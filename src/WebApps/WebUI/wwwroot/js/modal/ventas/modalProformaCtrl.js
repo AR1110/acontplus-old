@@ -90,22 +90,22 @@ class ModalProformaCtrl extends ModalBaseCtrl {
         }
     }
 
-    initiload(){
-        return this._mS.getData('get', 'Venta/Proforma/' +'Get?json=' + JSON.stringify({tipo: 2}), null, true ).then(response =>{
-            if(response.code==="0"){
+    initiload() {
+        return this._mS.getData('get', 'Venta/Proforma/' + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+            if (response.code === "0") {
                 throw response;
             }
-             
-            if(response.code==="1"){ 
-                let mainData = JSON.parse(response.payload); 
+
+            if (response.code === "1") {
+                let mainData = JSON.parse(response.payload);
                 return mainData;
             }
-        }) 
+        })
     }
 
-    
-    onKeyupCustomer(){
-        if(!this.cliente.nombreFiscal){
+
+    onKeyupCustomer() {
+        if (!this.cliente.nombreFiscal) {
             console.log(this.cliente)
             this.cliente = {};
         }
@@ -141,14 +141,21 @@ class ModalProformaCtrl extends ModalBaseCtrl {
                 datosAdicionales
             } = self.dataArticulo;
 
-            let index = 0;
+            let index = 0; 
+            let findIndexById = this.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
-            if ([null, undefined].includes(this.indexRow)) {
+            if (findIndexById === -1) {
                 self.addRow();
                 index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
             } else {
-                index = this.indexRow;
-            }
+                index = findIndexById
+            }  
+            // if ([null, undefined].includes(this.indexRow)) {
+            //     self.addRow();
+            //     index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
+            // } else {
+            //     index = this.indexRow;
+            // }
 
             let entity = self.gridOptions.data[index];
 
@@ -209,7 +216,7 @@ class ModalProformaCtrl extends ModalBaseCtrl {
 
 
 
-    
+
 
     calcularPorcentajeDescuento() {
         if (!this.ventaComprobantePermission.porcentajeDescuento.update) {
@@ -278,33 +285,33 @@ class ModalProformaCtrl extends ModalBaseCtrl {
 
 export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'storageService', 
-        'mainService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'storageService',
+        'mainService',
         'commonService',
-        'proformaService', 
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        'proformaService',
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params',
         'articuloService'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
+        $scope,
+        $timeout,
         $uibModalInstance,
-        _storageSvc, 
-        _mS, 
-        _commonSvc, 
+        _storageSvc,
+        _mS,
+        _commonSvc,
         proformaSvc,
-        _modalSvc, 
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS,
         _params,
         articuloSvc
     ) {
@@ -382,7 +389,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
             //7 cliente 
 
             if (resultsDataForm[8].length > 0) {
-                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
+                let { searchCode, multipleVendedor } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
@@ -403,9 +410,9 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
             this.usuariosVendedor = resultsDataForm[11];
-            if(this.usuariosVendedor.length>0){
+            if (this.usuariosVendedor.length > 0) {
                 this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
-            }else{
+            } else {
                 this.data.idUsuario = 0;
             }
 
@@ -467,7 +474,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
         } else {
             this.newCustomer = false;
         }
-        this.cliente = result; 
+        this.cliente = result;
     }
 
     async onSelectedClienteChange(item) {
@@ -490,9 +497,9 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
 
             if (!this.isValidaForm()) return
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -541,7 +548,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
             if (isConfirmed) {
 
                 showLoader();
-                this.data.tarifa = this.actividadTipoIva.tarifa;       
+                this.data.tarifa = this.actividadTipoIva.tarifa;
 
                 let query = this.proformaSvc.queryMapper({
                     data: this.data,
@@ -749,31 +756,31 @@ export class ModalProformaDetalleCtrl extends ModalProformaCtrl {
 export class ModalProformaEditarCtrl extends ModalProformaCtrl {
 
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'mainService', 
-        'commonService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
         'proformaService',
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params',
         'articuloService'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
-        _mS, 
-        _commonSvc, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
         proformaSvc,
-        _modalSvc, 
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS,
         _params,
         articuloSvc
     ) {
@@ -936,9 +943,9 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
         try {
             if (!this.isValidaForm()) return
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -1013,31 +1020,31 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
 
 export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'mainService', 
-        'commonService', 
-        'proformaService', 
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
+        'proformaService',
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params',
         'articuloService'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
-        _mS, 
-        _commonSvc, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
         proformaSvc,
-        _modalSvc, 
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS,
         _params,
         articuloSvc
     ) {
@@ -1121,7 +1128,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
             this.tiempoCreditos = resultsDataForm[5];
 
             if (resultsDataForm[8].length > 0) {
-                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
+                let { searchCode, multipleVendedor } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
@@ -1174,9 +1181,9 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
 
             this.gridOptions.data = this.detalleDocumento;
 
-            if(this.usuariosVendedor.length>0){
+            if (this.usuariosVendedor.length > 0) {
                 this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
-            }else{
+            } else {
                 this.data.idUsuario = 0;
             }
 
@@ -1200,7 +1207,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
         } else {
             this.newCustomer = false;
         }
-        this.cliente = result; 
+        this.cliente = result;
     }
 
     async onSelectedClienteChange(item) {
@@ -1224,9 +1231,9 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
 
             if (!this.isValidaForm()) return
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -1278,14 +1285,14 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
                     cliente: this.cliente,
                     detalles: this.gridOptions.data
                 })
-                
+
 
                 this.proformaSvc.save(query).then(response => {
                     hideLoader();
                     if (response.code === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.code === '1') {                        
+                    if (response.code === '1') {
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         this.$uibModalInstance.close(response)
                     }
