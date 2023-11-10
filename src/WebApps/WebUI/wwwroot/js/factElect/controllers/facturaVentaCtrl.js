@@ -201,6 +201,7 @@
                     $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
                     hideLoader();
                 }).catch(error => {
+                    $scope.dataSearch.totalRecords = 0;
                     hideLoader();
                     console.log(error);
                 })

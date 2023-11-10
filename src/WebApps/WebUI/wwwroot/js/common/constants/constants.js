@@ -25,7 +25,7 @@ app.constant('nombreModalCommon', {
 app.constant('nombreModalInventario', {
     ARTICULO: {
         //fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
-        fileCtrl: '/js/inventario/modals/modalArticuloCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
         controllers: {
             'LG': 'ModalArticuloGeneralCtrl',
             //'M': 'ModalArticuloCtrl',
@@ -133,8 +133,16 @@ app.constant('nombreModalFactElect', {
 })
 
 app.constant('nombreModalVenta', {
-    CLIENTE: {
-        //fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.min.js' + CHANGE_VERSION(),
+    DOC_VENTA_DETALLE: {
+        fileCtrl: '/js/ventas/modals/modalDocVentaDetalleCtrl.js',
+        controller: 'modalDocVentaDetalleCtrl',
+        templates: {
+            NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
+            PR: ''
+        }
+
+    },
+    CLIENTE: { 
         fileCtrl: '/js/ventas/modals/modalClienteCtrl.js' + CHANGE_VERSION(),
         controllers: {
             M: 'ModalClienteCtrl',
@@ -826,4 +834,9 @@ app.constant('TAX_RATE_CODE', {
     NOT_SUBJECT_TO_TAX: "6",
     TAX_EXEMPT: "7",
     DIFFERENTIATED_TAX: "8",
+})
+
+app.constant('DOC_TYPE', {
+    NE: 'NE',
+    PR: 'PR'
 })

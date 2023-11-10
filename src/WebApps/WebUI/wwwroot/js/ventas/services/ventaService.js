@@ -222,11 +222,11 @@
 
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
-                    let decimal = mainData[0][0];
-                    // let decimal = mainData[1][0];
-                    let tarifasImpuesto = mainData[2];
-                    let tarifas = mainData[3];
-                    let tiemposCredito = mainData[4];
+                    console.log(mainData)
+                    let decimal = mainData[0][0];                    
+                    let tarifasImpuesto = mainData[1];
+                    let tarifas = mainData[2];
+                    let tiemposCredito = mainData[3];
                     // let articuloDefaultTemp = mainData[6];
                     // let articuloDefault = {}
                     // if(articuloDefaultTemp && articuloDefaultTemp.length>0){
@@ -237,22 +237,18 @@
                     // if(clienteDefaultTemp && clienteDefaultTemp.length>0){
                     //     clienteDefault = clienteDefaultTemp[0];
                     // }
-                    let config = mainData[7][0];
-                    // let permisosTemp = mainData[9][0];
-                    // let permisoJson = JSON.parse(permisosTemp.jsonPermission);
-                    // let permisos = permisoJson && permisoJson.additional.requestAuthorizationKey
-
-                    let vendedores = mainData[8];
+                    let config = mainData[6][0]; 
+                    let vendedores = mainData[7];
                     let notificacionVenta = {
                         notificacionVenta: false
                     }
-                    let notificacionVentaTemp = mainData[9];
+                    let notificacionVentaTemp = mainData[8];
                     notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
-                    let tempEstabsAndPtosEmision = mainData[10];
-                    let tempBodegas = mainData[11];
-                    let tarifaImpuestoVigente = mainData[12][0];
+                    let tempEstabsAndPtosEmision = mainData[9];
+                    let tempBodegas = mainData[10];
+                    let tarifaImpuestoVigente = mainData[11][0];
                     let { permisoVenta } = fS.getDataUserRol();
-                    console.log(mainData)
+                 
                     const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
                         const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
 
@@ -483,7 +479,7 @@
                         } else {
                             // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
                             if (item.cantidad > item.cantidadOriginal) {
-                                cantidadStock = item.cantidadOriginal - item.cantidad; 
+                                cantidadStock = item.cantidadOriginal - item.cantidad;
                             } else {
                                 cantidadStock = item.cantidadOriginal - item.cantidad;
                             }
@@ -491,7 +487,7 @@
                     }
                     if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
                         cantidadStock = Math.abs(cantidadStock)
-                      //  cantidadAnulada = item.cantidad;
+                        //  cantidadAnulada = item.cantidad;
                     }
                 }
 
@@ -525,7 +521,7 @@
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
                     cantidadTransaccion, //✅
-                   // cantidadAnulada,
+                    // cantidadAnulada,
                     estado: item.estado //✅                    
                 })
             }
@@ -716,6 +712,38 @@
                         infoAdicionalDocumento,
                         datosAdicionalesArticulo
                     }
+                }
+            })
+        }
+
+        service.getIdForInfo = function (id) {
+            let spParams = {
+                tipo: 5,
+                id
+            }
+            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+                if (response.code === "0") {
+                    console.log("Get Data Info", response)
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainDataApi = JSON.parse(response.payload);
+                    let dataTemp = mainDataApi[0][0];
+                    let cliente = mainDataApi[1][0];
+                    let items = mainDataApi[2]; 
+                    let  {nombreComercial, fechaEmision, fechaVencimiento, ...restData} = dataTemp;                   
+                    let data = {
+                        ...restData,
+                        establecimiento: nombreComercial,
+                        fechaEmision: fS.formatDate(fechaEmision),
+                        fechaVencimiento: fS.formatDate(fechaVencimiento),
+                    } 
+                    return {
+                        data,
+                        cliente,
+                        items
+                    }
+
                 }
             })
         }
