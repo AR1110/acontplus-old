@@ -147,6 +147,7 @@ BEGIN
                   ,UserAssignedId
                   ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
                   ,Obs
+                  ,[Status] AS [Status]
             FROM Mechanical.v_Support WITH (NOLOCK)
             WHERE Id = @Id
 
