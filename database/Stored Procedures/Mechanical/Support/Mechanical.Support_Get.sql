@@ -58,6 +58,7 @@ BEGIN
                                         ,COUNT(*) OVER() AS [TotalRecords]
                                         ,Obs
                                         ,codEstab
+                                        ,[Status]       AS TypeStatus
                                   FROM Mechanical.v_Support WITH (NOLOCK)
                                   WHERE CompanyId = @CompanyId '
            ,@params NVARCHAR(MAX)

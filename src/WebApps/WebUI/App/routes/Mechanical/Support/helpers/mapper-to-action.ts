@@ -41,11 +41,32 @@ const mapperToAction = () => {
     return factura;
   };
 
-  const detalleMapperTo = (detalles) => {
+  const detalleMapperTo = (detalles, fechaEmision) => {
     const tempDetails = [];
     let orderIndex = 1;
 
     for (const item of detalles) {
+      let cantidadTransaccion = item.cantidad * item.conversion;
+
+      let { cantidadStock, action } = getCantidadStock(item, fechaEmision);
+
+      if (action === 0) {
+        if (item.idNotaEntregaDetalle > 0 && item.estado) {
+          if (item.cantidad === item.cantidadOriginal) {
+            cantidadStock = 0;
+          } else {
+            if (item.cantidad > item.cantidadOriginal) {
+              cantidadStock = item.cantidadOriginal - item.cantidad;
+            } else {
+              cantidadStock = item.cantidadOriginal - item.cantidad;
+            }
+          }
+        }
+        if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
+          cantidadStock = Math.abs(cantidadStock);
+        }
+      }
+
       tempDetails.push({
         orderIndex: orderIndex++,
         idFacturaDetalle: item.idFacturaDetalle || 0,
@@ -69,69 +90,72 @@ const mapperToAction = () => {
         porcentajeDescuento: item.porcentajeDescuento || 0,
         total: item.total,
         nota: item.nota || "",
+        cantidadStock,
+        llevaInventario: item.llevaInventario, //✅
+        precioCosto: item.precioCosto,  //✅
+        cantidadTransaccion,
+        estado: item.estado //✅
       });
     }
     return tempDetails;
   };
 
-  const detalleNotaEntrega = (data, fecheEmision) => {
-    const tempDetails = [];
-    let orderIndex = 1;
+  // const detalleNotaEntrega = (data, fecheEmision) => {
+  //   const tempDetails = [];
+  //   let orderIndex = 1;
 
-    for (const item of data) {
-      let { cantidadStock, action } = getCantidadStock(item, fecheEmision);
+  //   for (const item of data) {
+  //     let { cantidadStock, action } = getCantidadStock(item, fecheEmision);
 
-      console.log(cantidadStock, action);
+  //     if (action === 0) {
+  //       if (item.idNotaEntregaDetalle > 0 && item.estado) {
+  //         if (item.cantidad === item.cantidadOriginal) {
+  //           cantidadStock = 0;
+  //         } else {
+  //           if (item.cantidad > item.cantidadOriginal) {
+  //             cantidadStock = item.cantidadOriginal - item.cantidad;
+  //           } else {
+  //             cantidadStock = item.cantidadOriginal - item.cantidad;
+  //           }
+  //         }
+  //       }
+  //       if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
+  //         cantidadStock = Math.abs(cantidadStock);
+  //       }
+  //     }
 
-      if (action === 0) {
-        if (item.idNotaEntregaDetalle > 0 && item.estado) {
-          if (item.cantidad === item.cantidadOriginal) {
-            cantidadStock = 0;
-          } else {
-            if (item.cantidad > item.cantidadOriginal) {
-              cantidadStock = item.cantidadOriginal - item.cantidad;
-            } else {
-              cantidadStock = item.cantidadOriginal - item.cantidad;
-            }
-          }
-        }
-        if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
-          cantidadStock = Math.abs(cantidadStock);
-        }
-      }
-
-      tempDetails.push({
-        orderIndex: orderIndex++,
-        idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
-        idFacturaDetalle: item.idFacturaDetalle || 0,
-        idArticulo: item.idArticulo || 0,
-        idTarifa: item.idTarifa,
-        idBodega: item.idBodega,
-        idMedida: item.idMedida,
-        idPresentacion: 0,
-        idTipoIva: item.idTipoIva,
-        tarifa: item.tarifa,
-        codigoPorcentaje: item.codigoPorcentaje,
-        ice: item.ice || 0,
-        descripcion: item.descripcion,
-        cantidad: item.cantidad * -1,
-        precioUnitario: item.precioUnitario || 0,
-        precioVenta: item.precioVenta || 0,
-        precioCosto: item.precioCosto || 0,
-        precioConIva: item.precioConIva || 0,
-        valorDescuento: item.valorDescuento || 0,
-        precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
-        porcentajeDescuento: item.porcentajeDescuento || 0,
-        total: item.total || 0,
-        nota: "S/N",
-        llevaInventario: item.llevaInventario || false,
-        cantidadStock: cantidadStock || 0,
-        cantidadTransaccion: item.cantidad * item.conversion || 0,
-        cantidadAnulada: item.cantidadAnulada || 0,
-      });
-    }
-    return tempDetails;
-  };
+  //     tempDetails.push({
+  //       orderIndex: orderIndex++,
+  //       idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
+  //       idFacturaDetalle: item.idFacturaDetalle || 0,
+  //       idArticulo: item.idArticulo || 0,
+  //       idTarifa: item.idTarifa,
+  //       idBodega: item.idBodega,
+  //       idMedida: item.idMedida,
+  //       idPresentacion: 0,
+  //       idTipoIva: item.idTipoIva,
+  //       tarifa: item.tarifa,
+  //       codigoPorcentaje: item.codigoPorcentaje,
+  //       ice: item.ice || 0,
+  //       descripcion: item.descripcion,
+  //       cantidad: item.cantidad * -1,
+  //       precioUnitario: item.precioUnitario || 0,
+  //       precioVenta: item.precioVenta || 0,
+  //       precioCosto: item.precioCosto || 0,
+  //       precioConIva: item.precioConIva || 0,
+  //       valorDescuento: item.valorDescuento || 0,
+  //       precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
+  //       porcentajeDescuento: item.porcentajeDescuento || 0,
+  //       total: item.total || 0,
+  //       nota: "S/N",
+  //       llevaInventario: item.llevaInventario || false,
+  //       cantidadStock: cantidadStock || 0,
+  //       cantidadTransaccion: item.cantidad * item.conversion || 0,
+  //       cantidadAnulada: item.cantidadAnulada || 0,
+  //     });
+  //   }
+  //   return tempDetails;
+  // };
 
   const getCantidadStock = (item, fechaEmision) => {
     let fechaEmisionValidate = null;
@@ -182,7 +206,6 @@ const mapperToAction = () => {
   return {
     principalMapperTo,
     detalleMapperTo,
-    detalleNotaEntrega,
   };
 };
 
