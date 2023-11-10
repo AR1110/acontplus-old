@@ -555,7 +555,7 @@
 
     let data = {
       factura: JSON.stringify(MapperToAction.principalMapperTo(support)),
-      detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails)),
+      detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails, support.date)),
       adicional: JSON.stringify({}),
       infoAdicionalArticulo: JSON.stringify({}),
     };
@@ -659,7 +659,7 @@
 
     let newData = {
       notaEntrega: MapperToAction.principalMapperTo(support),
-      detalles: MapperToAction.detalleNotaEntrega(supportDetails, support.date),
+      detalles: MapperToAction.detalleMapperTo(supportDetails, support.date),
       infoAdicionalArticulo: [],
     };
 
