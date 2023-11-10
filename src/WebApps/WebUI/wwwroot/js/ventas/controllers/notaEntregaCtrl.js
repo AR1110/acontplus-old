@@ -344,8 +344,6 @@
 
         $scope.openModalEdit = async (item) => {
             try {
-                console.log($scope.jsonPermission)
-                console.log(item)
                 if (item.anulada) {
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
@@ -357,8 +355,6 @@
                     commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
                     return
                 }
-
-                showLoader();
 
                 showLoader();
                 notaEntregaSvc.getId(item.idDocumento).then(response => {
@@ -453,46 +449,6 @@
                 hideLoader();
                 console.log(error)
             }
-
-            // try {
-            //     showLoader();
-            //     let { MODAL_FILE_CTRL, MODAL_DUPLICAR } = nombreModalConst.nota_entrega;
-            //     let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
-            //     let template = MODAL_DUPLICAR['template'];
-
-            //     let response = await commonSvc.getDataTipoDocVenta({
-            //         id: item.idDocumento,
-            //         codigoDocumento: TIPO_DOC_NE.codigo
-            //     })
-
-            //     if (!response.isComplete) return
-
-            //     let params = {
-            //         TIPO_REGISTRO: 'DUPLICAR',
-            //         data: response
-            //     }
-
-            //     modalSvc.openModalCustom({
-            //         controller,
-            //         template,
-            //         size: 'xl',
-            //         params,
-            //         windowClass: 'uibModalFullScreen'
-            //     }).result.then(result => {
-
-            //         if (typeof result !== 'object') return
-
-            //         $scope.validateOperationPrintAndPayment(result)
-
-            //     })
-
-            // } catch (error) {
-
-            //     console.log(error)
-            // } finally {
-            //     hideLoader();
-            // }
-
         }
 
         $scope.openModalInvoiceParam = ({ controller, template, size = 'xl', params }) => {
@@ -502,8 +458,7 @@
                 size,
                 params,
                 windowClass: 'uibModalFullScreen'
-            }).result.then(result => {
-
+            }).result.then(result => { 
                 if (typeof result === 'object') {
                     $scope.getNotaEntregas();
                 }
@@ -524,34 +479,26 @@
                     return
                 }
 
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-2'
-                    },
-                    buttonsStyling: false
-                })
-
-                let { isConfirmed } = await swalWithBootstrapButtons.fire({
-                    title: '<small>Anular Nota de Entrega?</small>',
+                let { isConfirmed } = await Swal.fire({
+                    title: "<small>Anular Nota de Entrega?</small>",
                     html: `<small>Esta Ud. seguro/a de anular este Documento <b>N° ${item.serieComprobante
                         }</b></small>?`,
-                    icon: 'warning',
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Si, anular!',
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
                     cancelButtonText: 'No, cancelar!',
-                    reverseButtons: false
+                    confirmButtonText: "Si, anular!"
                 })
 
                 if (isConfirmed) {
                     showLoader();
                     notaEntregaSvc.delete(item.idDocumento).then(response => {
-                        hideLoader();
+                        hideLoader() ;
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
-                        if (response.code === "1") {
-                            hideLoader();
+                        if (response.code === "1") { 
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                             //Una vez actualizado el documento  
@@ -563,14 +510,13 @@
                     }).catch(error => {
                         hideLoader();
                         console.log(error);
-                    })
+                    }).finally(()=>hideLoader());
 
                 }
             } catch (error) {
+                hideLoader();
                 console.log(error)
-            } finally {
-                console.log(error)
-            }
+            }  
         }
 
 
@@ -700,11 +646,7 @@
                 console.log(error)
             }
         }
-
-
-
-
-
+ 
         $scope.openModalHistorialCobro = async (ev, item) => {
             try {
                 if (['PE'].includes(item.codEstado)) return
@@ -808,7 +750,6 @@
     }
 
 
-
     app.controller('modalNotaEntregaCtrl', modalNotaEntregaCtrl)
     modalNotaEntregaCtrl.$inject = [
         '$scope',
@@ -831,6 +772,7 @@
         $scope.infoEstabPtoEmi = {};
 
         $scope.data = {
+            idNotaEntrega: 0,
             idBodega: 0,
             idPuntoEmision: 0,
             idTiempoCredito: 0,
@@ -1766,6 +1708,7 @@
         function addRow() {
             const obj = {
                 idNotaEntregaDetalle: 0,
+                idFacturaDetalle: 0,
                 n: 1,
                 codigo: "",
                 idArticulo: 0,
@@ -2216,7 +2159,7 @@
                     showLoader();
                     serieComprobante = await facturaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
-                    })
+                    });
                     hideLoader();
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
@@ -2231,6 +2174,7 @@
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 }
 
+                console.log(serieComprobante)
 
                 const customSwal = Swal.mixin({
                     customClass: {
@@ -2257,11 +2201,13 @@
                 //Tarifa Aplicada al Documento
                 $scope.data.tarifa = $scope.tarifaImpuestoVigente.tarifa;
 
-                let query = facturaSvc.queryMapper({
+                //Mappeamos todo el objecto necesario para guardar factura.
+                let params = facturaSvc.queryMapper({
                     data: $scope.data,
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
+                    infoAdicionalDocumento: [],
                     historyDatosAdicionales: $scope.historyDatosAdicionales
                 })
 
@@ -2269,46 +2215,24 @@
                 //Registar Doc 
                 if (isRegister()) {
                     showLoader();
-                    notaEntregaSvc.save(query).then(response => {
+                    facturaSvc.save(params).then(response => {
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
-
+                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
                             let mainData = {
-                                isRegister: true,
-                                data: response.dataResponse,
+                                data: response.dataResponse
                             }
                             $uibModalInstance.close(mainData)
                         }
                     }).catch(error => {
-                        hideLoader();
-                        console.log(error)
+                        console.error(error);
                     }).finally(() => hideLoader())
-                }
-
-                //Update Doc 
-                if (isUpdate()) {
-                    showLoader()
-                    notaEntregaSvc.update($scope.data.idNotaEntrega, query).then(response => {
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                            $uibModalInstance.close(response)
-                        }
-                    }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    }).finally(() => hideLoader())
-                    console.log(serieComprobante)
-
                 }
             } catch (error) {
                 hideLoader();
-                console.log(error)
+                console.warn(error)
             }
         }
 
