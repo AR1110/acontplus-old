@@ -82,9 +82,10 @@ const calculations = () => {
       if (row.bodegas != undefined && value != undefined) {
         bodegas = row.bodegas;
 
-        return bodegas.find((x) => x.idBodega == value).bodega;
+        let bodegaSelect = bodegas.find((x) => x.idBodega == value);
+        return bodegaSelect.bodega;
       }
-      return "_";
+      return "";
     }
 
     if (column == "idTipoIva") {
@@ -140,10 +141,7 @@ const calculations = () => {
         const dataTipoIva = row.tipoIvas.find(
           (x) => x.idTipoIva === parseInt(row.idTipoIva)
         );
-        console.log(dataTipoIva);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
 
     if (column == "idTarifa") {

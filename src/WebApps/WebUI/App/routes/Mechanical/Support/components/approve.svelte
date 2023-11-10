@@ -160,9 +160,6 @@
               nota: "S/N",
             };
             supportDetails = [...supportDetails, obj];
-
-            console.log("supportDetails");
-            console.log(supportDetails);
             getTotales();
           }
         }
@@ -460,7 +457,7 @@
       item.tarifas = JSON.parse(
         measures.find((x) => x.idMedida == item.idMedida).tarifas
       );
-      item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
+      item.bodegas = warehouses.filter((x) => x.codEstab == item.codEstab);
       item.tipoIvas = tipoIva;
       item.precioConIva = item.tarifas.find(
         (x) => x.idTarifa == item.idTarifa
@@ -471,6 +468,9 @@
         (x) => x.idArticulo === item.idArticulo
       );
       item.cantidadOriginal = item.cantidad;
+      item.conversion = item.medidas.find(
+        (x) => x.idMedida === item.idMedida
+      ).conversion;
     });
   };
 
@@ -481,7 +481,6 @@
     support.codEstab = estab.codEstab;
 
     tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
-
     ptoEmisiones = [
       ...ptoEmisionesTemp.filter((x) => x.codEstab === estab.codEstab),
     ];
@@ -513,6 +512,9 @@
       supportDetails.forEach((item) => {
         item.idBodega = idBodega;
         item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
+        item.conversion = item.medidas.find(
+          (x) => x.idMedida === item.idMedida
+        ).conversion;
       });
       supportDetails = [...supportDetails];
     }
@@ -550,12 +552,11 @@
       getTiempoCredito.diasCredito
     );
 
-    //support.date = newFormatDate(support.date);
-    //support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
-
     let data = {
       factura: JSON.stringify(MapperToAction.principalMapperTo(support)),
-      detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails, support.date)),
+      detalle: JSON.stringify(
+        MapperToAction.detalleMapperTo(supportDetails, support.date)
+      ),
       adicional: JSON.stringify({}),
       infoAdicionalArticulo: JSON.stringify({}),
     };
@@ -574,12 +575,6 @@
       });
   };
 
-  // const newFormatDate = (date: string) => {
-  //   let splitDate = date.split("-");
-  //   let newDate = `${splitDate[0]}-${splitDate[1]}-${splitDate[2]}`;
-  //   return newDate;
-  // };
-
   const getFechaVencimiento = function (fechaEmision, dia) {
     let fechaVencimiento = new Date(fechaEmision);
 
@@ -591,8 +586,6 @@
     let newFechaVencimiento = fechaVencimiento.toISOString().split("T")[0];
     return newFechaVencimiento;
   };
-
-  // ======================== Action for NotaEntrega =========================
 
   // ======================== GenerateNumberOfSerie ======================
   const generateSerieNumberNotaEntrega = function () {
@@ -638,9 +631,6 @@
     let getTiempoCredito = tiempoCreditos[0];
     support.tarifa = tarifaImpuestoFactura[0].tarifa;
 
-    // Todo: Format new date.
-    //support.date = newFormatDate(support.date);
-
     // Todo: Tiempo crédito.
     support.idTiempoCredito = getTiempoCredito.idTiempoCredito;
     support.tipo = getTiempoCredito.tipo;
@@ -655,7 +645,6 @@
       support.date,
       getTiempoCredito.diasCredito
     );
-    //support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
 
     let newData = {
       notaEntrega: MapperToAction.principalMapperTo(support),
