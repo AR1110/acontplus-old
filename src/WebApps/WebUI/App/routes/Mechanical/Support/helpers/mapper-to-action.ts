@@ -1,13 +1,18 @@
 const mapperToAction = () => {
   const principalMapperTo = (support) => {
     const factura = {
-      direccionComprador: support.direccionComprador || "",
-      email: support.email || "",
-      fechaEmision: support.date,
-      fechaVencimiento: support.fechaVencimiento || new Date(),
       idCliente: support.customerId || 0,
-      identificacionComprador: support.identificacionComprador || "",
+      identificacionComprador: support.idCard || "",
+      razonSocialComprador: support.businessName || "",
+      direccionComprador: support.address || "",
+      email: support.email || "",
+      telefono: support.telephone || "",
+      estab: support.estab || "",
+      codEstab: support.codEstab || "",
+      fechaEmision: newFormatDate(support.date) || new Date(),
+      fechaVencimiento: newFormatDate(support.fechaVencimiento) || new Date(),
       idPuntoEmision: support.puntoEmisionId || 0,
+      tipo: support.tipo || "",
       idTiempoCredito: support.idTiempoCredito || 0,
       idUsuario: support.userAssignedId || 0,
       irbpnr: support.irbpnr || 0,
@@ -16,7 +21,6 @@ const mapperToAction = () => {
       placa: support.placa || "",
       porcentajeDescuento: support.porcentajeDescuento || 0,
       propina: support.propina || 0,
-      razonSocialComprador: support.razonSocialComprador || "",
       recargo: support.recargo || 0,
       subTotalExentoIva: support.subTotalExentoIva || 0,
       subTotalIva: support.subTotalIva || 0,
@@ -28,7 +32,6 @@ const mapperToAction = () => {
       subTotalNoObjetoIva: support.subTotalNoObjetoIva || 0,
       subTotalSinImpuestos: support.sumaTotalNeto || 0,
       tarifa: support.tarifa || "",
-      telefono: support.telefono || "",
       total: support.total || 0,
       totalDescuento: support.totalDescuento || 0,
       totalIce: support.totalIce || 0,
@@ -71,50 +74,32 @@ const mapperToAction = () => {
     return tempDetails;
   };
 
-  const notaEntregaMapper = (data) => {
-    const notaEntrega = {
-      idCliente: data.customerId || 0,
-      identificacionComprador: data.idCard,
-      razonSocialComprador: data.businessName || "",
-      direccionComprador: data.address,
-      email: data.email || "",
-      telefono: data.telephone || "",
-      estab: data.estab,
-      codEstab: data.codEstab,
-      fechaEmision: newFormatDate(data.date) || new Date(),
-      fechaVencimiento: newFormatDate(data.fechaVencimiento) || new Date(),
-      idPuntoEmision: data.puntoEmisionId || 0,
-      tipo: data.tipo || "",
-      idTiempoCredito: data.idTiempoCredito || 0,
-      idUsuario: data.userAssignedId || 0,
-      irbpnr: data.irbpnr || 0,
-      iva: data.iva || 0,
-      porcentajeDescuento: data.porcentajeDescuento || 0,
-      propina: data.propina || 0,
-      recargo: data.recargo || 0,
-      subTotalExentoIva: data.subTotalExentoIva || 0,
-      subTotalIva: data.subTotalIva || 0,
-      subTotalIvaCero: data.subTotalIvaCero || 0,
-      subTotalNetoExentoIva: data.subTotalNetoExentoIva || 0,
-      subTotalNetoIva: data.subTotalNetoIva || 0,
-      subTotalNetoIvaCero: data.subTotalNetoIvaCero || 0,
-      subTotalNetoNoObjetoIva: data.subTotalNetoNoObjetoIva || 0,
-      subTotalNoObjetoIva: data.subTotalNoObjetoIva || 0,
-      subTotalSinImpuestos: data.sumaTotalNeto || 0,
-      tarifa: data.tarifa,
-      total: data.total || 0,
-      totalDescuento: data.totalDescuento || 0,
-      totalIce: data.totalIce || 0,
-      transporte: data.transporte || 0,
-    };
-    return notaEntrega;
-  };
-
   const detalleNotaEntrega = (data, fecheEmision) => {
     const tempDetails = [];
     let orderIndex = 1;
 
     for (const item of data) {
+      let { cantidadStock, action } = getCantidadStock(item, fecheEmision);
+
+      console.log(cantidadStock, action);
+
+      if (action === 0) {
+        if (item.idNotaEntregaDetalle > 0 && item.estado) {
+          if (item.cantidad === item.cantidadOriginal) {
+            cantidadStock = 0;
+          } else {
+            if (item.cantidad > item.cantidadOriginal) {
+              cantidadStock = item.cantidadOriginal - item.cantidad;
+            } else {
+              cantidadStock = item.cantidadOriginal - item.cantidad;
+            }
+          }
+        }
+        if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
+          cantidadStock = Math.abs(cantidadStock);
+        }
+      }
+
       tempDetails.push({
         orderIndex: orderIndex++,
         idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
@@ -140,8 +125,9 @@ const mapperToAction = () => {
         total: item.total || 0,
         nota: "S/N",
         llevaInventario: item.llevaInventario || false,
-        cantidadStock: getCantidadStock(item, fecheEmision) || 0,
+        cantidadStock: cantidadStock || 0,
         cantidadTransaccion: item.cantidad * item.conversion || 0,
+        cantidadAnulada: item.cantidadAnulada || 0,
       });
     }
     return tempDetails;
@@ -150,6 +136,7 @@ const mapperToAction = () => {
   const getCantidadStock = (item, fechaEmision) => {
     let fechaEmisionValidate = null;
     let cantidadStock = 0;
+    let action = 0;
 
     if (fechaEmision) {
       fechaEmisionValidate = fechaEmision;
@@ -167,28 +154,34 @@ const mapperToAction = () => {
     if (dataConsolidacionFecha) {
       if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
         cantidadStock = 0;
-        return cantidadStock;
+        action = 1;
+        return {
+          cantidadStock,
+          action,
+        };
+      } else {
+        action = 2;
       }
     }
 
     cantidadStock = item.cantidad * item.conversion;
     const resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
 
-    return resultCantStock;
+    return {
+      cantidadStock: resultCantStock,
+      action,
+    };
   };
 
   const newFormatDate = (date: string) => {
     const splitDate = date.split("-");
     const newDate = `${splitDate[2]}-${splitDate[1]}-${splitDate[0]}`;
-    console.log(`NewDate ${newDate}`);
-
     return newDate;
   };
 
   return {
     principalMapperTo,
     detalleMapperTo,
-    notaEntregaMapper,
     detalleNotaEntrega,
   };
 };
