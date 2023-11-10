@@ -1,11 +1,16 @@
-﻿@{
-    ViewData["title"] = "Factura de Venta";
+﻿@page
+@model WebUI.Pages.Factura.IndexModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["title"] = "Factura";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div ng-controller="facturaVentaCtrl">
+<div ng-controller="facturaCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
-            <h4 class="text-themecolor">Factura de Venta</h4>
+            <h4 class="text-themecolor">Factura</h4>
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
@@ -14,7 +19,7 @@
                 </button> *@
                 @* ng-if="accion.leer && accion.crear" *@
                 <button type="button" class="btn btn-info m-l-15" ng-show="accion.crear" id="btnNewInvoice"
-                        ng-click="openModalInvoiceNew()">
+                    ng-click="openModalInvoiceNew()">
                     <i class="fa fa-plus-circle"></i> Nuevo
                 </button>
             </div>
@@ -32,13 +37,13 @@
                             <div class="form-gorup">
                                 <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
                                 <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                                        class="form-control  border-select" ng-change="estabFilter()">
+                                    class="form-control  border-select" ng-change="estabFilter()">
                                     <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                         {{item.nombreComercial}}
                                     </option>
                                 </select>
                             </div>
-                        </div> 
+                        </div>
 
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                             <span for="date-range-filter">Rango Fechas: </span>
@@ -46,10 +51,8 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">
                                         <div class="custom-control custom-checkbox mr-sm-2">
-                                            <input type="checkbox" 
-                                                ng-model="dataSearch.checkBoxFecha"
-                                                   ng-disabled="!(dataSearch.idCliente>0)"
-                                                class="custom-control-input" 
+                                            <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
+                                                ng-disabled="!(dataSearch.idCliente>0)" class="custom-control-input"
                                                 id="checkBoxFecha">
                                             <label class="custom-control-label" for="checkBoxFecha"></label>
                                         </div>
@@ -57,8 +60,8 @@
                                 </div>
 
                                 <date-range-filter current-date="dataSearch.fechaInicio"
-                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                                    start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                    result-range-date="resultRangeFilter(result)"></date-range-filter>
                             </div>
                         </div>
                     </div>
@@ -69,9 +72,9 @@
                             <div class="form-group">
                                 <span for="clienteFiltro">Cliente</span>
                                 <input type="text" id="customerInputSearch" class="form-control border-select"
-                                       ng-model="cliente.nombreCliente" cliente-search-drtv
-                                       on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
-                                       placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+                                    ng-model="cliente.nombreCliente" cliente-search-drtv
+                                    on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                                    placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                                 <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                                     <div class="autocomplete-suggestion-uib-typeahead">
@@ -86,7 +89,7 @@
                                     <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
                                 </button>
                                 <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                                        ng-click="getFacturas()">
+                                    ng-click="getFacturas()">
                                     <i class="fas fa-redo"></i>
                                 </button>
                             </div>
@@ -100,7 +103,7 @@
                     <div class="form-gorup">
                         <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
                         <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
-                                class="form-control  border-select" ng-change="getFacturas()">
+                            class="form-control  border-select" ng-change="getFacturas()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -111,12 +114,12 @@
                     <div class="form-group">
                         <span for="usuario">Usuario</span>
                         <input type="text" class="form-control border-select" ng-model="nombreCompleto"
-                               ng-keyup="onKeyupUsuarioSearch()"
-                               uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
-                               typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
-                               typeahead-template-url="usuarioSearchTemplate.html"
-                               typeahead-no-results="usuarioSearch.noResults"
-                               typeahead-on-select="selectedUsuarioSearch($item)">
+                            ng-keyup="onKeyupUsuarioSearch()"
+                            uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
+                            typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
+                            typeahead-template-url="usuarioSearchTemplate.html"
+                            typeahead-no-results="usuarioSearch.noResults"
+                            typeahead-on-select="selectedUsuarioSearch($item)">
 
                         <script type="text/ng-template" id="usuarioSearchTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -131,8 +134,8 @@
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Buscar por Nro. Doc.:</span>
-                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial" 
-                               placeholder="Ej: 123 o 1-30" />
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123 o 1-30" />
                     </div>
                 </div>
 
@@ -140,7 +143,7 @@
                     <div class="form-group">
                         <span>Estado:</span>
                         <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.byEstado"
-                                ng-change="getFacturas()">
+                            ng-change="getFacturas()">
                             <option value="">Todos</option>
                             <option ng-value="item.idEstadoPago" ng-repeat="item in estadoDocumentos">
                                 {{item.descripcion}}
@@ -153,7 +156,7 @@
                     <div class="form-group">
                         <span>Buscar</span>
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                               ng-model="dataSearch.bySearch" placeholder="...">
+                            ng-model="dataSearch.bySearch" placeholder="...">
                     </div>
                 </div>
             </div>
@@ -162,7 +165,7 @@
                 <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
-                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
                 </div>
@@ -174,11 +177,11 @@
 
             <div ng-style="getStyle($index)">
                 <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1"
-                                    infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow"
-                                    style=" max-height: 400px; overflow-x: hidden">
+                    infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow"
+                    style=" max-height: 400px; overflow-x: hidden">
                     <table resize master md-table name="innerWireTable">
                         <thead md-trim-column-names fix-head md-head md-on-reorder="onOrderInvoice"
-                               md-order="dataSearch.order">
+                            md-order="dataSearch.order">
                             <tr md-row>
                                 <th md-column><span>Op</span></th>
                                 <th md-column md-order-by="nroFactura"><span>Nro. Doc</span></th>
@@ -201,7 +204,7 @@
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                   ng-click="$mdMenu.open($event)">
+                                            ng-click="$mdMenu.open($event)">
                                             <icon class="mdi mdi-menu"></icon>
                                         </md-button>
                                         <md-menu-content class="md-dense">
@@ -216,7 +219,7 @@
 
                                             <md-menu-item ng-if="accion.editar">
                                                 <md-button ng-click="openModalInvoiceEdit(item)"
-                                                           ng-disabled="item.gestion">
+                                                    ng-disabled="item.gestion">
                                                     <span md-menu-align-target>
                                                         <i class="ti-pencil"></i>
                                                         Editar
@@ -231,11 +234,11 @@
                                                         Duplicar
                                                     </span>
                                                 </md-button>
-                                            </md-menu-item> 
+                                            </md-menu-item>
 
                                             <md-menu-item ng-if="accion.anular">
                                                 <md-button ng-click="askToDelete(item)"
-                                                           ng-disabled="item.gestionTributaria">
+                                                    ng-disabled="item.gestionTributaria">
                                                     <span md-menu-align-target>
                                                         <i class="ti-na"></i>
                                                         Anular
@@ -243,9 +246,10 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item ng-if="(accion.cobroPago && item.codEstado==='PP') || (accion.cobroPago && item.codEstado==='PE')">
+                                            <md-menu-item
+                                                ng-if="(accion.cobroPago && item.codEstado==='PP') || (accion.cobroPago && item.codEstado==='PE')">
                                                 <md-button ng-click="opcionCobro(item)"
-                                                           ng-disabled="item.gestionFinanciera">
+                                                    ng-disabled="item.gestionFinanciera">
                                                     <span md-menu-align-target>
                                                         <i class=" fas fa-hand-holding-usd"></i>
                                                         Cobro
@@ -255,7 +259,7 @@
 
                                             <md-menu-item ng-if="accion.cuota">
                                                 <md-button ng-click="openModalCuota(item)"
-                                                           ng-disabled="item.gestionTributaria">
+                                                    ng-disabled="item.gestionTributaria">
                                                     <span md-menu-align-target>
                                                         <i class=" fas fa-hand-holding-usd"></i>
                                                         Cuotas
@@ -292,8 +296,8 @@
 
                                             <md-menu-item>
                                                 <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                           btn-send-to-whats-app params="item" has-permission="hasPermissions"
-                                                           type-send="typeSend">
+                                                    btn-send-to-whats-app params="item" has-permission="hasPermissions"
+                                                    type-send="typeSend">
                                                     <span md-menu-align-target>
                                                         <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                     </span>
@@ -354,9 +358,8 @@
 
 </div>
 @section Scripts {
-    <script src="~/js/services/storageService.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/controllers/facturaVentaCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/directives/factElectDirective.js" asp-append-version="true"></script>
+    <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/controllers/facturaCtrl.js" asp-append-version="true"></script>
 
 }

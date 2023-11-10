@@ -469,7 +469,9 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
     $scope.selected = [];
     $scope.dataSearch = { 
         pageIndex: 1,
-        pageSize: 50
+        pageSize: 50,
+        maxSize: 5
+
     }
     
 

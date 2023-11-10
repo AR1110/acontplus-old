@@ -134,10 +134,11 @@ app.constant('nombreModalFactElect', {
 
 app.constant('nombreModalVenta', {
     DOC_VENTA_DETALLE: {
-        fileCtrl: '/js/ventas/modals/modalDocVentaDetalleCtrl.js',
+        fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.js',
         controller: 'modalDocVentaDetalleCtrl',
         templates: {
             NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
+            FV_SRI: '~/Pages/Factura/_ModalDetalle.cshtml',
             PR: ''
         }
 
@@ -837,6 +838,8 @@ app.constant('TAX_RATE_CODE', {
 })
 
 app.constant('DOC_TYPE', {
+    FV_SRI: '01',
+    FV: 'FV',
     NE: 'NE',
     PR: 'PR'
 })

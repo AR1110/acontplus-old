@@ -7,19 +7,23 @@ modalDocVentaDetalleCtrl.$inject = [
     '$uibModalInstance',
     '$injector',
     '$timeout',
-    'DOC_TYPE',
-    'TAX_RATE_CODE',
     'params'
 ];
 
-function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout, DOC_TYPE, TAX_RATE_CODE, params) {
+function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout, params) {
+    const DOC_TYPE = $injector.get('DOC_TYPE');
+    const TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
     const notaEntregaSvc = $injector.get('notaEntregaService');
+    const facturaSvc = $injector.get('facturaService');
+
     let { id, codDoc } = params;
     let tarifaImpuesto = {
         [TAX_RATE_CODE.TWELVE_PERCENT]: "IVA 12%",
         [TAX_RATE_CODE.DIFFERENTIATED_TAX]: "IVA 8%",
 
     }
+    $scope.showHeader = true;
+    $scope.infoAdicionalDocumento = [];
     $scope.gridOptions = {
         enableColumnMenus: false,
         enableColumnReordering: true,
@@ -35,22 +39,55 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             }, 5);
         }
     }
-    if (codDoc === DOC_TYPE.NE) {
-        showLoader();
-        notaEntregaSvc.getIdForInfo(id).then(response => {
-            let { data, cliente, items } = response;
-            $scope.data = data;
-            $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
-            $scope.cliente = cliente;
-            $scope.gridOptions.data = items;
-            setColumnDefsVista();
-            gridOptionsEnumeracion();
-        }).catch(error => {
-            console.warn(error)
-        }).finally(() => {
+
+    //Nota Entrega
+    if (codDoc === DOC_TYPE['NE']) {
+        try {
+            showLoader();
+            notaEntregaSvc.getIdForInfo(id).then(response => {
+                let { data, cliente, items, infoAdicionalDocumento } = response;
+                $scope.data = data;
+                $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
+                $scope.cliente = cliente;
+                $scope.gridOptions.data = items;
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                setColumnDefsVista();
+                gridOptionsEnumeracion();
+            }).catch(error => {
+                console.warn(error)
+            }).finally(() => {
+                hideLoader();
+            })
+        } catch (error) {
             hideLoader();
-        })
+            console.log(error)
+        }
     }
+
+    //Factura
+    if (codDoc === DOC_TYPE['FV_SRI']) {
+        try {
+            showLoader();
+            facturaSvc.getIdForInfo(id).then(response => {
+                let { data, cliente, items } = response;
+                $scope.data = data;
+                $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
+                $scope.cliente = cliente;
+                $scope.gridOptions.data = items;
+                setColumnDefsVista();
+                gridOptionsEnumeracion();
+                console.log($scope.data)
+            }).catch(error => {
+                console.error(error)
+            }).finally(() => {
+                hideLoader();
+            })
+        } catch (error) {
+            hideLoader();
+        }
+    }
+
+
 
 
     function setColumnDefsVista() {

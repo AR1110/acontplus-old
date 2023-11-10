@@ -294,28 +294,33 @@
             let { permissions } = userData;
             let permisoVentaTemp = permissions.find(pp => pp.codModule === "V");
             let objPermissionVenta = JSON.parse(permisoVentaTemp.permission);
-            let { comprobante, detail } = objPermissionVenta;
+           
+            let { comprobante, detail, additional } = objPermissionVenta;
+            let permisonEditarDoc = {
+                requiereClave: additional && additional.requestAuthorizationKey.requestKey
+            }
             const permisoVenta = {
                 comprobante: {
-                    descuento: comprobante.descuento.update,
-                    fechaEmision: comprobante.fechaEmision.update,
-                    porcentajeDescuento: comprobante.porcentajeDescuento.update,
-                    tarifa: comprobante.tarifa.update,
-                    tiempoCredito: comprobante.tiempoCredito.update
+                    descuento: comprobante && comprobante.descuento.update,
+                    fechaEmision: comprobante && comprobante.fechaEmision.update,
+                    porcentajeDescuento: comprobante && comprobante.porcentajeDescuento.update,
+                    tarifa: comprobante && comprobante.tarifa.update,
+                    tiempoCredito: comprobante && comprobante.tiempoCredito.update
                 },
                 detalle: {
-                    descuento: detail.descuento.update,
-                    medida: detail.medida.update,
-                    porcentajeDescuento: detail.porcentajeDescuento.update,
-                    precioConIva: detail.precioConIva.update,
-                    precioUnitario: detail.precioUnitario.update,
-                    tarifa: detail.tarifa.update,
-                    tipoIva: detail.tipoIva.update
+                    descuento: detail && detail.descuento.update,
+                    medida: detail && detail.medida.update,
+                    porcentajeDescuento: detail && detail.porcentajeDescuento.update,
+                    precioConIva: detail && detail.precioConIva.update,
+                    precioUnitario: detail && detail.precioUnitario.update,
+                    tarifa: detail && detail.tarifa.update,
+                    tipoIva: detail && detail.tipoIva.update
                 }
             }
 
             return {
-                permisoVenta
+                permisoVenta,
+                permisonEditarDoc
             }
         }
 
@@ -327,7 +332,7 @@
 
             if (fechaIngresada.isValid() && fechaIngresada.isAfter(fechaActual, 'day')) {
                 return true;
-            }  
+            }
             return false;
         }
 

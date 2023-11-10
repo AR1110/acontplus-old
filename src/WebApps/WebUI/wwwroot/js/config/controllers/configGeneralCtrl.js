@@ -137,7 +137,7 @@
             try {
                 let jsonConfig = {}
                 let data = {}
-
+                console.log($scope.gestionSistema)
                 //---------------------------------Configuracion de Ventas---------------------------
                 if ($scope.codConfig === $scope.codigo.CV) {
 

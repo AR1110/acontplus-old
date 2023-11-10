@@ -247,7 +247,7 @@
                     let tempEstabsAndPtosEmision = mainData[9];
                     let tempBodegas = mainData[10];
                     let tarifaImpuestoVigente = mainData[11][0];
-                    let { permisoVenta } = fS.getDataUserRol();
+                    let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
                  
                     const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
                         const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
@@ -295,7 +295,8 @@
                         notificacionVenta,
                         decimal,
                         config,
-                        vendedores
+                        vendedores,
+                        permisonEditarDoc
                     }
                 }
             })

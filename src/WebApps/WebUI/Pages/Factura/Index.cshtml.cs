@@ -1,6 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.Factura.Pages
+namespace WebUI.Pages.Factura
 {
     public class IndexModel : PageModel
     {

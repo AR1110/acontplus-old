@@ -124,7 +124,7 @@
     app.factory('facturaService', function ($injector) {
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
-        let formSvc = $injector.get('formulario');
+        let fS = $injector.get('formulario');
         let service = {}
 
 
@@ -135,63 +135,145 @@
                 }
 
                 if (response.code === "1") {
-
                     let mainData = JSON.parse(response.payload);
-                    return mainData;
+                    let decimal = mainData[0][0];
+                    let tarifasImpuesto = mainData[1];
+                    let tarifas = mainData[2];
+                    let tiemposCredito = mainData[3];
+
+                    // Maneja datos opcionales para articuloDefault
+                    let articuloDefaultTemp = mainData[4];
+                    let articuloDefault = {};
+                    if (articuloDefaultTemp && articuloDefaultTemp.length > 0) {
+                        articuloDefault = articuloDefaultTemp[0];
+                    }
+
+                    // Maneja datos opcionales para clienteDefault 
+                    let clienteDefaultTemp = mainData[5];
+                    let clienteDefault = {};
+                    if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
+                        clienteDefault = clienteDefaultTemp[0];
+                    }
+
+                    let config = mainData[6][0];
+                    let vendedores = mainData[7];
+
+                    // Establece un valor predeterminado para notificacionVenta y actualiza si hay datos disponibles
+                    let notificacionVenta = {
+                        notificacionVenta: false
+                    };
+                    let notificacionVentaTemp = mainData[8];
+                    notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
+
+                    // Extrae datos temporales para establecimientos y puntos de emisión
+                    let tempEstabsAndPtosEmision = mainData[9];
+                    let tempBodegas = mainData[10];
+
+                    // Extrae la tarifa actual para el impuesto
+                    let tarifaImpuestoVigente = mainData[11][0];
+
+                    // Obtiene el permiso de venta a partir de los datos del rol del usuario
+                    let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
+
+                    // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
+                    const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                        if (!existingItem) {
+                            acc.push({
+                                idEstablecimiento: item.idEstablecimiento,
+                                nombreComercial: item.nombreComercial,
+                                codEstab: item.codEstab,
+                                defaultEstab: item.defaultEstab,
+                                puntosEmision: [{
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                }]
+                            });
+                        } else {
+                            existingItem.puntosEmision.push({
+                                idPuntoEmision: item.idPuntoEmision,
+                                ptoEmi: item.ptoEmi,
+                                defaultPtoEmi: item.defaultPtoEmi
+                            });
+                        }
+                        return acc;
+                    }, []);
+
+                    // Organiza establecimientos y sus almacenes correspondientes
+                    let estabs = tempEstabs.map(estab => ({
+                        ...estab,
+                        bodegas: tempBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
+                            .map(bodega => ({
+                                idBodega: bodega.idBodega,
+                                bodega: bodega.bodega,
+                                descripcion: bodega.bodega,
+                                defaultBodega: bodega.defaultBodega,
+                            }))
+                    }));
+
+                    // Devuelve los datos finales estructurados
+                    return {
+                        estabs,
+                        tarifaImpuestoVigente,
+                        tarifasImpuesto,
+                        tiemposCredito,
+                        tarifas,
+                        permisoVenta,
+                        notificacionVenta,
+                        decimal,
+                        config,
+                        vendedores,
+                        articuloDefault,
+                        clienteDefault,
+                        permisonEditarDoc
+                    };
+
                 }
             })
         }
 
-        /**
-         * tipo 1: get invoices 
-         * tipo 2: get invoices for credit note 
-         * tipo 3: ----
-         * tipo 4: get estabs, ptos. emisiones para los filtros
-         * @returns 
-         */
-        service.get = (params) => {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+        service.getDataFilter = () => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 4 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
 
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload)
+                    let tempEstabsAndPtosEmision = mainData[0];
+                    let estadosDoc = mainData[1];
 
-                    if (params.tipo === 4) {
-                        let tempEstabsAndPtosEmision = mainData[0];
-                        let estadosDoc = mainData[1];
+                    const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
 
-                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                            if (!existingItem) {
-                                acc.push({
-                                    idEstablecimiento: item.idEstablecimiento,
-                                    nombreComercial: item.nombreComercial,
-                                    codEstab: item.codEstab,
-                                    defaultEstab: item.defaultEstab,
-                                    puntosEmision: [{
-                                        idPuntoEmision: item.idPuntoEmision,
-                                        ptoEmi: item.ptoEmi,
-                                        defaultPtoEmi: item.defaultPtoEmi
-                                    }]
-                                });
-                            } else {
-                                existingItem.puntosEmision.push({
+                        if (!existingItem) {
+                            acc.push({
+                                idEstablecimiento: item.idEstablecimiento,
+                                nombreComercial: item.nombreComercial,
+                                codEstab: item.codEstab,
+                                defaultEstab: item.defaultEstab,
+                                puntosEmision: [{
                                     idPuntoEmision: item.idPuntoEmision,
                                     ptoEmi: item.ptoEmi,
                                     defaultPtoEmi: item.defaultPtoEmi
-                                });
-                            }
-                            return acc;
-                        }, []);
-
-
-                        return {
-                            estabs,
-                            estadosDoc
+                                }]
+                            });
+                        } else {
+                            existingItem.puntosEmision.push({
+                                idPuntoEmision: item.idPuntoEmision,
+                                ptoEmi: item.ptoEmi,
+                                defaultPtoEmi: item.defaultPtoEmi
+                            });
                         }
+                        return acc;
+                    }, []);
+
+
+                    return {
+                        estabs,
+                        estadosDoc
                     }
                 }
             })
@@ -216,42 +298,29 @@
 
                     let facturas = facturasRepository.map(item => {
                         return {
-                            codigoTipoDoc: 'FV',
+                            codigoTipoDoc: 'FV',//📛
                             comprobante: 'Factura',
                             idDocumento: item.idDocumento,
-                            idFactura: item.idFactura,
-                            idTipoDocumento: item.idTipoDocumento,
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
-                            idTiempoCredito: item.idTiempoCredito,
-                            idCliente: item.idCliente,
                             codEstab: item.codEstab,
                             telefonoEstablecimiento: item.telefonoEstablecimiento,
-                            entidad: item.razonSocial,
                             nombreComercial: item.nombreComercial,
                             fechaEmision: item.fechaEmision,
                             fechaVencimiento: item.fechaVencimiento,
                             total: item.total,
-                            nroFactura: item.nroFactura,
+                            nroFactura: item.nroFactura, //📛
                             serieComprobante: item.nroFactura,
                             telefono: item.telefono,
                             nombreFiscal: item.nombreFiscal,
                             correos: item.correos,
                             identificacionComprador: item.identificacionComprador,
                             estadoFinanciero: item.estadoFinanciero,
-                            estadoSri: item.estadoSri,
-                            claveAcceso: item.claveAcceso,
                             codDoc: item.codDoc,
                             abono: item.abono,
                             saldo: item.saldo,
-                            posfechado: item.posfechado,
                             tiempoCredito: item.tiempoCredito,
                             style: item.style,
                             usuario: item.usuario,
-                            nroNotaCredito: item.nroNotaCredito,
-                            nroGuiaRemision: item.nroGuiaRemision,
-                            nroRetencion: item.nroRetencion,
-                            nroIdentificacion: item.nroIdentificacion,
-                            anulada: item.anulada,
                             codEstado: item.codEstado,
                             esContado: item.tiempoCredito,
                             totalRecords: item.totalRecords
@@ -270,11 +339,11 @@
 
         service.getForCreditNote = function (query) {
             if (!('byCliente' in query)) {
-                formSvc.sweetAlert('warning', 'No se ha proporcionado el idCliente')
+                fS.sweetAlert('warning', 'No se ha proporcionado el idCliente')
                 throw ''
             }
             if (!('codEstab' in query)) {
-                formSvc.sweetAlert('warning', 'No se ha proporcionado el codEstab')
+                fDs.sweetAlert('warning', 'No se ha proporcionado el codEstab')
                 throw ''
             }
             query.tipo = 2;
@@ -297,6 +366,41 @@
                     })
                     return {
                         facturas,
+                    }
+
+                }
+            })
+        }
+
+        service.getIdForInfo = function (id) {
+            let spParams = {
+                tipo: 8,
+                id
+            }
+            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+                if (response.code === "0") {
+                    console.log("Get Data Info", response)
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainDataApi = JSON.parse(response.payload);
+                    let dataTemp = mainDataApi[0][0];
+                    let cliente = mainDataApi[1][0];
+                    let items = mainDataApi[2];
+                    let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
+                    let data = {
+                        ...restData,
+                        establecimiento: nombreComercial,
+                        fechaEmision: fS.formatDate(fechaEmision),
+                        fechaVencimiento: fS.formatDate(fechaVencimiento),
+                        fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
+                        fechaVencimientoEscrita: fS.getFechaEscrita(fS.formatDate(fechaVencimiento))
+                    }
+                    return {
+                        data,
+                        cliente,
+                        items,
+                        infoAdicionalDocumento: []
                     }
 
                 }
@@ -369,8 +473,8 @@
             }
 
             factura.idCliente = cliente.idCliente;
-            factura.fechaEmision = formSvc.formatDateTimeZone(data.fechaEmision);
-            factura.fechaVencimiento = formSvc.formatDateTimeZone(data.fechaVencimiento);
+            factura.fechaEmision = fS.formatDateTimeZone(data.fechaEmision);
+            factura.fechaVencimiento = fS.formatDateTimeZone(data.fechaVencimiento);
             factura.identificacionComprador = cliente.identificacionComprador;
             factura.razonSocialComprador = cliente.razonSocialComprador;
             factura.direccionComprador = cliente.direccionComprador;
@@ -405,14 +509,16 @@
                     cantidadStock,
                     action
                 } = service.getCantidadStock(item);
-
+                let cantidadTransaccion = item.cantidad * item.conversion;
 
                 if (action === 0) {
                     // Comprobar si el elemento tiene un 'idFacturaDetalle' positivo y está en estado 'activo'
                     if (item.idFacturaDetalle > 0 && item.estado) {
+                        //cantidadAnulada = cantidadTransaccion;
                         // Verificar si 'cantidad' es igual a 'cantidadOriginal'
                         if (item.cantidad === item.cantidadOriginal) {
                             cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
+
                         } else {
                             // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
                             if (item.cantidad > item.cantidadOriginal) {
@@ -424,6 +530,7 @@
                     }
                     if (item.idFacturaDetalle > 0 && item.estado === 0) {
                         cantidadStock = Math.abs(cantidadStock)
+                        //  cantidadAnulada = item.cantidad;
                     }
                 }
 
@@ -452,10 +559,12 @@
                     total: item.total,
                     nota: item.nota,
 
+                    cantidadStock, //✅
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
-                    cantidadTransaccion: item.cantidad * item.conversion, //✅
-                    estado: item.estado //✅
+                    cantidadTransaccion, //✅
+                    // cantidadAnulada,
+                    estado: item.estado //✅     
                 })
             }
             return tempDetails;
@@ -484,7 +593,7 @@
             let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
-            if (dataConsolidacionFecha && formSvc.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+            if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
                 if (dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate) {
                     cantidadStock = 0;
                     action = 1;
@@ -575,7 +684,6 @@
                     }
 
                     if (params.tipo === 2) {
-                        console.log(mainData)
                         let tempEstabsAndPtosEmision = mainData[0];
                         let tempBodegas = mainData[1];
                         let tarifaImpuestoVigente = mainData[2][0];

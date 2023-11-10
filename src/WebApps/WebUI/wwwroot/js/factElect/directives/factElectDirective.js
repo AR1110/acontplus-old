@@ -12,7 +12,7 @@
                 datosAdicionales:'=',
                 historyDatosAdicionales:'='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
 
                 element.on('click', async function () {
                     console.log(scope)

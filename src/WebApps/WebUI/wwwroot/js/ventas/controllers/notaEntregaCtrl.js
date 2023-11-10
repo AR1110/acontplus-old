@@ -9,7 +9,8 @@
     let tS = {};
     let fS = {};
     let modalSvc = {};
-    let TIPO_DOC_NE = {}
+    let TIPO_DOC_NE = {};
+    const NUM_CONSUMIDOR_FINAL = "9999999999999";
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
 
@@ -51,7 +52,7 @@
 
         $scope.typeSend = 'GenericFile';
 
-        $scope.jsonPermission = {}
+        $scope.permisonEditarDoc = {}
 
         $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
         $scope.parametersPrint = {};
@@ -219,6 +220,7 @@
 
             notaEntregaSvc.getDataForm().then(response => {
                 mainDataForm = response; 
+                $scope.permisonEditarDoc = response.permisonEditarDoc;
             })
 
         }
@@ -295,7 +297,7 @@
                     if (typeof result !== 'object') return
 
                     //Pendiednte ⭕
-                    //   $scope.validateOperationPrintAndPayment(result)
+                    $scope.validateOperationPrintAndPayment(result)
                 })
             } catch (error) {
                 console.log(error)
@@ -351,7 +353,7 @@
                     })
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {
-                            if (typeof $scope.jsonPermission === 'object' && $scope.jsonPermission.requestKey) {
+                            if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
                             }
 
@@ -389,8 +391,7 @@
 
                     modalRef.result.then(result=>{
                         if(typeof result==='object'){
-                            //$scope.validateOperationPrintAndPayment(result)
-                            console.log(result)
+                            $scope.validateOperationPrintAndPayment(result) 
                         }
                     })
                 })
@@ -402,21 +403,7 @@
                 hideLoader();
                 console.log(error)
             }
-        }
-
-        $scope.openModalInvoiceParam = ({ controller, template, size = 'xl', params }) => {
-            modalSvc.openModalCustom({
-                controller,
-                template,
-                size,
-                params,
-                windowClass: 'uibModalFullScreen'
-            }).result.then(result => {
-                if (typeof result === 'object') {
-                    $scope.getNotaEntregas();
-                }
-            })
-        }
+        } 
 
 
         $scope.askToDelete = async (item) => {
@@ -455,7 +442,7 @@
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                             //Una vez actualizado el documento  
-                            if (typeof $scope.jsonPermission === 'object' && $scope.jsonPermission.requestKey) {
+                            if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
                             }
                             $scope.getNotaEntregas();
@@ -1480,17 +1467,17 @@
         }
 
         $scope.onChangeFechaEmision = function () {
-            // try {
-            //     if (!$scope.permisoComprobanteVenta.fechaEmision) {
-            //         $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
-            //         tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-            //         return
-            //     }
-            //     getFechaVencimiento();
-            // } catch (error) {
-            //     console.log(error)
-            //     $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
-            // }
+            try {
+                if (!$scope.permisoComprobanteVenta.fechaEmision) {
+                    $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
+                    tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                    return
+                }
+                getFechaVencimiento();
+            } catch (error) {
+                console.log(error)
+                $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
+            }
         }
 
         //==============================START CUSTOMER===========================
@@ -2108,6 +2095,11 @@
                     throw "Invalid form!";
                 }
 
+                if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
+                    fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
+                    return
+                }
+
                 if (isRegister()) {
                     showLoader();
                     serieComprobante = await facturaSvc.generateSerieComprobante({
@@ -2175,6 +2167,7 @@
                         if (response.code === "1") {
                             fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
                             let mainData = {
+                                isRegister: true,
                                 data: response.dataResponse
                             }
                             $uibModalInstance.close(mainData)
