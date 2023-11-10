@@ -7,12 +7,13 @@
   import Swal from "sweetalert2";
   import Pagination from "$lib/components/Pagination.svelte";
   import Add from "./add.svelte";
-    import Approve from "./approve.svelte";
+  import Approve from "./approve.svelte";
 
   let supports = [];
   let recordsQuantity = [10, 25, 50, 100];
   let page;
   let pageSize = recordsQuantity[0];
+  let disablebForButton = [5];
 
   onMount(() => {
     return () => unsubscribe();
@@ -125,7 +126,7 @@
         </thead>
         <tbody>
           {#each supports as item}
-            <tr  class={item.colorRow}>
+            <tr class={item.colorRow}>
               <td>{item.sequence}</td>
               <td>{item.date}</td>
               <td>{item.idCard}</td>
@@ -135,18 +136,21 @@
               <td>{item.status}</td>
               <td>
                 <button
+                  disabled={disablebForButton.includes(item.typeStatus)}
                   class="btn btn-outline-danger btn-sm"
                   on:click={() => remove(item.id)}
                 >
                   <i class="ti-na" />
                 </button>
                 <button
+                  disabled={disablebForButton.includes(item.typeStatus)}
                   class="btn btn-outline-warning btn-sm"
                   on:click={() => supportStore.getOpenModal(item.id)}
                 >
                   <i class="ti-pencil" />
                 </button>
                 <button
+                  disabled={disablebForButton.includes(item.typeStatus)}
                   class="btn btn-outline-success btn-sm"
                   on:click={() => getReport(item)}
                 >
@@ -154,9 +158,11 @@
                 </button>
 
                 <!-- For approbation -->
-                <button class="btn btn-outline-info btn-sm"
+                <button
+                  disabled={disablebForButton.includes(item.typeStatus)}
+                  class="btn btn-outline-info btn-sm"
                   on:click={() => supportStore.getOpenApproveModal(item.id)}
-                  >
+                >
                   <i class="ti-check" />
                 </button>
               </td>
