@@ -25,8 +25,7 @@
         commonSvc = $injector.get('commonService');
         tS = $injector.get('toastService');
         fS = $injector.get('formulario');
-        modalSvc = $injector.get('modalService');
-        let nombreModalConst = $injector.get('nombreModal');
+        modalSvc = $injector.get('modalService');        
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
         let nombreModalVenta = $injector.get('nombreModalVenta');
 
@@ -219,8 +218,7 @@
             })
 
             notaEntregaSvc.getDataForm().then(response => {
-                mainDataForm = response;
-                // $scope.jsonPermission = response.permisos;
+                mainDataForm = response; 
             })
 
         }
@@ -248,9 +246,7 @@
             $scope.notaEntregas = $filter("filter")(notaEntregas, $scope.dataSearch.bySearch);
             $scope.getTotales();
         }
-
-
-
+ 
         $scope.validateOperationPrintAndPayment = (result) => {
 
             let { isRegister, data } = result;
@@ -295,7 +291,7 @@
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 }).result.then(result => {
-
+                    console.log(result)
                     if (typeof result !== 'object') return
 
                     //Pendiednte ⭕
@@ -304,21 +300,7 @@
             } catch (error) {
                 console.log(error)
             }
-        }
-
-
-        /**
-         * 
-         * @param {*} id 
-         * @returns 
-         */
-
-        $scope.getDataDocumento = (id) => {
-            return commonSvc.getDataTipoDocVenta({
-                id,
-                codigoDocumento: TIPO_DOC_NE.codigo
-            })
-        }
+        } 
 
         $scope.openModalDetalle = async (params) => {
             try {
@@ -347,8 +329,7 @@
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
                 }
-
-
+ 
                 let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
                 if (result.code === "2") {
                     commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
@@ -381,25 +362,7 @@
                     .catch(error => {
                         console.log(error)
                     })
-                    .finally(() => hideLoader())
-
-                // modalSvc.openModalCustom({
-                //     controller,
-                //     template,
-                //     size: 'xl',
-                //     params,
-                //     windowClass: 'uibModalFullScreen'
-                // }).result.then(response => {
-                //     if (typeof response === 'object') {
-
-                //         //Una vez actualizado el documento  
-                //         if (typeof $scope.jsonPermission === 'object' && $scope.jsonPermission.requestKey) {
-                //             commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
-                //         }
-
-                //         $scope.getNotaEntregas();
-                //     }
-                // })
+                    .finally(() => hideLoader()) 
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -412,7 +375,7 @@
             try {
                 showLoader();
                 notaEntregaSvc.getId(item.idDocumento).then(response => {
-                    modalSvc.openModalCustom({
+                    let modalRef =  modalSvc.openModalCustom({
                         controller: 'modalNotaEntregaCtrl',
                         template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
                         size: 'xl',
@@ -423,27 +386,18 @@
                         windowClass: 'uibModalFullScreen',
                         isRenderRazorPartial: true
                     })
+
+                    modalRef.result.then(result=>{
+                        if(typeof result==='object'){
+                            //$scope.validateOperationPrintAndPayment(result)
+                            console.log(result)
+                        }
+                    })
                 })
                     .catch(error => {
                         console.log(error)
                     })
-                    .finally(() => hideLoader())
-                // modalSvc.openModalCustom({
-                //     controller: 'modalNotaEntregaCtrl',
-                //     template: `${TEMPLATE_URL}_ModalNuevo.cshtml`,
-                //     size: 'xl',
-                //     params: {
-                //         action: 'DUPLICAR'
-                //     },
-                //     windowClass: 'uibModalFullScreen',
-                //     isRenderRazorPartial: true
-                // }).result.then(result => {
-
-                //     if (typeof result !== 'object') return
-
-                //     //Pendiednte ⭕
-                //     //   $scope.validateOperationPrintAndPayment(result)
-                // })
+                    .finally(() => hideLoader()) 
             } catch (error) {
                 hideLoader();
                 console.log(error)
