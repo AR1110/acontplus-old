@@ -7,9 +7,10 @@
 (function () {
 
     'use strict';
+    const URL_API = 'FactElect/'
 
     app.factory('docElectService', function ($injector) {
-        let URL = 'FactElect/DocumentoElectronico/'
+        let URL = `${URL_API}DocumentoElectronico/`
         let URL_RETENCION_ATS = 'FactElect/RetencionAts/'
         let mS = $injector.get('mainService');
         let FileSaver = $injector.get('FileSaver');
@@ -118,17 +119,17 @@
         return service;
 
     })
- 
+
 
     app.factory('facturaService', function ($injector) {
-        let url = 'FactElect/Factura/'
-        let mainService = $injector.get('mainService');
+        let url = `${URL_API}Factura/`
+        let mS = $injector.get('mainService');
         let formSvc = $injector.get('formulario');
         let service = {}
 
 
         service.getDataForm = () => {
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -149,7 +150,7 @@
          * @returns 
          */
         service.get = (params) => {
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -202,7 +203,7 @@
          * @returns 
          */
         service.getAll = function (query) {
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -279,7 +280,7 @@
             query.tipo = 2;
             query.paraNotaCredito = true;
             query.checkBoxCliente = true;
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -302,8 +303,22 @@
             })
         }
 
+        service.generateSerieComprobante = function (query) {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 7 })), null, true).then(response => {
+                if (response.code === "0") {
+                    console.warn(response)
+                    throw null;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let data = mainData[0][0];
+                    return data.serieComprobante;
+                }
+            })
+        }
+
         service.save = function (data) {
-            return mainService.getData('post', url + 'Insert', data, true).then(response => {
+            return mS.getData('post', url + 'Insert', data, true).then(response => {
                 if (response.code === "0") {
                     return response;
                 }
@@ -324,7 +339,7 @@
         }
 
         service.update = function (id, data) {
-            return mainService.getData('put', url + 'Update/' + id, data, true).then(response => {
+            return mS.getData('put', url + 'Update/' + id, data, true).then(response => {
                 if (response.code === "0") {
                     return response;
                 }
@@ -336,12 +351,16 @@
 
 
         service.delete = function (id) {
-            return mainService.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
                 return response;
             })
         }
 
-        service.queryMapper = function ({ data, cliente, detalles, infoAdicionalDocumento, historyDatosAdicionales }) {
+        service.queryMapper = function (params) {
+            const { data, cliente, detalles, itemsDeleted, infoAdicionalDocumento, historyDatosAdicionales } = params;
+
+            //data que se usara dentro de la función "getCantidadStock"
+            service.data = Object.assign({}, data);
 
             let factura = Object.assign({}, data);
 
@@ -360,9 +379,17 @@
             factura.recargo = data.recargo || 0;
             factura.propina = data.propina || 0;
 
+            const itemsMainMapper = service.detalleMapperTo(detalles);
+            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted)
+
+            const mergeItems = [
+                ...itemsMainMapper,
+                ...itemsDeletedMapper
+            ]
+
             return {
                 factura: JSON.stringify(factura),
-                detalle: JSON.stringify(service.detalleMapperTo(detalles)),
+                detalle: JSON.stringify(mergeItems),
                 adicional: JSON.stringify(infoAdicionalDocumento || []),
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
             }
@@ -373,6 +400,34 @@
             let orderIndex = 1;
 
             for (let item of detalles) {
+                // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
+                let {
+                    cantidadStock,
+                    action
+                } = service.getCantidadStock(item);
+
+
+                if (action === 0) {
+                    // Comprobar si el elemento tiene un 'idFacturaDetalle' positivo y está en estado 'activo'
+                    if (item.idFacturaDetalle > 0 && item.estado) {
+                        // Verificar si 'cantidad' es igual a 'cantidadOriginal'
+                        if (item.cantidad === item.cantidadOriginal) {
+                            cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
+                        } else {
+                            // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
+                            if (item.cantidad > item.cantidadOriginal) {
+                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                            } else {
+                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                            }
+                        }
+                    }
+                    if (item.idFacturaDetalle > 0 && item.estado === 0) {
+                        cantidadStock = Math.abs(cantidadStock)
+                    }
+                }
+
+
                 tempDetails.push({
                     orderIndex: orderIndex++,
                     idFacturaDetalle: item.idFacturaDetalle || 0,
@@ -380,14 +435,13 @@
                     idTarifa: item.idTarifa,
                     idBodega: item.idBodega,
                     idMedida: item.idMedida,
-                    idPresentacion: item.idPresentacion || 0,
                     idTipoIva: item.idTipoIva,
                     tarifa: item.tarifa,
                     codigoPorcentaje: item.codigoPorcentaje,
                     ice: item.ice,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
-                    precioSinSubsidio: item.precioSinSubsidio,
+                    precioSinSubsidio: item.precioSinSubsidio || 0,
                     precioCostoNeto: item.precioCostoNeto,
                     precioUnitario: item.precioUnitario,
                     precioVenta: item.precioUnitario,
@@ -397,9 +451,59 @@
                     porcentajeDescuento: item.porcentajeDescuento,
                     total: item.total,
                     nota: item.nota,
+
+                    llevaInventario: item.llevaInventario,//✅
+                    precioCosto: item.precioCosto,  //✅
+                    cantidadTransaccion: item.cantidad * item.conversion, //✅
+                    estado: item.estado //✅
                 })
             }
             return tempDetails;
+        }
+
+        /**
+        * 
+        * @param {*} rowEntity 
+        * @param {*} fechaEmision unicamente se envia desde el controlador de FacturaCtrl
+        * @returns 
+        */
+        service.getCantidadStock = function (rowEntity, fechaEmision) {
+            let fechaEmisionValidate = null;
+            let cantidadStock = 0;
+            let action = 0;
+
+            if (fechaEmision) {
+                fechaEmisionValidate = fechaEmision;
+            } else {
+                fechaEmisionValidate = service.data.fechaEmision;
+            }
+            if (!fechaEmisionValidate) {
+                console.warn('Para validacion del cantidad stock la fecha emision del comprobante es nula')
+            }
+
+            let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+            )
+            if (dataConsolidacionFecha && formSvc.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                if (dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate) {
+                    cantidadStock = 0;
+                    action = 1;
+                    return {
+                        cantidadStock,
+                        action
+                    };
+                } else {
+                    action = 2;
+                }
+            }
+
+            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+
+            return {
+                cantidadStock: resultCantStock,
+                action
+            };
         }
 
         return service;

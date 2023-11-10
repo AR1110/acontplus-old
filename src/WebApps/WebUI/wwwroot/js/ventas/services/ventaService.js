@@ -424,7 +424,7 @@
         }
 
         service.queryMapper = function ({ data, cliente, detalles, itemsDeleted, historyDatosAdicionales }) {
-            //
+            //data que se usara dentro de la función "getCantidadStock"
             service.data = Object.assign({}, data);
 
             let notaEntrega = Object.assign({}, data);
@@ -469,7 +469,7 @@
                     cantidadStock,
                     action
                 } = service.getCantidadStock(item);
-
+                let cantidadAnulada = Math.abs(cantidadStock)
 
                 if (action === 0) {
                     // Comprobar si el elemento tiene un 'idNotaEntregaDetalle' positivo y está en estado 'activo'
@@ -484,10 +484,12 @@
                             } else {
                                 cantidadStock = item.cantidadOriginal - item.cantidad;
                             }
+                            cantidadAnulada = item.cantidad;
                         }
                     }
                     if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
                         cantidadStock = Math.abs(cantidadStock)
+                        cantidadAnulada = item.cantidad;
                     }
                 }
 
@@ -516,11 +518,13 @@
                     porcentajeDescuento: item.porcentajeDescuento,
                     total: item.total,
                     nota: item.nota, //✅
+
                     cantidadStock, //✅
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
                     cantidadTransaccion: item.cantidad * item.conversion, //✅
-                    estado: item.estado //✅
+                    cantidadAnulada,
+                    estado: item.estado //✅                    
                 })
             }
             return tempDetails;
@@ -668,7 +672,7 @@
                         // Asignar los datos de las tarifas obtenidos de data medida 
                         restItem.articuloTarifas = dataMedida.tarifas || [];
 
-                        restItem.consolidacionesFecha = consolidacionesFecha.map((data)=>({ 
+                        restItem.consolidacionesFecha = consolidacionesFecha.map((data) => ({
                             ...data,
                             fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
                         }))

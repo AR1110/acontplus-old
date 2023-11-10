@@ -36,6 +36,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
     $scope.initiload = async function () {
         try {
+            showLoader();
             await clienteSvc.getDataForm().then(response => {
                 let {
                     tipoIdentificacion,
@@ -67,10 +68,11 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
  
             }).catch(error => {
                 console.log(error);
-            })
+            }).finally(()=>hideLoader())
 
 
             if ($scope.tipoRegistro === 2) {
+                showLoader();
                 clienteSvc.findById(params.idCliente).then(response => {
 
                     let {
@@ -103,10 +105,11 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
                 }).catch(error => {
                     console.log(error);
-                })
+                }).finally(()=>hideLoader())
             }
 
         } catch (error) {
+            hideLoader();
             console.log(error);
         }
     }

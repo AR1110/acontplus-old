@@ -24,8 +24,7 @@ const settings = ['Cerrar sesión'];
 function MainLayout() {
     const navigate = useNavigate(); 
     const dataEstab = useAuthStore(state => state.dataEstab);
-    const closeSession = useAuthStore(state => state.logOut);
-    console.log(dataEstab)
+    const closeSession = useAuthStore(state => state.logOut); 
     
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
