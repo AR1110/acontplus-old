@@ -123,6 +123,9 @@ const mapperToAction = () => {
       );
     }
 
+    console.log("item");
+    console.log(item);
+
     let consolidacion = JSON.parse(item.consolidacion);
 
     const dataConsolidacionFecha = consolidacion.find(

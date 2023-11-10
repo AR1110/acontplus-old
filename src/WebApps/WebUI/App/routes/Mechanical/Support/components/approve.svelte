@@ -511,10 +511,30 @@
   };
 
   // ======================== Action for Factura =========================
-  const showAlertFactura = () => {
+  const generateSerieNumberFactura = function () {
+    showLoader();
+    let params = {
+      tipo: 7,
+      idPuntoEmision: support.puntoEmisionId,
+    };
+    FacturaService.get(JSON.stringify(params))
+      .then((response) => {
+        if (response) {
+          let payload = JSON.parse(response.payload);
+          let serieComprobante = payload[0][0].serieComprobante;
+
+          showAlertFactura(serieComprobante);
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
+
+  const showAlertFactura = (serieComprobante) => {
     Swal.fire({
       title: "Guardar Factura",
-      text: "Esta Ud. seguro de Guardar este Factura de Venta?",
+      text: `¿Esta Ud. seguro de Guardar este Factura de Venta N° ${serieComprobante}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -557,6 +577,7 @@
           return toast({ type: "warning", message: response.message });
         }
 
+        supportStore.get();
         onModalClose();
         toast({ type: "success", message: response.message });
       })
@@ -650,6 +671,7 @@
             return toast({ type: "warning", message: response.message });
           }
 
+          supportStore.get();
           onModalClose();
           toast({ type: "success", message: response.message });
         }
@@ -934,7 +956,8 @@
                   <button
                     id="btnGroupDrop1"
                     type="button"
-                    disabled={support.status === statusForDisabled}
+                    disabled={support.status === statusForDisabled ||
+                      supportDetails.length <= 0}
                     class="btn btn-secondary btn-block dropdown-toggle"
                     data-toggle="dropdown"
                     aria-haspopup="true"
@@ -945,7 +968,7 @@
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                     <!-- svelte-ignore a11y-invalid-attribute -->
                     <a
-                      on:click={showAlertFactura}
+                      on:click={generateSerieNumberFactura}
                       class="dropdown-item"
                       href="#">Factura</a
                     >
