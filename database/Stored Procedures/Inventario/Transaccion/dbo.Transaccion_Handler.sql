@@ -64,7 +64,7 @@ BEGIN
                         UPDATE Inventario.Transaccion SET estado = 0 WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @documentoId
                         
                         --> Actualizar Stock
-			            UPDATE st SET st.cantidad = st.cantidad + ISNULL(td.CantidadAnulada, 0)
+			            UPDATE st SET st.cantidad = st.cantidad + ISNULL(td.cantidad, 0)
 			            FROM Inventario.Stock                 st WITH (ROWLOCK)
 			            INNER JOIN Inventario.TransaccionTemp td WITH (ROWLOCK) ON td.ProductId = st.idArticulo AND td.BodegaId = st.idBodega
 			            WHERE td.TipoTransaccionId = @idTipoTransaccion
