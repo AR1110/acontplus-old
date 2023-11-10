@@ -469,27 +469,29 @@
                     cantidadStock,
                     action
                 } = service.getCantidadStock(item);
-                let cantidadAnulada = Math.abs(cantidadStock)
+                //let cantidadAnulada = Math.abs(cantidadStock);
+                let cantidadTransaccion = item.cantidad * item.conversion;
 
                 if (action === 0) {
                     // Comprobar si el elemento tiene un 'idNotaEntregaDetalle' positivo y está en estado 'activo'
                     if (item.idNotaEntregaDetalle > 0 && item.estado) {
+                        //cantidadAnulada = cantidadTransaccion;
                         // Verificar si 'cantidad' es igual a 'cantidadOriginal'
                         if (item.cantidad === item.cantidadOriginal) {
                             cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
+
                         } else {
                             // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
                             if (item.cantidad > item.cantidadOriginal) {
-                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                                cantidadStock = item.cantidadOriginal - item.cantidad; 
                             } else {
                                 cantidadStock = item.cantidadOriginal - item.cantidad;
                             }
-                            cantidadAnulada = item.cantidad;
                         }
                     }
                     if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
                         cantidadStock = Math.abs(cantidadStock)
-                        cantidadAnulada = item.cantidad;
+                      //  cantidadAnulada = item.cantidad;
                     }
                 }
 
@@ -522,8 +524,8 @@
                     cantidadStock, //✅
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
-                    cantidadTransaccion: item.cantidad * item.conversion, //✅
-                    cantidadAnulada,
+                    cantidadTransaccion, //✅
+                   // cantidadAnulada,
                     estado: item.estado //✅                    
                 })
             }
