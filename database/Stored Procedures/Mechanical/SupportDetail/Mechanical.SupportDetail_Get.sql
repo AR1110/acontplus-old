@@ -9,7 +9,7 @@ GO
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
--- Mechanical.SupportDetail_Get 157, '{"tipo": 1,"id": 2}', ''
+-- Mechanical.SupportDetail_Get 157, '{"tipo": 1,"id": 3}', ''
 -- =============================================
 -- DROP PROC Mechanical.SupportDetail_Get
 CREATE OR ALTER PROCEDURE Mechanical.SupportDetail_Get
@@ -32,7 +32,7 @@ BEGIN
         BEGIN
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-            SET @tableNames = 'support,supportDetail,medidas,fechaConsolidaciones,establecimiento,bodega,tipoIva,decimal,ptoEmision,tiempoCredito,tarifaImpuesto'
+            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva,decimal,ptoEmision,tiempoCredito,tarifaImpuesto'
 
             SELECT v_s.Id
                   ,v_s.PuntoEmisionId
@@ -76,6 +76,35 @@ BEGIN
                   ,ar.codigoAuxiliar    AS codigoAuxiliar
                   ,0                    AS valorDescuento
                   ,md.[Enabled]         AS estado
+                  ,ISNULL((SELECT idMedida     = m.idMedida 
+			        ,descripcion  = m.descripcion
+			        ,tarifas      = (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor
+								     FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								     INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								     WHERE afs.idArticuloFraccionado =af.idArticuloFraccionado
+								     ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			        ,orden = IIF(af.gestionVenta = 1,1,3)
+                    ,af.conversion
+			      FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			      INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			      WHERE af.idArticulo = md.ArticuloId AND af.estado = 1 FOR JSON PATH),'[]') as fraccionado
+                 ,(
+                    SELECT m.idMedida
+			              ,m.descripcion
+			              ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor 
+								            FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								            INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								            WHERE ap.idArticulo = a.idArticulo
+								            ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			              ,orden = 2
+                          ,1 as conversion
+			        FROM dbo.Articulo     a WITH (NOLOCK)
+			        INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			        WHERE a.idArticulo = md.ArticuloId AND a.estado = 1 FOR JSON PATH
+                 ) as principal
+                 ,(
+                    SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
+                 ) as consolidacion
             FROM Mechanical.SupportDetail md    WITH (NOLOCK)
             INNER JOIN dbo.Bodega bo            WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
             INNER JOIN Inventario.v_Articulo ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
@@ -122,13 +151,7 @@ BEGIN
 			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
 			WHERE a.idArticulo IN (SELECT ArticuloId FROM Mechanical.SupportDetail md WITH (NOLOCK) WHERE md.SupportId = @Id )
 			ORDER BY orden ASC
-            
-            SELECT idArticulo
-                    ,idBodega
-                    ,fechaConsolidacion 
-            FROM Inventario.Stock 
-            WHERE idArticulo IN (SELECT ArticuloId FROM Mechanical.SupportDetail md WITH (NOLOCK) WHERE md.SupportId = @Id)
-            
+                       
             SELECT idEstablecimiento
                     , codEstab
                     , predeterminado

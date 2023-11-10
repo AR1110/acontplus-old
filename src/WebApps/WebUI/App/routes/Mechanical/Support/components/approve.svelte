@@ -52,7 +52,6 @@
   let ptoEmisionesTemp = [];
   let tiempoCreditos = [];
   let tarifaImpuestoFactura = [];
-  let fechaConsolidaciones = [];
   let timeout;
   let statusForDisabled = 2;
 
@@ -60,6 +59,54 @@
     supportStore.update((state) => ({
       ...state,
       isApprove: false,
+      parameter: { establecimientoId: 0, sequence: "" },
+      support: {
+        id: 0,
+        puntoEmisionId: 0,
+        vehicleCompanyId: 0,
+        userAssignedId: 0,
+        customerId: 0,
+        supportTypeId: 0,
+        date: new Date().toISOString().slice(0, 10),
+        sequence: 0,
+        obs: "",
+        status: 1,
+      },
+      vehicle: {
+        id: 0,
+        countryId: 0,
+        vehicleId: 0,
+        vehicleTypeId: 0,
+        customerId: 0,
+        licensePlate: "",
+        brand: "",
+        model: "",
+        year: 0,
+        color: "",
+        engine: "",
+        chassis: "",
+        cylindraje: "",
+        enabled: false,
+      },
+      customer: {
+        id: 0,
+        idType: "",
+        idCard: "",
+        businessName: "",
+        tradeName: "",
+        email: "",
+        telephone: "",
+        address: "",
+      },
+      supportDetails: [],
+      establishments: [],
+      measures: [],
+      warehouses: [],
+      tipoIva: [],
+      decimals: [],
+      ptoEmisiones: [],
+      tiempoCreditos: [],
+      tarifaImpuestos: [],
     }));
   };
 
@@ -103,7 +150,7 @@
   const selectArticle = (e) => {
     let dataArticle = {};
     let medidas = [];
-    let fechaConsolidaciones = [];
+    let consolidacion = [];
 
     // Todo: Clear array's.
     articles = [];
@@ -116,7 +163,7 @@
       ).then((response) => {
         if (response) {
           dataArticle = response[0][0];
-          fechaConsolidaciones = response[3];
+          consolidacion = response[3];
 
           let isExists = onValidateLlevaInventario(dataArticle);
 
@@ -140,7 +187,7 @@
               tarifas: dataMedida.tarifas,
               tipoIvas: tipoIva,
               medidas: medidas,
-              fechaConsolidaciones,
+              consolidacion,
               orderIndex: 0,
               ...dataArticle,
               idTarifa: dataTarifa.idTarifa,
@@ -160,9 +207,6 @@
               nota: "S/N",
             };
             supportDetails = [...supportDetails, obj];
-
-            console.log("supportDetails");
-            console.log(supportDetails);
             getTotales();
           }
         }
@@ -460,16 +504,13 @@
       item.tarifas = JSON.parse(
         measures.find((x) => x.idMedida == item.idMedida).tarifas
       );
-      item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
+      item.bodegas = warehouses.filter((x) => x.codEstab == item.codEstab);
       item.tipoIvas = tipoIva;
       item.precioConIva = item.tarifas.find(
         (x) => x.idTarifa == item.idTarifa
       ).precioConIva;
       item.decimals = decimals;
       item.total = item.cantidad * item.precioUnitario;
-      item.fechaConsolidaciones = fechaConsolidaciones.filter(
-        (x) => x.idArticulo === item.idArticulo
-      );
       item.cantidadOriginal = item.cantidad;
     });
   };
@@ -481,7 +522,6 @@
     support.codEstab = estab.codEstab;
 
     tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
-
     ptoEmisiones = [
       ...ptoEmisionesTemp.filter((x) => x.codEstab === estab.codEstab),
     ];
@@ -519,10 +559,30 @@
   };
 
   // ======================== Action for Factura =========================
-  const showAlertFactura = () => {
+  const generateSerieNumberFactura = function () {
+    showLoader();
+    let params = {
+      tipo: 7,
+      idPuntoEmision: support.puntoEmisionId,
+    };
+    FacturaService.get(JSON.stringify(params))
+      .then((response) => {
+        if (response) {
+          let payload = JSON.parse(response.payload);
+          let serieComprobante = payload[0][0].serieComprobante;
+
+          showAlertFactura(serieComprobante);
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
+
+  const showAlertFactura = (serieComprobante) => {
     Swal.fire({
       title: "Guardar Factura",
-      text: "Esta Ud. seguro de Guardar este Factura de Venta?",
+      text: `¿Esta Ud. seguro de Guardar este Factura de Venta N° ${serieComprobante}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -550,12 +610,11 @@
       getTiempoCredito.diasCredito
     );
 
-    //support.date = newFormatDate(support.date);
-    //support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
-
     let data = {
       factura: JSON.stringify(MapperToAction.principalMapperTo(support)),
-      detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails, support.date)),
+      detalle: JSON.stringify(
+        MapperToAction.detalleMapperTo(supportDetails, support.date)
+      ),
       adicional: JSON.stringify({}),
       infoAdicionalArticulo: JSON.stringify({}),
     };
@@ -566,6 +625,7 @@
           return toast({ type: "warning", message: response.message });
         }
 
+        supportStore.get();
         onModalClose();
         toast({ type: "success", message: response.message });
       })
@@ -573,12 +633,6 @@
         hideLoader();
       });
   };
-
-  // const newFormatDate = (date: string) => {
-  //   let splitDate = date.split("-");
-  //   let newDate = `${splitDate[0]}-${splitDate[1]}-${splitDate[2]}`;
-  //   return newDate;
-  // };
 
   const getFechaVencimiento = function (fechaEmision, dia) {
     let fechaVencimiento = new Date(fechaEmision);
@@ -591,8 +645,6 @@
     let newFechaVencimiento = fechaVencimiento.toISOString().split("T")[0];
     return newFechaVencimiento;
   };
-
-  // ======================== Action for NotaEntrega =========================
 
   // ======================== GenerateNumberOfSerie ======================
   const generateSerieNumberNotaEntrega = function () {
@@ -638,9 +690,6 @@
     let getTiempoCredito = tiempoCreditos[0];
     support.tarifa = tarifaImpuestoFactura[0].tarifa;
 
-    // Todo: Format new date.
-    //support.date = newFormatDate(support.date);
-
     // Todo: Tiempo crédito.
     support.idTiempoCredito = getTiempoCredito.idTiempoCredito;
     support.tipo = getTiempoCredito.tipo;
@@ -655,7 +704,6 @@
       support.date,
       getTiempoCredito.diasCredito
     );
-    //support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
 
     let newData = {
       notaEntrega: MapperToAction.principalMapperTo(support),
@@ -671,6 +719,7 @@
             return toast({ type: "warning", message: response.message });
           }
 
+          supportStore.get();
           onModalClose();
           toast({ type: "success", message: response.message });
         }
@@ -786,7 +835,6 @@
     ptoEmisionesTemp = values.ptoEmisiones;
     tiempoCreditos = values.tiempoCreditos;
     tarifaImpuestoFactura = values.tarifaImpuestos;
-    fechaConsolidaciones = values.fechaConsolidaciones;
 
     initialPushData();
     selectCodEstab();
@@ -956,7 +1004,8 @@
                   <button
                     id="btnGroupDrop1"
                     type="button"
-                    disabled={support.status === statusForDisabled}
+                    disabled={support.status === statusForDisabled ||
+                      supportDetails.length <= 0}
                     class="btn btn-secondary btn-block dropdown-toggle"
                     data-toggle="dropdown"
                     aria-haspopup="true"
@@ -967,7 +1016,7 @@
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                     <!-- svelte-ignore a11y-invalid-attribute -->
                     <a
-                      on:click={showAlertFactura}
+                      on:click={generateSerieNumberFactura}
                       class="dropdown-item"
                       href="#">Factura</a
                     >

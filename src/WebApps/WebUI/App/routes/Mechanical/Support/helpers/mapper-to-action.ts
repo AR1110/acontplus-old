@@ -46,6 +46,12 @@ const mapperToAction = () => {
     let orderIndex = 1;
 
     for (const item of detalles) {
+
+      let fraccionado = JSON.parse(item.fraccionado);
+      let principal = JSON.parse(item.principal);
+      let general = fraccionado.concat(principal);
+
+      item.conversion = general.find((x) => x.idMedida === item.idMedida).conversion;
       let cantidadTransaccion = item.cantidad * item.conversion;
 
       let { cantidadStock, action } = getCantidadStock(item, fechaEmision);
@@ -70,6 +76,8 @@ const mapperToAction = () => {
       tempDetails.push({
         orderIndex: orderIndex++,
         idFacturaDetalle: item.idFacturaDetalle || 0,
+        idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
+        idPresentacion: 0,
         idArticulo: item.idArticulo,
         idTarifa: item.idTarifa,
         idBodega: item.idBodega,
@@ -79,11 +87,11 @@ const mapperToAction = () => {
         codigoPorcentaje: item.codigoPorcentaje,
         ice: item.ice || 0,
         descripcion: item.descripcion,
-        cantidad: item.cantidad,
+        cantidad: item.cantidad * -1,
+        precioVenta: item.precioVenta,
         precioSinSubsidio: item.precioSinSubsidio || 0,
         precioCostoNeto: item.precioCosto || 0,
         precioUnitario: item.precioVenta,
-        precioVenta: item.precioVenta,
         precioConIva: item.precioConIva || 0,
         valorDescuento: item.valorDescuento || 0,
         precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
@@ -91,71 +99,14 @@ const mapperToAction = () => {
         total: item.total,
         nota: item.nota || "",
         cantidadStock,
-        llevaInventario: item.llevaInventario, //✅
-        precioCosto: item.precioCosto,  //✅
+        llevaInventario: item.llevaInventario || false, //✅
+        precioCosto: item.precioCosto || false, //✅
         cantidadTransaccion,
-        estado: item.estado //✅
+        estado: item.estado, //✅
       });
     }
     return tempDetails;
   };
-
-  // const detalleNotaEntrega = (data, fecheEmision) => {
-  //   const tempDetails = [];
-  //   let orderIndex = 1;
-
-  //   for (const item of data) {
-  //     let { cantidadStock, action } = getCantidadStock(item, fecheEmision);
-
-  //     if (action === 0) {
-  //       if (item.idNotaEntregaDetalle > 0 && item.estado) {
-  //         if (item.cantidad === item.cantidadOriginal) {
-  //           cantidadStock = 0;
-  //         } else {
-  //           if (item.cantidad > item.cantidadOriginal) {
-  //             cantidadStock = item.cantidadOriginal - item.cantidad;
-  //           } else {
-  //             cantidadStock = item.cantidadOriginal - item.cantidad;
-  //           }
-  //         }
-  //       }
-  //       if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
-  //         cantidadStock = Math.abs(cantidadStock);
-  //       }
-  //     }
-
-  //     tempDetails.push({
-  //       orderIndex: orderIndex++,
-  //       idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
-  //       idFacturaDetalle: item.idFacturaDetalle || 0,
-  //       idArticulo: item.idArticulo || 0,
-  //       idTarifa: item.idTarifa,
-  //       idBodega: item.idBodega,
-  //       idMedida: item.idMedida,
-  //       idPresentacion: 0,
-  //       idTipoIva: item.idTipoIva,
-  //       tarifa: item.tarifa,
-  //       codigoPorcentaje: item.codigoPorcentaje,
-  //       ice: item.ice || 0,
-  //       descripcion: item.descripcion,
-  //       cantidad: item.cantidad * -1,
-  //       precioUnitario: item.precioUnitario || 0,
-  //       precioVenta: item.precioVenta || 0,
-  //       precioCosto: item.precioCosto || 0,
-  //       precioConIva: item.precioConIva || 0,
-  //       valorDescuento: item.valorDescuento || 0,
-  //       precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
-  //       porcentajeDescuento: item.porcentajeDescuento || 0,
-  //       total: item.total || 0,
-  //       nota: "S/N",
-  //       llevaInventario: item.llevaInventario || false,
-  //       cantidadStock: cantidadStock || 0,
-  //       cantidadTransaccion: item.cantidad * item.conversion || 0,
-  //       cantidadAnulada: item.cantidadAnulada || 0,
-  //     });
-  //   }
-  //   return tempDetails;
-  // };
 
   const getCantidadStock = (item, fechaEmision) => {
     let fechaEmisionValidate = null;
@@ -165,17 +116,24 @@ const mapperToAction = () => {
     if (fechaEmision) {
       fechaEmisionValidate = fechaEmision;
     }
+
     if (!fechaEmisionValidate) {
       console.warn(
         "Para validacion del cantidad stock la fecha emision del comprobante es nula"
       );
     }
 
-    const dataConsolidacionFecha = item.fechaConsolidaciones.find(
+    console.log("item");
+    console.log(item);
+
+    let consolidacion = JSON.parse(item.consolidacion);
+
+    const dataConsolidacionFecha = consolidacion.find(
       (cdataFecha) => cdataFecha.idBodega === item.idBodega
     );
 
-    if (dataConsolidacionFecha) {
+    if (dataConsolidacionFecha && isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+      console.log(dataConsolidacionFecha.fechaConsolidacion);
       if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
         cantidadStock = 0;
         action = 1;
@@ -195,6 +153,16 @@ const mapperToAction = () => {
       cantidadStock: resultCantStock,
       action,
     };
+  };
+
+  const isDateValid = function (dateString) {
+    let validation = [undefined, null, ""];
+
+    if (validation.includes(dateString)) {
+      return false;
+    }
+    let date = new Date(dateString);
+    return date instanceof Date;
   };
 
   const newFormatDate = (date: string) => {
