@@ -2,7 +2,7 @@ import { Http } from "@/core/utilities";
 import { ApiResponse } from "../models";
 import { PERSIS_USER, PATHS } from "../constants";
 
-const login = async (username: string, password: string, userAgent?: string): Promise<ApiResponse> => {
+const login = async (username: string, password: string, userAgent: string): Promise<ApiResponse> => {
   const response = await Http({
     method: "post",
     url: PATHS.ACCOUNT,

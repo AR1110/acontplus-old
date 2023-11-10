@@ -41,7 +41,7 @@ BEGIN
 	--Order
 	SELECT o.*
         ,e.nombreComercial tradeName
-        ,ISNULL(t.[Description], '') + ' - ' + CONVERT(VARCHAR, t.NumberTable) tableName
+        ,r.[description] + ' - ' + ISNULL(t.[Description], '') + ' - ' + CONVERT(VARCHAR, t.NumberTable) tableName
         ,ISNULL(c.nombreFiscal, 'Consumidor Final') customer
         ,u.nombreUsuario username
     FROM Restaurant.[Order] o WITH (NOLOCK)
@@ -49,6 +49,7 @@ BEGIN
             LEFT JOIN v_usuario u ON o.UserId = u.idUsuario
             INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON o.EstablecimientoId = e.idEstablecimiento
             LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON o.TableId = t.Id
+            LEFT JOIN Restaurant.[v_room] r ON r.Id = t.RoomId
     WHERE o.Id = @id
 
 	--OrderItems
