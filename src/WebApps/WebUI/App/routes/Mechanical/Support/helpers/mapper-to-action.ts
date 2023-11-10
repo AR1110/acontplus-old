@@ -46,6 +46,12 @@ const mapperToAction = () => {
     let orderIndex = 1;
 
     for (const item of detalles) {
+
+      let fraccionado = JSON.parse(item.fraccionado);
+      let principal = JSON.parse(item.principal);
+      let general = fraccionado.concat(principal);
+
+      item.conversion = general.find((x) => x.idMedida === item.idMedida).conversion;
       let cantidadTransaccion = item.cantidad * item.conversion;
 
       let { cantidadStock, action } = getCantidadStock(item, fechaEmision);
@@ -99,10 +105,6 @@ const mapperToAction = () => {
         estado: item.estado, //✅
       });
     }
-
-    console.log("tempDetails");
-    console.log(tempDetails);
-
     return tempDetails;
   };
 
@@ -114,20 +116,21 @@ const mapperToAction = () => {
     if (fechaEmision) {
       fechaEmisionValidate = fechaEmision;
     }
+
     if (!fechaEmisionValidate) {
       console.warn(
         "Para validacion del cantidad stock la fecha emision del comprobante es nula"
       );
     }
 
-    const dataConsolidacionFecha = item.fechaConsolidaciones.find(
+    let consolidacion = JSON.parse(item.consolidacion);
+
+    const dataConsolidacionFecha = consolidacion.find(
       (cdataFecha) => cdataFecha.idBodega === item.idBodega
     );
 
-    console.log(`dataConsolidacionFecha ${dataConsolidacionFecha}`);
-    console.log(`fechaEmisionValidate ${fechaEmisionValidate}`);
-
-    if (dataConsolidacionFecha) {
+    if (dataConsolidacionFecha && isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+      console.log(dataConsolidacionFecha.fechaConsolidacion);
       if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
         cantidadStock = 0;
         action = 1;
@@ -141,17 +144,22 @@ const mapperToAction = () => {
     }
 
     cantidadStock = item.cantidad * item.conversion;
-
-    console.log(`cantidadStock ${cantidadStock}`);
-
     const resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-
-    console.log(`resultCantStock 01 ${resultCantStock}`);
 
     return {
       cantidadStock: resultCantStock,
       action,
     };
+  };
+
+  const isDateValid = function (dateString) {
+    let validation = [undefined, null, ""];
+
+    if (validation.includes(dateString)) {
+      return false;
+    }
+    let date = new Date(dateString);
+    return date instanceof Date;
   };
 
   const newFormatDate = (date: string) => {

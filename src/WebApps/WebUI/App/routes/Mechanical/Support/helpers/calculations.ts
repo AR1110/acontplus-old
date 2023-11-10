@@ -122,7 +122,6 @@ const calculations = () => {
       cell.getRow().update({
         tarifas: articuloTarifas,
         idTarifa: articuloTarifas[0].idTarifa,
-        conversion: dataMedida.conversion,
         precioUnitario: sS.roundNumber(
           articuloTarifas[0].precioVenta,
           decimal.nroPrecio

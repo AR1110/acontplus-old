@@ -52,7 +52,6 @@
   let ptoEmisionesTemp = [];
   let tiempoCreditos = [];
   let tarifaImpuestoFactura = [];
-  let fechaConsolidaciones = [];
   let timeout;
   let statusForDisabled = 2;
 
@@ -103,7 +102,7 @@
   const selectArticle = (e) => {
     let dataArticle = {};
     let medidas = [];
-    let fechaConsolidaciones = [];
+    let consolidacion = [];
 
     // Todo: Clear array's.
     articles = [];
@@ -116,7 +115,7 @@
       ).then((response) => {
         if (response) {
           dataArticle = response[0][0];
-          fechaConsolidaciones = response[3];
+          consolidacion = response[3];
 
           let isExists = onValidateLlevaInventario(dataArticle);
 
@@ -140,7 +139,7 @@
               tarifas: dataMedida.tarifas,
               tipoIvas: tipoIva,
               medidas: medidas,
-              fechaConsolidaciones,
+              consolidacion,
               orderIndex: 0,
               ...dataArticle,
               idTarifa: dataTarifa.idTarifa,
@@ -464,13 +463,7 @@
       ).precioConIva;
       item.decimals = decimals;
       item.total = item.cantidad * item.precioUnitario;
-      item.fechaConsolidaciones = fechaConsolidaciones.filter(
-        (x) => x.idArticulo === item.idArticulo
-      );
       item.cantidadOriginal = item.cantidad;
-      item.conversion = item.medidas.find(
-        (x) => x.idMedida === item.idMedida
-      ).conversion;
     });
   };
 
@@ -512,9 +505,6 @@
       supportDetails.forEach((item) => {
         item.idBodega = idBodega;
         item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
-        item.conversion = item.medidas.find(
-          (x) => x.idMedida === item.idMedida
-        ).conversion;
       });
       supportDetails = [...supportDetails];
     }
@@ -775,7 +765,6 @@
     ptoEmisionesTemp = values.ptoEmisiones;
     tiempoCreditos = values.tiempoCreditos;
     tarifaImpuestoFactura = values.tarifaImpuestos;
-    fechaConsolidaciones = values.fechaConsolidaciones;
 
     initialPushData();
     selectCodEstab();
