@@ -150,7 +150,6 @@
                   <i class="ti-pencil" />
                 </button>
                 <button
-                  disabled={disablebForButton.includes(item.typeStatus)}
                   class="btn btn-outline-success btn-sm"
                   on:click={() => getReport(item)}
                 >

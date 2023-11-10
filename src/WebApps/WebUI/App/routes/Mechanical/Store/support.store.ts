@@ -99,6 +99,8 @@ const cretaeSupport = () => {
   });
 
   const get = (params?: object) => {
+    showLoader();
+
     const json = { pageIndex: 1, pageSize: 10, tipo: 1 };
     const query = Object.assign(json, params ? params : json);
 
