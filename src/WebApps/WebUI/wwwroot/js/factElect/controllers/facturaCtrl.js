@@ -14,22 +14,9 @@
 
     app.controller('facturaCtrl', facturaCtrl)
 
-    facturaCtrl.$inject = [
-        '$scope',
-        '$filter',
-        '$injector',
+    facturaCtrl.$inject = ['$scope', '$filter', '$injector', 'nombreModal', 'decodeToken']
 
-        'nombreModal',
-        'decodeToken'
-    ]
-
-    function facturaCtrl(
-        $scope,
-        $filter,
-        $injector,
-        _nombreModalConst,
-        decodeToken
-    ) {
+    function facturaCtrl($scope, $filter, $injector, _nombreModalConst, decodeToken) {
 
         facturaSvc = $injector.get('facturaService');
         commonSvc = $injector.get('commonService');
@@ -144,11 +131,7 @@
             $scope.getTotales();
         }
 
-        //=====================Eend Filters=======================
-
-
-
-
+        //=====================Eend Filters======================= 
 
         $scope.getTotales = () => {
             let { total,
@@ -206,8 +189,7 @@
                 $scope.facturas = [];
                 $scope.getTotales();
                 facturaSvc.getAll(dataSearch).then(response => {
-                    let { facturas, dataTotals } = response;
-
+                    let { facturas, dataTotals } = response; 
                     $scope.facturas = facturas;
                     $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
 
@@ -334,31 +316,6 @@
             } catch (error) {
                 console.log(error)
             }
-            // let {
-            //     MODAL_FILE_CTRL,
-            //     MODAL_NUEVO
-            // } = _nombreModalConst.factura_venta;
-            // let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
-            // let template = MODAL_NUEVO['template'];
-            // let params = {
-            //     dataForm: await facturaSvc.getDataForm(),
-            //     TIPO_REGISTRO: 'NUEVO'
-            // }
-
-            // let modalRef = modalSvc.openModalCustom({
-            //     controller,
-            //     template,
-            //     size: 'xl',
-            //     params,
-            //     windowClass: 'uibModalFullScreen'
-            // })
-
-            // modalRef.result.then(result => {
-
-            //     if (typeof result !== 'object') return
-
-            //     $scope.validateOperationPrintAndPayment(result)
-            // }) 
         }
 
         /**
@@ -366,10 +323,8 @@
          * @param {*} id 
          * @returns 
          */
-
-
         $scope.openModalDetalle = async (params) => {
-            try { 
+            try {
                 let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
                 let ctrl = (await import(fileCtrl))[controller];
                 let template = templates['FV_SRI'];
@@ -390,8 +345,8 @@
         }
 
         $scope.openModalInvoiceEdit = async (item) => {
-            try {
-                if (item.anulada) {
+            try { 
+                if (item.codEstado==='A') {
                     fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
                     return
                 }
@@ -403,44 +358,37 @@
                 }
 
                 showLoader();
-                let {
-                    MODAL_FILE_CTRL,
-                    MODAL_EDITAR
-                } = _nombreModalConst.factura_venta;
-                let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
-                let template = MODAL_EDITAR['template'];
+                facturaSvc.getId(item.idDocumento).then(response => {
+                    const modalRef = modalSvc.openModalCustom({
+                        controller: 'modalFacturaCtrl',
+                        template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                        size: 'xl',
+                        params: {
+                            data: response,
+                            action: 'EDITAR'
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object' && result.isUpdate) {
+                            //Actualizar el estado de solicitud en caso de tener 
+                            if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
+                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                            }
 
-                let response = await $scope.getDataDocumento(item.idDocumento);
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'EDITAR',
-                    data: response
-                }
-                modalSvc.openModalCustom({
-                    controller,
-                    template,
-                    size: 'xl',
-                    params,
-                    windowClass: 'uibModalFullScreen'
-                }).result.then(result => {
-                    if (typeof result === 'object' && result.isUpdate) {
-
-                        //Actualizar el estado de solicitud en caso de tener 
-
-                        if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
-                            commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                            $scope.getFacturas();
                         }
-
-                        $scope.getFacturas();
-                    }
+                    })
                 })
-            } catch (error) {
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
 
-                console.log(error)
-            } finally {
+            } catch (error) {
                 hideLoader();
+                console.log(error)
             }
         }
 
@@ -448,41 +396,32 @@
         $scope.openModalInvoiceDuplicate = async (item) => {
             try {
                 showLoader();
-                let {
-                    MODAL_FILE_CTRL,
-                    MODAL_DUPLICAR
-                } = _nombreModalConst.factura_venta;
-                let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
-                let template = MODAL_DUPLICAR['template'];
+                facturaSvc.getId(item.idDocumento).then(response => {
+                    let modalRef = modalSvc.openModalCustom({
+                        controller: 'modalFacturaCtrl',
+                        template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                        size: 'xl',
+                        params: {
+                            data: response,
+                            action: 'DUPLICAR'
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
 
-                let response = await $scope.getDataDocumento(item.idDocumento);
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DUPLICAR',
-                    data: response
-                }
-
-
-                modalSvc.openModalCustom({
-                    controller,
-                    template,
-                    size: 'xl',
-                    params,
-                    windowClass: 'uibModalFullScreen'
-                }).result.then(result => {
-
-                    if (typeof result !== 'object') return
-
-                    $scope.validateOperationPrintAndPayment(result)
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object') {
+                            $scope.validateOperationPrintAndPayment(result)
+                        }
+                    })
                 })
-
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
             } catch (error) {
-
-                console.log(error)
-            } finally {
                 hideLoader();
+                console.log(error)
             }
 
         }
@@ -513,7 +452,7 @@
         $scope.askToDelete = async (item) => {
             try {
 
-                if (item.anulada) {
+                if (item.codEstado==='A') {
                     fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
                     return
                 }
@@ -524,49 +463,37 @@
                     return
                 }
 
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-2'
-                    },
-                    buttonsStyling: false
-                })
-
-                let {
-                    isConfirmed
-                } = await swalWithBootstrapButtons.fire({
+                let { isConfirmed } = await Swal.fire({
                     title: '<small>Anular Factura?</small>',
-                    html: `<small>Esta Ud. seguro/a de anular este Factura de Venta <b>N° ${item.nroFactura}</b></small>?`,
-                    icon: 'warning',
+                    html: `<small>Esta Ud. seguro/a de anular este Factura de Venta <b>N° ${item.serieComprobante}</b></small>?`,
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Si, anular!',
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
                     cancelButtonText: 'No, cancelar!',
-                    reverseButtons: false
+                    confirmButtonText: "Si, anular!"
                 })
 
                 if (isConfirmed) {
                     showLoader();
                     facturaSvc.delete(item.idDocumento).then(response => {
+                        hideLoader();
                         if (response.code === "0") {
-                            hideLoader();
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
-                            hideLoader();
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                             //Una vez actualizado el documento 
                             if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
                             }
-
-
                             $scope.getFacturas();
                         }
                     }).catch(error => {
                         hideLoader();
                         console.log(error)
-                    })
+                    }).finally(() => hideLoader())
                 }
             } catch (error) {
                 hideLoader();
@@ -599,14 +526,12 @@
                 format
             })
         }
-
-
-
+ 
 
         //--------------------------------------------------COBROS----------
 
         $scope.opcionCobro = (item) => {
-            if (item.estadoFinanciero === "Cobrada") {
+            if (item.codEstado === "CBR") {
                 fS.sweetAlert('warning', '<small>Este documento ya se encuentra cobrada!</small>')
                 return
             }
@@ -1192,6 +1117,11 @@
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
             }
         }
+
+        $scope.resultModalAdicional = function(result) {
+            let { historyDatosAdicionales } = result;
+            $scope.historyDatosAdicionales = historyDatosAdicionales;
+        }
         function setColumnDefs() {
             let defaultPermission = Object.freeze({
                 tarifa: true,
@@ -1210,7 +1140,7 @@
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',

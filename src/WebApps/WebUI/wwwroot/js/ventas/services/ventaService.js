@@ -212,7 +212,9 @@
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
 
-        let service = {};
+        let service = {
+            data: {}
+        };
 
         service.getDataForm = () => {
             return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
@@ -223,7 +225,7 @@
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
                     console.log(mainData)
-                    let decimal = mainData[0][0];                    
+                    let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
                     let tiemposCredito = mainData[3];
@@ -237,7 +239,7 @@
                     // if(clienteDefaultTemp && clienteDefaultTemp.length>0){
                     //     clienteDefault = clienteDefaultTemp[0];
                     // }
-                    let config = mainData[6][0]; 
+                    let config = mainData[6][0];
                     let vendedores = mainData[7];
                     let notificacionVenta = {
                         notificacionVenta: false
@@ -248,7 +250,7 @@
                     let tempBodegas = mainData[10];
                     let tarifaImpuestoVigente = mainData[11][0];
                     let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
-                 
+
                     const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
                         const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
 
@@ -545,6 +547,11 @@
             } else {
                 fechaEmisionValidate = service.data.fechaEmision;
             }
+
+            if (typeof service.data === 'object' && service.data.idFactura > 0) {
+                fechaEmisionDocCreado = service.data.fechaEmisionDocCreado;
+            }
+
             if (!fechaEmisionValidate) {
                 console.warn('Para validacion del cantidad stock la fecha emision del comprobante es nula')
             }
@@ -553,6 +560,18 @@
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                if (
+                    rowEntity.idFacturaDetalle > 0 &&
+                    fechaEmisionDocCreado !== fechaEmisionValidate &&
+                    rowEntity.estado &&
+                    dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate
+                ) {
+                    return {
+                        cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                        action: 2
+                    }
+                }
+
                 if (dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate) {
                     cantidadStock = 0;
                     action = 1;
@@ -578,6 +597,7 @@
         service.save = function (data) {
             return mS.getData('post', url + 'Insert/', { data }, true).then(response => {
                 if (response.code === "0") {
+                    service.data = {};
                     return response;
                 }
                 if (response.code === "1") {
@@ -594,6 +614,9 @@
                         message: 'Registrado Correctamente'
                     }
                 }
+            }).catch(error => {
+                service.data = {};
+                throw error;
             })
         }
 
@@ -621,13 +644,13 @@
                         const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
 
                         // Medidas del artículo fraccionado del principal
-                        let medidasFraccionadoTemp = JSON.parse(fraccionado);
+                        let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
 
                         // Medida principal con las tarifas
-                        let medidasPrincipalTemp = JSON.parse(principal);
+                        let medidasPrincipalTemp = JSON.parse(principal) || [];
 
                         // 
-                        let consolidacionesFecha = JSON.parse(consolidacion);
+                        let consolidacionesFecha = JSON.parse(consolidacion) || [];
 
                         /**
                          * Combinar los dos arrays de medidas en uno solo
@@ -731,14 +754,14 @@
                     let mainDataApi = JSON.parse(response.payload);
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
-                    let items = mainDataApi[2]; 
-                    let  {nombreComercial, fechaEmision, fechaVencimiento, ...restData} = dataTemp;                   
+                    let items = mainDataApi[2];
+                    let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
                     let data = {
                         ...restData,
                         establecimiento: nombreComercial,
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaVencimiento: fS.formatDate(fechaVencimiento),
-                    } 
+                    }
                     return {
                         data,
                         cliente,
@@ -754,11 +777,15 @@
 
             return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
                 if (response.code === "0") {
+                    service.data = {};
                     return response;
                 }
                 if (response.code === "1") {
                     return response
                 }
+            }).catch(error => {
+                service.data = {};
+                throw error;
             })
         }
 

@@ -1066,6 +1066,12 @@
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
             }
         }
+
+        $scope.resultModalAdicional = function (result) {
+            let { historyDatosAdicionales } = result;
+            $scope.historyDatosAdicionales = historyDatosAdicionales;
+        }
+
         function setColumnDefs() {
             let defaultPermission = Object.freeze({
                 tarifa: true,
@@ -1084,7 +1090,7 @@
 
         <view-kardex params="row.entity"></view-kardex>
 
-        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.$ctrl.historyDatosAdicionales" result-modal-adicional="grid.appScope.$ctrl.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
 
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',

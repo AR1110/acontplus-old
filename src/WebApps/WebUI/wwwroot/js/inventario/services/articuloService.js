@@ -660,9 +660,10 @@
                         tarifas: JSON.parse(item.tarifas)
                     }))
 
-                    let consolidacionesFecha = mainData[3];
+                    let consolidacionesFecha = mainData[3] || [];
+                    
                     if (mainData[4]) {
-                        infoAdicionalTemp = mainData[4]
+                        infoAdicionalTemp = mainData[4] || []
                     }
 
 
