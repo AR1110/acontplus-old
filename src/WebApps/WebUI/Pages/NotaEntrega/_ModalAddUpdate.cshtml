@@ -176,7 +176,9 @@
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
                     <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select"
-                           ng-model="data.fechaEmision" ng-change="onChangeFechaEmision()"
+                           ng-model="data.fechaEmision" 
+                           ng-change="onChangeFechaEmision()"
+                           ng-disabled="!permisoComprobanteVenta.fechaEmision"
                            ng-keyup="onChangeFechaEmision()" tabindex="-1" />
                     <small class="text-info">{{data.fechaEmisionEscrita}}</small>
                 </div>

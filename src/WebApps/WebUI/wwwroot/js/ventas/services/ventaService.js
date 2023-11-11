@@ -1,13 +1,15 @@
 /**
  * 1. ventaService
  * 2. notaEntregaService
- * 3. clienteService
- * 4. empleadoService 
- * 5. cargoService
+ * 3. proformaService
+ * 4. clienteService
+ * 5. empleadoService 
+ * 6. cargoService
  */
 (function () {
 
     'use strict';
+    const URL_API = 'Venta/'
 
     app.factory('ventaService', function ($injector) {
         let service = {};
@@ -208,11 +210,13 @@
      */
 
     app.factory('notaEntregaService', function ($injector) {
-        let url = 'Venta/NotaEntrega/';
+        let url = `${URL_API}NotaEntrega/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
 
-        let service = {};
+        let service = {
+            data: {}
+        };
 
         service.getDataForm = () => {
             return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
@@ -223,7 +227,7 @@
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
                     console.log(mainData)
-                    let decimal = mainData[0][0];                    
+                    let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
                     let tiemposCredito = mainData[3];
@@ -237,7 +241,7 @@
                     // if(clienteDefaultTemp && clienteDefaultTemp.length>0){
                     //     clienteDefault = clienteDefaultTemp[0];
                     // }
-                    let config = mainData[6][0]; 
+                    let config = mainData[6][0];
                     let vendedores = mainData[7];
                     let notificacionVenta = {
                         notificacionVenta: false
@@ -248,7 +252,7 @@
                     let tempBodegas = mainData[10];
                     let tarifaImpuestoVigente = mainData[11][0];
                     let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
-                 
+
                     const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
                         const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
 
@@ -539,12 +543,18 @@
             let fechaEmisionValidate = null;
             let cantidadStock = 0;
             let action = 0;
+            let fechaEmisionDocCreado = null;
 
             if (fechaEmision) {
                 fechaEmisionValidate = fechaEmision;
             } else {
                 fechaEmisionValidate = service.data.fechaEmision;
             }
+
+            if (typeof service.data === 'object' && service.data.idNotaEntrega > 0) {
+                fechaEmisionDocCreado = service.data.fechaEmisionDocCreado;
+            }
+
             if (!fechaEmisionValidate) {
                 console.warn('Para validacion del cantidad stock la fecha emision del comprobante es nula')
             }
@@ -553,19 +563,41 @@
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate) {
+                if (rowEntity.idNotaEntregaDetalle > 0 && rowEntity.estado && fS.getDate(fechaEmisionDocCreado) !== fS.getDate(fechaEmisionValidate)) {
+                    if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
+                        fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
+                    ) {
+                        return {
+                            cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                            action: 2
+                        }
+
+                    }
+                }
+                // if (
+                //     rowEntity.idNotaEntregaDetalle > 0 &&
+                //     fechaEmisionDocCreado !== fechaEmisionValidate &&
+                //     rowEntity.estado &&
+                //     dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate
+                // ) {
+                //     return {
+                //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                //         action: 2
+                //     }
+                // }
+
+                if (fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate.getDate)) {
                     cantidadStock = 0;
                     action = 1;
                     return {
                         cantidadStock,
                         action
                     };
-                } else {
-                    action = 2;
                 }
             }
 
             cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+
             let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
 
             return {
@@ -578,6 +610,7 @@
         service.save = function (data) {
             return mS.getData('post', url + 'Insert/', { data }, true).then(response => {
                 if (response.code === "0") {
+                    service.data = {};
                     return response;
                 }
                 if (response.code === "1") {
@@ -594,6 +627,9 @@
                         message: 'Registrado Correctamente'
                     }
                 }
+            }).catch(error => {
+                service.data = {};
+                throw error;
             })
         }
 
@@ -621,13 +657,13 @@
                         const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
 
                         // Medidas del artículo fraccionado del principal
-                        let medidasFraccionadoTemp = JSON.parse(fraccionado);
+                        let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
 
                         // Medida principal con las tarifas
-                        let medidasPrincipalTemp = JSON.parse(principal);
+                        let medidasPrincipalTemp = JSON.parse(principal) || [];
 
                         // 
-                        let consolidacionesFecha = JSON.parse(consolidacion);
+                        let consolidacionesFecha = JSON.parse(consolidacion) || [];
 
                         /**
                          * Combinar los dos arrays de medidas en uno solo
@@ -731,14 +767,14 @@
                     let mainDataApi = JSON.parse(response.payload);
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
-                    let items = mainDataApi[2]; 
-                    let  {nombreComercial, fechaEmision, fechaVencimiento, ...restData} = dataTemp;                   
+                    let items = mainDataApi[2];
+                    let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
                     let data = {
                         ...restData,
                         establecimiento: nombreComercial,
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaVencimiento: fS.formatDate(fechaVencimiento),
-                    } 
+                    }
                     return {
                         data,
                         cliente,
@@ -754,11 +790,15 @@
 
             return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
                 if (response.code === "0") {
+                    service.data = {};
                     return response;
                 }
                 if (response.code === "1") {
                     return response
                 }
+            }).catch(error => {
+                service.data = {};
+                throw error;
             })
         }
 
@@ -792,11 +832,239 @@
 
     })
 
+    /**
+     * Proforma 
+     */
+    app.factory('proformaService', function ($injector) {
+        let url = `${URL_API}Proforma/`;
+        let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario')
+
+        let service = {};
+
+        service.getDataForm = function () {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    return mainData;
+                }
+            })
+        }
+
+        /**
+         * tipo 1: get proformas  
+         * tipo 3: get estabs, ptos. emisiones para los filtros
+         * @returns 
+         */
+        service.get = (params) => {
+            if (!("tipo" in params)) {
+                throw "Requiere propiedad tipo"
+            }
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+
+
+                    if (params.tipo === 3) {
+                        let tempEstabsAndPtosEmision = mainData[0];
+                        let estadosDoc = mainData[1];
+
+                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                            if (!existingItem) {
+                                acc.push({
+                                    idEstablecimiento: item.idEstablecimiento,
+                                    nombreComercial: item.nombreComercial,
+                                    codEstab: item.codEstab,
+                                    defaultEstab: item.defaultEstab,
+                                    puntosEmision: [{
+                                        idPuntoEmision: item.idPuntoEmision,
+                                        ptoEmi: item.ptoEmi,
+                                        defaultPtoEmi: item.defaultPtoEmi
+                                    }]
+                                });
+                            } else {
+                                existingItem.puntosEmision.push({
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                });
+                            }
+                            return acc;
+                        }, []);
+
+
+                        return {
+                            estabs,
+                            estadosDoc
+                        }
+                    }
+                }
+            })
+        }
+
+        //se a mas de listar en modulo de proformas en Aprobacion Documento 
+        service.getAll = function (query) {
+
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload) || [];
+                    let proformasRepos = mainData[0];
+                    let { totalRecords, totalDocument } = proformasRepos[0];
+                    let proformas = proformasRepos.map(item => {
+                        return {
+                            comprobante: 'Proforma',
+                            entidad: item.entidad,
+                            codEstab: item.codEstab,
+                            idProforma: item.idProforma,
+                            idDocumento: item.idDocumento,
+                            idTipoDocumento: item.idTipoDocumento,
+                            idCliente: item.idCliente,
+                            nombreComercial: item.nombreComercial,
+                            telefonoEstablecimiento: item.telefonoEstablecimiento,
+                            correo: item.correo,
+                            fechaEmision: item.fechaEmision,
+                            total: item.total,
+                            nroDocumento: item.nroDocumento, //eliminar posteriormente
+                            serieComprobante: item.nroDocumento,
+                            nombreFiscal: item.nombreFiscal,
+                            nroIdentificacion: item.nroIdentificacion,
+                            telefono: item.telefono,
+                            usuario: item.usuario,
+                            estadoDoc: item.estadoDoc,
+                            codDoc: item.codDoc,
+                            rowColor: item.rowColor,
+                            codEstado: item.codEstado,
+                        }
+                    })
+                    return {
+                        proformas,
+                        dataTotals: { totalRecords, totalDocument }
+                    }
+                }
+            }).catch(error => {
+                throw error;
+            })
+        }
+
+        service.queryMapper = function ({ data, cliente, detalles }) {
+            let formattedDateForInsert = null;
+            if (moment(data.fechaEmision).isBefore(new Date(), 'day')) {
+                formattedDateForInsert = moment(data.fechaEmision).startOf('day').toDate();
+            } else {
+                formattedDateForInsert = data.fechaEmision
+            }
+
+            if (cliente.idCliente === 0 && !cliente.razonSocialComprador && !cliente.identificacionComprador) {
+                throw new Error("Datos de cliente no proporcionados")
+            }
+
+            let proforma = Object.assign({}, data);
+
+            //Tarifa Aplicada al Documento
+            proforma.idCliente = cliente.idCliente;
+            proforma.identificacionComprador = cliente.identificacionComprador;
+            proforma.razonSocialComprador = cliente.razonSocialComprador;
+            proforma.direccionComprador = cliente.direccionComprador;
+            proforma.email = cliente.email;
+            proforma.telefono = cliente.telefono;
+            proforma.fechaEmision = fS.formatDateTimeZone(formattedDateForInsert)
+            // this.data.tarifa = this.actividadTipoIva.tarifa;            
+
+            return {
+                proforma,
+                detalle: service.detalleMapperTo(detalles)
+            }
+        }
+
+        service.detalleMapperTo = function (detalles) {
+            let tempDetails = [];
+            let orderIndex = 1;
+
+            for (let item of detalles) {
+                tempDetails.push({
+                    orderIndex: orderIndex++,
+                    idProformaDetalle: item.idProformaDetalle || 0,
+                    idArticulo: item.idArticulo,
+                    idTarifa: item.idTarifa,
+                    idBodega: item.idBodega,
+                    idMedida: item.idMedida,
+                    idPresentacion: item.idPresentacion || 0,
+                    idTipoIva: item.idTipoIva,
+                    tarifa: item.tarifa,
+                    codigoPorcentaje: item.codigoPorcentaje,
+                    ice: item.ice,
+                    descripcion: item.descripcion,
+                    cantidad: item.cantidad,
+                    precioCostoNeto: item.precioCostoNeto,
+                    precioUnitario: item.precioUnitario,
+                    precioConIva: item.precioConIva,
+                    valorDescuento: item.valorDescuento,
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
+                    porcentajeDescuento: item.porcentajeDescuento,
+                    total: item.total,
+                    nota: item.nota,
+                })
+            }
+            return tempDetails;
+
+        }
+
+        service.save = function (data) {
+            return mS.getData('post', url + 'Insert/', data, true).then(response => {
+                if (response.code === "0") {
+                    return response;
+                }
+                if (response.code === "1") {
+                    return response;
+                }
+            })
+        }
+
+
+        service.update = function (id, data) {
+            return mS.getData('put', url + 'Update/' + id, data, true).then(response => {
+                if (response.code === "0") {
+                    return response;
+                }
+                if (response.code === "1") {
+                    return response
+                }
+            })
+        }
+
+        service.delete = function (id) {
+            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+                if (response.code === "0") {
+                    return response;
+                }
+                if (response.code === "1") {
+                    return response
+                }
+            })
+        }
+
+
+        return service;
+
+    })
 
 
     //---------------------------------Cliente------------------------------------------
     app.factory('clienteService', function ($injector) {
-        let url = 'Venta/Cliente/';
+        let url = `${URL_API}Cliente/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         let tS = $injector.get('toastService');
@@ -979,8 +1247,6 @@
         }
 
 
-
-
         service.validateForm = function (data) {
 
             if (!data.numeroIdentificacion) {
@@ -1047,8 +1313,6 @@
 
             return true;
         }
-
-
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
             mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
@@ -1132,7 +1396,7 @@
 
 
     app.factory('empleadoService', function ($injector) {
-        let url = 'Venta/Empleado/';
+        let url = `${URL_API}Empleado/`;
         let mS = $injector.get('mainService');
         return {
             getAll,
@@ -1230,7 +1494,7 @@
 
 
     app.factory('cargoService', function ($injector) {
-        let URL = 'Venta/Cargo/';
+        let URL = `${URL_API}Cargo/`;
         let mS = $injector.get('mainService');
 
         let service = {}
@@ -1266,7 +1530,7 @@
 
 
     app.factory('empresaService', function ($injector) {
-        let URL = 'Venta/Empresa/';
+        let URL = `${URL_API}Empresa/`;
         let mS = $injector.get('mainService');
 
         let service = {}
