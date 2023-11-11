@@ -715,9 +715,9 @@
         */
         service.getCantidadStock = function (rowEntity, fechaEmision) {
             let fechaEmisionValidate = null;
-            let fechaEmisionDocCreado = null;
             let cantidadStock = 0;
             let action = 0;
+            let fechaEmisionDocCreado = null;
 
             if (fechaEmision) {
                 fechaEmisionValidate = fechaEmision;
@@ -737,33 +737,41 @@
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                if (rowEntity.idFacturaDetalle > 0 && rowEntity.estado && fS.getDate(fechaEmisionDocCreado) !== fS.getDate(fechaEmisionValidate)) {
+                    if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
+                        fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
+                    ) {
+                        return {
+                            cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                            action: 2
+                        }
 
-                if (
-                    rowEntity.idFacturaDetalle > 0 &&
-                    fechaEmisionDocCreado !== fechaEmisionValidate &&
-                    rowEntity.estado &&
-                    dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate
-                ) {
-                    return {
-                        cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                        action: 2
                     }
                 }
+                // if (
+                //     rowEntity.idNotaEntregaDetalle > 0 &&
+                //     fechaEmisionDocCreado !== fechaEmisionValidate &&
+                //     rowEntity.estado &&
+                //     dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate
+                // ) {
+                //     return {
+                //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                //         action: 2
+                //     }
+                // }
 
-                if (dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate) {
+                if (fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate.getDate)) {
                     cantidadStock = 0;
                     action = 1;
                     return {
                         cantidadStock,
                         action
                     };
-                } else {
-                    action = 2;
                 }
-
             }
 
             cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+
             let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
 
             return {

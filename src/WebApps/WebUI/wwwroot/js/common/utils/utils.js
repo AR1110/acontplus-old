@@ -207,6 +207,25 @@
             }
         }
 
+        formSvc.getDate = function (fecha) {
+            if (!fecha) new Error('Parametro fecha requerido: ' + fecha)
+
+            return fecha.getDate()
+        }
+
+        formSvc.setHoursToDate = function (fecha) {
+            let fechaActual = new Date();
+
+            // Comprobar si ambas fechas son la fecha actual
+            if (fechaActual.getDate() === fecha.getDate()) {
+                fecha.setHours(fechaActual.getHours());
+                fecha.setMinutes(fechaActual.getMinutes());
+                fecha.setSeconds(fechaActual.getSeconds());
+            }
+            return fecha;
+
+        }
+
 
         /**
          * 
@@ -294,7 +313,7 @@
             let { permissions } = userData;
             let permisoVentaTemp = permissions.find(pp => pp.codModule === "V");
             let objPermissionVenta = JSON.parse(permisoVentaTemp.permission);
-           
+
             let { comprobante, detail, additional } = objPermissionVenta;
             let permisonEditarDoc = {
                 requiereClave: additional && additional.requestAuthorizationKey.requestKey

@@ -26,7 +26,7 @@
         commonSvc = $injector.get('commonService');
         tS = $injector.get('toastService');
         fS = $injector.get('formulario');
-        modalSvc = $injector.get('modalService');        
+        modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
         let nombreModalVenta = $injector.get('nombreModalVenta');
 
@@ -219,7 +219,7 @@
             })
 
             notaEntregaSvc.getDataForm().then(response => {
-                mainDataForm = response; 
+                mainDataForm = response;
                 $scope.permisonEditarDoc = response.permisonEditarDoc;
             })
 
@@ -248,7 +248,7 @@
             $scope.notaEntregas = $filter("filter")(notaEntregas, $scope.dataSearch.bySearch);
             $scope.getTotales();
         }
- 
+
         $scope.validateOperationPrintAndPayment = (result) => {
 
             let { isRegister, data } = result;
@@ -302,7 +302,7 @@
             } catch (error) {
                 console.log(error)
             }
-        } 
+        }
 
         $scope.openModalDetalle = async (params) => {
             try {
@@ -331,7 +331,7 @@
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
                 }
- 
+
                 let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
                 if (result.code === "2") {
                     commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
@@ -364,7 +364,7 @@
                     .catch(error => {
                         console.log(error)
                     })
-                    .finally(() => hideLoader()) 
+                    .finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -377,7 +377,7 @@
             try {
                 showLoader();
                 notaEntregaSvc.getId(item.idDocumento).then(response => {
-                    let modalRef =  modalSvc.openModalCustom({
+                    let modalRef = modalSvc.openModalCustom({
                         controller: 'modalNotaEntregaCtrl',
                         template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
                         size: 'xl',
@@ -389,21 +389,21 @@
                         isRenderRazorPartial: true
                     })
 
-                    modalRef.result.then(result=>{
-                        if(typeof result==='object'){
-                            $scope.validateOperationPrintAndPayment(result) 
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object') {
+                            $scope.validateOperationPrintAndPayment(result)
                         }
                     })
                 })
                     .catch(error => {
                         console.log(error)
                     })
-                    .finally(() => hideLoader()) 
+                    .finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
             }
-        } 
+        }
 
 
         $scope.askToDelete = async (item) => {
@@ -979,7 +979,7 @@
 
                 $scope.data = structuredClone(comprobante);
                 $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
-                getFechaVencimiento();
+                // getFechaVencimiento();
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
                 $scope.gridOptions.data = items;
@@ -1043,8 +1043,10 @@
             $scope.setInfoEstabPtoEmi();
 
         }
+ 
         function getFechaVencimiento() {
             if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
+                let fechaEmision = fS.setHoursToDate($scope.data.fechaEmision)
 
                 let dataTiempoCredito = $scope.tiemposCredito.find(item => item.idTiempoCredito === $scope.data.idTiempoCredito);
                 let diasCredito = typeof dataTiempoCredito === 'object' ? dataTiempoCredito.diasCredito : 0;
@@ -1053,7 +1055,7 @@
                     fechaVencimiento,
                     fechaEmisionEscrita,
                     fechaVencimientoEscrita
-                } = fS.sumarDiasAFecha($scope.data.fechaEmision, diasCredito);
+                } = fS.sumarDiasAFecha(fechaEmision, diasCredito);
 
                 // let formattedDateTime = fS.formatDateMoment(fechaVencimiento)
 
@@ -1062,7 +1064,7 @@
                 $scope.data.fechaVencimientoEscrita = fechaVencimientoEscrita;
 
                 //Variables temporales
-                $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
+                $scope.dataClone.fechaEmision = fechaEmision;
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
             }
         }
@@ -1920,22 +1922,23 @@
                 let fechaActual = new Date();
 
                 // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
-                if (fechaEmisionModificada.getTime() !== fechaEmisionDocCreado.getTime()) {
+                if (fS.getDate(fechaEmisionModificada) !== fS.getDate(fechaEmisionDocCreado)) {
 
                     //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                    if (fechaEmisionModificada > fechaActual) {
+                    if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
                         fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
                         return
                     }
 
-                    if (fechaEmisionModificada < fechaActual) {
+                    if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();
                     }
-                } else {
-                    $scope.data.fechaEmision = fechaEmisionDocCreado;
                 }
+                // else {
+                //     $scope.data.fechaEmision = fechaEmisionDocCreado;
+                // }
             }
 
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
@@ -1962,7 +1965,9 @@
                 return
             }
 
-            if ($scope.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+            if ($scope.gridOptions.data.some(item => item.articuloTarifas.some(
+                ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)
+            )) {
                 for (let item of $scope.gridOptions.data) {
                     if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)

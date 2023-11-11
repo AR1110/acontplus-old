@@ -189,7 +189,7 @@
                 $scope.facturas = [];
                 $scope.getTotales();
                 facturaSvc.getAll(dataSearch).then(response => {
-                    let { facturas, dataTotals } = response; 
+                    let { facturas, dataTotals } = response;
                     $scope.facturas = facturas;
                     $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
 
@@ -345,8 +345,8 @@
         }
 
         $scope.openModalInvoiceEdit = async (item) => {
-            try { 
-                if (item.codEstado==='A') {
+            try {
+                if (item.codEstado === 'A') {
                     fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
                     return
                 }
@@ -452,7 +452,7 @@
         $scope.askToDelete = async (item) => {
             try {
 
-                if (item.codEstado==='A') {
+                if (item.codEstado === 'A') {
                     fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
                     return
                 }
@@ -526,7 +526,7 @@
                 format
             })
         }
- 
+
 
         //--------------------------------------------------COBROS----------
 
@@ -1096,7 +1096,7 @@
         }
         function getFechaVencimiento() {
             if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
-
+                let fechaEmision = fS.setHoursToDate($scope.data.fechaEmision)
                 let dataTiempoCredito = $scope.tiemposCredito.find(item => item.idTiempoCredito === $scope.data.idTiempoCredito);
                 let diasCredito = typeof dataTiempoCredito === 'object' ? dataTiempoCredito.diasCredito : 0;
 
@@ -1104,7 +1104,7 @@
                     fechaVencimiento,
                     fechaEmisionEscrita,
                     fechaVencimientoEscrita
-                } = fS.sumarDiasAFecha($scope.data.fechaEmision, diasCredito);
+                } = fS.sumarDiasAFecha(fechaEmision, diasCredito);
 
                 // let formattedDateTime = fS.formatDateMoment(fechaVencimiento)
 
@@ -1113,12 +1113,12 @@
                 $scope.data.fechaVencimientoEscrita = fechaVencimientoEscrita;
 
                 //Variables temporales
-                $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
+                $scope.dataClone.fechaEmision = fechaEmision;
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
             }
         }
 
-        $scope.resultModalAdicional = function(result) {
+        $scope.resultModalAdicional = function (result) {
             let { historyDatosAdicionales } = result;
             $scope.historyDatosAdicionales = historyDatosAdicionales;
         }
@@ -1970,22 +1970,23 @@
                 let fechaActual = new Date();
 
                 // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
-                if (fechaEmisionModificada.getTime() !== fechaEmisionDocCreado.getTime()) {
+                if (fS.getDate(fechaEmisionModificada) !== fS.getDate(fechaEmisionDocCreado)) {
 
                     //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                    if (fechaEmisionModificada > fechaActual) {
+                    if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
                         fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
                         return
                     }
 
-                    if (fechaEmisionModificada < fechaActual) {
+                    if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();
                     }
-                } else {
-                    $scope.data.fechaEmision = fechaEmisionDocCreado;
                 }
+                // else {
+                //     $scope.data.fechaEmision = fechaEmisionDocCreado;
+                // }
             }
 
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
