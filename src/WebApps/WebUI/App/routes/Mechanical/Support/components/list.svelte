@@ -136,7 +136,8 @@
               <td>{item.status}</td>
               <td>
                 <button
-                  disabled={disablebForButton.includes(item.typeStatus)}
+                  disabled={disablebForButton.includes(item.typeStatus) ||
+                    item.typeStatus === 2}
                   class="btn btn-outline-danger btn-sm"
                   on:click={() => remove(item.id)}
                 >

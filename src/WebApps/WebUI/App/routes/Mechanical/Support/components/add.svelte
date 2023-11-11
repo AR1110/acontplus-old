@@ -149,7 +149,7 @@
     data = {
       textSearch: valueCustomer,
     };
-    CustomerService.search(JSON.stringify(data)).then((response) => {
+    CustomerService.search(JSON.stringify(data), '').then((response) => {
       if (response) {
         customers = response;
       }
@@ -467,6 +467,7 @@
         date: new Date().toISOString().slice(0, 10),
         sequence: 0,
         obs: "",
+        status: 1,
       },
       vehicle: {
         id: 0,
@@ -585,7 +586,7 @@
             </div>
           </div>
         </div>
-        <br>
+        <br />
 
         <div class="row">
           <div class="col-12 col-sm-6 col-md-4 col-lg-4">
@@ -612,11 +613,7 @@
             <label for="country"
               >Soporte a realizar <span class="text-danger"> *</span></label
             >
-            <input
-              type="text"
-              class="form-control"
-              bind:value={support.obs}
-            />
+            <input type="text" class="form-control" bind:value={support.obs} />
           </div>
         </div>
         <hr />
@@ -963,7 +960,11 @@
         </div>
 
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">
+          <button
+            disabled={support.status === 2}
+            type="submit"
+            class="btn btn-success"
+          >
             <i class="ti-save" /> Guardar</button
           >
           <button
