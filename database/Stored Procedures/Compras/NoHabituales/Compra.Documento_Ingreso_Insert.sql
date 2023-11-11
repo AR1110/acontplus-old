@@ -65,6 +65,7 @@ BEGIN
         ,totalSinImpuestos NUMERIC (18,5) NOT NULL
         ,importeTotal NUMERIC (18,5) NOT NULL
 		,inventory VARCHAR(5) NOT NULL
+        ,observacion VARCHAR(300) NULL
 	)
 
 	DECLARE @detail AS TABLE(
@@ -104,11 +105,11 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO @document 
-		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory,observacion)
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory,observacion
 		FROM OPENJSON(@comprobante)WITH 
         (
-             idEstablecimiento           INT '$.idEstablecimiento' 
+             idEstablecimiento           INT '$.idEstablecimiento'
 		    ,idPuntoEmision              INT '$.idPuntoEmision'
 		    ,idProveedor                 INT '$.idProveedor' 
 		    ,estab                VARCHAR(5) '$.estab' 
@@ -117,6 +118,7 @@ BEGIN
 		    ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos'
 		    ,importeTotal      NUMERIC(18,5) '$.importeTotal'
 		    ,inventory            VARCHAR(5) '$.inventory'
+            ,observacion        VARCHAR(300) '$.observacion'
 		) as dt
 		
 		INSERT INTO @detail
@@ -216,8 +218,8 @@ BEGIN
 		BEGIN TRAN 
 			--============================================================Administracion=========================================================================================
 			INSERT INTO Compra.Documento_Ingreso
-			       (uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,secuencial,totalSinImpuestos,importeTotal,fechaRegistro,idUsuario,idEntidad)
-			SELECT @uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,@secuencial,totalSinImpuestos,importeTotal,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad 
+			       (uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,secuencial,totalSinImpuestos,importeTotal,fechaRegistro,idUsuario,idEntidad,observacion)
+			SELECT @uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,@secuencial,totalSinImpuestos,importeTotal,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad,observacion 
 			FROM @document
 			
 			SET @idDocumentoIngreso = @@IDENTITY

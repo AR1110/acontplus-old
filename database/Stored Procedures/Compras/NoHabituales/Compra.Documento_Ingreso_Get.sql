@@ -263,6 +263,7 @@ BEGIN
 				,iva = @iva
 				,totalDescuento = @decuento 
 				,total = di.importeTotal
+                ,di.observacion
 			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
 			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = di.idPuntoEmision
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab

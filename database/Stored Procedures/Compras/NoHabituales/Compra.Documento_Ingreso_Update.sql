@@ -58,6 +58,7 @@ BEGIN
         ,totalSinImpuestos NUMERIC (18,5) NOT NULL
         ,importeTotal NUMERIC (18,5) NOT NULL
 		,inventory VARCHAR(5) NOT NULL
+        ,observacion VARCHAR(300) NULL
 	)
 
 	DECLARE @detail AS TABLE(
@@ -99,8 +100,8 @@ BEGIN
 	BEGIN TRY 
 					
 		INSERT INTO @document 
-		       (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT @idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		       (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory,observacion)
+		SELECT @idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory,observacion
 		FROM OPENJSON(@comprobante) WITH 
         (
 		     idProveedor                 INT '$.idProveedor' 
@@ -108,6 +109,7 @@ BEGIN
 		    ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos'
 		    ,importeTotal      NUMERIC(18,5) '$.importeTotal'
 		    ,inventory            VARCHAR(5) '$.inventory'
+            ,observacion        VARCHAR(300) '$.observacion'
 		) as dt
 		
 		INSERT INTO @detail
@@ -200,6 +202,7 @@ BEGIN
 			   ,di.fechaEmision      = dc.fechaEmision
 			   ,di.totalSinImpuestos = dc.totalSinImpuestos
 			   ,di.importeTotal      = dc.importeTotal
+               ,di.observacion       = dc.observacion
 			FROM Compra.Documento_Ingreso di WITH (NOLOCK)
 			INNER JOIN @document dc ON dc.idDocumentoIngreso = di.idDocumentoIngreso
 			 
