@@ -37,7 +37,7 @@ function a11yProps(index: number) {
 
 const CustomButton = styled(Button)(({ theme }) => ({
  //   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.h5,
+    ...theme.typography.body2,
     padding: theme.spacing(3),
     textAlign: 'center',
     color: theme.palette.text.secondary,
@@ -241,7 +241,7 @@ const TableDialog = (props: SimpleDialogProps) => {
                                 disabled={table.assigned}
                                 onClick={()=>handleButtonClick(table)}
                                  >
-                                    {table.numberTable} <TableBarIcon />
+                                    {table.description} <TableBarIcon />
                                 </CustomButton>
                                 {/* <Item onClick={() => handleButtonClick(table, index)} style={{
                                     backgroundColor: `${order.tableId === table.tableId ? '#1976d2' : '#818181'}`,

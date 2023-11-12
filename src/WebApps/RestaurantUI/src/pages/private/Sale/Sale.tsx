@@ -30,6 +30,7 @@ export default function Sale() {
     const { loading, fetchItem } = useFetchItems()
 
     const setDataEstab = useAuthStore(state => state.setDataEstab);
+    const setPuntoEmision = useAuthStore(state => state.setPuntoEmision);
     const { itemSearch, setCollectionItems } = useSaleStore(state => ({
         itemSearch: state.itemSearch,
         setCollectionItems: state.setCollectionItems
@@ -65,8 +66,10 @@ export default function Sale() {
                 establecimientoId: dataEstab.idEstablecimiento,
                 puntoEmisionId: emissionPointData?.idPuntoEmision ?? 0,
                 bodegaId: warehouseData?.idBodega ?? 0
+            })
+            if(emissionPointData){
+                setPuntoEmision(emissionPointData.ptoEmi)
             }
-            )
             setDataForm(response)
         })
 
