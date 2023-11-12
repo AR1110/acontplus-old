@@ -11,7 +11,7 @@ export class InfoAdicionalTipoDocCtrl{
             columnDefs: this.columnDefsInfoAdicional(!this._params.isView),
             showGridFooter: false,           
         }
-        this.gridOptions.data = this._params.infoAdicionalDocumento;
+        this.gridOptions.data = this._params.infoAdicionalDocumento || [];
         this.setEnumeracion();             
     }
 

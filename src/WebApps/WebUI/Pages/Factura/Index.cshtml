@@ -219,7 +219,7 @@
 
                                             <md-menu-item ng-if="accion.editar">
                                                 <md-button ng-click="openModalInvoiceEdit(item)"
-                                                    ng-disabled="item.gestion">
+                                                    ng-disabled="item.disabledActionUpdate">
                                                     <span md-menu-align-target>
                                                         <i class="ti-pencil"></i>
                                                         Editar
@@ -238,7 +238,7 @@
 
                                             <md-menu-item ng-if="accion.anular">
                                                 <md-button ng-click="askToDelete(item)"
-                                                    ng-disabled="item.gestionTributaria">
+                                                    ng-disabled="item.disabledActionAnular">
                                                     <span md-menu-align-target>
                                                         <i class="ti-na"></i>
                                                         Anular
@@ -247,9 +247,8 @@
                                             </md-menu-item>
 
                                             <md-menu-item
-                                                ng-if="(accion.cobroPago && item.codEstado==='PP') || (accion.cobroPago && item.codEstado==='PE')">
-                                                <md-button ng-click="opcionCobro(item)"
-                                                    ng-disabled="item.gestionFinanciera">
+                                                ng-if="accion.cobroPago && item.enabledActionCobro">
+                                                <md-button ng-click="opcionCobro(item)" >
                                                     <span md-menu-align-target>
                                                         <i class=" fas fa-hand-holding-usd"></i>
                                                         Cobro
@@ -257,9 +256,8 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.cuota">
-                                                <md-button ng-click="openModalCuota(item)"
-                                                    ng-disabled="item.gestionTributaria">
+                                            <md-menu-item ng-if="accion.cuota && item.enabledActionCuota">
+                                                <md-button ng-click="openModalCuota(item)" >
                                                     <span md-menu-align-target>
                                                         <i class=" fas fa-hand-holding-usd"></i>
                                                         Cuotas
@@ -267,7 +265,7 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.historialFinanciero">
+                                            <md-menu-item ng-if="accion.historialFinanciero && item.enabledActionHC">
                                                 <md-button ng-click="openModalHistorialCobro($event, item)">
                                                     <span md-menu-align-target>
                                                         <i class=" fas fa-tasks"></i>
@@ -358,8 +356,8 @@
 
 </div>
 @section Scripts {
-    <script src="~/js/factElect/directives/factElectDirective.js" asp-append-version="true"></script>
-    <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/controllers/facturaCtrl.js" asp-append-version="true"></script>
+        <script src="~/js/factElect/directives/factElectDirective.js" asp-append-version="true"></script>
+        <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
+        <script src="~/js/factElect/controllers/facturaCtrl.min.js" asp-append-version="true"></script>
 
 }

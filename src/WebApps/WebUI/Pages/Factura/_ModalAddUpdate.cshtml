@@ -92,7 +92,9 @@
                     <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
                         class="form-control border-select" ng-model="cliente.nombreFiscal" customer-search-sale-drtv
                         on-select="onSelectedClienteChange(result)" on-keyup="onKeyupCustomer()"
-                        function-trigger="receiveDataCustomerSRI(result)" placeholder="Ingrese C.I o Nombre Comercial"
+                        function-trigger="receiveDataCustomerSRI(result)" 
+                        autocomplete="off"
+                        placeholder="Ingrese C.I o Nombre Comercial"
                         onclick="select();">
 
                     <div class="input-group-append">
@@ -122,7 +124,9 @@
                     <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
                         class="form-control border-select" ng-model="cliente.nombreFiscal" cliente-search-drtv
                         on-select="onSelectedClienteChange(result)" on-keyup-cliente="onKeyupCustomer()"
-                        placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+                        placeholder="Ingrese C.I o Nombre Comercial"
+                        autocomplete="off"
+                         onclick="select();">
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary btn-xs border-select"
                             id="btnNewCustomerDocument" btn-cliente result-modal="onSelectedClienteChange(result)">
@@ -164,10 +168,12 @@
         <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-                <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select"
-                    ng-model="data.fechaEmision" ng-change="onChangeFechaEmision()" ng-keyup="onChangeFechaEmision()"
-                    tabindex="-1" ng-disabled="!ventaComprobantePermission.fechaEmision.update" />
-                <small class="text-info">{{fechaEmisionEscrita}}</small>
+                    <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select"
+                           ng-model="data.fechaEmision" 
+                           ng-change="onChangeFechaEmision()"
+                           ng-disabled="!permisoComprobanteVenta.fechaEmision"
+                           ng-keyup="onChangeFechaEmision()" tabindex="-1" />
+                    <small class="text-info">{{data.fechaEmisionEscrita}}</small>
             </div>
         </div>
 

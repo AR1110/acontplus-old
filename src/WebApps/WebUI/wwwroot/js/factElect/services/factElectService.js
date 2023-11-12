@@ -125,7 +125,9 @@
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
-        let service = {}
+        let service = {
+            data: {}
+        }
 
 
         service.getDataForm = () => {
@@ -323,7 +325,13 @@
                             usuario: item.usuario,
                             codEstado: item.codEstado,
                             esContado: item.tiempoCredito,
-                            totalRecords: item.totalRecords
+                            totalRecords: item.totalRecords,
+                            esCobrado: item.codEstado === 'CBR',
+                            disabledActionUpdate: item.codEstado === 'CBR' || item.codEstado === 'PP' || item.codEstado === 'A',
+                            disabledActionAnular: item.codEstado === 'A',
+                            enabledActionCobro: item.codEstado === 'PP' || item.codEstado === 'PE',
+                            enabledActionCuota: item.codEstado === 'PE' ,
+                            enabledActionHC: ["PP", "CBR"].includes(item.codEstado)
                         }
                     })
 
@@ -421,9 +429,131 @@
             })
         }
 
+        service.getId = function (id) {
+            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+                if (response.code === "0") {
+                    console.log(response)
+                }
+                if (response.code === "1") {
+                    let mainDataApi = JSON.parse(response.payload);
+                    console.log(mainDataApi)
+                    const [
+                        comprobanteApi,
+                        clienteTempApi,
+                        itemsApi,
+                        infoAdicionalDocumento,
+                        datosAdicionalesArticuloTemp
+                    ] = mainDataApi;
+
+                    let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
+                    let cliente = clienteTempApi && clienteTempApi[0] || {};
+
+                    let items = itemsApi.map(itemPrincipal => {
+
+                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
+
+                        // Medidas del artículo fraccionado del principal
+                        let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
+
+                        // Medida principal con las tarifas
+                        let medidasPrincipalTemp = JSON.parse(principal) || [];
+
+                        // 
+                        let consolidacionesFecha = JSON.parse(consolidacion) || [];
+
+                        /**
+                         * Combinar los dos arrays de medidas en uno solo
+                         *
+                         * Parámetros:
+                         *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
+                         */
+                        const mergedMedidasArray = [...medidasFraccionadoTemp, ...medidasPrincipalTemp];
+
+                        /**
+                         * Ordenar el array de medidas en función de la propiedad "orden" y
+                         * establecer la propiedad "defaultMedida" en falso para todos los elementos
+                         *
+                         * Parámetros:
+                         *  - orderMedidaArray: El array de medidas ordenado
+                         */
+                        let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
+                            ...medida,
+                            defaultMedida: false
+                        }));
+
+                        // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
+                        orderMedidaArray[0].defaultMedida = true;
+
+
+                        /**
+                         * Obtener los datos de la medida
+                         *
+                         * Parámetros:
+                         *  - orderMedidaArray: El array de medidas ordenado
+                         *  - restItem: El artículo
+                         *
+                         * Devuelve:
+                         *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
+                         */
+                        let dataMedida = orderMedidaArray.find(m => m.idMedida === restItem.idMedida) || {};
+
+                        // Asignar los datos de la medida al artículo
+                        restItem.medidas = orderMedidaArray;
+                        restItem.conversion = dataMedida.conversion;
+                        // Asignar los datos de las tarifas obtenidos de data medida 
+                        restItem.articuloTarifas = dataMedida.tarifas || [];
+
+                        restItem.consolidacionesFecha = consolidacionesFecha.map((data) => ({
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
+
+
+                        let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
+                        let totalDescuento = restItem.cantidad * restItem.valorDescuento || 0;
+
+                        restItem.subTotal = subTotal || 0;
+                        restItem.totalDescuento = totalDescuento || 0;
+                        //Para validacion del cantidad stock
+                        restItem.cantidadOriginal = restItem.cantidad;
+                        return restItem;
+                    });
+
+                    let comprobante = {
+                        ...comprobanteTemp,
+                        serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
+                        puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
+                        fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
+                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
+                    }
+
+                    let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
+                        idDocumento: item.idDocumento,
+                        idHistoryInfoAdicional: item.idHistoryInfoAdicional,
+                        idArticulo: item.idArticulo,
+                        idEtiqueta: item.idEtiqueta,
+                        idInfoAdicional: item.idInfoAdicional,
+                        jsonAdicional: item.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
+                        selected: item.selected,
+                        estado: item.estado
+                    }))
+
+                    return {
+                        comprobante,
+                        cliente,
+                        items,
+                        infoAdicionalDocumento,
+                        datosAdicionalesArticulo
+                    }
+                }
+            })
+        }
+
         service.save = function (data) {
             return mS.getData('post', url + 'Insert', data, true).then(response => {
                 if (response.code === "0") {
+                    service.data = {}
                     return response;
                 }
                 if (response.code === "1") {
@@ -439,17 +569,24 @@
                         message: 'Registrado Correctamente'
                     }
                 }
+            }).catch(error => {
+                service.data = {}
+                throw error
             })
         }
 
         service.update = function (id, data) {
             return mS.getData('put', url + 'Update/' + id, data, true).then(response => {
                 if (response.code === "0") {
+                    service.data = {}
                     return response;
                 }
                 if (response.code === "1") {
                     return response;
                 }
+            }).catch(error => {
+                service.data = {}
+                throw error;
             })
         }
 
@@ -580,12 +717,18 @@
             let fechaEmisionValidate = null;
             let cantidadStock = 0;
             let action = 0;
+            let fechaEmisionDocCreado = null;
 
             if (fechaEmision) {
                 fechaEmisionValidate = fechaEmision;
             } else {
                 fechaEmisionValidate = service.data.fechaEmision;
             }
+
+            if (typeof service.data === 'object' && service.data.idFactura > 0) {
+                fechaEmisionDocCreado = service.data.fechaEmisionDocCreado;
+            }
+
             if (!fechaEmisionValidate) {
                 console.warn('Para validacion del cantidad stock la fecha emision del comprobante es nula')
             }
@@ -594,19 +737,41 @@
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate) {
+                if (rowEntity.idFacturaDetalle > 0 && rowEntity.estado && fS.getDate(fechaEmisionDocCreado) !== fS.getDate(fechaEmisionValidate)) {
+                    if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
+                        fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
+                    ) {
+                        return {
+                            cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                            action: 2
+                        }
+
+                    }
+                }
+                // if (
+                //     rowEntity.idNotaEntregaDetalle > 0 &&
+                //     fechaEmisionDocCreado !== fechaEmisionValidate &&
+                //     rowEntity.estado &&
+                //     dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate
+                // ) {
+                //     return {
+                //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                //         action: 2
+                //     }
+                // }
+
+                if (fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate.getDate)) {
                     cantidadStock = 0;
                     action = 1;
                     return {
                         cantidadStock,
                         action
                     };
-                } else {
-                    action = 2;
                 }
             }
 
             cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+
             let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
 
             return {
