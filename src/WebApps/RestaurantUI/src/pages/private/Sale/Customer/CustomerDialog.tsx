@@ -197,13 +197,13 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
                 } = dataCustomerSRI;
                 let idTipoIdentificacion = 0; 
                 if (numeroRuc.length == 13) {
-                    const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === "04");
+                    const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.RUC);
                     if (dataID) {
                         idTipoIdentificacion = dataID.idTipoIdentificacion;
                     }
                 }
                 if (numeroRuc.length === 10) {
-                    const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === "06");
+                    const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.LICENSE);
                     if (dataID) {
                         idTipoIdentificacion = dataID.idTipoIdentificacion;
                     }
