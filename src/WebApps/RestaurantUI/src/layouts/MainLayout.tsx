@@ -14,25 +14,25 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import { PrivateRoutes, PublicRoutes } from '@/core/models';
-import { useAuthStore } from '@/stores/authStore'; 
-import ModeToggleButton from '@/core/components/ModeToggleButton'; 
+import { useAuthStore } from '@/stores/authStore';
+import ModeToggleButton from '@/core/components/ModeToggleButton';
 
 const pages = ['Pedidos'];
 const settings = ['Cerrar sesión'];
- 
+
 
 function MainLayout() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const dataEstab = useAuthStore(state => state.dataEstab);
-    const closeSession = useAuthStore(state => state.logOut); 
-    
+    const puntoEmision = useAuthStore(state => state.puntoEmision);
+    const closeSession = useAuthStore(state => state.logOut);
+
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
     // const estabs = useAuthStore(state => state.estabs);
     // const dataEstab = estabs[0] as Establecimiento;
-
-
+ 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
@@ -56,7 +56,7 @@ function MainLayout() {
         navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
     };
 
-    
+
 
 
     return (
@@ -159,16 +159,19 @@ function MainLayout() {
                             ))}
                         </Box>
                         <Stack>
-                             <Typography   variant="body2">
-                             Estab: {dataEstab?.nombreComercial} 
-                        </Typography> 
-                        <Typography variant="body2"> 
-                            <span>Usuario: {dataEstab?.usuario}</span>
-                        </Typography>                            
-                        </Stack> 
-                          
+                            <Typography variant="body2">
+                                Estab: {dataEstab?.nombreComercial}
+                            </Typography>
+                            <Typography variant="body2">
+                                Punto Emisión: {puntoEmision}
+                            </Typography>
+                            <Typography variant="body2">
+                                <span>Usuario: {dataEstab?.usuario}</span>
+                            </Typography>
+                        </Stack>
+
                         <Box sx={{ flexGrow: 0 }}>
-                        <ModeToggleButton />
+                            <ModeToggleButton />
                             <Tooltip title="Open settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                     <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
