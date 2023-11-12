@@ -166,24 +166,25 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
             let dataMedida = medidas[0];
 
-            let index = 0; 
+            let index = 0, entity = {};
             let findIndexById = this.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
             if (findIndexById === -1) {
                 self.addRow();
                 index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
+                entity = self.gridOptions.data[index];
             } else {
-                index = findIndexById
-            }            
+                index = findIndexById;
+                entity = self.gridOptions.data[index];
+                entity.cantidad = entity.cantidad + 1;
+            }
 
             // if ([null, undefined].includes(this.indexRow)) {
             //     self.addRow();
             //     index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
             // } else {
             //     index = this.indexRow;
-            // }
-
-            let entity = self.gridOptions.data[index];
+            // } 
 
 
             entity.idArticulo = articulo.idArticulo;
@@ -381,7 +382,10 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
     recalculateImpuestoTarifa() {
         try {
-            this.uiGridInvoice.actividadTipoIva = this.impuestoTarifas.find(item => item.tarifa === this.data.tarifa);
+            let dataTarifa = this.impuestoTarifas.find(item => item.tarifa === this.data.tarifa);
+
+            this.uiGridInvoice.actividadTipoIva = dataTarifa
+            this.actividadTipoIva = dataTarifa;
             this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
         } catch (error) {
             console.log(error);
