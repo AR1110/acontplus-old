@@ -7,7 +7,7 @@ export const enum PATHS {
     SALE = `${GATEWAY}Venta/`,
     ACCOUNTING = `${GATEWAY}Contabilidad/`,
     CONFIG = `${GATEWAY}Config/`,
-    CUSTOMER = `${GATEWAY}Customer/`,
+    CONSULTA = `${GATEWAY}Consultas/`,
     REPORT = `${GATEWAY}Reporte/`
 }
 
