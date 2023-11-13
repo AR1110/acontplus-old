@@ -2,6 +2,7 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using Restaurant.Core.Interfaces;
+using Restaurant.Infrastructure.Data;
 
 namespace Restaurant.Application.Services
 {
@@ -9,10 +10,14 @@ namespace Restaurant.Application.Services
     {
         private readonly IADORepository _repository;
         private readonly IRdlcReportService _report;
-        public OrderService(IADORepository repository, IRdlcReportService report)
+        private readonly RestaurantContext _context;
+        public OrderService(IADORepository repository,
+            IRdlcReportService report,
+            RestaurantContext context)
         {
             _repository = repository;
             _report = report;
+            _context = context;
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
@@ -43,6 +48,15 @@ namespace Restaurant.Application.Services
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
             };
             return await _repository.SPExecuteAsync("Restaurant.Order_Update", parameters);
+        }
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) { return false; }
+            order.Enabled = false;
+            _context.Update(order);
+            await _context.SaveChangesAsync();
+            return true;
         }
         public async Task<string> PrintAsync(Dictionary<string, object> parameters)
         {
