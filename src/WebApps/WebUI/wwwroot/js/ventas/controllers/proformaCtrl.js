@@ -1182,7 +1182,7 @@
                     tS.toastr('warning', 'No tienes permiso para realizar esta acción');
                     return
                 }
-
+                $scope.data.fechaEmision = fS.setHoursToDate($scope.data.fechaEmision);
             } catch (error) {
                 console.log(error)
                 $scope.data.fechaEmision = $scope.dataClone.fechaEmision;

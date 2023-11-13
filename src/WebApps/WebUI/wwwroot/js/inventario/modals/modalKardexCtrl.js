@@ -6,18 +6,25 @@ export {
 
 modalKardexCtrl.$inject = [
     '$scope',
+    '$injector',
     '$uibModalInstance',
-    'commonService',
-    'kardexService',
-    'articuloService',
-    'modalService',
-    'nombreModalCompra',
-    'formulario',
-    'toastService',
     'params'
 ];
 
-function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articuloSvc, modalSvc, nombreModalCompra, fS, tS, params) {
+function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
+
+    let commonSvc = $injector.get('commonService');
+    let kardexSvc = $injector.get('kardexService');
+    let articuloSvc = $injector.get('articuloService');
+    let modalSvc = $injector.get('modalService');
+    let nombreModalCompra = $injector.get('nombreModalCompra');
+    let nombreModalVenta = $injector.get('nombreModalVenta');
+    let fS = $injector.get('formulario');
+    let tS = $injector.get('toastService');
+    let DOC_TYPE = $injector.get('DOC_TYPE');
+
+
+
     $scope.articulo = params;
 
     $scope.dataSearch = {
@@ -42,7 +49,6 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
     let endOfMonth = moment(thisMoment).endOf('month')
     // $scope.dataSearch.fechaInicio = startOfMonth;
     // $scope.dataSearch.fechaFin = endOfMonth;
-    console.log(startOfMonth)
 
     //https://www.daterangepicker.com/
     $scope.dateRangePicker = {
@@ -140,7 +146,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
 
             const params = Object.assign($scope.dataSearch, {
                 checkBoxFecha: $scope.dataSearch.checkBoxFecha,
-                checkBoxMovement: $scope.dataSearch.movement ? true : false, 
+                checkBoxMovement: $scope.dataSearch.movement ? true : false,
             })
 
             getDataKardex(params)
@@ -565,7 +571,25 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
 
     async function openModalTipoDocumento(item) {
         try {
+
+            console.log(item)
             if (("idDocumento" in item) && ("tipoDoc") in item) {
+
+                //Nota Entrega
+                if ([DOC_TYPE.NE].includes(item.tipoDoc)) {
+                    $scope.openDocSale(item, item.tipoDoc);
+                    return
+                }
+                //Factura Venta
+                if ((item.tipoDoc === 'FE' && item.codTransaccion === 'S')) {                    
+                    let params = {
+                        ...item,
+                        tipoDoc : DOC_TYPE.FV_SRI
+                    }
+                    $scope.openDocSale(params, 'FV_SRI');
+                    return
+                }
+
                 if (item.codTransaccion == 'E' && item.tipoDoc == 'FE') {
 
                     let { fileCtrl, controller, F } = nombreModalCompra.DOCUMENTO_RECIBIDO;
@@ -595,6 +619,30 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
                     })
                 }
             }
+
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    $scope.openDocSale = async function (params, codDoc) {
+        try {
+            let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+            let ctrl = (await import(fileCtrl))[controller];
+            let template = templates[codDoc];
+            modalSvc.openModalCustom({
+                controller: ctrl,
+                template: template,
+                size: 'xl',
+                params: {
+                    codDoc: params.tipoDoc,
+                    id: params.idDocumento
+                },
+                windowClass: 'uibModalFullScreen',
+                isRenderRazorPartial: true
+            })
         } catch (error) {
             console.log(error)
         }

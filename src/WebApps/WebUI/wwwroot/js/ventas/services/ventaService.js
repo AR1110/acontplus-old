@@ -225,8 +225,7 @@
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
-                    console.log(mainData)
+                    let mainData = JSON.parse(response.payload); 
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
