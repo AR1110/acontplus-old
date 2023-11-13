@@ -61,7 +61,7 @@
         let idUsuarioRol = Number(decodeToken.idUsuarioRol)
 
 
-        $scope.permisonEditarDoc = {};
+        $scope.permisoEditarDoc = {};
         //Remove Focus new invoice 
         let btnNewInvoice = document.getElementById("btnNewInvoice");
         btnNewInvoice.addEventListener("click", () => {
@@ -234,7 +234,7 @@
 
             facturaSvc.getDataForm().then(response => {
                 mainDataForm = response;
-                $scope.permisonEditarDoc = response.permisonEditarDoc;
+                $scope.permisoEditarDoc = response.permisoEditarDoc;
             })
 
         }
@@ -373,7 +373,7 @@
                     modalRef.result.then(result => {
                         if (typeof result === 'object' && result.isUpdate) {
                             //Actualizar el estado de solicitud en caso de tener 
-                            if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
                             }
 
@@ -485,7 +485,7 @@
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                             //Una vez actualizado el documento 
-                            if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
                             }
                             $scope.getFacturas();
@@ -1882,6 +1882,10 @@
                 tS.toastr('warning', 'No tienes permiso para realizar esta acción');
                 return
             }
+            if ($scope.gridOptions.data.length === 0) {
+                return
+            }
+
             if (typeof $scope.data.porcentajeDescuento !== 'number' || isNaN($scope.data.porcentajeDescuento)) {
                 tS.toastr('warning', 'Ingrese un Número Válido');
                 return
@@ -1906,6 +1910,9 @@
                 if (!$scope.permisoComprobanteVenta.descuento) {
                     $scope.data.descuento = 0;
                     tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                    return
+                }
+                if ($scope.gridOptions.data.length === 0) {
                     return
                 }
                 if (typeof $scope.data.totalDescuento !== 'number' || isNaN($scope.data.totalDescuento)) {

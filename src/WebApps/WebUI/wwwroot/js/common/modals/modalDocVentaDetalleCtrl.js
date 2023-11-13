@@ -15,6 +15,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     const TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
     const notaEntregaSvc = $injector.get('notaEntregaService');
     const facturaSvc = $injector.get('facturaService');
+    const proformaSvc = $injector.get('proformaService');
 
     let { id, codDoc } = params;
     let tarifaImpuesto = {
@@ -39,6 +40,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             }, 5);
         }
     }
+    setColumnDefsVista();
 
     //Nota Entrega
     if (codDoc === DOC_TYPE['NE']) {
@@ -50,8 +52,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = items;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                setColumnDefsVista();
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
                 gridOptionsEnumeracion();
             }).catch(error => {
                 console.warn(error)
@@ -73,8 +74,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.data = data;
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
-                $scope.gridOptions.data = items;
-                setColumnDefsVista();
+                $scope.gridOptions.data = items; 
                 gridOptionsEnumeracion();
                 console.log($scope.data)
             }).catch(error => {
@@ -83,6 +83,30 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 hideLoader();
             })
         } catch (error) {
+            console.log(error)
+            hideLoader();
+        }
+    }
+
+    console.log(codDoc)
+    if(codDoc==='09'){
+        try {
+            showLoader();
+            proformaSvc.getIdForInfo(id).then(response => {
+                let { data, cliente, items } = response;
+                $scope.data = data;
+                $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
+                $scope.cliente = cliente;
+                $scope.gridOptions.data = items; 
+                gridOptionsEnumeracion();
+                console.log($scope.data)
+            }).catch(error => {
+                console.error(error)
+            }).finally(() => {
+                hideLoader();
+            })
+        } catch (error) {
+            console.log(error)
             hideLoader();
         }
     }

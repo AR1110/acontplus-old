@@ -315,7 +315,7 @@
             let objPermissionVenta = JSON.parse(permisoVentaTemp.permission);
 
             let { comprobante, detail, additional } = objPermissionVenta;
-            let permisonEditarDoc = {
+            let permisoEditarDoc = {
                 requiereClave: additional && additional.requestAuthorizationKey.requestKey
             }
             const permisoVenta = {
@@ -339,7 +339,7 @@
 
             return {
                 permisoVenta,
-                permisonEditarDoc
+                permisoEditarDoc
             }
         }
 

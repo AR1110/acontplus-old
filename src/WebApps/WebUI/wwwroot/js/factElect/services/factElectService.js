@@ -175,7 +175,7 @@
                     let tarifaImpuestoVigente = mainData[11][0];
 
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
-                    let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
+                    let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
 
                     // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
                     const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
@@ -229,7 +229,7 @@
                         vendedores,
                         articuloDefault,
                         clienteDefault,
-                        permisonEditarDoc
+                        permisoEditarDoc
                     };
 
                 }
