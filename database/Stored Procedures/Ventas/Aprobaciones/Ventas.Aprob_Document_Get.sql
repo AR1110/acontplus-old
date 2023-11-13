@@ -24,7 +24,6 @@ BEGIN
 	DECLARE @bySearch VARCHAR(MAX)
     DECLARE @tipo INT
     DECLARE @checkBoxFecha BIT 
-    DECLARE @codDoc VARCHAR(20)
     DECLARE @codEstab VARCHAR(25) 
     DECLARE @byCliente INT 
     DECLARE @codEstado VARCHAR(5) 
