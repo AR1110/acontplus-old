@@ -26,6 +26,8 @@ import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { SplitOrderProvider, useOrderContext } from "./context";
 import OrderDocument from "./OrderDocument/OrderDocument";
 import { showLoader, hideLoader } from "@/spinner";
+import Swal from "sweetalert2";
+import { SnackbarUtility } from "@/core/utilities";
 const SplitOrder = lazy(() => import("./SplitOrder/SplitOrder"));
 
 export default function OrderTable() {
@@ -86,6 +88,42 @@ export default function OrderTable() {
         setOpenDocument(false)
     }
 
+    const askToDelete = (id:number)=>{
+        try {
+            Swal.fire({
+                //title: "Are you sure?",
+                html: "Esta seguro de anular el pedido?",
+                icon: "warning",
+                showCancelButton: true,
+                showConfirmButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí, anular!",
+                cancelButtonText: 'No, cancelar!'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    showLoader();
+                     orderService.delete(id).then(response=>{
+                        if(response){
+                            if(response.code==="0"){
+                                SnackbarUtility.info(response.message)
+                            }
+                            if(response.code==="1"){
+                                SnackbarUtility.info(response.message);
+                                fetchOrders()
+                            }
+                        }
+                     })
+                     .catch(error=>{
+                        console.log(error)
+                     })
+                     .finally(()=>hideLoader())
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <React.Fragment>
             <Box sx={{ width: "100%" }}>
@@ -160,6 +198,14 @@ export default function OrderTable() {
                                                         </Tooltip>
                                                     )
                                                 }
+                                                <Tooltip describeChild title="Anular">
+                                                    <Button variant="contained" color="error"
+                                                        aria-label="Anular"
+                                                        onClick={()=>askToDelete(order.orderId)}
+                                                    >
+                                                        <AspectRatioIcon />
+                                                    </Button>
+                                                </Tooltip>
                                             </Stack>
                                         </TableCell>
                                         <TableCell align="center"> {order.serie}</TableCell>
