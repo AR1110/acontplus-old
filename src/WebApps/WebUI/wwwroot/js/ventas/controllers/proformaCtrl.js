@@ -265,22 +265,22 @@
             // } catch (error) {
             //     console.log(error)
             // }
-            // try {
-            //     ctrl = nombreModalVenta.PROFORMA.controllers['MN'];
-            //     template = nombreModalVenta.PROFORMA.templates['MN'];
-            //     let controller = (await import(fileCtrl))[ctrl];
+            try {
+                ctrl = nombreModalVenta.PROFORMA.controllers['MN'];
+                template = nombreModalVenta.PROFORMA.templates['MN'];
+                let controller = (await import(fileCtrl))[ctrl];
 
-            //     let params = {
-            //         TIPO_REGISTRO: 'NUEVO'
-            //     }
-            //     $scope.openModalParam({
-            //         controller,
-            //         template,
-            //         params
-            //     })
-            // } catch (error) {
-            //     console.log(error);
-            // }
+                let params = {
+                    TIPO_REGISTRO: 'NUEVO'
+                }
+                $scope.openModalParam({
+                    controller,
+                    template,
+                    params
+                })
+            } catch (error) {
+                console.log(error);
+            }
         }
 
 
