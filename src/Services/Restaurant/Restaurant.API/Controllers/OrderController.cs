@@ -38,7 +38,66 @@ namespace Restaurant.API.Controllers
                 return BadRequest("Error on get");
             }
         }
-
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] ApiRequest data)
+        {
+            try
+            {
+                //var parameters = new Dictionary<string, object> {
+                //    { "userRoleId", User.GetUserRoleId() },
+                //    { "json", JsonConvert.SerializeObject(data) }
+                //};
+                data.UserRoleId = User.GetUserRoleId();
+                var response = await _orderService.AddAsync(data);
+                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on save: " + ex.ToString());
+                return BadRequest("Error On Save");
+            }
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+        {
+            try
+            {
+                data.UserRoleId = User.GetUserRoleId();
+                var response = await _orderService.PutAsync(id, data);
+                if (response == null | string.IsNullOrEmpty(response))
+                {
+                    _log.LogActivity("Error on update");
+                    return BadRequest("No se pudo actualizar");
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on put catch " + ex.ToString());
+                return BadRequest("Error On Put");
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                if (id == 0) { return BadRequest("Id Incorrecto"); }
+                var response = await _orderService.DeleteAsync(id);
+                if (!response)
+                {
+                    _log.LogActivity("Error on delete");
+                    return BadRequest("No se pudo anular la orden");
+                }
+                return Ok(new { code = "1", message = "Anulada Exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on delete order " + ex.ToString());
+                return BadRequest("Error on delete");
+            }
+        }
         [HttpGet("Print/{json}")]
         public async Task<IActionResult> Print(string json)
         {
@@ -60,47 +119,6 @@ namespace Restaurant.API.Controllers
             {
                 _log.LogActivity($"Error on print {ex.Message}");
                 return BadRequest("Error on print " + ex.Message);
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
-        {
-            try
-            {
-                //var parameters = new Dictionary<string, object> {
-                //    { "userRoleId", User.GetUserRoleId() },
-                //    { "json", JsonConvert.SerializeObject(data) }
-                //};
-                data.UserRoleId = User.GetUserRoleId();
-                var response = await _orderService.AddAsync(data);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on save: " + ex.ToString());
-                return BadRequest("Error On Save");
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
-        {
-            try
-            {
-                data.UserRoleId = User.GetUserRoleId();
-                var response = await _orderService.PutAsync(id, data);
-                if (response == null | string.IsNullOrEmpty(response))
-                {
-                    _log.LogActivity("Error on update");
-                    return BadRequest("No se pudo actualizar");
-                }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on put catch " + ex.ToString());
-                return BadRequest("Error On Put");
             }
         }
         [HttpPost("Report/{id}")]

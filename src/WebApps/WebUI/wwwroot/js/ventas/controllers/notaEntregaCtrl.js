@@ -353,11 +353,11 @@
                     })
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {
+                            $scope.getNotaEntregas();
                             if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
                             }
 
-                            $scope.getNotaEntregas();
                         }
                     })
                 })
