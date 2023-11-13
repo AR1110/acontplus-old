@@ -9,7 +9,7 @@ GO
 -- Description:	sp for get order restaurant
 -- =============================================
 -- Restaurant.Order_Get 139, '{"tipo":1,"pageIndex":1,"pageSize":25,"startDate":"2023-09-05T17:18:46.886Z","endDate":"2023-09-05T17:18:46.886Z","customerCompanyId":0}', ''
--- Restaurant.Order_Get 139, '{"id":6,"tipo":3}', ''
+-- Restaurant.Order_Get 362, '{"id":6,"tipo":3}', ''
 CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT
 ,@json NVARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
@@ -26,7 +26,7 @@ BEGIN
     ,@endDate     DATETIME2
     ,@sql         NVARCHAR(MAX)
     ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT '
-
+    ,@idEntidad INT 
 
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
@@ -79,6 +79,9 @@ BEGIN
             pageIndex INT         '$.pageIndex',
             pageSize  INT         '$.pageSize'
     )
+
+    SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
+
     IF (@tipo = 1)
         BEGIN 
             print @startDate
@@ -298,7 +301,7 @@ BEGIN
                 ,v_cpc.nombreComercial
             FROM Restaurant.OrderDocument od WITH(NOLOCK)
             INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
-            WHERE od.orderId = @id AND v_cpc.codDoc IN('01', 'NE') 
+            WHERE v_cpc.idEntidad = @idEntidad AND od.orderId = @id AND v_cpc.codDoc IN('01', 'NE') 
         END
 END
 GO

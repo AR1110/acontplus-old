@@ -16,6 +16,7 @@ import {
     AccountTreeIcon,
     ArrowBackIcon,
     AspectRatioIcon,
+    ClearIcon,
     EditIcon,
 } from "@/core/components/IconsMaterial";
 import { orderService } from "@/core/services";
@@ -203,7 +204,7 @@ export default function OrderTable() {
                                                         aria-label="Anular"
                                                         onClick={()=>askToDelete(order.orderId)}
                                                     >
-                                                        <AspectRatioIcon />
+                                                        <ClearIcon />
                                                     </Button>
                                                 </Tooltip>
                                             </Stack>
