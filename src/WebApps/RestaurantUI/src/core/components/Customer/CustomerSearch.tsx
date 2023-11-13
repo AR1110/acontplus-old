@@ -11,6 +11,7 @@ import { CustomerInfo } from './CustomerInfo';
 import CustomerDialog from './CustomerDialog';
 import { hideLoader, showLoader } from '@/spinner';
 import { SnackbarUtility } from '@/core/utilities';
+import Swal from 'sweetalert2';
 
 type CustomerSearchProps = {
     customerCompanyId: number
@@ -71,21 +72,40 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
         return true;
     }
 
-    const onSearchToSRI = async function (event: any) {
-        try {
-            const textSearch = event.target.value;
-            dataCustomerSRI.current = {
-                numeroRuc: '',
-                razonSocial: '',
-                direccion: "",
-                telefono: "",
-                email: ""
+    const showAlertConfirmID = (textSearch: string) => {
+        Swal.fire({
+            //title: "Are you sure?",
+            html: "Desea registrar con el número de identificación <b>PASAPORTE</b>?",
+            icon: "warning",
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí!",
+            cancelButtonText: 'No!'
+        }).then(result => {
+            if (result.isConfirmed) {
+                console.log('dhoidhf')
+                dataCustomerSRI.current = {
+                    numeroRuc: textSearch,
+                    razonSocial: "",
+                    direccion: "",
+                    telefono: "",
+                    email: ""
+                }
+                setOpenCustomerDialog(true)
             }
-            if (
-                event.key === 'Enter' &&
-                (!(customerCompanyId > 0))) {
+        })
+    }
+    const onSearchToSRI = async function (textSearch: string) {
+        try {
 
-                if (!verificarNumero(textSearch)) return
+            if (!(customerCompanyId > 0)) {
+                const isValidID = verificarNumero(textSearch);
+                if (!isValidID) {
+                    showAlertConfirmID(textSearch)
+                    return
+                }
                 //Numero de RUC 
                 if (textSearch.length === 13) {
                     try {
@@ -144,13 +164,51 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                         hideLoader();
                     }
                 }
-
             }
+
         } catch (error) {
             console.log(error)
         }
     }
 
+    const onEnterCustomerSearch = (event: any) => {
+        const textSearch = event.target.value;
+        dataCustomerSRI.current = {
+            numeroRuc: '',
+            razonSocial: '',
+            direccion: "",
+            telefono: "",
+            email: ""
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            onSearchToSRI(textSearch)
+        }
+
+    }
+
+    const onClickNewCustomer = () => {
+        try {
+            const elem = document.getElementById('customerSearch') as HTMLInputElement;
+            const textSearch = elem.value; 
+            refCustomerCompanyId.current = 0;
+            dataCustomerSRI.current = {
+                numeroRuc: '',
+                razonSocial: '',
+                direccion: "",
+                telefono: "",
+                email: ""
+            }
+            if (textSearch) {
+                onSearchToSRI(textSearch)
+            } else {
+                setOpenCustomerDialog(true)
+            }
+        } catch (error) {
+            console.log(console.error());
+        }
+    }
 
     return (
         <>
@@ -182,7 +240,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                 }}
                 renderOption={(props, option) => <li {...props}>{option.identificationNumber} - {option.fiscalName}</li>}
                 freeSolo
-                onKeyDown={onSearchToSRI}
+                onKeyDown={onEnterCustomerSearch}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -198,17 +256,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                                     alignItems="flex-end">
                                     {/* {params.InputProps.endAdornment} */}
                                     <Tooltip title="Nuevo Cliente">
-                                        <IconButton onClick={() => {
-                                            refCustomerCompanyId.current = 0;
-                                            dataCustomerSRI.current = {
-                                                numeroRuc: '',
-                                                razonSocial: '',
-                                                direccion: "",
-                                                telefono: "",
-                                                email: ""
-                                            }
-                                            setOpenCustomerDialog(true);
-                                        }}>
+                                        <IconButton onClick={onClickNewCustomer}>
                                             <PersonAddAltTwoToneIcon color='success' sx={{ fontSize: 30 }} />
                                         </IconButton>
                                     </Tooltip>

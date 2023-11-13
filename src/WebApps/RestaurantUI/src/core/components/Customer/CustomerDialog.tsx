@@ -187,7 +187,7 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
 
             }
 
-            if (typeof dataCustomerSRI === 'object') {
+            if (typeof dataCustomerSRI === 'object' && dataCustomerSRI.numeroRuc) {
                 const {
                     numeroRuc,
                     razonSocial,
@@ -204,6 +204,12 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
                 }
                 if (numeroRuc.length === 10) {
                     const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.LICENSE);
+                    if (dataID) {
+                        idTipoIdentificacion = dataID.idTipoIdentificacion;
+                    }
+                }
+                if (![13, 10].includes(numeroRuc.length)) {
+                    const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.PASSPORT);
                     if (dataID) {
                         idTipoIdentificacion = dataID.idTipoIdentificacion;
                     }

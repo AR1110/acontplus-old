@@ -2,7 +2,7 @@
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { EditIcon, PersonAddAltTwoToneIcon, InfoIcon } from '@/core/components/IconsMaterial';
-import { Box, IconButton, Stack, Tooltip } from '@mui/material';
+import { IconButton, Stack, Tooltip } from '@mui/material';
 import { useRef, useState } from 'react';
 import { CustomerReadDto } from '@/core/models';
 import { SharedService, customerService } from '@/core/services';
@@ -12,6 +12,7 @@ import HtmlTooltip from '@/core/components/HtmlTooltip';
 import { CustomerInfo } from './CustomerInfo';
 import { SnackbarUtility } from '@/core/utilities';
 import { hideLoader, showLoader } from '@/spinner';
+import Swal from 'sweetalert2';
 
 const CustomerSearch = () => {
     const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
@@ -68,27 +69,46 @@ const CustomerSearch = () => {
         return true;
     }
 
-    const onSearchToSRI = async function (event: any) {
-        try {
-            const textSearch = event.target.value;
-            dataCustomerSRI.current = {
-                numeroRuc: '',
-                razonSocial: '',
-                direccion: "",
-                telefono: "",
-                email: ""
+    const showAlertConfirmID = (textSearch: string)=>{
+        Swal.fire({
+            //title: "Are you sure?",
+            html: "Desea registrar con el número de identificación <b>PASAPORTE</b>?",
+            icon: "warning",
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí!",
+            cancelButtonText: 'No!'
+        }).then(result => {
+            if (result.isConfirmed) {
+                console.log('dhoidhf')
+                dataCustomerSRI.current = {
+                    numeroRuc: textSearch,
+                    razonSocial: "",
+                    direccion: "",
+                    telefono: "",
+                    email: ""
+                }
+                setOpenCustomerDialog(true)
             }
-            if (
-                event.key === 'Enter' &&
-                (!(order.customerCompanyId > 0))) {
+        }) 
+    }
+    const onSearchToSRI = async function (textSearch: string) {
+        try {
 
-                if (!verificarNumero(textSearch)) return
+            if (!(order.customerCompanyId > 0)) {
+                const isValidID = verificarNumero(textSearch); 
+                if (!isValidID) {  
+                    showAlertConfirmID(textSearch)
+                    return
+                }
                 //Numero de RUC 
                 if (textSearch.length === 13) {
                     try {
                         showLoader();
                         SharedService.checkClientSRIByRUC(textSearch).then(response => {
-                            const { numeroRuc, razonSocial, direccion, telefono, email, error } = response; 
+                            const { numeroRuc, razonSocial, direccion, telefono, email, error } = response;
                             if (!numeroRuc) {
                                 SnackbarUtility.info(error!)
                                 return
@@ -141,13 +161,51 @@ const CustomerSearch = () => {
                         hideLoader();
                     }
                 }
-
             }
+
         } catch (error) {
             console.log(error)
         }
     }
 
+    const onEnterCustomerSearch = (event: any) => {       
+        const textSearch = event.target.value;
+        dataCustomerSRI.current = {
+            numeroRuc: '',
+            razonSocial: '',
+            direccion: "",
+            telefono: "",
+            email: ""
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            onSearchToSRI(textSearch)
+        }
+
+    }
+
+    const onClickNewCustomer = () => {
+        try {
+            const elem = document.getElementById('customerSearch') as HTMLInputElement;
+            const textSearch = elem.value;
+            customerCompanyId.current = 0;
+            dataCustomerSRI.current = {
+                numeroRuc: '',
+                razonSocial: '',
+                direccion: "",
+                telefono: "",
+                email: ""
+            }
+            if(textSearch){
+                onSearchToSRI(textSearch)
+            }else{
+                setOpenCustomerDialog(true)
+            }
+        } catch (error) {
+            console.log(console.error());
+        }
+    }
     return (
         <>
             <Autocomplete
@@ -178,7 +236,7 @@ const CustomerSearch = () => {
                 }}
                 renderOption={(props, option) => <li {...props}>{option.identificationNumber} - {option.fiscalName}</li>}
                 freeSolo
-                onKeyDown={onSearchToSRI}
+                onKeyDown={onEnterCustomerSearch}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -194,17 +252,7 @@ const CustomerSearch = () => {
                                     alignItems="flex-end">
                                     {/* {params.InputProps.endAdornment} */}
                                     <Tooltip title="Nuevo Cliente">
-                                        <IconButton onClick={() => {
-                                            customerCompanyId.current = 0;
-                                            dataCustomerSRI.current = {
-                                                numeroRuc: '',
-                                                razonSocial: '',
-                                                direccion: "",
-                                                telefono: "",
-                                                email: ""
-                                            }
-                                            setOpenCustomerDialog(true);
-                                        }}>
+                                        <IconButton onClick={onClickNewCustomer}>
                                             <PersonAddAltTwoToneIcon color='success' sx={{ fontSize: 30 }} />
                                         </IconButton>
                                     </Tooltip>
