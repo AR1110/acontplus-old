@@ -564,16 +564,54 @@
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
                 if (rowEntity.idNotaEntregaDetalle > 0 && rowEntity.estado && fS.getDate(fechaEmisionDocCreado) !== fS.getDate(fechaEmisionValidate)) {
-                    if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
-                        fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
-                    ) {
-                        return {
-                            cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                            action: 2
-                        }
 
-                    }
+                    //si fecha documento creado es anterior a fecha consolidacion articulo
+                    if (fechaEmisionDocCreado >= dataConsolidacionFecha.fechaConsolidacion) {
+                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
+                        if (fechaEmisionValidate <= dataConsolidacionFecha.fechaConsolidacion) {
+                            return {
+                                cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                                action: 2
+                            }
+                        } else if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
+                            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+
+                            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                            return {
+                                cantidadStock: resultCantStock,
+                                action: 2
+                            };
+                        }
+                    } 
+
+                    //si fecha documento creado es anterior a fecha consolidacion articulo
+                    if (fechaEmisionDocCreado <= dataConsolidacionFecha.fechaConsolidacion) {
+                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
+                        if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
+                            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+
+                            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+
+                            return {
+                                cantidadStock: resultCantStock,
+                                action: 2
+                            };
+                        }   
+                    } 
+
+                    // if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
+                    //     fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
+                    // ) {
+                    //     return {
+                    //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                    //         action: 2
+                    //     }
+
+                    // }
                 }
+
+
+
                 // if (
                 //     rowEntity.idNotaEntregaDetalle > 0 &&
                 //     fechaEmisionDocCreado !== fechaEmisionValidate &&
@@ -586,7 +624,7 @@
                 //     }
                 // }
 
-                if (fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate.getDate)) {
+                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
                     cantidadStock = 0;
                     action = 1;
                     return {
@@ -605,6 +643,7 @@
                 action
             };
         }
+
 
 
         service.save = function (data) {
@@ -640,7 +679,7 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
-                    console.log(mainDataApi)
+                    
                     const [
                         comprobanteApi,
                         clienteTempApi,
