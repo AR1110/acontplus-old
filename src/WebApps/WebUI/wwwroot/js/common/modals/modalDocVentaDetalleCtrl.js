@@ -75,8 +75,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = items; 
-                gridOptionsEnumeracion();
-                console.log($scope.data)
+                gridOptionsEnumeracion(); 
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -87,8 +86,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             hideLoader();
         }
     }
-
-    console.log(codDoc)
+ 
     if(codDoc==='09'){
         try {
             showLoader();
@@ -99,7 +97,6 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = items; 
                 gridOptionsEnumeracion();
-                console.log($scope.data)
             }).catch(error => {
                 console.error(error)
             }).finally(() => {

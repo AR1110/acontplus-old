@@ -435,8 +435,7 @@
                     console.log(response)
                 }
                 if (response.code === "1") {
-                    let mainDataApi = JSON.parse(response.payload);
-                    console.log(mainDataApi)
+                    let mainDataApi = JSON.parse(response.payload); 
                     const [
                         comprobanteApi,
                         clienteTempApi,
