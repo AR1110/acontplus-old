@@ -13,7 +13,7 @@
     let tS = {};
     let clienteSvc = {};
 
-    let mainDataForm = {}; 
+    let mainDataForm = {};
 
     //main Controller Ctrl
     app.controller('notaCreditoClienteCtrl', notaCreditoClienteCtrl);
@@ -27,12 +27,13 @@
     function notaCreditoClienteCtrl($scope, $injector, decodeToken) {
 
         notaCreditoSvc = $injector.get('notaCreditoService');
-        commonSvc      = $injector.get('commonService');
-        modalSvc       = $injector.get('modalService');
-        fS             = $injector.get('formulario');
-        tS             = $injector.get('toastService');
-        clienteSvc     = $injector.get('clienteService');
+        commonSvc = $injector.get('commonService');
+        modalSvc = $injector.get('modalService');
+        fS = $injector.get('formulario');
+        tS = $injector.get('toastService');
+        clienteSvc = $injector.get('clienteService');
         const nombreModalFactElect = $injector.get("nombreModalFactElect");
+        
 
         const TIPO_DOC = commonSvc.tipoDoc['NC'];
 
@@ -55,7 +56,7 @@
                 $scope.dataSearch.fechaFin = item.endDate
             $scope.getNotaCreditos();
         }
- 
+
         $scope.onKeyupCliente = function () {
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.idCliente = 0;
@@ -110,7 +111,7 @@
 
         //=====================Eend Filters======================= 
         $scope.getNotaCreditos = function () {
-            try { 
+            try {
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
@@ -136,12 +137,16 @@
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
-                } 
+                }
                 $scope.notaCreditos = [];
                 notaCreditoSvc.get(dataSearch).then(response => {
                     $scope.notaCreditos = response || [];
                     $scope.cloneNotaCreditos = JSON.parse(JSON.stringify($scope.notaCreditos))
-                }).finally(() => hideLoader())
+                })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -169,7 +174,7 @@
             })
 
             notaCreditoSvc.get({ tipo: 2 }).then(response => {
-                mainDataForm = response; 
+                mainDataForm = response;
             })
 
         }
@@ -211,15 +216,15 @@
         $scope.openModalDetalle = async (item) => {
             try {
 
-                const {fileCtrl, controller, template} = nombreModalFactElect.NOTA_CREDITO 
-                let ctrl = (await import('../../../' + fileCtrl))[controller];  
+                const { fileCtrl, controller, template } = nombreModalFactElect.NOTA_CREDITO
+                let ctrl = (await import('../../../' + fileCtrl))[controller];
                 showLoader();
                 let response = await commonSvc.getDataTipoDocVenta({
                     id: item.idNotaCredito,
                     codigoDocumento: TIPO_DOC.codigo
-                }).finally(()=>hideLoader())
+                }).finally(() => hideLoader())
 
-                if(!response.isComplete) throw ''
+                if (!response.isComplete) throw ''
 
                 modalSvc.openModalCustom({
                     controller: ctrl,
@@ -228,7 +233,7 @@
                     params: response,
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
-                })  
+                })
             } catch (error) {
                 console.log(error)
             }
@@ -267,7 +272,7 @@
 
                 let { isConfirmed } = await swalWithBootstrapButtons.fire({
                     title: '¿Está seguro de anular este comprobante?',
-                    html: `<small>Asegurese de haber dado de baja este comprobante en el portal del SRI</small>`,                     
+                    html: `<small>Asegurese de haber dado de baja este comprobante en el portal del SRI</small>`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Si, anular!',
@@ -330,6 +335,9 @@
 
     function modalNotaCreditoCtrl($scope, $timeout, $injector, $uibModalInstance, facturaSvc, params) {
         let gridOptionsSvc = $injector.get('gridOptionsService');
+        let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
+        let DOC_TYPE = $injector.get('DOC_TYPE');
+        let nombreModalVenta = $injector.get('nombreModalVenta');
 
         let { estabs, decimal, tarifaImpuestoVigente, tarifasImpuesto, tarifas, config, vendedores } = mainDataForm;
 
@@ -345,8 +353,7 @@
 
         $scope.clienteSearch = {};
         $scope.cliente = {};
-
-        let COD_DOC_FV = 'FV';
+        
         $scope.tipoDoc = commonSvc.tipoDoc['NC'];
         $scope.dataArticulo = {};
 
@@ -446,7 +453,7 @@
                     actividadTipoIva
                 } = params;
 
-                if (dataDocumento && dataDocumento.idNotaCredito > 0) { 
+                if (dataDocumento && dataDocumento.idNotaCredito > 0) {
                     $scope.factura = factura;
                     $scope.cliente = cliente;
 
@@ -858,7 +865,8 @@
             $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                 items: $scope.gridOptions.data,
                 decimal: $scope.decimal,
-                dataTarifaImpuesto: $scope.tarifaImpuestoVigente
+                dataTarifaImpuesto: $scope.tarifaImpuestoVigente,
+                TAX_RATE_CODE
             }))
 
             $scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
@@ -1077,7 +1085,8 @@
                 $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                     items: $scope.gridOptions.data,
                     decimal: $scope.decimal,
-                    dataTarifaImpuesto: $scope.tarifaImpuestoVigente
+                    dataTarifaImpuesto: $scope.tarifaImpuestoVigente,
+                    TAX_RATE_CODE
                 }))
             }
         }
@@ -1088,38 +1097,50 @@
             $scope.getDataFactura();
         }
 
-        $scope.getDataFactura = async function () {
+        $scope.getDataFactura = function () {
             try {
                 showLoader();
-                let response = await commonSvc.getDataTipoDocVenta({
-                    id: $scope.data.idFactura,
-                    codigoDocumento: COD_DOC_FV
-                }).finally(() => hideLoader())
-
-                if (!response.isComplete) return
-
-                $scope.gridOptions.data = response.detalleDocumento;
-                $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
-                    items: $scope.gridOptions.data,
-                    decimal: $scope.decimal,
-                    dataTarifaImpuesto: $scope.tarifaImpuestoVigente
-                }));
-                //Recalculamos los totales 
-                $scope.setCalculoTotales("cantidad", rowEntity, 0);
+                facturaSvc.getId($scope.data.idFactura).then(response => {
+                    $scope.gridOptions.data = response.items;
+                    $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
+                        items: $scope.gridOptions.data,
+                        decimal: $scope.decimal,
+                        dataTarifaImpuesto: $scope.tarifaImpuestoVigente,
+                        TAX_RATE_CODE
+                    }));
+                    //Recalculamos los totales 
+                    $scope.recalculateTotalsSimple();
+                    counterGridOptions();
+                }).catch(error => {
+                    console.log(error)
+                })
+                    .finally(() => hideLoader())
             } catch (error) {
+                hideLoader();
                 console.log(error)
             }
         }
 
-        $scope.getDetalleDoc = function () {
+        $scope.getDetalleDoc = async function () {
             try {
                 if (!($scope.data.idFactura > 0)) return
-                commonSvc.viewDetailDocument({
-                    id: this.data.idFactura,
-                    codigoDocumento: COD_DOC_FV,
+
+
+                let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+                let ctrl = (await import(fileCtrl))[controller];
+                let template = templates['FV_SRI'];
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template: template,
                     size: 'xl',
-                    windowClass: 'uibModalFullScreen'
+                    params: {
+                        codDoc: DOC_TYPE.FV_SRI,
+                        id: $scope.data.idFactura
+                    },
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
                 })
+
 
             } catch (error) {
                 console.error(error)
