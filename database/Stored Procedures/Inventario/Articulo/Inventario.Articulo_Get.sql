@@ -343,7 +343,7 @@ BEGIN
 				  ,subFamilia   = sf.descripcion
 				  ,sf.siglas
 				  ,sf.ultimoSecuencial
-                  ,sf.siglas + '-' + CAST(sf.ultimoSecuencial as varchar) as codigo
+                  ,sf.siglas + CAST(sf.ultimoSecuencial as varchar) as codigo
 			FROM dbo.SubFamilia sf  WITH (NOLOCK)
 			 LEFT JOIN Familia   f  WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
 			WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
