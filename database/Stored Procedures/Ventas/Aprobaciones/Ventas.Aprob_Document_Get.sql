@@ -93,6 +93,8 @@ BEGIN
 		          ,@dateStart     = CONVERT(DATETIME, fechaInicio, 105)
 		          ,@dateEnd       = CONVERT(DATETIME, fechaFin, 105)
 		          ,@secuencial    = LTRIM(TRIM(nroSecuencial))
+                  ,@pageIndex     = pageIndex
+                  ,@pageSize      = pageSize
 	        FROM OPENJSON(@json) WITH
             (    
                  checkBoxFecha           BIT  
@@ -107,7 +109,6 @@ BEGIN
 			    ,pageSize                INT
             )
 
-		        --------------------------------------------BUSQUEDA INDIVIDUAL POR PARAMETRO-------------------------------------------------------------------
 	        IF @secuencial IS NOT NULL
 		        BEGIN
 			        SET @sql = @sql + 'AND ad.secuencial BETWEEN ' + REPLACE(@secuencial,'-',' AND ')
@@ -207,6 +208,23 @@ BEGIN
 
                 SELECT descripcion = 'IVA '+descripcion , codigo = 'IVA', codigoPorcentaje = codigo, tarifa = porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo = '2' AND estado = 1 ORDER BY codigoPorcentaje DESC
             RETURN
+        END 
+
+    --> filtros
+    IF @tipo = 3
+        BEGIN
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+            SELECT idEstadoPago, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+
+            RETURN 
         END 
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'

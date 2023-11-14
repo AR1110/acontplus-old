@@ -25,7 +25,8 @@ BEGIN
 	DECLARE @uniqueId VARCHAR(150)
 	DECLARE @idTipoDocumento INT 
 	
-	SELECT @uniqueId = uniqueId FROM Ventas.Aprob_Document WHERE idAprob_Document = @id
+	SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+
 	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
 	SELECT 
@@ -47,8 +48,8 @@ BEGIN
 	   ,totalConImpuestos
 	   ,propina
 	   ,importeTotal	   
-	FROM Ventas.Aprob_Document d
-	INNER JOIN Cliente cl ON cl.idCliente = d.idCliente
+	FROM Ventas.Aprob_Document d WITH (NOLOCK)
+	INNER JOIN Cliente        cl WITH (NOLOCK) ON cl.idCliente = d.idCliente
 	WHERE d.idAprob_Document = @id
 
 	SELECT 
@@ -58,10 +59,10 @@ BEGIN
 		cl.numeroIdentificacion,
 		direccion = ISNULL(cl.direccion,'')
 		,tipoIdentificacion = ti.codigo 
-	FROM Ventas.Aprob_Document aprob_doc
-	INNER JOIN Cliente cl WITH(NOLOCK) ON cl.idCliente = aprob_doc.idCliente
-	LEFT JOIN TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
-	WHERE aprob_doc.idAprob_Document = @id;
+	FROM Ventas.Aprob_Document    ad
+	INNER JOIN Cliente            cl WITH(NOLOCK) ON cl.idCliente            = ad.idCliente
+	 LEFT JOIN TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+	WHERE ad.idAprob_Document = @id;
 
 	SELECT 
 		idAprob_Document_Detailt
@@ -74,29 +75,52 @@ BEGIN
 	   ,dt.descripcion
 	   ,medida = m.descripcion
 	   ,dt.cantidad
-	   ,dt.precioUnitario	
-	   ,precioConIva = CAST(((dt.precioUnitario * (dt.tarifa / 100)) + dt.precioUnitario) AS decimal(18, 2)) -- dt.precioUnitario + dt.valor
-	   ,porcentajeDescuento = CASE WHEN dt.precioUnitario=0 THEN 0 ELSE  (dt.descuento / dt.precioUnitario) * 100   END   
-	   ,precioTotalSinImpuesto = (dt.precioUnitario - dt.descuento) * dt.cantidad
+	   ,dt.precioUnitario
+	   ,((dt.precioUnitario - dt.descuento) * dt.cantidad) as precioTotalSinImpuesto
 	   ,dt.descuento
-	   ,totalDescuento = dt.cantidad * dt.descuento
+	   ,dt.cantidad * dt.descuento as totalDescuento
 	   ,nombreTipoIva = t.descripcion
 	   ,valor = t.porcentaje
 	   ,codigoTipoIva = t.codigo
-	   ,codigoPorcentaje = CONVERT(VARCHAR(4), dt.codigoPorcentaje)
-	   ,tarifa = dt.tarifa
-	   ,datosAdicionales = a.datosAdicionales
-	FROM  Ventas.Aprob_Document_Detailt dt
-	INNER JOIN dbo.Articulo a ON a.code_unique      = dt.codArticulo
-	INNER JOIN dbo.Medida   m ON m.codigo           = dt.codMedida
-	INNER JOIN dbo.TipoIva  t ON t.codigoPorcentaje = dt.codigoPorcentaje
+	   ,CONVERT(VARCHAR(4), dt.codigoPorcentaje) as codigoPorcentaje
+	   ,dt.tarifa                                as tarifa
+	   ,a.datosAdicionales                       as datosAdicionales
+       ,ISNULL((SELECT idMedida     = m.idMedida 
+			          ,descripcion  = m.descripcion
+			          ,tarifas      = (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor
+								       FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								       INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								       WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
+								       ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			         ,orden = IIF(af.gestionVenta = 1,1,3)
+                     ,af.conversion
+			   FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			   INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			   WHERE af.idArticulo = dt.idArticulo AND af.estado = 1 FOR JSON PATH),'[]') as fraccionado
+             ,(
+                SELECT m.idMedida
+			          ,m.descripcion
+			          ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor 
+								        FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								        INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								        WHERE ap.idArticulo = a.idArticulo
+								        ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			          ,orden = 2
+                      ,1 as conversion
+			    FROM dbo.Articulo     a WITH (NOLOCK)
+			    INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			    WHERE a.idArticulo = dt.idArticulo AND a.estado = 1 FOR JSON PATH
+             ) as principal
+	FROM  Ventas.Aprob_Document_Detailt dt WITH (NOLOCK)
+	INNER JOIN dbo.Articulo              a WITH (NOLOCK) ON a.code_unique      = dt.codArticulo
+	INNER JOIN dbo.Medida                m WITH (NOLOCK) ON m.codigo           = dt.codMedida
+	INNER JOIN dbo.TipoIva               t WITH (NOLOCK) ON t.codigoPorcentaje = dt.codigoPorcentaje
 	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY dt.idAprob_Document_Detailt ASC 
 
-	SELECT 
-		 tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
-			             WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
-			             ELSE '' END 
-		,serieComprobante = serie
+	SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
+			               WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
+			               ELSE '' END 
+		  ,serieComprobante = serie
 	FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
 	
 	SELECT 
@@ -106,13 +130,10 @@ BEGIN
 		ia.estado
 	FROM InfoAdicionalDoc ia
 	WHERE ia.idComprobante = @id AND ia.idTipoDocumento = @idTipoDocumento
-
-	-----------------------------------------------------Datos Adicionales de Articulo------------------------------------
+	
 	SELECT h.idDocumento, h.idHistoryInfoAdicional, selected = CAST(1 as BIT), i.* FROM Ventas.HistoryInfoAdicional h WITH(NOLOCK)
 	INNER JOIN Compra.InfoAdicional i WITH(NOLOCK) ON i.idInfoAdicional = h.idInfoAdicional
-	WHERE h.codDoc='APR' AND h.idDocumento = @id	
-	
-
+	WHERE h.codDoc='APR' AND h.idDocumento = @id
 
 END
 
