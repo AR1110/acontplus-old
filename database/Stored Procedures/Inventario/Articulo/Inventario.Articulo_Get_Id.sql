@@ -51,7 +51,7 @@ BEGIN
 			SELECT '0','El id: '+ CAST(@id as nvarchar)+' no existe',''
 			RETURN
 		END 
-			SELECT   
+			SELECT
 		         idArticulo = a.idArticulo
 				,idSubFamilia = ISNULL(a.idSubFamilia,0) 
 				,idTipoIce = ISNULL(a.idTipoIce,0) 

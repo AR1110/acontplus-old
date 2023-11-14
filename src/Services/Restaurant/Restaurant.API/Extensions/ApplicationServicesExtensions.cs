@@ -29,6 +29,9 @@ namespace Restaurant.API.Extensions
             services.AddScoped<IPromotionService, PromotionService>();
             services.AddScoped<IPromotionMenuService, PromotionMenuService>();
             services.AddScoped<IS3StorageService, S3StorageService>();
+            services.AddScoped<IConsumptionConfigService, ConsumptionConfigService>();
+            services.AddScoped<IConsumptionService, ConsumptionService>();
+            services.AddScoped<IConsumptionCancelledService, ConsumptionCancelledService>();
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
