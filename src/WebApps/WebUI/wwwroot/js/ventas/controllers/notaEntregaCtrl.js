@@ -52,7 +52,7 @@
 
         $scope.typeSend = 'GenericFile';
 
-        $scope.permisonEditarDoc = {}
+        $scope.permisoEditarDoc = {}
 
         $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
         $scope.parametersPrint = {};
@@ -220,7 +220,7 @@
 
             notaEntregaSvc.getDataForm().then(response => {
                 mainDataForm = response;
-                $scope.permisonEditarDoc = response.permisonEditarDoc;
+                $scope.permisoEditarDoc = response.permisoEditarDoc;
             })
 
         }
@@ -353,11 +353,11 @@
                     })
                     modalRef.result.then(result => {
                         if (typeof result === 'object') {
-                            if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
+                            $scope.getNotaEntregas();
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
                             }
 
-                            $scope.getNotaEntregas();
                         }
                     })
                 })
@@ -442,7 +442,7 @@
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                             //Una vez actualizado el documento  
-                            if (typeof $scope.permisonEditarDoc === 'object' && $scope.permisonEditarDoc.requiereClave) {
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
                             }
                             $scope.getNotaEntregas();
@@ -1834,6 +1834,10 @@
                 tS.toastr('warning', 'No tienes permiso para realizar esta acción');
                 return
             }
+            if ($scope.gridOptions.data.length === 0) {
+                return
+            }
+
             if (typeof $scope.data.porcentajeDescuento !== 'number' || isNaN($scope.data.porcentajeDescuento)) {
                 tS.toastr('warning', 'Ingrese un Número Válido');
                 return
@@ -1858,6 +1862,9 @@
                 if (!$scope.permisoComprobanteVenta.descuento) {
                     $scope.data.descuento = 0;
                     tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                    return
+                }
+                if ($scope.gridOptions.data.length === 0) {
                     return
                 }
                 if (typeof $scope.data.totalDescuento !== 'number' || isNaN($scope.data.totalDescuento)) {

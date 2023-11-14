@@ -37,14 +37,9 @@
         const PERMISSION_KEY_ACTIONS = {
             E: 'E',
             A: 'A',
-        }
+        } 
 
-        let fileCtrl = nombreModalVenta.PROFORMA.fileCtrl;
-        let template;
-        let controller;
-        let ctrl;
-
-        $scope.jsonPermission = {}
+        $scope.permisoEditarDoc = {}
 
         $scope.moreSearchOptions = false;
         $scope.recordsQuantity = [10, 25, 50, 100];
@@ -216,8 +211,9 @@
 
             }).finally(() => hideLoader())
 
-            proformaSvc.getDataForm().then(result => {
-                $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
+            proformaSvc.getDataForm().then(response => {
+                mainDataForm = response;
+                $scope.permisoEditarDoc = response.permisoEditarDoc;
             })
 
         }
@@ -246,87 +242,24 @@
 
 
         $scope.openModalNew = async () => {
-            // try {
-            //     modalSvc.openModalCustom({
-            //         controller: 'modalProformaCtrl',
-            //         template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
-            //         size: 'xl',
-            //         params: {
-            //             action: 'NUEVO'
-            //         },
-            //         windowClass: 'uibModalFullScreen',
-            //         isRenderRazorPartial: true
-            //     }).result.then(result => {
-            //         if (typeof result !== 'object') return
-
-            //         //Pendiednte 📛
-            //         $scope.validateOperationPrintAndPayment(result)
-            //     })
-            // } catch (error) {
-            //     console.log(error)
-            // }
             try {
-                ctrl = nombreModalVenta.PROFORMA.controllers['MN'];
-                template = nombreModalVenta.PROFORMA.templates['MN'];
-                let controller = (await import(fileCtrl))[ctrl];
-
-                let params = {
-                    TIPO_REGISTRO: 'NUEVO'
-                }
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
-
-        $scope.openModalFiltro = async function () {
-            try {
-                ctrl = nombreModalVenta.PROFORMA.controllers['MF'];
-                template = nombreModalVenta.PROFORMA.templates['MF'];
-                controller = (await import(fileCtrl))[ctrl];
-
-                let params = {
-                    dataSearch: $scope.dataSearch,
-                    clienteFiltro: $scope.clienteFiltro,
-                    usuarioSearchFiltro: $scope.usuarioSearchFiltro,
-                    mes: $scope.mes
-                }
-
-                let modalRef = modalSvc.openModalCustom({
-                    controller,
-                    template,
-                    params,
-                    size: 'lg'
-                })
-
-                modalRef.result.then(result => {
-                    let {
-                        dataSearch,
-                        clienteFiltro,
-                        usuarioSearchFiltro,
-                        mes,
-                        isSearch
-                    } = result;
-                    $scope.dataSearch = dataSearch;
-                    $scope.clienteFiltro = clienteFiltro;
-                    $scope.usuarioSearchFiltro = usuarioSearchFiltro;
-                    $scope.mes = mes;
-                    if (isSearch) {
-                        $scope.getProformas();
-                    }
+                modalSvc.openModalCustom({
+                    controller: 'modalProformaCtrl',
+                    template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                    size: 'xl',
+                    params: {
+                        action: 'NUEVO'
+                    },
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                }).result.then(result => {
+                    if (typeof result !== 'object') return
+                    $scope.getProformas();
                 })
             } catch (error) {
                 console.log(error)
             }
         }
-
-
-
         $scope.searchLocalProforma = function () {
             let proformas = JSON.parse(JSON.stringify($scope.cloneProformas));
             $scope.proformas = $filter('filter')(proformas, $scope.dataSearch.bySearch);
@@ -334,37 +267,30 @@
         }
 
 
-        $scope.openModalDetalle = async (item) => {
+        $scope.openModalDetalle = async (params) => {
             try {
-                ctrl = nombreModalVenta.PROFORMA.controllers['MD'];
-                template = nombreModalVenta.PROFORMA.templates['MD'];
-                controller = (await import(fileCtrl))[ctrl];
-
-                let response = await commonSvc.getDataTipoDocVenta({
-                    id: item.idProforma,
-                    codigoDocumento: tipoDoc.codigo
-                })
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DETALLE',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params
+                let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+                let ctrl = (await import(fileCtrl))[controller];
+                let template = templates['PR'];
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template: template,
+                    size: 'xl',
+                    params: {
+                        codDoc: params.codDoc,
+                        id: params.idDocumento
+                    },
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
                 })
             } catch (error) {
-                console.log(error);
+                console.log(error)
             }
         }
 
+
         $scope.openModalEdit = async (item) => {
             try {
-
                 let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
                 if (result.code === "2") {
                     commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
@@ -372,115 +298,79 @@
                 }
 
                 showLoader();
-                ctrl = nombreModalVenta.PROFORMA.controllers['ME'];
-                template = nombreModalVenta.PROFORMA.templates['ME'];
-                controller = (await import(fileCtrl))[ctrl];
+                proformaSvc.getId(item.idDocumento).then(response => {
+                    const modalRef = modalSvc.openModalCustom({
+                        controller: 'modalProformaCtrl',
+                        template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                        size: 'xl',
+                        params: {
+                            data: response,
+                            action: 'EDITAR'
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object') {
+                            $scope.getProformas();
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
+                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                            }
 
-                let response = await commonSvc.getDataTipoDocVenta({
-                    id: item.idProforma,
-                    codigoDocumento: tipoDoc.codigo
-                })
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'EDITAR',
-                    data: response
-                }
-
-                modalSvc.openModalCustom({
-                    controller,
-                    template,
-                    size: 'xl',
-                    params,
-                    windowClass: 'uibModalFullScreen',
-                    isRenderRazorPartial: true
-                }).result.then(result => {
-                    if (typeof result === 'object') {
-
-                        //Una vez actualizado el documento 
-                        let {
-                            additional
-                        } = $scope.jsonPermission;
-                        if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
-                            commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
                         }
-
-                        $scope.getProformas();
-                    }
+                    })
                 })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
 
             } catch (error) {
-                console.log(error)
-            } finally {
                 hideLoader();
+                console.log(error)
             }
         }
 
         $scope.openModalDuplicate = async (item) => {
             try {
+                console.log(item)
                 showLoader();
-                ctrl = nombreModalVenta.PROFORMA.controllers['MDUPLICATE'];
-                template = nombreModalVenta.PROFORMA.templates['MDUPLICATE'];
-                controller = (await import(fileCtrl))[ctrl];
+                proformaSvc.getId(item.idDocumento).then(response => {
+                    let modalRef = modalSvc.openModalCustom({
+                        controller: 'modalProformaCtrl',
+                        template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                        size: 'xl',
+                        params: {
+                            data: response,
+                            action: 'DUPLICAR'
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
 
-                let response = await commonSvc.getDataTipoDocVenta({
-                    id: item.idProforma,
-                    codigoDocumento: tipoDoc.codigo
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object') {
+                            $scope.getProformas();
+                        }
+                    })
                 })
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DUPLICAR',
-                    data: response
-                }
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params
-                })
-            } catch (error) {
-
-                console.log(error)
-
-            } finally {
-                hideLoader();
-            }
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
+            } catch (error) { 
+                console.log(error) 
+            }  
 
         }
-
-        $scope.openModalParam = ({
-            controller,
-            template,
-            size = 'xl',
-            params
-        }) => {
-
-            modalSvc.openModalCustom({
-                controller,
-                template,
-                size,
-                params,
-                windowClass: 'uibModalFullScreen',
-                isRenderRazorPartial: true
-            }).result.then(result => {
-                if (typeof result === 'object') {
-                    $scope.getProformas();
-                }
-            })
-
-        }
-
-
+ 
+ 
         $scope.askToDelete = async (item) => {
             try {
                 if (item.anulada) {
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
-                }
-
-
+                } 
                 let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
                 if (result.code === "2") {
                     commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
@@ -509,8 +399,7 @@
 
                 if (isConfirmed) {
                     showLoader();
-                    proformaSvc.delete(item.idProforma).then(response => {
-                        hideLoader();
+                    proformaSvc.delete(item.idDocumento).then(response => { 
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
@@ -518,20 +407,16 @@
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
 
-                            //Una vez actualizado el documento 
-                            let {
-                                additional
-                            } = $scope.jsonPermission;
-                            if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
+                            //Una vez actualizado el documento  
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
                                 commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
                             }
 
                             $scope.getProformas();
                         }
                     }).catch(error => {
-                        console.log(error);
-                        hideLoader();
-                    })
+                        console.log(error); 
+                    }).finally(()=>hideLoader())
 
                 }
             } catch (error) {
@@ -557,7 +442,7 @@
                         format: "pdf"
                     },
                     spParams: {
-                        id: item.idProforma
+                        id: item.idDocumento
                     }
                 }
             }
@@ -569,11 +454,9 @@
 
         $scope.print = function (item) {
             let parameters = {
-                idDocument: item.idDocument,
-                idTipoDocumento: item.idTipoDocumento,
+                idDocument: ('idDocumento' in item) ? item.idDocumento : item.idDocument, 
                 codEstab: item.codEstab,
-                codDoc: tipoDoc.codigo,
-                nroIdentificacion: item.nroIdentificacion,
+                codDoc: tipoDoc.codigo, 
                 codigo: 'RNEPT'
             }
 
@@ -585,16 +468,11 @@
 
 
         //Reporte 
-        $scope.getReport = function (item) {
-
-            let format = 'pdf';
-
+        $scope.getReport = function (item) { 
+            let format = 'pdf'; 
             let dataParms = {
                 id: item.idDocumento,
-            }
-
-
-
+            } 
             const parameters = {
                 hasService: true,
                 reportParams: JSON.stringify({
@@ -625,19 +503,18 @@
         'params'
     ];
     function modalProformaCtrl($scope, $uibModalInstance, $timeout, $injector, params) {
-        let ventaSvc = $injector.get('ventaService');
         let clienteSvc = $injector.get('clienteService');
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let storageSvc = $injector.get('storageService');
-        let articuloSvc = $injector.get('articuloService');
         let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
 
+        console.log('modal proforma')
 
         $scope.tipoDoc = tipoDoc;
         $scope.infoEstabPtoEmi = {};
 
         $scope.data = {
-            idFactura: 0,
+            idProforma: 0,
             idBodega: 0,
             idPuntoEmision: 0,
             idTiempoCredito: 0,
@@ -731,68 +608,20 @@
                 }
 
                 //Verificacion del stock 
-                if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
-                    checkNotificationStock(colDef.field, rowEntity, oldValue);
-                    return
-                }
-                if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
-                    checkNotificationStock(colDef.field, rowEntity, oldValue);
-                    return
-                }
+                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                //     return
+                // }
+                // if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
+                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                //     return
+                // }
 
-                setCalculoTotales(colDef.field, rowEntity, oldValue);
+                // setCalculoTotales(colDef.field, rowEntity, oldValue);
             })
         }
 
         $scope.gridOptionsItemsDeleted = [];
-
-        function checkNotificationStock(field, rowEntity, oldValue) {
-            try {
-                if (!rowEntity.llevaInventario) return;
-                showLoader();
-                let { cantidadStock } = facturaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision)
-                articuloSvc.checkNotificationStock({
-                    idArticulo: rowEntity.idArticulo,
-                    cantidad: cantidadStock,
-                    idBodega: rowEntity.idBodega,
-                    idMedida: rowEntity.idMedida
-                }).then(async responseApi => {
-                    hideLoader();
-                    let { code, message, titleSms } = responseApi;
-                    if (code === "1") {
-                        setCalculoTotales(field, rowEntity, oldValue);
-                        return
-                    }
-
-                    let { isConfirmed } = await Swal.fire({
-                        title: `<small>${titleSms}</small>`,
-                        icon: 'warning',
-                        html: `<small>${message}</small>`,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                    })
-
-                    if (isConfirmed) {
-                        if (code === "0") {
-                            rowEntity[field] = oldValue;
-                            setCalculoTotales(field, rowEntity, oldValue);
-                            $("#custom-template-md-autocomplete-articulo").focus();
-                        }
-                        if (code === "2") {
-                            setCalculoTotales(field, rowEntity, oldValue);
-                        }
-                    }
-
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error)
-                })
-
-            } catch (error) {
-                hideLoader();
-                console.log(error);
-            }
-        }
 
         $scope.setInfoEstabPtoEmi = function () {
             if ($scope.establecimientos.length > 0) {
@@ -819,8 +648,6 @@
                 decimal,
                 config,
                 vendedores,
-                clienteDefault,
-                articuloDefault
             } = mainDataForm;
             $scope.establecimientos = estabs;
             let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
@@ -855,10 +682,6 @@
                     let dataPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi));
                     $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                 }
-                if ($scope.tiemposCredito.length > 0) {
-                    $scope.data.idTiempoCredito = $scope.tiemposCredito[0].idTiempoCredito;
-                    $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
-                }
 
                 if ($scope.vendedores.length > 0) {
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
@@ -866,22 +689,20 @@
                     $scope.data.idUsuario = 0;
                 }
 
-                //Cliente Predeterminado 
-                if (clienteDefault.idCliente > 0) {
-                    $scope.cliente = clienteDefault;
-                }
+                // //Cliente Predeterminado 
+                // if (clienteDefault.idCliente > 0) {
+                //     $scope.cliente = clienteDefault;
+                // }
 
-                //Articulo Predeterminado
-                if (articuloDefault.idArticulo > 0) {
-                    articuloSvc.getForSale({
-                        idArticulo: articuloDefault.idArticulo,
-                        idBodega: $scope.data.idBodega
-                    }).then(dataArticuloApi => {
-                        $scope.setItemArticuloEnDetalle(dataArticuloApi)
-                    })
-                }
-
-                getFechaVencimiento();
+                // //Articulo Predeterminado
+                // if (articuloDefault.idArticulo > 0) {
+                //     articuloSvc.getForSale({
+                //         idArticulo: articuloDefault.idArticulo,
+                //         idBodega: $scope.data.idBodega
+                //     }).then(dataArticuloApi => {
+                //         $scope.setItemArticuloEnDetalle(dataArticuloApi)
+                //     })
+                // } 
             }
             $scope.tarifaImpuestoVigente = tarifaImpuestoVigente;
 
@@ -892,7 +713,6 @@
                     comprobante,
                     cliente,
                     items,
-                    infoAdicionalDocumento,
                 } = params.data;
                 console.log(params)
                 $scope.data = {
@@ -900,17 +720,15 @@
                     ...structuredClone(comprobante)
                 }
                 $scope.data.fechaEmision = new Date();
-                $scope.data.idFactura = 0;
-                getFechaVencimiento();
+                $scope.data.idProforma = 0;
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
                 $scope.gridOptions.data = items.map(item => ({
                     ...item,
-                    idFacturaDetalle: 0
+                    idProformaDetalle: 0
                 }))
 
                 $scope.data.fechaEmisionEscrita = fS.getFechaEscrita($scope.data.fechaEmision);
-                $scope.data.fechaVencimientoEscrita = fS.getFechaEscrita($scope.data.fechaVencimiento);
 
                 if ($scope.vendedores.length > 0) {
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
@@ -919,7 +737,6 @@
                 }
 
                 $scope.cliente = cliente;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
                 counterGridOptions();
             }
 
@@ -930,7 +747,6 @@
                     comprobante,
                     cliente,
                     items,
-                    infoAdicionalDocumento,
                 } = params.data;
 
                 $scope.data = {
@@ -943,7 +759,6 @@
                 $scope.gridOptions.data = items;
 
                 $scope.data.fechaEmisionEscrita = fS.getFechaEscrita($scope.data.fechaEmision);
-                $scope.data.fechaVencimientoEscrita = fS.getFechaEscrita($scope.data.fechaVencimiento);
 
                 if ($scope.vendedores.length > 0) {
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
@@ -952,12 +767,6 @@
                 }
 
                 $scope.cliente = cliente;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                $scope.historyDatosAdicionales = $scope.datosAdicionalesArticulo.map(item => ({
-                    idArticulo: item.idArticulo,
-                    idInfoAdicional: item.idInfoAdicional,
-                    selected: true,
-                }))
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
             }
@@ -971,14 +780,14 @@
             });
 
 
-            if (params.action === "NUEVO" && !($scope.data.idFactura > 0)) {
-                if (Object.keys(storageSvc.getObject("storeFacturaDetail")).length > 0) {
-                    storageSvc.restoreInvoiceDetail("storeFacturaDetail").then(result => {
+            if (params.action === "NUEVO" && !($scope.data.idProforma > 0)) {
+                if (Object.keys(storageSvc.getObject("storeProformaDetail")).length > 0) {
+                    storageSvc.restoreInvoiceDetail("storeProformaDetail").then(result => {
                         if (result.isConfirmed) {
                             $scope.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);
                             delete result.dataInvoiceDetail[result.value];
 
-                            storageSvc.setObject("storeFacturaDetail", result.dataInvoiceDetail)
+                            storageSvc.setObject("storeProformaDetail", result.dataInvoiceDetail)
 
                             recalculateTotalsSimple();
                             $scope.$apply();
@@ -990,34 +799,7 @@
             $scope.setInfoEstabPtoEmi();
 
         }
-        function getFechaVencimiento() {
-            if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
-                let fechaEmision = fS.setHoursToDate($scope.data.fechaEmision)
-                let dataTiempoCredito = $scope.tiemposCredito.find(item => item.idTiempoCredito === $scope.data.idTiempoCredito);
-                let diasCredito = typeof dataTiempoCredito === 'object' ? dataTiempoCredito.diasCredito : 0;
 
-                let {
-                    fechaVencimiento,
-                    fechaEmisionEscrita,
-                    fechaVencimientoEscrita
-                } = fS.sumarDiasAFecha(fechaEmision, diasCredito);
-
-                // let formattedDateTime = fS.formatDateMoment(fechaVencimiento)
-
-                $scope.data.fechaVencimiento = new Date(fechaVencimiento);
-                $scope.data.fechaEmisionEscrita = fechaEmisionEscrita;
-                $scope.data.fechaVencimientoEscrita = fechaVencimientoEscrita;
-
-                //Variables temporales
-                $scope.dataClone.fechaEmision = fechaEmision;
-                $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
-            }
-        }
-
-        $scope.resultModalAdicional = function (result) {
-            let { historyDatosAdicionales } = result;
-            $scope.historyDatosAdicionales = historyDatosAdicionales;
-        }
         function setColumnDefs() {
             let defaultPermission = Object.freeze({
                 tarifa: true,
@@ -1032,17 +814,13 @@
             const ventaDetailPermission = $scope.permisoDetalleVenta ? $scope.permisoDetalleVenta : defaultPermission;
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
-        <a update-article ng-click="grid.appScope.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >
-
-        <view-kardex params="row.entity"></view-kardex>
-
-        <a  btn-dato-adicional-articulo-fact-elect entity="row.entity" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' history-datos-adicionales="grid.appScope.historyDatosAdicionales" result-modal-adicional="grid.appScope.resultModalAdicional(result)" class= "btn btn-warning btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
+        <a  update-article ng-click="grid.appScope.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >`;
 
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
-                width: '12%',
-                minWidth: '100',
+                width: '5%',
+                minWidth: '50',
                 cellTemplate: CELL_TEMPLATE_OPTION,
             },
             {
@@ -1299,13 +1077,6 @@
                     let index = $scope.gridOptions.data.indexOf(rowEntity);
                     $scope.gridOptions.data.splice(index, 1);
 
-                    if (rowEntity.idFacturaDetalle > 0) {
-                        $scope.gridOptionsItemsDeleted.push({
-                            ...rowEntity,
-                            cantidad: rowEntity.cantidadOriginal,
-                            estado: 0
-                        });
-                    }
 
                     //Recalculamos los totales 
                     setCalculoTotales("cantidad", rowEntity, 0);
@@ -1313,10 +1084,6 @@
                     $scope.$apply();
                 }
 
-                if (isConfirmed && rowEntity.datosAdicionales) {
-                    $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
-                    $scope.historyDatosAdicionales = $scope.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.idArticulo);
-                }
             } catch (error) {
                 console.log(error)
             }
@@ -1408,16 +1175,6 @@
             }
         }
 
-
-
-        $scope.onChangeTiempoCredito = function () {
-            if (!$scope.permisoComprobanteVenta.tiempoCredito) {
-                tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-                return
-            }
-            getFechaVencimiento();
-        }
-
         $scope.onChangeFechaEmision = function () {
             try {
                 if (!$scope.permisoComprobanteVenta.fechaEmision) {
@@ -1425,7 +1182,7 @@
                     tS.toastr('warning', 'No tienes permiso para realizar esta acción');
                     return
                 }
-                getFechaVencimiento();
+                $scope.data.fechaEmision = fS.setHoursToDate($scope.data.fechaEmision);
             } catch (error) {
                 console.log(error)
                 $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
@@ -1435,31 +1192,7 @@
         //==============================START CUSTOMER===========================
         $scope.onSelectedClienteChange = async function (item) {
             try {
-
-                if (!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Datos Incorrectos',
-                        html: 'Número de identificación no validado!',
-                        showConfirmButton: true,
-                        showCancelButton: true,
-                        cancelButtonText: 'Cancelar'
-                    })
-                    return
-                }
-
-                if (['R', 'C', 'P'].includes(item.tipoIdentificacion) && $scope.notificacionVenta.notificacionVenta) {
-                    let isPendientAccount = await ventaSvc.verifyPendientAccount({
-                        idCliente: item.idCliente
-                    });
-                    if (isPendientAccount) {
-                        setCustomerData(item);
-                    } else {
-                        setCustomerData(item);
-                    }
-                } else {
-                    setCustomerData(item)
-                }
+                setCustomerData(item)
             } catch (error) {
                 $scope.cliente = {};
                 console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
@@ -1471,9 +1204,7 @@
         async function setCustomerData(item) {
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
-            $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
             $scope.data.fechaEmision = new Date();
-            getFechaVencimiento();
             $scope.$apply();
         }
 
@@ -1599,7 +1330,7 @@
         //=================================START PRODUCT=======================================
         function addRow() {
             const obj = {
-                idFacturaDetalle: 0,
+                idProformaDetalle: 0,
                 n: 1,
                 codigo: "",
                 idArticulo: 0,
@@ -1638,18 +1369,20 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0;
+                let index = 0, entity = {};
 
                 let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
                 if (findIndexById === -1) {
                     addRow();
                     index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
+                    entity = $scope.gridOptions.data[index];
                 } else {
                     index = findIndexById;
+                    entity = $scope.gridOptions.data[index];
+                    entity.cantidad = entity.cantidad + 1;
                 }
 
-                let entity = $scope.gridOptions.data[index];
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
 
@@ -1778,6 +1511,10 @@
                 tS.toastr('warning', 'No tienes permiso para realizar esta acción');
                 return
             }
+            if ($scope.gridOptions.data.length === 0) {
+                return
+            }
+
             if (typeof $scope.data.porcentajeDescuento !== 'number' || isNaN($scope.data.porcentajeDescuento)) {
                 tS.toastr('warning', 'Ingrese un Número Válido');
                 return
@@ -1802,6 +1539,9 @@
                 if (!$scope.permisoComprobanteVenta.descuento) {
                     $scope.data.descuento = 0;
                     tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                    return
+                }
+                if ($scope.gridOptions.data.length === 0) {
                     return
                 }
                 if (typeof $scope.data.totalDescuento !== 'number' || isNaN($scope.data.totalDescuento)) {
@@ -1846,10 +1586,7 @@
                 tS.toastr('warning', 'Seleccione el Punto de Emisión');
                 return
             }
-            if (!($scope.data.idTiempoCredito > 0)) {
-                tS.toastr('warning', 'Seleccione el Tiempo Credito');
-                return
-            }
+
             if (!(fS.isDateValid($scope.data.fechaEmision))) {
                 tS.toastr('warning', 'Ingrese la Fecha de emisión');
                 return
@@ -1885,10 +1622,6 @@
                 // }
             }
 
-            if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
-                tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
-                return
-            }
             if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
                 if (!$scope.cliente.razonSocialComprador || !$scope.cliente.nombreComercial) {
                     tS.toastr('warning', 'Seleccione el Cliente');
@@ -1939,31 +1672,29 @@
                     throw "Invalid form!";
                 }
 
-                if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
-                    fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
-                    return
-                }
+                // if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
+                //     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
+                //     return
+                // }
 
                 if (isRegister()) {
                     showLoader();
-                    serieComprobante = await facturaSvc.generateSerieComprobante({
+                    serieComprobante = await proformaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     });
                     hideLoader();
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
-                    titleSwal = '<small>Guardar Factura</small>';
+                    titleSwal = '<small>Guardar Proforma</small>';
                     confirmButtonText = 'Guardar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
 
                 } else if (isUpdate()) {
                     serieComprobante = $scope.data.serieComprobante;
-                    titleSwal = '<small>Actualizar Factura</small>';
+                    titleSwal = '<small>Actualizar Proforma</small>';
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 }
-
-                console.log(serieComprobante)
 
                 const customSwal = Swal.mixin({
                     customClass: {
@@ -1990,36 +1721,48 @@
                 //Tarifa Aplicada al Documento
                 $scope.data.tarifa = $scope.tarifaImpuestoVigente.tarifa;
 
-                //Mappeamos todo el objecto necesario para guardar factura.
-                let params = facturaSvc.queryMapper({
+                let query = proformaSvc.queryMapper({
                     data: $scope.data,
                     cliente: $scope.cliente,
-                    detalles: $scope.gridOptions.data,
-                    itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    historyDatosAdicionales: $scope.historyDatosAdicionales
+                    detalles: $scope.gridOptions.data
                 })
-
 
                 //Registar Doc 
                 if (isRegister()) {
                     showLoader();
-                    facturaSvc.save(params).then(response => {
+                    proformaSvc.save(query).then(response => {
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
-                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
-                            let mainData = {
-                                isRegister: true,
-                                data: response.dataResponse
-                            }
-                            $uibModalInstance.close(mainData)
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            $uibModalInstance.close(response)
                         }
                     }).catch(error => {
-                        console.error(error);
+                        hideLoader();
+                        console.log(error)
                     }).finally(() => hideLoader())
                 }
+
+                //Update Doc 
+                if (isUpdate()) {
+                    showLoader()
+                    proformaSvc.update($scope.data.idProforma, query).then(response => {
+                        if (response.code === "0") {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            hideLoader();
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            $scope.isUpdate = true;
+                            $uibModalInstance.close(response)
+                        }
+                    }).catch(error => {
+                        console.log(error)
+                    }).finally(() => hideLoader())
+
+                }
+
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -2032,7 +1775,7 @@
 
         async function askToSaveStorage() {
             try {
-                await storageSvc.askToSaveDetailDoc("storeFacturaDetail", $scope.gridOptions.data);
+                await storageSvc.askToSaveDetailDoc("storeProformaDetail", $scope.gridOptions.data);
                 $uibModalInstance.close();
             } catch (error) {
                 console.log(error)

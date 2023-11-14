@@ -71,6 +71,19 @@ const orderService = {
         return response;
     },
 
+    async delete(id: number) {
+        const resultAxios = await Http({
+            method: 'delete',
+            url: `${PATHS.PRIVATE}${URL}${id}`,
+            params: {
+                id
+            }
+        })
+
+        const response: ApiResponse = resultAxios.data;
+        return response;
+    },
+
 }
 
 export {

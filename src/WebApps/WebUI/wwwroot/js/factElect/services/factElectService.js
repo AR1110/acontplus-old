@@ -175,7 +175,7 @@
                     let tarifaImpuestoVigente = mainData[11][0];
 
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
-                    let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
+                    let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
 
                     // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
                     const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
@@ -229,7 +229,7 @@
                         vendedores,
                         articuloDefault,
                         clienteDefault,
-                        permisonEditarDoc
+                        permisoEditarDoc
                     };
 
                 }
@@ -330,7 +330,7 @@
                             disabledActionUpdate: item.codEstado === 'CBR' || item.codEstado === 'PP' || item.codEstado === 'A',
                             disabledActionAnular: item.codEstado === 'A',
                             enabledActionCobro: item.codEstado === 'PP' || item.codEstado === 'PE',
-                            enabledActionCuota: item.codEstado === 'PE' ,
+                            enabledActionCuota: item.codEstado === 'PE',
                             enabledActionHC: ["PP", "CBR"].includes(item.codEstado)
                         }
                     })
@@ -435,8 +435,7 @@
                     console.log(response)
                 }
                 if (response.code === "1") {
-                    let mainDataApi = JSON.parse(response.payload);
-                    console.log(mainDataApi)
+                    let mainDataApi = JSON.parse(response.payload); 
                     const [
                         comprobanteApi,
                         clienteTempApi,
@@ -736,18 +735,57 @@
             let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
+
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
                 if (rowEntity.idFacturaDetalle > 0 && rowEntity.estado && fS.getDate(fechaEmisionDocCreado) !== fS.getDate(fechaEmisionValidate)) {
-                    if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
-                        fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
-                    ) {
-                        return {
-                            cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                            action: 2
-                        }
 
+                    //si fecha documento creado es anterior a fecha consolidacion articulo
+                    if (fechaEmisionDocCreado >= dataConsolidacionFecha.fechaConsolidacion) {
+                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
+                        if (fechaEmisionValidate <= dataConsolidacionFecha.fechaConsolidacion) {
+                            return {
+                                cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                                action: 2
+                            }
+                        } else if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
+                            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+
+                            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                            return {
+                                cantidadStock: resultCantStock,
+                                action: 2
+                            };
+                        }
                     }
+
+                    //si fecha documento creado es anterior a fecha consolidacion articulo
+                    if (fechaEmisionDocCreado <= dataConsolidacionFecha.fechaConsolidacion) {
+                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
+                        if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
+                            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+
+                            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+
+                            return {
+                                cantidadStock: resultCantStock,
+                                action: 2
+                            };
+                        }
+                    }
+
+                    // if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
+                    //     fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
+                    // ) {
+                    //     return {
+                    //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
+                    //         action: 2
+                    //     }
+
+                    // }
                 }
+
+
+
                 // if (
                 //     rowEntity.idNotaEntregaDetalle > 0 &&
                 //     fechaEmisionDocCreado !== fechaEmisionValidate &&
@@ -760,7 +798,7 @@
                 //     }
                 // }
 
-                if (fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate.getDate)) {
+                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
                     cantidadStock = 0;
                     action = 1;
                     return {
