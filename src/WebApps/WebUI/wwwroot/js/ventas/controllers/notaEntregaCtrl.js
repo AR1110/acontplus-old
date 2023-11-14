@@ -1043,7 +1043,7 @@
             $scope.setInfoEstabPtoEmi();
 
         }
- 
+
         function getFechaVencimiento() {
             if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
                 let fechaEmision = fS.setHoursToDate($scope.data.fechaEmision)
@@ -1687,7 +1687,6 @@
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
             try {
                 $scope.dataArticulo = dataArticulo;
-                console.log(dataArticulo)
                 const {
                     articulo,
                     medidas,
@@ -1695,18 +1694,21 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0;
+                let index = 0, entity = {};
 
                 let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
                 if (findIndexById === -1) {
                     addRow();
                     index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
+                    entity = $scope.gridOptions.data[index];
                 } else {
                     index = findIndexById;
+                    entity = $scope.gridOptions.data[index];
+                    entity.cantidad = entity.cantidad + 1;
                 }
 
-                let entity = $scope.gridOptions.data[index];
+
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
 

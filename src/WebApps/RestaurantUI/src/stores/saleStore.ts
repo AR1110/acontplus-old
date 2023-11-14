@@ -77,15 +77,27 @@ type Actions = {
 }
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
-    setDataEdit(obj: any) {
+    setDataEdit(obj: any) { 
         const { order, orderItems } = obj;
         set(
             produce((state: State) => {
                 state.order = order;
                 state.items = orderItems
+                state.totalItems = orderItems.reduce((total:any, item:any) => total + item.quantity, 0); 
+                
+                const subtotalSinImpuesto = orderItems.reduce((subTotalSinImpuestos:number, item:any)=>{
+                    const itemPrice = item.price - item.discount;
+
+                    // Calcular el total del ítem
+                    const itemTotal = itemPrice * item.quantity;
+
+                    // Agregar el total del ítem al subtotal sin impuestos
+                    subTotalSinImpuestos += itemTotal;
+                    return subTotalSinImpuestos;
+                }, 0)
+                state.order.subTotalSinImpuestos = RoundNumber(subtotalSinImpuesto,2)
             })
         )
-
     },
     setChangeValueOrderItem(itemIndex, prop, newValue) {
         const { items } = get();
@@ -244,9 +256,13 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         caculateTotals();
         clearSound();
     },
-    setTotalItems: () => set(state => ({
-        totalItems: state.items.reduce((total, item) => total + item.quantity, 0)
-    })),
+    setTotalItems: () =>{
+        set(
+            produce((state: State) => { 
+                state.totalItems = state.items.reduce((total, item) => total + item.quantity, 0)                
+            })
+        )
+    },
     async setItemChangeQty(index, qty) {
         const { order, items, dataForm, setTotalItems, caculateTotals, getItemQty } = get();
         const decimal = dataForm.decimal;
