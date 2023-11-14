@@ -139,7 +139,7 @@ app.constant('nombreModalVenta', {
         templates: {
             NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
             FV_SRI: '~/Pages/Factura/_ModalDetalle.cshtml',
-            PR: ''
+            PR: '~/Pages/Proforma/_ModalDetalle.cshtml',
         }
 
     },
@@ -838,7 +838,7 @@ app.constant('TAX_RATE_CODE', {
 })
 
 app.constant('DOC_TYPE', {
-    FV_SRI: '01',
+    FV_SRI: '01',    
     FV: 'FV',
     NE: 'NE',
     PR: 'PR'
