@@ -372,7 +372,7 @@ BEGIN
             RETURN
 		END 
 
-	--> Verificar datos de la venta
+	--> Datos Articulo Venta Web
 	IF @tipo = 6
 		BEGIN
 		    SELECT @idArticulo = idArticulo ,@idBodega = idBodega FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo', idBodega INT '$.idBodega')
@@ -635,8 +635,8 @@ BEGIN
             RETURN 
         END 
 
-     --> Verificar datos de la venta para la app 
-	IF @tipo = 12 
+     --> Datos Articulo Venta App 
+	IF @tipo = 12
 		BEGIN
 		    SELECT @idArticulo = idArticulo ,@idBodega = idBodega FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo', idBodega INT '$.idBodega')
 
@@ -658,7 +658,7 @@ BEGIN
 				  ,codigoArticulo       = IIF(ti.porcentaje > 0,'*','')+a.codigo
 				  ,stock                = a.stock
 				  ,cantMinimaVentaPorMayor
-			FROM dbo.Articulo a
+			FROM dbo.Articulo       a WITH (NOLOCK)
 			INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = a.idTipoIva
 			 LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = a.idMedida
 			WHERE a.idArticulo = @idArticulo
@@ -703,11 +703,12 @@ BEGIN
                 
             --- Fechas consolidaciones
             SELECT idArticulo
-                    ,idBodega
-                    ,fechaConsolidacion
+                  ,idBodega
+                  ,fechaConsolidacion
             FROM Inventario.Stock
             WHERE idArticulo = @idArticulo
-			RETURN 
+			
+            RETURN 
 		END
 
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'

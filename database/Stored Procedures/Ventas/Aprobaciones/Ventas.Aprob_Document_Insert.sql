@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Ventas.Aprob_Document_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Ventas.Aprob_Document_Insert 
-GO
-CREATE PROCEDURE Ventas.Aprob_Document_Insert 
+CREATE OR ALTER PROCEDURE Ventas.Aprob_Document_Insert 
 	@idUsuarioRol INT 
    ,@comprobante VARCHAR(MAX)
    ,@detalle	 VARCHAR(MAX)

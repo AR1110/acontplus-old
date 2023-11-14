@@ -209,6 +209,21 @@ BEGIN
             RETURN
         END 
 
+    --> filtros
+    IF @tipo = 3
+        BEGIN
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+            RETURN 
+        END 
+
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
     RETURN
 
