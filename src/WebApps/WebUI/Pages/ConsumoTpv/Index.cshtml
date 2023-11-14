@@ -1,0 +1,275 @@
+﻿@page
+@model WebUI.Pages.ConsumoTpv.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="consumoTpvCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Consumo TPV</h5>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Registro Diario</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="input-group">
+                                <input type="text" class="form-control border-select" ng-enter="getClient($event)"
+                                       ng-model="search" maxlength="13" placeholder="Nro. Identificación" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-info btn-sm" ng-click="getClient($event)"
+                                            title="Busqueda Manual">
+                                        <i class="ti-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" ng-if="client.idCliente>0">
+                            <h5 class="card-title">Datos del cliente</h5>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-6 b-r">
+                                    <strong>N° Identificación:</strong>
+                                    <br>
+                                    <p class="text-muted">{{client.numeroIdentificacion}}</p>
+                                </div>
+                                <div class="col-md-3 col-xs-6 b-r">
+                                    <strong>Razón Social:</strong>
+                                    <br>
+                                    <p class="text-muted">{{client.razonSocial}}</p>
+                                </div>
+                                <div class="col-md-3 col-xs-6 b-r">
+                                    <strong>Empresa:</strong>
+                                    <br>
+                                    <p class="text-muted">{{client.empresa}}</p>
+                                </div>
+                                <div class="col-md-3 col-xs-6">
+                                    <strong>Cargo:</strong>
+                                    <br>
+                                    <p class="text-muted">{{client.cargo}}</p>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+
+                        <div class="card-body" ng-if="client.idCliente > 0">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Servicio</th>
+                                            <th>Hora Inicio</th>
+                                            <th>Hora Fin</th>
+                                            <th class="text-center">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in schedule">
+                                            <td>{{item.descripcion}}</td>
+                                            <td>
+                                                <div>
+                                                    <input type="time" id="horaInicio-{{item.codigo}}"
+                                                           ng-model="item.horaInicio" min="04:00:00" max="23:00:00"
+                                                           class="form-control" disabled />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <input type="time" id="horaFin-{{item.codigo}}"
+                                                           ng-model="item.horaFin" min="04:00:00" max="23:00:00"
+                                                           class="form-control" disabled />
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span ng-if="item.estado" class="text-success">
+                                                    <i class="mdi mdi-check"></i>
+                                                    Registrado
+                                                </span>
+                                                <div class="icheck-success" ng-if="!item.estado">
+                                                    <input type="checkbox" id="chk-{{item.codigo}}"
+                                                           ng-model="item.estado" class="form-control"
+                                                           ng-click="askToSave(item)" title="Marque para guardar"
+                                                           ng-disabled="!item.onTime" />
+                                                    <label for="chk-{{item.codigo}}"></label>
+                                                </div>
+                                                <button type="button" class="btn btn-info btn-sm"
+                                                        ng-click="addOther(item)"
+                                                        title="Añadir registros de otras fechas">
+                                                    <i class="ti-plus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOther" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form ng-submit="saveOther()">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="ti-plus"></i> Registro Otras Fechas</h5>
+                        <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <h5><label for="clientOther">Cliente:</label> {{otherRecord.razonSocial}}</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <h5><label for="service">Servicio:</label> {{otherRecord.servicio}}</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="fechaConsumo">Fecha Consumo:</label>
+                                    <div class="input-group">
+                                        <input type="date" name="fechaConsumo" id="fechaConsumo" ng-change="onChangeFechaConsumo()"
+                                               class="form-control" ng-model="otherRecord.fechaConsumo"
+                                               min="2022-01-01T00:00:00" max="2030-12-31T00:00:00" required />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">{{otherRecord.fechaConsumo | date:'h:mma'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="cantidad">Cantidad:</label>
+                                    <input type="number" name="cantidad" id="cantidad" class="form-control"
+                                           ng-model="otherRecord.cantidad" min="1" required />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success btn-sm"><i class="ti-save"></i> Guardar</button>
+                        <button type="button" class="btn btn-dark  btn-sm" data-dismiss="modal">
+                            &times;
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Registros del Día</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="form-group">
+                                <select id="idConfigTpv" class="form-control" ng-model="idConfigTpv"
+                                        ng-change="getActualRecords(idConfigTpv)">
+                                    <option ng-value="item.idConfigTpv" ng-repeat="item in configurations">
+                                        {{item.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 offset-xl-4 offset-lg-4 offset-md-4">
+                            <div class="form-group">
+                                <input type="text" class="form-control" ng-model="searchRecord"
+                                       placeholder="Buscar registro" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive" ng-if="actualRecords.length > 0">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Empresa</th>
+                                    <th>Cliente</th>
+                                    <th class="text-center">Servicio</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Hora</th>
+                                    <th class="text-center">Estado</th>
+                                    <th>Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in actualRecords | filter: searchRecord">
+                                    <td>{{item.empresa}}</td>
+                                    <td>{{item.cliente}}</td>
+                                    <td class="text-center">{{item.servicio}}</td>
+                                    <td class="text-center">{{item.cantidad}}</td>
+                                    <td class="text-center">
+                                        {{item.fechaRegistro | date: 'dd/MM/yyyy'}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.fechaRegistro | date: 'HH:mm'}}
+                                    </td>
+                                    <td class="text-center">
+                                        <span ng-if="!item.estado" class="ti-close text-danger" title="Anulado"></span>
+                                        <span ng-if="item.estado" class="ti-check text-success" title="Activo"></span>
+                                    </td>
+                                    <td class="text-center">
+                                        <button ng-if="item.estado" class="btn btn-danger btn-sm"
+                                                ng-click="print(item)" title="Imprimir">
+                                            <i class="mdi mdi-printer"></i>
+                                        </button>
+                                        <button ng-if="item.estado" class="btn btn-danger btn-sm"
+                                                ng-click="askToRevert(item)" title="Anular Consumo">
+                                            <i class="mdi mdi-close"></i>
+                                        </button>
+                                        <button ng-if="!item.estado" class="btn btn-info btn-sm"
+                                                ng-click="getStatus(item)" title="Ver motivo anulación">
+                                            <i class="ti-info"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7">
+                                        <button class="btn btn-danger" ng-click="getReport(1)">
+                                            <i class="fa fa-file-pdf"></i> Imprimir
+                                        </button>
+                                        <button class="btn btn-success" ng-click="getReport(2)">
+                                            <i class="ti-download"></i> Descargar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Utils-->
+    <audio id="audioNotify">
+        <source src="~/assets/audio/consumotpv.mp3" type="audio/mpeg" />
+    </audio>
+    <!--End Utils-->
+</div>
+
+
+@section Scripts{
+    <script src="~/js/controllers/restaurant/consumoTpvCtrl.js" asp-append-version="true"></script>
+}

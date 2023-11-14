@@ -11,13 +11,11 @@ namespace Reports.API.Controllers
     public class DashboardController : BaseApiController
     {
         private readonly IDashboardService _dashboard;
-        private readonly ITransaccionService _transaccion;
         private readonly LogWriter _log;
-        public DashboardController(IDashboardService dashboard, LogWriter log, ITransaccionService transaccion)
+        public DashboardController(IDashboardService dashboard, LogWriter log)
         {
             _dashboard = dashboard;
             _log = log;
-            _transaccion = transaccion;
         }
         [HttpGet]
         public async Task<IActionResult> Get(string json)
