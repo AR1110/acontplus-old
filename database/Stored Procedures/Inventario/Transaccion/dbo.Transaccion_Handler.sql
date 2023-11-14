@@ -70,8 +70,7 @@ BEGIN
 			            WHERE td.TipoTransaccionId = @idTipoTransaccion
 				          AND td.TipoDocumentoId = @idTipoDocumento
 				          AND td.DocumentoId = @documentoId
-                          AND td.CantidadStock != 0
-                    
+                          AND td.estado = 2
                     END 
 
                 --> Insertamos solo en el proceso de Editar o Crear una Transaccion
@@ -95,7 +94,7 @@ BEGIN
 				          AND td.DocumentoId = @documentoId
                           AND td.CantidadStock != 0
 
-                        UPDATE Inventario.TransaccionTemp SET estado = 2 WHERE TipoTransaccionId = @idTipoTransaccion AND TipoDocumentoId = @idTipoDocumento AND DocumentoId = @documentoId 
+                        UPDATE Inventario.TransaccionTemp SET estado = 2 WHERE TipoTransaccionId = @idTipoTransaccion AND TipoDocumentoId = @idTipoDocumento AND DocumentoId = @documentoId AND estado = 1
                     END 
 
                 --> Actualizar Stock General

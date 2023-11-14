@@ -33,6 +33,7 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		  ,cc.saldo
 		  ,usuario                 = us.nombreUsuario
 		  ,tiempoCredito           = tc.tipo
+          ,tc.descripcion as tipoTiempoCredito
 		  ,estadoSri               = CASE WHEN cc.codDoc = '01' THEN (SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = cc.idDocumento AND de.codDoc = '01') 
 		                                                         ELSE 0 END     
           ,cc.mora
