@@ -24,6 +24,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
   
     //Modals 
     const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
+    const [openTooltip, setOpenTooltip] = useState(false)
 
     const dataCustomerSRI = useRef({
         numeroRuc: '',
@@ -75,7 +76,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
     const showAlertConfirmID = (textSearch: string) => {
         Swal.fire({
             //title: "Are you sure?",
-            html: "Desea registrar con el número de identificación <b>PASAPORTE</b>?",
+            html: `Desea registrar este numero de identificacion: ${textSearch} como <b>PASAPORTE</b>?`,
             icon: "warning",
             showCancelButton: true,
             showConfirmButton: true,
@@ -106,6 +107,13 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                     showAlertConfirmID(textSearch)
                     return
                 }
+
+                const response = await customerService.search(textSearch);
+                if (response.length > 0) {
+                    SnackbarUtility.info('Selecciona al cliente de entre los clientes que se han encontrado!');
+                    return
+                }
+
                 //Numero de RUC 
                 if (textSearch.length === 13) {
                     try {
@@ -210,6 +218,10 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
         }
     }
 
+    const handleTooltipInfo = () => {
+        setOpenTooltip((state) => !state);
+    };
+
     return (
         <>
             <Autocomplete
@@ -278,7 +290,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                                                         <EditIcon color='warning' sx={{ fontSize: 30 }} />
                                                     </IconButton>
                                                 </Tooltip>
-                                                <HtmlTooltip placement="bottom-start" title={
+                                                <HtmlTooltip open={openTooltip} onClick={handleTooltipInfo} placement="bottom-start" title={
                                                     <CustomerInfo id={refCustomerCompanyId.current} />
                                                 }>
                                                     <IconButton >
