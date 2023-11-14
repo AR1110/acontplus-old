@@ -194,8 +194,18 @@
             })
         }
 
-        service.getTipoIdentificacion = function () {
-            return mS.getData('get', '/TipoIdentificacion/GetByType?tipo=V')
+        service.getDataForm = function () {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tyList : 4}), null, true).then(response => {
+                if (response.code === '0') {
+                    throw response;
+                }
+                if (response.code === '1') {
+                    let results = JSON.parse(response.payload);
+                    return  results;
+                }
+            }).catch(error => {
+                throw error;
+            })
         }
         return service;
 

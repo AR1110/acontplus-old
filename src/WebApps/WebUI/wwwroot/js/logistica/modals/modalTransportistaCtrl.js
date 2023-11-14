@@ -13,14 +13,9 @@ function ModalTransportistaCtrl($scope, $uibModalInstance, transportistaSvc,  tS
 
     $scope.getTipoIdentificacion = function(){
         showLoader();
-        transportistaSvc.getTipoIdentificacion().then(response => {
-            if (response.id === "0") {
-                console.log(response)
-                return
-            }
-            
-            $scope.tipoIdentificaciones = response.data;
-            $scope.data.idTipoIdentificacion = response.data[0].idTipoIdentificacion;
+        transportistaSvc.getDataForm().then(response => {  
+            $scope.tipoIdentificaciones = response;
+            // $scope.data.idTipoIdentificacion = $scope.tipoIdentificaciones[0].idTipoIdentificacion;
             
             if($scope._params.idTransportista>0){
                 $scope.tipoRegistro=2;
