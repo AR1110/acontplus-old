@@ -635,6 +635,81 @@ BEGIN
             RETURN 
         END 
 
+     --> Verificar datos de la venta para la app 
+	IF @tipo = 12 
+		BEGIN
+		    SELECT @idArticulo = idArticulo ,@idBodega = idBodega FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo', idBodega INT '$.idBodega')
+
+			SELECT idArticulo           = a.idArticulo
+				  ,idMedida             = ISNULL(a.idMedida,0)
+				  ,idTipoIva            = ti.idTipoIva
+				  ,codigoAuxiliar       = ISNULL(a.codigoAuxiliar, 'S/N')
+				  ,descripcion          = a.descripcion
+				  ,valorIce             = ISNULL(a.valorIce,0)
+				  ,llevaInventario      = a.llevaInventario
+				  ,datosAdicionales     = ISNULL(a.datosAdicionales, 0) 
+				  ,productoFraccionable = a.productoFraccionable
+				  ,precioCosto          = a.precioCosto
+				  ,precioSinSubsidio    = ISNULL(a.precioSinSubsidio,0)
+				  ,nombreTipoIva        = ti.descripcion
+				  ,porcentajeTipoIva    = ti.porcentaje
+                  ,codigoTipoIva        = ti.codigo
+				  ,codigoPorcentaje     = CAST(ti.codigoPorcentaje as varchar)
+				  ,codigoArticulo       = IIF(ti.porcentaje > 0,'*','')+a.codigo
+				  ,stock                = a.stock
+				  ,cantMinimaVentaPorMayor
+			FROM dbo.Articulo a
+			INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = a.idTipoIva
+			 LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = a.idMedida
+			WHERE a.idArticulo = @idArticulo
+
+			SELECT idMedida     = m.idMedida
+			      ,tarifas		= (SELECT afs.idTarifa
+                                           , afs.precioVenta
+                                           , afs.precioConIva
+                                           , tarifa = UPPER(ta.descripcion)
+                                           , porcentaje = ISNULL(afs.porcentajeUtilidad, 0)
+                                           , ta.ventaPorMayor
+                                           , predeterminada = ISNULL(ta.predeterminada, 0)
+								   FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								   INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								   WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
+								   ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			      ,orden = IIF(af.gestionVenta = 1,1,3)
+                  ,af.conversion
+			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			WHERE af.idArticulo = @idArticulo AND af.estado = 1
+
+			SELECT
+				m.idMedida
+			   ,tarifas		 = (SELECT ap.idTarifa
+                                        , ap.precioVenta
+                                        , ap.precioConIva
+                                        , tarifa = UPPER(ta.descripcion)
+                                        , porcentaje = ISNULL(ap.porcentajeUtilidad, 0)
+                                        , ta.ventaPorMayor 
+                                        , predeterminada = ISNULL(ta.predeterminada, 0)
+								FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								WHERE ap.idArticulo = a.idArticulo
+								ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			  ,orden = 2
+              ,1 as conversion
+			FROM dbo.Articulo     a WITH (NOLOCK)
+			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			WHERE a.idArticulo = @idArticulo AND a.estado = 1
+			ORDER BY orden ASC
+                
+            --- Fechas consolidaciones
+            SELECT idArticulo
+                    ,idBodega
+                    ,fechaConsolidacion
+            FROM Inventario.Stock
+            WHERE idArticulo = @idArticulo
+			RETURN 
+		END
+
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END
