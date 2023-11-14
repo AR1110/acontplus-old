@@ -657,49 +657,30 @@ BEGIN
 				  ,codigoArticulo       = IIF(ti.porcentaje > 0,'*','')+a.codigo
 				  ,stock                = a.stock
 				  ,cantMinimaVentaPorMayor
+                  ,medidas              = ( SELECT
+				                                m.idMedida
+			                                   ,tarifas		 = (SELECT ap.idTarifa
+                                                                        , ap.precioVenta
+                                                                        , ap.precioConIva
+                                                                        , tarifa = UPPER(ta.descripcion)
+                                                                        , porcentaje = ISNULL(ap.porcentajeUtilidad, 0)
+                                                                        , ta.ventaPorMayor 
+                                                                        , predeterminada = ISNULL(ta.predeterminada, 0)
+								                                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								                                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								                                WHERE ap.idArticulo = a.idArticulo
+								                                ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			                                  ,orden = 2
+                                              ,1 as conversion
+			                                FROM dbo.Articulo     a WITH (NOLOCK)
+			                                INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			                                WHERE a.idArticulo = @idArticulo AND a.estado = 1
+			                                ORDER BY orden ASC FOR JSON PATH)
 			FROM dbo.Articulo       a WITH (NOLOCK)
 			INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = a.idTipoIva
-			 LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = a.idMedida
+		    LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = a.idMedida
 			WHERE a.idArticulo = @idArticulo
-
-			SELECT idMedida     = m.idMedida
-			      ,tarifas		= (SELECT afs.idTarifa
-                                           , afs.precioVenta
-                                           , afs.precioConIva
-                                           , tarifa = UPPER(ta.descripcion)
-                                           , porcentaje = ISNULL(afs.porcentajeUtilidad, 0)
-                                           , ta.ventaPorMayor
-                                           , predeterminada = ISNULL(ta.predeterminada, 0)
-								   FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
-								   INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
-								   WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
-								   ORDER BY ta.predeterminada DESC FOR JSON PATH)
-			      ,orden = IIF(af.gestionVenta = 1,1,3)
-                  ,af.conversion
-			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
-			INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
-			WHERE af.idArticulo = @idArticulo AND af.estado = 1
-
-			SELECT
-				m.idMedida
-			   ,tarifas		 = (SELECT ap.idTarifa
-                                        , ap.precioVenta
-                                        , ap.precioConIva
-                                        , tarifa = UPPER(ta.descripcion)
-                                        , porcentaje = ISNULL(ap.porcentajeUtilidad, 0)
-                                        , ta.ventaPorMayor 
-                                        , predeterminada = ISNULL(ta.predeterminada, 0)
-								FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
-								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
-								WHERE ap.idArticulo = a.idArticulo
-								ORDER BY ta.predeterminada DESC FOR JSON PATH)
-			  ,orden = 2
-              ,1 as conversion
-			FROM dbo.Articulo     a WITH (NOLOCK)
-			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
-			WHERE a.idArticulo = @idArticulo AND a.estado = 1
-			ORDER BY orden ASC
-                
+                            
             --- Fechas consolidaciones
             SELECT idArticulo
                   ,idBodega
