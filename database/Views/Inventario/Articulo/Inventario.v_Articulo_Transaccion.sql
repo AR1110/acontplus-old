@@ -7,10 +7,14 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Transaccion WITH SCHEMABINDING AS (
 		  ,ts.idTipoTransaccion
 		  ,ts.idArticulo
 		  ,ts.idBodega
+          ,ts.idMedida
+          ,ts.idTarifa
+          ,ts.idUsuario
 		  ,ts.fechaRegistro
           ,ts.estado
 		  ,ts.precioCosto
 		  ,ts.precioUnitario
+          ,ts.total
 		  ,IIF(tt.codigo =  'E' OR tt.codigo = 'A',ts.cantidad,0) as cantidadEntrada 
 		  ,IIF(tt.codigo =  'S',ts.cantidad,0) as cantidadSalida 
 		  ,td.codigo as codDoc

@@ -10,11 +10,7 @@ GO
 -- Create date: 2021-10-06
 -- Description:	SP para listar los clietes
 -- =============================================
---Ventas.Aprob_Document_Get 38,'[]'
-IF OBJECT_ID(N'Ventas.Aprob_Document_Get', N'P') IS NOT NULL
-DROP PROCEDURE Ventas.Aprob_Document_Get 
-GO
-CREATE PROCEDURE Ventas.Aprob_Document_Get @idUsuarioRol INT, @json NVARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Ventas.Aprob_Document_Get @idUsuarioRol INT, @json NVARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -33,6 +29,8 @@ BEGIN
 	DECLARE @secuencial VARCHAR(100) 
     DECLARE @pageSize INT
     DECLARE @pageIndex INT 
+    DECLARE @id INT
+    DECLARE @uniqueId VARCHAR(500)
 
 	DECLARE @params NVARCHAR(MAX) = '@idEntidad         INT
 									,@codEstab  VARCHAR(25)
@@ -93,6 +91,8 @@ BEGIN
 		          ,@dateStart     = CONVERT(DATETIME, fechaInicio, 105)
 		          ,@dateEnd       = CONVERT(DATETIME, fechaFin, 105)
 		          ,@secuencial    = LTRIM(TRIM(nroSecuencial))
+                  ,@pageIndex     = pageIndex
+                  ,@pageSize      = pageSize
 	        FROM OPENJSON(@json) WITH
             (    
                  checkBoxFecha           BIT  
@@ -107,7 +107,6 @@ BEGIN
 			    ,pageSize                INT
             )
 
-		        --------------------------------------------BUSQUEDA INDIVIDUAL POR PARAMETRO-------------------------------------------------------------------
 	        IF @secuencial IS NOT NULL
 		        BEGIN
 			        SET @sql = @sql + 'AND ad.secuencial BETWEEN ' + REPLACE(@secuencial,'-',' AND ')
@@ -221,7 +220,64 @@ BEGIN
                   ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
 
+            SELECT idEstadoPago, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+
             RETURN 
+        END 
+    
+    --> Ver Documento
+    IF @tipo = 4
+        BEGIN
+            
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+
+            SELECT d.estab+'-'+d.ptoEmi+'-'+Helper.F_Auto_Sequential(d.secuencial) as serieComprobante
+	              ,d.identificacionComprador
+	              ,d.codDoc
+	              ,d.docOrigen
+	              ,d.fechaEmision	 
+	              ,d.observacion
+	              ,CONVERT(VARCHAR(3), d.codigoPorcentaje) as codigoPorcentaje
+	              ,totalSinImpuestos
+	              ,totalDescuento
+	              ,totalConImpuestos
+	              ,propina
+	              ,importeTotal	   
+             FROM Ventas.Aprob_Document d WITH (NOLOCK)
+             WHERE d.idAprob_Document = @id
+
+             SELECT cl.idCliente
+		           ,cl.nombreComercial
+		           ,cl.nombreFiscal
+		           ,cl.numeroIdentificacion
+		           ,ISNULL(cl.direccion,'') as direccion
+		           ,ti.codigoSri            as tipoIdentificacion
+	         FROM Ventas.Aprob_Document        ad
+	         INNER JOIN dbo.Cliente            cl WITH(NOLOCK) ON cl.idCliente            = ad.idCliente
+	          LEFT JOIN dbo.TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+	         WHERE ad.idAprob_Document = @id
+
+             SELECT dt.idAprob_Document_Detailt
+                   ,ar.codigo 
+                   ,dt.descripcion
+                   ,dt.cantidad
+                   ,me.descripcion as medida
+                   ,ti.descripcion as tipoIva
+                   ,ta.descripcion as tarifa
+                   ,dt.precioUnitario
+                   ,dt.precioTotalSinImpuesto
+                   ,bo.descripcion as bodega
+             FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK) 
+             INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.code_unique       = dt.codArticulo
+             INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.codigo            = dt.codMedida
+             INNER JOIN dbo.TipoIva             ti WITH (NOLOCK) ON ti.codigoPorcentaje  = dt.codigoPorcentaje
+             INNER JOIN dbo.Tarifa              ta WITH (NOLOCK) ON ta.idTarifa          = dt.idTarifa
+             INNER JOIN dbo.Bodega              bo WITH (NOLOCK) ON bo.idBodega          = dt.idBodega
+             WHERE dt.uniqueId = @uniqueId AND dt.estado = 1
+
+             RETURN 
         END 
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'

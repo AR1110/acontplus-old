@@ -36,7 +36,6 @@ BEGIN
     DECLARE @ventaStockCero BIT 
     DECLARE @stock NUMERIC(15,5)
 	DECLARE @stockMinimo NUMERIC(18,5)
-	DECLARE @porcentaje NUMERIC(15,5)
 	DECLARE @cantidad NUMERIC(18,5)
 
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
@@ -401,7 +400,7 @@ BEGIN
 
 			SELECT idMedida     = m.idMedida 
 			      ,descripcion  = m.descripcion
-			      ,tarifas		= (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion),porcentaje = @porcentaje, ta.ventaPorMayor
+			      ,tarifas		= (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor
 								   FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
 								   INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
 								   WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
@@ -415,7 +414,7 @@ BEGIN
 			SELECT 
 				m.idMedida
 			   ,m.descripcion
-			   ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion) ,porcentaje = @porcentaje, ta.ventaPorMayor 
+			   ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor 
 								FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 								WHERE ap.idArticulo = a.idArticulo
