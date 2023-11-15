@@ -10,19 +10,14 @@ GO
 -- Create date: 2021-10-06
 -- Description:	SP para listar los clietes
 -- =============================================
--- Ventas.Aprob_Document_Get_Id 14
-IF OBJECT_ID(N'Ventas.Aprob_Document_Get_Id', N'P') IS NOT NULL
-DROP PROCEDURE Ventas.Aprob_Document_Get_Id 
-GO
-
--- exec Ventas.Aprob_Document_Get_Id 9
-CREATE PROCEDURE Ventas.Aprob_Document_Get_Id @id INT
+CREATE OR ALTER PROCEDURE Ventas.Aprob_Document_Get_Id @id INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @uniqueId VARCHAR(150)
+
 	DECLARE @idTipoDocumento INT 
 	
 	SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
@@ -52,17 +47,16 @@ BEGIN
 	INNER JOIN Cliente        cl WITH (NOLOCK) ON cl.idCliente = d.idCliente
 	WHERE d.idAprob_Document = @id
 
-	SELECT 
-		cl.idCliente,
-		cl.nombreComercial,
-		cl.nombreFiscal,
-		cl.numeroIdentificacion,
-		direccion = ISNULL(cl.direccion,'')
-		,tipoIdentificacion = ti.codigo 
+	SELECT cl.idCliente
+		  ,cl.nombreComercial
+		  ,cl.nombreFiscal
+		  ,cl.numeroIdentificacion
+		  ,direccion = ISNULL(cl.direccion,'')
+	      ,tipoIdentificacion = ti.codigoSri 
 	FROM Ventas.Aprob_Document    ad
 	INNER JOIN Cliente            cl WITH(NOLOCK) ON cl.idCliente            = ad.idCliente
 	 LEFT JOIN TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
-	WHERE ad.idAprob_Document = @id;
+	WHERE ad.idAprob_Document = @id
 
 	SELECT 
 		idAprob_Document_Detailt
@@ -78,13 +72,13 @@ BEGIN
 	   ,dt.precioUnitario
 	   ,((dt.precioUnitario - dt.descuento) * dt.cantidad) as precioTotalSinImpuesto
 	   ,dt.descuento
-	   ,dt.cantidad * dt.descuento as totalDescuento
+	   ,dt.cantidad * dt.descuento                         as totalDescuento
 	   ,nombreTipoIva = t.descripcion
 	   ,valor = t.porcentaje
 	   ,codigoTipoIva = t.codigo
-	   ,CONVERT(VARCHAR(4), dt.codigoPorcentaje) as codigoPorcentaje
-	   ,dt.tarifa                                as tarifa
-	   ,a.datosAdicionales                       as datosAdicionales
+	   ,CONVERT(VARCHAR(4), dt.codigoPorcentaje)           as codigoPorcentaje
+	   ,dt.tarifa                                          as tarifa
+	   ,a.datosAdicionales                                 as datosAdicionales
        ,ISNULL((SELECT idMedida     = m.idMedida 
 			          ,descripcion  = m.descripcion
 			          ,tarifas      = (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor
@@ -103,19 +97,23 @@ BEGIN
 			          ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor 
 								        FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 								        INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
-								        WHERE ap.idArticulo = a.idArticulo
+								        WHERE ap.idArticulo = ar.idArticulo
 								        ORDER BY ta.predeterminada DESC FOR JSON PATH)
 			          ,orden = 2
                       ,1 as conversion
-			    FROM dbo.Articulo     a WITH (NOLOCK)
-			    INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
-			    WHERE a.idArticulo = dt.idArticulo AND a.estado = 1 FOR JSON PATH
+			    FROM dbo.Articulo     ar WITH (NOLOCK)
+			    INNER JOIN dbo.Medida  m WITH (NOLOCK) ON m.idMedida = ar.idMedida
+			    WHERE ar.idArticulo = a.idArticulo FOR JSON PATH
              ) as principal
-	FROM  Ventas.Aprob_Document_Detailt dt WITH (NOLOCK)
-	INNER JOIN dbo.Articulo              a WITH (NOLOCK) ON a.code_unique      = dt.codArticulo
-	INNER JOIN dbo.Medida                m WITH (NOLOCK) ON m.codigo           = dt.codMedida
-	INNER JOIN dbo.TipoIva               t WITH (NOLOCK) ON t.codigoPorcentaje = dt.codigoPorcentaje
-	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY dt.idAprob_Document_Detailt ASC 
+            ,a.llevaInventario
+            ,(
+               SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = a.idArticulo AND st.idBodega = dt.idBodega FOR JSON PATH
+             ) as consolidacion
+	FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK)
+	INNER JOIN dbo.Articulo             a WITH (NOLOCK) ON a.code_unique      = dt.codArticulo
+	INNER JOIN dbo.Medida               m WITH (NOLOCK) ON m.codigo           = dt.codMedida
+	INNER JOIN dbo.TipoIva              t WITH (NOLOCK) ON t.codigoPorcentaje = dt.codigoPorcentaje
+	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1  
 
 	SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
 			               WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
