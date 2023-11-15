@@ -100,8 +100,7 @@ const RightOrderItem = () => {
                 tableId: leftOrder.tableId,
                 bodegaId: leftOrder.bodegaId
             }
-
-            console.log(rightOrderItems)
+ 
 
             const orderResult = summaryToApi(mergeLeftIntoRightOrder);
             const orderItemsResult = itemToApi(rightOrderItems);

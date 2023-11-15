@@ -18,15 +18,16 @@ BEGIN
 	DECLARE @codEstab VARCHAR(20)
     DECLARE @customerCompanyId INT 
     DECLARE @actividad VARCHAR(4)
+    DECLARE @idUsuario INT 
     
-	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+	SELECT TOP 1  @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab')
     SELECT TOP 1 @actividad = actividad FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
     --cliente por defecto agregado en configuracion general
     SELECT TOP 1 @customerCompanyId = ISNULL(JSON_VALUE(jsonConfig, '$.idCliente'), 0) FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND  codConfig = 'CV'
 
-	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente'
+	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente,config,vendedores'
 	
     SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
     
@@ -81,5 +82,20 @@ BEGIN
 	FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId 
             
 	SELECT descripcion, codigo, porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('2') AND estado = 1 ORDER BY codigo DESC
+
+    SELECT CAST(searchCode AS BIT)       as searchCode
+	    ,CAST(printerAutomatic AS BIT) as printerAutomatic
+	    ,CAST(payAutomatic AS BIT)     as payAutomatic
+	    ,CAST(multipleVendedor AS BIT) as multipleVendedor
+	FROM Config.v_Sistema_Ventas gs
+    WHERE gs.idEntidad = @idEntidad
+
+     SELECT 
+        u.idUsuario, 
+        u.nombreUsuario, 
+        u.nombreCompleto, 
+        predeterminado = CAST(IIF(u.idUsuario = @idUsuario, 1, 0) AS bit)
+     FROM v_usuario u WITH(NOLOCK) 
+     WHERE u.idEntidad = @idEntidad AND u.estadoUsuario = 1
 END
 GO

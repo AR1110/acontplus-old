@@ -10,9 +10,7 @@ export const CustomerInfo = ({ id }: CustomerInfoProps) => {
     const [data, setData] = useState<CustomerReadDto>({} as CustomerReadDto);
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
-    useEffect(() => {
-        console.log(id)
-        console.log('init customer ingo')
+    useEffect(() => { 
         customerService.getId(id).then(response => {            
             setData(response)
             setLoading(false)

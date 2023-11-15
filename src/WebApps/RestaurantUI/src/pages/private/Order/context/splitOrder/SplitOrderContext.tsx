@@ -43,7 +43,8 @@ const leftOrder = {
     obs: "",
     codDoc: "",
     quickSale: false,
-    createdAt: new Date()
+    createdAt: new Date(),
+    userId: 0
 };
 
 const rightOrder = {
@@ -65,7 +66,8 @@ const rightOrder = {
     obs: "",
     codDoc: "",
     quickSale: false,
-    createdAt: new Date()
+    createdAt: new Date(),
+    userId: 0
 };
 // Define el estado inicial del contexto
 const initialState: SplitOrderState = {
@@ -153,8 +155,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
             const resultAxios = await dataFetch.call;
 
             const response = resultAxios.data;
-            const orderData = await orderReadForUpdateAdapter(response)
-            console.log(orderData)
+            const orderData = await orderReadForUpdateAdapter(response) 
             await getDataForForm(orderData.order.establecimientoId)
             // Actualiza el estado con los datos del pedido 
             resetData()
