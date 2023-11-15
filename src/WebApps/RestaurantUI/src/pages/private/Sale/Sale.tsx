@@ -53,11 +53,11 @@ export default function Sale() {
 
         SaleService.getDataForForm(JSON.stringify({
             codEstab: dataEstab?.codEstab
-        })).then(response => {
+        })).then(response => { 
             const warehouseData = response.warehouses.filter(
                 warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(warehouse => (warehouse.defaultBodega));
-
+ 
             const emissionPointData = response.emissionPoints.filter(
                 emissionPoint => emissionPoint.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(emissionPoint => (emissionPoint.predeterminado));
@@ -69,9 +69,9 @@ export default function Sale() {
             setSummary({
                 ...order,
                 establecimientoId: dataEstab.idEstablecimiento,
-                puntoEmisionId: emissionPointData?.idPuntoEmision ?? 0,
+                puntoEmisionId: order.orderId>0? order.puntoEmisionId : emissionPointData?.idPuntoEmision ?? 0,
                 bodegaId: warehouseData?.idBodega ?? 0,
-                userId: vendedorData?.idUsuario ?? 0
+                userId: order.orderId>0? order.userId : vendedorData?.idUsuario ?? 0
             })
             if(emissionPointData){
                 setPuntoEmision(emissionPointData.ptoEmi)

@@ -37,8 +37,7 @@ export const SaleService = {
             tarifaImpuestoVigente,
             config,
             vendedores
-        } = resultAxios.data;
-        console.log(resultAxios.data)
+        } = resultAxios.data; 
 
         const rooms: Array<Room> = room;
         const floors: Array<Floor> = floor;

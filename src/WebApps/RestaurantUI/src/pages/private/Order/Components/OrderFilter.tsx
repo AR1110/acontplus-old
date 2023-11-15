@@ -70,7 +70,7 @@ const OrderFilter = () => {
                                                 {
                                                     tables.length > 0 && tables.map((table:any, index:number) => (
                                                         <MenuItem key={index} value={table.id}>
-                                                            {table.description}
+                                                            {table.roomDescription} - {table.description} 
                                                         </MenuItem>
                                                     ))
                                                 }
