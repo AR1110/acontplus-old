@@ -6,8 +6,7 @@
     app.factory('aprobacionDocService', function ($injector) {
         let url = 'Venta/AprobacionDocumento/';
         let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario');
-        let pricingUtils = $injector.get('pricingUtils');
+        let fS = $injector.get('formulario'); 
         let service = {}
 
         service.getDataFilter = function () {
@@ -221,7 +220,7 @@
 
                     let items = detalleRepository.map(itemPrincipal => {
 
-                        const { fraccionado, principal, ...restItem } = itemPrincipal;
+                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
 
                         // Medidas del artículo fraccionado del principal
                         let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
@@ -229,6 +228,7 @@
                         // Medida principal con las tarifas
                         let medidasPrincipalTemp = JSON.parse(principal) || [];
 
+                        let consolidacionesFecha = JSON.parse(consolidacion) || [];
                         /**
                          * Combinar los dos arrays de medidas en uno solo
                          *
@@ -252,6 +252,10 @@
                         // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
                         orderMedidaArray[0].defaultMedida = true;
 
+                        restItem.consolidacionesFecha = consolidacionesFecha.map((data) => ({
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }));
 
                         /**
                          * Obtener los datos de la medida
@@ -348,10 +352,11 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
+                    console.log(mainDataApi)
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
-                    let items = mainDataApi[2];
-                    let historialRepository = dataRepository[3];
+                    let itemsTemp = mainDataApi[2];
+                    let historialRepository = mainDataApi[3];
                     let { nombreComercial, fechaEmision, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -362,8 +367,13 @@
                     return {
                         comprobante: data,
                         cliente,
-                        items,
-                        historial: historialRepository
+                        items: itemsTemp.map((item)=>({
+                            ...item,
+                            precioConIva: item.precioConIva || 0,
+                            ice: 0,
+                            valorDescuento: item.descuento || 0
+                        })),
+                        historial: historialRepository || []
                     }
 
                 }
@@ -400,48 +410,7 @@
             }
             return tempDetail;
         }
-
-        /**
-         * 
-         * @param {object} params_objecr(detalles, fS(formularioSvc), decimal, findForPurchase 
-         * @returns detalles []
-         */
-        service.detalleMapperFrom = function ({ detalles, fS, decimal, findForSale }) {
-            let enumeracion = 1;
-            for (let item of detalles) {
-                item.enumeracion = enumeracion++;
-                item.valorDescuento = item.descuento;
-                item.ice = 0;
-                item.nota = null;
-
-                //   let total = (item.precioUnitario - item.valorDescuento) * item.cantidad;
-                // let totalDescuento = item.cantidad * item.valorDescuento;
-                let subTotal = item.cantidad * item.precioUnitario;
-
-
-                item.totalDescuento = fS.roundNumber(item.totalDescuento, decimal.nroDescuentoDetalle)
-                item.subTotal = fS.roundNumber(subTotal, 5);
-                item.total = fS.roundNumber(item.precioTotalSinImpuesto, decimal.nroTotalDetalle);
-
-                /**
-                 * tipo 6 listar articulos para el documento ventas 
-                 */
-                findForSale({ tipo: 6, idArticulo: item.idArticulo }).then(response => {
-
-                    let { medidas, datosAdicionalesArticulo } = response;
-                    item.medidas = medidas;
-                    item.datosAdicionalesArticulo = datosAdicionalesArticulo;
-
-                    let dataMedida = medidas.find(m => m.idMedida === item.idMedida) || {};
-                    item.articuloTarifas = JSON.parse(dataMedida.tarifas);
-                })
-
-                // item.idBodega = idBodega
-            }
-
-            return detalles;
-        }
-
+ 
 
         service.addRow = function () {
             return {

@@ -12,8 +12,7 @@
     let aprobacionDocSvc = {};
     let clienteSvc = {};
     let notaEntregaSvc = {};
-    let proformaSvc = {};
-    let articuloSvc = {};
+    let proformaSvc = {}; 
     let facturaSvc = {};
     let gridOptionsSvc = {};
     let TAX_RATE_CODE = {};
@@ -21,19 +20,7 @@
 
     let mainDataForm = {};
     let DOC_TYPE = {}
-    let SRI_IDENTIFITION_CODE = {}
-
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    })
+    let SRI_IDENTIFITION_CODE = {} 
 
     app.controller('aprobacionDocumentoCtrl', aprobacionDocumentoCtrl);
 
@@ -46,8 +33,7 @@
         clienteSvc = $injector.get('clienteService');
         aprobacionDocSvc = $injector.get('aprobacionDocService');
         notaEntregaSvc = $injector.get('notaEntregaService');
-        proformaSvc = $injector.get('proformaService');
-        articuloSvc = $injector.get('articuloService');
+        proformaSvc = $injector.get('proformaService'); 
         facturaSvc = $injector.get('facturaService');
         tS = $injector.get('toastService');
         fS = $injector.get('formulario');
@@ -884,6 +870,10 @@
             $scope.getDocumentos();
         }
 
+        $scope.pageChanged = function(){
+            $scope.getDocumentos();
+        }
+
 
         $scope.getDocumentos = function () {
             try {
@@ -983,20 +973,21 @@
                 showLoader();
                 $scope.documentos = [];
                 let dataSearch = {
-                    codEstab: $scope.dataSearch.codEstab,
+                    tipo: 1,
                     checkBoxFecha: true,
-                    checkBoxCliente: $scope.dataSearch.byCliente > 0,
-                    byCliente: $scope.dataSearch.byCliente,
+                    codEstab: $scope.dataSearch.codEstab,
+                    idPuntoEmision: $scope.dataSearch.idPuntoEmision,
+                    byCliente: $scope.dataSearch.byCliente, 
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                    typeList: 2,
-                    pageIndex: 1,
-                    pageSize: 50
+                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),  
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
                 }
+
                 proformaSvc.getAll(dataSearch).then(async ({ proformas }) => {
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',
-                        field: 'nroDocumento'
+                        field: 'serieComprobante'
                     },
                     {
                         name: 'F. Emisión',
@@ -1039,8 +1030,8 @@
                     },
                     ];
 
-                    this.documentos = proformas;
-                    await this.setDataGridOptionsChildren();
+                    $scope.documentos = proformas;
+                    await $scope.setDataGridOptionsChildren();
                 }).catch(error => {
                     hideLoader();
                     console.log(error)
@@ -1061,8 +1052,7 @@
                 item.subGridOptions = $scope.columnDefsSubGridOptions();
                 if ($scope.docOrigen.codDoc === DOC_TYPE.NE) {
                     await notaEntregaSvc.getId(item.idDocumento).then(response => {
-                        let { items, datosAdicionalesArticulo, infoAdicionalDocumento } = response;
-                        console.log(response)
+                        let { items, datosAdicionalesArticulo, infoAdicionalDocumento } = response; 
                         item.subGridOptions.data = items;
                         tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
                         tempInfoAdicionalDocumento.push(infoAdicionalDocumento)
@@ -1070,7 +1060,12 @@
                 }
 
                 if ($scope.docOrigen.codDoc === DOC_TYPE.PR) {
-                    //  $scope.getProformas();
+                    await proformaSvc.getId(item.idDocumento).then(response=>{
+                        let { items} = response; 
+                        item.subGridOptions.data = items;
+                        // tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
+                        // tempInfoAdicionalDocumento.push(infoAdicionalDocumento);
+                    })
                 }
 
                 //Obtenemos detalle de Nota de Entrega || Porforma
@@ -1686,6 +1681,7 @@
         $scope.docDestinoDesc = docDestinoDesc
 
         $scope.data = comprobante;
+        console.log($scope.data)
         $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
         $scope.cliente = cliente;
         $scope.dataDisabled = {
@@ -1716,6 +1712,17 @@
 
         async function initiload() {
             try {
+                let {
+                   // estabs,
+                    tarifaImpuestoVigente,
+                   // tarifasImpuesto,
+                    // tiemposCredito,
+                    // tarifas,
+                   // permisoVenta,
+                   decimal,
+                } = mainDataForm;
+                $scope.dataTarifaImpuesto = tarifaImpuestoVigente;
+                $scope.decimal = decimal;
                 setColumnDefs();
                 $scope.gridOptionsDetalle.data = items.map((item, index) => ({
                     ...item,
@@ -2711,7 +2718,7 @@
                     estabs,
                     tarifaImpuestoVigente,
                     tarifasImpuesto,
-                    // tiemposCredito,
+                    tiemposCredito,
                     tarifas,
                     permisoVenta,
                     decimal,
@@ -2722,9 +2729,9 @@
                  */
                 $scope.establecimientos = estabs;
                 const codEstab = $scope.establecimientos.flatMap((dt) => dt.puntosEmision)
-                    .find((dt) => dt.idPuntoEmision === $scope.data.idPuntoEmision);
+                    .find((dt) => dt.idPuntoEmision === $scope.data.idPuntoEmision).codEstab;
 
-                let dataEstab = establecimientos.find(item => (item.codEstab === codEstab))
+                let dataEstab = $scope.establecimientos.find(item => (item.codEstab === codEstab))
 
                 $scope.data.codEstab = dataEstab.codEstab;
                 $scope.dataClone.codEstab = $scope.data.codEstab;
@@ -2752,7 +2759,7 @@
                 $scope.data.idTarifa = $scope.tarifas.length > 0 ? $scope.tarifas[0].idTarifa : 0;
                 $scope.dataClone.idTarifa = $scope.data.idTarifa;
 
-                $scope.tiempoCreditos = tiempoCreditos;
+                $scope.tiempoCreditos = tiemposCredito;
 
                 //Permisos para detalle y documento    
                 $scope.permisoComprobanteVenta = permisoVenta.comprobante;
@@ -3146,7 +3153,7 @@
         $scope.setItemArticuloEnDetalle = function (dataArticulo){
 
             try {
-                const { articulo, medidas, datosAdicionalesArticulo } = dataArticulo;  
+                const { articulo, medidas, datosAdicionalesArticulo, consolidacionesFecha } = dataArticulo;  
 
                 let index = 0, entity = {};
 
@@ -3198,6 +3205,7 @@
 
                 //Datos Adicionales 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+                entity.consolidacionesFecha = consolidacionesFecha;
 
                 entity.articuloTarifas = dataMedida.tarifas;
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
@@ -3282,6 +3290,7 @@
         }
 
 
+        $scope.gridOptionsItemsDeleted = [];
         $scope.askToDeleteRow = async function (rowEntity) {
             try {
                 $scope.indexRowDetalle = null;
@@ -3290,6 +3299,15 @@
                 if (isConfirmed) {
                     let index = $scope.gridOptionsDetalle.data.indexOf(rowEntity);
                     $scope.gridOptionsDetalle.data.splice(index, 1);
+                    
+                    // if (rowEntity.idAprob_Document_Detailt > 0) {
+                    //     $scope.gridOptionsItemsDeleted.push({
+                    //         ...rowEntity,
+                    //         cantidad: rowEntity.cantidadOriginal,
+                    //         estado: 0
+                    //     });
+                    // }
+
                     //Recalculamos los totales 
                     $scope.setCalculoTotales("cantidad", rowEntity, 0);
                     $scope.$apply();
@@ -3299,6 +3317,7 @@
                     $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
                     $scope.historyDatosAdicionales = $scope.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.idArticulo);
                 }
+
             } catch (error) {
                 console.log(error);
             }
@@ -3408,20 +3427,27 @@
                     })
                     return
                 }
+                if ($scope.gridOptions.data.some(row => !(row.idBodega > 0))) {
+                    tS.toastr('warning', 'Seleccione la bodega en el detalle de los artículos');
+                    return
+                }
+
                 let serieComprobante = null;
                 if($scope.data.docDestino===DOC_TYPE.FV_SRI){
-
+                    showLoader();
+                    serieComprobante = await facturaSvc.generateSerieComprobante({
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    });
+                    hideLoader();
                 }
                 if ($scope.data.docDestino === DOC_TYPE.NE) {
-
+                    showLoader();
+                    serieComprobante = await notaEntregaSvc.generateSerieComprobante({
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    })
                 } 
 
-                // const nroDocumentoSecuencial = await commonSvc.generarNroDocumentoVenta({
-                //     idPuntoEmision: $scope.data.idPuntoEmision,
-                //     codigoDocumento: $scope.data.docDestino == DOC_TYPE.FV_SRI ? DOC_TYPE.FV : $scope.data.docDestino,
-                // })
-
-                if (!serieComprobante) throw 'Nro. secuencial no se generó';
+                if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"; 
 
                 let { isConfirmed } = await Swal.fire({
                     // title: 'Are you sure?',
@@ -3444,10 +3470,9 @@
                     if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
                         let query = facturaSvc.queryMapper({
                             data: $scope.data,
-                            cliente: {
-                                idCliente: $scope.cliente.idCliente
-                            },
+                            cliente:  $scope.cliente.idCliente,                            
                             detalles: $scope.gridOptionsDetalle.data,
+                            itemsDeleted: [],
                             infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                             historyDatosAdicionales: $scope.historyDatosAdicionales
                         })
@@ -3474,6 +3499,7 @@
                             data: $scope.data,
                             cliente: $scope.cliente,
                             detalles: $scope.gridOptionsDetalle.data,
+                            itemsDeleted: [],
                             historyDatosAdicionales: $scope.historyDatosAdicionales
                         })
 
