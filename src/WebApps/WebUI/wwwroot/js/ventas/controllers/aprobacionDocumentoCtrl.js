@@ -870,6 +870,10 @@
             $scope.getDocumentos();
         }
 
+        $scope.pageChanged = function(){
+            $scope.getDocumentos();
+        }
+
 
         $scope.getDocumentos = function () {
             try {
@@ -969,20 +973,21 @@
                 showLoader();
                 $scope.documentos = [];
                 let dataSearch = {
-                    codEstab: $scope.dataSearch.codEstab,
+                    tipo: 1,
                     checkBoxFecha: true,
-                    checkBoxCliente: $scope.dataSearch.byCliente > 0,
-                    byCliente: $scope.dataSearch.byCliente,
+                    codEstab: $scope.dataSearch.codEstab,
+                    idPuntoEmision: $scope.dataSearch.idPuntoEmision,
+                    byCliente: $scope.dataSearch.byCliente, 
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                    typeList: 2,
-                    pageIndex: 1,
-                    pageSize: 50
+                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),  
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
                 }
+
                 proformaSvc.getAll(dataSearch).then(async ({ proformas }) => {
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',
-                        field: 'nroDocumento'
+                        field: 'serieComprobante'
                     },
                     {
                         name: 'F. Emisión',
@@ -1025,8 +1030,8 @@
                     },
                     ];
 
-                    this.documentos = proformas;
-                    await this.setDataGridOptionsChildren();
+                    $scope.documentos = proformas;
+                    await $scope.setDataGridOptionsChildren();
                 }).catch(error => {
                     hideLoader();
                     console.log(error)
@@ -1047,8 +1052,7 @@
                 item.subGridOptions = $scope.columnDefsSubGridOptions();
                 if ($scope.docOrigen.codDoc === DOC_TYPE.NE) {
                     await notaEntregaSvc.getId(item.idDocumento).then(response => {
-                        let { items, datosAdicionalesArticulo, infoAdicionalDocumento } = response;
-                        console.log(response)
+                        let { items, datosAdicionalesArticulo, infoAdicionalDocumento } = response; 
                         item.subGridOptions.data = items;
                         tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
                         tempInfoAdicionalDocumento.push(infoAdicionalDocumento)
@@ -1056,7 +1060,12 @@
                 }
 
                 if ($scope.docOrigen.codDoc === DOC_TYPE.PR) {
-                    //  $scope.getProformas();
+                    await proformaSvc.getId(item.idDocumento).then(response=>{
+                        let { items} = response; 
+                        item.subGridOptions.data = items;
+                        // tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
+                        // tempInfoAdicionalDocumento.push(infoAdicionalDocumento);
+                    })
                 }
 
                 //Obtenemos detalle de Nota de Entrega || Porforma

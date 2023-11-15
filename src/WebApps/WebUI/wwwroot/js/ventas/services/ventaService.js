@@ -1044,7 +1044,7 @@
                             correo: item.correo,
                             fechaEmision: item.fechaEmision,
                             total: item.total,
-                            nroDocumento: item.nroDocumento, //eliminar posteriormente
+                            nroDocumento: item.nroDocumento, //📛eliminar posteriormente
                             serieComprobante: item.nroDocumento,
                             nombreFiscal: item.nombreFiscal,
                             nroIdentificacion: item.nroIdentificacion,
