@@ -16,8 +16,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @idEntidad INT 
-	DECLARE @bySearch VARCHAR(MAX)
+	DECLARE @idEntidad INT
     DECLARE @tipo INT
     DECLARE @checkBoxFecha BIT 
     DECLARE @codEstab VARCHAR(25) 
@@ -42,8 +41,6 @@ BEGIN
                                     ,@pageSize          INT
 							        ,@pageIndex         INT'
 
-
-
 	DECLARE @sql NVARCHAR(MAX) = 'SELECT idAprob_Document        = ad.idAprob_Document
 										,uniqueId                = ad.uniqueId
 										,es.codEstab
@@ -64,8 +61,8 @@ BEGIN
 										,total                   = ad.importeTotal
 										,codEstado               = ad.codEstado
 										,estado			         = ep.descripcion
-										,colorFila               = CASE ad.codEstado WHEN ''A''    THEN ''table-danger'' 
-																					 WHEN ''APR'' THEN  ''table-success''
+										,colorFila               = CASE ad.codEstado WHEN ''A''   THEN ''table-danger'' 
+																					 WHEN ''APR'' THEN ''table-success''
 																					 ELSE ''''
 																   END 
                                         ,count(*) over() as totalRecords
@@ -220,7 +217,7 @@ BEGIN
                   ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
 
-            SELECT idEstadoPago, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+            SELECT idEstadoPago, descripcion, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('PE','AC')
 
             RETURN 
         END 
