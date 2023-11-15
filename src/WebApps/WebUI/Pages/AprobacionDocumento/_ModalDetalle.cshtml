@@ -7,16 +7,14 @@
 
     <div class="modal-body">
         <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Establecimiento: </label>
-                    <select class="form-control" ng-model="data.codEstab" disabled>
-                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
-                    </select>
+                     <input type="text" class="form-control" ng-value="data.establecimiento" disabled>
                 </div>
             </div>                
 
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">                        
                     <label>Punto Emisión </label>
                     <input type="text" class="form-control" ng-value="data.ptoEmi" disabled>
@@ -26,7 +24,14 @@
                 </div>
             </div>
 
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>Serie Comprobante:  </label>
+                    <input type="text" name="serieComprobante" class="form-control" ng-model="data.serieComprobante" disabled>
+                </div>                    
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label>Fecha Emisión:  </label>
                     <input type="date" name="fechaEmision" class="form-control" ng-model="data.fechaEmision" disabled>
@@ -76,7 +81,7 @@
                                 <tbody>
                                     <tr>
                                         <td class="left">
-                                            <strong>SubTotal {{dataTarifaImpuesto.descripcion}}</strong>
+                                            <strong>SubTotal {{data.tarifaImpuestoVigente}}</strong>
                                         </td>
                                         <td class="right">
                                             <strong>${{data.subTotalIva}}</strong>
@@ -244,7 +249,7 @@
 
                             <tr>
                                 <td class="left">
-                                    <strong> {{dataTarifaImpuesto.descripcion}}</strong>
+                                    <strong> {{data.tarifaImpuestoVigente}}</strong>
                                 </td>
                                 <td class="right">
                                     <strong>${{data.iva}}</strong>

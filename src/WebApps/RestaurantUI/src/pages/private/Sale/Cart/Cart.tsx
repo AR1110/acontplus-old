@@ -91,7 +91,7 @@ const Cart = () => {
                                 order.tableId > 0 ? (
                                     (
                                         order.table?.tableName && order.table?.tableName
-                                    ) ? `${order.table?.tableName} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                                    ) ? `${order.table?.tableName}` : 'Seleccionar Mesa'
                                 ) : 'Mesa'
                             }
                         </Button>

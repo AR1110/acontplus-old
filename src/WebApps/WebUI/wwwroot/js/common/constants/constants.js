@@ -843,3 +843,9 @@ app.constant('DOC_TYPE', {
     NE: 'NE',
     PR: 'PR'
 })
+app.constant('SRI_IDENTIFITION_CODE', {
+    RUC : "04",
+    LICENSE : "05",
+    PASSPORT : "06",
+    CONSUMIR_FINAL: '07'
+})

@@ -163,7 +163,7 @@ function MainLayout() {
                                 Estab: {dataEstab?.nombreComercial}
                             </Typography>
                             <Typography variant="body2">
-                                Punto Emisión: {puntoEmision}
+                                Punto Emisión: {dataEstab.estab}-{puntoEmision}
                             </Typography>
                             <Typography variant="body2">
                                 <span>Usuario: {dataEstab?.usuario}</span>

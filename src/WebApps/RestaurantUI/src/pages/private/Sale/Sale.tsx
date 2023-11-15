@@ -140,7 +140,7 @@ export default function Sale() {
                                     order.tableId > 0 ? (
                                         (
                                             order.table?.tableName && order.table?.tableName
-                                        ) ? `${order.table?.tableName} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                                        ) ? `${order.table?.tableName}` : 'Seleccionar Mesa'
                                     ) : 'Seleccionar Mesa'
                                 }
                             </Button>
