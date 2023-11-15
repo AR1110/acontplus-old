@@ -134,6 +134,7 @@ BEGIN
         ,@tableId               = tableId    
         ,@itemsToPay            = itemsToPay
         ,@customDetail          = customDetail
+        ,@userId                = userId
     FROM OPENJSON(@json)
     WITH(establecimientoId      INT             '$.establecimientoId',
         puntoEmisionId          INT             '$.puntoEmisionId',
@@ -149,7 +150,8 @@ BEGIN
         codDoc                  VARCHAR(2)      '$.codDoc',       
         tableId                 INT             '$.tableId',
         itemsToPay              NVARCHAR(MAX)   '$.itemsToPay' AS JSON,
-        customDetail            NVARCHAR(MAX)   '$.customDetail' AS JSON
+        customDetail            NVARCHAR(MAX)   '$.customDetail' AS JSON,
+        userId              INT '$.userId'
     )
     
     SET @fechaEmision = (SELECT dbo.ufnGetDateEcuador())
@@ -269,9 +271,13 @@ BEGIN
     --- Select ---
     SELECT @companyId   = idEntidad
         , @ruc          = rucEmpresa
-        , @userId       =  idUsuario 
     FROM v_usuario 
     WHERE idUsuarioRol  = @userRoleId
+
+     IF (@userId = 0)
+        BEGIN
+            SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+        END
 
     -------------------------DOCUMENTOS DE VENTA-------------------------------
     SELECT @nroDocumento     = cd.secuencial
