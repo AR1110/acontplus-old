@@ -371,7 +371,7 @@ BEGIN
 				  ,saldo
 				  ,estado
 				  ,cuotas
-			FROM @tbVentas ORDER BY fechaEmision DESC
+			FROM @tbVentas ORDER BY CONVERT(DATE, fechaEmision, 103) DESC
 
 			SELECT importeTotal         = SUM(importeTotal) 
 			      ,mora                 = SUM(mora)

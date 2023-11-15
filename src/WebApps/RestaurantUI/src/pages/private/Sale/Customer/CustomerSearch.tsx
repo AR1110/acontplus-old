@@ -28,6 +28,7 @@ const CustomerSearch = () => {
     })
     //Modals 
     const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
+    const [openTooltip, setOpenTooltip] = useState(false)
 
     const customerSearch = (textSearch: string) => {
         setCustomers([])
@@ -69,10 +70,10 @@ const CustomerSearch = () => {
         return true;
     }
 
-    const showAlertConfirmID = (textSearch: string)=>{
+    const showAlertConfirmID = (textSearch: string) => {
         Swal.fire({
             //title: "Are you sure?",
-            html: "Desea registrar con el número de identificación <b>PASAPORTE</b>?",
+            html: `Desea registrar este numero de identificacion: ${textSearch} como <b>PASAPORTE</b>?`,
             icon: "warning",
             showCancelButton: true,
             showConfirmButton: true,
@@ -92,17 +93,24 @@ const CustomerSearch = () => {
                 }
                 setOpenCustomerDialog(true)
             }
-        }) 
+        })
     }
     const onSearchToSRI = async function (textSearch: string) {
         try {
 
             if (!(order.customerCompanyId > 0)) {
-                const isValidID = verificarNumero(textSearch); 
-                if (!isValidID) {  
+                const isValidID = verificarNumero(textSearch);
+                if (!isValidID) {
                     showAlertConfirmID(textSearch)
                     return
                 }
+
+                const response = await customerService.search(textSearch);
+                if (response.length > 0) {
+                    SnackbarUtility.info('Selecciona al cliente de entre los clientes que se han encontrado!');
+                    return
+                } 
+
                 //Numero de RUC 
                 if (textSearch.length === 13) {
                     try {
@@ -168,7 +176,7 @@ const CustomerSearch = () => {
         }
     }
 
-    const onEnterCustomerSearch = (event: any) => {       
+    const onEnterCustomerSearch = (event: any) => {
         const textSearch = event.target.value;
         dataCustomerSRI.current = {
             numeroRuc: '',
@@ -197,15 +205,24 @@ const CustomerSearch = () => {
                 telefono: "",
                 email: ""
             }
-            if(textSearch){
+            if (textSearch) {
                 onSearchToSRI(textSearch)
-            }else{
+            } else {
                 setOpenCustomerDialog(true)
             }
         } catch (error) {
             console.log(console.error());
         }
     }
+
+    const handleTooltipInfo = () => {
+        setOpenTooltip((state)=>!state);
+    };
+
+    // const handleTooltipOpen = () => {
+    //     setOpen(true);
+    // };
+
     return (
         <>
             <Autocomplete
@@ -274,7 +291,7 @@ const CustomerSearch = () => {
                                                     <EditIcon color='warning' sx={{ fontSize: 30 }} />
                                                 </IconButton>
                                             </Tooltip>
-                                                <HtmlTooltip placement="bottom-start" title={
+                                                <HtmlTooltip open={openTooltip} onClick={handleTooltipInfo} placement="bottom-start" title={
                                                     <CustomerInfo id={order.customerCompanyId} />
                                                 }>
                                                     <IconButton>

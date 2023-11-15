@@ -27,8 +27,8 @@
                         <div class="row justify-content-start">
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label for="establecimiento">Establecimiento: <span
-                                            class="text-danger">*</span></label>
+                                    <span for="establecimiento">Establecimiento: <span
+                                            class="text-danger">*</span></span>
                                     <select class="form-control border-select" ng-model="dataSearch.codEstab"
                                         ng-change="askToChangeEstabFilter()">
                                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
@@ -39,7 +39,7 @@
                             </div>
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label for="">Rango de fechas:</label>
+                                    <span for="">Rango de fechas:</span>
                                     <date-range-filter current-date="dataSearch.fechaInicio"
                                         start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
                                         result-range-date="resultDateRange(result)"></date-range-filter>
@@ -47,7 +47,7 @@
                             </div>
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label for="">Cliente: <span class="text-danger">*</span></label>
+                                    <span for="">Cliente: <span class="text-danger">*</span></span>
                                     <div class="input-group">
                                         <input type="text" id="clienteSearch" autocomplete="off" name="clienteSearch"
                                             class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
@@ -75,6 +75,22 @@
                                     </div>
                                 </div>
 
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="form-group">
+                                <span for="puntoEmision">Punto Emision: <span class="text-danger">*</span></span>
+                                <select class="form-control border-select" ng-model="dataSearch.idPuntoEmision"
+                                        ng-change="refresh()">
+                                        <option ng-value="item.idPuntoEmision" ng-repeat="item in ptosEmision">
+                                            {{item.ptoEmi}}
+                                        </option>
+                                    </select>
+                            </div>
+                            <div class="form-group">
+                                 <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
                             </div>
                         </div>
                     </form>
