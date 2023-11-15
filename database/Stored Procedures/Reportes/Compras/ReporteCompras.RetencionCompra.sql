@@ -127,7 +127,7 @@ BEGIN
 						   ,ISNULL(prov.telefono, 'S/N') as telefonoProveedor
 						   ,ISNULL(prov.direccion, 'S/N') as direccionProveedor								
 						   ,CONVERT(varchar(50), FORMAT(rc.fechaEmision, 'dd/MM/yyyy'), 106) as fechaEmision 		
-						   ,CAST((SELECT SUM(ret.valorRetenido) FROM FactElect.RetencionAtsRet ret WHERE ret.idRetencionAts = @id) as numeric(15, 2)) as totalValorRetenido
+						   ,CAST((SELECT SUM(ret.valorRetenido) FROM FactElect.RetencionAtsRet ret WHERE ret.idRetencionAts = @id AND ret.idRetAtsDocSustento IS NOT NULL) as numeric(15, 2)) as totalValorRetenido
 					FROM FactElect.RetencionAts        rc WITH (NOLOCK)
 					INNER JOIN Sri.Establecimiento      s WITH (NOLOCK) ON s.codEstab              = rc.codEstab
 					inner JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.codigoSri            = '07'
