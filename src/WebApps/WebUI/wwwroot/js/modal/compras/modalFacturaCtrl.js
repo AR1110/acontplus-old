@@ -1,5 +1,5 @@
 
-import './modalCompraBaseCtrl.min.js?v=0.50'
+import './modalCompraBaseCtrl.min.js?v=0.90'
 
 class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
 
