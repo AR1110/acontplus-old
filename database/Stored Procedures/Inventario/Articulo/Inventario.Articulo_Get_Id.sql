@@ -15,22 +15,19 @@ CREATE OR ALTER PROCEDURE Inventario.Articulo_Get_Id
 @id INT
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-
-    ------------- =================================== ----------------------
-    --- NO CAMBIAR EL ORDER DE LAS POSICIONES DEL SELECT, OCURRA ERRORES EN LA APP EN EDICIÓN. 
-
-
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 	DECLARE @idEntidad INT 
 	DECLARE @ruc VARCHAR(15) 
 	DECLARE @tableStock TABLE(id INT IDENTITY(1,1),idBodega INT,codEstab VARCHAR(25),bodega VARCHAR(200),ubicacion VARCHAR(200),stock DECIMAL(15,5))
 	
-	SELECT TOP 1 @idEntidad = idEntidad FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @id
+	SELECT TOP 1 @idEntidad = idEntidad 
+    FROM dbo.Articulo WITH (NOLOCK) 
+    WHERE idArticulo = @id
 
-	SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+	SELECT TOP 1 @ruc = ruc 
+    FROM dbo.Entidad WITH (NOLOCK) 
+    WHERE idEntidad = @idEntidad
 
 	INSERT INTO @tableStock(idBodega,codEstab,bodega,ubicacion,stock)
 	SELECT 
@@ -42,10 +39,7 @@ BEGIN
 	FROM Inventario.Stock st WITH (NOLOCK)
 	INNER JOIN dbo.Bodega bo WITH (NOLOCK) ON bo.idBodega = st.idBodega 
 	WHERE st.idArticulo = @id and bo.estado = 1
-
-    SELECT * FROM @tableStock
-
-     
+             
 	IF NOT EXISTS(SELECT 1 FROM Articulo WITH (NOLOCK) WHERE idArticulo = @id)
 		BEGIN
 			SELECT '0','El id: '+ CAST(@id as nvarchar)+' no existe',''
@@ -91,8 +85,7 @@ BEGIN
 		INNER JOIN TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = a.idTipoIva
 		LEFT JOIN Medida   me WITH (NOLOCK) ON me.idMedida = a.idMedida
 		WHERE a.idArticulo = @id
-
-        
+                
 		SELECT 
 			 idArticuloPvP = ap.idArticuloPvP
 			,idTarifa = ap.idTarifa
