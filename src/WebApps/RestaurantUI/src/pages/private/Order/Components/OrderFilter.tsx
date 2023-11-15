@@ -1,6 +1,6 @@
- 
+
 import { useNavigate } from 'react-router-dom'
-import { AppBar,Button, Grid, IconButton, MenuItem, TextField, Toolbar, Tooltip } from '@mui/material'
+import { AppBar, Button, Grid, IconButton, MenuItem, TextField, Toolbar, Tooltip } from '@mui/material'
 import { CustomerSearchFilter, DateRangeFilter } from '.'
 import { RefreshIcon } from '@/core/components/IconsMaterial'
 import { useOrderContext } from '../context'
@@ -9,10 +9,10 @@ import { PrivateRoutes } from '@/core/models'
 
 const OrderFilter = () => {
     const navigate = useNavigate();
-    const { fetchOrders, dataFilter, setDataFilter, tables } = useOrderContext();
-     
+    const { fetchOrders, dataFilter, setDataFilter, tables, usuarios } = useOrderContext();
+
     const onchangeDateStart = (date: any) => {
-        setDataFilter('startDate', date.format()); 
+        setDataFilter('startDate', date.format());
     }
 
     const onchangeDateEnd = (date: any) => {
@@ -23,8 +23,12 @@ const OrderFilter = () => {
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })
     }
 
-    const onChangeTable = (tableId:number)=>{
-        setDataFilter('tableId', tableId); 
+    const onChangeTable = (tableId: number) => {
+        setDataFilter('tableId', tableId);
+    }
+
+    const onChangeUser = (userId: number) => {
+        setDataFilter('userId', userId);
     }
     return (
         <>
@@ -33,33 +37,33 @@ const OrderFilter = () => {
                 color="default"
                 elevation={0}
             // sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-            > 
-                <Toolbar sx={{ mt: 2 }}> 
+            >
+                <Toolbar sx={{ mt: 2 }}>
                     <Grid container spacing={0.5}>
                         <Grid item xs={12} sm={12} md={12} lg={10} xl={10}>
                             <Grid container spacing={1}>
-                                <Grid item xs={12} md={3} lg={3}>
+                                <Grid item xs={12} md={6} lg={2}>
                                     <DateRangeFilter
                                         label="Fecha Inicio"
                                         value={dayjs(dataFilter.startDate)}
                                         onChange={onchangeDateStart} />
                                 </Grid>
-                                <Grid item xs={12} md={3} lg={3}>
+                                <Grid item xs={12} md={6} lg={2}>
                                     <DateRangeFilter
                                         label="Fecha Fin"
                                         value={dayjs(dataFilter.endDate)}
                                         onChange={onchangeDateEnd} />
                                 </Grid>
-                                <Grid item xs={12} md={4}>
+                                <Grid item xs={12} md={6} lg={4}>
                                     <CustomerSearchFilter />
                                 </Grid>
-                                <Grid item xs={12} md={2}>
+                                <Grid item xs={12} md={6} lg={2}>
                                     {
-                                        tables.length>0 && (
+                                        tables.length > 0 && (
                                             <TextField
                                                 id="table"
                                                 select
-                                                label="Mesa" 
+                                                label="Mesa"
                                                 value={dataFilter.tableId}
                                                 fullWidth
                                                 onChange={(e) => onChangeTable(Number(e.target.value))}
@@ -68,16 +72,39 @@ const OrderFilter = () => {
                                                     Todos
                                                 </MenuItem>
                                                 {
-                                                    tables.length > 0 && tables.map((table:any, index:number) => (
+                                                    tables.length > 0 && tables.map((table: any, index: number) => (
                                                         <MenuItem key={index} value={table.id}>
-                                                            {table.roomDescription} - {table.description} 
+                                                            {table.roomDescription} - {table.description}
                                                         </MenuItem>
                                                     ))
                                                 }
                                             </TextField>
                                         )
                                     }
-                                    
+
+                                </Grid>
+                                <Grid item xs={12} md={6} lg={2}>
+                                    <TextField
+                                        id="usuario"
+                                        select
+                                        label="Usuario"
+                                        value={dataFilter.userId}
+                                        fullWidth
+                                        onChange={(e) => onChangeUser(Number(e.target.value))}
+                                    >
+                                        <MenuItem value={0}>
+                                            Todos
+                                        </MenuItem>
+                                        {
+                                            usuarios.length > 0 && usuarios.map((usuario: any, index: number) => (
+                                                <MenuItem key={index} value={usuario.idUsuario}>
+                                                    {usuario.nombreUsuario}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </TextField>
+
+
                                 </Grid>
                             </Grid>
 
@@ -101,7 +128,7 @@ const OrderFilter = () => {
 
                             </Grid>
                         </Grid>
-                    </Grid>  
+                    </Grid>
                 </Toolbar>
             </AppBar>
         </>

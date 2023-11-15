@@ -219,6 +219,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
     }
 
     const handleTooltipInfo = () => {
+        refCustomerCompanyId.current = customerCompanyId;        
         setOpenTooltip((state) => !state);
     };
 

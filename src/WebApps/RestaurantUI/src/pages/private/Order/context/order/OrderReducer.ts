@@ -23,9 +23,12 @@ export const orderReducer = (state: OrderState, action: any): OrderState => {
             }
 
         case SET_DATA_FORM_ORDER_FILTER_SUCCESS: {
+
+            
             return {
-                ...state,
-                tables: action.payload
+                ...state,                
+                tables: action.payload.tables,
+                usuarios: action.payload.usuarios || []
             }
         }
 

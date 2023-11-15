@@ -11,7 +11,8 @@ const initialState: OrderState = {
     orderError: false,
     dataFilter: orderFilter,
     orders: [],
-    tables: []
+    tables: [],
+    usuarios: []
 }
 const initialActions: OrderActions = {
     fetchOrders: () => [],
@@ -72,7 +73,7 @@ export const OrderProvider = ({ children }: Props) => {
             const response = await orderService.get({tipo: 4}, cancelTokenSourceFilter.token);
             //console.log(response)
             // const orders = orderReadAdapter(response.orders);
-            dispatch({ type: SET_DATA_FORM_ORDER_FILTER_SUCCESS, payload: response.tables });
+            dispatch({ type: SET_DATA_FORM_ORDER_FILTER_SUCCESS, payload: response });
             hideLoader()
         } catch (error) {
             // dispatch({ type: GET_ORDERS_ERROR })
