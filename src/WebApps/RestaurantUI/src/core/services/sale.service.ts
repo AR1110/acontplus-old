@@ -10,7 +10,7 @@ import {
 } from "../adapters"
 
 import { PATHS } from "../constants"
-import { Floor, Room } from "../models";
+import { ConfigSistema, Floor, Room, Vendedor } from "../models";
 import { Http } from "../utilities"
 
 const URL = 'Configuration';
@@ -34,13 +34,16 @@ export const SaleService = {
             room,
             floor,
             customer,
-            tarifaImpuestoVigente
+            tarifaImpuestoVigente,
+            config,
+            vendedores
         } = resultAxios.data;
-
+        console.log(resultAxios.data)
 
         const rooms: Array<Room> = room;
         const floors: Array<Floor> = floor;
         const tarifaVigente = taxRateAdapter(tarifaImpuestoVigente);
+       
         return {
             categories: categoryReadAdapter(subCategorias || []),
             decimal: decimalSaleReadAdapter(configDecimal[0]),
@@ -52,7 +55,9 @@ export const SaleService = {
             rooms,
             floors,
             customer: customerReadAdapter(customer.length > 0 ? customer[0] : {}),
-            tarifaImpuestoVigente: tarifaVigente[0]! 
+            tarifaImpuestoVigente: tarifaVigente[0]!,
+            configSistema: config[0] as ConfigSistema,
+            vendedores: vendedores as Vendedor[]
         }
     }
 }

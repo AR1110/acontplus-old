@@ -36,6 +36,19 @@ const orderService = {
             controller
         }
     },
+    // async getDataFilter() {
+    //     const resultAxios = await Http({
+    //         method: 'get',
+    //         url: `${PATHS.PRIVATE}${URL}`,
+    //         data: { 
+    //             json: JSON.stringify({tipo: 4})
+    //          }
+    //     })
+
+    //     const response: ApiResponse = resultAxios.data;
+    //     console.log(response)
+    //     return response;
+    // },
     async post(data: object) {
         const resultAxios = await Http({
             method: 'post',
