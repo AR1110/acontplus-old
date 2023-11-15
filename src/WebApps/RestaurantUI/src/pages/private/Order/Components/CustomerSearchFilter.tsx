@@ -24,7 +24,7 @@ const CustomerSearchFilter = () => {
             onInputChange={(_, newValue) => onInputChange(newValue)}
             id="customerSearchFilter"
             options={customers}
-            sx={{ width: 300 }}
+            fullWidth
             freeSolo
             value={dataFilter.customerName}
             autoHighlight

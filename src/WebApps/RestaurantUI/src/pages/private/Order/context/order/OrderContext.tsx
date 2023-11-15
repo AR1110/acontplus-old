@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
-import { GET_ORDERS_BEGIN, GET_ORDERS_ERROR, GET_ORDERS_SUCCESS, SET_DATA_FILTER, orderReducer } from ".";
+import { GET_ORDERS_BEGIN, GET_ORDERS_ERROR, GET_ORDERS_SUCCESS, SET_DATA_FILTER, SET_DATA_FORM_ORDER_FILTER_SUCCESS, orderReducer } from ".";
 import { orderService } from "@/core/services";
 import { OrderActions, OrderState, orderFilter } from "@/core/models";
 import { orderReadAdapter } from "@/core/adapters";
@@ -10,7 +10,8 @@ const initialState: OrderState = {
     orderLoading: false,
     orderError: false,
     dataFilter: orderFilter,
-    orders: []
+    orders: [],
+    tables: []
 }
 const initialActions: OrderActions = {
     fetchOrders: () => [],
@@ -30,6 +31,7 @@ export const OrderProvider = ({ children }: Props) => {
     // Utiliza useReducer para gestionar el estado
     const [state, dispatch] = useReducer(orderReducer, initialState); 
     let cancelTokenSource: CancelTokenSource | null = null;
+    let cancelTokenSourceFilter: CancelTokenSource | null = null;
 
     // Función para cargar datos de pedido
     const fetchOrders = async () => {
@@ -46,10 +48,34 @@ export const OrderProvider = ({ children }: Props) => {
             cancelTokenSource = axios.CancelToken.source();
             const response = await orderService.get(state.dataFilter, cancelTokenSource.token,);
             const orders = orderReadAdapter(response.orders);
+            
             dispatch({ type: GET_ORDERS_SUCCESS, payload: orders });
             hideLoader()
         } catch (error) {
             dispatch({ type: GET_ORDERS_ERROR })
+            hideLoader()
+        }
+    }
+
+    const fetchDataFilter = async ()=>{
+        try {
+            // Inicia el indicador de carga
+            //dispatch({ type: GET_DATA_FORM_ORDER_FILTER_BEGIN })
+            showLoader()
+            // Check if we made a request
+            if (cancelTokenSourceFilter) {
+                // Cancel the previous request before making a new request
+                cancelTokenSourceFilter.cancel('Request canceled');
+            }
+            // Create a new cancelTokenSourceFilter
+            cancelTokenSourceFilter = axios.CancelToken.source();
+            const response = await orderService.get({tipo: 4}, cancelTokenSourceFilter.token);
+            //console.log(response)
+            // const orders = orderReadAdapter(response.orders);
+            dispatch({ type: SET_DATA_FORM_ORDER_FILTER_SUCCESS, payload: response.tables });
+            hideLoader()
+        } catch (error) {
+            // dispatch({ type: GET_ORDERS_ERROR })
             hideLoader()
         }
     }
@@ -75,6 +101,7 @@ export const OrderProvider = ({ children }: Props) => {
 
     useEffect(() => {
         fetchOrders();
+        fetchDataFilter()
         return () => cancelEndpoint();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.dataFilter])

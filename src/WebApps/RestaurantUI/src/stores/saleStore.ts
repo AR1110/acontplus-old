@@ -80,7 +80,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     setDataEdit(obj: any) { 
         const { order, orderItems } = obj;
         set(
-            produce((state: State) => {
+            produce((state: State) => { 
                 state.order = order;
                 state.items = orderItems
                 state.totalItems = orderItems.reduce((total:any, item:any) => total + item.quantity, 0); 

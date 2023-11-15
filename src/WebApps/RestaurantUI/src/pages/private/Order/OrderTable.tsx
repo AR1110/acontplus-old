@@ -143,7 +143,7 @@ export default function OrderTable() {
                                     <TableCell align="center">F. Emisión</TableCell>
                                     <TableCell align="center">Cliente</TableCell>
                                     <TableCell align="right">Total</TableCell>
-                                    {/* <TableCell align="center">Estado</TableCell> */}
+                                    <TableCell align="center">Mesa</TableCell> 
                                     <TableCell align="center">Usuario</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -213,7 +213,7 @@ export default function OrderTable() {
                                         <TableCell align="center">{order.createdAt}</TableCell>
                                         <TableCell align="center">{order.nameFiscal}</TableCell>
                                         <TableCell align="right">{order.total}</TableCell>
-                                        {/* <TableCell align="center">{order.divided ? 'Dividiendo' : '-'}</TableCell> */}
+                                        <TableCell align="center">{order.tableName}</TableCell> 
                                         <TableCell align="center">{order.userName}</TableCell>
                                     </TableRow>
                                 ))}

@@ -33,6 +33,7 @@ export interface RawOrderData {
   totalRecords: number
   divided: boolean
   finished: boolean
+  tableName: string
 }
 
 export interface OrderReadDto {
@@ -53,6 +54,7 @@ export interface OrderReadDto {
   totalRecords: number
   divided: boolean 
   finished: boolean
+  tableName: string
 }
 
 
@@ -84,6 +86,7 @@ export interface DataFilter {
   endDate: any
   customerCompanyId: number
   customerName: string
+  tableId: number
 }
 
 export const orderFilter: DataFilter = {
@@ -93,7 +96,8 @@ export const orderFilter: DataFilter = {
   startDate: formatDateTimeZone(dayjs()),
   endDate: formatDateTimeZone(dayjs()),
   customerCompanyId: 0,
-  customerName: ""
+  customerName: "",
+  tableId: 0
 }
 
 export interface OrderState {
@@ -101,6 +105,7 @@ export interface OrderState {
   orderError: boolean
   dataFilter: DataFilter
   orders: Array<OrderReadDto>
+  tables: any
 }
 
 

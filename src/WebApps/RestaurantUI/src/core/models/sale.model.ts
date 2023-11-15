@@ -1,4 +1,4 @@
-import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, ProductPVPReadDto, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
+import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, ProductPVPReadDto, Room, TableReadDto, Tax, TaxRate, Vendedor, WarehouseAsign } from ".";
 import { DOC_TYPE, ITEM_TYPE_CODE } from "../constants";
 import { EmissionPointAsign } from "./emission-point.model";
 
@@ -26,7 +26,7 @@ export interface Order {
     updateOrder?: boolean
     uuid?: string
     table?: any
-    
+    userId: number
 }
 
 //Impuesto Articulos 
@@ -122,6 +122,7 @@ export interface SummaryPostDto {
     quickSale: boolean
     fechaEmision: Date,   
     uuid?: string 
+    userId: number
 }
 
 
@@ -140,6 +141,7 @@ export interface DataFormSale {
     floors: Array<Floor>
     customer: CustomerReadDto
     tarifaImpuestoVigente: TaxRate
+    vendedores: Array<Vendedor>
 } 
 
 
@@ -178,7 +180,8 @@ export const dataFormInitialState: DataFormSale = {
         taxRateCode: "",
         description: "",
         percentage: 0
-    }
+    },
+    vendedores: []
 }
 
 export const orderInitialState: Order = {
@@ -202,5 +205,6 @@ export const orderInitialState: Order = {
     createdAt: new Date(), 
     saveDoc: false,
     updateOrder: false,
-    table: {}
+    table: {},
+    userId: 0
 }

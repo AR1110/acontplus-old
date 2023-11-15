@@ -1,7 +1,7 @@
 import { ItemRead, OrderReadDto, ProductPVPReadDto, RawOrderData } from "../models";
 import { productService } from "../services";
 
-function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> { 
+function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {  
     return orders.map(order => ({
         orderId: order.id,
         documentoId: order.documentoId,
@@ -19,7 +19,8 @@ function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {
         createdAt: order.createdAt,
         totalRecords: order.totalRecords,
         divided: order.divided,
-        finished: order.finished
+        finished: order.finished,
+        tableName: order.tableName
     })
     )
 }
@@ -52,7 +53,8 @@ async function orderReadForUpdateAdapter(obj: any) {
         table: {
             tableName: order.tableName,
             numberTable: order.numberTable
-        }
+        },
+        userId: order.userId
     }
 
     const results = orderItems.map(async (orderItem: any, indexOrderItem: number) => {

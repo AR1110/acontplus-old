@@ -43,7 +43,8 @@ const leftOrder = {
     obs: "",
     codDoc: "",
     quickSale: false,
-    createdAt: new Date()
+    createdAt: new Date(),
+    userId: 0
 };
 
 const rightOrder = {
@@ -65,7 +66,8 @@ const rightOrder = {
     obs: "",
     codDoc: "",
     quickSale: false,
-    createdAt: new Date()
+    createdAt: new Date(),
+    userId: 0
 };
 // Define el estado inicial del contexto
 const initialState: SplitOrderState = {
