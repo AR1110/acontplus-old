@@ -88,6 +88,7 @@ export interface DataFilter {
   customerName: string
   tableId: number
   userId: number
+  finished: boolean
 }
 
 export const orderFilter: DataFilter = {
@@ -99,7 +100,8 @@ export const orderFilter: DataFilter = {
   customerCompanyId: 0,
   customerName: "",
   tableId: 0,
-  userId: 0
+  userId: 0,
+  finished:false
 }
 
 export interface OrderState {

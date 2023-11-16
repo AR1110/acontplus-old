@@ -26,9 +26,10 @@ BEGIN
     ,@endDate     DATETIME2
     ,@tableId     INT
     ,@sql         NVARCHAR(MAX)
-    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT '
+    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT,@finished BIT '
     ,@idEntidad INT 
     ,@userId INT
+    ,@finished BIT
 
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
@@ -64,7 +65,7 @@ BEGIN
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
                     LEFT JOIN Usuario u ON u.idUsuario = o.UserId
                     LEFT JOIN Restaurant.v_Table vt WITH(NOLOCK) ON o.tableId = vt.Id
-                    WHERE CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+                    WHERE CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) AND o.Enabled = 1 '
 
             
     SELECT @tipo                 = tipo
@@ -85,7 +86,8 @@ BEGIN
             pageIndex INT         '$.pageIndex',
             pageSize  INT         '$.pageSize',
             tableId     INT       '$.tableId',
-            userId INT '$.userId'
+            userId INT '$.userId',
+            finished BIT
     )
 
     SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
@@ -102,6 +104,11 @@ BEGIN
             IF (@userId > 0)
                 SET @sql = @sql + ' AND o.userId = @userId'
 
+            IF @finished = 1
+                 SET @sql = @sql + ' AND o.Finished = @finished'
+            ELSE 
+                 SET @sql = @sql + ' AND o.Finished = 0'
+
             SET @sql = @sql + ' ORDER BY o.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
                                  
             SET @tableNames = 'orders'
@@ -115,6 +122,7 @@ BEGIN
                                 ,@customerCompanyId
                                 ,@tableId
                                 ,@userId
+                                ,@finished
         END
     IF (@tipo = 2)
         BEGIN
@@ -318,8 +326,14 @@ BEGIN
         END
     IF (@tipo = 4)
         BEGIN
-            SET @tableNames = 'tables'
+            SET @tableNames = 'tables,usuarios'
             SELECT Id, [NumberTable], [Description], [Floor], roomDescription FROM Restaurant.v_Table vt INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc where e.idEntidad = @idEntidad
+            SELECT 
+				u.idUsuario, 
+				u.nombreUsuario, 
+				u.nombreCompleto				 
+			 FROM v_usuario u WITH(NOLOCK) 
+			 WHERE u.idEntidad = @idEntidad AND u.estadoUsuario = 1
         END
 END
 GO

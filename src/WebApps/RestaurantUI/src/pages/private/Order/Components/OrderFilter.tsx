@@ -1,6 +1,6 @@
 
 import { useNavigate } from 'react-router-dom'
-import { AppBar, Button, Grid, IconButton, MenuItem, TextField, Toolbar, Tooltip } from '@mui/material'
+import { AppBar, Button, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Radio, RadioGroup, TextField, Toolbar, Tooltip } from '@mui/material'
 import { CustomerSearchFilter, DateRangeFilter } from '.'
 import { RefreshIcon } from '@/core/components/IconsMaterial'
 import { useOrderContext } from '../context'
@@ -30,6 +30,11 @@ const OrderFilter = () => {
     const onChangeUser = (userId: number) => {
         setDataFilter('userId', userId);
     }
+    const handleChangeFinished = (finished: any) => {
+        const booleanValue: boolean = finished === "true";
+        setDataFilter('finished', booleanValue);
+    }
+
     return (
         <>
             <AppBar
@@ -58,30 +63,26 @@ const OrderFilter = () => {
                                     <CustomerSearchFilter />
                                 </Grid>
                                 <Grid item xs={12} md={6} lg={2}>
-                                    {
-                                        tables.length > 0 && (
-                                            <TextField
-                                                id="table"
-                                                select
-                                                label="Mesa"
-                                                value={dataFilter.tableId}
-                                                fullWidth
-                                                onChange={(e) => onChangeTable(Number(e.target.value))}
-                                            >
-                                                <MenuItem value={0}>
-                                                    Todos
-                                                </MenuItem>
-                                                {
-                                                    tables.length > 0 && tables.map((table: any, index: number) => (
-                                                        <MenuItem key={index} value={table.id}>
-                                                            {table.roomDescription} - {table.description}
-                                                        </MenuItem>
-                                                    ))
-                                                }
-                                            </TextField>
-                                        )
-                                    }
 
+                                    <TextField
+                                        id="table"
+                                        select
+                                        label="Mesa"
+                                        value={dataFilter.tableId}
+                                        fullWidth
+                                        onChange={(e) => onChangeTable(Number(e.target.value))}
+                                    >
+                                        <MenuItem value={0}>
+                                            Todos
+                                        </MenuItem>
+                                        {
+                                            tables.length > 0 && tables.map((table: any, index: number) => (
+                                                <MenuItem key={index} value={table.id}>
+                                                    {table.roomDescription} - {table.description}
+                                                </MenuItem>
+                                            ))
+                                        }
+                                    </TextField>
                                 </Grid>
                                 <Grid item xs={12} md={6} lg={2}>
                                     <TextField
@@ -105,6 +106,19 @@ const OrderFilter = () => {
                                     </TextField>
 
 
+                                </Grid>
+                                <Grid item xs={12} md={6} lg={6}>
+                                    <FormControl>
+                                        <RadioGroup row
+                                            aria-labelledby="demo-controlled-radio-buttons-group"
+                                            name="controlled-radio-buttons-group"
+                                            value={dataFilter.finished}
+                                            onChange={(e) => handleChangeFinished(e.target.value)}
+                                        >
+                                            <FormControlLabel value={false} control={<Radio />} label="Sin Documentos" />
+                                            <FormControlLabel value={true} control={<Radio />} label="Con Documentos" />
+                                        </RadioGroup>
+                                    </FormControl>
                                 </Grid>
                             </Grid>
 
