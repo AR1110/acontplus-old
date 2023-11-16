@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useState , useEffect} from 'react'
 import {
     Box,
     Button,
@@ -131,7 +131,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         setChangeOrderItems,
         calculateOrderItemTotal,
         setRightOrderData,
-        rightOrder,
+        rightOrder,        
         setPaymentData,
         resetData, 
     } = useSplitOrderContext();
@@ -275,6 +275,22 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         return newRow;
     }
 
+    useEffect(()=>{
+        console.log(leftOrder)
+        setRightOrderData({
+                        ...rightOrder,
+                        customerCompanyId: leftOrder.customerCompanyId,
+                        customerName: leftOrder.customerName
+                    })
+        return ()=>{
+            setRightOrderData({
+            ...rightOrder,
+            customerCompanyId: 0,
+            customerName: ""
+        })
+        }
+    }, [])
+
 
     const saveAsInvoice = async () => {
         try {
@@ -383,7 +399,10 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
             <DialogContent dividers>
                 <Grid container spacing={1}>
                     <Grid item xs={12}>
-                        <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName='' onChangeCustomer={(data) => {
+                        <CustomerSearch 
+                        customerCompanyId={rightOrder.customerCompanyId} 
+                        customerName={leftOrder.customerName} 
+                        onChangeCustomer={(data) => {
                             if (data) {
                                 setRightOrderData({
                                     ...rightOrder,

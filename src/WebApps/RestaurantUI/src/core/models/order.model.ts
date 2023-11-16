@@ -87,6 +87,7 @@ export interface DataFilter {
   customerCompanyId: number
   customerName: string
   tableId: number
+  userId: number
 }
 
 export const orderFilter: DataFilter = {
@@ -97,7 +98,8 @@ export const orderFilter: DataFilter = {
   endDate: formatDateTimeZone(dayjs()),
   customerCompanyId: 0,
   customerName: "",
-  tableId: 0
+  tableId: 0,
+  userId: 0
 }
 
 export interface OrderState {
@@ -106,6 +108,7 @@ export interface OrderState {
   dataFilter: DataFilter
   orders: Array<OrderReadDto>
   tables: any
+  usuarios:any
 }
 
 

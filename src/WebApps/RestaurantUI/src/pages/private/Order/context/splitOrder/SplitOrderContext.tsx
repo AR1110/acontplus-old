@@ -155,8 +155,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
             const resultAxios = await dataFetch.call;
 
             const response = resultAxios.data;
-            const orderData = await orderReadForUpdateAdapter(response)
-            console.log(orderData)
+            const orderData = await orderReadForUpdateAdapter(response) 
             await getDataForForm(orderData.order.establecimientoId)
             // Actualiza el estado con los datos del pedido 
             resetData()
