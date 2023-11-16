@@ -50,6 +50,7 @@ BEGIN
         ,@obs                   = obs
         ,@saveDoc               = saveDoc
         ,@updateOrder           = updateOrder
+        ,@userId                = userId
     FROM OPENJSON(@json)
     WITH(
         uuid                UNIQUEIDENTIFIER '$.uuid',  
@@ -64,7 +65,8 @@ BEGIN
         total               NUMERIC(18,5) '$.total',
         obs                 VARCHAR(500) '$.obs',
         saveDoc             BIT '$.saveDoc',
-        updateOrder         BIT '$.updateOrder'        
+        updateOrder         BIT '$.updateOrder',
+        userId              INT '$.userId'
     )
     
     IF NOT EXISTS (SELECT 1 FROM Config.v_ConfigDocumento cd 
@@ -152,6 +154,11 @@ BEGIN
             SET @saveDoc = 0
         END
 
+    IF (@userId = 0)
+        BEGIN
+            SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+        END
+
     BEGIN TRY
         BEGIN TRAN
             IF @updateOrder = 1
@@ -198,11 +205,9 @@ BEGIN
                     INTO #selectExist
                     FROM Restaurant.OrderItem ro
                     INNER JOIN Restaurant.ItemType it ON it.Id = ro.ItemTypeId
-                    INNER JOIN @tblItems t1 ON t1.itemTypeCode = it.Code                    
-                    WHERE ro.OrderId = @id
-                    AND it.Code = t1.itemTypeCode
-                    GROUP BY ro.OrderId, ro.ItemId, ro.MenuId, it.Code
-                      
+                    INNER JOIN @tblItems t1 ON t1.itemTypeCode = it.Code  AND ro.Id = t1.orderItemId          
+                    WHERE ro.OrderId = @id 
+                    --GROUP BY ro.OrderId, ro.ItemId, ro.MenuId, it.Code
                     IF EXISTS(SELECT TOP 1 1 FROM #selectExist)
                         BEGIN                           
                             UPDATE u
@@ -220,29 +225,26 @@ BEGIN
                                 ,u.BodegaId     = t1.bodegaId
                             FROM Restaurant.OrderItem u
                             INNER JOIN #selectExist si ON si.OrderId = u.OrderId
-                            INNER JOIN @tblItems t1 ON t1.itemTypeCode = si.Code
-                            WHERE u.Id      = t1.orderItemId
+                            INNER JOIN @tblItems t1 ON t1.itemTypeCode = si.Code AND u.Id = t1.orderItemId
                         END
                                             
                     -- ========= SELECT NOT EXITS ========= --
-                    SELECT ro.OrderId, ro.ItemId, ro.MenuId, it.Code
+                    SELECT ro.OrderId, ro.Id, ro.ItemId, ro.MenuId, it.Code
                     INTO #selectNotExist
                     FROM Restaurant.OrderItem ro
                     INNER JOIN Restaurant.ItemType it ON it.Id = ro.ItemTypeId
                     WHERE ro.OrderId = @id
-                    AND it.Code NOT IN(SELECT itemTypeCode FROM @tblItems)
-                    GROUP BY ro.OrderId, ro.ItemId, ro.MenuId, it.Code
+                    AND ro.Id NOT IN (SELECT orderItemId FROM @tblItems)
+                    --GROUP BY ro.OrderId, ro.ItemId, ro.MenuId, it.Code
 
                     IF EXISTS(SELECT TOP 1 1 FROM #selectNotExist)
                         BEGIN
                              UPDATE u
                              SET u.Deleted    = 1
-                                 ,u.UpdatedAt  = dbo.ufnGetDateEcuador()
+                                ,u.[Enabled]  = 0
+                                ,u.UpdatedAt  = dbo.ufnGetDateEcuador()
                              FROM Restaurant.OrderItem u
-                             INNER JOIN #selectNotExist si ON si.OrderId = u.OrderId 
-                             INNER JOIN @tblItems t1 ON t1.itemTypeCode = si.Code
-                             WHERE u.Id      = t1.orderItemId
-                             AND u.Uuid      = t1.uuid
+                             INNER JOIN #selectNotExist si ON u.Id = si.Id
                         END                       
                    
                     ---- SET DATA -----
@@ -251,7 +253,6 @@ BEGIN
 
             IF @saveDoc = 1
                 BEGIN
-                   PRINT 'SaveDoc 01'
                    EXEC Restaurant.Order_Document_Insert @userRoleId, @id, @json, @payload OUTPUT
                 END
         COMMIT TRAN

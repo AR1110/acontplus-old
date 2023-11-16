@@ -47,6 +47,7 @@ BEGIN
         ,@obs                   = obs       
         ,@quickSale             = quickSale
         ,@bodegaId              = bodegaId
+        ,@userId                = userId
     FROM OPENJSON(@json)
         WITH(
             uuid UNIQUEIDENTIFIER '$.uuid',
@@ -61,7 +62,8 @@ BEGIN
             total NUMERIC(18,5) '$.total',
             obs VARCHAR(500) '$.obs',
             quickSale BIT '$.quickSale',
-            bodegaId INT '$.bodegaId'
+            bodegaId INT '$.bodegaId',
+            userId              INT '$.userId'
         )
 
     IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
@@ -147,10 +149,15 @@ BEGIN
 
     SELECT @companyId   = idEntidad
             , @ruc      = rucEmpresa
-            , @userId   = idUsuario 
     FROM v_usuario
     WHERE idUsuarioRol = @userRoleId
     
+    
+    IF (@userId = 0)
+        BEGIN
+            SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+        END
+
 	BEGIN TRY
 		BEGIN TRAN
             ----------------ORDER------------------

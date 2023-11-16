@@ -24,9 +24,11 @@ BEGIN
     ,@pageSize    INT
     ,@startDate   DATETIME2
     ,@endDate     DATETIME2
+    ,@tableId     INT
     ,@sql         NVARCHAR(MAX)
-    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT '
+    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT '
     ,@idEntidad INT 
+    ,@userId INT
 
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
@@ -56,20 +58,24 @@ BEGIN
                         ,totalRecords       = COUNT(*) OVER()
                         ,o.Divided
                         ,o.Finished
+                        ,ISNULL(vt.roomDescription,'''') + '' - '' + CONVERT(VARCHAR, ISNULL(vt.[NumberTable],0)) + '' '' + ISNULL(vt.[Description], '''') tableName
                     FROM Restaurant.[Order] o WITH(NOLOCK)
                     INNER JOIN Sri.Establecimiento sri_e WITH(NOLOCK) ON sri_e.idEstablecimiento = o.establecimientoId 
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
                     LEFT JOIN Usuario u ON u.idUsuario = o.UserId
+                    LEFT JOIN Restaurant.v_Table vt WITH(NOLOCK) ON o.tableId = vt.Id
                     WHERE CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
 
             
     SELECT @tipo                 = tipo
-            , @id                = id
-            , @customerCompanyId = customerCompanyId
-            , @pageIndex         = pageIndex
-            , @pageSize          = pageSize
-            , @startDate         = startDate
-            , @endDate           = endDate
+            ,@id                = id
+            ,@customerCompanyId = customerCompanyId
+            ,@pageIndex         = pageIndex
+            ,@pageSize          = pageSize
+            ,@startDate         = startDate
+            ,@endDate           = endDate
+            ,@tableId           = tableId
+            ,@userId            = userId
     FROM OPENJSON(@json) 
     WITH ( tipo      INT         '$.tipo',
             id        INT         '$.id',
@@ -77,20 +83,24 @@ BEGIN
             startDate DATETIME2  '$.startDate',
             endDate DATETIME2     '$.endDate',
             pageIndex INT         '$.pageIndex',
-            pageSize  INT         '$.pageSize'
+            pageSize  INT         '$.pageSize',
+            tableId     INT       '$.tableId',
+            userId INT '$.userId'
     )
 
     SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
     IF (@tipo = 1)
-        BEGIN 
-            print @startDate
-                        print @endDate
-
+        BEGIN
             IF (@customerCompanyId > 0)
                 BEGIN
                     SET @sql = @sql + ' AND o.CustomerCompanyId = @customerCompanyId '
                 END
+            IF (@tableId > 0)
+                SET @sql = @sql + ' AND o.TableId = @tableId'
+
+            IF (@userId > 0)
+                SET @sql = @sql + ' AND o.userId = @userId'
 
             SET @sql = @sql + ' ORDER BY o.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
                                  
@@ -103,6 +113,8 @@ BEGIN
                                 ,@startDate
                                 ,@endDate
                                 ,@customerCompanyId
+                                ,@tableId
+                                ,@userId
         END
     IF (@tipo = 2)
         BEGIN
@@ -303,6 +315,11 @@ BEGIN
             FROM Restaurant.OrderDocument od WITH(NOLOCK)
             INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
             WHERE v_cpc.idEntidad = @idEntidad AND od.orderId = @id AND v_cpc.codDoc IN('01', 'NE') 
+        END
+    IF (@tipo = 4)
+        BEGIN
+            SET @tableNames = 'tables'
+            SELECT Id, [NumberTable], [Description], [Floor], roomDescription FROM Restaurant.v_Table vt INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc where e.idEntidad = @idEntidad
         END
 END
 GO
