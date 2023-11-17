@@ -1,5 +1,9 @@
-﻿@{
+﻿@page
+@model WebUI.Pages.TransferenciaBodega.IndexModel
+
+@{
     ViewData["title"] = "Transferencia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div ng-controller="transferenciaBodegaCtrl">
@@ -16,15 +20,15 @@
         </div>
     </div>
 
- 
+
     <div class="card">
         <div class="card-body">
-             <div class="row">
+            <div class="row">
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
                         <span for="establecimiento">Establecimiento</span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                                class="form-control  border-select" ng-change="getTransferenciasBodega()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -36,9 +40,9 @@
                         <span for="">Rango de Fechas</span>
                         @* <div class="input-group"> *@
                         <date-range-filter current-date="dataSearch.startDate" start-date="dataSearch.startDate"
-                            end-date="dataSearch.endDate"
-                            result-range-date="resultDateRange(result)"></date-range-filter>
-                        
+                                           end-date="dataSearch.endDate"
+                                           result-range-date="resultDateRange(result)"></date-range-filter>
+
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -47,14 +51,14 @@
                         <input type="text" class="form-control border-select" ng-model="dataSearch.bySearch" ng-keyup="getFilterTransferencia()" placeholder="Buscar">
                     </div>
                 </div>
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">                   
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
-                        ng-click="getTransferenciasBodega()">
+                            ng-click="getTransferenciasBodega()">
                         <i class="fas fa-redo"></i>
                     </button>
                 </div>
             </div>
-           
+
             <hr>
             <md-table-container style="max-height: 400px;">
                 <table md-table>
@@ -68,7 +72,7 @@
                             <th md-column>Destino</th>
                             <th md-column>Total</th>
                             <th md-column>Estado</th>
-                        </tr>                                
+                        </tr>
                     </thead>
                     <tbody md-body>
                         <tr md-row ng-repeat="item in transferenciasBodegas" ng-class="item.rowColor">
@@ -77,13 +81,13 @@
                                     <button class="btn btn-default " type="button" id="dropdownMenu" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
                                         <i class="fa fa-bars"></i>
                                     </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu">                            
-                                        <button class="dropdown-item" type="button" ng-click="openModalDetalle(item)"><i class="ti-menu"></i> Detalle</button>                                                 
-                                        <button class="dropdown-item" type="button" ng-click="openModalEditar(item)"><i class="ti-pencil"></i> Editar</button>                                                
-                                        <button class="dropdown-item" type="button" ng-click="askToDelete(item)"><i class="ti-na"></i> Anular</button>  
-                                        <button class="dropdown-item" type="button" ng-click="getReport(item)"><i class="fas fa-file-pdf"></i> Reporte</button>                                                
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+                                        <button class="dropdown-item" type="button" ng-click="openModalDetalle(item)"><i class="ti-menu"></i> Detalle</button>
+                                        <button class="dropdown-item" type="button" ng-click="openModalEditar(item)"><i class="ti-pencil"></i> Editar</button>
+                                        <button class="dropdown-item" type="button" ng-click="askToDelete(item)"><i class="ti-na"></i> Anular</button>
+                                        <button class="dropdown-item" type="button" ng-click="getReport(item)"><i class="fas fa-file-pdf"></i> Reporte</button>
                                     </div>
-                                </div>                                                                                                                            
+                                </div>
 
                             </td>
                             <td md-cell>{{$index+1}}</td>
@@ -101,17 +105,17 @@
                     <tfoot md-foot>
                         <tr>
                             <td></td>
-                        </tr>                        
+                        </tr>
                     </tfoot>
                 </table>
             </md-table-container>
         </div>
     </div>
-         
+
 </div>
 
-@section Scripts{        
+@section Scripts {
     <script src="~/js/inventario/services/transferenciaBodegaService.js" asp-append-version="true"></script>
-    <script src="~/js/inventario/controllers/transferenciaBodegaCtrl.min.js" asp-append-version="true"></script>    
+    <script src="~/js/inventario/controllers/transferenciaBodegaCtrl.min.js" asp-append-version="true"></script>
 
 }

@@ -586,5 +586,23 @@
     "inputFiles": [
       "wwwroot/js/factElect/services/docElectService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/controllers/entidadCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/controllers/entidadCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/controllers/articuloCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/controllers/articuloCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/constants/constants.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/constants/constants.js"
+    ]
   }
 ]
