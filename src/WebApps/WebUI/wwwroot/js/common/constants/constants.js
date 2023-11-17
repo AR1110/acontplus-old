@@ -103,7 +103,7 @@ app.constant('nombreModalInventario', {
             D: 'ModalTransferenciaBodegaDetalleCtrl',
         },
         templates: {
-            D: '~/Views/TransferenciaBodega/_ModalDetalle.cshtml',
+            D: '~/Pages/TransferenciaBodega/Shared/_ModalDetalle.cshtml',
         }
     }
 
@@ -794,7 +794,7 @@ app.constant('nombreModal', {
         },
         MODAL_DETALLE: {
             controller: 'ModalTransferenciaBodegaDetalleCtrl',
-            template: 'TransferenciaBodega/_ModalDetalle.cshtml'
+            template: '~/Pages/TransferenciaBodega/Shared/_ModalDetalle.cshtml'
         },
         MODAL_FILTRO: {
             controller: 'ModalTransferenciaBodegaFiltroCtrl',

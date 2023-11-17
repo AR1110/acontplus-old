@@ -163,14 +163,12 @@
                 const results = await $q.all([
                     mS.getData('get', '/SubContribuyente/OptionSubContribuyente').then(res => res.data),
                     mS.getData('get', '/Ciudad/ReadCiudadProvincia').then(res => res.data),
-                    mS.getData('get', '/CodigoEnvioSri/Get').then(res => JSON.parse(res.data)),
                     mS.getData('get', `EntidadConfigSri/Get?json=${JSON.stringify({idEntidad})}`, null, true)
                 ])
                 
 
                 $scope.subContribuyentes = results[0];
                 $scope.ciudadPronvincias = results[1];
-                $scope.biocombustibles = JSON.parse(results[2][0].biocombustible);
                 // $scope.anioFiscales = results[3];
                 // $scope.data.idAnioFiscal = $scope.anioFiscales.find(val => val.descripcion === $scope.anio).idAnioFiscal;
 

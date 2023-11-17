@@ -14,5 +14,7 @@
 	  <Folder Include="Administracion\" />
 	  <Folder Include="App\" />
 	  <Folder Include="Auditoria\" />
+	  <Folder Include="Inventario\" />
+	  <Folder Include="Sri\" />
 	</ItemGroup>
 </Project>
