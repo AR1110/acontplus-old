@@ -243,8 +243,8 @@ export default function PrimarySearchAppBar() {
                             <Badge badgeContent={4} color="error">
                                 <MailIcon />
                             </Badge>
-                        </IconButton>
-                        <IconButton
+                </IconButton>*/}
+                        <IconButton sx={{ display: { xs: 'none', md: 'flex' } }}
                             size="large"
                             aria-label="show 17 new notifications"
                             color="inherit"
@@ -252,7 +252,7 @@ export default function PrimarySearchAppBar() {
                             <Badge badgeContent={17} color="error">
                                 <NotificationsIcon />
                             </Badge>
-                        </IconButton> */}
+                        </IconButton>  
                         <IconButton sx={{ display: { xs: 'none', md: 'flex' } }}
                             size="large"
                             edge="end"
