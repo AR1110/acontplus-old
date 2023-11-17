@@ -446,7 +446,7 @@
                     // this.calculoColumnas["calculoTotalDetalle"](); 
                     let objCalculo = callback({
                         rowEntity,
-                        oldValue: 0,
+                        oldValue: null,
                         decimal,
                         idTarifa,
                         columnDefs: gridOptions.columnDefs
@@ -476,7 +476,7 @@
 
                 let objCalculo = callback({
                     rowEntity,
-                    oldValue: 0,
+                    oldValue: null,
                     decimal,
                     idTarifa: data.idTarifa,
                     columnDefs: gridOptions.columnDefs
