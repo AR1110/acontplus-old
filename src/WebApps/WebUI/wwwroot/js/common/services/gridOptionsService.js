@@ -189,7 +189,8 @@
                 },
                 "calculoTotalDetalle": function () {
                     try {
-                        let total = (rowEntity.precioUnitario - rowEntity.valorDescuento) * rowEntity.cantidad;
+                        //let total = (rowEntity.precioUnitario - rowEntity.valorDescuento) * rowEntity.cantidad;
+                        let total = ((rowEntity.precioUnitario * rowEntity.cantidad)) - rowEntity.valorDescuento;
                         let totalDescuento = rowEntity.cantidad * rowEntity.valorDescuento;
                         let subTotal = rowEntity.cantidad * rowEntity.precioUnitario;
                         let totalIce = rowEntity.cantidad * rowEntity.ice;
@@ -239,7 +240,8 @@
                 getTotalIva: function (codigoPorcentaje) {
                     let { totalSubSinImpuesto, totalNetoIva } = items.reduce((total, item) => {
                         let totalSubSinImpuesto = item.cantidad * item.precioUnitario;
-                        let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                       // let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                        let totalNetoIva = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
 
                         if (item.codigoPorcentaje === codigoPorcentaje) {
                             total.totalSubSinImpuesto += totalSubSinImpuesto;
@@ -277,31 +279,32 @@
                 //Suma columna total 
                 getTotalDetalle: function () {
                     let { totalNetoIva } = items.reduce((total, item) => {
-                        let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                        //let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                        let totalNetoIva = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
                         total.totalNetoIva += totalNetoIva;
                         return total;
                     }, {
                         totalNetoIva: 0
                     })
-                    return fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal);
+                    return totalNetoIva;
                 },
 
                 getTotalPorcentajeDescuento: function () {
-                    let totalPorcentajeDescuento = 0, totalDetalle = 0;
+                    let totalPorcentajeDescuento = 0;
+                    let subTotalSinImpuesto = obj.getSubTotalSinImpuesto();
+                    let totalDetalleNeto = obj.getTotalDetalle();
+                    // if (items.length > 0 && subTotalSinImpuesto > 0) { 
+                    //     if (totalSumDetalle > subTotalSinImpuesto) {
+                    //         totalDetalle = subTotalSinImpuesto;
+                    //     } else {
+                    //         totalDetalle = totalSumDetalle;
+                    //     }
 
-                    if (items.length > 0 && obj.getSubTotalSinImpuesto() > 0) {
-
-                        //Total Detalle No tiene que ser mayor al total sin impuesto
-                        if (obj.getTotalDetalle() > obj.getSubTotalSinImpuesto()) {
-                            totalDetalle = obj.getSubTotalSinImpuesto();
-                        } else {
-                            totalDetalle = obj.getTotalDetalle();
-                        }
-
-                        totalPorcentajeDescuento = ((obj.getSubTotalSinImpuesto() - totalDetalle) * 100) / obj.getSubTotalSinImpuesto();
-
-                    }
-
+                    //     totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalle) * 100) / subTotalSinImpuesto; 
+                    // }
+                   
+                    totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalleNeto) * 100) / subTotalSinImpuesto;
+                    
                     return fS.roundNumber(totalPorcentajeDescuento, decimal.nroPorcentaje);
                 },
 
@@ -311,7 +314,7 @@
                         total.totalDescuento += totalDescuento;
                         return total;
                     }, { totalDescuento: 0 })
-                    return fS.roundNumber(totalDescuento, decimal.nroTotalSubTotal);
+                    return totalDescuento;
                 }
             };
 
@@ -324,8 +327,7 @@
             // let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;                
 
             // let total = iva + obj.getTotalDetalle();
-
-            //--------------------------
+ 
             let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;
 
             let total = obj.getSubTotalSinImpuesto() + iva + obj.getTotalIce();
@@ -446,7 +448,7 @@
                     // this.calculoColumnas["calculoTotalDetalle"](); 
                     let objCalculo = callback({
                         rowEntity,
-                        oldValue: 0,
+                        oldValue: null,
                         decimal,
                         idTarifa,
                         columnDefs: gridOptions.columnDefs
@@ -476,7 +478,7 @@
 
                 let objCalculo = callback({
                     rowEntity,
-                    oldValue: 0,
+                    oldValue: null,
                     decimal,
                     idTarifa: data.idTarifa,
                     columnDefs: gridOptions.columnDefs

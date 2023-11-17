@@ -293,7 +293,7 @@
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 }).result.then(result => {
-                    console.log(result)
+                    
                     if (typeof result !== 'object') return
 
                     //Pendiednte ⭕
@@ -753,7 +753,7 @@
 
         //Habilitar cuando la acción es editar
         $scope.isDisabledFormField = false;
-        console.log(mainDataForm)
+        
 
         $scope.indexRow = null; //Indice del items del detalle 
 
@@ -805,6 +805,7 @@
 
                 //Verificacion del stock 
                 if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                    
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
                 }
@@ -821,7 +822,12 @@
 
         function checkNotificationStock(field, rowEntity, oldValue) {
             try {
-                if (!rowEntity.llevaInventario) return;
+                
+                if (!rowEntity.llevaInventario) {
+                    setCalculoTotales(field, rowEntity, oldValue);
+                    return
+                }
+                
                 showLoader();
                 let { cantidadStock } = notaEntregaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision)
                 articuloSvc.checkNotificationStock({
@@ -833,7 +839,7 @@
                     hideLoader();
                     let { code, message, titleSms } = responseApi;
                     if (code === "1") {
-                        console.log(responseApi);
+                        
                         setCalculoTotales(field, rowEntity, oldValue);
                         return
                     }
@@ -941,7 +947,7 @@
                     items,
                     infoAdicionalDocumento,
                 } = params.data;
-                console.log(params)
+                
                 $scope.data = structuredClone(comprobante);
                 $scope.data.fechaEmision = new Date();
                 $scope.data.idNotaEntrega = 0;
@@ -1527,9 +1533,11 @@
         async function setCustomerData(item) {
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
-            $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
-            $scope.data.fechaEmision = new Date();
-            getFechaVencimiento();
+            if(!($scope.data.idNotaEntrega>0)){
+                $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
+                $scope.data.fechaEmision = new Date();
+                getFechaVencimiento();
+            }
             $scope.$apply();
         }
 
@@ -2097,7 +2105,7 @@
                         hideLoader();
                         console.log(error)
                     }).finally(() => hideLoader())
-                    console.log(serieComprobante)
+                    
 
                 }
             } catch (error) {
@@ -2138,8 +2146,7 @@
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 }
-
-                console.log(serieComprobante)
+                
 
                 const customSwal = Swal.mixin({
                     customClass: {
