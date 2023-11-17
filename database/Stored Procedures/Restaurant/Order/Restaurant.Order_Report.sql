@@ -72,8 +72,8 @@ BEGIN
                                         ORDER BY idEstab_Logo DESC
 
     INSERT INTO @tblParams(paramName, isBase64, paramValue)
-    VALUES('logo', 1, @logoImg),
-        ('mimeType', 0, CONVERT(VARBINARY, @mimeType))
+    VALUES('logo', 1, ISNULL(@logoImg, CONVERT(VARBINARY(MAX), NEWID()))),
+        ('mimeType', 0, CONVERT(VARBINARY, ISNULL(@mimeType, 'none')))
 
     SELECT * FROM @tblParams
 	

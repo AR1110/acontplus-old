@@ -172,35 +172,7 @@ BEGIN
                         ,Obs                = @obs                        
                     WHERE Id = @id
                     
-                    --=========== INSERT IF NOT EXISTS =============--
-                    INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId)
-                    
-                    SELECT @id
-                        , ti.uuid
-                        , ti.itemId
-                        , ti.taxId
-                        , ti.taxPercentId
-                        , ti.taxValue
-                        , ti.quantity
-                        , ti.cost
-                        , ti.price
-                        , ti.discount
-                        , ti.total
-                        , 1
-                        , @userId
-                        , ti.feeId
-                        , ti.obs
-                        , ti.bodegaId
-                    FROM @tblItems ti
-                    WHERE ti.itemTypeCode                     
-                    NOT IN(SELECT it.Code 
-                           FROM Restaurant.OrderItem rr
-                           INNER JOIN Restaurant.ItemType it ON it.Id = rr.ItemTypeId 
-                           WHERE rr.OrderId = @id
-                    )
-                           
-                     -- ========= SELECT EXISTS ========= --
+                           -- ========= SELECT EXISTS ========= --
                     SELECT ro.OrderId, ro.ItemId, ro.MenuId, it.Code
                     INTO #selectExist
                     FROM Restaurant.OrderItem ro
@@ -227,6 +199,31 @@ BEGIN
                             INNER JOIN #selectExist si ON si.OrderId = u.OrderId
                             INNER JOIN @tblItems t1 ON t1.itemTypeCode = si.Code AND u.Id = t1.orderItemId
                         END
+                    
+                    --=========== INSERT IF NOT EXISTS =============--
+                    INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, RemainingQuantity)
+                    SELECT @id
+                        ,ti.uuid
+                        ,ti.itemId
+                        ,ti.taxId
+                        ,ti.taxPercentId
+                        ,ti.taxValue
+                        ,ti.quantity
+                        ,ti.cost
+                        ,ti.price
+                        ,ti.discount
+                        ,ti.total
+                        ,1
+                        ,@userId
+                        ,ti.feeId
+                        ,ti.obs
+                        ,ti.bodegaId
+                        ,it.Id
+                        ,ti.quantity
+                    FROM @tblItems ti
+                    INNER JOIN Restaurant.ItemType it ON it.Code = ti.itemTypeCode
+                    WHERE ti.orderItemId = 0
                                             
                     -- ========= SELECT NOT EXITS ========= --
                     SELECT ro.OrderId, ro.Id, ro.ItemId, ro.MenuId, it.Code
@@ -234,7 +231,7 @@ BEGIN
                     FROM Restaurant.OrderItem ro
                     INNER JOIN Restaurant.ItemType it ON it.Id = ro.ItemTypeId
                     WHERE ro.OrderId = @id
-                    AND ro.Id NOT IN (SELECT orderItemId FROM @tblItems)
+                    AND ro.Uuid NOT IN (SELECT ttp.Uuid FROM @tblItems ttp)
                     --GROUP BY ro.OrderId, ro.ItemId, ro.MenuId, it.Code
 
                     IF EXISTS(SELECT TOP 1 1 FROM #selectNotExist)
