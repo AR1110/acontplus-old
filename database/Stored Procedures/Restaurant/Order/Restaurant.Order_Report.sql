@@ -61,6 +61,7 @@ BEGIN
         INNER JOIN Sri.Impuesto t WITH(NOLOCK) ON oi.TaxId = t.idImpuesto
         INNER JOIN Sri.TarifaImpuesto ti WITH(NOLOCK) ON t.codigo = ti.codImpuesto AND ti.codigo = '2'
     WHERE oi.OrderId = @id
+        AND oi.Deleted IS NULL
 
 		--RdlcParams
 	SELECT TOP 1 @logoImg = imagen
@@ -72,8 +73,8 @@ BEGIN
                                         ORDER BY idEstab_Logo DESC
 
     INSERT INTO @tblParams(paramName, isBase64, paramValue)
-    VALUES('logo', 1, @logoImg),
-        ('mimeType', 0, CONVERT(VARBINARY, @mimeType))
+    VALUES('logo', 1, ISNULL(@logoImg, CONVERT(VARBINARY(MAX), NEWID()))),
+        ('mimeType', 0, CONVERT(VARBINARY, ISNULL(@mimeType, 'none')))
 
     SELECT * FROM @tblParams
 	

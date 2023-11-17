@@ -603,8 +603,6 @@
     <None Include="wwwroot\js\controllers\admin\cajaCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\cajaCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\controlCajaCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\entidadFinancieraCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\entidadFinancieraCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\turnoCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\turnoCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\usuarioCtrl.js" />

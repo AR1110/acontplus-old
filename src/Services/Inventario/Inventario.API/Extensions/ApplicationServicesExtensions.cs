@@ -18,6 +18,7 @@ namespace Inventario.API.Extensions
             services.AddScoped<IS3StorageService, S3StorageService>();
             services.AddScoped<IArticuloFraccionadoService, ArticuloFraccionadoService>();
             services.AddScoped<ITransaccionService, TransaccionService>();
+            services.AddScoped<IStockService, StockService>();
             return services;
         }
     }

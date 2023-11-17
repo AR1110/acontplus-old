@@ -4,7 +4,7 @@
 
     'use strict';
 
-    const PATH_HTML = 'Views/TransferenciaBodega/'
+    const PATH_HTML = 'Pages/TransferenciaBodega/'
 
     let transBogegaSvc = {};
     let commonSvc = {};
@@ -34,7 +34,7 @@
             try {
                 let modalRef = modalSvc.openModalCustom({
                     controller: 'ModalTransferenciaBodegaCtrl',
-                    template: PATH_HTML + '_ModalTransferenciaBodega.cshtml',
+                    template: PATH_HTML + 'Shared/_ModalTransferenciaBodega.cshtml',
                     isRenderRazorPartial: true,
                     size: 'xl',
                     params: {}
@@ -120,7 +120,7 @@
                 
                 let modalRef = modalSvc.openModalCustom({
                     controller: 'ModalTransferenciaBodegaCtrl',
-                    template: PATH_HTML + '_ModalTransferenciaBodega.cshtml',
+                    template: PATH_HTML + 'Shared/_ModalTransferenciaBodega.cshtml',
                     isRenderRazorPartial: true,
                     size: 'xl',
                     params: {
