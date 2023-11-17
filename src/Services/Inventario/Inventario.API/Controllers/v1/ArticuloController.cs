@@ -56,7 +56,7 @@ namespace Inventario.API.Controllers.v1
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Get_Id");
+                await _db.SPExecute("Inventario.Articulo_Get_Id");
                 //_db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDataSetAsync();
@@ -196,7 +196,7 @@ namespace Inventario.API.Controllers.v1
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Delete");
+                await _db.SPExecute("Inventario.Articulo_Delete");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
