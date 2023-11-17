@@ -61,6 +61,7 @@ BEGIN
         INNER JOIN Sri.Impuesto t WITH(NOLOCK) ON oi.TaxId = t.idImpuesto
         INNER JOIN Sri.TarifaImpuesto ti WITH(NOLOCK) ON t.codigo = ti.codImpuesto AND ti.codigo = '2'
     WHERE oi.OrderId = @id
+        AND oi.Deleted IS NULL
 
 		--RdlcParams
 	SELECT TOP 1 @logoImg = imagen
