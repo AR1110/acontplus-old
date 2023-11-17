@@ -46,15 +46,33 @@ const mapperToAction = () => {
     let orderIndex = 1;
 
     for (const item of detalles) {
+      const fraccionado = JSON.parse(item.fraccionado);
+      const principal = JSON.parse(item.principal);
+      const general = fraccionado.concat(principal);
 
-      let fraccionado = JSON.parse(item.fraccionado);
-      let principal = JSON.parse(item.principal);
-      let general = fraccionado.concat(principal);
-
-      item.conversion = general.find((x) => x.idMedida === item.idMedida).conversion;
-      let cantidadTransaccion = item.cantidad * item.conversion;
+      item.conversion = general.find(
+        (x) => x.idMedida === item.idMedida
+      ).conversion;
+      const cantidadTransaccion = item.cantidad * item.conversion;
 
       let { cantidadStock, action } = getCantidadStock(item, fechaEmision);
+
+      if (action === 0) {
+        if ((item.idFacturaDetalle || item.idNotaEntregaDetalle) > 0 && item.estado) {
+          if (item.cantidad === item.cantidadOriginal) {
+            cantidadStock = 0;
+          } else {
+            if (item.cantidad > item.cantidadOriginal) {
+              cantidadStock = item.cantidadOriginal - item.cantidad;
+            } else {
+              cantidadStock = item.cantidadOriginal - item.cantidad;
+            }
+          }
+        }
+        if ((item.idFacturaDetalle || item.idNotaEntregaDetalle) > 0 && item.estado === 0) {
+          cantidadStock = Math.abs(cantidadStock);
+        }
+      }
 
       if (action === 0) {
         if (item.idNotaEntregaDetalle > 0 && item.estado) {
@@ -122,18 +140,16 @@ const mapperToAction = () => {
         "Para validacion del cantidad stock la fecha emision del comprobante es nula"
       );
     }
-
-    console.log("item");
-    console.log(item);
-
-    let consolidacion = JSON.parse(item.consolidacion);
+    const consolidacion = JSON.parse(item.consolidacion);
 
     const dataConsolidacionFecha = consolidacion.find(
       (cdataFecha) => cdataFecha.idBodega === item.idBodega
     );
 
-    if (dataConsolidacionFecha && isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-      console.log(dataConsolidacionFecha.fechaConsolidacion);
+    if (
+      dataConsolidacionFecha &&
+      isDateValid(dataConsolidacionFecha.fechaConsolidacion)
+    ) {
       if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
         cantidadStock = 0;
         action = 1;
@@ -141,8 +157,6 @@ const mapperToAction = () => {
           cantidadStock,
           action,
         };
-      } else {
-        action = 2;
       }
     }
 
@@ -156,12 +170,12 @@ const mapperToAction = () => {
   };
 
   const isDateValid = function (dateString) {
-    let validation = [undefined, null, ""];
+    const validation = [undefined, null, ""];
 
     if (validation.includes(dateString)) {
       return false;
     }
-    let date = new Date(dateString);
+    const date = new Date(dateString);
     return date instanceof Date;
   };
 
