@@ -142,21 +142,23 @@ const mapperToAction = () => {
     }
     const consolidacion = JSON.parse(item.consolidacion);
 
-    const dataConsolidacionFecha = consolidacion.find(
-      (cdataFecha) => cdataFecha.idBodega === item.idBodega
-    );
+    if(consolidacion != null) {
+      const dataConsolidacionFecha = consolidacion.find(
+        (cdataFecha) => cdataFecha.idBodega === item.idBodega
+      );
 
-    if (
-      dataConsolidacionFecha &&
-      isDateValid(dataConsolidacionFecha.fechaConsolidacion)
-    ) {
-      if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
-        cantidadStock = 0;
-        action = 1;
-        return {
-          cantidadStock,
-          action,
-        };
+      if (
+        dataConsolidacionFecha &&
+        isDateValid(dataConsolidacionFecha.fechaConsolidacion)
+      ) {
+        if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+          cantidadStock = 0;
+          action = 1;
+          return {
+            cantidadStock,
+            action,
+          };
+        }
       }
     }
 
