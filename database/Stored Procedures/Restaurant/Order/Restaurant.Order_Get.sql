@@ -26,9 +26,11 @@ BEGIN
     ,@endDate     DATETIME2
     ,@tableId     INT
     ,@sql         NVARCHAR(MAX)
-    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT '
+    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT, @tableId INT, @userId INT,@finished BIT,@rucEmpresa VARCHAR(13) '
     ,@idEntidad INT 
     ,@userId INT
+    ,@finished BIT
+    ,@rucEmpresa VARCHAR(13)
 
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
@@ -64,7 +66,7 @@ BEGIN
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
                     LEFT JOIN Usuario u ON u.idUsuario = o.UserId
                     LEFT JOIN Restaurant.v_Table vt WITH(NOLOCK) ON o.tableId = vt.Id
-                    WHERE CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+                    WHERE sri_e.ruc = @rucEmpresa AND CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) AND o.Enabled = 1 '
 
             
     SELECT @tipo                 = tipo
@@ -76,6 +78,7 @@ BEGIN
             ,@endDate           = endDate
             ,@tableId           = tableId
             ,@userId            = userId
+            ,@finished          = finished
     FROM OPENJSON(@json) 
     WITH ( tipo      INT         '$.tipo',
             id        INT         '$.id',
@@ -85,10 +88,11 @@ BEGIN
             pageIndex INT         '$.pageIndex',
             pageSize  INT         '$.pageSize',
             tableId     INT       '$.tableId',
-            userId INT '$.userId'
+            userId INT '$.userId',
+            finished BIT
     )
 
-    SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
+    SELECT @idEntidad = idEntidad, @rucEmpresa = rucEmpresa FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
     IF (@tipo = 1)
         BEGIN
@@ -101,6 +105,15 @@ BEGIN
 
             IF (@userId > 0)
                 SET @sql = @sql + ' AND o.userId = @userId'
+
+            IF @finished = 1
+                BEGIN
+                 SET @sql = @sql + ' AND o.Divided=1 AND o.Finished = 1'
+                 END
+            ELSE 
+                BEGIN 
+                    SET @sql = @sql + ' AND o.Finished = 0'
+                END
 
             SET @sql = @sql + ' ORDER BY o.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
                                  
@@ -115,6 +128,8 @@ BEGIN
                                 ,@customerCompanyId
                                 ,@tableId
                                 ,@userId
+                                ,@finished
+                                ,@rucEmpresa
         END
     IF (@tipo = 2)
         BEGIN
@@ -318,8 +333,14 @@ BEGIN
         END
     IF (@tipo = 4)
         BEGIN
-            SET @tableNames = 'tables'
+            SET @tableNames = 'tables,usuarios'
             SELECT Id, [NumberTable], [Description], [Floor], roomDescription FROM Restaurant.v_Table vt INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc where e.idEntidad = @idEntidad
+            SELECT 
+				u.idUsuario, 
+				u.nombreUsuario, 
+				u.nombreCompleto				 
+			 FROM v_usuario u WITH(NOLOCK) 
+			 WHERE u.idEntidad = @idEntidad AND u.estadoUsuario = 1
         END
 END
 GO
