@@ -1,7 +1,7 @@
 GO
 USE Acontplus
 GO
--- Mechanical.Inspection_Report 139, '{"inspectionId": 4}'
+-- Mechanical.Inspection_Report 139, '{"inspectionId": 2}'
 CREATE OR ALTER PROC Mechanical.Inspection_Report
 @idUsuarioRol INT
 ,@json      VARCHAR(300)
