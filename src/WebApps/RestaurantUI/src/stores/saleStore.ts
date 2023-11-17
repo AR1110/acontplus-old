@@ -558,11 +558,20 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
 
                         if (queryParams.printerAutomatic) {
-                            SharedService.getPrinter({
-                                id: queryParams.orderId,
-                                documentoId: queryParams.idDocumento,
-                                tipo: 1
-                            })
+                            if (codDoc === DOC_TYPE.FV) {
+                                SharedService.askToPrint({
+                                    id: queryParams.orderId,
+                                    documentoId: queryParams.idDocumento,
+                                    tipo: 3
+                                })
+                            }
+                            if (codDoc === DOC_TYPE.NE) {
+                                SharedService.askToPrint({
+                                    id: queryParams.orderId,
+                                    documentoId: queryParams.idDocumento,
+                                    tipo: 4
+                                })
+                            } 
                         } else {
                             resetForm();
                         }

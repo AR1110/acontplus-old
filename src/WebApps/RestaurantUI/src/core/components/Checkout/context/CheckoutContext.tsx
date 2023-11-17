@@ -376,11 +376,20 @@ export const CheckoutProvider = ({ children }: Props) => {
                     SnackbarUtility.success(response.message);
 
                     if (state.checkoutParams.printerAutomatic) {
-                        SharedService.getPrinter({
-                            id: state.checkoutParams.orderId,
-                            documentoId: state.checkoutParams.idDocumento,
-                            tipo: 1
-                        })
+                        if(["01", 'FV'].includes(state.checkoutParams.codDoc)){
+                            SharedService.getPrinter({
+                                id: state.checkoutParams.orderId,
+                                documentoId: state.checkoutParams.idDocumento,
+                                tipo: 3
+                            })
+                        }
+                        if (['NE'].includes(state.checkoutParams.codDoc)) {
+                            SharedService.getPrinter({
+                                id: state.checkoutParams.orderId,
+                                documentoId: state.checkoutParams.idDocumento,
+                                tipo: 4
+                            })
+                        }
                     }
                     state.closeDialog();
                 } else {
