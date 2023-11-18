@@ -39,7 +39,7 @@ const RightOrderItemTable = () => {
     const { rightOrderItems, setRightCheckedOrderItems, setLeftCheckedOrderItems} = useSplitOrderContext(); 
 
     return (
-        <div style={{ height: 400, width: '100%' }}>
+        <div style={{ height: 600, width: '100%' }}>
             <DataGrid
                 rows={rightOrderItems}
                 columns={columns}
@@ -51,7 +51,7 @@ const RightOrderItemTable = () => {
                     },
                 }}
                 slots={{ noRowsOverlay: CustomNoRowsOverlay }}
-                pageSizeOptions={[5, 10]} 
+                pageSizeOptions={[10, 25]} 
                 checkboxSelection
                 rowSelection
                 onRowSelectionModelChange ={(ids)=>{

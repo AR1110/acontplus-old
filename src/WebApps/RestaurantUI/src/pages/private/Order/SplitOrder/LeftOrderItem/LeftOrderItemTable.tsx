@@ -42,7 +42,7 @@ const LeftOrderItemTable = () => {
     const {orderLoading, leftOrderItems, setLeftCheckedOrderItems, setRightCheckedOrderItems } = useSplitOrderContext();
      
     return (
-        <div style={{ height: 400, width: '100%' }}> 
+        <div style={{ height: 600, width: '100%' }}> 
             <DataGrid
                 rows={leftOrderItems}
                 columns={columns}
@@ -54,7 +54,7 @@ const LeftOrderItemTable = () => {
                     },
                 }}
                 slots={{ noRowsOverlay: CustomNoRowsOverlay }}
-                pageSizeOptions={[5, 10]}
+                pageSizeOptions={[10, 25]}
                 checkboxSelection
                 rowSelection
                 loading={orderLoading}                 
