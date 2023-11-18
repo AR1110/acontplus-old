@@ -29,6 +29,11 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
                 ...state,
                 orderLoading: false,
                 leftOrder: order,
+                rightOrder: {
+                    ...state.rightOrder,
+                    customerName: order.customerName, 
+                    customerCompanyId: order.customerCompanyId
+                },
                 leftOrderItems: orderItems.map((orderItem: any) => ({
                     ...orderItem,                
                     //remainingQuantity: ((orderItem.remainingQuantity > 0 || orderItem.remainingQuantity === 0) && orderItem.paid) ? orderItem.remainingQuantity : orderItem.quantity 
