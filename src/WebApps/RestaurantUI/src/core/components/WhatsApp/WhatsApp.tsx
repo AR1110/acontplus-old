@@ -169,7 +169,7 @@ const WhatsApp = <T extends {
                     dataParams: JSON.stringify(dataParms)
                 }
                 setLoading(true)
-                const responseFile = await SharedService.downloadDynamicExternal(parameters, true);
+                const responseFile = await SharedService.downloadExternal(parameters, true);
                 if (responseFile) {
                     const { file, fileName } = contentFile(responseFile);
                     await sendMedia(fileName, file)
