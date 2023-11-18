@@ -855,9 +855,11 @@
         service.getTotales = function (notaEntregas) {
             let total = 0, totalAbono = 0, totalSaldo = 0;
             for (let val of notaEntregas) {
-                total += val.total;
-                totalAbono += val.abono;
-                totalSaldo += val.saldo;
+                if (val.codEstado!=='A'){
+                    total += val.total;
+                    totalAbono += val.abono;
+                    totalSaldo += val.saldo;
+                }
             }
             return {
                 total,
@@ -888,7 +890,7 @@
 
                 if (response.code === "1") { 
                     let mainData = JSON.parse(response.payload);
-                    console.log(mainData)
+                   
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];

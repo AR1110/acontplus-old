@@ -2135,6 +2135,20 @@
                         console.error(error);
                     }).finally(() => hideLoader())
                 }
+                if (isUpdate()) {
+                    showLoader();
+                    facturaSvc.update($scope.data.idFactura, params).then(response => {
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);                            
+                            $uibModalInstance.close(response)
+                        }
+                    }).catch(error => {
+                        console.error(error);
+                    }).finally(() => hideLoader())
+                }
             } catch (error) {
                 hideLoader();
                 console.log(error)

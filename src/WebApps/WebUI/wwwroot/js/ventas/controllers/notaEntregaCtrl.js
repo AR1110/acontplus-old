@@ -183,9 +183,10 @@
 
                     //Totals 
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
-                    $scope.totalAbono = fS.roundNumber(dataTotals.totalAbono, 5);
-                    $scope.totalSaldo = fS.roundNumber(dataTotals.totalSaldo, 5);
+                    $scope.getTotales();
+                    // $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
+                    // $scope.totalAbono = fS.roundNumber(dataTotals.totalAbono, 5);
+                    // $scope.totalSaldo = fS.roundNumber(dataTotals.totalSaldo, 5);
 
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
