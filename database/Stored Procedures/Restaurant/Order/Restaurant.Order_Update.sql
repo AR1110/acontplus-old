@@ -188,6 +188,7 @@ BEGIN
                                 ,u.TaxPercentId = t1.taxPercentId
                                 ,u.TaxValue     = t1.taxValue
                                 ,u.Quantity     = t1.quantity
+                                ,u.RemainingQuantity = t1.quantity
                                 ,u.Cost         = t1.cost
                                 ,u.Price        = t1.price
                                 ,u.Discount     = t1.discount
