@@ -1,6 +1,9 @@
-﻿
+﻿@page
+@model WebUI.Pages.Usuario.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Usuario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div ng-controller="usuarioCtrl">
     <div class="row page-titles">
@@ -10,11 +13,11 @@
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
                 @*<ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
-                        <li class="breadcrumb-item active">Usuario</li>
-                    </ol>*@
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                <li class="breadcrumb-item active">Usuario</li>
+                </ol>*@
                 <button type="button" ng-if="accion.leer && accion.crear" ng-click="openModalUserNew()" class="btn btn-info d-block d-lg-inline-block m-l-15">
-                    <i class="fa fa-plus-circle"></i> Nuevo  
+                    <i class="fa fa-plus-circle"></i> Nuevo
                 </button>
             </div>
         </div>
@@ -22,7 +25,7 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card">                
+            <div class="card">
                 <div class="card-body">
                     <div class="row justify-content-between">
                         <div class="col-lg-4"></div>
@@ -42,18 +45,18 @@
                         <table resize md-table>
                             <thead fix-head md-head>
                                 <tr md-row>
-                                    <th md-column >N°</th>
+                                    <th md-column>N°</th>
                                     <th md-column ng-if="accion.editar || accion.eliminar || accion.acceso">Op.</th>
                                     <th md-column> Nro. Identificación</th>
-                                    <th md-column >Nombre Completo</th>
-                                    <th md-column >Usuario</th>
-                                    <th md-column >Correo</th>                
+                                    <th md-column>Nombre Completo</th>
+                                    <th md-column>Usuario</th>
+                                    <th md-column>Correo</th>
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat="item in usuarios | filter:txtFilter">                           
+                                <tr md-row ng-repeat="item in usuarios | filter:txtFilter">
                                     <td md-cell>{{$index+1}}</td>
-                                    <td md-cell ng-if="accion.editar || accion.eliminar || accion.acceso">                                        
+                                    <td md-cell ng-if="accion.editar || accion.eliminar || accion.acceso">
                                         <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModalUserEdit(item)">
                                             <i class="mdi mdi-pencil"></i>
                                         </button>
@@ -62,12 +65,12 @@
                                         </button>
                                         <button class="btn btn-warning btn-sm" ng-if="accion.acceso" tooltip-placement='top' uib-tooltip='Asig. de Establecimientos, Puntos de Emisión, Bodegas y Permisos' ng-click="openModalUserConfig(item)">
                                             <i class="mdi mdi-account-settings-variant"></i>
-                                        </button>                                  
+                                        </button>
                                     </td>
                                     <td md-cell>{{item.nroIdentificacion}}</td>
                                     <td md-cell>{{item.nombreCompleto|uppercase}}</td>
                                     <td md-cell>{{item.nombreUsuario}}</td>
-                                    <td md-cell>{{item.correo}}</td>                
+                                    <td md-cell>{{item.correo}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -75,9 +78,10 @@
                 </div>
             </div>
         </div>
-    </div>              
+    </div>
 </div>
-@section Scripts{    
+@section Scripts {
     <script src="~/js/config/services/politicaService.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/admin/usuarioCtrl.js" asp-append-version="true" ></script>
+    <script src="~/js/config/services/userService.js" asp-append-version="true"></script>
+    <script src="~/js/config/controllers/usuarioCtrl.min.js" asp-append-version="true"></script>
 }

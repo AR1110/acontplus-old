@@ -1,10 +1,10 @@
 ﻿(() => {
 
     const MODAL_PATH_PARTIAL = {
-        modal_nuevo: 'Usuario/_ModalNuevo.cshtml',
-        modal_editar: 'Usuario/_ModalEditar.cshtml',
-        modal_user_config: "Usuario/_ModalUserConfig.cshtml",
-        modal_asign_punto_emision_bodega: 'Usuario/_ModalAsignPtoEmisionBodega.cshtml'
+        modal_nuevo: '~/Pages/Usuario/_ModalNuevo.cshtml',
+        modal_editar: '~/Pages/Usuario/_ModalEditar.cshtml',
+        modal_user_config: "~/Pages/Usuario/_ModalUserConfig.cshtml",
+        modal_asign_punto_emision_bodega: '~/Pages/Usuario/_ModalAsignPtoEmisionBodega.cshtml'
     }
 
     let Id_Usuario_Rol = 0;
@@ -13,9 +13,9 @@
 
     app.controller('usuarioCtrl', usuarioCtrl);
 
-    usuarioCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'toastService', 'decodeToken'];
+    usuarioCtrl.$inject = ['$scope', 'mainService', 'userService', 'commonService', 'modalService', 'toastService', 'decodeToken'];
 
-    function usuarioCtrl($scope, _mS, _commonSvc, _modalSvc, toast, decodeToken) {
+    function usuarioCtrl($scope, _mS, userSvc, _commonSvc, _modalSvc, toast, decodeToken) {
         // let accion = JSON.parse(localStorage.getItem("accion"));
         // if(accion===null){
         //     location.href = "/Home/Index";
@@ -41,19 +41,11 @@
 
                 showLoader();
                 $scope.usuarios = [];
-                _mS.getData('get', 'Usuario/' + JSON.stringify($scope.dataSearch), null, true).then(response => {
-                    if (response.code === "0") {
-                        hideLoader();
-                        console.log(response)
-                    }
-                    if (response.code === "1") {
-                        $scope.usuarios = JSON.parse(response.payload) || [];
-                        hideLoader();
-                    }
-                }).catch(error => {
-                    hideLoader();
+                userSvc.getAll($scope.dataSearch).then(response => {                
+                    $scope.usuarios = response;
+                }).catch(error => { 
                     console.log(error);
-                })
+                }).finally(()=>hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -102,13 +94,15 @@
             controller,
             template,
             size = 'lg',
-            params, 
+            params,
+            
         }) => {
             _modalSvc.openModalCustom({
                 controller,
                 template,
                 size,
-                params
+                params,
+                isRenderRazorPartial: true
             }).result.then(result => {
                 if (typeof result === 'object') {
                     $scope.getUsuarios();
@@ -157,14 +151,14 @@
 
 
 
-        $scope.openModalUserConfig = async (params) => { 
+        $scope.openModalUserConfig = async (params) => {
             $scope.openModalParam({
                 controller: 'modalUserConfigCtrl',
                 template: MODAL_PATH_PARTIAL.modal_user_config,
                 params,
                 size: 'xl'
             })
-             
+
         }
     }
 
@@ -175,11 +169,11 @@
     app.controller("modalUserCtrl", modalUserCtrl);
 
     modalUserCtrl.$inject = [
-        '$scope', 
-        '$uibModalInstance', 
-        'mainService', 
+        '$scope',
+        '$uibModalInstance',
+        'mainService',
         'politicaService',
-        'toastService', 
+        'toastService',
         'params'
     ];
 
@@ -201,16 +195,16 @@
         })
 
         initiload();
-        function initiload(){
+        function initiload() {
             try {
                 showLoader();
-                politicaSvc.get({tipo: 2}).then(response=>{  
-                    $scope.politicas = response|| [];
-                }).finally(()=>hideLoader())
+                politicaSvc.get({ tipo: 2 }).then(response => {
+                    $scope.politicas = response || [];
+                }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
             }
-        } 
+        }
         if ($scope.tipoRegistro === 'E') {
             $scope.data = Object.assign({}, $scope.params.data);
         }
@@ -418,13 +412,10 @@
             }
 
             $scope.establecimientos = [];
-            mS.getData('get', '/EstabAsig/Get?json=' + JSON.stringify(json)).then(response => {
-                if (response.code === '0') {
-                    console.log(response)
-                }
-                if (response.code === '1') {
-                    $scope.establecimientos = JSON.parse(response.payload) || [];
-                }
+            mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {
+                if(response){
+                    $scope.establecimientos = response; 
+                } 
             })
         }
 
@@ -434,7 +425,7 @@
                 idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol
             })
             showLoader();
-            mS.getData('get', 'UsuarioPermiso/Get/' + jsonParams, null, true).then(response => {
+            mS.getData('get', 'Config/UsuarioPermiso/Get/' + jsonParams, null, true).then(response => {
                 if (response.code === "0") {
                     hideLoader();
                     console.log(response)
@@ -466,7 +457,7 @@
                 idUsuarioRol: $scope.dataEntidadRol.idUsuarioRol
             })
             $scope.authorizationKeyRequests = [];
-            mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response => {
+            mS.getData('get', 'Config/Solicitud/Get/' + jsonParams, null, true).then(response => {
                 if (response.code === "0") {
                     console.log(response)
                 }
@@ -502,7 +493,7 @@
 
         $scope.onChangePredeterminada = (item) => {
             try {
-                mS.getData('put', '/EstabAsig/Update?id=' + item.idEstab_Asig).then(response => {
+                mS.getData('put', `Config/EstabAsig/${item.idEstab_Asig}`, null, true ).then(response => {
                     if (response.code === '0') {
                         tS.toastr('warning', response.message, response.titleSms);
                         $scope.getEstablecimientos($scope.dataEntidadRol)
@@ -535,10 +526,10 @@
                 let {
                     isConfirmed
                 } = await swalWithBootstrapButtons.fire({
-                    html: `<small>Está seguro de ${item.estado?'Asignar':'Quitar'} este Sucursal: <b>${item.nombreComercial}</b> a Usuario: <b>${$scope.params.nombreCompleto}</b></small>`,
+                    html: `<small>Está seguro de ${item.estado ? 'Asignar' : 'Quitar'} este Sucursal: <b>${item.nombreComercial}</b> a Usuario: <b>${$scope.params.nombreCompleto}</b></small>`,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: `Sí, ${item.estado?'asignar':'quitar'}`,
+                    confirmButtonText: `Sí, ${item.estado ? 'asignar' : 'quitar'}`,
                     cancelButtonText: 'No, cancelar!',
                     reverseButtons: false,
                     allowOutsideClick: false,
@@ -551,7 +542,13 @@
                     showLoader();
                     item.idUsuarioRol = $scope.dataEntidadRol.idUsuarioRol;
 
-                    mS.getData('post', '/EstabAsig/Insert', item).then(response => {
+                    let params = {
+                        id: item.idEstab_Asig,
+                        idUsuarioRol: item.idUsuarioRol,
+                        codEstab: item.codEstab
+                    }
+
+                    mS.getData('post', 'Config/EstabAsig', { data: params }, true).then(response => {
                         if (response.code === '0') {
                             tS.toastr('warning', response.message, response.titleSms);
                             $scope.getEstablecimientos($scope.dataEntidadRol)
@@ -562,11 +559,10 @@
                             $scope.getEstablecimientos($scope.dataEntidadRol);
                             hideLoader();
                         }
-                    }).catch(error => {
-                        hideLoader();
+                    }).catch(error => { 
                         $scope.getEstablecimientos($scope.dataEntidadRol)
                         console.log(error)
-                    })
+                    }).finally(()=>hideLoader())
                 } else {
                     $scope.getEstablecimientos($scope.dataEntidadRol)
                 }
@@ -585,7 +581,8 @@
                     params: {
                         sucursal: data
                     },
-                    size: 'lg'
+                    size: 'lg',
+                    isRenderRazorPartial: true
                 })
             } catch (error) {
                 console.log(error)
@@ -601,24 +598,24 @@
 
 
                 let jsonPermission = JSON.stringify([{
-                        idUserPermission: $scope.dataSalePermissions.idUserPermission,
-                        jsonPermission: $scope.salePermissions
-                    },
-                    {
-                        idUserPermission: $scope.dataArticlePermissions.idUserPermission,
-                        jsonPermission: $scope.articlePermissions
-                    },
-                    {
-                        idUserPermission: $scope.dataCajaPermissions.idUserPermission,
-                        jsonPermission: $scope.cajaPermissions
-                    }
+                    idUserPermission: $scope.dataSalePermissions.idUserPermission,
+                    jsonPermission: $scope.salePermissions
+                },
+                {
+                    idUserPermission: $scope.dataArticlePermissions.idUserPermission,
+                    jsonPermission: $scope.articlePermissions
+                },
+                {
+                    idUserPermission: $scope.dataCajaPermissions.idUserPermission,
+                    jsonPermission: $scope.cajaPermissions
+                }
                 ]);
 
                 let data = {
                     jsonPermission
                 }
 
-                mS.getData('put', 'UsuarioPermiso', data, true).then(response => {
+                mS.getData('put', 'Config/UsuarioPermiso', data, true).then(response => {
 
                     if (response.code === "0") {
                         hideLoader();
@@ -648,7 +645,7 @@
                     typeList: 3,
                     searchText
                 })
-                return mS.getData('get', 'Solicitud/Get/' + jsonParams, null, true).then(response => {
+                return mS.getData('get', 'Config/Solicitud/Get/' + jsonParams, null, true).then(response => {
                     return JSON.parse(response.payload) || []
                 })
             } catch (error) {
@@ -667,7 +664,7 @@
             try {
                 Swal.fire({
                     title: 'Aprobar Solicitud de Clave de Autorización',
-                    text: `Se está dando permiso al usuario para ${item.codigoAccion==='E'?'editar':'anular'} el documento de venta!`,
+                    text: `Se está dando permiso al usuario para ${item.codigoAccion === 'E' ? 'editar' : 'anular'} el documento de venta!`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -676,7 +673,7 @@
                     cancelButtonText: 'Cancelar!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        mS.getData('put', 'Solicitud/Put/' + JSON.stringify({
+                        mS.getData('put', 'Config/Solicitud/Put/' + JSON.stringify({
                             typeOperation: 1,
                             id: item.idSolicitud
                         }), null, true).then(response => {
@@ -801,9 +798,9 @@
                     isConfirmed
                 } = await swalWithBootstrapButtons.fire({
                     icon: 'warning',
-                    html: `<small>Está seguro de ${item.estado?'Asignar':'Quitar'} este Punto de Emisión: <b>${item.ptoEmi}</b> a Sucursal: <b>${$scope.sucursal.nombreComercial}</b></small>`,
+                    html: `<small>Está seguro de ${item.estado ? 'Asignar' : 'Quitar'} este Punto de Emisión: <b>${item.ptoEmi}</b> a Sucursal: <b>${$scope.sucursal.nombreComercial}</b></small>`,
                     showCancelButton: true,
-                    confirmButtonText: `Sí, ${item.estado?'asignar':'quitar'}`,
+                    confirmButtonText: `Sí, ${item.estado ? 'asignar' : 'quitar'}`,
                     cancelButtonText: 'No, cancel!',
                     reverseButtons: false,
                     allowOutsideClick: false
@@ -878,9 +875,9 @@
                     isConfirmed
                 } = await swalWithBootstrapButtons.fire({
                     icon: 'warning',
-                    html: `<small>Está seguro de ${item.estado?'Asignar':'Quitar'} este Bodega: <b>${item.bodega}</b> a Sucursal: <b>${$scope.sucursal.nombreComercial}</b></small>`,
+                    html: `<small>Está seguro de ${item.estado ? 'Asignar' : 'Quitar'} este Bodega: <b>${item.bodega}</b> a Sucursal: <b>${$scope.sucursal.nombreComercial}</b></small>`,
                     showCancelButton: true,
-                    confirmButtonText: `Sí, ${item.estado?'asignar':'quitar'}`,
+                    confirmButtonText: `Sí, ${item.estado ? 'asignar' : 'quitar'}`,
                     cancelButtonText: 'No, cancel!',
                     reverseButtons: false,
                     allowOutsideClick: false,
