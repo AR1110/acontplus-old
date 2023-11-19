@@ -21,7 +21,7 @@ GO
 IF OBJECT_ID(N'Config.Estab_Asig_Update', N'P') IS NOT NULL
 DROP PROCEDURE Config.Estab_Asig_Update
 GO
-CREATE PROCEDURE Config.Estab_Asig_Update @idRol INT,@id INT 
+CREATE PROCEDURE Config.Estab_Asig_Update @userRoleId INT,@id INT 
 	
 AS
 BEGIN
@@ -38,7 +38,7 @@ BEGIN
 			UPDATE Config.Estab_Asig SET predeterminado = 0 WHERE idUsuarioRol = @idUsuarioRol
 			UPDATE Config.Estab_Asig SET predeterminado = 1 WHERE idEstab_Asig = @id
 		COMMIT TRAN 
-		SELECT '1'code,'Actualizado Correctamente' as 'message'
+		SELECT Common.ufnSpResponse('1','Actualizado Correctamente',NULL)
 		RETURN 
 	END TRY 
 
@@ -47,7 +47,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-		SELECT '0'code,'Info: Error en el procedimiento ' + ERROR_MESSAGE() as  'message'
+		SELECT Common.ufnSpResponse('0','Info: Error en el procedimiento',NULL)
 	END CATCH
 END
 GO
