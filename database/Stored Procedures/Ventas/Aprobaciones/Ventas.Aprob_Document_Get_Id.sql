@@ -105,10 +105,11 @@ BEGIN
 			    INNER JOIN dbo.Medida  m WITH (NOLOCK) ON m.idMedida = ar.idMedida
 			    WHERE ar.idArticulo = a.idArticulo FOR JSON PATH
              ) as principal
-            ,a.llevaInventario
             ,(
                SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = a.idArticulo AND st.idBodega = dt.idBodega FOR JSON PATH
              ) as consolidacion
+            ,a.llevaInventario
+            ,a.precioCosto
 	FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK)
 	INNER JOIN dbo.Articulo             a WITH (NOLOCK) ON a.code_unique      = dt.codArticulo
 	INNER JOIN dbo.Medida               m WITH (NOLOCK) ON m.codigo           = dt.codMedida

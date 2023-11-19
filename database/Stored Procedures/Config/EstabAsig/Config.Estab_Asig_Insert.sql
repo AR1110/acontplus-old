@@ -23,36 +23,38 @@ GO
 IF OBJECT_ID(N'Config.Estab_Asig_Insert', N'P') IS NOT NULL
 DROP PROCEDURE Config.Estab_Asig_Insert
 GO
-CREATE PROCEDURE Config.Estab_Asig_Insert
-	@idRol INT 
-   ,@id INT
-   ,@idUsuarioRol INT 
-   ,@codEstab VARCHAR(25)
+CREATE PROCEDURE Config.Estab_Asig_Insert @userRoleId INT ,@json VARCHAR(MAX) 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @idUsuario INT 
-	DECLARE @usuario VARCHAR(100)
 	DECLARE @codEstab_Asig VARCHAR(150)
 	DECLARE @message VARCHAR(200)
 	DECLARE @predeterminado BIT
 
-	BEGIN TRY 
-		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+    --> Data json
+    DECLARE @id INT ,@idUsuarioRol INT ,@codEstab VARCHAR(25)
 
-		SELECT @usuario = nombreUsuario FROM dbo.Usuario WHERE idUsuario = @idUsuario
+	BEGIN TRY 
+		
+        SELECT @id = id, @idUsuarioRol = idUsuarioRol, @codEstab = codEstab FROM OPENJSON(@json) WITH (id INT, idUsuarioRol INT, codEstab VARCHAR(50))
 
 		SELECT @codEstab_Asig = NEWID()
 
 		SET @predeterminado = IIF ((SELECT COUNT(*) FROM Config.Estab_Asig WHERE idUsuarioRol = @idUsuarioRol ) = 0,1,0)
 
+        IF EXISTS (SELECT 1 FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND codEstab = @codEstab)
+            BEGIN
+                SELECT Common.ufnSpResponse('0','Ya existe este Acceso',NULL)
+                RETURN 
+            END 
+
 		BEGIN TRAN 
 			IF @id = 0 
 				BEGIN
 					INSERT INTO Config.Estab_Asig(codEstab_Asig,idUsuarioRol,codEstab,predeterminado,usuario,fechaRegistro)
-					SELECT @codEstab_Asig,@idUsuarioRol,@codEstab,@predeterminado,@usuario,dbo.ufnGetDateEcuador()
+					SELECT @codEstab_Asig,idUsuarioRol,@codEstab,@predeterminado,nombreUsuario,dbo.ufnGetDateEcuador() FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 					SET @message = 'Registrado Correctamente' 
 
 				END 
@@ -62,11 +64,11 @@ BEGIN
 					SET @message = 'Eliminado Correctamente' 
 				END 
 		COMMIT TRAN
-		SELECT '1' code,@message as 'message'
+		SELECT Common.ufnSpResponse('1',@message,NULL)
 	END TRY 
 
 	BEGIN CATCH 
-		SELECT '0'code,ERROR_MESSAGE() as  'message'
+		SELECT Common.ufnSpResponse('0',ERROR_MESSAGE(),NULL)
 		IF (@@TRANCOUNT > 0)
 			BEGIN
 				ROLLBACK TRAN
