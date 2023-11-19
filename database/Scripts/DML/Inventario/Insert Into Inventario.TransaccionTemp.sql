@@ -1,9 +1,9 @@
---use [Acontplus]
---go 
+use [Acontplus]
+go 
 
 
 --INSERT INTO Inventario.TransaccionTemp
---     (TipoTransaccionId,ProductId ,BodegaId,TipoDocumentoId,DocumentoId,MedidaId,TarifaId,Cantidad,CantidadStock,PrecioUnitario,PrecioCosto,Total,FechaRegistro,idUsuario,estado,Accion)
+--  (TipoTransaccionId,ProductId ,BodegaId,TipoDocumentoId,DocumentoId,MedidaId,TarifaId,Cantidad,CantidadStock,PrecioUnitario,PrecioCosto,Total,FechaRegistro,idUsuario,estado,Accion)
 
 --select idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidadSalida, cantidadSalida * -1,precioUnitario,precioCosto,total,fechaRegistro,idUsuario
 --,CASE estado when 2 then 0
