@@ -59,7 +59,8 @@ export default function ItemCard({ item }: ItemCardProps) {
 
         productService.findForSale(item.productId, order.bodegaId).then(response => {
             const { product, measures } = response;
-            const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
+            const measureData = measures.find(medida => (medida.defaultMedida));
+           // const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
 
             const taxRateData = dataForm.taxRates.find(item => item.taxRateCode === product.taxRateCode); // Tarifa Impuesto 
             const taxData = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode); // Impuesto IVA-ICE 
@@ -104,7 +105,16 @@ export default function ItemCard({ item }: ItemCardProps) {
 
             function addItem() {
                 const uuid = uuidv4();
-                const { salePrice, priceWithVat, feeId } = measureData.pvps[0] as ProductPVPReadDto
+                let salePrice = 0, priceWithVat = 0, feeId = 0; 
+                if(measureData){
+                    const dataPVP = measureData.pvps.find(pvp=>(pvp.default));
+                    if(dataPVP){
+                        salePrice = dataPVP.salePrice;
+                        priceWithVat = dataPVP.priceWithVat;
+                        feeId = dataPVP.feeId
+
+                    }
+                } 
                 const taxValue = PricingCalculateUtility.calculateTaxValue(salePrice, taxRateData?.percentage ?? 0)
 
                 addItemToCart({
@@ -138,7 +148,9 @@ export default function ItemCard({ item }: ItemCardProps) {
                         taxBase: salePrice ?? 0,
                         taxValue: taxValue,
                     }],
-                    pvps: measureData.pvps,
+                    measureId: measureData ? measureData.measureId : 0,
+                    measures: measures,
+                    pvps: measureData ? measureData.pvps : [],
                     uuid: uuid,
                     obs: "",
                     itemTypeCode: item.itemTypeCode,

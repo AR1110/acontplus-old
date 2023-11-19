@@ -21,16 +21,23 @@ function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto
 function productSaleRateReadAdapter(measures: RawMeasure[]): Array<Measure> {
 
     return measures.map(item => {
-        const productPVPs: RawProductPVPData[] = JSON.parse(item.tarifas);
+        let productPVPs: RawProductPVPData[] = [];
+        if (typeof item.tarifas==='string'){
+            productPVPs = JSON.parse(item.tarifas); 
+        }else{
+            productPVPs = item.tarifas;
+        }
         return {
             measureId: item.idMedida,
-            description: item.medida,
+            description: item.descripcion,
+            conversion: item.conversion, 
+            defaultMedida: item.defaultMedida,
             pvps: productPVPs.map(pvp => ({
                 feeId: pvp.idTarifa,
                 salePrice: pvp.precioVenta,
                 priceWithVat: pvp.precioConIva,
                 description: pvp.tarifa,
-                default:  pvp.precioPredeterminado
+                default: pvp.predeterminada
             }))
         }
     })

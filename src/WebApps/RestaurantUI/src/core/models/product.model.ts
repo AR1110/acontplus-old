@@ -73,6 +73,9 @@ export interface ProductSearchDto  {
 export interface RawMeasure {
     idMedida: number
     medida: string
+    conversion: number
+    descripcion: string
+    defaultMedida: boolean
     tarifas: string
 }
 
@@ -82,5 +85,7 @@ export interface RawMeasure {
 export interface Measure {
     measureId: number
     description: string,
+    conversion: number 
+    defaultMedida: boolean
     pvps: Array<ProductPVPReadDto>
 }

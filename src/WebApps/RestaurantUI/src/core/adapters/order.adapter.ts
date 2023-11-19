@@ -1,3 +1,4 @@
+import { productSaleRateReadAdapter } from ".";
 import { ItemRead, OrderReadDto, ProductPVPReadDto, RawOrderData } from "../models";
 import { productService } from "../services";
 
@@ -57,56 +58,94 @@ async function orderReadForUpdateAdapter(obj: any) {
         userId: order.userId
     }
 
-    const results = orderItems.map(async (orderItem: any, indexOrderItem: number) => {
-        let response: any = {}
-        let pvps: Array<ProductPVPReadDto> = [];
+    const orderItemsMapper = orderItems.map((orderItem: any, indexOrderItem: number) => {
+        
+        //let pvps: Array<ProductPVPReadDto> = [];
+        
+        const { medidasFraccionado, medidasPrincipal, ...restOrderItem } = orderItem;
 
-        try {
-            response = await productService.findForSale(orderItem.idArticulo);
-            pvps = response.measures[0]?.pvps ?? [];
+        // Medidas del artículo fraccionado del principal
+        const medidasFraccionadoTemp = JSON.parse(medidasFraccionado) || [];
 
+        // Medida principal con las tarifas
+        const medidasPrincipalTemp = JSON.parse(medidasPrincipal) || [];
 
-        } catch (error) {
-            console.error(`Error al obtener datos del producto para orderItem ${indexOrderItem}: ${error}`);
-        }
+        /**
+         * Combinar los dos arrays de medidas en uno solo
+         *
+         * Parámetros:
+         *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
+         */
+        const mergedMedidasArray = [...medidasFraccionadoTemp, ...medidasPrincipalTemp];
+
+        /**
+         * Ordenar el array de medidas en función de la propiedad "orden" y
+         * establecer la propiedad "defaultMedida" en falso para todos los elementos
+         *
+         * Parámetros:
+         *  - orderMedidaArray: El array de medidas ordenado
+         */
+        const orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
+            ...medida,
+            defaultMedida: false
+        }));
+
+        // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
+        orderMedidaArray[0].defaultMedida = true;
+
+        const measures = productSaleRateReadAdapter(orderMedidaArray)      
+
+        /**
+         * Obtener los datos de la medida
+         *
+         * Parámetros:
+         *  - orderMedidaArray: El array de medidas ordenado
+         *  - restItem: El artículo
+         *
+         * Devuelve:
+         *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
+         */
+        const dataMedida = measures.find(m => m.measureId === restOrderItem.measureId);
+      
         return {
             index: indexOrderItem + 1,
-            productId: orderItem.idArticulo,
-            id: orderItem.id,
-            uuid: orderItem.uuid,
-            orderId: orderItem.orderId,
-            itemId: orderItem.itemId,
-            taxId: orderItem.taxId,
-            taxPercentId: orderItem.taxPercentId,
-            taxValue: orderItem.taxValue,
-            quantity: orderItem.quantity,
-            cost: orderItem.cost,
-            price: orderItem.price,
-            discount: orderItem.discount,
-            total: orderItem.total,
-            obs: orderItem.obs ?? "",
-            feeId: orderItem.feeId,
-            bodegaId: orderItem.bodegaId,
-            description: orderItem.descripcion,
-            summary: orderItem.summary,
-            code: orderItem.codigoArticulo,
-            s3ObjectUrl: orderItem.s3ObjectUrl,
-            carryInventory: orderItem.llevaInventario,
-            priceWithVat: orderItem.priceWithVat,
+            productId: restOrderItem.idArticulo,
+            id: restOrderItem.id,
+            uuid: restOrderItem.uuid,
+            orderId: restOrderItem.orderId,
+            itemId: restOrderItem.itemId,
+            taxId: restOrderItem.taxId,
+            taxPercentId: restOrderItem.taxPercentId,
+            taxValue: restOrderItem.taxValue,
+            quantity: restOrderItem.quantity,
+            cost: restOrderItem.cost,
+            price: restOrderItem.price,
+            discount: restOrderItem.discount,
+            total: restOrderItem.total,
+            obs: restOrderItem.obs ?? "",
+            feeId: restOrderItem.feeId,
+            bodegaId: restOrderItem.bodegaId,
+            description: restOrderItem.descripcion,
+            summary: restOrderItem.summary,
+            code: restOrderItem.codigoArticulo,
+            s3ObjectUrl: restOrderItem.s3ObjectUrl,
+            carryInventory: restOrderItem.llevaInventario,
+            priceWithVat: restOrderItem.priceWithVat,
             discountTotal: 0,
             taxes: [],
-            pvps: pvps,
-            taxRateCode: orderItem.taxRateCode,
-            envioSri: orderItem.envioSri,
-            paid: orderItem.paid ?? false,
-            menuId: orderItem.menuId,
-            itemTypeCode: orderItem.itemTypeCode,
-            remainingQuantity: orderItem.remainingQuantity
+            pvps: dataMedida && dataMedida.pvps || [], // Asignar los datos de las tarifas obtenidos de data medida 
+            measureId: restOrderItem.measureId,
+            measures: measures, // Asignar los datos de la medida al artículo
+            conversion: dataMedida && dataMedida.conversion,
+            taxRateCode: restOrderItem.taxRateCode,
+            envioSri: restOrderItem.envioSri,
+            paid: restOrderItem.paid ?? false,
+            menuId: restOrderItem.menuId,
+            itemTypeCode: restOrderItem.itemTypeCode,
+            remainingQuantity: restOrderItem.remainingQuantity
         };
-    })
-
-    const orderItemsMapper: Array<ItemRead> = await Promise.all(results);
-
+        
+    }) 
     return {
         order: orderMapper,
         orderItems: orderItemsMapper
