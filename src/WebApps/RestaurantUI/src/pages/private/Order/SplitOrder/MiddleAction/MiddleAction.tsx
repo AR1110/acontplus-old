@@ -23,6 +23,7 @@ const MiddleAction = () => {
     //Modal cambiar cantidades
     const [open, setOpen] = useState(false)
  
+    //Cuando pasamos items a segunda tabla
     const handleCheckedRight = () => {
         const filteredItems = leftChecked.filter(orderItem => orderItem.remainingQuantity > 1); 
         if (filteredItems.length > 0) {

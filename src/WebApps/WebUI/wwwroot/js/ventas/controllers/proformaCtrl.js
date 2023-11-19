@@ -135,7 +135,12 @@
 
 
         $scope.sumarColumnaTotal = function () {
-            let total = $scope.proformas.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
+            let total = 0;
+            for (let val of $scope.proformas){
+                if(val.codEstado!=='A'){
+                    total+=val.total; 
+                }
+            }
             return fS.roundNumber(total, 5);
         }
 
@@ -179,7 +184,8 @@
                     $scope.proformas = proformas;
                     $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
+                  //  $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
+                    $scope.total = $scope.sumarColumnaTotal();
 
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
@@ -617,7 +623,7 @@
                 //     return
                 // }
 
-                // setCalculoTotales(colDef.field, rowEntity, oldValue);
+                setCalculoTotales(colDef.field, rowEntity, oldValue);
             })
         }
 

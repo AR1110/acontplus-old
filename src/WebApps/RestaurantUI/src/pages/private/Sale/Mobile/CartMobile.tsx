@@ -2,9 +2,9 @@
 import CartMobileAction from './CartMobileActions'
 import { Box, TextField, Typography, useTheme } from '@mui/material';
 import { AddShoppingCartIcon } from '@/core/components/IconsMaterial';
-import { useSaleStore } from '@/stores';
-import CartItem from '../CartItem/CartItem';
+import { useSaleStore } from '@/stores'; 
 import CustomerSearch from '../Customer/CustomerSearch';
+import ShoppingCart from '../components/ShoppingCart';
 
 const CartMobile = () => {
     const theme = useTheme();
@@ -33,7 +33,8 @@ const CartMobile = () => {
                 <CustomerSearch />
                 {
                     orderItems.map((orderItem, index) => (
-                        <CartItem item={orderItem} index={index} key={index} />
+                        <ShoppingCart item={orderItem} index={index} key={index} />
+                        // <CartItem item={orderItem} index={index} key={index} />
                     ))
                 }
             </div>

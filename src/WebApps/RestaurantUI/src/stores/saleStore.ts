@@ -31,7 +31,6 @@ const typeActions: { [key: string]: string } = {
     <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
     [DOC_TYPE.OR]: `Esta seguro de guardar el pedido? </br>
     <small>El stock de los productos <strong>no se descontará</strong> hasta que se transforme a "Factura" o "Nota de Entrega".`
-
 }
 
 type State = {
@@ -56,6 +55,7 @@ type State = {
         closeDialogCustom(): void
     }
 }
+
 
 type Actions = {
     setDataEdit(obj: object): void
@@ -255,7 +255,8 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         setTotalItems();
         caculateTotals();
         clearSound();
-    },
+    }, 
+
     setTotalItems: () =>{
         set(
             produce((state: State) => { 
