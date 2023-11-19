@@ -17,6 +17,7 @@ import ItemContent from "./Item/ItemContent";
 import useFetchItems from "./hooks/useFetchItems.hook"; 
 import VendedorSelect from "./components/VendedorSelect";
 const Checkout = lazy(() => import("@/core/components/Checkout/Checkout"));
+const CartSidebar = lazy(()=> import("./components/CartSidebar"));
 
 export default function Sale() {
     const { isMobile } = useMobileDetect();
@@ -163,6 +164,8 @@ export default function Sale() {
 
             <CustomBottomNavigation />
             {/* <KeyCombinationDetector /> */}
+
+            <CartSidebar/>
         </ErrorBoundary>
     );
 }

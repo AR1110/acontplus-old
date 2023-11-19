@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography } from '@mui/material'
-import CartItem from '../CartItem/CartItem'
+// import CartItem from '../CartItem/CartItem'
 import {useSaleStore } from '@/stores';
 import Swal from 'sweetalert2'; 
 import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components/IconsMaterial';
@@ -8,6 +8,7 @@ import './Cart.css'
 import TableDialog from '../Table/TableDialog';
 import { useState } from 'react';
 import CustomerSearch from '../Customer/CustomerSearch';
+import ShoppingCart from '../components/ShoppingCart';
 
 const Cart = () => {
     const cartItems = useSaleStore(state => state.items);
@@ -70,7 +71,8 @@ const Cart = () => {
 
                     <Box sx={{ width: '100%', maxHeight: 300, overflowY: 'auto', bgcolor: 'background.paper' }}>
                         {cartItems.map((item, index) => (
-                            <CartItem item={item} index={index} key={index} />
+                            // <CartItem item={item} index={index} key={index} />
+                            <ShoppingCart item={item} index={index} key={index} />
                         ))}
                     </Box>
 
