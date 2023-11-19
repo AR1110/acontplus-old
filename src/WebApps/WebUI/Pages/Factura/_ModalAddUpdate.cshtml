@@ -50,7 +50,7 @@
                 <div class="input-group">
                     <select name="tiempoCredito" id="tiempoCedito" class="form-control border-select"
                         ng-model="data.idTiempoCredito" ng-change="onChangeTiempoCredito()"
-                        ng-disabled="!permisoComprobanteVenta.tiempoCredito">
+                        ng-disabled="!permisoComprobanteVenta.tiempoCredito || data.idFactura>0">
                         <option ng-value="item.idTiempoCredito" ng-repeat="item in tiemposCredito">
                             {{item.descripcion}}
                         </option>

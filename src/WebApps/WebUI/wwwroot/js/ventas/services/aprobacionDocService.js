@@ -6,7 +6,7 @@
     app.factory('aprobacionDocService', function ($injector) {
         let url = 'Venta/AprobacionDocumento/';
         let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario'); 
+        let fS = $injector.get('formulario');
         let service = {}
 
         service.getDataFilter = function () {
@@ -19,7 +19,7 @@
                 }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
-                    console.log(mainData)
+                   
                     let tempEstabsAndPtosEmision = mainData[0];
                     const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
                         const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
@@ -66,7 +66,7 @@
                 }
                 if (response.code === "1") {
                     const mainData = JSON.parse(response.payload);
-                    console.log(mainData)
+                  
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -141,7 +141,7 @@
                     }
                     if (response.code === "1") {
                         let aprobComprobantes = JSON.parse(response.payload)[0];
-                        console.log(aprobComprobantes)
+                      
 
                         return aprobComprobantes.map(item => {
                             return {
@@ -177,7 +177,7 @@
                 }
                 if (response.code === '1') {
                     let dataRepository = JSON.parse(response.payload);
-                    console.log(dataRepository)
+                 
                     let compRepository = dataRepository[0][0];
                     let clienteRepository = dataRepository[1][0];
                     let detalleRepository = dataRepository[2];
@@ -352,7 +352,7 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
-                    console.log(mainDataApi)
+                    
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
                     let itemsTemp = mainDataApi[2];
@@ -367,12 +367,19 @@
                     return {
                         comprobante: data,
                         cliente,
-                        items: itemsTemp.map((item)=>({
-                            ...item,
-                            precioConIva: item.precioConIva || 0,
-                            ice: 0,
-                            valorDescuento: item.descuento || 0
-                        })),
+                        items: itemsTemp.map((item) => {
+                            let subTotal = item.cantidad * item.precioUnitario || 0;
+                            let precioTotalSinImpuesto = (item.precioUnitario - item.descuento) * item.cantidad;
+                            return {
+                                ...item,
+                                precioConIva: item.precioConIva || 0,
+                                ice: 0,
+                                valorDescuento: item.descuento || 0,
+
+                                subTotal: fS.roundNumber(subTotal, 3),
+                                total: precioTotalSinImpuesto,
+                            }
+                        }),
                         historial: historialRepository || []
                     }
 
@@ -410,7 +417,7 @@
             }
             return tempDetail;
         }
- 
+
 
         service.addRow = function () {
             return {

@@ -461,10 +461,7 @@
                 let dataParms = {
                     id: item.idAprob_Document,
                     codEstab: item.codEstab,
-                    codDoc: item.docDestino,
-                    normalMethod: true,
-                    codigo,
-                    format,
+                    codDoc: item.docDestino, 
                 }
 
                 const parameters = {
@@ -477,7 +474,7 @@
                         aditionalParams: []
                     }),
                     dataParams: JSON.stringify(dataParms)
-                }
+                } 
                 commonSvc.getReport({
                     parameters,
                     formatType: format
@@ -3427,7 +3424,7 @@
                     })
                     return
                 }
-                if ($scope.gridOptions.data.some(row => !(row.idBodega > 0))) {
+                if ($scope.gridOptionsDetalle.data.some(row => !(row.idBodega > 0))) {
                     tS.toastr('warning', 'Seleccione la bodega en el detalle de los artículos');
                     return
                 }
@@ -3445,6 +3442,7 @@
                     serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     })
+                    hideLoader();
                 } 
 
                 if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"; 

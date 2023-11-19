@@ -236,43 +236,52 @@ export const SplitOrderProvider = ({ children }: Props) => {
         taxRateCode?: string
         priceWithVat: number
     }>(payload: T[]) {
-        let tax = 0; // Monto del IVA (12%)
+       // let tax = 0; // Monto del IVA (12%)
         // let totalPlusVAT = 0; // Total con IVA
         // let importeTotal = 0; // Importe total con descuento 
 
-        const { quantity, subTotalSinImpuestos, totalNetoIva, importeTotal } = payload.reduce((total, orderItem) => {
+        const { quantity, discount, subTotalSinImpuestos, totalNetoIvaVigente } = payload.reduce((total, orderItem) => {
+             
             // Calcular el precio del ítem teniendo en cuenta el descuento
-            const itemPrice = orderItem.price - orderItem.discount;
+            //const itemPrice = orderItem.price - orderItem.discount;
+            const totalSubSinImpuesto = orderItem.remainingQuantity * orderItem.price;
+            const totalNetoIvaVigente = ((orderItem.price * orderItem.remainingQuantity)) - orderItem.discount;
+            const discount = orderItem.remainingQuantity * orderItem.discount;
 
             // Calcular el total del ítem
-            const itemTotal = itemPrice * orderItem.remainingQuantity;
-
+            //const itemTotal = itemPrice * orderItem.remainingQuantity;
+            total.discount += discount;
             total.quantity += orderItem.remainingQuantity;
             // Agregar el total del ítem al subtotal sin impuestos
-            total.subTotalSinImpuestos += itemTotal;
+            total.subTotalSinImpuestos += totalSubSinImpuesto;
 
             // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
             if (orderItem.taxRateCode === TAX_RATE_CODE.TWELVE_PERCENT) {
-                total.totalNetoIva += itemTotal;
+                total.totalNetoIvaVigente += totalNetoIvaVigente;
             }
 
-            total.importeTotal += Number((orderItem.priceWithVat * orderItem.remainingQuantity).toFixed(2))
+            //total.importeTotal += Number((orderItem.priceWithVat * orderItem.remainingQuantity).toFixed(2))
             return total;
         }, {
             quantity: 0,
             subTotalSinImpuestos: 0,
-            totalNetoIva: 0,
-            importeTotal: 0
+            totalNetoIvaVigente: 0,
+            importeTotal: 0,
+            discount: 0
         })
+ 
+        const tax = totalNetoIvaVigente * state.dataForm.tarifaImpuestoVigente.percentage / 100;
+        const total = subTotalSinImpuestos + tax;
+        const importeTotal = total - discount;
         // calcular valor impuesto vigente a partir del total 
-        const price = PricingCalculateUtility.calculatePriceSale(importeTotal, state.dataForm.tarifaImpuestoVigente.percentage);
-        tax = importeTotal - price;
+        // const price = PricingCalculateUtility.calculatePriceSale(importeTotal, state.dataForm.tarifaImpuestoVigente.percentage);
+        // tax = importeTotal - price;
 
         return {
             remainingQuantity: quantity,
             subTotalSinImpuestos: RoundNumber(subTotalSinImpuestos, 5),
             tax: RoundNumber(tax, 5),
-            total: RoundNumber(importeTotal, 5)
+            total: RoundNumber(importeTotal, state.dataForm.decimal.nroTotalSubTotal)
         }
     }
 

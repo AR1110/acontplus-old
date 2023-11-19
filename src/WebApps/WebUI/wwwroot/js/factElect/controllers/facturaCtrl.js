@@ -852,7 +852,10 @@
 
         function checkNotificationStock(field, rowEntity, oldValue) {
             try {
-                if (!rowEntity.llevaInventario) return;
+                if (!rowEntity.llevaInventario) {
+                    setCalculoTotales(field, rowEntity, oldValue);
+                    return
+                }
                 showLoader();
                 let { cantidadStock } = facturaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision)
                 articuloSvc.checkNotificationStock({
@@ -998,7 +1001,7 @@
                     items,
                     infoAdicionalDocumento,
                 } = params.data;
-                console.log(params)
+                
                 $scope.data = {
                     ...$scope.data,
                     ...structuredClone(comprobante)
@@ -1575,9 +1578,11 @@
         async function setCustomerData(item) {
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
-            $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
-            $scope.data.fechaEmision = new Date();
-            getFechaVencimiento();
+            if(!($scope.data.idFactura>0)){
+                $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
+                $scope.data.fechaEmision = new Date();
+                getFechaVencimiento();
+            }
             $scope.$apply();
         }
 
@@ -1734,7 +1739,7 @@
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
             try {
                 $scope.dataArticulo = dataArticulo;
-                console.log(dataArticulo)
+                
                 const {
                     articulo,
                     medidas,
@@ -2073,8 +2078,7 @@
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 }
-
-                console.log(serieComprobante)
+                
 
                 const customSwal = Swal.mixin({
                     customClass: {
@@ -2126,6 +2130,20 @@
                                 data: response.dataResponse
                             }
                             $uibModalInstance.close(mainData)
+                        }
+                    }).catch(error => {
+                        console.error(error);
+                    }).finally(() => hideLoader())
+                }
+                if (isUpdate()) {
+                    showLoader();
+                    facturaSvc.update($scope.data.idFactura, params).then(response => {
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);                            
+                            $uibModalInstance.close(response)
                         }
                     }).catch(error => {
                         console.error(error);

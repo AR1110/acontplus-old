@@ -266,6 +266,11 @@ BEGIN
                    ,dt.precioUnitario
                    ,dt.precioTotalSinImpuesto
                    ,bo.descripcion as bodega
+                   ,dt.cantidad * dt.descuento                         as totalDescuento
+                   ,valor = ti.porcentaje
+	               ,codigoTipoIva = ti.codigo
+	               ,CONVERT(VARCHAR(4), dt.codigoPorcentaje)           as codigoPorcentaje
+	               ,dt.tarifa                                          as tarifa
              FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK) 
              INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.code_unique       = dt.codArticulo
              INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.codigo            = dt.codMedida
