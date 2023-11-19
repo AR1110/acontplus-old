@@ -47,11 +47,11 @@ const RightOrderItemTable = () => {
                 disableRowSelectionOnClick
                 initialState={{
                     pagination: {
-                        paginationModel: { page: 0, pageSize: 5 },
+                        paginationModel: { page: 0, pageSize: 25 },
                     },
                 }}
                 slots={{ noRowsOverlay: CustomNoRowsOverlay }}
-                pageSizeOptions={[10, 25]} 
+                pageSizeOptions={[25, 50]} 
                 checkboxSelection
                 rowSelection
                 onRowSelectionModelChange ={(ids)=>{

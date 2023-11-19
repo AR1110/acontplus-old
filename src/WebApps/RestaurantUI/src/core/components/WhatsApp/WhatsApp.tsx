@@ -164,10 +164,17 @@ const WhatsApp = <T extends {
                     codigo: DOC_TYPE_REPORT.FV,
                     format,
                 }
-
                 const parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo: DOC_TYPE_REPORT.FV,
+                        codEstab: data.codEstab,
+                        format,
+                        aditionalParams: []
+                    }),
                     dataParams: JSON.stringify(dataParms)
-                }
+                } 
                 setLoading(true)
                 const responseFile = await SharedService.downloadExternal(parameters, true);
                 if (responseFile) {
