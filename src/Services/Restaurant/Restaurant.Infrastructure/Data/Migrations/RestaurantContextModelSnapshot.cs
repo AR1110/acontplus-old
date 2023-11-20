@@ -568,6 +568,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<decimal?>("Tax")
                         .HasColumnType("numeric(18,5), null");
 
+                    b.Property<int?>("TaxPercentId")
+                        .HasColumnType("int");
+
                     b.Property<decimal?>("Tip")
                         .HasColumnType("numeric(18,5), null");
 

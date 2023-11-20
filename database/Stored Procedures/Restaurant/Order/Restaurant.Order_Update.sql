@@ -36,6 +36,8 @@ BEGIN
     ,@itemsJson NVARCHAR(MAX)
     ,@taxesJson NVARCHAR(MAX)
     ,@code CHAR(1)
+    ,@customDetail NVARCHAR(MAX)
+
 
      SELECT @uuid               = uuid
         ,@itemsJson             = items
@@ -51,6 +53,7 @@ BEGIN
         ,@saveDoc               = saveDoc
         ,@updateOrder           = updateOrder
         ,@userId                = userId
+        ,@customDetail          = customDetail
     FROM OPENJSON(@json)
     WITH(
         uuid                UNIQUEIDENTIFIER '$.uuid',  
@@ -66,7 +69,8 @@ BEGIN
         obs                 VARCHAR(500) '$.obs',
         saveDoc             BIT '$.saveDoc',
         updateOrder         BIT '$.updateOrder',
-        userId              INT '$.userId'
+        userId              INT '$.userId',
+        customDetail            NVARCHAR(MAX)   '$.customDetail' AS JSON
     )
     
     IF NOT EXISTS (SELECT 1 FROM Config.v_ConfigDocumento cd 
@@ -140,7 +144,7 @@ BEGIN
                         medidaId        INT '$.medidaId'
                 )
                 
-                IF (SELECT COUNT(*) FROM @tblItems) = 0
+                IF (SELECT COUNT(*) FROM @tblItems) = 0 AND LEN(RTRIM(LTRIM(@customDetail))) = 0
                     BEGIN
                         SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
                         RETURN

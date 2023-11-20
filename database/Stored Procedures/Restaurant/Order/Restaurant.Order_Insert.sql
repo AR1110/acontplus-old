@@ -33,6 +33,7 @@ BEGIN
     ,@userId INT
     ,@bodegaId INT
     ,@payload NVARCHAR(MAX)
+    ,@TaxPercentId INT
        
     SELECT @uuid                = uuid
         ,@itemsJson             = items
@@ -48,6 +49,7 @@ BEGIN
         ,@quickSale             = quickSale
         ,@bodegaId              = bodegaId
         ,@userId                = userId
+        ,@TaxPercentId          = TaxPercentId
     FROM OPENJSON(@json)
         WITH(
             uuid UNIQUEIDENTIFIER '$.uuid',
@@ -63,7 +65,8 @@ BEGIN
             obs VARCHAR(500) '$.obs',
             quickSale BIT '$.quickSale',
             bodegaId INT '$.bodegaId',
-            userId              INT '$.userId'
+            userId              INT '$.userId',
+            TaxPercentId INT '$.taxPercentId'
         )
 
     IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
@@ -168,9 +171,9 @@ BEGIN
                     SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
                     
                     INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId
-                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt, Uuid)
+                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt, Uuid, TaxPercentId)
                     VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId
-                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid)
+                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid, @TaxPercentId)
 
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
                     

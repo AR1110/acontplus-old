@@ -125,7 +125,6 @@ BEGIN
         ,@puntoEmisionId        = puntoEmisionId
         ,@customerCompanyId     = customerCompanyId
         ,@subtotalSinImpuestos  = subtotalSinImpuestos
-        ,@taxPercent            = taxPercent
         ,@tax                   = tax
         ,@discount              = discount
         ,@tip                   = tip
@@ -164,14 +163,14 @@ BEGIN
     IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
         BEGIN
             INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue
-                                 , quantity, cost, price, discount, total, medidaId)
+                                 , quantity, cost, price, discount, total, medidaId, cantidadStock, cantidadTransaccion)
             SELECT oi.Uuid
                 ,oi.bodegaId
                 ,itemTypeId
                 ,menuId
                 ,ItemId
                 ,TaxId
-                ,TaxPercentId
+                ,oi.TaxPercentId
                 ,FeeId
                 ,TaxValue
                 ,ij.quantity
@@ -180,7 +179,17 @@ BEGIN
                 ,ij.discount
                 ,ij.total               
                 ,oi.MedidaId
+                ,CASE
+					WHEN (SELECT CAST(s.fechaConsolidacion AS DATE) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idBodega = oi.BodegaId) >= CAST(o.CreatedAt AS DATE)
+						THEN
+							0
+				ELSE
+					ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)
+				END
+                ,ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
+            INNER JOIN Restaurant.[Order] o ON oi.OrderId = o.ID
+			INNER JOIN Restaurant.v_Item i ON oi.ItemId = i.Id
             JOIN (SELECT uuid, quantity, price, discount, total FROM OPENJSON(@itemsToPay)
                     WITH (
                         uuid        UNIQUEIDENTIFIER '$.uuid',
@@ -234,23 +243,34 @@ BEGIN
             --- Insert Items ---
             INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId
                                   , taxPercentId, feeId, taxValue, quantity, cost
-                                  , price, discount, total, medidaId)
-            SELECT Uuid
+                                  , price, discount, total, medidaId, cantidadStock, cantidadTransaccion, envioSri)
+            SELECT oi.Uuid
                 ,BodegaId
                 ,itemTypeId
                 ,menuId
                 ,ItemId
                 ,TaxId
-                ,TaxPercentId
+                ,oi.TaxPercentId
                 ,FeeId
                 ,TaxValue
                 ,Quantity
                 ,Cost
                 ,Price
-                ,Discount
-                ,Total
+                ,oi.Discount
+                ,oi.Total
                 ,MedidaId
-            FROM Restaurant.OrderItem
+                ,CASE
+					WHEN (SELECT CAST(s.fechaConsolidacion AS DATE) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idBodega = oi.BodegaId) >= CAST(o.CreatedAt AS DATE)
+						THEN
+							0
+				ELSE
+					ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity)
+				END
+               ,ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity)
+               ,0
+           FROM Restaurant.OrderItem oi WITH (NOLOCK)
+                INNER JOIN Restaurant.[Order] o WITH (NOLOCK) ON oi.OrderId = o.ID
+			    INNER JOIN Restaurant.Item i WITH (NOLOCK) ON oi.ItemId = i.Id
             WHERE OrderId = @orderId
             
             --- Insert Taxes---
@@ -269,6 +289,14 @@ BEGIN
                     RETURN
                 END
 
+            UPDATE oi SET oi.Paid = 1
+
+             FROM Restaurant.OrderItem oi WITH(ROWLOCK)
+             WHERE oi.orderId = @orderId
+
+              UPDATE Restaurant.[Order] WITH (ROWLOCK)
+                    SET Finished = 1
+              WHERE Id = @orderId
         END
 
     --- Select ---
@@ -299,32 +327,31 @@ BEGIN
             SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente WHERE codIdentSri = '07'
         END
 
-    IF @taxPercent IS NULL OR @taxPercent = 0
-        BEGIN 
-            SET @taxPercent = 0
-        END       
+   SET @taxPercent = (SELECT porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK) INNER JOIN Restaurant.[Order] o WITH (NOLOCK) ON ti.idTarifaImpuesto = o.TaxPercentId WHERE o.Id = @orderId )
     
-    SELECT  @subtotalIva = SUM(oi.price), @subTotalNetoIva = SUM((oi.price) * oi.quantity) FROM @tblItems oi
+    
+    SELECT @subtotalIva = SUM((oi.price) * oi.quantity), @subTotalNetoIva = SUM(((oi.price) - (oi.discount)) * oi.quantity) FROM @tblItems oi
                                                                                     INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
                                                                                     INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
                                                                                     WHERE i.codigo = '2'
+                                                                                        AND ISNULL(oi.envioSri, 0) = 0
                                                                                     
 
-    SELECT  @subTotalIvaCero = SUM(oi.price), @subTotalNetoIvaCero = SUM((oi.price) * oi.quantity) FROM @tblItems oi
+    SELECT  @subTotalIvaCero = SUM(oi.price), @subTotalNetoIvaCero = SUM(((oi.price) - (oi.discount)) * oi.quantity) FROM @tblItems oi
                                                 INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
                                                 INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
                                                 WHERE i.codigo = '2'
                                                 AND t.codigo = '0'
                                                 AND ISNULL(oi.envioSri, 0) = 0 --- Se agrega para diferenciar y calcular los registros que tienen envioSri = 0 por detalle personalizado
 
-    SELECT @subTotalNoObjetoIva = SUM(oi.price), @subTotalNetoNoObjetoIva = SUM((oi.price) * oi.quantity) FROM @tblItems oi
+    SELECT @subTotalNoObjetoIva = SUM(oi.price), @subTotalNetoNoObjetoIva = SUM(((oi.price) - (oi.discount)) * oi.quantity) FROM @tblItems oi
                                                 INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
                                                 INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
                                                 WHERE i.codigo = '2'
                                                 AND t.codigo = '6'
                                                 AND ISNULL(oi.envioSri, 0) = 0 --- Se agrega para diferenciar y calcular los registros que tienen envioSri = 0 por detalle personalizado
 
-    SELECT  @subTotalExentoIva = SUM(oi.price), @subTotalNetoExentoIva =  SUM((oi.price) * oi.quantity) FROM @tblItems oi
+    SELECT  @subTotalExentoIva = SUM(oi.price), @subTotalNetoExentoIva =  SUM(((oi.price) - (oi.discount)) * oi.quantity) FROM @tblItems oi
                                                 INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
                                                 INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
                                                 WHERE  i.codigo = '2'
@@ -399,7 +426,7 @@ BEGIN
                 
             INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId
                                 , taxPercentId, feeId, taxValue, quantity, cost
-                                , price, discount, total, envioSri, idArticulo, [description], medidaId)
+                                , price, discount, total, envioSri, idArticulo, [description], medidaId, cantidadStock, cantidadTransaccion)
 
             SELECT uuid
                 ,bodegaId
@@ -419,6 +446,8 @@ BEGIN
                 ,productId
                 ,[description]
                 ,medidaId
+                ,0
+                ,0
             FROM OPENJSON(@customDetail)
             WITH(
                 uuid            UNIQUEIDENTIFIER    '$.uuid' 
