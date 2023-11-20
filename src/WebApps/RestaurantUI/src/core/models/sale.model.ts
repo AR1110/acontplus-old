@@ -1,4 +1,4 @@
-import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, ProductPVPReadDto, Room, TableReadDto, Tax, TaxRate, Vendedor, WarehouseAsign } from ".";
+import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, Measure, ProductPVPReadDto, Room, TableReadDto, Tax, TaxRate, Vendedor, WarehouseAsign } from ".";
 import { DOC_TYPE, ITEM_TYPE_CODE } from "../constants";
 import { EmissionPointAsign } from "./emission-point.model";
 
@@ -68,6 +68,8 @@ export interface ItemRead extends ItemBase {
     carryInventory: boolean
     taxes: Array<ItemTaxes>
     pvps: Array<ProductPVPReadDto>
+    measureId: number
+    measures: Array<Measure>
     obs?: string
     taxRateCode?: string
     itemTypeCode: ITEM_TYPE_CODE.ITEM | ITEM_TYPE_CODE.MENU

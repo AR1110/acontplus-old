@@ -589,32 +589,61 @@ BEGIN
     --> Resturante Orden
     IF @tipo = 10
         BEGIN 
-            SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo')
+            SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo')             
 
-			SELECT idArticulo
-					,idMedida
-					,idTipoIva
-					,descripcion
-					,llevaInventario
-					,precioCosto
-					,precioSinSubsidio = ISNULL(precioSinSubsidio,0)
-					,tarifaImpuesto
-					,tarifa            = porcentaje
-					,codigoPorcentaje  = CAST(codigoPorcentaje as varchar)
-					,codigoArticulo    = codigo 
-					,stock    
-                    ,s3ObjectKey
-	                ,s3ObjectUrl
-			FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo 
+            SELECT idArticulo           = a.idArticulo
+				  ,idMedida             = ISNULL(a.idMedida,0)
+				  ,idTipoIva            = a.idTipoIva
+				  ,descripcion          = a.descripcion
+				  ,llevaInventario      = a.llevaInventario
+				  ,precioCosto          = a.precioCosto
+                  ,precioSinSubsidio    = ISNULL(precioSinSubsidio,0)
+                  ,tarifaImpuesto
+				  ,tarifa               = a.porcentaje
+				  ,codigoPorcentaje     = CAST(a.codigoPorcentaje as varchar)
+				  ,codigoArticulo       = IIF(a.porcentaje > 0,'*','')+a.codigo
+				  ,stock                = a.stock
+                  ,s3ObjectKey
+	              ,s3ObjectUrl 			 
+			FROM Inventario.v_Articulo a 
+			WHERE a.idArticulo = @idArticulo
+
+
+			--SELECT 
+			--	a.idMedida
+			--   ,a.medida
+			--   ,tarifas		 = (SELECT idTarifa, precioVenta, precioConIva, tarifa, precioPredeterminado
+			--					FROM Inventario.v_Articulo_Tarifa  vat
+			--					WHERE vat.idArticulo = a.idArticulo
+			--					ORDER BY precioPredeterminado DESC FOR JSON PATH) 
+			--FROM Inventario.v_Articulo a WHERE idArticulo = @idArticulo AND estado = 1 
+            SELECT idMedida     = m.idMedida 
+			      ,descripcion  = m.descripcion
+			      ,tarifas		= (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, ta.predeterminada
+								   FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								   INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								   WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
+								   ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			      ,orden = IIF(af.gestionVenta = 1,1,3)
+                  ,af.conversion
+			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			WHERE af.idArticulo = @idArticulo AND af.estado = 1
 
 			SELECT 
-				a.idMedida
-			   ,a.medida
-			   ,tarifas		 = (SELECT idTarifa, precioVenta, precioConIva, tarifa, precioPredeterminado
-								FROM Inventario.v_Articulo_Tarifa  vat
-								WHERE vat.idArticulo = a.idArticulo
-								ORDER BY precioPredeterminado DESC FOR JSON PATH) 
-			FROM Inventario.v_Articulo a WHERE idArticulo = @idArticulo AND estado = 1 
+				m.idMedida
+			   ,m.descripcion
+			   ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, ta.predeterminada
+								FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								WHERE ap.idArticulo = a.idArticulo
+								ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			  ,orden = 2
+              ,1 as conversion
+			FROM dbo.Articulo     a WITH (NOLOCK)
+			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			WHERE a.idArticulo = @idArticulo AND a.estado = 1
+			ORDER BY orden ASC
             RETURN 
         END 
 

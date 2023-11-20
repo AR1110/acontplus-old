@@ -71,6 +71,7 @@ type Actions = {
     setTotalItems(): void, //Calcular totales   
     setItemChangeQty(index: number, qty: number): void //Modificar cantidad del item  
     onChangePVP(id: number, index: number): void
+    onChangeMeasure(id: number, index: number):void
     caculateTotals(): void
     resetForm(): void
     save(codDoc: string): void
@@ -356,6 +357,43 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     feeId: dataPVP?.feeId ?? 0,
                     price: dataPVP?.salePrice ?? 0,
                     priceWithVat: dataPVP?.priceWithVat ?? 0,
+                    total: RoundNumber(total, 2)
+                };
+            } else {
+                return orderItem;
+            }
+        })
+        set(
+            produce((state: State) => {
+                state.items = newArray;
+            })
+        )
+        setTotalItems();
+        caculateTotals();
+    },
+    onChangeMeasure(id, index) { 
+        const { items, setTotalItems, caculateTotals } = get();        
+        const newArray = items.map((orderItem, orderItemIndex) => {
+            if (index === orderItemIndex) {
+                const dataMedida = orderItem.measures.find(val => val.measureId === id);
+                let salePrice = 0, priceWithVat = 0, feeId = 0; 
+                
+                if(dataMedida){
+                    const dataPVP = dataMedida.pvps.find(pvp=>(pvp.default));
+                    if(dataPVP){
+                        salePrice = dataPVP.salePrice;
+                        priceWithVat = dataPVP.priceWithVat;
+                        feeId = dataPVP.feeId
+                    }
+                } 
+  
+                const total = orderItem.quantity * (salePrice);
+                return {
+                    ...orderItem,
+                    pvps: dataMedida && dataMedida.pvps || [],
+                    price: salePrice,
+                    priceWithVat: priceWithVat,
+                    feeId: feeId,
                     total: RoundNumber(total, 2)
                 };
             } else {

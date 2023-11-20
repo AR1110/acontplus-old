@@ -131,6 +131,8 @@ BEGIN
                                 ,@finished
                                 ,@rucEmpresa
         END
+    
+    --Editar Orden
     IF (@tipo = 2)
         BEGIN
             DECLARE @tblOrderItems AS TABLE(
@@ -144,6 +146,7 @@ BEGIN
                 taxPercentId        INT NOT NULL,
                 feeId               INT NOT NULL,
                 idArticulo          INT NULL DEFAULT 0,
+                measureId           INT NOT NULL,
                 codigoArticulo      VARCHAR(150) NOT NULL,
                 descripcion         VARCHAR(300) NOT NULL,
                 s3ObjectUrl         VARCHAR(300) NULL,
@@ -161,7 +164,10 @@ BEGIN
                 bodegaId            INT NOT NULL,                
                 paid                bit NULL,
                 itemTypeCode        VARCHAR(5) NOT NULL,
-                RemainingQuantity   NUMERIC(18,5) NULL
+                RemainingQuantity   NUMERIC(18,5) NULL,
+
+                medidasFraccionado VARCHAR(MAX) NOT NULL,
+                medidasPrincipal   VARCHAR(MAX) NOT NULL
             )
 
             SET @tableNames = 'order,orderItems'
@@ -178,128 +184,97 @@ BEGIN
              WHERE o.Id = @id 
             
             --ARTICULO- ITEMS 
-            INSERT INTO @tblOrderItems( 
-                uuid, 
-                id,
-                orderId,
-                itemId,
-                taxId,                
-                taxPercentId,
-                feeId,  
-                idArticulo,
-                codigoArticulo,
-                descripcion,
-                s3ObjectUrl,
-                llevaInventario,
-                taxRateCode,
-                priceWithVat,
-                taxValue,
-                quantity,
-                cost,
-                price,
-                discount,
-                total,
-                obs,
-                bodegaId, 
-                paid,
-                itemTypeCode,
-                remainingQuantity
-            )
-            SELECT 
-                o_i.uuid,
-                o_i.Id,
-                o_i.orderId,
-                o_i.itemId,
-                o_i.taxId,
-                o_i.taxPercentId,
-                o_i.feeId,
-                va.idArticulo,
-                va.codigo,
-                va.descripcion,
-                va.s3ObjectUrl,
-                va.llevaInventario,
-                taxRateCode = sti.codigo,
-                priceWithVat = CAST((o_i.Price + o_i.TaxValue) as numeric(18,5)),
-                o_i.taxValue,
-                o_i.quantity,
-                o_i.cost,
-                o_i.price,
-                o_i.discount,
-                o_i.total,
-                o_i.obs,
-                o_i.bodegaId, 
-                o_i.Paid,
-                i_t.Code,
-                o_i.RemainingQuantity                
+            INSERT INTO @tblOrderItems(uuid, id, orderId, itemId, taxId, taxPercentId, feeId,  idArticulo, measureId, codigoArticulo, descripcion, s3ObjectUrl,
+                                        llevaInventario, taxRateCode, priceWithVat, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid,
+                                        itemTypeCode, remainingQuantity, medidasFraccionado, medidasPrincipal
+                                        )
+            SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, va.idMedida, va.codigo, 
+                    va.descripcion, va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = CAST((o_i.Price + o_i.TaxValue) as numeric(18,5)),
+                    o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
+                    
+                    ISNULL(
+                            (SELECT idMedida      = m.idMedida 
+			                        ,descripcion  = m.descripcion
+			                        ,tarifas      = (SELECT afs.idTarifa, afs.precioVenta, afs.precioConIva, 
+                                                            tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, ta.predeterminada
+								                     FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								                     INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								                     WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
+								                     ORDER BY ta.predeterminada DESC FOR JSON PATH
+                                                     )
+			                        ,orden = IIF(af.gestionVenta = 1,1,3)
+                                    ,af.conversion
+			                FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			                INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			                WHERE af.idArticulo = va.idArticulo AND af.estado = 1 FOR JSON PATH),'[]'
+                            ) as medidasFraccionado
+                            ,
+                            (SELECT  m.idMedida
+			                        ,m.descripcion
+			                        ,tarifas = (SELECT ap.idTarifa, ap.precioVenta, ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, 
+                                                        ta.predeterminada
+								                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								                WHERE ap.idArticulo = a.idArticulo
+								                ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			                          ,orden = 2
+                                      ,1 as conversion
+			                    FROM dbo.Articulo     a WITH (NOLOCK)
+			                    INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			                    WHERE a.idArticulo = va.idArticulo AND a.estado = 1 FOR JSON PATH
+                             ) as medidasPrincipal
+                    
+
             FROM Restaurant.[OrderItem] o_i with(nolock)
-            INNER JOIN Restaurant.Item it ON it.Id = o_i.ItemId
-            INNER JOIN Restaurant.ItemType i_t ON i_t.Id = o_i.ItemTypeId
+            INNER JOIN Restaurant.Item it               ON it.Id = o_i.ItemId
+            INNER JOIN Restaurant.ItemType i_t         ON i_t.Id = o_i.ItemTypeId
             INNER JOIN Inventario.v_Articulo va ON va.idArticulo = it.ProductId
             INNER JOIN Sri.TarifaImpuesto sti ON o_i.taxPercentId = sti.idTarifaImpuesto
             WHERE o_i.OrderId = @id AND ISNULL(o_i.[Enabled], 0) = 1
 
             --MENÚ- ITEMS 
-            INSERT INTO @tblOrderItems(
-                uuid,  
-                id,
-                orderId,
-                itemTypeId,
-                menuId,
-                taxId,
-                taxPercentId,
-                feeId,  
-                idArticulo,
-                codigoArticulo,
-                descripcion,
-                s3ObjectUrl,
-               llevaInventario,
-                taxRateCode,
-                priceWithVat,
-                summary,
-                taxValue,
-                quantity,
-                cost,
-                price,
-                discount,
-                total,
-                obs,
-                bodegaId, 
-                paid,
-                itemTypeCode,
-                remainingQuantity
+            INSERT INTO @tblOrderItems(uuid,  id, orderId, itemTypeId, menuId, taxId, taxPercentId, feeId,  idArticulo, measureId, codigoArticulo, descripcion, s3ObjectUrl,
+               llevaInventario, taxRateCode, priceWithVat, summary, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid, itemTypeCode, remainingQuantity,
+               medidasFraccionado, medidasPrincipal
             )
-            SELECT 
-                o_i.uuid, 
-                o_i.id,
-                o_i.orderId,
-                o_i.ItemTypeId,
-                o_i.MenuId,
-                o_i.taxId,
-                o_i.taxPercentId,
-                o_i.feeId,
-                va.idArticulo,
-                va.codigo,
-                va.descripcion,
-                va.s3ObjectUrl,
-                va.llevaInventario,
-                taxRateCode = sti.codigo,
-                priceWithVat = cast((o_i.Price + o_i.TaxValue) as numeric(18,5)),
-                m.Summary,
-                o_i.taxValue,
-                o_i.quantity,
-                o_i.cost,
-                o_i.price,
-                o_i.discount,
-                o_i.total,
-                o_i.obs,
-                o_i.bodegaId, 
-                o_i.Paid,
-                i_t.Code,
-                o_i.RemainingQuantity
+            SELECT o_i.uuid, o_i.id, o_i.orderId, o_i.ItemTypeId, o_i.MenuId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, va.idMedida, va.codigo, va.descripcion,
+                va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = cast((o_i.Price + o_i.TaxValue) as numeric(18,5)),
+                m.Summary, o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
+                  ISNULL(
+                            (SELECT idMedida      = m.idMedida 
+			                        ,descripcion  = m.descripcion
+			                        ,tarifas      = (SELECT afs.idTarifa, afs.precioVenta, afs.precioConIva, 
+                                                            tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, ta.predeterminada
+								                     FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								                     INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								                     WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
+								                     ORDER BY ta.predeterminada DESC FOR JSON PATH
+                                                     )
+			                        ,orden = IIF(af.gestionVenta = 1,1,3)
+                                    ,af.conversion
+			                FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			                INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			                WHERE af.idArticulo = va.idArticulo AND af.estado = 1 FOR JSON PATH),'[]'
+                            ) as medidasFraccionado
+                            ,
+                            (SELECT  m.idMedida
+			                        ,m.descripcion
+			                        ,tarifas = (SELECT ap.idTarifa, ap.precioVenta, ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, 
+                                                        ta.predeterminada
+								                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								                WHERE ap.idArticulo = a.idArticulo
+								                ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			                          ,orden = 2
+                                      ,1 as conversion
+			                    FROM dbo.Articulo     a WITH (NOLOCK)
+			                    INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			                    WHERE a.idArticulo = va.idArticulo AND a.estado = 1 FOR JSON PATH
+                             ) as medidasPrincipal
             FROM Restaurant.[OrderItem] o_i with(nolock)
-            INNER JOIN Restaurant.ItemType i_t ON i_t.Id = o_i.ItemTypeId
-            INNER JOIN Restaurant.Menu m ON o_i.menuId = m.Id 
-            INNER JOIN Inventario.v_Articulo va ON va.idArticulo = m.ProductId
+            INNER JOIN Restaurant.ItemType i_t          ON i_t.Id = o_i.ItemTypeId
+            INNER JOIN Restaurant.Menu m            ON o_i.menuId = m.Id 
+            INNER JOIN Inventario.v_Articulo va  ON va.idArticulo = m.ProductId
             INNER JOIN Sri.TarifaImpuesto sti ON o_i.taxPercentId = sti.idTarifaImpuesto
             WHERE o_i.OrderId = @id AND ISNULL(o_i.[Enabled], 0) = 1
 
@@ -331,6 +306,8 @@ BEGIN
             INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
             WHERE v_cpc.idEntidad = @idEntidad AND od.orderId = @id AND v_cpc.codDoc IN('01', 'NE') 
         END
+
+    --Order Filters 
     IF (@tipo = 4)
         BEGIN
             SET @tableNames = 'tables,usuarios'
