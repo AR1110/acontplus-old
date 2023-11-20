@@ -1,6 +1,4 @@
 import { defineConfig } from "vite";
-import preact from "@preact/preset-vite";
-import basicSsl from "@vitejs/plugin-basic-ssl";
 import { resolve } from 'path'
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
@@ -11,8 +9,6 @@ import preprocess from 'svelte-preprocess';
 export default defineConfig({
     plugins: [
         svelte({ preprocess: preprocess({ postcss: false }), emitCss: false }),
-        preact(),
-        basicSsl(),
     ],
     // server: {
     //     port: 3001,

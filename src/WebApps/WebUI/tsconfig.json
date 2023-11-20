@@ -19,34 +19,5 @@
             "DOM.Iterable"
         ],
         "baseUrl": ".",
-        "paths": {
-            "$interfaces/*": [
-                "App/lib/interfaces/*"
-            ],
-            "$lib/*": [
-                "App/lib/*"
-            ],
-            "$mechanical/*": [
-                "App/routes/mechanical/*"
-            ],
-            "$restaurant/*": [
-                "App/routes/restaurant/*"
-            ],
-            "$routes/*": [
-                "App/routes/*"
-            ],
-            "$services/*": [
-                "App/lib/services/*"
-            ],
-            "$technical-support/*": [
-                "App/routes/TechnicalSupport/*"
-            ],
-            "$utils/*": [
-                "App/lib/utils/*"
-            ],
-            "$ventas/*": [
-                "App/routes/ventas/*"
-            ],
-        }
     }
 }
