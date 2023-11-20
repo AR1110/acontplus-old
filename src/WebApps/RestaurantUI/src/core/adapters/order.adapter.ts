@@ -1,6 +1,5 @@
 import { productSaleRateReadAdapter } from ".";
-import { ItemRead, OrderReadDto, ProductPVPReadDto, RawOrderData } from "../models";
-import { productService } from "../services";
+import { OrderReadDto, RawOrderData } from "../models";
 
 function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {  
     return orders.map(order => ({
@@ -55,7 +54,8 @@ async function orderReadForUpdateAdapter(obj: any) {
             tableName: order.tableName,
             numberTable: order.numberTable
         },
-        userId: order.userId
+        userId: order.userId,
+        taxPercentId: order.taxPercentId
     }
 
     const orderItemsMapper = orderItems.map((orderItem: any, indexOrderItem: number) => {

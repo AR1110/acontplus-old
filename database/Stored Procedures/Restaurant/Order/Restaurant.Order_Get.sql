@@ -108,7 +108,7 @@ BEGIN
 
             IF @finished = 1
                 BEGIN
-                 SET @sql = @sql + ' AND o.Divided=1 AND o.Finished = 1'
+                 SET @sql = @sql + ' AND o.Finished = 1'
                  END
             ELSE 
                 BEGIN 

@@ -81,7 +81,7 @@ BEGIN
 	   ,cl.correo
 	FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId 
             
-	SELECT descripcion, codigo, porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('2') AND estado = 1 ORDER BY codigo DESC
+	SELECT idTarifaImpuesto, descripcion, codigo, porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('2') AND estado = 1 ORDER BY codigo DESC
 
     SELECT CAST(searchCode AS BIT)       as searchCode
 	    ,CAST(printerAutomatic AS BIT) as printerAutomatic

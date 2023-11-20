@@ -27,6 +27,7 @@ export interface Order {
     uuid?: string
     table?: any
     userId: number
+    taxPercentId: number
 }
 
 //Impuesto Articulos 
@@ -126,6 +127,7 @@ export interface SummaryPostDto {
     fechaEmision: Date,   
     uuid?: string 
     userId: number
+    taxPercentId: number
 }
 
 
@@ -182,7 +184,8 @@ export const dataFormInitialState: DataFormSale = {
         taxCode: "",
         taxRateCode: "",
         description: "",
-        percentage: 0
+        percentage: 0,
+        idTarifaImpuesto: 0
     },
     vendedores: []
 }
@@ -209,5 +212,6 @@ export const orderInitialState: Order = {
     saveDoc: false,
     updateOrder: false,
     table: {},
-    userId: 0
+    userId: 0,
+    taxPercentId: 0
 }

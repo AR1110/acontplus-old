@@ -52,7 +52,8 @@ function summaryToApi(order: Order): SummaryPostDto {
         quickSale: order.quickSale,
         fechaEmision: order.createdAt,
         uuid: order.orderId > 0 ? order.uuid : uuidv4(),
-        userId: order.userId
+        userId: order.userId,
+        taxPercentId: order.taxPercentId
     }
 }
 

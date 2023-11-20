@@ -133,7 +133,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         setRightOrderData,
         rightOrder,
         setPaymentData,
-        resetData,
+        resetData, 
     } = useSplitOrderContext();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
     const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({
@@ -325,14 +325,17 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
 
             const mergeLeftIntoRightOrder = {
                 ...rightOrder,
+                taxPercentId: leftOrder.taxPercentId,
                 establecimientoId: leftOrder.establecimientoId,
                 puntoEmisionId: leftOrder.puntoEmisionId,
-                tableId: leftOrder.tableId,
+                tableId: leftOrder.tableId,                
             }
 
             const orderResult = summaryToApi(mergeLeftIntoRightOrder);
             const orderItemsResult = itemToApi(changeOrderItems);
-
+            //const orderItemsOriginal = itemToApi(leftCheckedOrderItems);
+ 
+            
             const data = {
                 ...orderResult,
                 subtotalSinImpuestos: objTempTotal.subTotalSinImpuestos,
@@ -342,9 +345,13 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 saveDoc: true,
                 codDoc: DOC_TYPE.FV,
                 quickSale: true,
-                items: orderItemsResult,
+                // items: orderItemsOriginal.map(item=>({
+                //     ...item,
+                //     envioSri: false
+                // })),
                 // itemsToPay: orderItemsResult,
-                customDetail: orderItemsResult
+                items: [],
+                customDetail: orderItemsResult, 
             }
 
 

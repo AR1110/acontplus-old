@@ -122,7 +122,13 @@ const Cart = () => {
                             <b>Subtotal: ${order.subTotalSinImpuestos}</b>
                         </Typography>
                         <Typography variant="body2" color="text.primary">
-                            <b>Impuesto({tarifaImpuestoVigente.description}): ${order.tax}</b>
+                            {
+                                order.orderId > 0 ? (
+                                    <b>Impuesto({tarifaImpuestoVigente.description}): ${order.tax}</b>
+                                ): (
+                                    <b>Impuesto({tarifaImpuestoVigente.description}): ${order.tax}</b>
+                                )
+                            }
                         </Typography>
                         <Typography variant="h6" color="error">
                             Total: ${order.total}
