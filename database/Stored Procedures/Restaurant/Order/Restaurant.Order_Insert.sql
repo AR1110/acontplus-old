@@ -92,11 +92,12 @@ BEGIN
                 discount NUMERIC(18,5),
                 total NUMERIC(18,5) NOT NULL,
                 obs VARCHAR(500) NULL,
-                bodegaId int not null
+                bodegaId int not null,
+                medidaId INT NOT NULL
             )
 
-            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId)
-            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId
+            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId, medidaId)
+            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId, medidaId
             FROM OPENJSON(@itemsJson)
                 WITH (
                         uuid UNIQUEIDENTIFIER '$.uuid',
@@ -114,7 +115,8 @@ BEGIN
                         total NUMERIC(18,5) '$.total',
                         feeId INT         '$.feeId',
                         obs NVARCHAR(500) '$.obs',
-                        bodegaId int '$.bodegaId'
+                        bodegaId int '$.bodegaId',
+                        medidaId INT '$.medidaId'
                       )
 
             IF NOT EXISTS(SELECT 1 FROM @tblItems)
@@ -178,7 +180,8 @@ BEGIN
                         END
 
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId, RemainingQuantity)
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId
+                                                    , MenuId, RemainingQuantity, medidaId)
                     SELECT @orderId
                             ,uuid
                             ,IIF(itemId = 0, NULL, itemId)
@@ -198,6 +201,7 @@ BEGIN
                             ,mt.Id
                             ,IIF(i.menuId = 0, NULL, i.menuId)
                             ,i.quantity
+                            ,i.medidaId
                     FROM @tblItems i
                     INNER JOIN Restaurant.ItemType mt ON mt.Code = i.itemTypeCode
 

@@ -38,5 +38,6 @@ namespace Restaurant.Core.Entities
         public bool? Paid { get; set; }
         [Column(TypeName = "numeric(18,5), null")]
         public decimal? RemainingQuantity { get; set; }
+        public int MedidaId { get; set; }
     }
 }
