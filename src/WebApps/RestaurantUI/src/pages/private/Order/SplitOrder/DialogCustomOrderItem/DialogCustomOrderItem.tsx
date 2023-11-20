@@ -163,7 +163,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 return
             }
             // const { taxValue, price, discount, total, bodegaId, priceWithVat } = joinOrderItemTotal();
-            const { feeId } = measureData.pvps[0] as ProductPVPReadDto;
+            const { feeId } = measureData.pvps.find(pvp=>(pvp.default)) as ProductPVPReadDto;
 
             const priceWithVat = objTempTotal.total;
             const price = PricingCalculateUtility.calculatePriceSale(priceWithVat, taxRateData?.percentage ?? 0);
@@ -187,7 +187,9 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 obs: "",
                 feeId,
                 bodegaId: changeOrderItems[0]?.bodegaId ?? 0,
-                description: product.description,
+                description: product.description, 
+                measureId: measureData ? measureData.measureId : 0,
+                measures: [],
                 summary: "",
                 code: product.productCode,
                 s3ObjectUrl: "",

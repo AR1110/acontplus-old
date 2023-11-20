@@ -47,7 +47,7 @@ const LoginPage = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       showLoader();
-      const agent = navigator.userAgent;
+      const agent = navigator.userAgent; 
       authService.login(values.username, values.password, JSON.stringify({ application: "Restaurant", browser: agent })).then(response => {
 
         if (response.code === "0" || response.id === "0") {

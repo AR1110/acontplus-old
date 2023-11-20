@@ -105,7 +105,7 @@ async function orderReadForUpdateAdapter(obj: any) {
          * Devuelve:
          *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
          */
-        const dataMedida = measures.find(m => m.measureId === restOrderItem.measureId);
+        const dataMedida = measures.find(m => m.measureId === restOrderItem.medidaId);
       
         return {
             index: indexOrderItem + 1,
@@ -134,7 +134,7 @@ async function orderReadForUpdateAdapter(obj: any) {
             discountTotal: 0,
             taxes: [],
             pvps: dataMedida && dataMedida.pvps || [], // Asignar los datos de las tarifas obtenidos de data medida 
-            measureId: restOrderItem.measureId,
+            measureId: restOrderItem.medidaId,
             measures: measures, // Asignar los datos de la medida al artículo
             conversion: dataMedida && dataMedida.conversion,
             taxRateCode: restOrderItem.taxRateCode,

@@ -9,7 +9,7 @@ GO
 -- Description:	sp for get order restaurant
 -- =============================================
 -- Restaurant.Order_Get 139, '{"tipo":1,"pageIndex":1,"pageSize":25,"startDate":"2023-09-05T17:18:46.886Z","endDate":"2023-09-05T17:18:46.886Z","customerCompanyId":0}', ''
--- Restaurant.Order_Get 362, '{"id":6,"tipo":3}', ''
+-- Restaurant.Order_Get 25, '{"id":102,"tipo":2}', ''
 CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT
 ,@json NVARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
@@ -146,7 +146,7 @@ BEGIN
                 taxPercentId        INT NOT NULL,
                 feeId               INT NOT NULL,
                 idArticulo          INT NULL DEFAULT 0,
-                measureId           INT NOT NULL,
+                medidaId            INT NOT NULL,
                 codigoArticulo      VARCHAR(150) NOT NULL,
                 descripcion         VARCHAR(300) NOT NULL,
                 s3ObjectUrl         VARCHAR(300) NULL,
@@ -184,11 +184,11 @@ BEGIN
              WHERE o.Id = @id 
             
             --ARTICULO- ITEMS 
-            INSERT INTO @tblOrderItems(uuid, id, orderId, itemId, taxId, taxPercentId, feeId,  idArticulo, measureId, codigoArticulo, descripcion, s3ObjectUrl,
+            INSERT INTO @tblOrderItems(uuid, id, orderId, itemId, taxId, taxPercentId, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
                                         llevaInventario, taxRateCode, priceWithVat, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid,
                                         itemTypeCode, remainingQuantity, medidasFraccionado, medidasPrincipal
                                         )
-            SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, va.idMedida, va.codigo, 
+            SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, 
                     va.descripcion, va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = CAST((o_i.Price + o_i.TaxValue) as numeric(18,5)),
                     o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
                     
@@ -233,11 +233,11 @@ BEGIN
             WHERE o_i.OrderId = @id AND ISNULL(o_i.[Enabled], 0) = 1
 
             --MENÚ- ITEMS 
-            INSERT INTO @tblOrderItems(uuid,  id, orderId, itemTypeId, menuId, taxId, taxPercentId, feeId,  idArticulo, measureId, codigoArticulo, descripcion, s3ObjectUrl,
+            INSERT INTO @tblOrderItems(uuid,  id, orderId, itemTypeId, menuId, taxId, taxPercentId, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
                llevaInventario, taxRateCode, priceWithVat, summary, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid, itemTypeCode, remainingQuantity,
                medidasFraccionado, medidasPrincipal
             )
-            SELECT o_i.uuid, o_i.id, o_i.orderId, o_i.ItemTypeId, o_i.MenuId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, va.idMedida, va.codigo, va.descripcion,
+            SELECT o_i.uuid, o_i.id, o_i.orderId, o_i.ItemTypeId, o_i.MenuId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, va.descripcion,
                 va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = cast((o_i.Price + o_i.TaxValue) as numeric(18,5)),
                 m.Summary, o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
                   ISNULL(

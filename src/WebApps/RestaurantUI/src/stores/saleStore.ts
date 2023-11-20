@@ -390,6 +390,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 const total = orderItem.quantity * (salePrice);
                 return {
                     ...orderItem,
+                    measureId: id,
                     pvps: dataMedida && dataMedida.pvps || [],
                     price: salePrice,
                     priceWithVat: priceWithVat,

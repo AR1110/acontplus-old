@@ -100,6 +100,7 @@ export interface ItemPostDto {
     menuId?: number
     bodegaId: number
     envioSri: boolean
+    medidaId: number
 }
 export interface SummaryPostDto {
     orderId: number
