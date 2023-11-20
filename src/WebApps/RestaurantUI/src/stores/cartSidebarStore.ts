@@ -9,7 +9,10 @@ type Medida = {
  
 type StateCartSidebar = {
     index: number
-    data: { pvps: ItemRead['pvps'] } & Partial<Omit<ItemRead, 'pvps'>>;
+    data: { 
+        pvps: ItemRead['pvps'],
+        measures: ItemRead['measures'] 
+    } & Partial<Omit<ItemRead, 'pvps' | 'measures'>>;
     openCartSidebar: boolean  
 }
 
@@ -22,14 +25,14 @@ type Actions = {
 export const useStoreCartSidebar = create<StateCartSidebar & Actions>()((set) => ({
     index: 0,
     data: {
-        pvps: []
+        pvps: [],
+        measures: []
     },
     openCartSidebar: false, 
-    setDataItem(data, index){
-        console.log(data)
+    setDataItem(data, index){ 
         set(
             produce((state: StateCartSidebar) => {
-                state.data = data;
+                state.data = structuredClone(data);
                 state.index = index;
             })
         )

@@ -3,7 +3,7 @@ export interface RawProductPVPData {
     precioVenta: number,
     precioConIva: number,
     tarifa: string, 
-    precioPredeterminado: boolean
+    predeterminada: boolean
 } 
 
 export interface ProductPVPReadDto {

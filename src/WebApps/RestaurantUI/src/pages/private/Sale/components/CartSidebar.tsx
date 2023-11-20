@@ -21,16 +21,19 @@ function CartSidebar() {
     }));
     const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem);
     const onChangePVP = useSaleStore(state => state.onChangePVP);
+    const onChangeMeasure = useSaleStore(state => state.onChangeMeasure);
+    const {pvps, measures} = data;
  
     const isMdUp = useMediaQuery((theme:any) => theme.breakpoints.up('md'));
 
-    const drawerWidth = isMdUp ? 400 : 300; 
+    const drawerWidth = isMdUp ? 450 : 350; 
     
     useEffect(()=>{
 
         return()=>{
             setDataItem({
-                pvps: []
+                pvps: [],
+                measures: []
             }, index)
         }
     }, [])
@@ -71,26 +74,46 @@ function CartSidebar() {
                         noValidate
                         autoComplete="off"
                     >
-                        {/* <TextField
-                            id="medida"
-                            select
-                            label="Medida"
-
-                            fullWidth
-                            size='small'
-
-                        >
-                            {
-                                [1, 2, 3, 4].map((usuario: any, index: number) => (
-                                    <MenuItem key={index} value={usuario}>
-                                        {usuario}
-                                    </MenuItem>
-                                ))
-                            }
-                        </TextField> */}
+                        {
+                            measures && measures.length > 0 && (
+                                <TextField
+                                    id="medida"
+                                    select
+                                    label="Medida"
+                                    value={data.measureId}
+                                    fullWidth
+                                    size='small'
+                                    onChange={(e) => {
+                                        const measureId = Number(e.target.value);
+                                        const dataMeasure = data.measures.find(m => (m.measureId === measureId));
+                                        let feeId = 0;
+                                        if(dataMeasure){
+                                            const dataPVP = dataMeasure.pvps.find(pvp => (pvp.default));
+                                            feeId = dataPVP && dataPVP.feeId || 0
+                                        }
+                                        
+                                        onChangeMeasure(measureId, index)
+                                        setDataItem({
+                                            ...data,
+                                            feeId,
+                                            pvps: dataMeasure && dataMeasure.pvps || [],
+                                            measureId: measureId
+                                        }, index)
+                                    }}
+                                >
+                                    {
+                                        measures && measures.map((medida, index: number) => (
+                                            <MenuItem key={index} value={medida.measureId}>
+                                                {medida.description}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </TextField>
+                            )
+                        }
 
                         {
-                            data && data.pvps && data.pvps.length > 0 && (
+                            pvps && pvps.length > 0 && (
                                 <TextField fullWidth
                                     size='small'
                                     id="pvps"
@@ -108,7 +131,7 @@ function CartSidebar() {
                                     }}
                                 >
                                     {
-                                        data.pvps.map((pvp, index) => (
+                                        pvps.map((pvp, index) => (
                                             <MenuItem value={pvp.feeId} key={index}>
                                                 {pvp.description} - ${pvp.priceWithVat}
                                             </MenuItem>
