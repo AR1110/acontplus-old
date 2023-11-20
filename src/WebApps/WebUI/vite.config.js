@@ -1,38 +1,11 @@
 import { defineConfig } from "vite";
 import { resolve } from 'path'
-import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
-import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
-import rollupNodePolyFill from "rollup-plugin-node-polyfills";
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import preprocess from 'svelte-preprocess';
 
 export default defineConfig({
     plugins: [
-        svelte({ preprocess: preprocess({ postcss: false }), emitCss: false }),
+        svelte({ emitCss: false }),
     ],
-    // server: {
-    //     port: 3001,
-    //     https: true,
-    // },
-    optimizeDeps: {
-        esbuildOptions: {
-            // Node.js global to browser globalThis
-            define: {
-                global: "globalThis",
-            },
-            // Enable esbuild polyfill plugins
-            plugins: [
-                NodeGlobalsPolyfillPlugin({
-                    process: true,
-                    buffer: true,
-                }),
-                NodeModulesPolyfillPlugin(),
-            ],
-        },
-    },
-    // worker: {
-    //     format: "es",
-    // },
     resolve: {
         alias: {
             "$interfaces": resolve(__dirname, "../WebUI/App/lib/interfaces"),
@@ -54,11 +27,6 @@ export default defineConfig({
             fileName: 'bundle',
         },
         rollupOptions: {
-            plugins: [
-                // Enable rollup polyfills plugin
-                // used during production bundling
-                rollupNodePolyFill(),
-            ],
             output: {
                 format: "esm",
                 entryFileNames: 'bundle.js',

@@ -36,6 +36,8 @@ BEGIN
     ,@itemsJson NVARCHAR(MAX)
     ,@taxesJson NVARCHAR(MAX)
     ,@code CHAR(1)
+    ,@customDetail NVARCHAR(MAX)
+
 
      SELECT @uuid               = uuid
         ,@itemsJson             = items
@@ -51,6 +53,7 @@ BEGIN
         ,@saveDoc               = saveDoc
         ,@updateOrder           = updateOrder
         ,@userId                = userId
+        ,@customDetail          = customDetail
     FROM OPENJSON(@json)
     WITH(
         uuid                UNIQUEIDENTIFIER '$.uuid',  
@@ -66,7 +69,8 @@ BEGIN
         obs                 VARCHAR(500) '$.obs',
         saveDoc             BIT '$.saveDoc',
         updateOrder         BIT '$.updateOrder',
-        userId              INT '$.userId'
+        userId              INT '$.userId',
+        customDetail            NVARCHAR(MAX)   '$.customDetail' AS JSON
     )
     
     IF NOT EXISTS (SELECT 1 FROM Config.v_ConfigDocumento cd 
@@ -96,28 +100,30 @@ BEGIN
                     total           NUMERIC(18,5) NOT NULL,
                     obs             VARCHAR(500) NULL,
                     bodegaId        INT NULL,
-                    itemTypeCode    VARCHAR(8) NOT NULL
+                    itemTypeCode    VARCHAR(8) NOT NULL,
+                    MedidaId        INT NOT NULL
                 )
 
                INSERT INTO @tblItems(orderItemId,uuid, itemId, menuId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price
-                                      , discount, total, obs, bodegaId, itemTypeCode)
+                                      , discount, total, obs, bodegaId, itemTypeCode, MedidaId)
                
                SELECT orderItemId
-                    , uuid
-                    , itemId
-                    , menuId
-                    , taxId
-                    , taxPercentId
-                    , feeId
-                    , taxValue
-                    , quantity
-                    , cost
-                    , price
-                    , discount
-                    , total
-                    , obs
-                    , bodegaId
-                    , itemTypeCode
+                    ,uuid
+                    ,itemId
+                    ,menuId
+                    ,taxId
+                    ,taxPercentId
+                    ,feeId
+                    ,taxValue
+                    ,quantity
+                    ,cost
+                    ,price
+                    ,discount
+                    ,total
+                    ,obs
+                    ,bodegaId
+                    ,itemTypeCode
+                    ,MedidaId
                 FROM OPENJSON(@itemsJson)
                 WITH (  orderItemId     INT '$.orderItemId',
                         uuid            UNIQUEIDENTIFIER '$.uuid',
@@ -134,10 +140,11 @@ BEGIN
                         total           NUMERIC(18,5) '$.total',
                         obs             NVARCHAR(500) '$.obs',
                         bodegaId        INT '$.bodegaId',
-                        itemTypeCode    VARCHAR(8) '$.itemTypeCode'
+                        itemTypeCode    VARCHAR(8) '$.itemTypeCode',
+                        medidaId        INT '$.medidaId'
                 )
                 
-                IF (SELECT COUNT(*) FROM @tblItems) = 0
+                IF (SELECT COUNT(*) FROM @tblItems) = 0 AND LEN(RTRIM(LTRIM(@customDetail))) = 0
                     BEGIN
                         SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
                         RETURN
@@ -196,6 +203,7 @@ BEGIN
                                 ,u.Obs          = t1.obs
                                 ,u.UpdatedAt    = dbo.ufnGetDateEcuador()
                                 ,u.BodegaId     = t1.bodegaId
+                                ,u.MedidaId       = t1.MedidaId
                             FROM Restaurant.OrderItem u
                             INNER JOIN #selectExist si ON si.OrderId = u.OrderId
                             INNER JOIN @tblItems t1 ON t1.itemTypeCode = si.Code AND u.Id = t1.orderItemId
@@ -203,7 +211,8 @@ BEGIN
                     
                     --=========== INSERT IF NOT EXISTS =============--
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, RemainingQuantity)
+                                                    ,Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId
+                                                    ,RemainingQuantity, MedidaId)
                     SELECT @id
                         ,ti.uuid
                         ,ti.itemId
@@ -222,6 +231,7 @@ BEGIN
                         ,ti.bodegaId
                         ,it.Id
                         ,ti.quantity
+                        ,ti.MedidaId
                     FROM @tblItems ti
                     INNER JOIN Restaurant.ItemType it ON it.Code = ti.itemTypeCode
                     WHERE ti.orderItemId = 0
