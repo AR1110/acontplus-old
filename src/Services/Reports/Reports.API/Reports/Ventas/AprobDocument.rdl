@@ -2454,7 +2454,7 @@
             <KeepTogether>true</KeepTogether>
             <Top>34.09751mm</Top>
             <Left>1.8507mm</Left>
-            <Height>132.09929mm</Height>
+            <Height>132.0993mm</Height>
             <Width>190.1324mm</Width>
             <Style>
               <Border>
@@ -3353,21 +3353,21 @@
             </Style>
           </Image>
         </ReportItems>
-        <Height>166.1968mm</Height>
+        <Height>166.19681mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>191.9831mm</Width>
+      <Width>193.30602mm</Width>
       <Page>
-        <PageHeight>29.7cm</PageHeight>
-        <PageWidth>20cm</PageWidth>
-        <LeftMargin>0.25cm</LeftMargin>
-        <RightMargin>0.25cm</RightMargin>
-        <TopMargin>0.25cm</TopMargin>
-        <BottomMargin>0.25cm</BottomMargin>
+        <PageHeight>30cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>0.2cm</LeftMargin>
+        <RightMargin>0.2cm</RightMargin>
+        <TopMargin>0.2cm</TopMargin>
+        <BottomMargin>0.2cm</BottomMargin>
         <ColumnSpacing>0.13cm</ColumnSpacing>
         <Style />
       </Page>
