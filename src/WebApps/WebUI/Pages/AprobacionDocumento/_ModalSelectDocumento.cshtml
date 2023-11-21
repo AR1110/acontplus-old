@@ -82,6 +82,7 @@
                                 <span for="puntoEmision">Punto Emision: <span class="text-danger">*</span></span>
                                 <select class="form-control border-select" ng-model="dataSearch.idPuntoEmision"
                                         ng-change="refresh()">
+                                        <option value="">Todos</option>
                                         <option ng-value="item.idPuntoEmision" ng-repeat="item in ptosEmision">
                                             {{item.ptoEmi}}
                                         </option>
