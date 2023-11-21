@@ -34,8 +34,8 @@ BEGIN
 
 		--declare @targetpProcedure nvarchar(100);
 		--set @targetpProcedure = CAST(@RecvReqMsg AS nvarchar(100))
-		SELECT @codTran     = nref.value('(codTran)[1]', 'VARCHAR(2)')
-			  ,@codDoc      = nref.value('(codDoc)[1]', 'VARCHAR(2)')
+		SELECT @codTran     = nref.value('(codTran)[1]', 'VARCHAR(5)')
+			  ,@codDoc      = nref.value('(codDoc)[1]', 'VARCHAR(5)')
 			  ,@documentoId = nref.value('(documentoId)[1]', 'INT')
 			  ,@tipo        = nref.value('(tipo)[1]', 'INT')
 		FROM @RecvReqMsg.nodes('/msg') AS R(nref);
@@ -52,29 +52,8 @@ BEGIN
 
 			    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
 
-                --> En caso de Actualizar una transaccion
-                IF @tipo = 2
-                    BEGIN
-                        DELETE FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @documentoId
-                    END 
-
-                --> En caso de Anular una Transaccion 
-                IF @tipo = 3
-                    BEGIN
-                        UPDATE Inventario.Transaccion SET estado = 0 WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @documentoId
-                        
-                        --> Actualizar Stock
-			            UPDATE st SET st.cantidad = st.cantidad + ISNULL(td.cantidad, 0)
-			            FROM Inventario.Stock                 st WITH (ROWLOCK)
-			            INNER JOIN Inventario.TransaccionTemp td WITH (ROWLOCK) ON td.ProductId = st.idArticulo AND td.BodegaId = st.idBodega
-			            WHERE td.TipoTransaccionId = @idTipoTransaccion
-				          AND td.TipoDocumentoId = @idTipoDocumento
-				          AND td.DocumentoId = @documentoId
-                          AND td.estado = 2
-                    END 
-
-                --> Insertamos solo en el proceso de Editar o Crear una Transaccion
-                IF @tipo IN (1,2)
+                --> Insert
+                IF @tipo = 1
                     BEGIN 
 			            INSERT INTO Inventario.Transaccion 
                               (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
@@ -97,6 +76,50 @@ BEGIN
                         UPDATE Inventario.TransaccionTemp SET estado = 2 WHERE TipoTransaccionId = @idTipoTransaccion AND TipoDocumentoId = @idTipoDocumento AND DocumentoId = @documentoId AND estado = 1
                     END 
 
+                --> Update
+                IF @tipo = 2
+                    BEGIN
+                        DELETE FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @documentoId
+                        
+                        INSERT INTO Inventario.Transaccion 
+                              (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
+			            SELECT [TipoTransaccionId],[ProductId],[BodegaId],[TipoDocumentoId],[DocumentoId],[MedidaId],[TarifaId],[Cantidad],[PrecioUnitario],[PrecioCosto],[Total],[FechaRegistro],[idUsuario]
+			            FROM Inventario.TransaccionTemp WITH(NOLOCK)
+			            WHERE estado = 1
+				          AND TipoTransaccionId = @idTipoTransaccion
+				          AND TipoDocumentoId = @idTipoDocumento
+				          AND DocumentoId = @documentoId
+
+                        --> Actualizar Stock
+			            UPDATE st SET st.cantidad = st.cantidad + ISNULL(td.CantidadStock, 0)
+			            FROM Inventario.Stock                 st WITH (ROWLOCK)
+			            INNER JOIN Inventario.TransaccionTemp td WITH (ROWLOCK) ON td.ProductId = st.idArticulo AND td.BodegaId = st.idBodega
+			            WHERE td.TipoTransaccionId = @idTipoTransaccion
+				          AND td.TipoDocumentoId = @idTipoDocumento
+				          AND td.DocumentoId = @documentoId
+                          AND td.CantidadStock != 0
+
+                        UPDATE Inventario.TransaccionTemp SET estado = 2 WHERE TipoTransaccionId = @idTipoTransaccion AND TipoDocumentoId = @idTipoDocumento AND DocumentoId = @documentoId AND estado = 1
+
+                        INSERT INTO ErroresSistema (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate)
+		                SELECT NEWID(),'tipo 2',5,5,5,5,5,5,GETDATE()
+                    END 
+
+                --> Delete 
+                IF @tipo = 3
+                    BEGIN
+                        UPDATE Inventario.Transaccion SET estado = 0 WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @documentoId
+                        
+                        --> Actualizar Stock
+			            UPDATE st SET st.cantidad = st.cantidad + ISNULL(td.cantidad, 0)
+			            FROM Inventario.Stock                 st WITH (ROWLOCK)
+			            INNER JOIN Inventario.TransaccionTemp td WITH (ROWLOCK) ON td.ProductId = st.idArticulo AND td.BodegaId = st.idBodega
+			            WHERE td.TipoTransaccionId = @idTipoTransaccion
+				          AND td.TipoDocumentoId = @idTipoDocumento
+				          AND td.DocumentoId = @documentoId
+                          AND td.estado = 2
+                    END 
+
                 --> Actualizar Stock General
                 UPDATE ar
 			    SET ar.stock = (
@@ -111,6 +134,7 @@ BEGIN
 					    WHERE t.TipoTransaccionId = @idTipoTransaccion
 						    AND t.TipoDocumentoId = @idTipoDocumento
 						    AND t.DocumentoId = @documentoId
+                            AND t.estado = 2
 					    )
 		END
         END CONVERSATION @RecvReqDlgHandle;
