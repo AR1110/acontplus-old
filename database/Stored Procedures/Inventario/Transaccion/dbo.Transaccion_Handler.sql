@@ -101,8 +101,6 @@ BEGIN
 
                         UPDATE Inventario.TransaccionTemp SET estado = 2 WHERE TipoTransaccionId = @idTipoTransaccion AND TipoDocumentoId = @idTipoDocumento AND DocumentoId = @documentoId AND estado = 1
 
-                        INSERT INTO ErroresSistema (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate)
-		                SELECT NEWID(),'tipo 2',5,5,5,5,5,5,GETDATE()
                     END 
 
                 --> Delete 
