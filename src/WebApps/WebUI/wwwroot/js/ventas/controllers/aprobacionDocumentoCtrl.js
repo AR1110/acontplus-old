@@ -687,9 +687,7 @@
                 // console.log(resultJoinDetails)
                 // return 
 
-                const resultMergeItems = mergeItems(resultJoinItems);
-
-                console.log(resultMergeItems)
+                const resultMergeItems = mergeItems(resultJoinItems); 
 
                 //Agregamos Bodega e Indice
                 let index = 1;
@@ -754,6 +752,7 @@
                     let totalConImpuestosRounded = fS.roundNumber(totalConImpuestosSum, $scope.decimal.nroTotalDetalle);
                     let precioConIva = totalConImpuestosSum / totalCantidadSum;
                     let precioUnitario = totalPrecioUnitario / totalCantidadSum;
+                    let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(precioUnitario, totalDescuentoSum);
                     let total = ((precioUnitario * totalCantidadSum)) - totalDescuentoSum;
 
                     foundItem.cantidad = totalCantidadSum;
@@ -761,6 +760,8 @@
                     foundItem.precioUnitario = fS.roundNumber(precioUnitario, $scope.decimal.nroPrecio)
                     foundItem.precioConIva = fS.roundNumber(precioConIva, $scope.decimal.nroPrecio);
                     foundItem.total = fS.roundNumber(total, $scope.decimal.nroTotalDetalle);
+                    foundItem.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje);
+                    foundItem.valorDescuento = fS.roundNumber(totalDescuentoSum, $scope.decimal.nroDescuento);
 
                 } else {
                     acc.push({
@@ -3534,7 +3535,9 @@
                     if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
                         let query = facturaSvc.queryMapper({
                             data: $scope.data,
-                            cliente: $scope.cliente.idCliente,
+                            cliente: {
+                                idCliente: $scope.cliente.idCliente
+                            },
                             detalles: $scope.gridOptionsDetalle.data,
                             itemsDeleted: [],
                             infoAdicionalDocumento: $scope.infoAdicionalDocumento,
@@ -3561,7 +3564,9 @@
                     if ($scope.data.docDestino === DOC_TYPE.NE) {
                         let query = notaEntregaSvc.queryMapper({
                             data: $scope.data,
-                            cliente: $scope.cliente,
+                            cliente: {
+                                idCliente: $scope.cliente.idCliente
+                            },
                             detalles: $scope.gridOptionsDetalle.data,
                             itemsDeleted: [],
                             historyDatosAdicionales: $scope.historyDatosAdicionales

@@ -331,7 +331,6 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox90</rd:DefaultName>
-                    <Top>0.07055cm</Top>
                     <Left>5.39512cm</Left>
                     <Height>0.6cm</Height>
                     <Width>7.36868cm</Width>
@@ -363,7 +362,6 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox91</rd:DefaultName>
-                    <Top>0.07055cm</Top>
                     <Left>15.36202cm</Left>
                     <Height>0.6cm</Height>
                     <Width>2.67965cm</Width>
@@ -397,7 +395,6 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox121</rd:DefaultName>
-                    <Top>0.07055cm</Top>
                     <Left>0.20903cm</Left>
                     <Height>0.6cm</Height>
                     <Width>5.18609cm</Width>
@@ -431,7 +428,6 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox125</rd:DefaultName>
-                    <Top>0.07055cm</Top>
                     <Left>12.94019cm</Left>
                     <Height>0.6cm</Height>
                     <Width>2.38655cm</Width>
@@ -464,7 +460,7 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox92</rd:DefaultName>
-                    <Top>0.74111cm</Top>
+                    <Top>0.67056cm</Top>
                     <Left>3.19114cm</Left>
                     <Height>0.6cm</Height>
                     <Width>7.8736cm</Width>
@@ -497,7 +493,7 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox93</rd:DefaultName>
-                    <Top>0.74111cm</Top>
+                    <Top>0.67056cm</Top>
                     <Left>15.36202cm</Left>
                     <Height>0.6cm</Height>
                     <Width>2.67966cm</Width>
@@ -531,7 +527,7 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox122</rd:DefaultName>
-                    <Top>0.74111cm</Top>
+                    <Top>0.67056cm</Top>
                     <Left>0.20903cm</Left>
                     <Height>0.6cm</Height>
                     <Width>2.98211cm</Width>
@@ -565,7 +561,7 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox124</rd:DefaultName>
-                    <Top>0.74111cm</Top>
+                    <Top>0.67056cm</Top>
                     <Left>12.97547cm</Left>
                     <Height>0.6cm</Height>
                     <Width>2.38655cm</Width>
@@ -598,7 +594,7 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox94</rd:DefaultName>
-                    <Top>1.44694cm</Top>
+                    <Top>1.37639cm</Top>
                     <Left>3.19114cm</Left>
                     <Height>0.6cm</Height>
                     <Width>14.85053cm</Width>
@@ -632,7 +628,7 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>Textbox123</rd:DefaultName>
-                    <Top>1.44694cm</Top>
+                    <Top>1.37639cm</Top>
                     <Left>0.20903cm</Left>
                     <Height>0.6cm</Height>
                     <Width>2.94684cm</Width>
@@ -650,8 +646,8 @@
                   </Textbox>
                 </ReportItems>
                 <KeepTogether>true</KeepTogether>
-                <Top>4.91386cm</Top>
-                <Height>2.15327cm</Height>
+                <Top>4.98441cm</Top>
+                <Height>2.08272cm</Height>
                 <Width>19.01324cm</Width>
                 <ZIndex>2</ZIndex>
                 <Style>
@@ -664,10 +660,10 @@
                 <TablixBody>
                   <TablixColumns>
                     <TablixColumn>
-                      <Width>1.52596cm</Width>
+                      <Width>2.77155cm</Width>
                     </TablixColumn>
                     <TablixColumn>
-                      <Width>9.73631cm</Width>
+                      <Width>8.49073cm</Width>
                     </TablixColumn>
                     <TablixColumn>
                       <Width>1.50515cm</Width>
@@ -957,7 +953,7 @@
                                     <TextRun>
                                       <Value>=Fields!codigo.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -992,7 +988,7 @@
                                     <TextRun>
                                       <Value>=Fields!descripcion.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1027,7 +1023,7 @@
                                     <TextRun>
                                       <Value>=Fields!medida.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1062,7 +1058,7 @@
                                     <TextRun>
                                       <Value>=Fields!cantidad.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1097,7 +1093,7 @@
                                     <TextRun>
                                       <Value>=Fields!precioUnitario.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1132,7 +1128,7 @@
                                     <TextRun>
                                       <Value>=Fields!descuento.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1167,7 +1163,7 @@
                                     <TextRun>
                                       <Value>=Fields!precioSinImpuesto.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1219,7 +1215,7 @@
                 <DataSetName>detailDs</DataSetName>
                 <Top>7.15242cm</Top>
                 <Height>0.96188cm</Height>
-                <Width>18.98059cm</Width>
+                <Width>18.9806cm</Width>
                 <ZIndex>3</ZIndex>
                 <Style>
                   <Border>
@@ -1252,7 +1248,7 @@
                                     <TextRun>
                                       <Value>=Fields!porcentajeIva.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1321,7 +1317,7 @@
                                     <TextRun>
                                       <Value>SUBTOTAL IVA 0%</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1390,7 +1386,7 @@
                                     <TextRun>
                                       <Value>SUBTOTAL NO OBJETO IVA</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1459,7 +1455,7 @@
                                     <TextRun>
                                       <Value>SUBTOTAL EXCENTO IVA</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1528,7 +1524,7 @@
                                     <TextRun>
                                       <Value>SUBTOTAL SIN IMPUESTOS</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1597,7 +1593,7 @@
                                     <TextRun>
                                       <Value>DESCUENTO</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1666,7 +1662,7 @@
                                     <TextRun>
                                       <Value>=Fields!tipoIva.Value</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1735,7 +1731,7 @@
                                     <TextRun>
                                       <Value>IRBPNR</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1804,7 +1800,7 @@
                                     <TextRun>
                                       <Value>PROPINA</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -1873,7 +1869,7 @@
                                     <TextRun>
                                       <Value>VALOR TOTAL</Value>
                                       <Style>
-                                        <FontSize>6pt</FontSize>
+                                        <FontSize>7pt</FontSize>
                                       </Style>
                                     </TextRun>
                                   </TextRuns>
@@ -2821,8 +2817,8 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox48</rd:DefaultName>
-                <Top>0.28787cm</Top>
-                <Left>1.87019cm</Left>
+                <Top>0.21732cm</Top>
+                <Left>1.87018cm</Left>
                 <Height>0.6cm</Height>
                 <Width>6.53299cm</Width>
                 <Style>
@@ -2856,9 +2852,9 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox49</rd:DefaultName>
-                <Top>0.99371cm</Top>
+                <Top>0.88788cm</Top>
                 <Left>0.34033cm</Left>
-                <Height>0.6cm</Height>
+                <Height>0.56472cm</Height>
                 <Width>8.06285cm</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
@@ -2889,9 +2885,9 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox50</rd:DefaultName>
-                <Top>1.62898cm</Top>
+                <Top>1.52315cm</Top>
                 <Left>1.27662cm</Left>
-                <Height>0.6cm</Height>
+                <Height>0.56471cm</Height>
                 <Width>7.12655cm</Width>
                 <ZIndex>2</ZIndex>
                 <Style>
@@ -2923,8 +2919,8 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox51</rd:DefaultName>
-                <Top>3.07593cm</Top>
-                <Left>0.34033cm</Left>
+                <Top>2.7937cm</Top>
+                <Left>0.34032cm</Left>
                 <Height>0.6cm</Height>
                 <Width>8.06285cm</Width>
                 <ZIndex>3</ZIndex>
@@ -2958,7 +2954,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox52</rd:DefaultName>
-                <Top>3.78176cm</Top>
+                <Top>3.53671cm</Top>
                 <Left>4.02647cm</Left>
                 <Height>0.6cm</Height>
                 <Width>4.3767cm</Width>
@@ -2991,7 +2987,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox53</rd:DefaultName>
-                <Top>4.4876cm</Top>
+                <Top>4.24255cm</Top>
                 <Left>2.18769cm</Left>
                 <Height>0.6cm</Height>
                 <Width>2.24673cm</Width>
@@ -3023,7 +3019,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox71</rd:DefaultName>
-                <Top>4.48759cm</Top>
+                <Top>4.24254cm</Top>
                 <Left>6.19172cm</Left>
                 <Height>0.6cm</Height>
                 <Width>2.21146cm</Width>
@@ -3058,7 +3054,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox72</rd:DefaultName>
-                <Top>7.07005cm</Top>
+                <Top>6.825cm</Top>
                 <Height>0.6cm</Height>
                 <Width>8.87812cm</Width>
                 <ZIndex>7</ZIndex>
@@ -3089,8 +3085,8 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox126</rd:DefaultName>
-                <Top>0.28787cm</Top>
-                <Left>0.34033cm</Left>
+                <Top>0.21732cm</Top>
+                <Left>0.34032cm</Left>
                 <Height>0.6cm</Height>
                 <Width>1.49458cm</Width>
                 <ZIndex>8</ZIndex>
@@ -3122,9 +3118,9 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox127</rd:DefaultName>
-                <Top>1.62898cm</Top>
+                <Top>1.52315cm</Top>
                 <Left>0.34033cm</Left>
-                <Height>0.6cm</Height>
+                <Height>0.56471cm</Height>
                 <Width>0.9363cm</Width>
                 <ZIndex>9</ZIndex>
                 <Style>
@@ -3155,8 +3151,8 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox128</rd:DefaultName>
-                <Top>2.3701cm</Top>
-                <Left>0.34033cm</Left>
+                <Top>2.12315cm</Top>
+                <Left>0.34032cm</Left>
                 <Height>0.6cm</Height>
                 <Width>8.06285cm</Width>
                 <ZIndex>10</ZIndex>
@@ -3190,7 +3186,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox129</rd:DefaultName>
-                <Top>3.78176cm</Top>
+                <Top>3.53671cm</Top>
                 <Left>0.34033cm</Left>
                 <Height>0.6cm</Height>
                 <Width>3.61559cm</Width>
@@ -3224,7 +3220,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox130</rd:DefaultName>
-                <Top>4.4876cm</Top>
+                <Top>4.24255cm</Top>
                 <Left>0.34033cm</Left>
                 <Height>0.6cm</Height>
                 <Width>1.81208cm</Width>
@@ -3257,7 +3253,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox131</rd:DefaultName>
-                <Top>4.4876cm</Top>
+                <Top>4.24255cm</Top>
                 <Left>4.61081cm</Left>
                 <Height>0.6cm</Height>
                 <Width>1.51035cm</Width>
@@ -3289,7 +3285,7 @@
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox138</rd:DefaultName>
-                <Top>5.19342cm</Top>
+                <Top>4.94837cm</Top>
                 <Left>0.34033cm</Left>
                 <Height>0.6cm</Height>
                 <Width>8.06285cm</Width>
@@ -3309,7 +3305,7 @@
                 <Value>=Parameters!barcode.Value</Value>
                 <MIMEType>=Parameters!mimeTypeBarcode.Value</MIMEType>
                 <Sizing>Fit</Sizing>
-                <Top>5.89926cm</Top>
+                <Top>5.61893cm</Top>
                 <Height>1.13552cm</Height>
                 <Width>8.87812cm</Width>
                 <ZIndex>15</ZIndex>
@@ -3323,7 +3319,7 @@
             <KeepTogether>true</KeepTogether>
             <Top>0.37427cm</Top>
             <Left>10.28227cm</Left>
-            <Height>7.75508cm</Height>
+            <Height>7.425cm</Height>
             <Width>8.87812cm</Width>
             <ZIndex>11</ZIndex>
             <Style>
@@ -3360,14 +3356,14 @@
           </Border>
         </Style>
       </Body>
-      <Width>193.30602mm</Width>
+      <Width>191.9831mm</Width>
       <Page>
-        <PageHeight>30cm</PageHeight>
-        <PageWidth>21cm</PageWidth>
-        <LeftMargin>0.2cm</LeftMargin>
-        <RightMargin>0.2cm</RightMargin>
-        <TopMargin>0.2cm</TopMargin>
-        <BottomMargin>0.2cm</BottomMargin>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>20cm</PageWidth>
+        <LeftMargin>0.25cm</LeftMargin>
+        <RightMargin>0.25cm</RightMargin>
+        <TopMargin>0.25cm</TopMargin>
+        <BottomMargin>0.25cm</BottomMargin>
         <ColumnSpacing>0.13cm</ColumnSpacing>
         <Style />
       </Page>
