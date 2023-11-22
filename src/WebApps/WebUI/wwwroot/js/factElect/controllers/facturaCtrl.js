@@ -929,8 +929,19 @@
                 clienteDefault,
                 articuloDefault
             } = mainDataForm;
-            $scope.establecimientos = estabs;
-            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            $scope.establecimientos = estabs; 
+
+            let dataEstab = {};
+
+            if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
+                const {
+                    comprobante,
+                } = params.data;
+                dataEstab = $scope.establecimientos.find(estab => estab.codEstab === comprobante.codEstab);
+            } else {
+                dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            }
+
             $scope.data.codEstab = dataEstab.codEstab;
             $scope.dataClone.codEstab = dataEstab.codEstab;
 

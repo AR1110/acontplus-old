@@ -220,7 +220,7 @@
             })
 
             notaEntregaSvc.getDataForm().then(response => {
-                mainDataForm = response;
+                mainDataForm = structuredClone(response);
                 $scope.permisoEditarDoc = response.permisoEditarDoc;
             })
 
@@ -294,7 +294,7 @@
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 }).result.then(result => {
-                    
+
                     if (typeof result !== 'object') return
 
                     //Pendiednte ⭕
@@ -754,7 +754,7 @@
 
         //Habilitar cuando la acción es editar
         $scope.isDisabledFormField = false;
-        
+
 
         $scope.indexRow = null; //Indice del items del detalle 
 
@@ -806,7 +806,7 @@
 
                 //Verificacion del stock 
                 if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
-                    
+
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
                 }
@@ -823,12 +823,12 @@
 
         function checkNotificationStock(field, rowEntity, oldValue) {
             try {
-                
+
                 if (!rowEntity.llevaInventario) {
                     setCalculoTotales(field, rowEntity, oldValue);
                     return
                 }
-                
+
                 showLoader();
                 let { cantidadStock } = notaEntregaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision)
                 articuloSvc.checkNotificationStock({
@@ -840,7 +840,7 @@
                     hideLoader();
                     let { code, message, titleSms } = responseApi;
                     if (code === "1") {
-                        
+
                         setCalculoTotales(field, rowEntity, oldValue);
                         return
                     }
@@ -902,10 +902,19 @@
                 vendedores
             } = mainDataForm;
             $scope.establecimientos = estabs;
-            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            let dataEstab = {};
+
+            if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
+                const {
+                    comprobante,
+                } = params.data;
+                dataEstab = $scope.establecimientos.find(estab => estab.codEstab === comprobante.codEstab);
+            } else {
+                dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            }
+
             $scope.data.codEstab = dataEstab.codEstab;
             $scope.dataClone.codEstab = dataEstab.codEstab;
-
             $scope.puntosEmision = dataEstab.puntosEmision;
             $scope.bodegas = dataEstab.bodegas;
             $scope.tarifas = tarifas;
@@ -948,7 +957,7 @@
                     items,
                     infoAdicionalDocumento,
                 } = params.data;
-                
+
                 $scope.data = structuredClone(comprobante);
                 $scope.data.fechaEmision = new Date();
                 $scope.data.idNotaEntrega = 0;
@@ -1534,7 +1543,7 @@
         async function setCustomerData(item) {
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
-            if(!($scope.data.idNotaEntrega>0)){
+            if (!($scope.data.idNotaEntrega > 0)) {
                 $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
                 $scope.data.fechaEmision = new Date();
                 getFechaVencimiento();
@@ -2111,7 +2120,7 @@
                         hideLoader();
                         console.log(error)
                     }).finally(() => hideLoader())
-                    
+
 
                 }
             } catch (error) {
@@ -2152,7 +2161,7 @@
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 }
-                
+
 
                 const customSwal = Swal.mixin({
                     customClass: {
