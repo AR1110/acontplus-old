@@ -90,7 +90,7 @@ BEGIN
     --> 
     IF @tipo = 2
         BEGIN
-            SELECT @id = id FROM OPENJSON(@json)WITH(id INT)
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
              
             SET @tableNames = 'data,pvps'
 
