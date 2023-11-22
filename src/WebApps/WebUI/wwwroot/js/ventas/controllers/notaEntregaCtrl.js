@@ -1994,6 +1994,11 @@
                 return
             }
 
+            if ($scope.data.total < 0) {
+                tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
+                return
+            }
+
             return true;
         }
 

@@ -97,9 +97,9 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     //Cuando el estado este Inactivo se presenta el estado para activar
                     $scope.showEstado = !estado;
 
-                    if(!(this.data.idTiempoCredito>0)){
-                        $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
-                    }
+                    // if(!(this.data.idTiempoCredito>0)){
+                    //     $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
+                    // }
 
                     $("#nombreComercial").focus();
 
