@@ -439,34 +439,21 @@ BEGIN
 			
 			SELECT @idArticulo = idArticulo
                   ,@idBodega   = idBodega 
-                  ,@idMedida   = idMedida
-                  ,@cantidad   = cantidad 
+                  ,@cantidad   = cantidad * -1
             FROM OPENJSON(@json) WITH
             (
                 idArticulo INT           '$.idArticulo'
-               ,idBodega   INT           '$.idBodega' 
-               ,idMedida   INT           '$.idMedida' 
+               ,idBodega   INT           '$.idBodega'
                ,cantidad   NUMERIC(18,5) '$.cantidad'
             )
 
-            SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
-
-			SELECT TOP 1 @stock = cantidad FROM Inventario.Stock WITH (NOLOCK) WHERE idBodega = @idBodega AND idArticulo = @idArticulo
+           
+			SELECT TOP 1 @stock = cantidad - @cantidad FROM Inventario.Stock WITH (NOLOCK) WHERE idBodega = @idBodega AND idArticulo = @idArticulo
 
 			SELECT TOP 1 @stockMinimo = stockMinimo FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
 
-			--|| Mostrar notificacion de artículos sin stock || --
-			SELECT TOP 1 @stockCantidad  = estado FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNS' AND idEntidad = @idEntidad 
-
-			--|| No permitir la venta de artículos sin stock || --
-			SELECT TOP 1 @ventaStockCero = estado FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'NPS' AND idEntidad = @idEntidad 
-
-			-- || Mostrar notificacion de artículos con stock mínimo ||--
-			SELECT TOP 1 @ventaStockMinimo = estado FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNM' AND idEntidad = @idEntidad 
-
-			SELECT  @stock =  @stock - (@cantidad * ISNULL(@fraccion,1))
-			
-			IF @ventaStockCero = 1
+            --> No permitir la venta de artículos sin stock
+			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'NPS' AND idEntidad = @idEntidad AND estado = 1)
 				BEGIN
 					IF @stock < 0
 						BEGIN
@@ -480,8 +467,9 @@ BEGIN
 							RETURN 
 						END 
 				END 
-	
-			IF @stockCantidad = 1 
+	        
+            --> Mostrar notificacion de artículos sin stock 
+			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNS' AND idEntidad = @idEntidad AND estado = 1)
 				BEGIN
 					IF @stock <= 0
 						BEGIN
@@ -494,7 +482,8 @@ BEGIN
 						END
 				END 
 
-			IF @ventaStockMinimo = 1
+            --> Mostrar notificacion de artículos con stock mínimo
+			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNM' AND idEntidad = @idEntidad AND estado = 1)
 				BEGIN
 					IF @stock <= @stockMinimo 
 						BEGIN

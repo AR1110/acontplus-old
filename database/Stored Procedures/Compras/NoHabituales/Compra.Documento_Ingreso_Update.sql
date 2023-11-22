@@ -288,7 +288,7 @@ BEGIN
                                         BEGIN
 									        INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
 				                                   (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
-			                                SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumentoIngreso,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSinImpuesto,@fechaEmision,@idUsuario
+			                                SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumentoIngreso,@idMedida,@cantidad,@precioUnitario,@precioUnitario,@precioTotalSinImpuesto,@fechaEmision,@idUsuario
 									    END
 
                                     IF EXISTS (SELECT 1 FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)
