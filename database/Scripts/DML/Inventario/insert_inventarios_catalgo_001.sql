@@ -19,30 +19,30 @@ GO
 
 --GO
 
---INSERT INTO Inventario.Transaccion(idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento,idMedida,idTarifa, cantidad, precioUnitario, precioCosto,total, fechaRegistro, idUsuario,estado)
+INSERT INTO Inventario.Transaccion(idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento,idMedida,idTarifa, cantidad, precioUnitario, precioCosto,total, fechaRegistro, idUsuario,estado)
 
-SELECT 2, 
-       fd.idArticulo,
-	   fd.idBodega,
-	   1,
-	   fd.idFactura,
-	   fd.idMedida,
-	   fd.idTarifa,
-	   cantidad = CAST(fd.cantidad * dbo.AFTConverFracc(fd.idArticulo,fd.idMedida) AS decimal(15,5)) ,
-	   fd.precioVenta,
-	   a.precioCosto,
-	   fd.total,
-	   f.fechaEmision,
-	   f.idUsuario
-	   ,estado = IIF(ep.codigo = 'A',0,1)
-FROM FacturaDetalle fd
-INNER JOIN Factura f ON fd.idFactura = f.idFactura
-INNER JOIN Articulo a On fd.idArticulo = a.idArticulo AND a.llevaInventario = 1
-INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = f.idEstadoPago
-WHERE a.llevaInventario = 1
-AND fd.estado = 1
+--SELECT 2, 
+--       fd.idArticulo,
+--	   fd.idBodega,
+--	   1,
+--	   fd.idFactura,
+--	   fd.idMedida,
+--	   fd.idTarifa,
+--	   cantidad = CAST(fd.cantidad * dbo.AFTConverFracc(fd.idArticulo,fd.idMedida) AS decimal(15,5)) ,
+--	   fd.precioVenta,
+--	   a.precioCosto,
+--	   fd.total,
+--	   f.fechaEmision,
+--	   f.idUsuario
+--	   ,estado = IIF(ep.codigo = 'A',0,1)
+--FROM FacturaDetalle fd
+--INNER JOIN Factura f ON fd.idFactura = f.idFactura
+--INNER JOIN Articulo a On fd.idArticulo = a.idArticulo AND a.llevaInventario = 1
+--INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = f.idEstadoPago
+--WHERE a.llevaInventario = 1
+--AND fd.estado = 1
 
-union all
+--union all
 
 SELECT idTipoTransaccion = 2
 	  ,nd.idArticulo
@@ -53,7 +53,7 @@ SELECT idTipoTransaccion = 2
 	  ,nd.idTarifa
 	  ,cantidad = CAST(nd.cantidad * dbo.AFTConverFracc(nd.idArticulo,nd.idMedida) AS decimal(15,5))
 	  ,nd.precioVenta
-	  ,nd.precioCosto
+	  ,ar.precioCosto
 	  ,nd.total
 	  ,ne.fechaEmision
 	  ,ne.idUsuario
@@ -216,11 +216,10 @@ SELECT idTipoTransaccion = 1
 	  ,ld.total
 	  ,lq.fechaEmision
 	  ,lq.idUsuario
-	  ,estado = IIF(ep.codigo = 'A',0,1)
+	  ,estado = IIF((select cp.codEstado from v_cuentaporpagar cp where cp.codDoc = '03' and cp.idDocumento = lq.idLiquidacionCompra) = 'A',0,1)
 FROM dbo.LiquidacionCompraDetalle ld WITH (NOLOCK)
 INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = ld.idArticulo
 INNER JOIN dbo.LiquidacionCompra lq WITH (NOLOCK) ON lq.idLiquidacionCompra = ld.idLiquidacionCompra
-INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = lq.idEstadoPago
 WHERE ar.llevaInventario = 1
 
 union all
