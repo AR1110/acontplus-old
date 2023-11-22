@@ -20,56 +20,79 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @pageIndex int
-	DECLARE @pageSize int 
-	DECLARE @totalRecords int 
-
-	DECLARE @idEntidad int
+	DECLARE @pageIndex INT
+	DECLARE @pageSize INT 
+    DECLARE @textSearch VARCHAR(300)
+    DECLARE @id INT
+	DECLARE @idEntidad INT
     DECLARE @tipo INT 
+    DECLARE @sql NVARCHAR(MAX)
+    DECLARE @params NVARCHAR(MAX)
 	
 	
 	SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
-	SET @totalRecords = (SELECT COUNT(*) FROM dbo.ArticuloFraccionado WHERE idEntidad = @idEntidad)
-    SELECT 
-        @pageIndex = pageIndex
-        ,@pageSize = pageSize
-        ,@tipo = tipo 
-    FROM OPENJSON(@json)
-    WITH(
-        pageIndex int
-        ,pageSize int
-        ,tipo int
-    )
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo int)
 
-    IF @tipo =1 
+    --> Get
+    IF @tipo = 1 
         BEGIN 
+            
+            SELECT @pageIndex  = pageIndex 
+                  ,@pageSize   = pageSize 
+                  ,@textSearch = REPLACE(textSearch,SPACE(1),'%') 
+            FROM OPENJSON(@json) WITH
+            (
+                pageIndex  INT 
+               ,pageSize   INT 
+               ,textSearch VARCHAR(300)
+            )
+
             SET @tableNames = 'articulosFraccionados'
 			
-	        SELECT 
-		         af.idArticuloFraccionado
-		        ,af.conversion
-		        ,af.precioCostoFraccionado
-		        ,af.gestionVenta
-		        ,af.estado
-		        ,articulo = ar.descripcion
-		        ,medida = me.descripcion
-		        ,ar.codigo
-		        ,totalRecords = @totalRecords
-	        FROM ArticuloFraccionado af
-	        INNER JOIN Medida me  ON me.idMedida = af.idMedida
-	        INNER JOIN Articulo ar ON ar.idArticulo = af.idArticulo
-	        INNER JOIN Medida med ON med.idMedida = ar.idMedida
-	        WHERE af.idEntidad = @idEntidad
-	        ORDER BY af.idArticuloFraccionado DESC
-			        OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
-              RETURN 
+            SET @sql = 'SELECT 
+		                     af.idArticuloFraccionado
+		                    ,af.conversion
+		                    ,af.precioCostoFraccionado
+		                    ,af.gestionVenta
+		                    ,af.estado
+		                    ,articulo = ar.descripcion
+		                    ,medida = me.descripcion
+		                    ,ar.codigo
+		                    ,COUNT(*) OVER() as totalRecords
+	                    FROM ArticuloFraccionado af WITH (NOLOCK)
+	                    INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
+	                    INNER JOIN Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+	                    INNER JOIN Medida       med WITH (NOLOCK) ON med.idMedida  = ar.idMedida
+	                    WHERE af.idEntidad = @idEntidad '
+
+            SET @params = '@idEntidad  INT
+                          ,@pageIndex  INT
+                          ,@pageSize   INT
+                          ,@textSearch VARCHAR(300)'
+
+            IF @textSearch IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND ar.descripcion + '''' + ar.codigo LIKE ''%'' + @textSearch + ''%'' '
+                END 
+
+            SET @sql = @sql + 'ORDER BY af.idArticuloFraccionado DESC OFFSET @pageSize * (@pageIndex - 1) ROWS FETCH NEXT @pageSize ROWS ONLY '
+
+            EXEC SP_EXECUTESQL @sql,@params
+                                   ,@idEntidad  = @idEntidad
+                                   ,@pageIndex  = @pageIndex
+                                   ,@pageSize   = @pageSize
+                                   ,@textSearch = @textSearch
+            
+            RETURN 
         END 
+
+    --> 
     IF @tipo = 2
         BEGIN
-            DECLARE @id INT 
-               SELECT @id = id FROM OPENJSON(@json)WITH(id INT)
-             SET @tableNames = 'data,pvps'
+            SELECT @id = id FROM OPENJSON(@json)WITH(id INT)
+             
+            SET @tableNames = 'data,pvps'
 
             SELECT  
 		        af.idArticuloFraccionado
@@ -102,7 +125,7 @@ BEGIN
 	        INNER JOIN Articulo a ON a.idArticulo = af.idArticulo
 	        INNER JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
 	        WHERE afp.idArticuloFraccionado = @id
-            return 
+            RETURN 
         END 
 
 END
