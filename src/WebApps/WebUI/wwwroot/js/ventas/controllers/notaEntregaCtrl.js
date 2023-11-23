@@ -804,12 +804,18 @@
                     rowEntity[colDef.field] = 1;
                 }
 
-                //Verificacion del stock 
-                if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
+                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
 
+                //Verificacion del stock
+                if (["idMedida", "cantidad"].includes(colDef.field)) {
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
                 }
+                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                //     return
+                // }
                 if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
@@ -821,16 +827,109 @@
 
         $scope.gridOptionsItemsDeleted = [];
 
+        /**
+         * Combina elementos en base a propiedades específicas del objeto rowEntity.
+         * @param {*} items - Conjunto de elementos a fusionar.
+         * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
+         * @returns {*} - Objeto resultante de la fusión.
+         */
+        function mergeItem(items, rowEntity) {
+            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
+            let foundItemByArticuloAndBodega = items.filter(item => (
+                item.idArticulo === rowEntity.idArticulo &&
+                item.idBodega === rowEntity.idBodega
+            ))
+
+            let totalCantidadFraccionada = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO')
+                if (dataMedida) {
+                    let conversionSum = item.cantidad * dataMedida.conversion;
+                    total += conversionSum;
+                }
+                return total;
+            }, 0);
+
+            let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+                if (dataMedida) {
+                    let conversionSum = item.cantidad * dataMedida.conversion;
+                    total += conversionSum;
+                }
+                return total;
+            }, 0)
+
+            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
+                itemPrevious.cantidad += itemCurrent.cantidad;
+                return itemPrevious;
+            }, {
+                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
+                ...rowEntity,
+                cantidad: 0,
+            });
+
+            // Devuelve el objeto resultante de la fusión. 
+            return {
+                idBodega: dataItemMerge.idBodega,
+                cantidad: dataItemMerge.cantidad,
+                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
+                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+            };
+        }
+
+        function getCantidadStock(rowEntity) {
+            try {
+                let fechaEmisionValidate = $scope.data.fechaEmision;
+                let cantidadStock = rowEntity.cantidadStock;
+
+                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+                )
+
+                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                        return 0;
+                    }
+                }
+
+                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                return resultCantStock;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        /**
+         * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
+         * @param {string} field - Campo modificado.
+         * @param {*} rowEntity - Objeto de fila actual.
+         * @param {*} oldValue - Valor anterior del campo modificado.
+         */
+
         function checkNotificationStock(field, rowEntity, oldValue) {
             try {
 
+                // Si la fila no lleva inventario, realiza cálculos totales y termina la función.
                 if (!rowEntity.llevaInventario) {
                     setCalculoTotales(field, rowEntity, oldValue);
-                    return
+                    return;
                 }
 
+                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                let rowItemClone = structuredClone(rowEntity);
+                let gridOptionsClone = structuredClone($scope.gridOptions.data);
+
+                // Realiza la fusión de elementos en la lista de artículos clonada.
+                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+
+                // Si la cantidad no ha cambiado, no realizar más acciones.
+                if (dataItemMerge.cantidad == oldValue) return;
+
                 showLoader();
-                let { cantidadStock } = notaEntregaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision)
+
+                // Llama a un servicio para verificar la notificación de stock.
+                let cantidadStock = getCantidadStock(dataItemMerge);
+                if (cantidadStock === 0) return
+                
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,

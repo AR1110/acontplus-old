@@ -626,8 +626,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
-                    console.log('main kdhwkdkjhfekhvkhfj')
+                    let mainData = JSON.parse(response.payload); 
                     let articulo = mainData[0][0];
                     let infoAdicionalTemp = [];
                     let datosAdicionalesArticulo = [];
