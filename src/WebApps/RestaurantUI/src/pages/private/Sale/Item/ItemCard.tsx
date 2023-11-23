@@ -35,6 +35,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
 
     const handleSelectItem = (item: ItemReadDto) => {
+        
         showLoader();
         const decimal = dataForm.decimal;
         // const warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);

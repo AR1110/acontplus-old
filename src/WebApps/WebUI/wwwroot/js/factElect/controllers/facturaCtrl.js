@@ -929,8 +929,19 @@
                 clienteDefault,
                 articuloDefault
             } = mainDataForm;
-            $scope.establecimientos = estabs;
-            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            $scope.establecimientos = estabs; 
+
+            let dataEstab = {};
+
+            if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
+                const {
+                    comprobante,
+                } = params.data;
+                dataEstab = $scope.establecimientos.find(estab => estab.codEstab === comprobante.codEstab);
+            } else {
+                dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            }
+
             $scope.data.codEstab = dataEstab.codEstab;
             $scope.dataClone.codEstab = dataEstab.codEstab;
 
@@ -2031,6 +2042,11 @@
                         fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
+                return
+            }
+
+            if ($scope.data.total < 0) {
+                tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                 return
             }
 

@@ -5,7 +5,7 @@ SELECT @is_broker_enabled = is_broker_enabled
 FROM sys.databases
 WHERE name = 'Acontplus'
  
-IF (@is_broker_enabled = 1)
+IF (@is_broker_enabled = 0)
     BEGIN
         ALTER DATABASE Acontplus SET NEW_BROKER  WITH ROLLBACK IMMEDIATE;
  

@@ -133,7 +133,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         setRightOrderData,
         rightOrder,
         setPaymentData,
-        resetData,
+        resetData, 
     } = useSplitOrderContext();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
     const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({
@@ -163,7 +163,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 return
             }
             // const { taxValue, price, discount, total, bodegaId, priceWithVat } = joinOrderItemTotal();
-            const { feeId } = measureData.pvps[0] as ProductPVPReadDto;
+            const { feeId } = measureData.pvps.find(pvp=>(pvp.default)) as ProductPVPReadDto;
 
             const priceWithVat = objTempTotal.total;
             const price = PricingCalculateUtility.calculatePriceSale(priceWithVat, taxRateData?.percentage ?? 0);
@@ -187,7 +187,9 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 obs: "",
                 feeId,
                 bodegaId: changeOrderItems[0]?.bodegaId ?? 0,
-                description: product.description,
+                description: product.description, 
+                measureId: measureData ? measureData.measureId : 0,
+                measures: [],
                 summary: "",
                 code: product.productCode,
                 s3ObjectUrl: "",
@@ -323,14 +325,17 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
 
             const mergeLeftIntoRightOrder = {
                 ...rightOrder,
+                taxPercentId: leftOrder.taxPercentId,
                 establecimientoId: leftOrder.establecimientoId,
                 puntoEmisionId: leftOrder.puntoEmisionId,
-                tableId: leftOrder.tableId,
+                tableId: leftOrder.tableId,                
             }
 
             const orderResult = summaryToApi(mergeLeftIntoRightOrder);
             const orderItemsResult = itemToApi(changeOrderItems);
-
+            //const orderItemsOriginal = itemToApi(leftCheckedOrderItems);
+ 
+            
             const data = {
                 ...orderResult,
                 subtotalSinImpuestos: objTempTotal.subTotalSinImpuestos,
@@ -340,9 +345,13 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 saveDoc: true,
                 codDoc: DOC_TYPE.FV,
                 quickSale: true,
-                items: orderItemsResult,
+                // items: orderItemsOriginal.map(item=>({
+                //     ...item,
+                //     envioSri: false
+                // })),
                 // itemsToPay: orderItemsResult,
-                customDetail: orderItemsResult
+                items: [],
+                customDetail: orderItemsResult, 
             }
 
 

@@ -89,7 +89,7 @@ export default function OrderTable() {
         setOpenDocument(false)
     }
 
-    const askToDelete = (id:number)=>{
+    const askToDelete = (id: number) => {
         try {
             Swal.fire({
                 //title: "Are you sure?",
@@ -104,21 +104,21 @@ export default function OrderTable() {
             }).then(result => {
                 if (result.isConfirmed) {
                     showLoader();
-                     orderService.delete(id).then(response=>{
-                        if(response){
-                            if(response.code==="0"){
+                    orderService.delete(id).then(response => {
+                        if (response) {
+                            if (response.code === "0") {
                                 SnackbarUtility.info(response.message)
                             }
-                            if(response.code==="1"){
+                            if (response.code === "1") {
                                 SnackbarUtility.info(response.message);
                                 fetchOrders()
                             }
                         }
-                     })
-                     .catch(error=>{
-                        console.log(error)
-                     })
-                     .finally(()=>hideLoader())
+                    })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                        .finally(() => hideLoader())
                 }
             })
         } catch (error) {
@@ -143,7 +143,7 @@ export default function OrderTable() {
                                     <TableCell align="center">F. Emisión</TableCell>
                                     <TableCell align="center">Cliente</TableCell>
                                     <TableCell align="right">Total</TableCell>
-                                    <TableCell align="center">Mesa</TableCell> 
+                                    <TableCell align="center">Mesa</TableCell>
                                     <TableCell align="center">Usuario</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -159,20 +159,17 @@ export default function OrderTable() {
                                         <TableCell>
                                             <Stack direction="row" spacing={1}>
                                                 {
-                                                    order.documentoId > 0 ? '' : (<>
-                                                        {
-                                                            !(order.divided) && (
-                                                                <Tooltip describeChild title="Editar">
-                                                                    <Button variant="contained" color="success"
-                                                                        aria-label="Editar"
-                                                                        onClick={() => handleEdit(order.orderId)}
-                                                                    >
-                                                                        <EditIcon />
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            )
-                                                        }
-                                                    </>)
+                                                    (order.finished || order.divided) ? '': (
+                                                        <Tooltip describeChild title="Editar">
+                                                            <Button variant="contained" color="success"
+                                                                aria-label="Editar"
+                                                                onClick={() => handleEdit(order.orderId)}
+                                                            >
+                                                                {JSON.stringify(order)}
+                                                                <EditIcon />
+                                                            </Button>
+                                                        </Tooltip>
+                                                    ) 
                                                 }
 
                                                 <Tooltip describeChild title="PDF e Impresión">
@@ -202,7 +199,7 @@ export default function OrderTable() {
                                                 <Tooltip describeChild title="Anular">
                                                     <Button variant="contained" color="error"
                                                         aria-label="Anular"
-                                                        onClick={()=>askToDelete(order.orderId)}
+                                                        onClick={() => askToDelete(order.orderId)}
                                                     >
                                                         <ClearIcon />
                                                     </Button>
@@ -213,7 +210,7 @@ export default function OrderTable() {
                                         <TableCell align="center">{order.createdAt}</TableCell>
                                         <TableCell align="center">{order.nameFiscal}</TableCell>
                                         <TableCell align="right">{order.total}</TableCell>
-                                        <TableCell align="center">{order.tableName}</TableCell> 
+                                        <TableCell align="center">{order.tableName}</TableCell>
                                         <TableCell align="center">{order.userName}</TableCell>
                                     </TableRow>
                                 ))}

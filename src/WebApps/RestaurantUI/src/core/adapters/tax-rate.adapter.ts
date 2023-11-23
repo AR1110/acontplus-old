@@ -7,7 +7,8 @@ function taxRateAdapter(taxRates: RawTaxRateData[]): Array<TaxRate> {
         taxCode: taxRate.codImpuesto, //Codigo Impuesto
         taxRateCode: taxRate.codigo, //Codigo Impuesto Tarifa
         description: taxRate.descripcion,
-        percentage: taxRate.porcentaje
+        percentage: taxRate.porcentaje,
+        idTarifaImpuesto: taxRate.idTarifaImpuesto
     }) )   
 }
 

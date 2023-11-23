@@ -29,7 +29,7 @@ export const useStoreCartSidebar = create<StateCartSidebar & Actions>()((set) =>
         measures: []
     },
     openCartSidebar: false, 
-    setDataItem(data, index){ 
+    setDataItem(data, index){  
         set(
             produce((state: StateCartSidebar) => {
                 state.data = structuredClone(data);

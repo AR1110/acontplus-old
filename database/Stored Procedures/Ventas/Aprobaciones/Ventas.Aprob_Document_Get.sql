@@ -279,6 +279,12 @@ BEGIN
              INNER JOIN dbo.Bodega              bo WITH (NOLOCK) ON bo.idBodega          = dt.idBodega
              WHERE dt.uniqueId = @uniqueId AND dt.estado = 1
 
+             
+	        SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
+			                       WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
+			                       ELSE '' END 
+		          ,serieComprobante = serie
+	        FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
              RETURN 
         END 
 

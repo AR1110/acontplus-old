@@ -67,7 +67,7 @@ BEGIN
 	WHERE cd.codDoc  = @codDoc
 	  AND i.codEstab = @codEstab 
 	  AND cd.estado  = 1
-	
+	    AND (i.nombreEquipo IS NOT NULL AND LEN(LTRIM(RTRIM(i.nombreEquipo))) > 0)
 
 	SELECT @totalThermalPrinters   = (SELECT COUNT(*) FROM v_Impresora ii WITH (NOLOCK) WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'TE')  
 	      ,@totalInyectionPrinters = (SELECT COUNT(*) FROM v_Impresora ii WITH (NOLOCK) WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'AT')  
@@ -130,7 +130,9 @@ BEGIN
 						INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
 						WHERE cd.codDoc    = @codDoc
 						    AND i.codEstab = @codEstab 
-						    AND cd.estado  = 1 FOR JSON PATH
+						    AND cd.estado  = 1
+                            AND (i.nombreEquipo IS NOT NULL AND LEN(LTRIM(RTRIM(i.nombreEquipo))) > 0)
+                            FOR JSON PATH
 					 )
 	
 	SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@codDoc)

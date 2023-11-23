@@ -194,7 +194,7 @@ BEGIN
 
 	INSERT INTO @tbDetalle (codigo, codigoPrincipal, codigoAuxiliar, descripcion, medida, cantidad, precioUnitario, descuento, precioSinImpuesto)
 	SELECT
-		codigo            = ad_d.codArticulo,
+		codigo            = ad_d.codigoPrincipal,
 		codigoPrincipal   = ad_d.codigoPrincipal,
 		codigoAuxiliar    = ad_d.codigoAuxiliar,
 		descripcion       = ad_d.descripcion,

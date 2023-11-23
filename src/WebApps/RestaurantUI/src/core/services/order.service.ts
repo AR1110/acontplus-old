@@ -61,6 +61,7 @@ const orderService = {
     },
 
     async put(id: number, data: object) {
+        console.log(data)
         const resultAxios = await Http({
             method: 'put',
             url: `${PATHS.PRIVATE}${URL}/${id}`,
