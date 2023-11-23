@@ -21,8 +21,6 @@ DECLARE @RequestMsg xml;
 			 WITH
 				 ENCRYPTION = OFF;
  
- 
- 
         --DECLARE @xmlParams XML 
 
         SET @RequestMsg = (SELECT @codTran codTran, @codDoc codDoc, @documentoId documentoId, @tipo tipo FOR XML PATH ('msg'));

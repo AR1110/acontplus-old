@@ -93,12 +93,14 @@ BEGIN
 
 	IF @codConfig = 'CS'
 		BEGIN
-			SELECT ISNULL(dt.estado,0) as estado,notificacion = ns.descripcion,idSistema = @idSistema, ns.codigo , ns.idNotificacionSistema
-			FROM OPENJSON(@jsonConfig)
-			WITH (idNotificacionSistema INT '$.idNotificacionSistema'
-			     ,codigo         VARCHAR(5) '$.codigo'
-				 ,estado                BIT '$.estado') as dt
-			INNER JOIN Config.NotificacionSistema ns WITH (NOLOCK) ON ns.idNotificacionSistema = dt.idNotificacionSistema
+            SELECT vs.estado
+                  ,ns.descripcion as notificacion
+                  ,@idSistema     as idSistema
+                  ,vs.codigo 
+                  ,vs.idNotificacionSistema
+            FROM Config.v_Sistema_Notificacion    vs WITH (NOLOCK)
+            INNER JOIN Config.NotificacionSistema ns WITH (NOLOCK) ON ns.idNotificacionSistema = vs.idNotificacionSistema
+            WHERE idEntidad = 50
 		END 
 END
 GO
