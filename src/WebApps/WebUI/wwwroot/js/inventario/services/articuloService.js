@@ -627,6 +627,7 @@
                 }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
+                    console.log('main kdhwkdkjhfekhvkhfj')
                     let articulo = mainData[0][0];
                     let infoAdicionalTemp = [];
                     let datosAdicionalesArticulo = [];
@@ -638,7 +639,15 @@
                     let medidasPrincipalTemp = mainData[2];
 
                     // Combinar los dos arrays de medidas en uno solo
-                    const mergedMedidasArray = [...medidasFraccionadoTemp, ...medidasPrincipalTemp];
+                    const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal=>({
+                        ...medidaPrincipal,
+                        tipo: 'PRINCIPAL'
+                    }))
+                    const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado=>({
+                        ...medidaFraccionado,
+                        tipo: 'FRACCIONADO'
+                    }))
+                    const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
 
                     /**
                      * Ordenar el array de medidas en función de la propiedad "orden" y 
@@ -657,6 +666,7 @@
                         conversion: item.conversion,
                         descripcion: item.descripcion,
                         defaultMedida: item.defaultMedida,
+                        tipo: item.tipo,
                         tarifas: JSON.parse(item.tarifas)
                     }))
 
