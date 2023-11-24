@@ -16,7 +16,6 @@
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
-            tipo: 1,
             pageSize: 50,
             pageIndex: 1,
             maxSize: 5,
@@ -50,10 +49,21 @@
             try {
                 $scope.articuloFraccionados = [];
                 showLoader();
-                articuloFraccionadoSvc.get($scope.dataSearch).then(response => {
+                const params = {
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
+                    tipo: 1,
+                    textSearch: ["", null, undefined].includes($scope.dataSearch.textSearch) ? null : $scope.dataSearch.textSearch
+                }
+                articuloFraccionadoSvc.get(params).then(response => {
                     $scope.articuloFraccionados = response;
-                    $scope.dataSearch.totalRecords = $scope.articuloFraccionados.length > 0 ? $scope.articuloFraccionados[0].totalRecords : 0                    
-                }).finally(() => hideLoader())
+                    $scope.dataSearch.totalRecords = $scope.articuloFraccionados.length > 0 ? $scope.articuloFraccionados[0].totalRecords : 0
+                })
+                    .catch(error => {
+                        $scope.dataSearch.totalRecords = 0;
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
             } catch (error) {
                 console.log(error);
             }
@@ -61,6 +71,15 @@
         }
 
         $scope.getAllArticuloFraccionado();
+
+        $scope.onChangeTextSearch = function () {
+            try {
+                $scope.getAllArticuloFraccionado();
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
         $scope.pagechanged = function () {
             $scope.getAllArticuloFraccionado();

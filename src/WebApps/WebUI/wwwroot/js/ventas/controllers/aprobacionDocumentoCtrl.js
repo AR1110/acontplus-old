@@ -687,11 +687,11 @@
                 // console.log(resultJoinDetails)
                 // return 
 
-                const resultMergeItems = mergeItems(resultJoinItems); 
+               // const resultMergeItems = mergeItems(resultJoinItems); 
 
                 //Agregamos Bodega e Indice
                 let index = 1;
-                $scope.gridOptionsDetalle.data = resultMergeItems.map(item => {
+                $scope.gridOptionsDetalle.data = resultJoinItems.map(item => {
                     // item.idBodega = $scope.idBodega;
                     item.n = index++;
                     return item;
@@ -736,47 +736,47 @@
             }
         }
 
-        function mergeItems(array) {
-            return array.reduce((acc, current) => {
-                const totalConImpuestos = current.cantidad * current.precioConIva;
-                //  console.log(acc)
-                console.log('--------------------------------------------')
-                const foundItem = acc.find(it => it.idArticulo === current.idArticulo);
+        // function mergeItems(array) {
+        //     return array.reduce((acc, current) => {
+        //         const totalConImpuestos = current.cantidad * current.precioConIva;
+        //         //  console.log(acc)
+        //         console.log('--------------------------------------------')
+        //         const foundItem = acc.find(it => it.idArticulo === current.idArticulo);
 
-                if (foundItem && current.llevaInventario) {
-                    let totalCantidadSum = foundItem.cantidad += current.cantidad;
-                    let totalConImpuestosSum = foundItem.totalConImpuestos += totalConImpuestos;
-                    let totalDescuentoSum = foundItem.valorDescuento += current.valorDescuento;
+        //         if (foundItem && current.llevaInventario) {
+        //             let totalCantidadSum = foundItem.cantidad += current.cantidad;
+        //             let totalConImpuestosSum = foundItem.totalConImpuestos += totalConImpuestos;
+        //             let totalDescuentoSum = foundItem.valorDescuento += current.valorDescuento;
 
-                    let totalPrecioUnitario = pricingUtils.calcularPrecioVenta(totalConImpuestosSum, current.tarifa);
-                    let totalConImpuestosRounded = fS.roundNumber(totalConImpuestosSum, $scope.decimal.nroTotalDetalle);
-                    let precioConIva = totalConImpuestosSum / totalCantidadSum;
-                    let precioUnitario = totalPrecioUnitario / totalCantidadSum;
-                    let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(precioUnitario, totalDescuentoSum);
-                    let total = ((precioUnitario * totalCantidadSum)) - totalDescuentoSum;
+        //             let totalPrecioUnitario = pricingUtils.calcularPrecioVenta(totalConImpuestosSum, current.tarifa);
+        //             let totalConImpuestosRounded = fS.roundNumber(totalConImpuestosSum, $scope.decimal.nroTotalDetalle);
+        //             let precioConIva = totalConImpuestosSum / totalCantidadSum;
+        //             let precioUnitario = totalPrecioUnitario / totalCantidadSum;
+        //             let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(precioUnitario, totalDescuentoSum);
+        //             let total = ((precioUnitario * totalCantidadSum)) - totalDescuentoSum;
 
-                    foundItem.cantidad = totalCantidadSum;
-                    foundItem.totalConImpuestos = totalConImpuestosRounded;
-                    foundItem.precioUnitario = fS.roundNumber(precioUnitario, $scope.decimal.nroPrecio)
-                    foundItem.precioConIva = fS.roundNumber(precioConIva, $scope.decimal.nroPrecio);
-                    foundItem.total = fS.roundNumber(total, $scope.decimal.nroTotalDetalle);
-                    foundItem.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje);
-                    foundItem.valorDescuento = fS.roundNumber(totalDescuentoSum, $scope.decimal.nroDescuento);
+        //             foundItem.cantidad = totalCantidadSum;
+        //             foundItem.totalConImpuestos = totalConImpuestosRounded;
+        //             foundItem.precioUnitario = fS.roundNumber(precioUnitario, $scope.decimal.nroPrecio)
+        //             foundItem.precioConIva = fS.roundNumber(precioConIva, $scope.decimal.nroPrecio);
+        //             foundItem.total = fS.roundNumber(total, $scope.decimal.nroTotalDetalle);
+        //             foundItem.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje);
+        //             foundItem.valorDescuento = fS.roundNumber(totalDescuentoSum, $scope.decimal.nroDescuento);
 
-                } else {
-                    acc.push({
-                        ...current,
-                        idArticulo: current.idArticulo,
-                        cantidad: current.cantidad,
-                        descripcion: current.descripcion,
-                        llevaInventario: current.llevaInventario,
-                        totalConImpuestos: fS.roundNumber(totalConImpuestos, 3),
-                        precioUnitario: fS.roundNumber(current.precioUnitario, $scope.decimal.nroPrecio)
-                    });
-                }
-                return acc;
-            }, []);
-        }
+        //         } else {
+        //             acc.push({
+        //                 ...current,
+        //                 idArticulo: current.idArticulo,
+        //                 cantidad: current.cantidad,
+        //                 descripcion: current.descripcion,
+        //                 llevaInventario: current.llevaInventario,
+        //                 totalConImpuestos: fS.roundNumber(totalConImpuestos, 3),
+        //                 precioUnitario: fS.roundNumber(current.precioUnitario, $scope.decimal.nroPrecio)
+        //             });
+        //         }
+        //         return acc;
+        //     }, []);
+        // }
 
 
         //Inicio 

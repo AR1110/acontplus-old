@@ -225,7 +225,7 @@
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload); 
+                    let mainData = JSON.parse(response.payload);
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -581,7 +581,7 @@
                                 action: 2
                             };
                         }
-                    } 
+                    }
 
                     //si fecha documento creado es anterior a fecha consolidacion articulo
                     if (fechaEmisionDocCreado <= dataConsolidacionFecha.fechaConsolidacion) {
@@ -595,8 +595,8 @@
                                 cantidadStock: resultCantStock,
                                 action: 2
                             };
-                        }   
-                    } 
+                        }
+                    }
 
                     // if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
                     //     fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
@@ -678,7 +678,7 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
-                    
+
                     const [
                         comprobanteApi,
                         clienteTempApi,
@@ -703,13 +703,23 @@
                         // 
                         let consolidacionesFecha = JSON.parse(consolidacion) || [];
 
+                        const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
+                            ...medidaPrincipal,
+                            tipo: 'PRINCIPAL'
+                        }))
+                        const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado => ({
+                            ...medidaFraccionado,
+                            tipo: 'FRACCIONADO'
+                        }))
+
+
                         /**
                          * Combinar los dos arrays de medidas en uno solo
                          *
                          * Parámetros:
                          *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
-                         */
-                        const mergedMedidasArray = [...medidasFraccionadoTemp, ...medidasPrincipalTemp];
+                         */ 
+                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal]; 
 
                         /**
                          * Ordenar el array de medidas en función de la propiedad "orden" y
@@ -738,9 +748,18 @@
                          *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
                          */
                         let dataMedida = orderMedidaArray.find(m => m.idMedida === restItem.idMedida) || {};
+                        // Crear un nuevo array de medidas con un formato específico
+                        let medidas = orderMedidaArray.map(item => ({
+                            idMedida: item.idMedida,
+                            conversion: item.conversion,
+                            descripcion: item.descripcion,
+                            defaultMedida: item.defaultMedida,
+                            tipo: item.tipo,
+                            tarifas: item.tarifas
+                        }))
 
                         // Asignar los datos de la medida al artículo
-                        restItem.medidas = orderMedidaArray;
+                        restItem.medidas = medidas;
                         restItem.conversion = dataMedida.conversion;
                         // Asignar los datos de las tarifas obtenidos de data medida 
                         restItem.articuloTarifas = dataMedida.tarifas || [];
@@ -757,6 +776,20 @@
                         restItem.subTotal = subTotal || 0;
                         restItem.totalDescuento = totalDescuento || 0;
                         restItem.cantidadOriginal = restItem.cantidad;
+
+                        //Datos Adicionales 
+                        if ('infoDatosAdicionales' in itemPrincipal) {
+                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
+                            restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
+                                idArticulo: dataAdicional.idArticulo,
+                                idEtiqueta: dataAdicional.idEtiqueta,
+                                idInfoAdicional: dataAdicional.idInfoAdicional,
+                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),
+                                uniqueId: dataAdicional.uniqueId,
+                                estado: dataAdicional.estado
+                            }))
+                        }
+ 
                         return restItem;
                     });
 
@@ -855,7 +888,7 @@
         service.getTotales = function (notaEntregas) {
             let total = 0, totalAbono = 0, totalSaldo = 0;
             for (let val of notaEntregas) {
-                if (val.codEstado!=='A'){
+                if (val.codEstado !== 'A') {
                     total += val.total;
                     totalAbono += val.abono;
                     totalSaldo += val.saldo;
@@ -888,9 +921,9 @@
                     throw response;
                 }
 
-                if (response.code === "1") { 
+                if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
-                   
+
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -906,7 +939,7 @@
                     //     clienteDefault = clienteDefaultTemp[0];
                     // }
                     let config = mainData[6][0];
-                    let vendedores = mainData[7]; 
+                    let vendedores = mainData[7];
                     let tempEstabsAndPtosEmision = mainData[8];
                     let tempBodegas = mainData[9];
                     let tarifaImpuestoVigente = mainData[10][0];
@@ -954,12 +987,12 @@
                         tarifasImpuesto,
                         tiemposCredito,
                         tarifas,
-                        permisoVenta, 
+                        permisoVenta,
                         decimal,
                         config,
                         vendedores,
                         permisoEditarDoc
-                    } 
+                    }
                 }
             })
         }
@@ -1034,7 +1067,7 @@
                     let { totalRecords, totalDocument } = proformasRepos[0];
                     let proformas = proformasRepos.map(item => {
                         return {
-                            comprobante: 'Proforma',                        
+                            comprobante: 'Proforma',
                             entidad: item.entidad,
                             codEstab: item.codEstab,
                             idProforma: item.idProforma,
@@ -1122,7 +1155,7 @@
                     idArticulo: item.idArticulo,
                     idTarifa: item.idTarifa,
                     idBodega: item.idBodega,
-                    idMedida: item.idMedida, 
+                    idMedida: item.idMedida,
                     idTipoIva: item.idTipoIva,
                     tarifa: item.tarifa,
                     codigoPorcentaje: item.codigoPorcentaje,
@@ -1154,7 +1187,7 @@
             })
         }
 
-        service.getId = function(id){
+        service.getId = function (id) {
             return mS.getData('get', url + 'GetId/' + id, null, true).then(response => {
                 if (response.code === "0") {
                     return response;
@@ -1164,7 +1197,7 @@
                     const [
                         comprobanteApi,
                         clienteTempApi,
-                        itemsApi, 
+                        itemsApi,
                     ] = mainDataApi;
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
@@ -1177,7 +1210,7 @@
                         let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
 
                         // Medida principal con las tarifas
-                        let medidasPrincipalTemp = JSON.parse(principal) || []; 
+                        let medidasPrincipalTemp = JSON.parse(principal) || [];
 
                         /**
                          * Combinar los dos arrays de medidas en uno solo
@@ -1219,7 +1252,7 @@
                         restItem.medidas = orderMedidaArray;
                         restItem.conversion = dataMedida.conversion;
                         // Asignar los datos de las tarifas obtenidos de data medida 
-                        restItem.articuloTarifas = dataMedida.tarifas || []; 
+                        restItem.articuloTarifas = dataMedida.tarifas || [];
 
                         let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
                         let totalDescuento = restItem.cantidad * restItem.valorDescuento || 0;
@@ -1234,14 +1267,14 @@
                         ...comprobanteTemp,
                         serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
-                        fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision), 
+                        fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
-                    } 
+                    }
 
                     return {
                         comprobante,
                         cliente,
-                        items, 
+                        items,
                     }
                 }
             })
@@ -1267,7 +1300,7 @@
                         ...restData,
                         establecimiento: nombreComercial,
                         fechaEmision: fS.formatDate(fechaEmision),
-                        fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)), 
+                        fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                     }
                     return {
                         data,
