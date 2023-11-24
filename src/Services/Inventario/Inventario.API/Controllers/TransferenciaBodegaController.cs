@@ -30,7 +30,7 @@ namespace Inventario.API.Controllers
                 await _db.SPExecute("Inventario.TransferenciaBodega_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
