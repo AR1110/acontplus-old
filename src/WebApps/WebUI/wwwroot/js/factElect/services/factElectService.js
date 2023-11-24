@@ -460,13 +460,24 @@
                         // 
                         let consolidacionesFecha = JSON.parse(consolidacion) || [];
 
+                        const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
+                            ...medidaPrincipal,
+                            tipo: 'PRINCIPAL'
+                        }))
+                        const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado => ({
+                            ...medidaFraccionado,
+                            tipo: 'FRACCIONADO'
+                        }))
+
                         /**
                          * Combinar los dos arrays de medidas en uno solo
                          *
                          * Parámetros:
                          *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
                          */
-                        const mergedMedidasArray = [...medidasFraccionadoTemp, ...medidasPrincipalTemp];
+                        // Combinar los dos arrays de medidas en uno solo
+                        
+                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal]; 
 
                         /**
                          * Ordenar el array de medidas en función de la propiedad "orden" y
@@ -496,8 +507,18 @@
                          */
                         let dataMedida = orderMedidaArray.find(m => m.idMedida === restItem.idMedida) || {};
 
+                        // Crear un nuevo array de medidas con un formato específico
+                        let medidas = orderMedidaArray.map(item => ({
+                            idMedida: item.idMedida,
+                            conversion: item.conversion,
+                            descripcion: item.descripcion,
+                            defaultMedida: item.defaultMedida,
+                            tipo: item.tipo,
+                            tarifas: item.tarifas
+                        }))
+
                         // Asignar los datos de la medida al artículo
-                        restItem.medidas = orderMedidaArray;
+                        restItem.medidas = medidas;
                         restItem.conversion = dataMedida.conversion;
                         // Asignar los datos de las tarifas obtenidos de data medida 
                         restItem.articuloTarifas = dataMedida.tarifas || [];
@@ -515,6 +536,19 @@
                         restItem.totalDescuento = totalDescuento || 0;
                         //Para validacion del cantidad stock
                         restItem.cantidadOriginal = restItem.cantidad;
+
+                        if ('infoDatosAdicionales' in itemPrincipal) {
+                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
+                            restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
+                                idArticulo: dataAdicional.idArticulo,
+                                idEtiqueta: dataAdicional.idEtiqueta,
+                                idInfoAdicional: dataAdicional.idInfoAdicional,
+                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),
+                                uniqueId: dataAdicional.uniqueId,
+                                estado: dataAdicional.estado
+                            }))
+                        }
+
                         return restItem;
                     });
 
