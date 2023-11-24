@@ -36,8 +36,8 @@ BEGIN
 		BEGIN
 			SELECT @cantidadActual = @cantidadActual + ISNULL(sum(cantidadEntrada - cantidadSalida),0)
 			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
-			WHERE idBodega = @idbodega 
-			  AND idArticulo = @idarticulo
+			WHERE idBodega = @idBodega 
+			  AND idArticulo = @idArticulo
 			  AND estado = 1 
 			  AND codTransaccion in ('E','S')
 			  AND fechaRegistro >= @fechaEmision
@@ -47,8 +47,8 @@ BEGIN
 		BEGIN	
 			SELECT @cantidadActual = ISNULL(sum(cantidadEntrada - cantidadSalida),0)
 			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
-			WHERE idBodega = @idbodega 
-			  AND idArticulo = @idarticulo 
+			WHERE idBodega = @idBodega 
+			  AND idArticulo = @idArticulo 
 			  AND estado = 1 
 			  AND codTransaccion in ('E','S')
 		END
