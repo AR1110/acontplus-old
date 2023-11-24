@@ -23,12 +23,40 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	DECLARE @idUsuario INT 
 	,@idArticulo INT
+    ,@companyId INT
+    ,@productNewCode VARCHAR(25)
+    ,@codEstab VARCHAR(50)
+    ,@productNewId INT
+    ,@existsProductJoined BIT = 0
+    ,@existsNewProductJoined BIT = 0
 
-	SET @idArticulo = (SELECT idArticulo FROM Recepcion.CompraHabitual WITH (NOLOCK) WHERE idCompraHabitual = @id)
+	SELECT @idArticulo = idArticulo, @productNewCode = codArticulo, @codEstab = codEstab FROM Recepcion.CompraHabitual WITH (NOLOCK) WHERE idCompraHabitual = @id
 	
-	IF EXISTS(SELECT 1 FROM Recepcion.DocumentoDetalle WHERE idArticulo = @idArticulo)
+    SET @companyId = (SELECT en.idEntidad FROM Sri.Establecimiento e WITH (NOLOCK)
+                                            INNER JOIN dbo.Entidad en WITH (NOLOCK) ON e.ruc = en.ruc WHERE e.codEstab = @codEstab)
+
+    IF NOT EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE codigo = @productNewCode AND idEntidad = @companyId)
+        BEGIN
+            SET @existsNewProductJoined = 0;
+        END
+    ELSE
+        BEGIN
+            --EXISTE STOCK DE ARTICULO NUEVO
+            SET @productNewId = (SELECT idArticulo FROM dbo.Articulo WITH (NOLOCK) WHERE codigo = @productNewCode AND idEntidad = @companyId)
+            IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idArticulo = @productNewId)
+                BEGIN
+                    SET @existsNewProductJoined = 1
+                END
+            --EXISTE STOCK DE ARTICULO VINCULADO
+            IF EXISTS(SELECT 1 FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idArticulo = @idArticulo)
+		        BEGIN
+			        SET @existsProductJoined = 1
+		        END
+        END
+
+	IF (@existsProductJoined = 1 AND @existsNewProductJoined = 1)
 		BEGIN
-			DECLARE @articleInDocs AS VARCHAR(MAX) = (SELECT dr.serieComprobante FROM Recepcion.DocumentoRecibido dr INNER JOIN Recepcion.DocumentoDetalle dd ON dr.idDocumento = dd.idDocumento WHERE dd.idArticulo	 = @idArticulo for json path)
+			DECLARE @articleInDocs AS VARCHAR(MAX) = (SELECT dr.serieComprobante FROM Recepcion.DocumentoRecibido dr INNER JOIN Recepcion.DocumentoDetalle dd ON dr.idDocumento = dd.idDocumento WHERE dd.idArticulo IN (@idArticulo, @productNewId) for json path)
 			SELECT '0' code, 'Imposible desvincular, el articulo esta contabilizado en el stock, primero debe eliminarlo del stock de los siguientes comprobantes --> ' + @articleInDocs as 'message'
 			RETURN
 		END
