@@ -7,8 +7,7 @@
     const PATH_HTML = 'Pages/TransferenciaBodega/'
 
     let transBogegaSvc = {};
-    let commonSvc = {};
-    let mS = {};
+    let commonSvc = {}; 
     let fS = {};
     let tS = {};
     let  establecimientos = [];
@@ -21,8 +20,7 @@
     function transferenciaBodegaCtrl($scope, $injector, $filter, modalSvc, nombreModalInventario) {
 
         transBogegaSvc = $injector.get('transferenciaBodegaService');
-        commonSvc = $injector.get('commonService');
-        mS = $injector.get('mainService');
+        commonSvc = $injector.get('commonService'); 
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
 
@@ -96,7 +94,7 @@
                 })
                
             } catch (error) {
-                
+                console.log(error)
             }
         }
         $scope.initiload();
@@ -391,7 +389,7 @@
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
-                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                editDropdownOptionsFunction: function (rowEntity) {
                     return rowEntity.medidas.map(function (val) {
                         //if (val.articuloPvP.idTarifa == rowEntity.idTarifa && rowEntity.precioVenta !== val.articuloPvP.precioVenta) {
                         //    val.articuloPvP.precioVenta = rowEntity.precioVenta

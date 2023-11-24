@@ -2003,9 +2003,9 @@
 
     app.controller('ModalAprobDocEditarCtrl', ModalAprobDocEditarCtrl);
 
-    ModalAprobDocEditarCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'params']
+    ModalAprobDocEditarCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'articuloService', 'params']
 
-    function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, params) {
+    function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
 
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
@@ -2071,9 +2071,181 @@
                     rowEntity[colDef.field] = 1;
                 }
 
+                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
+                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
+
+                //Verificacion del stock
+                if (["idMedida", "cantidad"].includes(colDef.field)) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                //     return
+                // }
+                if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+
                 $scope.setCalculoTotales(colDef.field, rowEntity, oldValue);
 
             })
+        }
+
+        /**
+         * Combina elementos en base a propiedades específicas del objeto rowEntity.
+         * @param {*} items - Conjunto de elementos a fusionar.
+         * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
+         * @returns {*} - Objeto resultante de la fusión.
+         */
+        function mergeItem(items, rowEntity) {
+            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
+            let foundItemByArticuloAndBodega = items.filter(item => (
+                item.idArticulo === rowEntity.idArticulo &&
+                item.idBodega === rowEntity.idBodega
+            ))
+
+            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
+                let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+                if (dataMedidaFraccionado) {
+                    let conversionFraccionadaSum = item.cantidad * dataMedida.conversion;
+                    total.totalCantidadFraccionada += conversionFraccionadaSum;
+                }
+                if (dataMedidaPrincipal) {
+                    let conversionPrincipalSum = item.cantidad * dataMedida.conversion;
+                    total.totalCantidadPrincipal += conversionPrincipalSum;
+                }
+                return total;
+            }, {
+                totalCantidadFraccionada: 0,
+                totalCantidadPrincipal: 0, 
+            });
+
+            // let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
+            //     let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+            //     if (dataMedida) {
+            //         let conversionSum = item.cantidad * dataMedida.conversion;
+            //         total += conversionSum;
+            //     }
+            //     return total;
+            // }, 0)
+
+            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
+                itemPrevious.cantidad += itemCurrent.cantidad;
+                return itemPrevious;
+            }, {
+                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
+                ...rowEntity,
+                cantidad: 0,
+            });
+
+            // Devuelve el objeto resultante de la fusión. 
+            return {
+                idBodega: dataItemMerge.idBodega,
+                cantidad: dataItemMerge.cantidad,
+                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
+                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+            };
+        }
+
+        function getCantidadStock(rowEntity) {
+            try {
+                let fechaEmisionValidate = $scope.data.fechaEmision;
+                let cantidadStock = rowEntity.cantidadStock;
+
+                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+                )
+
+                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                        return 0;
+                    }
+                }
+
+                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                return resultCantStock;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        /**
+         * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
+         * @param {string} field - Campo modificado.
+         * @param {*} rowEntity - Objeto de fila actual.
+         * @param {*} oldValue - Valor anterior del campo modificado.
+         */
+
+        function checkNotificationStock(field, rowEntity, oldValue) {
+            try {
+
+                // Si la fila no lleva inventario, realiza cálculos totales y termina la función.
+                if (!rowEntity.llevaInventario) {
+                    $scope.setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
+
+                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                let rowItemClone = structuredClone(rowEntity);
+                let gridOptionsClone = structuredClone($scope.gridOptionsDetalle.data);
+
+                // Realiza la fusión de elementos en la lista de artículos clonada.
+                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+
+                // Si la cantidad no ha cambiado, no realizar más acciones.
+                if (dataItemMerge.cantidad == oldValue) return;
+
+                showLoader();
+
+                // Llama a un servicio para verificar la notificación de stock.
+                let cantidadStock = getCantidadStock(dataItemMerge);
+                if (cantidadStock === 0) return
+
+                articuloSvc.checkNotificationStock({
+                    idArticulo: rowEntity.idArticulo,
+                    cantidad: cantidadStock,
+                    idBodega: rowEntity.idBodega,
+                    idMedida: rowEntity.idMedida
+                }).then(async responseApi => {
+                    hideLoader();
+                    let { code, message, titleSms } = responseApi;
+                    if (code === "1") {
+
+                       $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        return
+                    }
+
+                    let { isConfirmed } = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    })
+
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            rowEntity[field] = oldValue;
+                             $scope.setCalculoTotales(field, rowEntity, oldValue);
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                             $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        }
+                    }
+
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
+
+            } catch (error) {
+                hideLoader();
+                console.log(error);
+            }
         }
 
 
@@ -2409,12 +2581,21 @@
 
                 let index = 0, entity = {};
 
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptionsDetalle.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
+                if (itemsDuplicated.length > 1) {
+                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                    return
+                }
+
                 let findIndexById = $scope.gridOptionsDetalle.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
                 if (findIndexById === -1) {
                     $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
-                    $scope.indexRowDetalle = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
-                    index = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
+                    $scope.indexRowDetalle = $scope.gridOptions.data.length - 1;
+                    index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptionsDetalle.data[index];
                 } else {
                     index = findIndexById;
@@ -2764,10 +2945,183 @@
                     rowEntity[colDef.field] = 1;
                 }
 
+                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
+                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
+
+                //Verificacion del stock
+                if (["idMedida", "cantidad"].includes(colDef.field)) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                //     return
+                // }
+                if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+
                 $scope.setCalculoTotales(colDef.field, rowEntity, oldValue);
 
             })
         }
+
+        /**
+        * Combina elementos en base a propiedades específicas del objeto rowEntity.
+        * @param {*} items - Conjunto de elementos a fusionar.
+        * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
+        * @returns {*} - Objeto resultante de la fusión.
+        */
+        function mergeItem(items, rowEntity) {
+            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
+            let foundItemByArticuloAndBodega = items.filter(item => (
+                item.idArticulo === rowEntity.idArticulo &&
+                item.idBodega === rowEntity.idBodega
+            ))
+
+            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
+                let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+                if (dataMedidaFraccionado) {
+                    let conversionFraccionadaSum = item.cantidad * dataMedida.conversion;
+                    total.totalCantidadFraccionada += conversionFraccionadaSum;
+                }
+                if (dataMedidaPrincipal) {
+                    let conversionPrincipalSum = item.cantidad * dataMedida.conversion;
+                    total.totalCantidadPrincipal += conversionPrincipalSum;
+                }
+                return total;
+            }, {
+                totalCantidadFraccionada: 0,
+                totalCantidadPrincipal: 0,
+            });
+
+            // let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
+            //     let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+            //     if (dataMedida) {
+            //         let conversionSum = item.cantidad * dataMedida.conversion;
+            //         total += conversionSum;
+            //     }
+            //     return total;
+            // }, 0)
+
+            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
+                itemPrevious.cantidad += itemCurrent.cantidad;
+                return itemPrevious;
+            }, {
+                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
+                ...rowEntity,
+                cantidad: 0,
+            });
+
+            // Devuelve el objeto resultante de la fusión. 
+            return {
+                idBodega: dataItemMerge.idBodega,
+                cantidad: dataItemMerge.cantidad,
+                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
+                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+            };
+        }
+
+        function getCantidadStock(rowEntity) {
+            try {
+                let fechaEmisionValidate = $scope.data.fechaEmision;
+                let cantidadStock = rowEntity.cantidadStock;
+
+                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+                )
+
+                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                        return 0;
+                    }
+                }
+
+                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                return resultCantStock;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        /**
+         * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
+         * @param {string} field - Campo modificado.
+         * @param {*} rowEntity - Objeto de fila actual.
+         * @param {*} oldValue - Valor anterior del campo modificado.
+         */
+
+        function checkNotificationStock(field, rowEntity, oldValue) {
+            try {
+
+                // Si la fila no lleva inventario, realiza cálculos totales y termina la función.
+                if (!rowEntity.llevaInventario) {
+                    $scope.setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
+
+                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                let rowItemClone = structuredClone(rowEntity);
+                let gridOptionsClone = structuredClone($scope.gridOptionsDetalle.data);
+
+                // Realiza la fusión de elementos en la lista de artículos clonada.
+                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+
+                // Si la cantidad no ha cambiado, no realizar más acciones.
+                if (dataItemMerge.cantidad == oldValue) return;
+
+                showLoader();
+
+                // Llama a un servicio para verificar la notificación de stock.
+                let cantidadStock = getCantidadStock(dataItemMerge);
+                if (cantidadStock === 0) return
+
+                articuloSvc.checkNotificationStock({
+                    idArticulo: rowEntity.idArticulo,
+                    cantidad: cantidadStock,
+                    idBodega: rowEntity.idBodega,
+                    idMedida: rowEntity.idMedida
+                }).then(async responseApi => {
+                    hideLoader();
+                    let { code, message, titleSms } = responseApi;
+                    if (code === "1") {
+
+                        $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        return
+                    }
+
+                    let { isConfirmed } = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    })
+
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            rowEntity[field] = oldValue;
+                            $scope.setCalculoTotales(field, rowEntity, oldValue);
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                            $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        }
+                    }
+
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
+
+            } catch (error) {
+                hideLoader();
+                console.log(error);
+            }
+        }
+
 
 
         $scope.initiload = async function () {
@@ -3221,11 +3575,20 @@
 
                 let index = 0, entity = {};
 
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptionsDetalle.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
+                if (itemsDuplicated.length > 1) {
+                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                    return
+                }
+
                 let findIndexById = $scope.gridOptionsDetalle.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
                 if (findIndexById === -1) {
                     $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
-                    index = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
+                    index = $scope.gridOptionsDetalle.data.length-1;
                     entity = $scope.gridOptionsDetalle.data[index];
                 } else {
                     index = findIndexById;

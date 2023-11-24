@@ -929,7 +929,7 @@
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
                 if (cantidadStock === 0) return
-                
+
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -1813,11 +1813,22 @@
 
                 let index = 0, entity = {};
 
-                let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptions.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
+                if (itemsDuplicated.length > 1) {
+                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                    return
+                }
 
-                if (findIndexById === -1) {
+                let findIndexById = $scope.gridOptions.data.findIndex(
+                    item => item.llevaInventario && item.idArticulo === articulo.idArticulo
+                );
+
+                if (findIndexById === -1) { 
                     addRow();
-                    index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
+                    index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
                 } else {
                     index = findIndexById;

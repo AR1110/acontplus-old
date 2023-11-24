@@ -1391,7 +1391,7 @@
 
                 if (findIndexById === -1) {
                     addRow();
-                    index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
+                    index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
                 } else {
                     index = findIndexById;
