@@ -20,7 +20,7 @@ GO
 -- Create date: 2023-03-16
 -- Description:	sp for get data to print
 -- =============================================
- -- ApiPrinter.Impresion_Get 48, 
+ -- ApiPrinter.Impresion_Get 369, '{"isPrint":1,"idDocument":158946,"codEstab":"ESTAB-000000249","codDoc":"NE","codigo":"RNEPT"}'
 IF OBJECT_ID(N'ApiPrinter.Impresion_Get', N'P') IS NOT NULL
 DROP PROCEDURE ApiPrinter.Impresion_Get
 GO
@@ -123,7 +123,7 @@ BEGIN
 						     ,codDoc = CASE @codDoc WHEN 'IC' THEN 'MC'
 												    WHEN 'EC' THEN 'MC'
 												    WHEN 'A'  THEN 'A'
-												    ELSE ''
+												    ELSE @codDoc
 									   END 
  						FROM ApiPrinter.Config_Document     cd WITH (NOLOCK)
 						INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
