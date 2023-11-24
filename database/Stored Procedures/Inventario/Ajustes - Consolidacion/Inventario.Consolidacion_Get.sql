@@ -19,7 +19,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE  @idEntidad INT
+	DECLARE @idEntidad INT
 	,@tipo INT
 	,@id INT
 	,@opcion INT
@@ -86,7 +86,7 @@ BEGIN
 			SELECT * FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD' --AND JSON_VALUE(jsonConfig, '$[0].codTransaccion') = 'AL'
 		END
 
-	IF (@tipo = 2)
+	IF @tipo = 2
 		BEGIN
 			
 			SELECT
@@ -109,7 +109,7 @@ BEGIN
 			ORDER by ci.idConsolidacionInventario DESC
 		END
 
-	IF (@tipo = 3)
+	IF @tipo = 3
 		BEGIN
 			SELECT 
 				 idConsolidacionInventario = ci.idConsolidacionInventario
@@ -161,7 +161,7 @@ BEGIN
 
 		END
 
-	IF (@tipo = 4)
+	IF @tipo = 4
 		BEGIN
 			IF (@opcion = 1)
 				BEGIN 

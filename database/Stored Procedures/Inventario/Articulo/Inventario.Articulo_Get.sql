@@ -455,10 +455,10 @@ BEGIN
             --> No permitir la venta de artículos sin stock
 			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'NPS' AND idEntidad = @idEntidad AND estado = 1)
 				BEGIN
-					IF @stock < 0
+					IF @stock <= 0
 						BEGIN
 							SELECT '0' code
-							      ,descripcion + ' <b>(' + codigo + ')</b> medida '+ medida as 'message'
+							      ,descripcion + ' <b>(' + codigo + ')</b> stock de : ' + CAST(cantidad as varchar) + ' cantidad a vender es de: ' + CAST(@cantidad as varchar) as 'message'
 								  ,'ARTICULO SIN STOCK EN LA BODEGA ' + bodega as 'titleSms'
 							FROM Inventario.v_Articulo_Stock WITH (NOLOCK) 
 							WHERE idArticulo = @idArticulo 
