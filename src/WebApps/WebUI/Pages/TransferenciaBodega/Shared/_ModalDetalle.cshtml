@@ -10,22 +10,14 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-sm-12">
                         <div class="form-group">
                             <label for="">Establecimiento Origen: <span class="text-danger">*</span></label>                        
-                            <select class="form-control border-select" ng-model="data.codEstabOrigen" disabled>
-                                <option ng-value="item.codEstab" ng-repeat="item in establecimientosOrigen">
-                                    {{item.nombreComercial}}
-                                </option>                               
-                            </select>                           
+                              <input type="text" ng-model="data.estabOrigen" class="form-control" disabled>                                                
                         </div>                    
                     </div>
 
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Bodega Origen: <span class="text-danger">*</span> </label>
-                            <select class="form-control border-select" ng-model="data.idBodegaOrigen" disabled>
-                                <option ng-value="item.idBodega" ng-repeat="item in bodegasOrigen">
-                                    {{item.descripcion}}
-                                </option>                           
-                            </select>
+                               <input type="text" ng-model="data.bodegaOrigen" class="form-control" disabled>     
                         </div>
                     </div>
                 </div>
@@ -35,11 +27,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="Establecimiento">Establecimiento Destino: <span class="text-danger">*</span></label>
-                            <select class="form-control" ng-model="data.codEstabDestino" disabled>  
-                                <option ng-value="item.codEstab" ng-repeat="item in establecimientosDestino">
-                                    {{item.nombreComercial}}
-                                </option>                                                         
-                            </select>
+                            <input type="text" ng-model="data.estabDestino" class="form-control" disabled>     
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
