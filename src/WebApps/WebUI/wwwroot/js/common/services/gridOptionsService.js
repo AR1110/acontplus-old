@@ -302,8 +302,10 @@
 
                     //     totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalle) * 100) / subTotalSinImpuesto; 
                     // }
+                    if(subTotalSinImpuesto>0){
+                        totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalleNeto) * 100) / subTotalSinImpuesto;
+                    } 
                    
-                    totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalleNeto) * 100) / subTotalSinImpuesto;
                     
                     return fS.roundNumber(totalPorcentajeDescuento, decimal.nroPorcentaje);
                 },

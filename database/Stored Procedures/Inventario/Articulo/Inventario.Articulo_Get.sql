@@ -633,6 +633,8 @@ BEGIN
 			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
 			WHERE a.idArticulo = @idArticulo AND a.estado = 1
 			ORDER BY orden ASC
+
+             SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo 
             RETURN 
         END 
 

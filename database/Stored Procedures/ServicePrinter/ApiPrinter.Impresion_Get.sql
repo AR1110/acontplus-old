@@ -20,7 +20,7 @@ GO
 -- Create date: 2023-03-16
 -- Description:	sp for get data to print
 -- =============================================
- -- ApiPrinter.Impresion_Get 48, 
+ -- ApiPrinter.Impresion_Get 369, '{"isPrint":1,"idDocument":158946,"codEstab":"ESTAB-000000249","codDoc":"NE","codigo":"RNEPT"}'
 IF OBJECT_ID(N'ApiPrinter.Impresion_Get', N'P') IS NOT NULL
 DROP PROCEDURE ApiPrinter.Impresion_Get
 GO
@@ -67,7 +67,7 @@ BEGIN
 	WHERE cd.codDoc  = @codDoc
 	  AND i.codEstab = @codEstab 
 	  AND cd.estado  = 1
-	
+	    AND (i.nombreEquipo IS NOT NULL AND LEN(LTRIM(RTRIM(i.nombreEquipo))) > 0)
 
 	SELECT @totalThermalPrinters   = (SELECT COUNT(*) FROM v_Impresora ii WITH (NOLOCK) WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'TE')  
 	      ,@totalInyectionPrinters = (SELECT COUNT(*) FROM v_Impresora ii WITH (NOLOCK) WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'AT')  
@@ -123,14 +123,16 @@ BEGIN
 						     ,codDoc = CASE @codDoc WHEN 'IC' THEN 'MC'
 												    WHEN 'EC' THEN 'MC'
 												    WHEN 'A'  THEN 'A'
-												    ELSE ''
+												    ELSE @codDoc
 									   END 
  						FROM ApiPrinter.Config_Document     cd WITH (NOLOCK)
 						INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 						INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
 						WHERE cd.codDoc    = @codDoc
 						    AND i.codEstab = @codEstab 
-						    AND cd.estado  = 1 FOR JSON PATH
+						    AND cd.estado  = 1
+                            AND (i.nombreEquipo IS NOT NULL AND LEN(LTRIM(RTRIM(i.nombreEquipo))) > 0)
+                            FOR JSON PATH
 					 )
 	
 	SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@codDoc)

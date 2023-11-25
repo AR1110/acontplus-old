@@ -37,7 +37,7 @@
         const PERMISSION_KEY_ACTIONS = {
             E: 'E',
             A: 'A',
-        } 
+        }
 
         $scope.permisoEditarDoc = {}
 
@@ -136,9 +136,9 @@
 
         $scope.sumarColumnaTotal = function () {
             let total = 0;
-            for (let val of $scope.proformas){
-                if(val.codEstado!=='A'){
-                    total+=val.total; 
+            for (let val of $scope.proformas) {
+                if (val.codEstado !== 'A') {
+                    total += val.total;
                 }
             }
             return fS.roundNumber(total, 5);
@@ -184,7 +184,7 @@
                     $scope.proformas = proformas;
                     $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                  //  $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
+                    //  $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
                     $scope.total = $scope.sumarColumnaTotal();
 
                 }).catch(error => {
@@ -364,19 +364,19 @@
                         console.log(error)
                     })
                     .finally(() => hideLoader())
-            } catch (error) { 
-                console.log(error) 
-            }  
+            } catch (error) {
+                console.log(error)
+            }
 
         }
- 
- 
+
+
         $scope.askToDelete = async (item) => {
             try {
                 if (item.anulada) {
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
-                } 
+                }
                 let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
                 if (result.code === "2") {
                     commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
@@ -405,7 +405,7 @@
 
                 if (isConfirmed) {
                     showLoader();
-                    proformaSvc.delete(item.idDocumento).then(response => { 
+                    proformaSvc.delete(item.idDocumento).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
@@ -421,8 +421,8 @@
                             $scope.getProformas();
                         }
                     }).catch(error => {
-                        console.log(error); 
-                    }).finally(()=>hideLoader())
+                        console.log(error);
+                    }).finally(() => hideLoader())
 
                 }
             } catch (error) {
@@ -460,9 +460,9 @@
 
         $scope.print = function (item) {
             let parameters = {
-                idDocument: ('idDocumento' in item) ? item.idDocumento : item.idDocument, 
+                idDocument: ('idDocumento' in item) ? item.idDocumento : item.idDocument,
                 codEstab: item.codEstab,
-                codDoc: tipoDoc.codigo, 
+                codDoc: tipoDoc.codigo,
                 codigo: 'RNEPT'
             }
 
@@ -474,11 +474,11 @@
 
 
         //Reporte 
-        $scope.getReport = function (item) { 
-            let format = 'pdf'; 
+        $scope.getReport = function (item) {
+            let format = 'pdf';
             let dataParms = {
                 id: item.idDocumento,
-            } 
+            }
             const parameters = {
                 hasService: true,
                 reportParams: JSON.stringify({
@@ -656,7 +656,17 @@
                 vendedores,
             } = mainDataForm;
             $scope.establecimientos = estabs;
-            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+
+
+            let dataEstab = {};
+            if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
+                const {
+                    comprobante,
+                } = params.data;
+                dataEstab = $scope.establecimientos.find(estab => estab.codEstab === comprobante.codEstab);
+            } else {
+                dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            }
             $scope.data.codEstab = dataEstab.codEstab;
             $scope.dataClone.codEstab = dataEstab.codEstab;
 

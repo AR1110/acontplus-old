@@ -6,7 +6,7 @@ function  itemToApi(items: ItemRead[]):  Array<ItemPostDto> {
         return {
             orderItemId: item.id,
             uuid: item.uuid,
-            itemId: item.itemId,
+            itemId: item.itemId || 0,
             feeId: item.feeId,
             taxId: item.taxId,
             taxPercentId: item.taxPercentId,
@@ -21,9 +21,10 @@ function  itemToApi(items: ItemRead[]):  Array<ItemPostDto> {
             total: item.total,
             obs: item.obs,
             itemTypeCode: item.itemTypeCode,
-            menuId: item.menuId,
+            menuId: item.menuId || 0,
             bodegaId: item.bodegaId,
-            envioSri: item.envioSri
+            envioSri: item.envioSri,
+            medidaId: item.measureId
         }
     })
     return results;
@@ -51,7 +52,8 @@ function summaryToApi(order: Order): SummaryPostDto {
         quickSale: order.quickSale,
         fechaEmision: order.createdAt,
         uuid: order.orderId > 0 ? order.uuid : uuidv4(),
-        userId: order.userId
+        userId: order.userId,
+        taxPercentId: order.taxPercentId
     }
 }
 

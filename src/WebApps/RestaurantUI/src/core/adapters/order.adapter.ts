@@ -1,6 +1,5 @@
 import { productSaleRateReadAdapter } from ".";
-import { ItemRead, OrderReadDto, ProductPVPReadDto, RawOrderData } from "../models";
-import { productService } from "../services";
+import { OrderReadDto, RawOrderData } from "../models";
 
 function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {  
     return orders.map(order => ({
@@ -55,7 +54,8 @@ async function orderReadForUpdateAdapter(obj: any) {
             tableName: order.tableName,
             numberTable: order.numberTable
         },
-        userId: order.userId
+        userId: order.userId,
+        taxPercentId: order.taxPercentId
     }
 
     const orderItemsMapper = orderItems.map((orderItem: any, indexOrderItem: number) => {
@@ -105,7 +105,7 @@ async function orderReadForUpdateAdapter(obj: any) {
          * Devuelve:
          *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
          */
-        const dataMedida = measures.find(m => m.measureId === restOrderItem.measureId);
+        const dataMedida = measures.find(m => m.measureId === restOrderItem.medidaId);
       
         return {
             index: indexOrderItem + 1,
@@ -134,7 +134,7 @@ async function orderReadForUpdateAdapter(obj: any) {
             discountTotal: 0,
             taxes: [],
             pvps: dataMedida && dataMedida.pvps || [], // Asignar los datos de las tarifas obtenidos de data medida 
-            measureId: restOrderItem.measureId,
+            measureId: restOrderItem.medidaId,
             measures: measures, // Asignar los datos de la medida al artículo
             conversion: dataMedida && dataMedida.conversion,
             taxRateCode: restOrderItem.taxRateCode,

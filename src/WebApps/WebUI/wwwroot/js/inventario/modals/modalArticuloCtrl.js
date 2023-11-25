@@ -436,8 +436,8 @@ function modalArticuloCtrl(
             })
             .finally(() => hideLoader());
     }
-    $scope.getArticuloCodigo = () => {
-        if (params && params.isImport) return;
+    $scope.getArticuloCodigo = () => { 
+        if (params && params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra) return;
 
         if ($scope.tipoRegistro === 1 && $scope.subFamilias.length > 0) {
             let { codigo } = $scope.subFamilias.find(

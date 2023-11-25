@@ -153,8 +153,7 @@ class Shared {
             url: `${PATHS.PRIVATE}Order/Print/${JSON.stringify(obj)}`,
         })
 
-        const response: ApiResponse = resultAxios.data;
-        console.log(response)
+        const response: ApiResponse = resultAxios.data; 
         if (response.code === "0") {
             SnackbarUtility.warning(response.message)
         }

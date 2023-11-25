@@ -390,6 +390,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 const total = orderItem.quantity * (salePrice);
                 return {
                     ...orderItem,
+                    measureId: id,
                     pvps: dataMedida && dataMedida.pvps || [],
                     price: salePrice,
                     priceWithVat: priceWithVat,
@@ -504,7 +505,8 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         },
     }, 
     async save(codDoc: string) {
-        const { order, items, resetForm, payment } = get();
+        const { order, items, resetForm, payment, dataForm } = get();
+        
         try {
             if (!(order.tableId > 0)) {
                 Swal.fire({
@@ -531,9 +533,17 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 cancelButtonText: 'No, cancelar!'
             })
 
-            if (!isConfirmed) return
-
+            if (!isConfirmed) return 
+            let taxPercentId = 0;
+            if(order.orderId>0){
+                //iva vigente registrado
+                taxPercentId = order.taxPercentId;
+            }else{
+                taxPercentId = dataForm.tarifaImpuestoVigente.idTarifaImpuesto; 
+            }
+            
             const summaryResult = summaryToApi(order);
+            
             const itemsResult = itemToApi(items);
             const taxesResult = items.flatMap(item => item.taxes);
             const data = {
@@ -544,7 +554,8 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 quickSale: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
                 items: itemsResult,
                 taxes: taxesResult,
-                payments: {}
+                payments: {}, 
+                taxPercentId
             }
             if (order.orderId > 0) {
                 showLoader();

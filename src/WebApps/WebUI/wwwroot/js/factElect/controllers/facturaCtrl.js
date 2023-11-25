@@ -833,12 +833,18 @@
                 if (colDef.field === 'cantidad' && rowEntity[colDef.field] === 0) {
                     rowEntity[colDef.field] = 1;
                 }
+                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
+                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
 
-                //Verificacion del stock 
-                if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                //Verificacion del stock
+                if (["idMedida", "cantidad"].includes(colDef.field)) {
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
                 }
+                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                //     return
+                // }
                 if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
                     checkNotificationStock(colDef.field, rowEntity, oldValue);
                     return
@@ -850,56 +856,161 @@
 
         $scope.gridOptionsItemsDeleted = [];
 
+        /**
+         * Combina elementos en base a propiedades específicas del objeto rowEntity.
+         * @param {*} items - Conjunto de elementos a fusionar.
+         * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
+         * @returns {*} - Objeto resultante de la fusión.
+         */
+        function mergeItem(items, rowEntity) {
+            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
+            let foundItemByArticuloAndBodega = items.filter(item => (
+                item.idArticulo === rowEntity.idArticulo &&
+                item.idBodega === rowEntity.idBodega
+            ))
+
+            let totalCantidadFraccionada = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO')
+                if (dataMedida) {
+                    let conversionSum = item.cantidad * dataMedida.conversion;
+                    total += conversionSum;
+                }
+                return total;
+            }, 0);
+
+            let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+                if (dataMedida) {
+                    let conversionSum = item.cantidad * dataMedida.conversion;
+                    total += conversionSum;
+                }
+                return total;
+            }, 0)
+
+            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
+                itemPrevious.cantidad += itemCurrent.cantidad;
+                return itemPrevious;
+            }, {
+                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
+                ...rowEntity,
+                cantidad: 0,
+            });
+
+            // Devuelve el objeto resultante de la fusión. 
+            return {
+                idBodega: dataItemMerge.idBodega,
+                cantidad: dataItemMerge.cantidad,
+                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
+                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+            };
+        }
+
+        function getCantidadStock(rowEntity) {
+            try {
+                let fechaEmisionValidate = $scope.data.fechaEmision;
+                let cantidadStock = rowEntity.cantidadStock;
+
+                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+                )
+
+                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                        return 0;
+                    }
+                }
+
+                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                return resultCantStock;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        /**
+         * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
+         * @param {string} field - Campo modificado.
+         * @param {*} rowEntity - Objeto de fila actual.
+         * @param {*} oldValue - Valor anterior del campo modificado.
+         */
         function checkNotificationStock(field, rowEntity, oldValue) {
             try {
+                // Si la fila no lleva inventario, realiza cálculos totales y termina la función.
                 if (!rowEntity.llevaInventario) {
                     setCalculoTotales(field, rowEntity, oldValue);
-                    return
+                    return;
                 }
+
+                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                let rowItemClone = structuredClone(rowEntity);
+                let gridOptionsClone = structuredClone($scope.gridOptions.data);
+
+                // Realiza la fusión de elementos en la lista de artículos clonada.
+                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+
+                // Si la cantidad no ha cambiado, no realizar más acciones.
+                if (dataItemMerge.cantidad == oldValue) return;
+
                 showLoader();
-                let { cantidadStock } = facturaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision)
+
+                // Llama a un servicio para verificar la notificación de stock.
+                let cantidadStock = getCantidadStock(dataItemMerge);
+                if (cantidadStock === 0) return
+                console.log(cantidadStock)
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
                     idBodega: rowEntity.idBodega,
                     idMedida: rowEntity.idMedida
                 }).then(async responseApi => {
+                    // Oculta el indicador de carga después de recibir la respuesta del servicio.
                     hideLoader();
+
                     let { code, message, titleSms } = responseApi;
+
+                    // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
                     if (code === "1") {
                         setCalculoTotales(field, rowEntity, oldValue);
-                        return
+                        return;
                     }
 
+                    // Muestra un mensaje de advertencia y espera la confirmación del usuario.
                     let { isConfirmed } = await Swal.fire({
                         title: `<small>${titleSms}</small>`,
                         icon: 'warning',
                         html: `<small>${message}</small>`,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
-                    })
+                    });
 
+                    // Según la confirmación, realiza acciones adicionales.
                     if (isConfirmed) {
                         if (code === "0") {
+                            // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
                             rowEntity[field] = oldValue;
                             setCalculoTotales(field, rowEntity, oldValue);
                             $("#custom-template-md-autocomplete-articulo").focus();
                         }
                         if (code === "2") {
+                            // Si el código es "2", solo realiza cálculos totales.
                             setCalculoTotales(field, rowEntity, oldValue);
                         }
                     }
-
                 }).catch(error => {
+                    // Maneja errores en la llamada al servicio.
                     hideLoader();
-                    console.log(error)
-                })
-
+                    console.log(error);
+                });
             } catch (error) {
+                // Maneja errores generales en el bloque try-catch.
                 hideLoader();
                 console.log(error);
             }
         }
+
+
+
+
 
         $scope.setInfoEstabPtoEmi = function () {
             if ($scope.establecimientos.length > 0) {
@@ -930,7 +1041,18 @@
                 articuloDefault
             } = mainDataForm;
             $scope.establecimientos = estabs;
-            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+
+            let dataEstab = {};
+
+            if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
+                const {
+                    comprobante,
+                } = params.data;
+                dataEstab = $scope.establecimientos.find(estab => estab.codEstab === comprobante.codEstab);
+            } else {
+                dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            }
+
             $scope.data.codEstab = dataEstab.codEstab;
             $scope.dataClone.codEstab = dataEstab.codEstab;
 
@@ -1001,7 +1123,7 @@
                     items,
                     infoAdicionalDocumento,
                 } = params.data;
-                
+
                 $scope.data = {
                     ...$scope.data,
                     ...structuredClone(comprobante)
@@ -1578,7 +1700,7 @@
         async function setCustomerData(item) {
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
-            if(!($scope.data.idFactura>0)){
+            if (!($scope.data.idFactura > 0)) {
                 $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
                 $scope.data.fechaEmision = new Date();
                 getFechaVencimiento();
@@ -1739,7 +1861,7 @@
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
             try {
                 $scope.dataArticulo = dataArticulo;
-                
+
                 const {
                     articulo,
                     medidas,
@@ -1747,18 +1869,20 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0;
+                let index = 0, entity = {};
 
-                let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
+                // let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
+                let findIndexById = -1;
 
                 if (findIndexById === -1) {
                     addRow();
-                    index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
+                    index = $scope.gridOptions.data.length - 1;
+                    entity = $scope.gridOptions.data[index];
                 } else {
                     index = findIndexById;
+                    entity = $scope.gridOptions.data[index];
+                    entity.cantidad = entity.cantidad + 1;
                 }
-
-                let entity = $scope.gridOptions.data[index];
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
 
@@ -2034,6 +2158,11 @@
                 return
             }
 
+            if ($scope.data.total < 0) {
+                tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
+                return
+            }
+
             return true;
         }
 
@@ -2078,7 +2207,7 @@
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 }
-                
+
 
                 const customSwal = Swal.mixin({
                     customClass: {
@@ -2142,7 +2271,7 @@
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
-                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);                            
+                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
                             $uibModalInstance.close(response)
                         }
                     }).catch(error => {

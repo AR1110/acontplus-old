@@ -13,5 +13,6 @@ export interface TaxRate {
     taxCode: string
     taxRateCode: string
     description: string
-    percentage: number    
+    percentage: number   
+    idTarifaImpuesto: number 
 }

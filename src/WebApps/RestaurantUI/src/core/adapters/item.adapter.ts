@@ -7,7 +7,7 @@ function pvpReadAdapter(pvp: RawProductPVPData): ProductPVPReadDto {
         salePrice: pvp.precioVenta,
         priceWithVat: pvp.precioConIva,
         description: pvp.tarifa,
-        default: pvp.precioPredeterminado
+        default: pvp.predeterminada
     })
 }
 
