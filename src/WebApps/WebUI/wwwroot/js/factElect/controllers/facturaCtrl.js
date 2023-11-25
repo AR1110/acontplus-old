@@ -1871,9 +1871,17 @@
 
                 let index = 0, entity = {};
 
-                // let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
-                let findIndexById = -1;
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptions.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
+                if (itemsDuplicated.length > 1) {
+                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                    return
+                }
 
+                let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
+                
                 if (findIndexById === -1) {
                     addRow();
                     index = $scope.gridOptions.data.length - 1;

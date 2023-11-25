@@ -355,6 +355,60 @@
             return false;
         }
 
+
+        /**
+         * 
+         * @param {*} estabs 
+         */
+        formSvc.groupingEstab = function(obj){ 
+            const tempEstabsAndPtosEmision = obj.estabs;
+            const tempEstabsAndBodegas = obj.bodegas;
+            const isGroupBodega = obj.isGroupBodega;  
+            const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                if (!existingItem) {
+                    acc.push({
+                        idEstablecimiento: item.idEstablecimiento,
+                        nombreComercial: item.nombreComercial,
+                        codEstab: item.codEstab,
+                        defaultEstab: item.defaultEstab,
+                        puntosEmision:  [{
+                            codEstab: item.codEstab,
+                            idPuntoEmision: item.idPuntoEmision,
+                            ptoEmi: item.ptoEmi,
+                            defaultPtoEmi: item.defaultPtoEmi
+                        }]
+                    });
+                } else {
+                    existingItem.puntosEmision.push({
+                        codEstab: item.codEstab,
+                        idPuntoEmision: item.idPuntoEmision,
+                        ptoEmi: item.ptoEmi,
+                        defaultPtoEmi: item.defaultPtoEmi
+                    });
+                }
+                return acc;
+            }, []);
+
+            if (isGroupBodega){
+                let estabs = tempEstabs.map(estab => ({
+                    ...estab,
+                    bodegas: tempEstabsAndBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
+                        .map(bodega => ({
+                            codEstab: estab.codEstab,
+                            idBodega: bodega.idBodega,
+                            bodega: bodega.bodega,
+                            descripcion: bodega.bodega,
+                            defaultBodega: bodega.defaultBodega,
+                        }))
+                }))
+                return estabs;
+            }
+            return tempEstabs;
+
+        }
+
         return formSvc;
     }
 })(window.angular)
