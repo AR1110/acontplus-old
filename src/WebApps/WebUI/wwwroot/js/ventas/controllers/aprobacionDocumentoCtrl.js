@@ -2615,8 +2615,8 @@
 
                 if (findIndexById === -1) {
                     $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
-                    $scope.indexRowDetalle = $scope.gridOptions.data.length - 1;
-                    index = $scope.gridOptions.data.length - 1;
+                    $scope.indexRowDetalle = $scope.gridOptionsDetalle.data.length - 1;
+                    index = $scope.gridOptionsDetalle.data.length - 1;
                     entity = $scope.gridOptionsDetalle.data[index];
                 } else {
                     index = findIndexById;
@@ -2853,17 +2853,21 @@
                         totalSinImpuestos: $scope.data.subTotalSinImpuestos,
                         totalConImpuestos: $scope.data.total,
                         importeTotal: $scope.data.total,
-                        fechaEmision: fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD h:mm A"),
+                        fechaEmision: fS.formatDateTimeZone($scope.data.fechaEmision),
                     }
                     //Tarifa Aplicada al Documento
                     jsonHeader.tarifa = $scope.dataTarifaImpuesto.tarifa;
                     jsonHeader.codigoPorcentaje = $scope.dataTarifaImpuesto.codigoPorcentaje;
+                    let detalles = $scope.gridOptionsDetalle.data.map(item=>({
+                        ...item,
+                        fechaEmision: item.idAprob_Document_Detailt > 0 ? item.fechaEmision : $scope.data.fechaEmision
+                    })) 
 
-                    let detalles = aprobacionDocSvc.detalleMapperTo($scope.gridOptionsDetalle.data, $scope.decimal);
+                    let restultDetalles = aprobacionDocSvc.detalleMapperTo(detalles, $scope.decimal);
 
                     const query = {
                         comprobante: JSON.stringify(jsonHeader),
-                        detalle: JSON.stringify(detalles),
+                        detalle: JSON.stringify(restultDetalles),
                         historialVenta: JSON.stringify($scope.historyDatosAdicionales)
                     }
                     showLoader();
@@ -3990,8 +3994,8 @@
                 let cantidadStock = 0;
                 let cantidadTransaccion = item.cantidad * item.conversion;
 
-                let fechaEmisionDocumento = item.fechaEmision; //Fecha Emision del Doc. (Proforma, Nota Entrega)
-
+                let fechaEmisionDocumento = item.idAprob_Document_Detailt > 0 ? item.fechaEmision : $scope.data.fechaEmision; //Fecha Emision del Doc. (Proforma, Nota Entrega)
+                
                 let dataConsolidacion = item.consolidacionesFecha.find(
                     consolidacionFecha => consolidacionFecha.idBodega === item.idBodega
                 )
