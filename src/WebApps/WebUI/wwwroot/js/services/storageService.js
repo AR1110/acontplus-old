@@ -1,4 +1,4 @@
-
+//se usa en consolidacion inv.
 app.factory('storageService', storageService)
 
 storageService.$inject = ['$window']
