@@ -687,7 +687,7 @@
                 // console.log(resultJoinDetails)
                 // return 
 
-               // const resultMergeItems = mergeItems(resultJoinItems); 
+                // const resultMergeItems = mergeItems(resultJoinItems); 
 
                 //Agregamos Bodega e Indice
                 let index = 1;
@@ -704,7 +704,7 @@
                     TAX_RATE_CODE
                 }))
 
-                if ($scope.cliente.tipoIdentificacion === 'CF' && $scope.docDestino.codDoc === '01' && $scope.data.total > 50) {
+                if ($scope.cliente.tipoIdentificacion === 'CF' && $scope.docDestino.codDoc === DOC_TYPE.FV_SRI && $scope.data.total > 50) {
                     hideLoader();
                     Swal.fire({
                         icon: 'warning',
@@ -713,7 +713,7 @@
                     })
                     return
                 }
-                if($scope.data.total < 0){
+                if ($scope.data.total < 0) {
                     tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                     return
                 }
@@ -1112,8 +1112,12 @@
                 item.subGridOptions = $scope.columnDefsSubGridOptions();
                 if ($scope.docOrigen.codDoc === DOC_TYPE.NE) {
                     await notaEntregaSvc.getId(item.idDocumento).then(response => {
-                        let { items, datosAdicionalesArticulo, infoAdicionalDocumento } = response;
-                        item.subGridOptions.data = items;
+                        let { comprobante, items, datosAdicionalesArticulo, infoAdicionalDocumento } = response;
+                      
+                        item.subGridOptions.data = items.map(itemDetalle=>({
+                            ...itemDetalle,
+                            fechaEmision:comprobante.fechaEmision
+                        }));
                         tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
                         tempInfoAdicionalDocumento.push(infoAdicionalDocumento)
                     })
@@ -1121,8 +1125,11 @@
 
                 if ($scope.docOrigen.codDoc === DOC_TYPE.PR) {
                     await proformaSvc.getId(item.idDocumento).then(response => {
-                        let { items } = response;
-                        item.subGridOptions.data = items;
+                        let { items, comprobante } = response;
+                        item.subGridOptions.data = items.map(itemDetalle => ({
+                            ...itemDetalle,
+                            fechaEmision: comprobante.fechaEmision
+                        }));
                         // tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
                         // tempInfoAdicionalDocumento.push(infoAdicionalDocumento);
                     })
@@ -1285,11 +1292,26 @@
                     aggregationHideLabel: true,
                     footerCellFilter: `number:${$scope.decimal.nroTotalDetalle}`
                 },
+                // {
+                //     name: 'bodega',
+                //     field: 'idBodega',
+                //     enableCellEdit: true,
+                //     allowCellFocus: true,
+                //     enableCellEditOnFocus: true,
+                //     editableCellTemplate: 'ui-grid/dropdownEditor',
+                //     cellFilter: 'cellFilterBodega:this',
+                //     editDropdownValueLabel: 'descripcion',
+                //     editDropdownIdLabel: 'idBodega',
+                //     type: 'number',
+                //     width: '11%',
+                //     minWidth: '100'
+                // },
                 ]
             }
         }
 
 
+        //GridOptions Documento Aprobación 
         $scope.columnDefsInvoice = function () {
             let defaultPermission = Object.freeze({
                 tarifa: true,
@@ -1631,8 +1653,7 @@
                     $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                 } else {
                     $scope.data.fechaEmision = new Date();
-                }
-
+                } 
 
                 let { isConfirmed } = await Swal.fire({
                     //title: 'Are you sure?',
@@ -2120,7 +2141,7 @@
                 return total;
             }, {
                 totalCantidadFraccionada: 0,
-                totalCantidadPrincipal: 0, 
+                totalCantidadPrincipal: 0,
             });
 
             // let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
@@ -2214,7 +2235,7 @@
                     let { code, message, titleSms } = responseApi;
                     if (code === "1") {
 
-                       $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        $scope.setCalculoTotales(field, rowEntity, oldValue);
                         return
                     }
 
@@ -2229,11 +2250,11 @@
                     if (isConfirmed) {
                         if (code === "0") {
                             rowEntity[field] = oldValue;
-                             $scope.setCalculoTotales(field, rowEntity, oldValue);
+                            $scope.setCalculoTotales(field, rowEntity, oldValue);
                             $("#custom-template-md-autocomplete-articulo").focus();
                         }
                         if (code === "2") {
-                             $scope.setCalculoTotales(field, rowEntity, oldValue);
+                            $scope.setCalculoTotales(field, rowEntity, oldValue);
                         }
                     }
 
@@ -2878,12 +2899,12 @@
      * ======================MODAL APROBACION DEL DOCUMENTO DESTINO===============
      */
     app.controller('ModalApproveDocCtrl', ModalApproveDocCtrl);
-    ModalApproveDocCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'params']
+    ModalApproveDocCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'articuloService', 'params']
 
-    function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, params) {
+    function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
-
+        
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
 
@@ -2984,11 +3005,11 @@
                 let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
                 let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
                 if (dataMedidaFraccionado) {
-                    let conversionFraccionadaSum = item.cantidad * dataMedida.conversion;
+                    let conversionFraccionadaSum = item.cantidad * dataMedidaFraccionado.conversion;
                     total.totalCantidadFraccionada += conversionFraccionadaSum;
                 }
                 if (dataMedidaPrincipal) {
-                    let conversionPrincipalSum = item.cantidad * dataMedida.conversion;
+                    let conversionPrincipalSum = item.cantidad * dataMedidaPrincipal.conversion;
                     total.totalCantidadPrincipal += conversionPrincipalSum;
                 }
                 return total;
@@ -3137,6 +3158,7 @@
                     permisoVenta,
                     decimal,
                 } = mainDataForm;
+                console.log(detalles)
 
                 /**
                  * Establecimiento - Impuesto Tarifa 
@@ -3588,7 +3610,7 @@
 
                 if (findIndexById === -1) {
                     $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
-                    index = $scope.gridOptionsDetalle.data.length-1;
+                    index = $scope.gridOptionsDetalle.data.length - 1;
                     entity = $scope.gridOptionsDetalle.data[index];
                 } else {
                     index = findIndexById;
@@ -3896,15 +3918,17 @@
                     $scope.data.idUsuario = 0;
                     //Documento Destino Factuta
                     if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
+                        let detalles = checkStockDetalle($scope.gridOptionsDetalle.data)
                         let query = facturaSvc.queryMapper({
                             data: $scope.data,
                             cliente: {
                                 idCliente: $scope.cliente.idCliente
                             },
-                            detalles: $scope.gridOptionsDetalle.data,
+                            detalles,
                             itemsDeleted: [],
                             infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                            historyDatosAdicionales: $scope.historyDatosAdicionales
+                            historyDatosAdicionales: $scope.historyDatosAdicionales,
+                            fromAprobacion: true
                         })
 
                         facturaSvc.save(query).then(response => {
@@ -3958,6 +3982,33 @@
             }
         }
 
+
+        function checkStockDetalle(){
+            let fechaEmisionAprobacion = $scope.data.fechaEmision;//fecha emision de aprobacion documento 
+
+            let resultsItem = $scope.gridOptionsDetalle.data.map(item => {
+                let cantidadStock = 0;
+                let cantidadTransaccion = item.cantidad * item.conversion;
+
+                let fechaEmisionDocumento = item.fechaEmision; //Fecha Emision del Doc. (Proforma, Nota Entrega)
+
+                let dataConsolidacion = item.consolidacionesFecha.find(
+                    consolidacionFecha => consolidacionFecha.idBodega === item.idBodega
+                )
+
+                if (dataConsolidacion) {
+                    if (fechaEmisionDocumento < dataConsolidacion.fechaConsolidacion) {
+                        if (fechaEmisionAprobacion > dataConsolidacion.fechaConsolidacion) {
+                            cantidadStock = cantidadTransaccion < 0 ? cantidadTransaccion : -cantidadTransaccion;
+                        }
+                    }
+                }
+                item.cantidadStock = cantidadStock;
+                item.cantidadTransaccion = cantidadTransaccion;
+                return item;
+            })
+            return resultsItem;
+        }
 
 
         $scope.closeModal = function () {

@@ -1638,6 +1638,20 @@
                 // }
             }
 
+            if (isRegister()) {
+                let fechaEmisionModificada = $scope.data.fechaEmision;
+                let fechaActual = new Date();
+                if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
+                    fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
+                    return
+                }
+                if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
+                    $scope.data.fechaEmision.setHours(0, 0, 0, 0);
+                } else {
+                    $scope.data.fechaEmision = new Date();
+                }
+            }
+
             if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
                 if (!$scope.cliente.razonSocialComprador || !$scope.cliente.nombreComercial) {
                     tS.toastr('warning', 'Seleccione el Cliente');
