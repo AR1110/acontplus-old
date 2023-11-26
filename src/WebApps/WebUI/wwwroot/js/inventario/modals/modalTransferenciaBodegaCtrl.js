@@ -5,7 +5,7 @@ export {
 ModalTransferenciaBodegaDetalleCtrl.$inject = ['$scope',  '$uibModalInstance',   'commonService', 'toastService',   'params']
 function ModalTransferenciaBodegaDetalleCtrl($scope,  $uibModalInstance, commonSvc, tS, params){
      
-    let {dataDocumento, establecimientoOrigen, establecimientoDestino, detalleDocumento} = params.data;
+    let {dataDocumento, detalleDocumento} = params.data;
     
     $scope.data = dataDocumento;
 

@@ -1391,7 +1391,7 @@
 
                 if (findIndexById === -1) {
                     addRow();
-                    index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
+                    index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
                 } else {
                     index = findIndexById;
@@ -1636,6 +1636,20 @@
                 // else {
                 //     $scope.data.fechaEmision = fechaEmisionDocCreado;
                 // }
+            }
+
+            if (isRegister()) {
+                let fechaEmisionModificada = $scope.data.fechaEmision;
+                let fechaActual = new Date();
+                if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
+                    fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
+                    return
+                }
+                if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
+                    $scope.data.fechaEmision.setHours(0, 0, 0, 0);
+                } else {
+                    $scope.data.fechaEmision = new Date();
+                }
             }
 
             if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
