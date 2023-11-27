@@ -631,7 +631,15 @@
         }
 
         service.queryMapper = function (params) {
-            const { data, cliente, detalles, itemsDeleted, infoAdicionalDocumento, historyDatosAdicionales } = params;
+            const { 
+                data, 
+                cliente, 
+                detalles, 
+                itemsDeleted, 
+                infoAdicionalDocumento, 
+                historyDatosAdicionales,  
+                fromAprobacion=false
+            } = params;
 
             //data que se usara dentro de la función "getCantidadStock"
             service.data = Object.assign({}, data);
@@ -653,8 +661,8 @@
             factura.recargo = data.recargo || 0;
             factura.propina = data.propina || 0;
 
-            const itemsMainMapper = service.detalleMapperTo(detalles);
-            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted)
+            const itemsMainMapper = service.detalleMapperTo(detalles, fromAprobacion);
+            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted, fromAprobacion)
 
             const mergeItems = [
                 ...itemsMainMapper,
@@ -669,41 +677,52 @@
             }
         }
 
-        service.detalleMapperTo = function (detalles) {
+        /**
+         * 
+         * @param {*} detalles 
+         * @param {*} fromAprobacion si es verdadero el origen del detalle es desde aprobacion del documento 
+         * @returns 
+         */
+        service.detalleMapperTo = function (detalles, fromAprobacion=false) {
             let tempDetails = [];
             let orderIndex = 1;
 
             for (let item of detalles) {
+
                 // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
-                let {
-                    cantidadStock,
-                    action
-                } = service.getCantidadStock(item);
-                let cantidadTransaccion = item.cantidad * item.conversion;
+                let cantidadStock = 0, action = 0, cantidadTransaccion = 0;
 
-                if (action === 0) {
-                    // Comprobar si el elemento tiene un 'idFacturaDetalle' positivo y está en estado 'activo'
-                    if (item.idFacturaDetalle > 0 && item.estado) {
-                        //cantidadAnulada = cantidadTransaccion;
-                        // Verificar si 'cantidad' es igual a 'cantidadOriginal'
-                        if (item.cantidad === item.cantidadOriginal) {
-                            cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
+                if (!fromAprobacion) {
+                    let dataValidationStock = service.getCantidadStock(item);
 
-                        } else {
-                            // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
-                            if (item.cantidad > item.cantidadOriginal) {
-                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                    cantidadStock = dataValidationStock.cantidadStock;
+                    action = dataValidationStock.action;
+
+                    cantidadTransaccion = item.cantidad * item.conversion;
+
+                    if (action === 0) {
+                        // Comprobar si el elemento tiene un 'idFacturaDetalle' positivo y está en estado 'activo'
+                        if (item.idFacturaDetalle > 0 && item.estado) {
+                            //cantidadAnulada = cantidadTransaccion;
+                            // Verificar si 'cantidad' es igual a 'cantidadOriginal'
+                            if (item.cantidad === item.cantidadOriginal) {
+                                cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
+
                             } else {
-                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                                // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
+                                if (item.cantidad > item.cantidadOriginal) {
+                                    cantidadStock = item.cantidadOriginal - item.cantidad;
+                                } else {
+                                    cantidadStock = item.cantidadOriginal - item.cantidad;
+                                }
                             }
                         }
-                    }
-                    if (item.idFacturaDetalle > 0 && item.estado === 0) {
-                        cantidadStock = Math.abs(cantidadStock)
-                        //  cantidadAnulada = item.cantidad;
-                    }
+                        if (item.idFacturaDetalle > 0 && item.estado === 0) {
+                            cantidadStock = Math.abs(cantidadStock)
+                            //  cantidadAnulada = item.cantidad;
+                        }
+                    } 
                 }
-
 
                 tempDetails.push({
                     orderIndex: orderIndex++,
@@ -729,10 +748,10 @@
                     total: item.total,
                     nota: item.nota,
 
-                    cantidadStock, //✅
+                    cantidadStock: fromAprobacion ? item.cantidadStock : cantidadStock, //✅
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
-                    cantidadTransaccion, //✅
+                    cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : cantidadTransaccion, //✅
                     // cantidadAnulada,
                     estado: item.estado //✅     
                 })

@@ -687,7 +687,7 @@
                 // console.log(resultJoinDetails)
                 // return 
 
-               // const resultMergeItems = mergeItems(resultJoinItems); 
+                // const resultMergeItems = mergeItems(resultJoinItems); 
 
                 //Agregamos Bodega e Indice
                 let index = 1;
@@ -704,7 +704,7 @@
                     TAX_RATE_CODE
                 }))
 
-                if ($scope.cliente.tipoIdentificacion === 'CF' && $scope.docDestino.codDoc === '01' && $scope.data.total > 50) {
+                if ($scope.cliente.tipoIdentificacion === 'CF' && $scope.docDestino.codDoc === DOC_TYPE.FV_SRI && $scope.data.total > 50) {
                     hideLoader();
                     Swal.fire({
                         icon: 'warning',
@@ -713,7 +713,7 @@
                     })
                     return
                 }
-                if($scope.data.total < 0){
+                if ($scope.data.total < 0) {
                     tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                     return
                 }
@@ -1112,8 +1112,12 @@
                 item.subGridOptions = $scope.columnDefsSubGridOptions();
                 if ($scope.docOrigen.codDoc === DOC_TYPE.NE) {
                     await notaEntregaSvc.getId(item.idDocumento).then(response => {
-                        let { items, datosAdicionalesArticulo, infoAdicionalDocumento } = response;
-                        item.subGridOptions.data = items;
+                        let { comprobante, items, datosAdicionalesArticulo, infoAdicionalDocumento } = response;
+                      
+                        item.subGridOptions.data = items.map(itemDetalle=>({
+                            ...itemDetalle,
+                            fechaEmision:comprobante.fechaEmision
+                        }));
                         tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
                         tempInfoAdicionalDocumento.push(infoAdicionalDocumento)
                     })
@@ -1121,8 +1125,11 @@
 
                 if ($scope.docOrigen.codDoc === DOC_TYPE.PR) {
                     await proformaSvc.getId(item.idDocumento).then(response => {
-                        let { items } = response;
-                        item.subGridOptions.data = items;
+                        let { items, comprobante } = response;
+                        item.subGridOptions.data = items.map(itemDetalle => ({
+                            ...itemDetalle,
+                            fechaEmision: comprobante.fechaEmision
+                        }));
                         // tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
                         // tempInfoAdicionalDocumento.push(infoAdicionalDocumento);
                     })
@@ -1285,11 +1292,26 @@
                     aggregationHideLabel: true,
                     footerCellFilter: `number:${$scope.decimal.nroTotalDetalle}`
                 },
+                // {
+                //     name: 'bodega',
+                //     field: 'idBodega',
+                //     enableCellEdit: true,
+                //     allowCellFocus: true,
+                //     enableCellEditOnFocus: true,
+                //     editableCellTemplate: 'ui-grid/dropdownEditor',
+                //     cellFilter: 'cellFilterBodega:this',
+                //     editDropdownValueLabel: 'descripcion',
+                //     editDropdownIdLabel: 'idBodega',
+                //     type: 'number',
+                //     width: '11%',
+                //     minWidth: '100'
+                // },
                 ]
             }
         }
 
 
+        //GridOptions Documento Aprobación 
         $scope.columnDefsInvoice = function () {
             let defaultPermission = Object.freeze({
                 tarifa: true,
@@ -1631,8 +1653,7 @@
                     $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                 } else {
                     $scope.data.fechaEmision = new Date();
-                }
-
+                } 
 
                 let { isConfirmed } = await Swal.fire({
                     //title: 'Are you sure?',
@@ -2003,9 +2024,9 @@
 
     app.controller('ModalAprobDocEditarCtrl', ModalAprobDocEditarCtrl);
 
-    ModalAprobDocEditarCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'params']
+    ModalAprobDocEditarCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'articuloService', 'params']
 
-    function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, params) {
+    function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
 
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
@@ -2071,9 +2092,181 @@
                     rowEntity[colDef.field] = 1;
                 }
 
+                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
+                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
+
+                //Verificacion del stock
+                if (["idMedida", "cantidad"].includes(colDef.field)) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                //     return
+                // }
+                if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+
                 $scope.setCalculoTotales(colDef.field, rowEntity, oldValue);
 
             })
+        }
+
+        /**
+         * Combina elementos en base a propiedades específicas del objeto rowEntity.
+         * @param {*} items - Conjunto de elementos a fusionar.
+         * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
+         * @returns {*} - Objeto resultante de la fusión.
+         */
+        function mergeItem(items, rowEntity) {
+            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
+            let foundItemByArticuloAndBodega = items.filter(item => (
+                item.idArticulo === rowEntity.idArticulo &&
+                item.idBodega === rowEntity.idBodega
+            ))
+
+            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
+                let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+                if (dataMedidaFraccionado) {
+                    let conversionFraccionadaSum = item.cantidad * dataMedida.conversion;
+                    total.totalCantidadFraccionada += conversionFraccionadaSum;
+                }
+                if (dataMedidaPrincipal) {
+                    let conversionPrincipalSum = item.cantidad * dataMedida.conversion;
+                    total.totalCantidadPrincipal += conversionPrincipalSum;
+                }
+                return total;
+            }, {
+                totalCantidadFraccionada: 0,
+                totalCantidadPrincipal: 0,
+            });
+
+            // let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
+            //     let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+            //     if (dataMedida) {
+            //         let conversionSum = item.cantidad * dataMedida.conversion;
+            //         total += conversionSum;
+            //     }
+            //     return total;
+            // }, 0)
+
+            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
+                itemPrevious.cantidad += itemCurrent.cantidad;
+                return itemPrevious;
+            }, {
+                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
+                ...rowEntity,
+                cantidad: 0,
+            });
+
+            // Devuelve el objeto resultante de la fusión. 
+            return {
+                idBodega: dataItemMerge.idBodega,
+                cantidad: dataItemMerge.cantidad,
+                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
+                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+            };
+        }
+
+        function getCantidadStock(rowEntity) {
+            try {
+                let fechaEmisionValidate = $scope.data.fechaEmision;
+                let cantidadStock = rowEntity.cantidadStock;
+
+                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+                )
+
+                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                        return 0;
+                    }
+                }
+
+                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                return resultCantStock;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        /**
+         * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
+         * @param {string} field - Campo modificado.
+         * @param {*} rowEntity - Objeto de fila actual.
+         * @param {*} oldValue - Valor anterior del campo modificado.
+         */
+
+        function checkNotificationStock(field, rowEntity, oldValue) {
+            try {
+
+                // Si la fila no lleva inventario, realiza cálculos totales y termina la función.
+                if (!rowEntity.llevaInventario) {
+                    $scope.setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
+
+                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                let rowItemClone = structuredClone(rowEntity);
+                let gridOptionsClone = structuredClone($scope.gridOptionsDetalle.data);
+
+                // Realiza la fusión de elementos en la lista de artículos clonada.
+                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+
+                // Si la cantidad no ha cambiado, no realizar más acciones.
+                if (dataItemMerge.cantidad == oldValue) return;
+
+                showLoader();
+
+                // Llama a un servicio para verificar la notificación de stock.
+                let cantidadStock = getCantidadStock(dataItemMerge);
+                if (cantidadStock === 0) return
+
+                articuloSvc.checkNotificationStock({
+                    idArticulo: rowEntity.idArticulo,
+                    cantidad: cantidadStock,
+                    idBodega: rowEntity.idBodega,
+                    idMedida: rowEntity.idMedida
+                }).then(async responseApi => {
+                    hideLoader();
+                    let { code, message, titleSms } = responseApi;
+                    if (code === "1") {
+
+                        $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        return
+                    }
+
+                    let { isConfirmed } = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    })
+
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            rowEntity[field] = oldValue;
+                            $scope.setCalculoTotales(field, rowEntity, oldValue);
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                            $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        }
+                    }
+
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
+
+            } catch (error) {
+                hideLoader();
+                console.log(error);
+            }
         }
 
 
@@ -2409,12 +2602,21 @@
 
                 let index = 0, entity = {};
 
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptionsDetalle.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
+                if (itemsDuplicated.length > 1) {
+                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                    return
+                }
+
                 let findIndexById = $scope.gridOptionsDetalle.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
                 if (findIndexById === -1) {
                     $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
-                    $scope.indexRowDetalle = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
-                    index = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
+                    $scope.indexRowDetalle = $scope.gridOptionsDetalle.data.length - 1;
+                    index = $scope.gridOptionsDetalle.data.length - 1;
                     entity = $scope.gridOptionsDetalle.data[index];
                 } else {
                     index = findIndexById;
@@ -2651,17 +2853,21 @@
                         totalSinImpuestos: $scope.data.subTotalSinImpuestos,
                         totalConImpuestos: $scope.data.total,
                         importeTotal: $scope.data.total,
-                        fechaEmision: fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD h:mm A"),
+                        fechaEmision: fS.formatDateTimeZone($scope.data.fechaEmision),
                     }
                     //Tarifa Aplicada al Documento
                     jsonHeader.tarifa = $scope.dataTarifaImpuesto.tarifa;
                     jsonHeader.codigoPorcentaje = $scope.dataTarifaImpuesto.codigoPorcentaje;
+                    let detalles = $scope.gridOptionsDetalle.data.map(item=>({
+                        ...item,
+                        fechaEmision: item.idAprob_Document_Detailt > 0 ? item.fechaEmision : $scope.data.fechaEmision
+                    })) 
 
-                    let detalles = aprobacionDocSvc.detalleMapperTo($scope.gridOptionsDetalle.data, $scope.decimal);
+                    let restultDetalles = aprobacionDocSvc.detalleMapperTo(detalles, $scope.decimal);
 
                     const query = {
                         comprobante: JSON.stringify(jsonHeader),
-                        detalle: JSON.stringify(detalles),
+                        detalle: JSON.stringify(restultDetalles),
                         historialVenta: JSON.stringify($scope.historyDatosAdicionales)
                     }
                     showLoader();
@@ -2697,12 +2903,12 @@
      * ======================MODAL APROBACION DEL DOCUMENTO DESTINO===============
      */
     app.controller('ModalApproveDocCtrl', ModalApproveDocCtrl);
-    ModalApproveDocCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'params']
+    ModalApproveDocCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'articuloService', 'params']
 
-    function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, params) {
+    function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
-
+        
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
 
@@ -2764,10 +2970,183 @@
                     rowEntity[colDef.field] = 1;
                 }
 
+                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
+                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
+
+                //Verificacion del stock
+                if (["idMedida", "cantidad"].includes(colDef.field)) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+                // if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                //     checkNotificationStock(colDef.field, rowEntity, oldValue);
+                //     return
+                // }
+                if (colDef.field === 'idBodega' && rowEntity.idBodega !== oldValue) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+
                 $scope.setCalculoTotales(colDef.field, rowEntity, oldValue);
 
             })
         }
+
+        /**
+        * Combina elementos en base a propiedades específicas del objeto rowEntity.
+        * @param {*} items - Conjunto de elementos a fusionar.
+        * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
+        * @returns {*} - Objeto resultante de la fusión.
+        */
+        function mergeItem(items, rowEntity) {
+            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
+            let foundItemByArticuloAndBodega = items.filter(item => (
+                item.idArticulo === rowEntity.idArticulo &&
+                item.idBodega === rowEntity.idBodega
+            ))
+
+            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
+                let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+                if (dataMedidaFraccionado) {
+                    let conversionFraccionadaSum = item.cantidad * dataMedidaFraccionado.conversion;
+                    total.totalCantidadFraccionada += conversionFraccionadaSum;
+                }
+                if (dataMedidaPrincipal) {
+                    let conversionPrincipalSum = item.cantidad * dataMedidaPrincipal.conversion;
+                    total.totalCantidadPrincipal += conversionPrincipalSum;
+                }
+                return total;
+            }, {
+                totalCantidadFraccionada: 0,
+                totalCantidadPrincipal: 0,
+            });
+
+            // let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
+            //     let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+            //     if (dataMedida) {
+            //         let conversionSum = item.cantidad * dataMedida.conversion;
+            //         total += conversionSum;
+            //     }
+            //     return total;
+            // }, 0)
+
+            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
+                itemPrevious.cantidad += itemCurrent.cantidad;
+                return itemPrevious;
+            }, {
+                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
+                ...rowEntity,
+                cantidad: 0,
+            });
+
+            // Devuelve el objeto resultante de la fusión. 
+            return {
+                idBodega: dataItemMerge.idBodega,
+                cantidad: dataItemMerge.cantidad,
+                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
+                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+            };
+        }
+
+        function getCantidadStock(rowEntity) {
+            try {
+                let fechaEmisionValidate = $scope.data.fechaEmision;
+                let cantidadStock = rowEntity.cantidadStock;
+
+                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+                )
+
+                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                        return 0;
+                    }
+                }
+
+                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                return resultCantStock;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        /**
+         * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
+         * @param {string} field - Campo modificado.
+         * @param {*} rowEntity - Objeto de fila actual.
+         * @param {*} oldValue - Valor anterior del campo modificado.
+         */
+
+        function checkNotificationStock(field, rowEntity, oldValue) {
+            try {
+
+                // Si la fila no lleva inventario, realiza cálculos totales y termina la función.
+                if (!rowEntity.llevaInventario) {
+                    $scope.setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
+
+                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                let rowItemClone = structuredClone(rowEntity);
+                let gridOptionsClone = structuredClone($scope.gridOptionsDetalle.data);
+
+                // Realiza la fusión de elementos en la lista de artículos clonada.
+                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+
+                // Si la cantidad no ha cambiado, no realizar más acciones.
+                if (dataItemMerge.cantidad == oldValue) return;
+
+                showLoader();
+
+                // Llama a un servicio para verificar la notificación de stock.
+                let cantidadStock = getCantidadStock(dataItemMerge);
+                if (cantidadStock === 0) return
+
+                articuloSvc.checkNotificationStock({
+                    idArticulo: rowEntity.idArticulo,
+                    cantidad: cantidadStock,
+                    idBodega: rowEntity.idBodega,
+                    idMedida: rowEntity.idMedida
+                }).then(async responseApi => {
+                    hideLoader();
+                    let { code, message, titleSms } = responseApi;
+                    if (code === "1") {
+
+                        $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        return
+                    }
+
+                    let { isConfirmed } = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    })
+
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            rowEntity[field] = oldValue;
+                            $scope.setCalculoTotales(field, rowEntity, oldValue);
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                            $scope.setCalculoTotales(field, rowEntity, oldValue);
+                        }
+                    }
+
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
+
+            } catch (error) {
+                hideLoader();
+                console.log(error);
+            }
+        }
+
 
 
         $scope.initiload = async function () {
@@ -2783,6 +3162,7 @@
                     permisoVenta,
                     decimal,
                 } = mainDataForm;
+                console.log(detalles)
 
                 /**
                  * Establecimiento - Impuesto Tarifa 
@@ -3221,11 +3601,20 @@
 
                 let index = 0, entity = {};
 
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptionsDetalle.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
+                if (itemsDuplicated.length > 1) {
+                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                    return
+                }
+
                 let findIndexById = $scope.gridOptionsDetalle.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
                 if (findIndexById === -1) {
                     $scope.gridOptionsDetalle.data.push(aprobacionDocSvc.addRow());
-                    index = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
+                    index = $scope.gridOptionsDetalle.data.length - 1;
                     entity = $scope.gridOptionsDetalle.data[index];
                 } else {
                     index = findIndexById;
@@ -3533,15 +3922,17 @@
                     $scope.data.idUsuario = 0;
                     //Documento Destino Factuta
                     if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
+                        let detalles = checkStockDetalle($scope.gridOptionsDetalle.data)
                         let query = facturaSvc.queryMapper({
                             data: $scope.data,
                             cliente: {
                                 idCliente: $scope.cliente.idCliente
                             },
-                            detalles: $scope.gridOptionsDetalle.data,
+                            detalles,
                             itemsDeleted: [],
                             infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                            historyDatosAdicionales: $scope.historyDatosAdicionales
+                            historyDatosAdicionales: $scope.historyDatosAdicionales,
+                            fromAprobacion: true
                         })
 
                         facturaSvc.save(query).then(response => {
@@ -3595,6 +3986,33 @@
             }
         }
 
+
+        function checkStockDetalle(){
+            let fechaEmisionAprobacion = $scope.data.fechaEmision;//fecha emision de aprobacion documento 
+
+            let resultsItem = $scope.gridOptionsDetalle.data.map(item => {
+                let cantidadStock = 0;
+                let cantidadTransaccion = item.cantidad * item.conversion;
+
+                let fechaEmisionDocumento = item.idAprob_Document_Detailt > 0 ? item.fechaEmision : $scope.data.fechaEmision; //Fecha Emision del Doc. (Proforma, Nota Entrega)
+                
+                let dataConsolidacion = item.consolidacionesFecha.find(
+                    consolidacionFecha => consolidacionFecha.idBodega === item.idBodega
+                )
+
+                if (dataConsolidacion) {
+                    if (fechaEmisionDocumento < dataConsolidacion.fechaConsolidacion) {
+                        if (fechaEmisionAprobacion > dataConsolidacion.fechaConsolidacion) {
+                            cantidadStock = cantidadTransaccion < 0 ? cantidadTransaccion : -cantidadTransaccion;
+                        }
+                    }
+                }
+                item.cantidadStock = cantidadStock;
+                item.cantidadTransaccion = cantidadTransaccion;
+                return item;
+            })
+            return resultsItem;
+        }
 
 
         $scope.closeModal = function () {

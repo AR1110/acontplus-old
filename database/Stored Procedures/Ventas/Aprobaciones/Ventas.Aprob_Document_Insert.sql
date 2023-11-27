@@ -44,7 +44,7 @@ BEGIN
 	DECLARE @idEstadoDocumento INT
 	DECLARE @codigoPorcentaje INT = 2
 
-    DECLARE @fechaEmision DATETIME
+    DECLARE @fechaEmision DATETIME2
 	DECLARE @identificacionComprador VARCHAR(20)
     DECLARE @codDoc VARCHAR(5) = '01'
     DECLARE @estab VARCHAR(5)
@@ -58,7 +58,7 @@ BEGIN
 	DECLARE @tbComprobante  AS TABLE (
 		 idCliente INT NOT NULL
 		,idPuntoEmision INT NOT NULL
-		,fechaEmision VARCHAR(300)
+		,fechaEmision DATETIME2 NOT NULL
 		,codDoc VARCHAR(5) NOT NULL
 		,totalSinImpuestos NUMERIC(18,5) NOT NULL
 		,totalDescuento NUMERIC(18,5) NOT NULL
@@ -86,6 +86,7 @@ BEGIN
 		,codigoPorcentaje INT NOT NULL
 		,tarifa NUMERIC(18,5) NOT NULL
 		,baseImponible NUMERIC(18,5) NOT NULL
+        ,fechaEmision DATETIME2 NOT NULL
 	)
 
 	DECLARE @tbHistorial AS TABLE (
@@ -102,10 +103,8 @@ BEGIN
 		idInfoAdicional INT UNIQUE NOT NULL
 	)
 
-	--======================Fecha Emision===============================
-
 	BEGIN TRY 
-		
+
 		INSERT INTO @tbComprobante
 		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen, docDestino, observacion)
 		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen, docDestino, observacion
@@ -113,7 +112,7 @@ BEGIN
 		WITH (
 				idCliente                   INT '$.idCliente' 
 			   ,idPuntoEmision              INT '$.idPuntoEmision' 
-			   ,fechaEmision       VARCHAR(300) '$.fechaEmision'
+			   ,fechaEmision          DATETIME2 '$.fechaEmision'
 			   ,codDoc               VARCHAR(5) '$.codDoc'
 			   ,totalSinImpuestos NUMERIC(18,5) '$.subTotalSinImpuestos' 
 			   ,totalDescuento    NUMERIC(18,5) '$.totalDescuento'
@@ -126,9 +125,10 @@ BEGIN
 			   ,observacion        VARCHAR(300) '$.observacion'
 		     )
 
+
 		INSERT INTO @tbDetalle 
-			  (orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,baseImponible)
-		SELECT orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,baseImponible
+			  (orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,baseImponible,fechaEmision)
+		SELECT orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,baseImponible,fechaEmision
 		FROM OPENJSON(@detalle)
 		WITH (
 				orderIndex                       INT '$.orderIndex',
@@ -145,6 +145,7 @@ BEGIN
 		       ,codigoPorcentaje                 INT '$.codigoPorcentaje'
 		       ,tarifa                 NUMERIC(18,5) '$.tarifa'
 		       ,baseImponible          NUMERIC(18,5) '$.baseImponible'
+               ,fechaEmision               DATETIME2 '$.fechaEmision'
 		     )
 
 		INSERT INTO @tbHistorial  (idDocumento,serie) SELECT idDocumento,serie FROM OPENJSON(@historial) WITH (idDocumento INT '$.idDocumento' ,serie VARCHAR(30) '$.serie')
@@ -203,12 +204,6 @@ BEGIN
 				RETURN
 			END 
 
-		IF  CAST(@fechaEmision AS DATE)  >  CAST(dbo.ufnGetDateEcuador() AS DATE)
-			BEGIN 
-				SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
-				RETURN 
-			END
-
 		IF (SELECT COUNT(*) FROM @tbDetalle) = 0 
 			BEGIN
 				SELECT '0'code,'Error en la informacion del detalle' as 'message'
@@ -263,7 +258,7 @@ BEGIN
 				@uniqueId
 			   ,idCliente
 			   ,idPuntoEmision
-			   ,@fechaEmision
+			   ,fechaEmision
 			   ,@identificacionComprador
 			   ,@codDoc
 			   ,@estab
@@ -305,6 +300,7 @@ BEGIN
 			   ,tarifa
 			   ,baseImponible
                ,idArticulo
+               ,fechaEmision
 			)
 			SELECT 
 			    @uniqueId
@@ -324,6 +320,7 @@ BEGIN
 			   ,ti.porcentaje
 			   ,dt.precioTotalSinImpuesto
                ,ar.idArticulo
+               ,dt.fechaEmision
 			FROM @tbDetalle dt
 			LEFT JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
 			LEFT JOIN dbo.TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva  = dt.idTipoIva
@@ -332,7 +329,7 @@ BEGIN
 			ORDER BY dt.orderIndex ASC
 
 			INSERT INTO Ventas.Aprob_Document_Hist(uniqueId,idDocumento,codDocumento,serie)
-			SELECT @uniqueId,idDocumento,@codDoc,serie FROM @tbHistorial 
+			SELECT @uniqueId,idDocumento,@docOrigen,serie FROM @tbHistorial 
 
 			INSERT INTO InfoAdicionalDoc (idComprobante,idTipoDocumento,nombre,valor)
 						          SELECT @idAprobacion,@idTipoDocumento,nombre,valor FROM @tbInfoAdicional
@@ -342,31 +339,10 @@ BEGIN
 
 			IF @docOrigen = 'NE'
 				BEGIN
-
-					DECLARE @idDocumento AS INT
-
-					DECLARE cursor_inventory CURSOR LOCAL FOR
-					SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
-				    WHERE dt.uniqueId = @uniqueId
-
 					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'TRA'
 
 					UPDATE cc SET cc.idEstadoPago = @idEstadoDocumento FROM Contabilidad.CuentaPorCobrar cc WITH(NOLOCK)
 				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = cc.idDocumento AND cc.codDoc = 'NE'
-
-					OPEN cursor_inventory
-
-						FETCH NEXT FROM cursor_inventory INTO @idDocumento
-
-						WHILE @@FETCH_STATUS = 0
-							BEGIN
-								--tipo transaccion  salidas
-								--tipo documento  NotaEntrega
-								EXEC Inventario.Transaccion_Update 'S','NE',@idDocumento,2
-								FETCH NEXT FROM cursor_inventory INTO @idDocumento
-							END
-					CLOSE cursor_inventory
-					DEALLOCATE cursor_inventory 
 
 				END 
 

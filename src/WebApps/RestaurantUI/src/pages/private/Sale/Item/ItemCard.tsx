@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import { Badge, Box, CardActionArea, Divider } from '@mui/material';
 import brand_img from '/assets/images/imgProductDefault.png';
 
-import { ItemReadDto, Measure, ProductPVPReadDto } from '@/core/models';
+import { ItemReadDto } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
 import { productService } from '@/core/services';
 import { PricingCalculateUtility, RoundNumber } from '@/core/utilities';

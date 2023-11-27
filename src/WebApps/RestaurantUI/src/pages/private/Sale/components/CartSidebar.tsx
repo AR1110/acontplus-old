@@ -81,8 +81,7 @@ function CartSidebar() {
                                     select
                                     label="Medida"
                                     value={data.measureId}
-                                    fullWidth
-                                    size='small'
+                                    fullWidth 
                                     onChange={(e) => {
                                         const measureId = Number(e.target.value);
                                         const dataMeasure = data.measures.find(m => (m.measureId === measureId));
@@ -115,7 +114,7 @@ function CartSidebar() {
                         {
                             pvps && pvps.length > 0 && (
                                 <TextField fullWidth
-                                    size='small'
+                                    
                                     id="pvps"
                                     name="pvps"
                                     value={data.feeId}

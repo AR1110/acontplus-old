@@ -38,9 +38,13 @@
 
         $scope.btnEditDisabled = false;
         $scope.dataSearch = {
+            pageSize: 25,
             pageIndex: 1,
-            pageSize: 1000
+            maxSize: 5,
+            totalRecords: 0,
+            ckFecha: true
         }
+        $scope.recordsQuantity = [5, 25, 50, 100]
         $scope.getConsolidaciones = async () => {
             try {
                 $scope.consolidaciones = []
@@ -48,13 +52,23 @@
                 $scope.dataSearch.tipo = 2;
 
                 showLoader();
-                consolidacionInvSvc.get($scope.dataSearch).then(response => {
+                let params = {
+                    tipo: 2,
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
+                    ckFecha: $scope.dataSearch.ckFecha,
+                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                }
+                consolidacionInvSvc.get(params).then(response => { 
                     $scope.consolidaciones = response;
+                    $scope.dataSearch.totalRecords = $scope.consolidaciones.length > 0 ? response[0].totalRecords : 0;
                     $scope.cloneConsolidaciones = JSON.parse(JSON.stringify($scope.consolidaciones))
                     let total = $scope.consolidaciones.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
                     $scope.total = fS.roundNumber(total, 5);
                 })
                     .catch(error => {
+                        $scope.dataSearch.totalRecords  = 0;
                         console.log(error)
                     })
                     .finally(() => hideLoader());
@@ -118,6 +132,21 @@
             // })
         }
         $scope.initiload();
+
+        $scope.resultRangeFilter = function (item) {
+            $scope.dataSearch.fechaInicio = item.startDate,
+                $scope.dataSearch.fechaFin = item.endDate
+            $scope.getConsolidaciones();
+        }
+
+        $scope.pagechanged = function () {
+            $scope.getConsolidaciones();
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getConsolidaciones();
+        };
 
         $scope.getListaFilter = () => {
             let consolidaciones = JSON.parse(JSON.stringify($scope.cloneConsolidaciones))
