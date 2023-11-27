@@ -231,6 +231,8 @@ BEGIN
             SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
 
             SELECT d.estab+'-'+d.ptoEmi+'-'+Helper.F_Auto_Sequential(d.secuencial) as serieComprobante
+                  ,e.nombreComercial
+                  ,d.ptoEmi
 	              ,d.identificacionComprador
 	              ,d.codDoc
 	              ,d.docOrigen
@@ -243,6 +245,8 @@ BEGIN
 	              ,propina
 	              ,importeTotal	   
              FROM Ventas.Aprob_Document d WITH (NOLOCK)
+             INNER JOIN dbo.PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = d.idPuntoEmision 
+             INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON e.codEstab = pe.codEstab
              WHERE d.idAprob_Document = @id
 
              SELECT cl.idCliente
@@ -264,6 +268,7 @@ BEGIN
                    ,ti.descripcion as tipoIva
                    ,ta.descripcion as tarifa
                    ,dt.precioUnitario
+                   ,dt.descuento
                    ,dt.precioTotalSinImpuesto
                    ,bo.descripcion as bodega
                    ,dt.cantidad * dt.descuento                         as totalDescuento
