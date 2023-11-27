@@ -164,8 +164,7 @@ export default function OrderTable() {
                                                             <Button variant="contained" color="success"
                                                                 aria-label="Editar"
                                                                 onClick={() => handleEdit(order.orderId)}
-                                                            >
-                                                                {JSON.stringify(order)}
+                                                            > 
                                                                 <EditIcon />
                                                             </Button>
                                                         </Tooltip>
