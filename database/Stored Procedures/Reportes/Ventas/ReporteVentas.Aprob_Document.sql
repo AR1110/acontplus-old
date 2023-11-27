@@ -125,7 +125,7 @@ BEGIN
         codigoAutorizacion = ad.claveAcceso,
 		ambiente = CASE WHEN ad.ambiente = 1 THEN 'PRUEBA' ELSE 'PRODUCCIÓN' END,
 		emision  = CASE WHEN ad.tipoEmision = 1 THEN 'NORMAL' ELSE '' END,
-		fechaEmision = dbo.AFTConvertDate(ad.fechaEmision),
+		fechaEmision = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, 'dd/MM/yyyy')),   -- dbo.AFTConvertDate(ad.fechaEmision),
 		fechaAutorizacion = '',
 		identificacionComprador = ad.identificacionComprador,
 		razonSocialComprador = cl.nombreFiscal,
