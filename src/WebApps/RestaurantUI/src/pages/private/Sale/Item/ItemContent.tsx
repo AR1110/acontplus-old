@@ -22,7 +22,7 @@ const ItemContent = ({ loading }: ItemContentProps) => {
   return (
     <Box sx={{ pt: 2 }}>
       <Grid container
-        spacing={{ xs: 1, md: 1 }}
+        
         columns={{ xs: 12, sm: 12, md: 12 }}
         sx={{
           pr: 1,

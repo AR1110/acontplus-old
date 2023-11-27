@@ -84,7 +84,7 @@
 
         $scope.initiload = function () {
             try {
-
+                showLoader();
                 transBogegaSvc.getDataFilter().then(response => {
                     $scope.establecimientos = response.estabs;
                     console.log($scope.establecimientos)
@@ -93,7 +93,7 @@
                         $scope.dataSearch.codEstab = dataEstab.codEstab;
                         $scope.getTransferenciasBodega();
                     }
-                })
+                }).finally(()=>hideLoader())
                 transBogegaSvc.getDataForm().then(response => {
                     mainDataForm = response;
                     console.log(response)

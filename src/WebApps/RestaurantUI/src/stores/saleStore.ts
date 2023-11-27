@@ -278,6 +278,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 cantidad: getItemQty(dataOrderItem.productId),
                 idBodega: order.bodegaId
             }).then(async response => {
+                hideLoader();
                 const { code, message, titleSms } = response;
                 if (code === "1") {
                     setQty();
@@ -297,7 +298,11 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                         setQty();
                     }
                 }
-            }).finally(() => hideLoader())
+            })
+            .catch(error=>{
+                console.log(error)
+            })
+            .finally(() => hideLoader())
         }
         else {
             setQty();

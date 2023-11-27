@@ -190,6 +190,10 @@
           <DataField>porcentajeRetIva</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="idDocumento">
+          <DataField>idDocumento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>GestionReporte</rd:DataSetName>
@@ -2846,7 +2850,7 @@
                       <Group Name="nroDoc">
                         <GroupExpressions>
                           <GroupExpression>=Fields!nroDoc.Value</GroupExpression>
-                          <GroupExpression>=Fields!nroAutorizacion.Value</GroupExpression>
+                          <GroupExpression>=Fields!idDocumento.Value</GroupExpression>
                         </GroupExpressions>
                       </Group>
                       <TablixHeader>
@@ -2902,6 +2906,7 @@
                               <PaddingBottom>2pt</PaddingBottom>
                             </Style>
                           </Textbox>
+                          <rd:Selected>true</rd:Selected>
                         </CellContents>
                       </TablixHeader>
                       <TablixMembers>

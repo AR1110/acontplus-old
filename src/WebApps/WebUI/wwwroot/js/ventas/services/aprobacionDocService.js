@@ -220,7 +220,7 @@
 
                     let items = detalleRepository.map(itemPrincipal => {
 
-                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
+                        const { fraccionado, principal, consolidacion, fechaEmision, ...restItem } = itemPrincipal;
 
                         // Medidas del artículo fraccionado del principal
                         let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
@@ -321,6 +321,7 @@
                             }))
                         }
 
+                        restItem.fechaEmision = fechaEmision && fS.formatDate(fechaEmision) || null
                         return restItem;
                     });
 
@@ -444,6 +445,7 @@
                     codigoPorcentaje: item.codigoPorcentaje,
                     tarifa: item.tarifa,
                     idBodega: item.idBodega,
+                    fechaEmision: fS.formatDateTimeZone(item.fechaEmision)
                 }
                 tempDetail.push(obj);
             }

@@ -2133,6 +2133,22 @@
                 // }
             }
 
+            if (isRegister()) {
+                let fechaEmisionModificada = $scope.data.fechaEmision;
+                let fechaActual = new Date();
+                if (fechaEmisionModificada > fechaActual) {
+                    fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
+                    return
+                }
+                if (fS.getDate(fechaEmisionModificada) == fS.getDate(fechaActual)) {
+                    $scope.data.fechaEmision = fechaActual;
+                } else {
+                    if (fechaEmisionModificada < fechaActual) {
+                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
+                    }
+                }
+            } 
+
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
