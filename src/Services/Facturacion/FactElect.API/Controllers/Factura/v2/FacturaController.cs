@@ -47,7 +47,7 @@ namespace FactElect.API.Controllers.Factura.v2
             return Ok(_response);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
             var _response = new GenericResponse();
