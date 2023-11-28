@@ -184,10 +184,10 @@ export default function OrderTable() {
                                                 </Tooltip>
 
                                                 {
-                                                    ((!(order.divided) || order.divided) && !(order.finished)) && (
+                                                    ((!(order.divided)) && !(order.finished)) && (
                                                         <Tooltip describeChild title="Dividir la cuenta">
                                                             <Button variant="contained" size="large" color="inherit"
-                                                                aria-label="Impresión"
+                                                                aria-label="Dividir"
                                                                 onClick={() => dividerCuenta(order.orderId)}
                                                             >
                                                                 <AccountTreeIcon />
@@ -195,14 +195,19 @@ export default function OrderTable() {
                                                         </Tooltip>
                                                     )
                                                 }
-                                                <Tooltip describeChild title="Anular">
-                                                    <Button variant="contained" color="error"
-                                                        aria-label="Anular"
-                                                        onClick={() => askToDelete(order.orderId)}
-                                                    >
-                                                        <ClearIcon />
-                                                    </Button>
-                                                </Tooltip>
+                                                {
+                                                    (order.finished || order.divided) ? '' : (
+                                                        <Tooltip describeChild title="Anular">
+                                                            <Button variant="contained" color="error"
+                                                                aria-label="Anular"
+                                                                onClick={() => askToDelete(order.orderId)}
+                                                            >
+                                                                <ClearIcon />
+                                                            </Button>
+                                                        </Tooltip>
+                                                    ) 
+                                                }
+                                               
                                             </Stack>
                                         </TableCell>
                                         <TableCell align="center"> {order.serie}</TableCell>
