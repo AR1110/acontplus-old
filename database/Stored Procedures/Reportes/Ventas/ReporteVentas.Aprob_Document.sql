@@ -1,7 +1,7 @@
 USE AcontPlus
 GO 
-
--- exec ReporteVentas.Aprob_Document '{"id":664,"codEstab":"ESTAB-000000209","codDoc":"01","codigo":"RAC","format":"pdf"}'
+ 
+-- exec ReporteVentas.Aprob_Document '{"id":1164,"codEstab":"ESTAB-000000002","codDoc":"NE"}'
 CREATE OR ALTER PROCEDURE ReporteVentas.Aprob_Document @json VARCHAR(MAX)
 AS
 BEGIN
@@ -125,7 +125,7 @@ BEGIN
         codigoAutorizacion = ad.claveAcceso,
 		ambiente = CASE WHEN ad.ambiente = 1 THEN 'PRUEBA' ELSE 'PRODUCCIÓN' END,
 		emision  = CASE WHEN ad.tipoEmision = 1 THEN 'NORMAL' ELSE '' END,
-		fechaEmision = dbo.AFTConvertDate(ad.fechaEmision),
+		fechaEmision = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, 'dd/MM/yyyy')),   -- dbo.AFTConvertDate(ad.fechaEmision),
 		fechaAutorizacion = '',
 		identificacionComprador = ad.identificacionComprador,
 		razonSocialComprador = cl.nombreFiscal,
@@ -194,7 +194,7 @@ BEGIN
 
 	INSERT INTO @tbDetalle (codigo, codigoPrincipal, codigoAuxiliar, descripcion, medida, cantidad, precioUnitario, descuento, precioSinImpuesto)
 	SELECT
-		codigo            = ad_d.codArticulo,
+		codigo            = ad_d.codigoPrincipal,
 		codigoPrincipal   = ad_d.codigoPrincipal,
 		codigoAuxiliar    = ad_d.codigoAuxiliar,
 		descripcion       = ad_d.descripcion,
@@ -216,7 +216,11 @@ BEGIN
 
 	IF @docDestino='01'
 		BEGIN
-		    SELECT * FROM @tbComprobante
+		    SELECT ruc, razonSocial, nombreComercial, telefonoEntidad, emailEntidad, dirMatriz, contribuyenteEspecial,
+		obligadoContabilidad, contribuyenteRimpe, agenteRetencion, nroDoc, claveAcceso, codigoAutorizacion, ambiente, emision, fechaEmision,
+		fechaAutorizacion, identificacionComprador, razonSocialComprador, direccionComprador, telefonoComprador, emailComprador,
+		porcentajeIva, totalSinImpuestos, subTotalIva12, subTotalNetoIva, subtotalIva0, subtotalNoObjetoIva, subtotalExcentoIva,
+		totalDescuento, tipoIva, valorIva, irbpnr, propina, importeTotal, observacion FROM @tbComprobante
             SELECT * FROM @tbDetalle
             SELECT  descripcion = fp.descripcion
 								,valor = CAST(@importeTotal as numeric(15,2))
@@ -227,7 +231,7 @@ BEGIN
 
 	IF @docDestino='NE'
 		BEGIN 
-			SELECT c.*, 
+			SELECT  
 				tipoDoc           = 'NOTA DE ENTREGA POR APROBAR',
 				direccion         = c.dirMatriz,
 				telefono          = telefonoEntidad,
@@ -242,7 +246,15 @@ BEGIN
 				totalDescuentos = c.totalDescuento, 
 				ice = 0, 
 				iva12 = c.valorIva,
-				valorTotal = c.importeTotal FROM @tbComprobante c
+				valorTotal = c.importeTotal,
+                
+                ruc, razonSocial, nombreComercial, telefonoEntidad, emailEntidad, dirMatriz, contribuyenteEspecial,
+		        obligadoContabilidad, contribuyenteRimpe, agenteRetencion, nroDoc, ambiente, emision, fechaEmision,
+		        fechaAutorizacion, identificacionComprador, razonSocialComprador, direccionComprador, telefonoComprador, emailComprador,
+		        porcentajeIva, totalSinImpuestos, subTotalIva12, subTotalNetoIva, subtotalIva0, subtotalNoObjetoIva, subtotalExcentoIva,
+		        totalDescuento, tipoIva, valorIva, irbpnr, propina, importeTotal, observacion
+
+                FROM @tbComprobante c
 			SELECT valorDescuento = dt.descuento, precioTotal = dt.precioSinImpuesto, dt.* FROM @tbDetalle dt
 			SELECT * FROM @tbInfoAdicional
 		END 

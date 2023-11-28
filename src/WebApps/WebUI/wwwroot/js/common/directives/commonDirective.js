@@ -638,7 +638,7 @@
                                 return
                             }
 
-                            console.log('response finish')
+                            
                             //retornamos datos al controlador principal donde llamamos la directiva
                             scope.functionTrigger({
                                 result: {
@@ -1301,8 +1301,7 @@
                         width: auto;
                     }
                 `;
-
-                console.log('rendered')
+                
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
@@ -1370,8 +1369,7 @@
                         width: auto;
                     }
                 `;
-
-                console.log('rendered')
+                
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
@@ -1562,7 +1560,7 @@
                         articuloService.getArticlesFractionalInfo(query).then(response => {
                             scope.tarifas = response[0].tarifas;
                             scope.articlesFractionals = response;
-                            console.log(response);
+                            
                         }).catch(error => {
                             console.log(error)
                         })

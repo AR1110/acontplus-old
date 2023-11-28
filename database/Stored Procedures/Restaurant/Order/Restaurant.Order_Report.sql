@@ -41,7 +41,7 @@ BEGIN
 	--Order
 	SELECT o.*
         ,e.nombreComercial tradeName
-        ,ISNULL(t.[Description], '') + ' - ' + CONVERT(VARCHAR, t.NumberTable) tableName
+        ,r.[description] + ' - ' + ISNULL(t.[Description], '') + ' - ' + CONVERT(VARCHAR, t.NumberTable) tableName
         ,ISNULL(c.nombreFiscal, 'Consumidor Final') customer
         ,u.nombreUsuario username
     FROM Restaurant.[Order] o WITH (NOLOCK)
@@ -49,6 +49,7 @@ BEGIN
             LEFT JOIN v_usuario u ON o.UserId = u.idUsuario
             INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON o.EstablecimientoId = e.idEstablecimiento
             LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON o.TableId = t.Id
+            LEFT JOIN Restaurant.[v_room] r ON r.Id = t.RoomId
     WHERE o.Id = @id
 
 	--OrderItems
@@ -60,6 +61,7 @@ BEGIN
         INNER JOIN Sri.Impuesto t WITH(NOLOCK) ON oi.TaxId = t.idImpuesto
         INNER JOIN Sri.TarifaImpuesto ti WITH(NOLOCK) ON t.codigo = ti.codImpuesto AND ti.codigo = '2'
     WHERE oi.OrderId = @id
+        AND oi.Deleted IS NULL
 
 		--RdlcParams
 	SELECT TOP 1 @logoImg = imagen
@@ -71,8 +73,8 @@ BEGIN
                                         ORDER BY idEstab_Logo DESC
 
     INSERT INTO @tblParams(paramName, isBase64, paramValue)
-    VALUES('logo', 1, @logoImg),
-        ('mimeType', 0, CONVERT(VARBINARY, @mimeType))
+    VALUES('logo', 1, ISNULL(@logoImg, CONVERT(VARBINARY(MAX), NEWID()))),
+        ('mimeType', 0, CONVERT(VARBINARY, ISNULL(@mimeType, 'none')))
 
     SELECT * FROM @tblParams
 	

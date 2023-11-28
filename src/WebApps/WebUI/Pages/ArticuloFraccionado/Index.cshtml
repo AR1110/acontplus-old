@@ -39,7 +39,7 @@
                 <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                     <form class="form-material">
                         <div class="input-group">
-                            <input type="text" class="form-control" ng-model="buscarText" placeholder="Buscar Articulo" />
+                            <input type="text" class="form-control" ng-model="dataSearch.textSearch" ng-keyup="onChangeTextSearch()" placeholder="Buscar Articulo" />
                             <div class="input-group-append">
                                 <button class="btn btn-secondary btn-sm" ng-click="getAllArticuloFraccionado()">
                                     <i class="fas fa-redo fa-xs"></i>
@@ -65,7 +65,7 @@
                         </tr>
                     </thead>
                     <tbody md-body>
-                        <tr md-row ng-repeat="af in articuloFraccionados | filter: buscarText">
+                        <tr md-row ng-repeat="af in articuloFraccionados">
                             <td md-cell ng-if="accion.editar || accion.eliminar">
                                 <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModal(af)">
                                     <i class="mdi mdi-pencil"></i>

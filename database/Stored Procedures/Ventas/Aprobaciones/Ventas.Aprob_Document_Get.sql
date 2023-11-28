@@ -10,52 +10,38 @@ GO
 -- Create date: 2021-10-06
 -- Description:	SP para listar los clietes
 -- =============================================
---Ventas.Aprob_Document_Get 38,'[]'
-IF OBJECT_ID(N'Ventas.Aprob_Document_Get', N'P') IS NOT NULL
-DROP PROCEDURE Ventas.Aprob_Document_Get 
-GO
-CREATE PROCEDURE Ventas.Aprob_Document_Get @idUsuarioRol INT, @json NVARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Ventas.Aprob_Document_Get @idUsuarioRol INT, @json NVARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @idEntidad INT 
-	DECLARE @totalRecords INT 
-	DECLARE @dataExists CHAR(2)
-	DECLARE @bySearch VARCHAR(MAX)
-
-	DECLARE @tipoFecha VARCHAR(10)
+	DECLARE @idEntidad INT
+    DECLARE @tipo INT
     DECLARE @checkBoxFecha BIT 
-    DECLARE @checkBoxCliente BIT
-    DECLARE @checkBoxEstado BIT 
-    DECLARE @checkBoxUsuario BIT
-    DECLARE @checkBoxDefault BIT
-    DECLARE @codDoc VARCHAR(20)
     DECLARE @codEstab VARCHAR(25) 
     DECLARE @byCliente INT 
     DECLARE @codEstado VARCHAR(5) 
     DECLARE @byUsuario INT 
     DECLARE @dateStart DATETIME 
     DECLARE @dateEnd DATETIME  
+	DECLARE @secuencial VARCHAR(100) 
+    DECLARE @pageSize INT
+    DECLARE @pageIndex INT 
+    DECLARE @id INT
+    DECLARE @uniqueId VARCHAR(500)
 
-	DECLARE @isSearchNroSequential BIT 
-	DECLARE @nroSecuencial VARCHAR(30) 
+	DECLARE @params NVARCHAR(MAX) = '@idEntidad         INT
+									,@codEstab  VARCHAR(25)
+									,@idCliente         INT
+									,@codEstado  VARCHAR(5)
+									,@idUsuario         INT
+									,@dateStart    DATETIME
+									,@dateEnd      DATETIME
+                                    ,@pageSize          INT
+							        ,@pageIndex         INT'
 
-	DECLARE @params NVARCHAR(MAX) = '@idEntidad INT,
-									 @codEstab  VARCHAR(25),
-									 @idCliente INT, 
-									 @codEstado VARCHAR(5),
-									 @idUsuario INT,
-									 @dateStart DATETIME,
-									 @dateEnd   DATETIME,
-									 @typeDate  NVARCHAR(50),
-									 @nroSecuencial VARCHAR(20)'
-
-
-
-	DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 50 
-										 idAprob_Document        = ad.idAprob_Document
+	DECLARE @sql NVARCHAR(MAX) = 'SELECT idAprob_Document        = ad.idAprob_Document
 										,uniqueId                = ad.uniqueId
 										,es.codEstab
 										,ad.docOrigen  
@@ -75,109 +61,240 @@ BEGIN
 										,total                   = ad.importeTotal
 										,codEstado               = ad.codEstado
 										,estado			         = ep.descripcion
-										,colorFila               = CASE ad.codEstado WHEN ''A''    THEN ''table-danger'' 
-																					 WHEN ''APR'' THEN  ''table-success''
+										,colorFila               = CASE ad.codEstado WHEN ''A''   THEN ''table-danger'' 
+																					 WHEN ''APR'' THEN ''table-success''
 																					 ELSE ''''
 																   END 
-								  FROM Ventas.Aprob_Document     ad WITH(NOLOCK) 
-								  INNER JOIN dbo.EstadoPago      ep WITH(NOLOCK) ON ep.codigo         = ad.codEstado
-								  INNER JOIN dbo.Cliente         cl WITH(NOLOCK) ON cl.idCliente      = ad.idCliente
-								  INNER JOIN PuntoEmision        pe WITH(NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
-								  INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.codEstab       = pe.codEstab 
+                                        ,count(*) over() as totalRecords
+								  FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 
+								  INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.codigo         = ad.codEstado
+								  INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ad.idCliente
+								  INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
+								  INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab 
 								  WHERE ad.idEntidad = @idEntidad AND es.codEstab = @codEstab '
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
-	SELECT 
-		 @checkBoxFecha   = checkBoxFecha
-		,@checkBoxCliente = checkBoxCliente
-		,@checkBoxEstado  =  checkBoxEstado
-		,@checkBoxUsuario = checkBoxUsuario
-		,@checkBoxDefault = checkBoxDefault
-		,@codEstab        = codEstab
-		,@byCliente       = byCliente
-		,@codEstado       = byEstado
-		,@byUsuario       = byUsuario
-		,@dateStart       = CONVERT(DATETIME, fechaInicio, 105)
-		,@dateEnd         = CONVERT(DATETIME, fechaFin, 105)
-		,@tipoFecha       = tipoFecha
-		,@isSearchNroSequential = isSearchNroSequential
-		,@nroSecuencial       = LTRIM(TRIM(nroSecuencial))
-	FROM OPENJSON(@json) 
-	WITH(checkBoxFecha   BIT         '$.checkBoxFecha'
-		,checkBoxCliente BIT         '$.checkBoxCliente'
-		,checkBoxEstado  BIT         '$.checkBoxEstado'
-		,checkBoxUsuario BIT         '$.checkBoxUsuario'
-		,checkBoxDefault BIT         '$.checkBoxDefault'
-		,codEstab        VARCHAR(25) '$.codEstab'
-		,byCliente       INT         '$.byCliente'
-		,byEstado        VARCHAR(5)  '$.byEstado'
-		,byUsuario       INT         '$.byUsuario'
-		,fechaInicio     VARCHAR(50) '$.fechaInicio'
-		,fechaFin        VARCHAR(50) '$.fechaFin'
-		,tipoFecha       VARCHAR(50) '$.tipoFecha'
-		,isSearchNroSequential BIT   '$.isSearchNroSequential'
-		,nroSecuencial VARCHAR(20)   '$.nroSecuencial')
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
+    --> Get 
+    IF @tipo = 1
+        BEGIN 
+	        SELECT @checkBoxFecha = checkBoxFecha
+		          ,@codEstab      = codEstab
+		          ,@byCliente     = byCliente
+		          ,@codEstado     = byEstado
+		          ,@byUsuario     = byUsuario
+		          ,@dateStart     = CONVERT(DATETIME, fechaInicio, 105)
+		          ,@dateEnd       = CONVERT(DATETIME, fechaFin, 105)
+		          ,@secuencial    = LTRIM(TRIM(nroSecuencial))
+                  ,@pageIndex     = pageIndex
+                  ,@pageSize      = pageSize
+	        FROM OPENJSON(@json) WITH
+            (    
+                 checkBoxFecha           BIT  
+		        ,codEstab        VARCHAR(25)
+		        ,byCliente               INT 
+		        ,byEstado         VARCHAR(5) 
+		        ,byUsuario               INT
+		        ,fechaInicio     VARCHAR(50)
+		        ,fechaFin        VARCHAR(50)
+		        ,nroSecuencial   VARCHAR(20)
+                ,pageIndex               INT
+			    ,pageSize                INT
+            )
 
-	BEGIN TRY
-		--------------------------------------------BUSQUEDA INDIVIDUAL POR PARAMETRO-------------------------------------------------------------------
-		IF @isSearchNroSequential = 1
-			BEGIN
-				SET @sql = @sql + ' AND ad.secuencial = @nroSecuencial '
-			END 
-		ELSE
-			BEGIN
-				IF @checkBoxCliente = 1
-					BEGIN
-						SET @sql = @sql + ' AND ad.idCliente = @idCliente '
-					END 
+	        IF @secuencial IS NOT NULL
+		        BEGIN
+			        SET @sql = @sql + 'AND ad.secuencial BETWEEN ' + REPLACE(@secuencial,'-',' AND ')
+		        END 
 
-				IF @checkBoxEstado = 1
-					BEGIN
-						 SET @sql = @sql + ' AND ad.codEstado = @codEstado'
-					END
+			IF @byCliente > 0
+				BEGIN
+					SET @sql = @sql + ' AND ad.idCliente = @idCliente '
+				END 
 
+			IF @codEstado IS NOT NULL
+				BEGIN
+						SET @sql = @sql + 'AND ad.codEstado = @codEstado '
+				END
 
-				IF @checkBoxUsuario = 1
-					BEGIN
-						SET @sql = @sql + ' AND ad.idUsuario = @idUsuario '
-					END 
+			IF @byUsuario > 0
+				BEGIN
+					SET @sql = @sql + 'AND ad.idUsuario = @idUsuario '
+				END 
 			
-				IF @checkBoxFecha = 1 
-					BEGIN
-						SET @sql = @sql + ' AND CAST(ad.fechaEmision as date) BETWEEN CAST(@dateStart as date) AND CAST(@dateEnd as date) '
-					END
+			IF @checkBoxFecha = 1 
+				BEGIN
+					SET @sql = @sql + 'AND CAST(ad.fechaEmision as date) BETWEEN CAST(@dateStart as date) AND CAST(@dateEnd as date) '
+				END
 
-				IF @checkBoxDefault = 1
-					BEGIN
-						SET @sql = @sql + ' AND CAST(ad.fechaEmision AS DATE) = CAST(dbo.ufnGetDateEcuador() AS DATE) '
-					END 
-			END
+	        SET @sql= @sql + 'ORDER BY ad.idAprob_Document DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
-		SET @sql= @sql + ' ORDER BY ad.idAprob_Document DESC '
+	        EXEC sp_executesql @sql
+			                  ,@params 
+			                  ,@idEntidad     = @idEntidad
+			                  ,@codEstab      = @codEstab
+			                  ,@idCliente     = @byCliente
+			                  ,@codEstado     = @codEstado 
+			                  ,@idUsuario     = @byUsuario
+			                  ,@dateStart     = @dateStart
+			                  ,@dateEnd       = @dateEnd
+                              ,@pageSize      = @pageSize
+							  ,@pageIndex     = @pageIndex
+            RETURN 
+        END 
+    
+    --> DataForm
+    IF @tipo = 2
+        BEGIN
+                SELECT nroPrecio
+	                  ,nroCantidad
+	                  ,nroIva
+	                  ,nroDescuentoDetalle
+	                  ,nroTotalDetalle
+	                  ,nroTotalSubTotal
+	                  ,nroDescuento
+	                  ,nroIce
+	                  ,importeTotal
+	            FROM Config.v_Sistema_Decimal WITH (NOLOCK)
+                WHERE codTrasaccion = 'V' AND idEntidad = @idEntidad
 
-		EXEC sp_executesql 
-			    @sql
-			    ,@params 
-			    ,@idEntidad    = @idEntidad
-				,@codEstab     = @codEstab
-				,@idCliente    = @byCliente
-				,@codEstado    = @codEstado 
-				,@idUsuario    = @byUsuario
-				,@dateStart    = @dateStart
-				,@dateEnd      = @dateEnd
-				,@typeDate     = @tipoFecha		
-				,@nroSecuencial = @nroSecuencial
-	
-			RETURN 
-		END TRY 
-	
-		BEGIN CATCH 
-			SELECT '0'code,'Error en el procedimiento de listar '+ ERROR_MESSAGE() as 'message','Aprobación Comprobante' as 'titleSms'
-			RETURN 
-		END CATCH
+	            SELECT idTipoIva
+	                  ,descripcion
+	                  ,tarifa = porcentaje
+	                  ,codigoPorcentaje = CAST(codigoPorcentaje as varchar)
+	            FROM dbo.TipoIva WITH (NOLOCK) 
+	            WHERE estado = 1
 
+	            SELECT idTarifa
+	                 ,descripcion
+	                 ,predeterminada
+	                 ,codigo 
+	            FROM Tarifa WITH (NOLOCK) 
+	            WHERE idEntidad = @idEntidad AND estado = 1
+
+	            SELECT idTiempoCredito
+	                  ,descripcion
+	                  ,diasCredito
+	                  ,numeroCuota 
+	            FROM TiempoCredito WITH (NOLOCK) 
+	            WHERE idEntidad = @idEntidad AND gestion = 1 AND estado = 1
+
+                SELECT idEstablecimiento
+                      ,nombreComercial
+                      ,codEstab
+                      ,idPuntoEmision
+                      ,ptoEmi + '-' + estab as ptoEmi
+                      ,defaultEstab
+                      ,defaultPtoEmi 
+                FROM v_PtoEmi_Asign WITH(NOLOCK) 
+                WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+                SELECT idEstablecimiento
+                      ,nombreComercial
+                      ,codEstab
+                      ,idBodega
+                      ,bodega
+                      ,defaultEstab
+                      ,defaultBodega 
+                FROM v_Bodega_Asign WITH(NOLOCK) 
+                WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+                SELECT descripcion = 'IVA '+descripcion , codigo = 'IVA', codigoPorcentaje = codigo, tarifa = porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo = '2' AND estado = 1 ORDER BY codigoPorcentaje DESC
+            RETURN
+        END 
+
+    --> filtros
+    IF @tipo = 3
+        BEGIN
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+            SELECT idEstadoPago, descripcion, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('PE','AC')
+
+            RETURN 
+        END 
+    
+    --> Ver Documento
+    IF @tipo = 4
+        BEGIN
+            
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+
+            SELECT d.estab+'-'+d.ptoEmi+'-'+Helper.F_Auto_Sequential(d.secuencial) as serieComprobante
+                  ,e.nombreComercial
+                  ,d.ptoEmi
+	              ,d.identificacionComprador
+	              ,d.codDoc
+	              ,d.docOrigen
+	              ,d.fechaEmision	 
+	              ,d.observacion
+	              ,CONVERT(VARCHAR(3), d.codigoPorcentaje) as codigoPorcentaje
+	              ,totalSinImpuestos
+	              ,totalDescuento
+	              ,totalConImpuestos
+	              ,propina
+	              ,importeTotal	   
+             FROM Ventas.Aprob_Document d WITH (NOLOCK)
+             INNER JOIN dbo.PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = d.idPuntoEmision 
+             INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON e.codEstab = pe.codEstab
+             WHERE d.idAprob_Document = @id
+
+             SELECT cl.idCliente
+		           ,cl.nombreComercial
+		           ,cl.nombreFiscal
+		           ,cl.numeroIdentificacion
+		           ,ISNULL(cl.direccion,'') as direccion
+		           ,ti.codigoSri            as tipoIdentificacion
+	         FROM Ventas.Aprob_Document        ad
+	         INNER JOIN dbo.Cliente            cl WITH(NOLOCK) ON cl.idCliente            = ad.idCliente
+	          LEFT JOIN dbo.TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+	         WHERE ad.idAprob_Document = @id
+
+             SELECT dt.idAprob_Document_Detailt
+                   ,ar.codigo 
+                   ,dt.descripcion
+                   ,dt.cantidad
+                   ,me.descripcion as medida
+                   ,ti.descripcion as tipoIva
+                   ,ta.descripcion as tarifa
+                   ,dt.precioUnitario
+                   ,dt.descuento
+                   ,dt.precioTotalSinImpuesto
+                   ,bo.descripcion as bodega
+                   ,dt.cantidad * dt.descuento                         as totalDescuento
+                   ,valor = ti.porcentaje
+	               ,codigoTipoIva = ti.codigo
+	               ,CONVERT(VARCHAR(4), dt.codigoPorcentaje)           as codigoPorcentaje
+	               ,dt.tarifa                                          as tarifa
+             FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK) 
+             INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.code_unique       = dt.codArticulo
+             INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.codigo            = dt.codMedida
+             INNER JOIN dbo.TipoIva             ti WITH (NOLOCK) ON ti.codigoPorcentaje  = dt.codigoPorcentaje
+             INNER JOIN dbo.Tarifa              ta WITH (NOLOCK) ON ta.idTarifa          = dt.idTarifa
+             INNER JOIN dbo.Bodega              bo WITH (NOLOCK) ON bo.idBodega          = dt.idBodega
+             WHERE dt.uniqueId = @uniqueId AND dt.estado = 1
+
+             
+	        SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
+			                       WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
+			                       ELSE '' END 
+		          ,serieComprobante = serie
+	        FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
+             RETURN 
+        END 
+
+    SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
+    RETURN
 
 
 END

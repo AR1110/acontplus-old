@@ -14,7 +14,7 @@ import { useMobileDetect } from "@/hooks";
   const [value, setValue] = useState("recents"); 
   const navigate = useNavigate();
   const totalItems = useSaleStore((state) => state.totalItems);
-
+   
   const navigation = useSaleStore(state=>state.navigation);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {

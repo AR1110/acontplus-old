@@ -121,7 +121,7 @@
 
         $scope.searchArticle = async (textSearch) => {
             return articuloSvc.search({
-                textSearch,
+                busqueda: textSearch,
                 condicion: false
             }) || []
 
@@ -137,7 +137,7 @@
             try {
                 let jsonConfig = {}
                 let data = {}
-
+                console.log($scope.gestionSistema)
                 //---------------------------------Configuracion de Ventas---------------------------
                 if ($scope.codConfig === $scope.codigo.CV) {
 

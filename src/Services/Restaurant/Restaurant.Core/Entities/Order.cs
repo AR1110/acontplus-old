@@ -29,6 +29,7 @@ namespace Restaurant.Core.Entities
         public string Obs { get; set; }
         public bool Divided { get; set; }
         public bool Finished { get; set; }
+        public int? TaxPercentId { get; set; }
         public List<OrderItem> OrderItems { get; set; }
     }
 }

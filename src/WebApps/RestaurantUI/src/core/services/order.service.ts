@@ -36,6 +36,19 @@ const orderService = {
             controller
         }
     },
+    // async getDataFilter() {
+    //     const resultAxios = await Http({
+    //         method: 'get',
+    //         url: `${PATHS.PRIVATE}${URL}`,
+    //         data: { 
+    //             json: JSON.stringify({tipo: 4})
+    //          }
+    //     })
+
+    //     const response: ApiResponse = resultAxios.data;
+    //     console.log(response)
+    //     return response;
+    // },
     async post(data: object) {
         const resultAxios = await Http({
             method: 'post',
@@ -48,6 +61,7 @@ const orderService = {
     },
 
     async put(id: number, data: object) {
+        console.log(data)
         const resultAxios = await Http({
             method: 'put',
             url: `${PATHS.PRIVATE}${URL}/${id}`,
@@ -62,6 +76,19 @@ const orderService = {
         const resultAxios = await Http({
             method: 'put',
             url: `${PATHS.PRIVATE}${URL}`,
+            params: {
+                id
+            }
+        })
+
+        const response: ApiResponse = resultAxios.data;
+        return response;
+    },
+
+    async delete(id: number) {
+        const resultAxios = await Http({
+            method: 'delete',
+            url: `${PATHS.PRIVATE}${URL}${id}`,
             params: {
                 id
             }

@@ -1,0 +1,77 @@
+ 
+    <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Detalle Transferencia Bodega</h5>
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body"> 
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="row justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-sm-12">
+                        <div class="form-group">
+                            <label for="">Establecimiento Origen: <span class="text-danger">*</span></label>                        
+                              <input type="text" ng-model="data.establecimientoOrigen" class="form-control" disabled>                                                
+                        </div>                    
+                    </div>
+
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="">Bodega Origen: <span class="text-danger">*</span> </label>
+                               <input type="text" ng-model="data.bodegaOrigen" class="form-control" disabled>     
+                        </div>
+                    </div>
+                </div>
+            </div>       
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="row justify-content-between">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="Establecimiento">Establecimiento Destino: <span class="text-danger">*</span></label>
+                            <input type="text" ng-model="data.establecimientoDestino" class="form-control" disabled>     
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="">Bodega Destino: <span class="text-danger">*</span> </label>
+                            <input type="text" ng-model="data.bodegaDestino" class="form-control" disabled>     
+                        </div> 
+                    </div>
+                </div>             
+            </div>
+        </div> 
+                
+        <div class="row">
+            <div class="col-lg-3 col-md-4 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="">Punto Emision: <span class="text-danger"></span></label>                        
+                     <input type="text" ng-model="data.ptoEmi" class="form-control" disabled>     
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
+                    <input type="date" ng-model="data.fechaEmision" class="form-control border-select" disabled>                        
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-4 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="observación">Observación</label>
+                    <textarea ng-model="data.observacion" touppercase class="form-control border-select" cols="20" rows="2" disabled></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div ui-grid="gridOptions"
+            ui-grid-edit
+            ui-grid-resize-columns
+            ui-grid-cellNav
+            ui-grid-auto-resize
+            class="grid"></div>                  
+                            
+                                
+    </div>
+    <div class="modal-footer">       
+        <button type="button" class="btn btn-dark"  ng-click="closeModal()">&times; Cerrar</button>
+    </div>
+ 

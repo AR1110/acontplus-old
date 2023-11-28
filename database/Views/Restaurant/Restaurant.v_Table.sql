@@ -16,5 +16,11 @@ SELECT  rt.Id
     ,rt.RoomId	
     ,roomDescription = rr.[Description]
     ,rt.Assigned
-FROM Restaurant.[Table] rt
-INNER JOIN Restaurant.Room rr ON rr.Id = rt.RoomId
+    ,rr.FloorId
+    ,f.[Description] as 'Floor'
+    ,f.CodEstab
+    ,e.ruc
+FROM Restaurant.[Table] rt WITH (NOLOCK)
+INNER JOIN Restaurant.Room rr WITH (NOLOCK) ON rr.Id = rt.RoomId
+INNER JOIN Restaurant.[Floor] f WITH (NOLOCK) ON rr.FloorId = f.Id
+INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON f.CodEstab = e.codEstab

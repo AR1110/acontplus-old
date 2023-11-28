@@ -1,13 +1,7 @@
 USE AcontPlus
-
-IF OBJECT_ID('FactElect.Doc_Elect_GetByStatus') IS NOT NULL
-DROP PROCEDURE FactElect.Doc_Elect_GetByStatus
 GO
 
-
--- FactElect.Doc_Elect_GetByStatus 28, '{"isCurrentDate":false,"checkBoxDate":true,"isSearchCustomerProvider":false,"dateStart":"2023-04-01T05:00:00.000Z","dateEnd":"2023-05-01T04:59:59.999Z"}'
-
-CREATE PROCEDURE FactElect.Doc_Elect_GetByStatus @idRol INT,@json NVARCHAR(max)
+CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_GetByStatus @idRol INT,@json NVARCHAR(max)
 AS
 BEGIN 
 	SET NOCOUNT ON;
@@ -108,7 +102,7 @@ BEGIN
 										,de.telefonoEstablecimiento
 										,de.entidad
 										,de.nombreComercial
-									 FROM v_DocElectronico de WITH (NOLOCK)
+									 FROM FactElect.v_DocElectronico de WITH (NOLOCK)
 									 INNER JOIN Usuario     u WITH (NOLOCK) ON u.idUsuario = de.idUsuario
 									 WHERE de.idEntidad = @idEntidad   '
 

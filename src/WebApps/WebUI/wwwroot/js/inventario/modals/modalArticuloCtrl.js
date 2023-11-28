@@ -61,6 +61,9 @@ function modalArticuloCtrl(
     $scope.step = 1; //Por Defecto Tab General
 
     $scope.opcionCalculate = null;
+    $scope.dataTarifaOption = {
+        opcionCalculate: null
+    }
     //imagen articulo
     $scope.selectedFile = null;
     $scope.image = {
@@ -433,8 +436,8 @@ function modalArticuloCtrl(
             })
             .finally(() => hideLoader());
     }
-    $scope.getArticuloCodigo = () => {
-        if (params && params.isImport) return;
+    $scope.getArticuloCodigo = () => { 
+        if (params && params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra) return;
 
         if ($scope.tipoRegistro === 1 && $scope.subFamilias.length > 0) {
             let { codigo } = $scope.subFamilias.find(
@@ -713,6 +716,7 @@ function modalArticuloCtrl(
             return;
         }
 
+        console.log(opcionCalculate)
         if ($scope.data.precioCosto === 0) {
             tS.toastr("warning", "El valor mínimo en el precio de costo es 0.01");
             return;
@@ -798,7 +802,7 @@ function modalArticuloCtrl(
             $scope.data.precioCosto,
             $scope.decimal.nroPrecio
         );
-        recalculateTarifaUpdateArticle($scope.opcionCalculate);
+        recalculateTarifaUpdateArticle($scope.dataTarifaOption.opcionCalculate);
     };
 
     //Guardar/Actualizar Articulo
@@ -1391,7 +1395,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                         break;
                     case "porcentajeUtilidad":
                         precioVenta = pricingUtils.calcularPorcentajeUtilidad(
-                            $scope.data.precioCosto,
+                            precioCosto,
                             rowEntity.porcentajeUtilidad
                         );
                         precioConIva = pricingUtils.calcularPrecioConIva(

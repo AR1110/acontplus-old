@@ -13,6 +13,7 @@
   import toast from "$utils/toast";
   import { SupportDetailService } from "$lib/services/Mechanical/support-detail-service";
   import { sharedService } from "$lib/services/shared.service";
+  import Swal from "sweetalert2";
 
   let support;
   let establishments = [];
@@ -52,11 +53,60 @@
   let tiempoCreditos = [];
   let tarifaImpuestoFactura = [];
   let timeout;
+  let statusForDisabled = 2;
 
   const onModalClose = () => {
     supportStore.update((state) => ({
       ...state,
       isApprove: false,
+      parameter: { establecimientoId: 0, sequence: "" },
+      support: {
+        id: 0,
+        puntoEmisionId: 0,
+        vehicleCompanyId: 0,
+        userAssignedId: 0,
+        customerId: 0,
+        supportTypeId: 0,
+        date: new Date().toISOString().slice(0, 10),
+        sequence: 0,
+        obs: "",
+        status: 1,
+      },
+      vehicle: {
+        id: 0,
+        countryId: 0,
+        vehicleId: 0,
+        vehicleTypeId: 0,
+        customerId: 0,
+        licensePlate: "",
+        brand: "",
+        model: "",
+        year: 0,
+        color: "",
+        engine: "",
+        chassis: "",
+        cylindraje: "",
+        enabled: false,
+      },
+      customer: {
+        id: 0,
+        idType: "",
+        idCard: "",
+        businessName: "",
+        tradeName: "",
+        email: "",
+        telephone: "",
+        address: "",
+      },
+      supportDetails: [],
+      establishments: [],
+      measures: [],
+      warehouses: [],
+      tipoIva: [],
+      decimals: [],
+      ptoEmisiones: [],
+      tiempoCreditos: [],
+      tarifaImpuestos: [],
     }));
   };
 
@@ -98,9 +148,11 @@
   };
 
   const selectArticle = (e) => {
-    console.log(e);
     let dataArticle = {};
     let medidas = [];
+    let consolidacion = [];
+
+    // Todo: Clear array's.
     articles = [];
     valueArticle = "";
 
@@ -111,11 +163,12 @@
       ).then((response) => {
         if (response) {
           dataArticle = response[0][0];
-          // Todo: Validate if article has llevaInventario
+          consolidacion = response[3];
+
           let isExists = onValidateLlevaInventario(dataArticle);
 
           if (isExists) {
-            medidas = response[1].map((item) => {
+            medidas = response[2].map((item) => {
               return {
                 ...item,
                 tarifas: JSON.parse(item.tarifas),
@@ -134,12 +187,15 @@
               tarifas: dataMedida.tarifas,
               tipoIvas: tipoIva,
               medidas: medidas,
+              consolidacion,
               orderIndex: 0,
               ...dataArticle,
               idTarifa: dataTarifa.idTarifa,
               idBodega: idBodega,
               idMedida: dataMedida.idMedida,
+              conversion: dataMedida.conversion,
               cantidad: 1,
+              cantidadOriginal: 1,
               precioVenta: dataTarifa.precioVenta,
               precioSinSubsidio: 0,
               precioUnitario: dataTarifa.precioVenta,
@@ -150,10 +206,7 @@
               total: dataTarifa.precioConIva * 1,
               nota: "S/N",
             };
-
             supportDetails = [...supportDetails, obj];
-
-            // Get Articles invoke.
             getTotales();
           }
         }
@@ -221,24 +274,23 @@
       CODIGO_PORCENTAJE_IVA_NO_OBJETO = "6",
       CODIGO_PORCENTAJE_IVA8 = "8";
 
-    const dataTotal = supportDetails.reduce((total, itemDetails) => {
-
+    const dataTotal = supportDetails.reduce(
+      (total, itemDetails) => {
         let dataImpuesto = tipoIva.find(
           (x) => x.idTipoIva == Number(itemDetails.idTipoIva)
         );
-        console.log("dataImpuesto");
-        console.log(dataImpuesto);
 
-        let dataImpuestoVigente = tarifaImpuestos.find((x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje);
-        if(dataImpuestoVigente != undefined) {
+        let dataImpuestoVigente = tarifaImpuestos.find(
+          (x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje
+        );
+        if (dataImpuestoVigente != undefined) {
           total.valorIva = dataImpuestoVigente.tarifa;
         }
 
-        if(dataImpuestoVigente == undefined) {
-          if(dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA8) {
-            total.valorIva = 8.00
-          }
-          else {
+        if (dataImpuestoVigente == undefined) {
+          if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA8) {
+            total.valorIva = 8.0;
+          } else {
             total.valorIva = 0;
           }
         }
@@ -247,30 +299,47 @@
         itemDetails.precioUnitario = Number(itemDetails.precioUnitario);
         itemDetails.valorDescuento = Number(itemDetails.valorDescuento);
 
-        if(dataImpuestoVigente != undefined) {
-          if ( dataImpuesto.codigoPorcentaje == dataImpuestoVigente.codigoPorcentaje) {
-            total.totalImpuestoVigente += itemDetails.cantidad * itemDetails.precioUnitario;
-            total.totalImpuestoVigenteNeto += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+        if (dataImpuestoVigente != undefined) {
+          if (
+            dataImpuesto.codigoPorcentaje ==
+            dataImpuestoVigente.codigoPorcentaje
+          ) {
+            total.totalImpuestoVigente +=
+              itemDetails.cantidad * itemDetails.precioUnitario;
+            total.totalImpuestoVigenteNeto +=
+              (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+              itemDetails.cantidad;
           }
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA0) {
-          total.subTotalIvaCero += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoIvaCero +=  (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+          total.subTotalIvaCero +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoIvaCero +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVAEXENTO) {
-          total.subTotalExentoIva += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoExentoIva += (itemDetails.precioUnitario - itemDetails.valorDescuento) *itemDetails.cantidad;
+          total.subTotalExentoIva +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoExentoIva +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA_NO_OBJETO) {
-          total.subTotalNoObjetoIva += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoNoObjetoIva += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+          total.subTotalNoObjetoIva +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoNoObjetoIva +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
-        total.sumaTotalNeto += itemDetails.cantidad * itemDetails.precioUnitario;
-        total.valorDescuento += itemDetails.cantidad * itemDetails.precioUnitario;
+        total.sumaTotalNeto +=
+          itemDetails.cantidad * itemDetails.precioUnitario;
+        total.valorDescuento +=
+          itemDetails.cantidad * itemDetails.precioUnitario;
         return total;
       },
       {
@@ -301,7 +370,10 @@
     let total = dataTotal.sumaTotalNeto + iva;
 
     let importeTotal = total - dataTotal.totalDescuento;
-    importeTotal = sharedService.roundNumber(importeTotal, decimals.importeTotal);
+    importeTotal = sharedService.roundNumber(
+      importeTotal,
+      decimals.importeTotal
+    );
 
     let { valorIva, totalDescuento, ...result } = dataTotal;
 
@@ -432,13 +504,14 @@
       item.tarifas = JSON.parse(
         measures.find((x) => x.idMedida == item.idMedida).tarifas
       );
-      item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
+      item.bodegas = warehouses.filter((x) => x.codEstab == item.codEstab);
       item.tipoIvas = tipoIva;
       item.precioConIva = item.tarifas.find(
         (x) => x.idTarifa == item.idTarifa
       ).precioConIva;
       item.decimals = decimals;
       item.total = item.cantidad * item.precioUnitario;
+      item.cantidadOriginal = item.cantidad;
     });
   };
 
@@ -449,7 +522,6 @@
     support.codEstab = estab.codEstab;
 
     tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
-
     ptoEmisiones = [
       ...ptoEmisionesTemp.filter((x) => x.codEstab === estab.codEstab),
     ];
@@ -486,8 +558,47 @@
     }
   };
 
-  // Todo: Save FACTURA
+  // ======================== Action for Factura =========================
+  const generateSerieNumberFactura = function () {
+    showLoader();
+    let params = {
+      tipo: 7,
+      idPuntoEmision: support.puntoEmisionId,
+    };
+    FacturaService.get(JSON.stringify(params))
+      .then((response) => {
+        if (response) {
+          let payload = JSON.parse(response.payload);
+          let serieComprobante = payload[0][0].serieComprobante;
+
+          showAlertFactura(serieComprobante);
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
+
+  const showAlertFactura = (serieComprobante) => {
+    Swal.fire({
+      title: "Guardar Factura",
+      text: `¿Esta Ud. seguro de Guardar este Factura de Venta N° ${serieComprobante}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, guardar!",
+      cancelButtonText: "No, cancelar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        saveFactura();
+      }
+    });
+  };
+
   const saveFactura = () => {
+    if (!validateFacturaInSave()) return;
+
     showLoader();
 
     let getTiempoCredito = tiempoCreditos[0];
@@ -499,12 +610,11 @@
       getTiempoCredito.diasCredito
     );
 
-    support.date = newFormatDate(support.date);
-    support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
-
     let data = {
       factura: JSON.stringify(MapperToAction.principalMapperTo(support)),
-      detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails)),
+      detalle: JSON.stringify(
+        MapperToAction.detalleMapperTo(supportDetails, support.date)
+      ),
       adicional: JSON.stringify({}),
       infoAdicionalArticulo: JSON.stringify({}),
     };
@@ -515,18 +625,13 @@
           return toast({ type: "warning", message: response.message });
         }
 
+        supportStore.get();
         onModalClose();
         toast({ type: "success", message: response.message });
       })
       .finally(() => {
         hideLoader();
       });
-  };
-
-  const newFormatDate = (date: string) => {
-    let splitDate = date.split("-");
-    let newDate = `${splitDate[2]}-${splitDate[1]}-${splitDate[0]}`;
-    return newDate;
   };
 
   const getFechaVencimiento = function (fechaEmision, dia) {
@@ -541,29 +646,72 @@
     return newFechaVencimiento;
   };
 
-  const saveNotaEntrega = () => {
+  // ======================== GenerateNumberOfSerie ======================
+  const generateSerieNumberNotaEntrega = function () {
     showLoader();
+    let params = {
+      tipo: 4,
+      idPuntoEmision: support.puntoEmisionId,
+    };
+    NotaEntregaService.get(JSON.stringify(params))
+      .then((response) => {
+        if (response) {
+          let payload = JSON.parse(response.payload);
+          let serieComprobante = payload[0][0].serieComprobante;
+
+          showAlertNotaEntrega(serieComprobante);
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
+
+  const showAlertNotaEntrega = (serieComprobante) => {
+    Swal.fire({
+      title: "Guardar Nota Entrega",
+      text: `¿Esta Ud. seguro de Guardar este Nota Entrega N° ${serieComprobante}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, guardar!",
+      cancelButtonText: "No, cancelar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        saveNotaEntrega();
+      }
+    });
+  };
+
+  const saveNotaEntrega = () => {
+    if (!validateFacturaInSave()) return;
 
     let getTiempoCredito = tiempoCreditos[0];
     support.tarifa = tarifaImpuestoFactura[0].tarifa;
 
+    // Todo: Tiempo crédito.
     support.idTiempoCredito = getTiempoCredito.idTiempoCredito;
+    support.tipo = getTiempoCredito.tipo;
+
+    // Todo: Establecimiento.
+    support.estab = establishments.find(
+      (x) => x.codEstab === support.codEstab
+    ).estab;
+
+    // Todo: Fecha vencimiento
     support.fechaVencimiento = getFechaVencimiento(
       support.date,
       getTiempoCredito.diasCredito
     );
 
-    support.date = newFormatDate(support.date);
-    support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
-
     let newData = {
-      notaEntrega: JSON.stringify(MapperToAction.notaEntregaMapper(support)),
-      detalles: JSON.stringify(
-        MapperToAction.detalleNotaEntrega(supportDetails)
-      ),
-      infoAdicionalArticulo: JSON.stringify([]),
+      notaEntrega: MapperToAction.principalMapperTo(support),
+      detalles: MapperToAction.detalleMapperTo(supportDetails, support.date),
+      infoAdicionalArticulo: [],
     };
 
+    showLoader();
     NotaEntregaService.post({ data: newData })
       .then((response) => {
         if (response) {
@@ -571,6 +719,7 @@
             return toast({ type: "warning", message: response.message });
           }
 
+          supportStore.get();
           onModalClose();
           toast({ type: "success", message: response.message });
         }
@@ -580,7 +729,7 @@
       });
   };
 
-  // Todo: Save DETALLES
+  // ======================== Action for SOPORTE =========================
   const onUpdate = () => {
     if (!onValidate()) return;
 
@@ -617,6 +766,7 @@
       });
   };
 
+  // ======================== VALIDATIONS =========================
   const onValidate = () => {
     let isValidate = true;
     try {
@@ -640,6 +790,14 @@
         });
         return (isValidate = false);
       }
+
+      if (support.status === statusForDisabled) {
+        toast({
+          type: "warning",
+          message: "El soporte ha sido finalizado. Usted no puede modificar",
+        });
+        return (isValidate = false);
+      }
       return isValidate;
     } catch (error) {
       console.log(error);
@@ -647,6 +805,25 @@
     }
   };
 
+  const validateFacturaInSave = () => {
+    let isValidate = true;
+
+    try {
+      if (support.status === statusForDisabled) {
+        toast({
+          type: "warning",
+          message:
+            "Este soporte ya está finalizado. Usted no puede realizar la Factura y Nota Entrega",
+        });
+        isValidate = false;
+      }
+      return isValidate;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  // ======================== Init Modal =========================
   supportStore.subscribe((values) => {
     support = values.support;
     supportDetails = values.supportDetails;
@@ -775,6 +952,7 @@
                 on:blur={onBlurArticle}
                 value={valueArticle}
                 placeholder={placeholderArticle}
+                disabled={support.status === statusForDisabled}
               />
               {#if articles.length > 0}
                 <div class="floating-results list-group">
@@ -795,6 +973,7 @@
             <input
               on:blur={(e) => searchArticleCode(e)}
               id="searchArticleCode"
+              disabled={support.status === statusForDisabled}
               type="text"
               class="form-control"
               placeholder="Ej: COMP1"
@@ -806,6 +985,7 @@
                 <button
                   type="button"
                   on:click={onUpdate}
+                  disabled={support.status === statusForDisabled}
                   class="btn btn-block btn-success mt-4"
                 >
                   <i class="ti-save" /> Guardar
@@ -824,6 +1004,8 @@
                   <button
                     id="btnGroupDrop1"
                     type="button"
+                    disabled={support.status === statusForDisabled ||
+                      supportDetails.length <= 0}
                     class="btn btn-secondary btn-block dropdown-toggle"
                     data-toggle="dropdown"
                     aria-haspopup="true"
@@ -833,12 +1015,16 @@
                   </button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                     <!-- svelte-ignore a11y-invalid-attribute -->
-                    <a on:click={saveFactura} class="dropdown-item" href="#"
-                      >Factura</a
+                    <a
+                      on:click={generateSerieNumberFactura}
+                      class="dropdown-item"
+                      href="#">Factura</a
                     >
                     <!-- svelte-ignore a11y-invalid-attribute -->
-                    <a on:click={saveNotaEntrega} class="dropdown-item" href="#"
-                      >Nota Entrega</a
+                    <a
+                      on:click={generateSerieNumberNotaEntrega}
+                      class="dropdown-item"
+                      href="#">Nota Entrega</a
                     >
                   </div>
                 </div>

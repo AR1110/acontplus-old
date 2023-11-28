@@ -47,14 +47,18 @@ BEGIN
                                         ,LicensePlate
                                         ,CASE [Status] WHEN 0 THEN ''PENDIENTE'' 
                                                        WHEN 1 THEN ''REVISIÓN''
+                                                       WHEN 2 THEN ''FINALIZADO''
                                                        WHEN 3 THEN ''PROCESADO''
                                                        WHEN 5 THEN ''ANULADO''
                                          END as [Status]
-                                        ,CASE [Status] WHEN 5 THEN ''table-danger'' ELSE '''' END as ColorRow 
+                                        ,CASE [Status] WHEN 5 THEN ''table-danger'' 
+                                                       WHEN 2 THEN ''table-success''
+                                                       ELSE '''' END as ColorRow 
                                         ,UserAssigned
                                         ,COUNT(*) OVER() AS [TotalRecords]
                                         ,Obs
                                         ,codEstab
+                                        ,[Status]       AS TypeStatus
                                   FROM Mechanical.v_Support WITH (NOLOCK)
                                   WHERE CompanyId = @CompanyId '
            ,@params NVARCHAR(MAX)
@@ -120,7 +124,7 @@ BEGIN
                   ,idTipoIdentificacion as tipoIdentificacionId
             FROM dbo.TipoIdentificacion WITH (NOLOCK) 
             WHERE estado = 1
-              AND codigoSri IN ('05','04','06')
+            AND codigoSri IN ('05','04','06')
 
             SELECT idUsuario as UserAssignedId, nombreUsuario as UserName FROM v_usuario WITH (NOLOCK) WHERE idEntidad = @CompanyId
 
@@ -143,6 +147,7 @@ BEGIN
                   ,UserAssignedId
                   ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
                   ,Obs
+                  ,[Status] AS [Status]
             FROM Mechanical.v_Support WITH (NOLOCK)
             WHERE Id = @Id
 

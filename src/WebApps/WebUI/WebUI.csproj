@@ -22,6 +22,7 @@
     <Compile Remove="App\routes\ProductionArea\**" />
     <Compile Remove="Areas\Pet\**" />
     <Compile Remove="Areas\TipoEntidad\**" />
+    <Compile Remove="Controllers\Asignacion\**" />
     <Compile Remove="Pages\Shared\**" />
     <Compile Remove="Views\ComprobanteImportacion\**" />
     <Compile Remove="wwwroot\js\controllers\almacen\**" />
@@ -34,6 +35,7 @@
     <Content Remove="App\routes\ProductionArea\**" />
     <Content Remove="Areas\Pet\**" />
     <Content Remove="Areas\TipoEntidad\**" />
+    <Content Remove="Controllers\Asignacion\**" />
     <Content Remove="Pages\Shared\**" />
     <Content Remove="Views\ComprobanteImportacion\**" />
     <Content Remove="wwwroot\js\controllers\almacen\**" />
@@ -46,6 +48,7 @@
     <EmbeddedResource Remove="App\routes\ProductionArea\**" />
     <EmbeddedResource Remove="Areas\Pet\**" />
     <EmbeddedResource Remove="Areas\TipoEntidad\**" />
+    <EmbeddedResource Remove="Controllers\Asignacion\**" />
     <EmbeddedResource Remove="Pages\Shared\**" />
     <EmbeddedResource Remove="Views\ComprobanteImportacion\**" />
     <EmbeddedResource Remove="wwwroot\js\controllers\almacen\**" />
@@ -58,6 +61,7 @@
     <None Remove="App\routes\ProductionArea\**" />
     <None Remove="Areas\Pet\**" />
     <None Remove="Areas\TipoEntidad\**" />
+    <None Remove="Controllers\Asignacion\**" />
     <None Remove="Pages\Shared\**" />
     <None Remove="Views\ComprobanteImportacion\**" />
     <None Remove="wwwroot\js\controllers\almacen\**" />
@@ -512,95 +516,12 @@
     <None Include="wwwroot\dist\js\pages\widget-data.min.js" />
     <None Include="wwwroot\dist\js\sidebarmenu.js" />
     <None Include="wwwroot\dist\js\waves.js" />
-    <None Include="wwwroot\dist\scss\colors\blue-dark.scss" />
-    <None Include="wwwroot\dist\scss\colors\blue.scss" />
-    <None Include="wwwroot\dist\scss\colors\default-dark.scss" />
-    <None Include="wwwroot\dist\scss\colors\default.scss" />
-    <None Include="wwwroot\dist\scss\colors\green-dark.scss" />
-    <None Include="wwwroot\dist\scss\colors\green.scss" />
-    <None Include="wwwroot\dist\scss\colors\megna-dark.scss" />
-    <None Include="wwwroot\dist\scss\colors\megna.scss" />
-    <None Include="wwwroot\dist\scss\colors\purple-dark.scss" />
-    <None Include="wwwroot\dist\scss\colors\purple.scss" />
-    <None Include="wwwroot\dist\scss\colors\red-dark.scss" />
-    <None Include="wwwroot\dist\scss\colors\red.scss" />
-    <None Include="wwwroot\dist\scss\core\animation.scss" />
-    <None Include="wwwroot\dist\scss\core\app.scss" />
-    <None Include="wwwroot\dist\scss\core\buttons.scss" />
-    <None Include="wwwroot\dist\scss\core\core.scss" />
-    <None Include="wwwroot\dist\scss\core\custom-iconmind.scss" />
-    <None Include="wwwroot\dist\scss\core\form-pages.scss" />
-    <None Include="wwwroot\dist\scss\core\header.scss" />
-    <None Include="wwwroot\dist\scss\core\other-common.scss" />
-    <None Include="wwwroot\dist\scss\core\pagination.scss" />
-    <None Include="wwwroot\dist\scss\core\perfect-scrollbar.scss" />
-    <None Include="wwwroot\dist\scss\core\right-sidebar.scss" />
-    <None Include="wwwroot\dist\scss\core\scafholding.scss" />
-    <None Include="wwwroot\dist\scss\core\sidebar.scss" />
-    <None Include="wwwroot\dist\scss\core\spinner.scss" />
-    <None Include="wwwroot\dist\scss\core\table-pages.scss" />
-    <None Include="wwwroot\dist\scss\core\theme-settings.scss" />
-    <None Include="wwwroot\dist\scss\custom.scss" />
-    <None Include="wwwroot\dist\scss\pages\bootstrap-switch.scss" />
-    <None Include="wwwroot\dist\scss\pages\breadcrumb-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\chat-app-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\contact-app-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\dashboard1.scss" />
-    <None Include="wwwroot\dist\scss\pages\dashboard2.scss" />
-    <None Include="wwwroot\dist\scss\pages\dashboard3.scss" />
-    <None Include="wwwroot\dist\scss\pages\dashboard4.scss" />
-    <None Include="wwwroot\dist\scss\pages\easy-pie-chart.scss" />
-    <None Include="wwwroot\dist\scss\pages\error-pages.scss" />
-    <None Include="wwwroot\dist\scss\pages\file-upload.scss" />
-    <None Include="wwwroot\dist\scss\pages\float-chart.scss" />
-    <None Include="wwwroot\dist\scss\pages\floating-label.scss" />
-    <None Include="wwwroot\dist\scss\pages\footable-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\form-icheck.scss" />
-    <None Include="wwwroot\dist\scss\pages\google-vector-map.scss" />
-    <None Include="wwwroot\dist\scss\pages\icon-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\inbox.scss" />
-    <None Include="wwwroot\dist\scss\pages\login-register-lock.scss" />
-    <None Include="wwwroot\dist\scss\pages\other-pages.scss" />
-    <None Include="wwwroot\dist\scss\pages\pricing-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\progressbar-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\register3.scss" />
-    <None Include="wwwroot\dist\scss\pages\ribbon-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\stylish-tooltip.scss" />
-    <None Include="wwwroot\dist\scss\pages\tab-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\timeline-vertical-horizontal.scss" />
-    <None Include="wwwroot\dist\scss\pages\ui-bootstrap-page.scss" />
-    <None Include="wwwroot\dist\scss\pages\user-card.scss" />
-    <None Include="wwwroot\dist\scss\pages\widget-page.scss" />
-    <None Include="wwwroot\dist\scss\responsive.scss" />
-    <None Include="wwwroot\dist\scss\style.scss" />
-    <None Include="wwwroot\dist\scss\variable.scss" />
-    <None Include="wwwroot\dist\scss\widgets\activity.scss" />
-    <None Include="wwwroot\dist\scss\widgets\blog.scss" />
-    <None Include="wwwroot\dist\scss\widgets\calendar.scss" />
-    <None Include="wwwroot\dist\scss\widgets\carousel.scss" />
-    <None Include="wwwroot\dist\scss\widgets\chat-widget.scss" />
-    <None Include="wwwroot\dist\scss\widgets\comment.scss" />
-    <None Include="wwwroot\dist\scss\widgets\common-widget.scss" />
-    <None Include="wwwroot\dist\scss\widgets\contact.scss" />
-    <None Include="wwwroot\dist\scss\widgets\feed.scss" />
-    <None Include="wwwroot\dist\scss\widgets\msg-box.scss" />
-    <None Include="wwwroot\dist\scss\widgets\news-slide.scss" />
-    <None Include="wwwroot\dist\scss\widgets\product-review.scss" />
-    <None Include="wwwroot\dist\scss\widgets\profile.scss" />
-    <None Include="wwwroot\dist\scss\widgets\social.scss" />
-    <None Include="wwwroot\dist\scss\widgets\steamline.scss" />
-    <None Include="wwwroot\dist\scss\widgets\to-do.scss" />
-    <None Include="wwwroot\dist\scss\widgets\topbar-mail.scss" />
-    <None Include="wwwroot\dist\scss\widgets\weather-widget.scss" />
-    <None Include="wwwroot\dist\scss\widgets\widgets.scss" />
     <None Include="wwwroot\js\app\acontPlusApp.js" />
     <None Include="wwwroot\js\controllers\admin\asignacionCajaCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\asignacionCajaCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\cajaCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\cajaCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\controlCajaCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\entidadFinancieraCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\entidadFinancieraCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\turnoCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\turnoCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\usuarioCtrl.js" />
@@ -634,15 +555,6 @@
     <None Include="wwwroot\js\services\formularioService.min.js" />
     <None Include="wwwroot\js\services\tesoreria\pagoService.js" />
     <None Include="wwwroot\js\services\tesoreria\pagoService.min.js" />
-    <None Include="wwwroot\lib\angular-block-ui\dist\angular-block-ui.css.map" />
-    <None Include="wwwroot\lib\angular-block-ui\dist\angular-block-ui.js" />
-    <None Include="wwwroot\lib\angular-block-ui\dist\angular-block-ui.js.map" />
-    <None Include="wwwroot\lib\angular-block-ui\dist\angular-block-ui.min.js" />
-    <None Include="wwwroot\lib\angular-block-ui\dist\angular-block-ui.min.js.map" />
-    <None Include="wwwroot\lib\angular-block-ui\dist\LICENSE" />
-    <None Include="wwwroot\lib\angular-block-ui\dist\README.md" />
-    <None Include="wwwroot\lib\angular-bootstrap-toggle\dist\angular-bootstrap-toggle.js" />
-    <None Include="wwwroot\lib\angular-bootstrap-toggle\dist\angular-bootstrap-toggle.min.js" />
     <None Include="wwwroot\lib\angular-material\angular-material.js" />
     <None Include="wwwroot\lib\angular-material\angular-material.min.js" />
     <None Include="wwwroot\lib\angular-messages\angular-messages.js" />
@@ -798,94 +710,6 @@
     <None Include="wwwroot\lib\angularjs\angular.js" />
     <None Include="wwwroot\lib\angularjs\angular.min.js" />
     <None Include="wwwroot\lib\angularjs\angular.min.js.map" />
-    <None Include="wwwroot\lib\bootstrap-select\bootstrap-select.min.js" />
-    <None Include="wwwroot\lib\bootstrap-social\.editorconfig" />
-    <None Include="wwwroot\lib\bootstrap-social\.gitignore" />
-    <None Include="wwwroot\lib\bootstrap-social\bootstrap-social.less" />
-    <None Include="wwwroot\lib\bootstrap-social\bootstrap-social.scss" />
-    <None Include="wwwroot\lib\bootstrap-social\README.md" />
-    <None Include="wwwroot\lib\bootstrap-switch\bootstrap-switch.js" />
-    <None Include="wwwroot\lib\bootstrap-switch\bootstrap-switch.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\bootstrap-table-locale-all.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\bootstrap-table.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\accent-neutralise\bootstrap-table-accent-neutralise.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\angular\bootstrap-table-angular.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\auto-refresh\bootstrap-table-auto-refresh.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\click-edit-row\bootstrap-table-click-edit-row.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\cookie\bootstrap-table-cookie.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\copy-rows\bootstrap-table-copy-rows.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\defer-url\bootstrap-table-defer-url.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\editable\bootstrap-table-editable.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\export\bootstrap-table-export.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\filter-control\bootstrap-table-filter-control.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\filter\bootstrap-table-filter.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\flat-json\bootstrap-table-flat-json.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\group-by-v2\bootstrap-table-group-by.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\group-by\bootstrap-table-group-by.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\i18n-enhance\bootstrap-table-i18n-enhance.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\key-events\bootstrap-table-key-events.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\mobile\bootstrap-table-mobile.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\multi-column-toggle\bootstrap-table-multi-toggle.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\multiple-search\bootstrap-table-multiple-search.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\multiple-selection-row\bootstrap-table-multiple-selection-row.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\multiple-sort\bootstrap-table-multiple-sort.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\natural-sorting\bootstrap-table-natural-sorting.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\page-jumpto\bootstrap-table-jumpto.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\print\bootstrap-table-print.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\reorder-columns\bootstrap-table-reorder-columns.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\reorder-rows\bootstrap-table-reorder-rows.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\resizable\bootstrap-table-resizable.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\select2-filter\bootstrap-table-select2-filter.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\sticky-header\bootstrap-table-sticky-header.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\toolbar\bootstrap-table-toolbar.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\tree-column\bootstrap-table-tree-column.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\extensions\treegrid\bootstrap-table-treegrid.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-af-ZA.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ar-SA.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ca-ES.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-cs-CZ.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-da-DK.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-de-DE.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-el-GR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-en-US.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-es-AR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-es-CL.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-es-CR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-es-ES.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-es-MX.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-es-NI.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-es-SP.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-et-EE.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-eu-EU.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-fa-IR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-fr-BE.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-fr-FR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-he-IL.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-hr-HR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-hu-HU.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-id-ID.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-it-IT.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ja-JP.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ka-GE.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ko-KR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ms-MY.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-nb-NO.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-nl-NL.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-pl-PL.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-pt-BR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-pt-PT.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ro-RO.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ru-RU.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-sk-SK.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-sv-SE.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-th-TH.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-tr-TR.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-uk-UA.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-ur-PK.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-uz-Latn-UZ.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-vi-VN.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-zh-CN.min.js" />
-    <None Include="wwwroot\lib\bootstrap-table\dist\locale\bootstrap-table-zh-TW.min.js" />
     <None Include="wwwroot\lib\bootstrap\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\css\bootstrap-grid.min.css.map" />
     <None Include="wwwroot\lib\bootstrap\css\bootstrap-reboot.css.map" />
@@ -1019,10 +843,6 @@
     <None Include="wwwroot\lib\bootstrap\scss\_type.scss" />
     <None Include="wwwroot\lib\bootstrap\scss\_utilities.scss" />
     <None Include="wwwroot\lib\bootstrap\scss\_variables.scss" />
-    <None Include="wwwroot\lib\clockpicker\dist\bootstrap-clockpicker.js" />
-    <None Include="wwwroot\lib\clockpicker\dist\bootstrap-clockpicker.min.js" />
-    <None Include="wwwroot\lib\clockpicker\dist\jquery-clockpicker.js" />
-    <None Include="wwwroot\lib\clockpicker\dist\jquery-clockpicker.min.js" />
     <None Include="wwwroot\lib\danialfarid-angular-file-upload\FileAPI.flash.swf" />
     <None Include="wwwroot\lib\danialfarid-angular-file-upload\FileAPI.js" />
     <None Include="wwwroot\lib\danialfarid-angular-file-upload\FileAPI.min.js" />
@@ -1032,58 +852,8 @@
     <None Include="wwwroot\lib\danialfarid-angular-file-upload\ng-file-upload-shim.min.js" />
     <None Include="wwwroot\lib\danialfarid-angular-file-upload\ng-file-upload.js" />
     <None Include="wwwroot\lib\danialfarid-angular-file-upload\ng-file-upload.min.js" />
-    <None Include="wwwroot\lib\footable\js\footable.js" />
-    <None Include="wwwroot\lib\footable\js\footable.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\bindings\inputmask.binding.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\dependencyLibs\inputmask.dependencyLib.jquery.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\dependencyLibs\inputmask.dependencyLib.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\global\document.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\global\window.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\inputmask.date.extensions.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\inputmask.extensions.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\inputmask.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\inputmask.numeric.extensions.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\inputmask.phone.extensions.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\inputmask.regex.extensions.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\jquery.inputmask.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\phone-codes\phone-be.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\phone-codes\phone-nl.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\phone-codes\phone-ru.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\phone-codes\phone-uk.js" />
-    <None Include="wwwroot\lib\inputmask\dist\inputmask\phone-codes\phone.js" />
-    <None Include="wwwroot\lib\inputmask\dist\jquery.inputmask.bundle.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\bindings\inputmask.binding.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\dependencyLibs\inputmask.dependencyLib.jquery.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\dependencyLibs\inputmask.dependencyLib.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\global\document.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\global\window.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\inputmask.date.extensions.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\inputmask.extensions.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\inputmask.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\inputmask.numeric.extensions.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\inputmask.phone.extensions.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\inputmask.regex.extensions.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\jquery.inputmask.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\phone-codes\phone-be.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\phone-codes\phone-nl.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\phone-codes\phone-ru.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\phone-codes\phone-uk.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\inputmask\phone-codes\phone.min.js" />
-    <None Include="wwwroot\lib\inputmask\dist\min\jquery.inputmask.bundle.min.js" />
     <None Include="wwwroot\lib\jquery-sparklines\jquery.sparkline.js" />
     <None Include="wwwroot\lib\jquery-sparklines\jquery.sparkline.min.js" />
-    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
-    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
-    <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.js" />
-    <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.min.js" />
-    <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
-    <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.min.js" />
-    <None Include="wwwroot\lib\jquery-validation\LICENSE.md" />
-    <None Include="wwwroot\lib\jquery\dist\jquery.js" />
-    <None Include="wwwroot\lib\jquery\dist\jquery.min.js" />
-    <None Include="wwwroot\lib\jquery\dist\jquery.min.map" />
     <None Include="wwwroot\lib\jquery\jquery-3.2.1.min - Copy.js" />
     <None Include="wwwroot\lib\jquery\jquery-3.2.1.min.js" />
     <None Include="wwwroot\lib\jquery\jquery-3.2.1.slim.min.js" />
@@ -1097,7 +867,6 @@
     <None Include="wwwroot\lib\limonte-sweetalert2\sweetalert2.all.min.js" />
     <None Include="wwwroot\lib\limonte-sweetalert2\sweetalert2.js" />
     <None Include="wwwroot\lib\limonte-sweetalert2\sweetalert2.min.js" />
-    <None Include="wwwroot\lib\ng-tags\ng-tags-input.min.js" />
     <None Include="wwwroot\lib\popper\popper.es5.js" />
     <None Include="wwwroot\lib\popper\popper.es5.js.map" />
     <None Include="wwwroot\lib\popper\popper.es5.min.js" />
@@ -2404,22 +2173,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="wwwroot\lib\angular-block-ui\dist\angular-block-ui.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\angular-block-ui\dist\angular-block-ui.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\angular-bootstrap-toggle\dist\angular-bootstrap-toggle.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\angular-bootstrap-toggle\dist\angular-bootstrap-toggle.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Update="wwwroot\lib\angular-file-saver\angular-file-saver.bundle.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -2493,78 +2246,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="wwwroot\lib\angularjs\angular-mocks.min.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-select\bootstrap-select.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-social\.bower.json">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-social\bootstrap-social.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-social\bower.json">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-switch\bootstrap-switch.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-switch\bootstrap-switch.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\bootstrap-test.json">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\bootstrap-table.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\auto-refresh\bootstrap-table-auto-refresh.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\click-edit-row\bootstrap-table-click-edit-row.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\filter-control\bootstrap-table-filter-control.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\group-by-v2\bootstrap-table-group-by.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\group-by\bootstrap-table-group-by.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\multiple-selection-row\bootstrap-table-multiple-selection-row.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\page-jumpto\bootstrap-table-jumpto.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\reorder-rows\bootstrap-table-reorder-rows.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\sticky-header\bootstrap-table-sticky-header.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\bootstrap-table\dist\extensions\tree-column\bootstrap-table-tree-column.css">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -2680,47 +2361,11 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="wwwroot\lib\clockpicker\dist\bootstrap-clockpicker.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\clockpicker\dist\bootstrap-clockpicker.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\clockpicker\dist\jquery-clockpicker.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\clockpicker\dist\jquery-clockpicker.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\footable\columns.json">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\footable\css\footable.bootstrap.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\footable\css\footable.bootstrap.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\footable\rows.json">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Update="wwwroot\lib\icheck-bootstrap\icheck-bootstrap.css">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="wwwroot\lib\icheck-bootstrap\icheck-bootstrap.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -3960,14 +3605,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="wwwroot\lib\ng-tags\ng-tags-input.bootstrap.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\lib\ng-tags\ng-tags-input.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Update="wwwroot\lib\ngMask\ngMask.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -3997,7 +3634,6 @@
   <ItemGroup>
     <Folder Include="App\routes\TechnicalSupport\" />
     <Folder Include="App\routes\Restaurant\Product\Promotions\Components\" />
-    <Folder Include="Controllers\Asignacion\" />
     <Folder Include="wwwroot\lib\angular-daterangepicker\" />
   </ItemGroup>
 

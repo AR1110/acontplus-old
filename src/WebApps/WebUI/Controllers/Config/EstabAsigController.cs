@@ -60,7 +60,7 @@ namespace WebUI.Controllers.Config
             catch (Exception ex)
             {
                 _log.LogActivity("Error in GetDataForm: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Obtener los datos");
+                _response.Create(code: "0", message: "Error al Obtener los datos para el Formulario");
             }
             finally
             {
@@ -69,49 +69,7 @@ namespace WebUI.Controllers.Config
             return Ok(_response);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] EstabAsig data)
-        {
-            var response = new GenericResponse();
-            try
-            {
-                using (DbAccess _db = new DbAccess(_configuration))
-                {
-                    await _db.SPExecute("Config.Estab_Asig_Insert");
-                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
-                    _db.AddDynamicParam("id", data.idEstab_Asig);
-                    _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
-                    _db.AddDynamicParam("codEstab", data.codEstab);
-                    response = _db.GetDefault();
-                }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Update(int id)
-        {
-            var response = new GenericResponse();
-            try
-            {
-                using (DbAccess _db = new DbAccess(_configuration))
-                {
-                    await _db.SPExecute("Config.Estab_Asig_Update");
-                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
-                    _db.AddDynamicParam("id", id);
-                    response = _db.GetDefault();
-                }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+         
     }
 }
 

@@ -113,8 +113,7 @@
                     </div>
                     <div class="row" ng-show="tipoRegistro===1">
                         <div class="form-group col-lg-2 col-md-6 col-sm-6 col-12">
-                            <label for="">Tipo Iva: </label>
-                            <label for="">Tipo Iva: </label>
+                            <label for="">Tipo Iva: </label> 
                             <select class="form-control border-select tipoIva" ng-model="data.idTipoIva"
                                     ng-change="recalculateTarifaAdd()" ng-focus="delayFocus('.tipoIva')"
                                     ng-disabled="!articlePermission.isUpdatePrice">
@@ -285,7 +284,7 @@
                                  ng-if="articlePermission.isUpdatePrice">
                                 <label for="">Precio Costo: <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control precioCostoUp"
-                                       ng-disabled="!opcionCalculate"
+                                       ng-disabled="!dataTarifaOption.opcionCalculate"
                                        ng-focus="delayFocus('.precioCostoUp')"
                                        ng-change="recalculateTarifaUpdate()" ng-model="data.precioCosto"
                                        step="any" placeholder="0.00">
@@ -301,11 +300,11 @@
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mt-4"
                                  ng-show="articlePermission.isUpdatePrice">
                                 <div class="custom-control custom-radio">
-                                    <input type="radio" id="optionPvp" ng-model="opcionCalculate" value="optionPvp" name="optionCalculatePVP" class="custom-control-input">
+                                    <input type="radio" id="optionPvp" ng-model="dataTarifaOption.opcionCalculate" value="optionPvp" name="optionCalculatePVP" class="custom-control-input">
                                     <label class="custom-control-label" for="optionPvp">PVP</label>
                                 </div>
                                 <div class="custom-control custom-radio">
-                                    <input type="radio" id="optionPorcentaje" ng-model="opcionCalculate" value="optionPorcentaje" name="optionCalculatePVP" class="custom-control-input">
+                                    <input type="radio" id="optionPorcentaje" ng-model="dataTarifaOption.opcionCalculate" value="optionPorcentaje" name="optionCalculatePVP" class="custom-control-input">
                                     <label class="custom-control-label" for="optionPorcentaje">% Util</label>
                                 </div> 
                             </div>

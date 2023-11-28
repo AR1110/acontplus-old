@@ -16,6 +16,7 @@ import {
     AccountTreeIcon,
     ArrowBackIcon,
     AspectRatioIcon,
+    ClearIcon,
     EditIcon,
 } from "@/core/components/IconsMaterial";
 import { orderService } from "@/core/services";
@@ -26,6 +27,8 @@ import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { SplitOrderProvider, useOrderContext } from "./context";
 import OrderDocument from "./OrderDocument/OrderDocument";
 import { showLoader, hideLoader } from "@/spinner";
+import Swal from "sweetalert2";
+import { SnackbarUtility } from "@/core/utilities";
 const SplitOrder = lazy(() => import("./SplitOrder/SplitOrder"));
 
 export default function OrderTable() {
@@ -86,6 +89,42 @@ export default function OrderTable() {
         setOpenDocument(false)
     }
 
+    const askToDelete = (id: number) => {
+        try {
+            Swal.fire({
+                //title: "Are you sure?",
+                html: "Esta seguro de anular el pedido?",
+                icon: "warning",
+                showCancelButton: true,
+                showConfirmButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí, anular!",
+                cancelButtonText: 'No, cancelar!'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    showLoader();
+                    orderService.delete(id).then(response => {
+                        if (response) {
+                            if (response.code === "0") {
+                                SnackbarUtility.info(response.message)
+                            }
+                            if (response.code === "1") {
+                                SnackbarUtility.info(response.message);
+                                fetchOrders()
+                            }
+                        }
+                    })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                        .finally(() => hideLoader())
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <React.Fragment>
             <Box sx={{ width: "100%" }}>
@@ -104,7 +143,7 @@ export default function OrderTable() {
                                     <TableCell align="center">F. Emisión</TableCell>
                                     <TableCell align="center">Cliente</TableCell>
                                     <TableCell align="right">Total</TableCell>
-                                    {/* <TableCell align="center">Estado</TableCell> */}
+                                    <TableCell align="center">Mesa</TableCell>
                                     <TableCell align="center">Usuario</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -120,20 +159,16 @@ export default function OrderTable() {
                                         <TableCell>
                                             <Stack direction="row" spacing={1}>
                                                 {
-                                                    order.documentoId > 0 ? '' : (<>
-                                                        {
-                                                            !(order.divided) && (
-                                                                <Tooltip describeChild title="Editar">
-                                                                    <Button variant="contained" color="success"
-                                                                        aria-label="Editar"
-                                                                        onClick={() => handleEdit(order.orderId)}
-                                                                    >
-                                                                        <EditIcon />
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            )
-                                                        }
-                                                    </>)
+                                                    (order.finished || order.divided) ? '': (
+                                                        <Tooltip describeChild title="Editar">
+                                                            <Button variant="contained" color="success"
+                                                                aria-label="Editar"
+                                                                onClick={() => handleEdit(order.orderId)}
+                                                            > 
+                                                                <EditIcon />
+                                                            </Button>
+                                                        </Tooltip>
+                                                    ) 
                                                 }
 
                                                 <Tooltip describeChild title="PDF e Impresión">
@@ -160,13 +195,21 @@ export default function OrderTable() {
                                                         </Tooltip>
                                                     )
                                                 }
+                                                <Tooltip describeChild title="Anular">
+                                                    <Button variant="contained" color="error"
+                                                        aria-label="Anular"
+                                                        onClick={() => askToDelete(order.orderId)}
+                                                    >
+                                                        <ClearIcon />
+                                                    </Button>
+                                                </Tooltip>
                                             </Stack>
                                         </TableCell>
                                         <TableCell align="center"> {order.serie}</TableCell>
                                         <TableCell align="center">{order.createdAt}</TableCell>
                                         <TableCell align="center">{order.nameFiscal}</TableCell>
                                         <TableCell align="right">{order.total}</TableCell>
-                                        {/* <TableCell align="center">{order.divided ? 'Dividiendo' : '-'}</TableCell> */}
+                                        <TableCell align="center">{order.tableName}</TableCell>
                                         <TableCell align="center">{order.userName}</TableCell>
                                     </TableRow>
                                 ))}

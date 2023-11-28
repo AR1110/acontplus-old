@@ -1,4 +1,5 @@
-import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, ProductPVPReadDto, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
+import { ConsolidacionFecha } from './product.model';
+import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, Measure, ProductPVPReadDto, Room, TableReadDto, Tax, TaxRate, Vendedor, WarehouseAsign } from ".";
 import { DOC_TYPE, ITEM_TYPE_CODE } from "../constants";
 import { EmissionPointAsign } from "./emission-point.model";
 
@@ -26,7 +27,8 @@ export interface Order {
     updateOrder?: boolean
     uuid?: string
     table?: any
-    
+    userId: number
+    taxPercentId: number
 }
 
 //Impuesto Articulos 
@@ -68,6 +70,9 @@ export interface ItemRead extends ItemBase {
     carryInventory: boolean
     taxes: Array<ItemTaxes>
     pvps: Array<ProductPVPReadDto>
+    measureId: number
+    measures: Array<Measure>
+   // consolidacionesFecha: Array<ConsolidacionFecha>
     obs?: string
     taxRateCode?: string
     itemTypeCode: ITEM_TYPE_CODE.ITEM | ITEM_TYPE_CODE.MENU
@@ -98,6 +103,7 @@ export interface ItemPostDto {
     menuId?: number
     bodegaId: number
     envioSri: boolean
+    medidaId: number
 }
 export interface SummaryPostDto {
     orderId: number
@@ -122,6 +128,8 @@ export interface SummaryPostDto {
     quickSale: boolean
     fechaEmision: Date,   
     uuid?: string 
+    userId: number
+    taxPercentId: number
 }
 
 
@@ -140,6 +148,7 @@ export interface DataFormSale {
     floors: Array<Floor>
     customer: CustomerReadDto
     tarifaImpuestoVigente: TaxRate
+    vendedores: Array<Vendedor>
 } 
 
 
@@ -177,8 +186,10 @@ export const dataFormInitialState: DataFormSale = {
         taxCode: "",
         taxRateCode: "",
         description: "",
-        percentage: 0
-    }
+        percentage: 0,
+        idTarifaImpuesto: 0
+    },
+    vendedores: []
 }
 
 export const orderInitialState: Order = {
@@ -202,5 +213,7 @@ export const orderInitialState: Order = {
     createdAt: new Date(), 
     saveDoc: false,
     updateOrder: false,
-    table: {}
+    table: {},
+    userId: 0,
+    taxPercentId: 0
 }

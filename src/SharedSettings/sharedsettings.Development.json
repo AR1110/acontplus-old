@@ -14,10 +14,6 @@
 
     //AWS Staging
     //"DefaultConnection": "Server=18.224.78.45;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
-
-    //server prd
-    //"DefaultConnection": "Server=34.207.9.208;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
-
   },
   "ApiGateways": {
     "Acontplus": "https://localhost:7060"

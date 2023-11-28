@@ -15,9 +15,9 @@ namespace Inventario.API.Controllers.v1
     public class ArticuloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly IStorageService _storageService;
+        private readonly IS3StorageService _storageService;
         private readonly LogWriter _log;
-        public ArticuloController(IConfiguration configuration, IStorageService storageService, LogWriter log)
+        public ArticuloController(IConfiguration configuration, IS3StorageService storageService, LogWriter log)
         {
             _configuration = configuration;
             _storageService = storageService;
@@ -56,7 +56,7 @@ namespace Inventario.API.Controllers.v1
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Get_Id");
+                await _db.SPExecute("Inventario.Articulo_Get_Id");
                 //_db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDataSetAsync();
@@ -105,8 +105,9 @@ namespace Inventario.API.Controllers.v1
                     await using var memoryStream = new MemoryStream();
 
                     await file.CopyToAsync(memoryStream);
-                    var s3 = new S3Object()
+                    var s3 = new S3ObjectCustom()
                     {
+                        Region = s3file.Region,
                         BucketName = s3file.BucketName,
                         InputStream = memoryStream,
                         Name = s3file.S3ObjectKey
@@ -116,7 +117,7 @@ namespace Inventario.API.Controllers.v1
                         Key = _configuration["AwsConfiguration:AWSAccessKey"],
                         Secret = _configuration["AwsConfiguration:AWSSecretKey"]
                     };
-                    var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                    var s3Response = await _storageService.UploadAsync(s3, credentials);
                 }
             }
             catch (Exception ex)
@@ -160,8 +161,9 @@ namespace Inventario.API.Controllers.v1
                 {
                     await using var memoryStream = new MemoryStream();
                     await file.CopyToAsync(memoryStream);
-                    var s3 = new S3Object()
+                    var s3 = new S3ObjectCustom()
                     {
+                        Region = s3file.Region,
                         BucketName = s3file.BucketName,
                         InputStream = memoryStream,
                         Name = s3file.S3ObjectKey
@@ -171,7 +173,7 @@ namespace Inventario.API.Controllers.v1
                         Key = _configuration["AwsConfiguration:AWSAccessKey"],
                         Secret = _configuration["AwsConfiguration:AWSSecretKey"]
                     };
-                    var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                    var s3Response = await _storageService.UploadAsync(s3, credentials);
                 }
             }
             catch (Exception ex)
@@ -194,7 +196,7 @@ namespace Inventario.API.Controllers.v1
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Delete");
+                await _db.SPExecute("Inventario.Articulo_Delete");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();

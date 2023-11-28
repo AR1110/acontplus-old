@@ -64,6 +64,8 @@
     <None Remove="Reports\Test.rdlc" />
     <None Remove="Reports\Ventas\AprobDocument.rdl" />
     <None Remove="Reports\Ventas\Clientes.rdl" />
+    <None Remove="Reports\Ventas\CuentaPorCobrar.rdl" />
+    <None Remove="Reports\Ventas\CuentaPorCobrarCuotas.rdl" />
     <None Remove="Reports\Ventas\NotaCreditoCliente.rdlc" />
     <None Remove="Reports\Ventas\NotaEntrega.rdlc" />
     <None Remove="Reports\Ventas\Proforma.rdlc" />
@@ -238,6 +240,12 @@
     <Content Include="Reports\Ventas\Clientes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\Ventas\CuentaPorCobrar.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\CuentaPorCobrarCuotas.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Ventas\NotaCreditoCliente.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -261,12 +269,6 @@
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Reports\Ventas\CuentaPorCobrarCuotas.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

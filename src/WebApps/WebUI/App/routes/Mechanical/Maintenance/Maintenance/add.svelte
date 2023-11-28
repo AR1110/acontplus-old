@@ -306,18 +306,21 @@
   };
 
   let verifyMaintenanceDetailsAndPush = () => {
-    if (supportDetails != undefined || supportDetails != null) {
-      if (supportDetails.length != 0) {
-        supportDetails.forEach((item) => {
-          item.medidas = medidas.filter((x) => x.idArticulo == item.idArticulo);
-          item.tarifas = JSON.parse(
-            medidas.find((x) => x.idMedida == item.idMedida).tarifas
-          );
-          item.bodegas = bodegas;
-          item.priceIva = item.price;
-          item.total = item.priceIva * item.quantity;
-        });
-      }
+    if (supportDetails.length != 0) {
+
+      console.log("supportDetails");
+      console.log(supportDetails);
+
+      supportDetails.forEach((item) => {
+        item.medidas = medidas.filter((x) => x.idArticulo == item.idArticulo);
+        item.tarifas = JSON.parse(
+          medidas.find((x) => x.idMedida == item.idMedida).tarifas
+        );
+        item.bodegas = bodegas;
+        item.quantity = item.cantidad;
+        item.priceIva = item.tarifas.find((x) => x.idTarifa === item.idTarifa).precioConIva;
+        item.total = item.priceIva * item.cantidad;
+      });
     }
   };
 
@@ -372,7 +375,7 @@
       if (response) {
         dataArticle = response[0][0];
 
-        medidas = response[1].map((item) => {
+        medidas = response[2].map((item) => {
           return {
             ...item,
             tarifas: JSON.parse(item.tarifas),

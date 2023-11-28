@@ -51,6 +51,7 @@ const initialState: State = {
     date: new Date().toISOString().slice(0, 10),
     sequence: 0,
     obs: "",
+    status: 1,
   },
   vehicle: {
     id: 0,
@@ -96,6 +97,8 @@ const cretaeSupport = () => {
   });
 
   const get = (params?: object) => {
+    showLoader();
+
     const json = { pageIndex: 1, pageSize: 10, tipo: 1 };
     const query = Object.assign(json, params ? params : json);
 
@@ -149,6 +152,7 @@ const cretaeSupport = () => {
 
   const getOpenApproveModal = (id?: number) => {
     showLoader();
+
     SupportDetailService.get(JSON.stringify({ tipo: 1, id }))
       .then((response) => {
         if (response) {
@@ -164,7 +168,7 @@ const cretaeSupport = () => {
             decimals: response["decimal"],
             ptoEmisiones: response["ptoEmision"],
             tiempoCreditos: response["tiempoCredito"],
-            tarifaImpuestos: response["tarifaImpuesto"]
+            tarifaImpuestos: response["tarifaImpuesto"],
           }));
         }
       })

@@ -1,7 +1,7 @@
 import { SRI_IDENTIFITION_CODE } from '@/core/constants'
 import { CustomerCreateDto, CustomerReadDto, TiempoCredito, TipoContribuyente, TipoIdentificacion } from '@/core/models'
 import { customerService, SharedService } from '@/core/services'
-import { SnackbarUtility } from '@/core/utilities' 
+import { SnackbarUtility } from '@/core/utilities'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
 
 
@@ -9,11 +9,12 @@ import { useFormik } from 'formik'
 import { MuiChipsInput, MuiChipsInputChip } from 'mui-chips-input'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import * as yup from 'yup';
-import {showLoader, hideLoader} from '@/spinner'
+import { showLoader, hideLoader } from '@/spinner'
 type CustomDialogProp = {
     id?: number
     open: boolean
-    handleClose(data?: CustomerReadDto): void
+    handleClose(data?: CustomerReadDto): void,
+    dataCustomerSRI: any
 }
 
 interface TabPanelProps {
@@ -42,7 +43,7 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => { 
+const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDialogProp) => {
     const [tiposIdentificacion, setTiposIdentificacion] = useState<Array<TipoIdentificacion>>([])
     const [tipoContribuyentes, setTipoContribuyentes] = useState<Array<TipoContribuyente>>([])
     const [tiempoCreditos, setTiempoCreditos] = useState<Array<TiempoCredito>>([])
@@ -78,7 +79,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 if (dataIdentification?.codigoSri === SRI_IDENTIFITION_CODE.LICENSE) {
                     if (numeroIdentificacion.length !== 10) return false;
                 }
-                
+
 
                 return true; // No se aplica validación si idTipoIdentificacion es 10
             }),
@@ -107,7 +108,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
     }
 
     const successResponse = async (response: any) => {
-        
+
         if (response.code === "0") {
             SnackbarUtility.warning(response.message)
         }
@@ -135,9 +136,9 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 correo: values.emails.length > 0 ? values.emails.join(';') : "",
                 idSubContribuyente: values.idSubContribuyente,
                 idTiempoCredito: values.idTiempoCredito,
-                placa:"",
+                placa: "",
                 estado: true
-            } 
+            }
 
             if (id > 0) {
                 customerService.put(values.idCliente, data)
@@ -185,28 +186,73 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 }
 
             }
-        }).finally(() => hideLoader());
 
-
-        if (id > 0) {
-            customerService.getId(id).then(response => { 
+            if (typeof dataCustomerSRI === 'object' && dataCustomerSRI.numeroRuc) {
+                const {
+                    numeroRuc,
+                    razonSocial,
+                    direccion,
+                    telefono,
+                    email
+                } = dataCustomerSRI;
+                let idTipoIdentificacion = 0; 
+                if (numeroRuc.length == 13) {
+                    const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.RUC);
+                    if (dataID) {
+                        idTipoIdentificacion = dataID.idTipoIdentificacion;
+                    }
+                }
+                if (numeroRuc.length === 10) {
+                    const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.LICENSE);
+                    if (dataID) {
+                        idTipoIdentificacion = dataID.idTipoIdentificacion;
+                    }
+                }
+                if(![13, 10].includes(numeroRuc.length)){
+                    const dataID = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.PASSPORT);
+                    if (dataID) {
+                        idTipoIdentificacion = dataID.idTipoIdentificacion;
+                    }
+                }
                 formik.setValues(state => {
                     return {
                         ...state,
-                        direccion: response.direccion,
-                        idCliente: response.customerCompanyId,
-                        numeroIdentificacion: response.identificationNumber,
-                        nombreFiscal: response.fiscalName,
-                        nombreComercial: response.tradeName,
-                        idTipoIdentificacion: response.idTipoIdentificacion!,
-                        idTiempoCredito: response.idTiempoCredito!,
-                        idSubContribuyente: response.idSubContribuyente!,
-                        emails: response.correo ? response.correo.split(';') : [],
-                        telefonos: response.telefono ? response.telefono.split(';') : [],
+                        direccion: direccion,
+                        idCliente: 0,
+                        idTipoIdentificacion: idTipoIdentificacion,
+                        numeroIdentificacion: numeroRuc,
+                        nombreFiscal: razonSocial,
+                        nombreComercial: razonSocial,
+                        emails: email ? email.split(';') : [],
+                        telefonos: telefono ? telefono.split(';') : [],
                     }
                 })
-            })
-        }
+            }
+
+
+            if (id > 0) {
+                customerService.getId(id).then(response => {
+                    formik.setValues(state => {
+                        return {
+                            ...state,
+                            direccion: response.direccion,
+                            idCliente: response.customerCompanyId,
+                            numeroIdentificacion: response.identificationNumber,
+                            nombreFiscal: response.fiscalName,
+                            nombreComercial: response.tradeName,
+                            idTipoIdentificacion: response.idTipoIdentificacion!,
+                            idTiempoCredito: response.idTiempoCredito!,
+                            idSubContribuyente: response.idSubContribuyente!,
+                            emails: response.correo ? response.correo.split(';') : [],
+                            telefonos: response.telefono ? response.telefono.split(';') : [],
+                        }
+                    })
+                })
+            }
+
+        }).finally(() => hideLoader());
+
+        
 
     }
 
@@ -276,8 +322,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
             //Buscar SRI 
             showLoader();
             SharedService.checkClientSRIByCedula(numeroIdentificacion).then(response => {
-               
-                
+
+
                 const { direccion, email, error, nombreCompleto, telefono } = response;
                 if (response.nombreCompleto) {
                     SnackbarUtility.warning(error!);
@@ -322,10 +368,10 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
             }
         }
 
-        
+
     }
 
-    const handleEmailChange = (newValue: MuiChipsInputChip[]) => { 
+    const handleEmailChange = (newValue: MuiChipsInputChip[]) => {
         formik.setFieldValue("emails", newValue)
     }
     const handlePhoneChange = (newValue: MuiChipsInputChip[]) => {
@@ -428,14 +474,14 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                 <TextField
                                     fullWidth
                                     size={texFieldSize}
-                                    label="Dirección"   
+                                    label="Dirección"
                                     id="direccion"
                                     name="direccion"
-                                    variant="outlined" 
-                                    value={formik.values.direccion??""}
+                                    variant="outlined"
+                                    value={formik.values.direccion ?? ""}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
-                                    
+
                                 />
                             </Grid>
 
@@ -446,13 +492,13 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                     label="Correo"
                                     variant="outlined"
                                     placeholder='Ingrese el correo y presione Enter para agregar'
-                                    helperText={formik.values.emails.length> 0 ? "Haga doble clic para editar un correo" : ""}
+                                    helperText={formik.values.emails.length > 0 ? "Haga doble clic para editar un correo" : ""}
                                     value={formik.values.emails}
                                     onChange={handleEmailChange}
-                                    />
+                                />
                             </Grid>
                             <Grid item xs={12} sm={12} md={12} lg={12}>
-                                <MuiChipsInput 
+                                <MuiChipsInput
                                     fullWidth
                                     size="small"
                                     label="Teléfono"
@@ -461,7 +507,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                     helperText={formik.values.telefonos.length > 0 ? "Haga doble clic para editar un teléfono" : ""}
                                     value={formik.values.telefonos}
                                     onChange={handlePhoneChange}
-                                    />
+                                />
                             </Grid>
 
 
@@ -545,7 +591,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 </DialogContent>
                 <DialogActions>
                     <Button type="submit" variant='contained' size='large' color='success'>
-                        {id> 0? 'Actualizar': 'Guardar'}
+                        {id > 0 ? 'Actualizar' : 'Guardar'}
                     </Button>
                     <Button variant='outlined' color='inherit' size='large' onClick={() => handleClose()}>Cerrar</Button>
                 </DialogActions>

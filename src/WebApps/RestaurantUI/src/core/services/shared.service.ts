@@ -12,7 +12,7 @@ class Shared {
     async checkClientSRIByRUC(identificacion: string): Promise<CustomerRucSRI> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.CUSTOMER}Consultas/GetRucSRI`,
+            url: `${PATHS.CONSULTA}GetRucSRI`,
             params: {
                 Ruc: identificacion
             }
@@ -23,7 +23,7 @@ class Shared {
     async checkClientSRIByCedula(identificacion: string): Promise<CustomerCedulaSRI> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.CUSTOMER}Consultas/GetCedulaSri`,
+            url: `${PATHS.CONSULTA}GetCedulaSri`,
             params: {
                 Ruc: identificacion
             }
@@ -153,8 +153,7 @@ class Shared {
             url: `${PATHS.PRIVATE}Order/Print/${JSON.stringify(obj)}`,
         })
 
-        const response: ApiResponse = resultAxios.data;
-        console.log(response)
+        const response: ApiResponse = resultAxios.data; 
         if (response.code === "0") {
             SnackbarUtility.warning(response.message)
         }

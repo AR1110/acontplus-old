@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useState, useEffect } from 'react'
 import {
     Box,
     Button,
@@ -33,8 +33,8 @@ import { orderService, productService } from '@/core/services';
 import { Measure, ProductPVPReadDto } from '@/core/models';
 import { PricingCalculateUtility, SnackbarUtility } from '@/core/utilities';
 import Swal from 'sweetalert2';
-import { itemToApi, summaryToApi } from '@/core/adapters'; 
-import {showLoader, hideLoader} from '@/spinner'
+import { itemToApi, summaryToApi } from '@/core/adapters';
+import { showLoader, hideLoader } from '@/spinner'
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
     { field: 'code', headerName: 'Código', width: 120 },
@@ -142,7 +142,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
     });
     //Totals order items changes QTY
     const objTempTotal = calculateOrderItemTotal(changeOrderItems);
-    const [loader, setLoader] = useState(false);  
+    const [loader, setLoader] = useState(false);
 
     const onChangeProductSearch = (productId: number) => {
         productService.findForSale(productId).then(response => {
@@ -163,7 +163,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 return
             }
             // const { taxValue, price, discount, total, bodegaId, priceWithVat } = joinOrderItemTotal();
-            const { feeId } = measureData.pvps[0] as ProductPVPReadDto;
+            const { feeId } = measureData.pvps.find(pvp=>(pvp.default)) as ProductPVPReadDto;
 
             const priceWithVat = objTempTotal.total;
             const price = PricingCalculateUtility.calculatePriceSale(priceWithVat, taxRateData?.percentage ?? 0);
@@ -187,7 +187,9 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 obs: "",
                 feeId,
                 bodegaId: changeOrderItems[0]?.bodegaId ?? 0,
-                description: product.description,
+                description: product.description, 
+                measureId: measureData ? measureData.measureId : 0,
+                measures: [],
                 summary: "",
                 code: product.productCode,
                 s3ObjectUrl: "",
@@ -205,7 +207,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 itemTypeCode: ITEM_TYPE_CODE.ITEM,
                 envioSri: true,
                 tarifaImpuesto: product.tarifaImpuesto,
-                paid: false, 
+                paid: false,
             }
             setChangeOrderItems([obj]);
             setColumnVisibilityModel({ tarifaImpuesto: true, index: false })
@@ -275,6 +277,21 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         return newRow;
     }
 
+    useEffect(() => {
+        setRightOrderData({
+            ...rightOrder,
+            customerCompanyId: leftOrder.customerCompanyId,
+            customerName: leftOrder.customerName
+        })
+        return () => {
+            setRightOrderData({
+                ...rightOrder,
+                customerCompanyId: leftOrder.customerCompanyId,
+                customerName: leftOrder.customerName
+            })
+        }
+    }, [])
+
 
     const saveAsInvoice = async () => {
         try {
@@ -305,17 +322,20 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
             })
 
             if (!isConfirmed) return
-             
+
             const mergeLeftIntoRightOrder = {
                 ...rightOrder,
+                taxPercentId: leftOrder.taxPercentId,
                 establecimientoId: leftOrder.establecimientoId,
                 puntoEmisionId: leftOrder.puntoEmisionId,
-                tableId: leftOrder.tableId,
+                tableId: leftOrder.tableId,                
             }
 
             const orderResult = summaryToApi(mergeLeftIntoRightOrder);
             const orderItemsResult = itemToApi(changeOrderItems);
-
+            //const orderItemsOriginal = itemToApi(leftCheckedOrderItems);
+ 
+            
             const data = {
                 ...orderResult,
                 subtotalSinImpuestos: objTempTotal.subTotalSinImpuestos,
@@ -325,11 +345,15 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 saveDoc: true,
                 codDoc: DOC_TYPE.FV,
                 quickSale: true,
-                items: orderItemsResult,
+                // items: orderItemsOriginal.map(item=>({
+                //     ...item,
+                //     envioSri: false
+                // })),
                 // itemsToPay: orderItemsResult,
-                customDetail: orderItemsResult
+                items: [],
+                customDetail: orderItemsResult, 
             }
-             
+
 
             showLoader()
             orderService.put(leftOrder.orderId, data).then(response => {
@@ -345,18 +369,18 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                     setPaymentData({
                         open: true,
                         payload: queryParams
-                    }) 
+                    })
                     setActionType("CUSTOM_DETAIL")
-                    setOpen(); 
+                    setOpen();
                 }
             })
-            .catch(() => hideLoader())
+                .catch(() => hideLoader())
         } catch (error) {
             console.log(error)
         }
     }
 
-    const closeModal = ()=>{
+    const closeModal = () => {
         setActionType("")
         setOpen();
     }
@@ -383,15 +407,18 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
             <DialogContent dividers>
                 <Grid container spacing={1}>
                     <Grid item xs={12}>
-                        <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName='' onChangeCustomer={(data) => {
-                            if (data) {
-                                setRightOrderData({
-                                    ...rightOrder,
-                                    customerCompanyId: data.customerCompanyId,
-                                    customerName: data.customerName
-                                })
-                            }
-                        }} />
+                        <CustomerSearch
+                            customerCompanyId={rightOrder.customerCompanyId}
+                            customerName={leftOrder.customerName}
+                            onChangeCustomer={(data) => {
+                                if (data) {
+                                    setRightOrderData({
+                                        ...rightOrder,
+                                        customerCompanyId: data.customerCompanyId,
+                                        customerName: data.customerName
+                                    })
+                                }
+                            }} />
                     </Grid>
                     <Grid item xs={12} marginBottom={1}>
                         <ProductSearch onChangeProductSearch={onChangeProductSearch} />
@@ -459,8 +486,6 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                         }} size='large' fullWidth onClick={() => {
                             setRightOrderData({
                                 ...rightOrder,
-                                customerCompanyId: 0,
-                                customerName: "",
                                 obs: ""
                             })
                             closeModal()

@@ -3,12 +3,8 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.7.1",
-      "destination": "wwwroot/lib/jquery/"
-    },
-    {
-      "library": "bootstrap@4.6.2",
-      "destination": "wwwroot/lib/bootstrap/"
+      "library": "angular.js@1.8.3",
+      "destination": "wwwroot/lib/angularjs/"
     },
     {
       "library": "angular-aria@1.8.3",
@@ -19,16 +15,64 @@
       "destination": "wwwroot/lib/angular-material/"
     },
     {
+      "library": "angular-animate@1.8.3",
+      "destination": "wwwroot/lib/angular-animate/"
+    },
+    {
+      "library": "angular-sanitize@1.8.3",
+      "destination": "wwwroot/lib/angular-sanitize/"
+    },
+    {
+      "library": "angular-cookies@1.8.3",
+      "destination": "wwwroot/lib/angular-cookies/"
+    },
+    {
+      "library": "angular-messages@1.8.3",
+      "destination": "wwwroot/lib/angular-messages/"
+    },
+    {
+      "library": "angular-ui-grid@4.12.4",
+      "destination": "wwwroot/lib/angular-ui-grid/"
+    },
+    {
+      "library": "angular-file-saver@1.1.3",
+      "destination": "wwwroot/lib/angular-file-saver/"
+    },
+    {
+      "library": "angular-ui-router@1.1.0",
+      "destination": "wwwroot/lib/angular-ui-router/"
+    },
+    {
+      "library": "angular-filter@0.5.17",
+      "destination": "wwwroot/lib/angular-filter/"
+    },
+    {
+      "library": "angular-material-data-table@0.10.10",
+      "destination": "wwwroot/lib/angular-material-data-table/"
+    },
+    {
+      "library": "angular-media-queries@0.6.1",
+      "destination": "wwwroot/lib/angular-media-queries/"
+    },
+    {
+      "library": "danialfarid-angular-file-upload@12.2.13",
+      "destination": "wwwroot/lib/danialfarid-angular-file-upload/"
+    },
+    {
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "bootstrap@4.6.2",
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
       "library": "toastr.js@2.1.4",
       "destination": "wwwroot/lib/toastr/"
     },
     {
       "library": "popper.js@1.0.8",
       "destination": "wwwroot/lib/popper/"
-    },
-    {
-      "library": "angular-ui-grid@4.12.4",
-      "destination": "wwwroot/lib/angular-ui-grid/"
     },
     {
       "library": "icheck-bootstrap@3.0.1",
@@ -47,36 +91,12 @@
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
-      "library": "angular-messages@1.8.3",
-      "destination": "wwwroot/lib/angular-messages/"
-    },
-    {
-      "library": "danialfarid-angular-file-upload@12.2.13",
-      "destination": "wwwroot/lib/danialfarid-angular-file-upload/"
-    },
-    {
-      "library": "limonte-sweetalert2@11.7.32",
+      "library": "limonte-sweetalert2@11.9.1",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
-    },
-    {
-      "library": "angular-animate@1.8.3",
-      "destination": "wwwroot/lib/angular-animate/"
-    },
-    {
-      "library": "angular-sanitize@1.8.3",
-      "destination": "wwwroot/lib/angular-sanitize/"
-    },
-    {
-      "library": "angular.js@1.8.3",
-      "destination": "wwwroot/lib/angularjs/"
     },
     {
       "library": "jsbarcode@3.11.5",
       "destination": "wwwroot/lib/jsbarcode/"
-    },
-    {
-      "library": "angular-file-saver@1.1.3",
-      "destination": "wwwroot/lib/angular-file-saver/"
     },
     {
       "library": "Chart.js@4.4.0",
@@ -91,10 +111,6 @@
       "destination": "wwwroot/lib/moment.js/"
     },
     {
-      "library": "angular-material-data-table@0.10.10",
-      "destination": "wwwroot/lib/angular-material-data-table/"
-    },
-    {
       "library": "magnific-popup.js@1.1.0",
       "destination": "wwwroot/lib/magnific-popup.js/"
     },
@@ -103,27 +119,15 @@
       "destination": "wwwroot/lib/ngMask/"
     },
     {
-      "library": "MaterialDesign-Webfont@7.2.96",
+      "library": "MaterialDesign-Webfont@7.3.67",
       "destination": "wwwroot/assets/icons/MaterialDesign-Webfont/"
-    },
-    {
-      "library": "angular-ui-router@1.1.0",
-      "destination": "wwwroot/lib/angular-ui-router/"
     },
     {
       "library": "ngStorage@0.3.11",
       "destination": "wwwroot/lib/ngStorage/"
     },
     {
-      "library": "angular-cookies@1.8.3",
-      "destination": "wwwroot/lib/angular-cookies/"
-    },
-    {
-      "library": "angular-filter@0.5.17",
-      "destination": "wwwroot/lib/angular-filter/"
-    },
-    {
-      "library": "microsoft-signalr@7.0.11",
+      "library": "microsoft-signalr@7.0.12",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -135,15 +139,11 @@
       "destination": "wwwroot/lib/bootstrap-daterangepicker/"
     },
     {
-      "library": "angular-media-queries@0.6.1",
-      "destination": "wwwroot/lib/angular-media-queries/"
-    },
-    {
-      "library": "UAParser.js@1.0.36",
+      "library": "UAParser.js@1.0.37",
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "library": "axios@1.5.1",
+      "library": "axios@1.6.1",
       "destination": "wwwroot/lib/axios/"
     },
     {
@@ -161,6 +161,14 @@
     {
       "library": "jquery.perfect-scrollbar@1.5.5",
       "destination": "wwwroot/lib/jquery.perfect-scrollbar/"
+    },
+    {
+      "library": "ng-tags-input@3.2.0",
+      "destination": "wwwroot/lib/ng-tags-input/"
+    },
+    {
+      "library": "xlsx@0.18.5",
+      "destination": "wwwroot/lib/xlsx/"
     }
   ]
 }

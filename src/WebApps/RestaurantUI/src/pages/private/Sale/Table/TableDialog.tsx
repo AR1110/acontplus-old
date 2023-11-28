@@ -1,10 +1,10 @@
-
+ 
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { useSaleStore } from '@/stores';
 import { Box, Button, DialogActions, DialogContent, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, Tab, Tabs, styled, tabsClasses } from '@mui/material';
 import { Floor, Room, TableReadDto } from '@/core/models';
-import { useEffect, useRef, useState } from 'react';
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import TableBarIcon from '@mui/icons-material/TableBar';
 import { SaleService as saleSvc, getEstabs, tableService } from '@/core/services';
 import Swal from 'sweetalert2';
@@ -37,7 +37,7 @@ function a11yProps(index: number) {
 
 const CustomButton = styled(Button)(({ theme }) => ({
  //   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.h5,
+    ...theme.typography.body2,
     padding: theme.spacing(3),
     textAlign: 'center',
     color: theme.palette.text.secondary,
@@ -65,6 +65,8 @@ const TableDialog = (props: SimpleDialogProps) => {
     const tempRooms = useRef<Array<Room>>([]);
     const tempTables = useRef<Array<TableReadDto>>([]);
  
+     const [value, setValue] = useState(0);
+
     const handleClose = () => {
         onClose(false);
     }; 
@@ -105,11 +107,12 @@ const TableDialog = (props: SimpleDialogProps) => {
 
 
     const handleButtonClick = (table: TableReadDto) => { 
+        const dataRoom = rooms.find(room=>room.id===table.roomId); 
         setOrder({
             ...order,
             tableId: table.tableId,
             table: {
-                tableName: table.description,
+                tableName: `${dataRoom?.description} - ${table.description}`,
                 numberTable: table.numberTable
             }
         }) 
@@ -165,6 +168,14 @@ const TableDialog = (props: SimpleDialogProps) => {
             console.log(error)
         } 
     }
+
+    const handleChangeRoom = (_: SyntheticEvent, newValue: number) => {
+        const dataRoom:any =  tempRooms.current[newValue]
+        const tempTablesFiltered =  tempTables.current.filter(table => table.roomId === dataRoom.id); 
+        setTables(() => tempTablesFiltered) 
+        setRoomId(() => dataRoom.floorId);
+        setValue(newValue); 
+  };
     return (
         <Dialog onClose={handleClose} open={open} fullWidth={true}>
             <DialogTitle>
@@ -204,6 +215,8 @@ const TableDialog = (props: SimpleDialogProps) => {
                         aria-label="visible arrows tabs example"
                         textColor="secondary"
                         indicatorColor="secondary"
+                       value={value} 
+                       onChange={handleChangeRoom}
                         sx={{
                             [`& .${tabsClasses.scrollButtons}`]: {
                                 '&.Mui-disabled': { opacity: 0.3 },
@@ -214,7 +227,7 @@ const TableDialog = (props: SimpleDialogProps) => {
                     >
                         {
                             rooms.map((room, roomIndex) => (
-                                <Tab label={room.description} {...a11yProps(room.id)} key={roomIndex} />
+                                <Tab  label={room.description} {...a11yProps(room.id)} key={roomIndex} />
                             ))
                         }
                     </Tabs>
@@ -228,7 +241,7 @@ const TableDialog = (props: SimpleDialogProps) => {
                                 disabled={table.assigned}
                                 onClick={()=>handleButtonClick(table)}
                                  >
-                                    {table.numberTable} <TableBarIcon />
+                                    {table.description} <TableBarIcon />
                                 </CustomButton>
                                 {/* <Item onClick={() => handleButtonClick(table, index)} style={{
                                     backgroundColor: `${order.tableId === table.tableId ? '#1976d2' : '#818181'}`,

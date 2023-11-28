@@ -13,7 +13,8 @@
         </div>
         <div class="col-lg-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button class="btn btn-info" ng-if="accion.crear" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                <button class="btn btn-info" ng-if="accion.crear" ng-click="openModalNew()"><i
+                        class="fa fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
     </div>
@@ -21,102 +22,138 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
-                <md-toolbar class="md-table-toolbar md-default">
-                    <div class="md-toolbar-tools">
-                        <div class="col-lg-9 col-md-9 col-sm-1">
-                            <button type="button" class="btn btn-info" ng-click="openModalFiltro()">
-                                <icon class="fas fa-filter"></icon> Filtro
-                            </button>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                            <form class="form-material">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" ng-keyup="getListaFilter()" ng-model="dataSearch.bySearch" placeholder="Buscar" />
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-secondary btn-xs" ng-click="getConsolidaciones()">
-                                            <i class="fas fa-redo fa-xs"></i>
-                                        </button>
-                                    </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-12">
+
+                            <div class="d-flex flex-row">
+                                <div class="p-2">
+                                    <select class="form-control border-select" ng-model="dataSearch.pageSize"
+                                        ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                                    </select>
                                 </div>
-                            </form>
+                                <div class="p-2">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <div class="custom-control custom-checkbox mr-sm-2">
+                                                    <input type="checkbox" ng-model="dataSearch.ckFecha" 
+                                                        class="custom-control-input" id="checkBoxFecha">
+                                                    <label class="custom-control-label" for="checkBoxFecha"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <date-range-filter current-date="dataSearch.fechaInicio"
+                                            start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                            result-range-date="resultRangeFilter(result)"></date-range-filter>
+                                    </div>
+                                </div> 
+                            </div>
+                            
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="d-flex flex-row-reverse">
+                                <form class="form-material">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" ng-keyup="getListaFilter()"
+                                            ng-model="dataSearch.bySearch" placeholder="Buscar" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-info btn-xs"
+                                                ng-click="getConsolidaciones()">
+                                                <i class="fas fa-redo fa-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </md-toolbar>
-                <md-table-container style="max-height: 400px;">
-                    <table md-table>
-                        <thead fix-head md-head>
-                            <tr md-row>
-                                <th md-column></th>
-                                <th md-column>N°</th>
-                                <th md-column>N°. Documento</th>
-                                <th md-column>Fecha Emisión</th>
-                                <th md-column>Observación</th>
-                                <th md-column>Usuario</th>
-                                <th md-column>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody md-body>
-                            <tr md-row ng-repeat="item in consolidaciones" ng-class="item.style">
-                                <td md-cell>
-                                    <md-menu>
-                                        <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                   ng-click="$mdMenu.open($event)">
-                                            <icon class="mdi mdi-menu"></icon>
-                                        </md-button>
-                                        <md-menu-content class="md-dense">
-                                            <md-menu-item>
-                                                <md-button ng-click="openModalDetalle(item)">
-                                                    <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
-                                                </md-button>
-                                            </md-menu-item>
+                     
+                    <md-table-container style="max-height: 350px;">
+                        <table md-table>
+                            <thead fix-head md-head>
+                                <tr md-row>
+                                    <th md-column></th>
+                                    <th md-column>N°</th>
+                                    <th md-column>N°. Documento</th>
+                                    <th md-column>Fecha Emisión</th>
+                                    <th md-column>Observación</th>
+                                    <th md-column>Usuario</th>
+                                    <th md-column>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="item in consolidaciones" ng-class="item.style">
+                                    <td md-cell>
+                                        <md-menu>
+                                            <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                ng-click="$mdMenu.open($event)">
+                                                <icon class="mdi mdi-menu"></icon>
+                                            </md-button>
+                                            <md-menu-content class="md-dense">
+                                                <md-menu-item>
+                                                    <md-button ng-click="openModalDetalle(item)">
+                                                        <span md-menu-align-target><i class="ti-menu"></i>
+                                                            Detalle</span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item>
-                                                <md-button ng-click="openModalEditar(item)" ng-disabled="item.anulada">
-                                                    <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item>
+                                                    <md-button ng-click="openModalEditar(item)"
+                                                        ng-disabled="item.anulada">
+                                                        <span md-menu-align-target><i class="ti-pencil"></i>
+                                                            Editar</span>
+                                                    </md-button>
+                                                </md-menu-item>
 
 
-                                            <md-menu-item ng-if="accion.anular">
-                                                <md-button ng-click="askToDelete(item)" ng-disabled="item.anulada">
-                                                    <span md-menu-align-target><i class="ti-na"></i> Anular</span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.anular">
+                                                    <md-button ng-click="askToDelete(item)" ng-disabled="item.anulada">
+                                                        <span md-menu-align-target><i class="ti-na"></i> Anular</span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.reporte">
-                                                <md-button ng-click="getReport(item)">
-                                                    <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
-                                                </md-button>
-                                            </md-menu-item>
-                                        </md-menu-content>
-                                    </md-menu>
-                                </td>
-                                <td md-cell>{{$index+1}}</td>
-                                <td md-cell>{{item.nroDoc}}</td>
-                                <td md-cell>{{item.fechaEmision}}</td>
-                                <td md-cell>{{item.observacion}}</td>
-                                <td md-cell>{{item.usuario}}</td>
-                                <td md-cell>${{item.total}}</td>
-                            </tr>
-                            <tr class="text-center" ng-show="consolidaciones.length===0">
-                                <td colspan="7">No hay registros en esta Tabla</td>
-                            </tr>
-                        </tbody>
-                        <tfoot md-foot>
-                            <tr md-row>
-                                <td md-cell colspan="6"><strong>Total:</strong></td>
-                                <td md-cell>{{total}}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </md-table-container>
+                                                <md-menu-item ng-if="accion.reporte">
+                                                    <md-button ng-click="getReport(item)">
+                                                        <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
+                                                    </md-button>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
+                                    </td>
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{item.nroDoc}}</td>
+                                    <td md-cell>{{item.fechaEmision}}</td>
+                                    <td md-cell>{{item.observacion}}</td>
+                                    <td md-cell>{{item.usuario}}</td>
+                                    <td md-cell>${{item.total}}</td>
+                                </tr>
+                                <tr class="text-center" ng-show="consolidaciones.length===0">
+                                    <td colspan="7">No hay registros en esta Tabla</td>
+                                </tr>
+                            </tbody>
+                            <tfoot md-foot>
+                                <tr md-row>
+                                    <td md-cell colspan="6"><strong>Total:</strong></td>
+                                    <td md-cell>{{total}}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </md-table-container>
+                </div>
+                <div class="card-body">
+                    <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                        ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                        class="pagination" boundary-links="true" rotate="false"></ul>
+                </div>
             </div>
         </div>
     </div>
 
 </div>
-@section Scripts{
-        <script src="~/js/services/storageService.js" asp-append-version="true"></script>
-        <script src="~/js/inventario/services/consolidacionInvService.js" asp-append-version="true"></script>
-        <script src="~/js/inventario/controllers/consolidacionInvCtrl.min.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="~/js/services/storageService.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/services/consolidacionInvService.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/controllers/consolidacionInvCtrl.min.js" asp-append-version="true"></script>
 }

@@ -12,6 +12,7 @@ export interface UserData {
   role: string;
   actividad: string;
   jwtToken: string;
+  username:string
 }
 
 export interface DataLogin {
@@ -34,4 +35,5 @@ export const UserEmptyState: UserData = {
   role: "",
   actividad: "",
   jwtToken: "",
+  username: ''
 };

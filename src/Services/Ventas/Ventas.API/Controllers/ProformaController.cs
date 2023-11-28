@@ -125,7 +125,7 @@ namespace Ventas.API.Controllers
             return Ok(_response);
         }
 
-        [HttpDelete("GetId/{id}")]
+        [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
             var _db = new DbAccess(_configuration);

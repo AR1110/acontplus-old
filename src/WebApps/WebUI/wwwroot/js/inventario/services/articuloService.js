@@ -3,7 +3,7 @@
 
     'use strict';
 
-    app.factory('articuloService', ['mainService', 'formulario', function (mainService, fS) {
+    app.factory('articuloService', ['mainService', 'formulario', function (mS, fS) {
 
         let url = 'Inventario/Articulo/';
 
@@ -16,7 +16,7 @@
          * @returns 
          */
         service.get = (params) => {
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -75,7 +75,7 @@
 
         //eliminar mas adelante 
         service.getAll = function (query) {
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -122,7 +122,7 @@
          * @returns 
          */
         service.getDataForForm = function () {
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 5 }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 5 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -216,7 +216,7 @@
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 return
             }
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -247,7 +247,7 @@
                 checkBoxStock: dataSearch.checkBoxStock,
             };
 
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -298,7 +298,7 @@
             query.tipo = 1;
             query.pageIndex = 1;
             query.pageSize = 50
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -333,7 +333,7 @@
 
         //Se usa en modulo de consolidacion 
         service.getForImportation = function (query) {
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -345,7 +345,7 @@
 
         //eliminar mas adelante
         service.getDataForm = function (query) {
-            return mainService.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -388,7 +388,7 @@
         }
 
         service.save = function (file, data) {
-            return mainService.uploadFile("POST", url + "Post/?json=" + encodeURIComponent(JSON.stringify({ data })), file, null, true);
+            return mS.uploadFile("POST", url + "Post/?json=" + encodeURIComponent(JSON.stringify({ data })), file, null, true);
             //    return mainService.getData('post', url + 'Post', { data: data }, true)
         }
 
@@ -398,7 +398,7 @@
                 file = null;
             }
             //return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
-            return mainService.uploadFile("post", url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
+            return mS.uploadFile("post", url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
         }
 
         /**
@@ -407,7 +407,7 @@
          * @returns 
          */
         service.search = function (query) {
-            return mainService.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(query)), null, true).then(response => {
+            return mS.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(query)), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -449,7 +449,7 @@
                 code: objSearch.isSearchByCode,
                 tipo: 2
             }
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -462,7 +462,7 @@
         }
 
         service.findForPurchase = function (query) {
-            return mainService.getData('get', url + 'FindForPurchase?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'FindForPurchase?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -521,18 +521,16 @@
          * @param {*} query {tipo: 6, idArticulo: 17, idBodega: 2}
          * @returns object
          */
+        //👁‍🗨👁‍🗨📛📛❌📛
         service.findForSale = function (query) {
-
             if (!("tipo" in query)) {
                 query.tipo = 6;
-                // fS.sweetAlert('warning', 'Propiedad tipo no proporcionado - listar articulo')
-                // throw ''
             }
             if (!('idArticulo' in query)) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 throw ''
             }
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -611,6 +609,95 @@
             })
         }
 
+        /**
+         * Nueva depuracion ✅✅✅✅
+         */
+        service.getForSale = function (obj) {
+            let params = {
+                ...obj,
+                tipo: 6
+            }
+            if (!('idArticulo' in obj)) {
+                fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
+                throw ''
+            }
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload); 
+                    let articulo = mainData[0][0];
+                    let infoAdicionalTemp = [];
+                    let datosAdicionalesArticulo = [];
+
+                    // Medidas del artículo fraccionado del principal
+                    let medidasFraccionadoTemp = mainData[1];
+
+                    // Medida principal con las tarifas
+                    let medidasPrincipalTemp = mainData[2];
+
+                    // Combinar los dos arrays de medidas en uno solo
+                    const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal=>({
+                        ...medidaPrincipal,
+                        tipo: 'PRINCIPAL'
+                    }))
+                    const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado=>({
+                        ...medidaFraccionado,
+                        tipo: 'FRACCIONADO'
+                    }))
+                    const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
+
+                    /**
+                     * Ordenar el array de medidas en función de la propiedad "orden" y 
+                     * establecer la propiedad "defaultMedida" en falso para todos los elementos 
+                     * */
+                    let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
+                        ...medida,
+                        defaultMedida: false
+                    }))
+                    // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
+                    orderMedidaArray[0].defaultMedida = true;
+
+                    // Crear un nuevo array de medidas con un formato específico
+                    let medidas = orderMedidaArray.map(item => ({
+                        idMedida: item.idMedida,
+                        conversion: item.conversion,
+                        descripcion: item.descripcion,
+                        defaultMedida: item.defaultMedida,
+                        tipo: item.tipo,
+                        tarifas: JSON.parse(item.tarifas)
+                    }))
+
+                    let consolidacionesFecha = mainData[3] || [];
+                    
+                    if (mainData[4]) {
+                        infoAdicionalTemp = mainData[4] || []
+                    }
+
+
+                    datosAdicionalesArticulo = infoAdicionalTemp.map(item => ({
+                        idArticulo: item.idArticulo,
+                        idEtiqueta: item.idEtiqueta,
+                        idInfoAdicional: item.idInfoAdicional,
+                        jsonAdicional: JSON.parse(item.jsonAdicional),
+                        uniqueId: item.uniqueId,
+                        estado: item.estado
+                    }))
+                    return {
+                        articulo,
+                        medidas,
+                        datosAdicionalesArticulo,
+                        consolidacionesFecha: consolidacionesFecha.map((data) => ({
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
+                    }
+
+                }
+            })
+        }
+
 
         service.checkNotificationStock = function (query) {
             if (!("idArticulo" in query)) {
@@ -618,7 +705,7 @@
                 throw ''
             }
             query.tipo = 7;
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -634,7 +721,7 @@
 
 
         service.findById = function (id) {
-            return mainService.getData("get", url + "GetId/" + id, null, true).then(response => {
+            return mS.getData("get", url + "GetId/" + id, null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -652,7 +739,7 @@
 
         //Se usa Recepcion documentos (posiblemente eliminar mas adelante)
         service.getId = (id) => {
-            return mainService.getData("GET", url + "GetId/" + id, null, true).then(
+            return mS.getData("GET", url + "GetId/" + id, null, true).then(
                 response => {
                     if (response.code == "0") {
                         throw response
@@ -734,7 +821,7 @@
                             return {
                                 data: response.data[0],
                                 pvps: response.pvps
-                            }                            
+                            }
                         }
                     }
                     else {
@@ -744,12 +831,12 @@
         }
 
         service.post = function (data) {
-            return mS.getData("post", URL, {data}, true)
+            return mS.getData("post", URL, { data }, true)
         }
 
 
         service.put = function (id, data) {
-            return mS.getData("put", URL + `${id}`, {data}, true);
+            return mS.getData("put", URL + `${id}`, { data }, true);
         }
 
         service.delete = function (id) {

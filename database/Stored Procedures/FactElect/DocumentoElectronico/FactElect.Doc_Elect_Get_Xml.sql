@@ -18,17 +18,14 @@ GO
 -- Create date: 2023-05-05
 -- Description:	SP FOR GET XML
 -- =============================================
-IF OBJECT_ID(N'FactElect.Doc_Elect_Get_Xml', N'P') IS NOT NULL
-DROP PROCEDURE FactElect.Doc_Elect_Get_Xml 
-GO
-CREATE PROCEDURE FactElect.Doc_Elect_Get_Xml @idUsuarioRol INT
+CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Get_Xml @idUsuarioRol INT
 ,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	IF EXISTS (SELECT 1 FROM DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND xmlSri IS NOT NULL)
+	IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND xmlSri IS NOT NULL)
 		BEGIN
-			SELECT comprobante + ' ' + serieComprobante as 'filename',  xmlSri FROM v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id
+			SELECT comprobante + ' ' + serieComprobante as 'filename',  xmlSri FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id
 		END
 END
 GO

@@ -65,6 +65,7 @@ BEGIN
         ,totalSinImpuestos NUMERIC (18,5) NOT NULL
         ,importeTotal NUMERIC (18,5) NOT NULL
 		,inventory VARCHAR(5) NOT NULL
+        ,observacion VARCHAR(300) NULL
 	)
 
 	DECLARE @detail AS TABLE(
@@ -104,11 +105,11 @@ BEGIN
 	BEGIN TRY
 
 		INSERT INTO @document 
-		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory,observacion)
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory,observacion
 		FROM OPENJSON(@comprobante)WITH 
         (
-             idEstablecimiento           INT '$.idEstablecimiento' 
+             idEstablecimiento           INT '$.idEstablecimiento'
 		    ,idPuntoEmision              INT '$.idPuntoEmision'
 		    ,idProveedor                 INT '$.idProveedor' 
 		    ,estab                VARCHAR(5) '$.estab' 
@@ -117,6 +118,7 @@ BEGIN
 		    ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos'
 		    ,importeTotal      NUMERIC(18,5) '$.importeTotal'
 		    ,inventory            VARCHAR(5) '$.inventory'
+            ,observacion        VARCHAR(300) '$.observacion'
 		) as dt
 		
 		INSERT INTO @detail
@@ -216,8 +218,8 @@ BEGIN
 		BEGIN TRAN 
 			--============================================================Administracion=========================================================================================
 			INSERT INTO Compra.Documento_Ingreso
-			       (uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,secuencial,totalSinImpuestos,importeTotal,fechaRegistro,idUsuario,idEntidad)
-			SELECT @uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,@secuencial,totalSinImpuestos,importeTotal,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad 
+			       (uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,secuencial,totalSinImpuestos,importeTotal,fechaRegistro,idUsuario,idEntidad,observacion)
+			SELECT @uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,@secuencial,totalSinImpuestos,importeTotal,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad,observacion 
 			FROM @document
 			
 			SET @idDocumentoIngreso = @@IDENTITY
@@ -277,7 +279,7 @@ BEGIN
                                     
 								    INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
 				                           (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
-			                        SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumentoIngreso,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSinImpuesto,@fechaEmision,@idUsuario
+			                        SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumentoIngreso,@idMedida,@cantidad,@precioUnitario,@precioUnitario,@precioTotalSinImpuesto,@fechaEmision,@idUsuario
 								    
                                     IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
                                         BEGIN
@@ -287,6 +289,28 @@ BEGIN
                                     --> Metodo UltimoPrecio
                                     IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codMetodoValoracion = 'UEPS')
                                         BEGIN
+                                            
+                                            IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaUltimoCosto IS NULL)
+                                                BEGIN
+                                                    SELECT TOP 1 @porcentaje = precioCosto / 2 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo  
+                                                    
+                                                    IF @precioUnitario >= @porcentaje 
+				                                        BEGIN
+                                                            IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida AND estado = 1)
+						                                        BEGIN 
+							                                        UPDATE dbo.Articulo SET precioCosto = @precioUnitario, fechaModificacion = dbo.ufngetDateEcuador() WHERE idArticulo = @idArticulo
+						
+							                                        UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioUnitario) * 100) - 100 WHERE idArticulo = @idArticulo
+						                                        END 
+					                                        ELSE 
+						                                        BEGIN
+							                                        UPDATE dbo.ArticuloFraccionado SET precioCostoFraccionado = @precioUnitario WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+							
+						                                        END
+                                                        END 
+
+                                                END 
+
                                             IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaUltimoCosto < @fechaEmision)
                                                 BEGIN
                                                     SELECT TOP 1 @porcentaje = precioCosto / 2 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo  

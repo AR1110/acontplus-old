@@ -153,16 +153,18 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
                 datosAdicionalesArticulo
             } = self.dataArticulo;
 
-            let index = 0;
+            let index = 0, entity = {};
+            let findIndexById = this.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
-            if ([null, undefined].includes(this.indexRow)) {
+            if (findIndexById === -1) {
                 self.addRow();
                 index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
+                entity = self.gridOptions.data[index];
             } else {
-                index = this.indexRow;
+                index = findIndexById;
+                entity = self.gridOptions.data[index];
+                entity.cantidad = entity.cantidad + 1;
             }
-
-            let entity = self.gridOptions.data[index];
 
             let dataMedida = medidas[0];
 
@@ -551,7 +553,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                     this.setCustomerData(item);
                 } else {
                     this.setCustomerData(item);
-                } 
+                }
             } else {
                 this.setCustomerData(item)
             }
@@ -785,7 +787,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
         } catch (error) {
             console.log(error)
-        }  
+        }
     }
 
 
@@ -1215,7 +1217,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                     this.setCustomerData(item);
                 } else {
                     this.setCustomerData(item);
-                } 
+                }
             } else {
                 this.setCustomerData(item)
             }
@@ -1568,7 +1570,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                     this.setCustomerData(item);
                 } else {
                     this.setCustomerData(item);
-                } 
+                }
             } else {
                 this.setCustomerData(item)
             }

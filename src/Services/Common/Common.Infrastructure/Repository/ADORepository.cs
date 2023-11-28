@@ -147,6 +147,35 @@ namespace Common.Infrastructure.Repository
             }
             return response;
         }
+        public async Task OnlyExecute(string spName, Dictionary<string, object> parameters)
+        {
+            var _context = _contexts.GetContext(_configuration["ContextName"]);
+            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
+            {
+                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
+                try
+                {
+                    cmd.CommandText = spName;
+                    if (parameters.Count > 0)
+                    {
+                        foreach (var parameter in parameters)
+                        {
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                            }
+                        }
+                    }
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+                finally
+                {
+                    if (!wasOpen) await cmd.Connection.CloseAsync();
+                }
+            }
+        }
         public async Task<List<T>> CustomReader<T>(string spName, Dictionary<string, object> parameters)
         {
             List<T> response = new List<T>();

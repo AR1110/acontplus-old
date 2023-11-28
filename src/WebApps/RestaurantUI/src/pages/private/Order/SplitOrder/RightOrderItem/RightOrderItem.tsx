@@ -100,8 +100,7 @@ const RightOrderItem = () => {
                 tableId: leftOrder.tableId,
                 bodegaId: leftOrder.bodegaId
             }
-
-            console.log(rightOrderItems)
+ 
 
             const orderResult = summaryToApi(mergeLeftIntoRightOrder);
             const orderItemsResult = itemToApi(rightOrderItems);
@@ -177,7 +176,7 @@ const RightOrderItem = () => {
                         <StyledAccordionDetails>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
-                                    <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName='' onChangeCustomer={(data) => {
+                                    <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName={leftOrder.customerName} onChangeCustomer={(data) => {
                                         if (data) {
                                             setRightOrderData({
                                                 ...rightOrder,

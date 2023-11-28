@@ -58,6 +58,7 @@ BEGIN
         ,totalSinImpuestos NUMERIC (18,5) NOT NULL
         ,importeTotal NUMERIC (18,5) NOT NULL
 		,inventory VARCHAR(5) NOT NULL
+        ,observacion VARCHAR(300) NULL
 	)
 
 	DECLARE @detail AS TABLE(
@@ -99,8 +100,8 @@ BEGIN
 	BEGIN TRY 
 					
 		INSERT INTO @document 
-		       (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory)
-		SELECT @idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		       (idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory,observacion)
+		SELECT @idDocumentoIngreso,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,inventory,observacion
 		FROM OPENJSON(@comprobante) WITH 
         (
 		     idProveedor                 INT '$.idProveedor' 
@@ -108,6 +109,7 @@ BEGIN
 		    ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos'
 		    ,importeTotal      NUMERIC(18,5) '$.importeTotal'
 		    ,inventory            VARCHAR(5) '$.inventory'
+            ,observacion        VARCHAR(300) '$.observacion'
 		) as dt
 		
 		INSERT INTO @detail
@@ -200,6 +202,7 @@ BEGIN
 			   ,di.fechaEmision      = dc.fechaEmision
 			   ,di.totalSinImpuestos = dc.totalSinImpuestos
 			   ,di.importeTotal      = dc.importeTotal
+               ,di.observacion       = dc.observacion
 			FROM Compra.Documento_Ingreso di WITH (NOLOCK)
 			INNER JOIN @document dc ON dc.idDocumentoIngreso = di.idDocumentoIngreso
 			 
@@ -285,7 +288,7 @@ BEGIN
                                         BEGIN
 									        INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
 				                                   (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
-			                                SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumentoIngreso,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSinImpuesto,@fechaEmision,@idUsuario
+			                                SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumentoIngreso,@idMedida,@cantidad,@precioUnitario,@precioUnitario,@precioTotalSinImpuesto,@fechaEmision,@idUsuario
 									    END
 
                                     IF EXISTS (SELECT 1 FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)

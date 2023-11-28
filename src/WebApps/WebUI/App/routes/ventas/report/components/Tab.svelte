@@ -5,7 +5,7 @@
   let items = [
     {
       icon: "",
-      label: "Cuenta por cobrar",
+      label: "Reporte de cartera",
       value: 1,
       component: CuentaPorCobrar,
     },

@@ -156,7 +156,8 @@
                 totalSinImpuestos: data.subTotalSinImpuestos,
                 importeTotal: data.total,
                 inventory: data.inventory,
-                tarifa: data.tarifa                
+                tarifa: data.tarifa,
+                observacion: data.observacion              
             };
 
             let query =  {

@@ -1387,7 +1387,7 @@
                         codigoAuxiliar: $scope.articleSelected.codigoAuxiliar,
                         descripcion: $scope.articleSelected.descripcion
                     }
-                    mS.getData('get', 'Recepcion/Articulo/?json=' + encodeURIComponent(JSON.stringify(jsonData)), null, true).then(
+                    mS.getData('get', 'Compra/Articulo/?json=' + encodeURIComponent(JSON.stringify(jsonData)), null, true).then(
                         response => {
                             if (response.code == '1') {
                                 $scope.articleNotFound = true;
@@ -1432,8 +1432,7 @@
                         descripcion: $scope.articleMergeSearch.textSearch,
                         tipo: tipo
                     }
-                    //Recepcion/Articulo
-                    mS.getData('get', 'Recepcion/Articulo/?json=' + encodeURIComponent(JSON.stringify(jsonData)), null, true).then(
+                    //Recepcion/Articulo       mS.getData('get', 'Compra/Articulo/?json=' + encodeURIComponent(JSON.stringify(jsonData)), null, true).then(
                         response => {
                             if (response.code == '1') {
                                 // if ($scope.articleNotFound) {
@@ -1471,7 +1470,7 @@
                         id: item.idArticulo,
                         tipo: 'H'
                     }
-                    mS.getData('get', 'Recepcion/Articulo/?json=' + JSON.stringify(data), null, true).then(
+                    mS.getData('get', 'Compra/Articulo/?json=' + JSON.stringify(data), null, true).then(
                         response => {
                             if (response.code == '1') {
                                 $scope.articleHistory = JSON.parse(response.payload)

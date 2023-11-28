@@ -259,7 +259,7 @@
       </div>
       <div class="col-lg-4 col-md-4 col-sm-6 col-12">
         <div class="form-froup">
-          <label for="daterange">Rando fechas: </label>
+          <label for="daterange">Rango de fechas: </label>
           <input
             type="text"
             id="daterange"
@@ -340,7 +340,7 @@
               bind:checked={dataSearch.ckCxcVencida}
             />
             <label class="custom-control-label" for="ckCxcVencida"
-              >Toggle this switch element</label
+              >Movimientos</label
             >
           </div>
           <!-- <div class="input-group">

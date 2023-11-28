@@ -10,9 +10,11 @@ type AuthState = {
     successLogin: boolean
     user: UserData
     estabs: Array<Establecimiento>
-    dataEstab: Establecimiento
+    dataEstab: Establecimiento,
+    puntoEmision: string,
     setDataEstab(estabs: Array<Establecimiento>, dataEstab: Establecimiento): void
-    login: (username: string, password: string) => void;
+    setPuntoEmision(puntoEmision:string):void
+    // login: (username: string, password: string) => void;
     logOut: () => void
 }
 
@@ -23,50 +25,56 @@ export const useAuthStore = create<AuthState>((set) => (
         user: getUserData() ? getUserData() : UserEmptyState,
         estabs: [],
         dataEstab: estabInitialState,
+        puntoEmision: '',
         setDataEstab(estabs, dataEstab) {
             set({
                 estabs,
                 dataEstab
             })
         },
-        login: (username: string, password: string) => {
-
-            set(state => ({
-                ...state,
-                loading: true,
-                successLogin: false,
-            }))
-
-            authService.login(username, password).then(response => {
-
-                if (response.code === "0") {
-                    SnackbarUtility.warning(response.message);
-                }
-                if (response.code === "1") {
-                    SnackbarUtility.success("Inciando Sessión");
-                    const dataLogin = response.payload as DataLogin;
-                    const userData = dataLogin.userData[0];
-
-                    if (!userData?.jwtToken) return
-
-                    setToken(userData.jwtToken)
-                    setUserData(userData);
-                    setEstabs(JSON.parse(dataLogin.establecimientos));
-
-                    set(state => ({
-                        ...state,
-                        successLogin: true
-                    }))
-                }
-
-            }).finally(() => {
-                set(state => ({
-                    ...state,
-                    loading: false,
-                    successLogin: false
-                }))
+        setPuntoEmision(puntoEmision){
+            set({
+                puntoEmision
             })
         },
+        // login: (username: string, password: string) => {
+
+        //     set(state => ({
+        //         ...state,
+        //         loading: true,
+        //         successLogin: false,
+        //     }))
+
+        //     authService.login(username, password).then(response => {
+
+        //         if (response.code === "0") {
+        //             SnackbarUtility.warning(response.message);
+        //         }
+        //         if (response.code === "1") {
+        //             SnackbarUtility.success("Inciando Sessión");
+        //             const dataLogin = response.payload as DataLogin;
+        //             const userData = dataLogin.userData[0];
+
+        //             if (!userData?.jwtToken) return
+
+        //             setToken(userData.jwtToken)
+        //             setUserData(userData);
+        //             setEstabs(JSON.parse(dataLogin.establecimientos));
+
+        //             set(state => ({
+        //                 ...state,
+        //                 successLogin: true
+        //             }))
+        //         }
+
+        //     }).finally(() => {
+        //         set(state => ({
+        //             ...state,
+        //             loading: false,
+        //             successLogin: false
+        //         }))
+        //     })
+        // },
         logOut: () => {
             persistenceClear()
             set(state => ({

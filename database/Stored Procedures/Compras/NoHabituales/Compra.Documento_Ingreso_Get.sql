@@ -194,7 +194,7 @@ BEGIN
 			FROM sri.TarifaImpuesto WITH (NOLOCK) WHERE estado = 1 AND codImpuesto = 2
 
 			--============================Impuestos por tipo de Actividad======================================================
-			SELECT ea.codEstab,codigoPorcentaje = ae.codTarifaImpuesto,tarifa = ae.porcentaje
+			SELECT ea.codEstab,codigoPorcentaje = '2',tarifa = 12
 			FROM Config.Estab_Asig            ea WITH (NOLOCK) 
 			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON ea.codEstab = es.codEstab
 			INNER JOIN Sri.ActividadEconomica ae WITH (NOLOCK) ON ae.codigo   = es.actividad
@@ -263,6 +263,7 @@ BEGIN
 				,iva = @iva
 				,totalDescuento = @decuento 
 				,total = di.importeTotal
+                ,di.observacion
 			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
 			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = di.idPuntoEmision
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab

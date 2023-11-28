@@ -1,12 +1,5 @@
 USE AcontPlus
-
-IF OBJECT_ID('FactElect.Doc_Elect_Get') IS NOT NULL
-DROP PROCEDURE FactElect.Doc_Elect_Get
 GO
-
-
--- FactElect.Doc_Elect_Get 28, '{"isCurrentDate":false,"checkBoxDate":true,"isSearchCustomerProvider":false,"dateStart":"2023-04-01T05:00:00.000Z","dateEnd":"2023-05-01T04:59:59.999Z"}'
-
 CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Report @idRol INT,@json NVARCHAR(max)
 AS
 BEGIN 

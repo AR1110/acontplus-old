@@ -775,3 +775,14 @@ go
 
 DROP PROCEDURE IF EXISTS [Almacen].[Articulo_Update_v2]
 go
+
+--> RAMIREZ ALEXIS - FECHA :11/14/2023
+DROP PROCEDURE IF EXISTS Ventas.Catalogo_Get   
+go
+
+--> RAMIREZ ALEXIS - FECHA :11/17/2023
+DROP PROCEDURE IF EXISTS ASPControlStockGet   
+go
+
+DROP PROCEDURE IF EXISTS Sri.aspCodigoEnvioSriGet  
+go

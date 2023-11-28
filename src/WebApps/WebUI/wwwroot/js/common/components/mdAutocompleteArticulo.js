@@ -102,12 +102,10 @@ class BaseSearchArticulo {
 
             showLoader();
             this.dataArticulo.idBodega = this.idBodega;
-            this.dataArticulo.tipo = 6;
-
             /**
              * return object {articulo, medidas, datosAdicionales}
              */
-            this.articuloSvc.findForSale(this.dataArticulo).then(async dataArticuloApi => {
+            this.articuloSvc.getForSale(this.dataArticulo).then(async dataArticuloApi => {
 
                 //Cuando el articulo no lleva inventario 
                 if (!dataArticuloApi.articulo.llevaInventario) {
@@ -436,7 +434,7 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo {
                 }
             })
 
-        }, 500)
+        }, 800)
     }
 }
 
@@ -457,13 +455,13 @@ app.component('mdAutocompleteArticuloComponent', {
 });
 
 
+// ng - focus="$ctrl.focusDescripcionArticulo('#inputBarcode')"
 app.component("articuloSearchBarcode", {
     template: `<input  type="text" autocomplete="off"
                        class="form-control border-select" 
                        ng-model="$ctrl.searchText"  
                        ng-enter="$ctrl.getDataArticuloByEnterCode()"     
-                       id="inputBarcode" 
-                       ng-focus="$ctrl.focusDescripcionArticulo('#inputBarcode')" 
+                       id="inputBarcode"
                        placeholder="Ej: COMP1"> 
                 `,
     bindings: {

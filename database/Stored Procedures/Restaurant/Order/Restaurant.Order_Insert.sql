@@ -33,6 +33,7 @@ BEGIN
     ,@userId INT
     ,@bodegaId INT
     ,@payload NVARCHAR(MAX)
+    ,@TaxPercentId INT
        
     SELECT @uuid                = uuid
         ,@itemsJson             = items
@@ -47,6 +48,8 @@ BEGIN
         ,@obs                   = obs       
         ,@quickSale             = quickSale
         ,@bodegaId              = bodegaId
+        ,@userId                = userId
+        ,@TaxPercentId          = TaxPercentId
     FROM OPENJSON(@json)
         WITH(
             uuid UNIQUEIDENTIFIER '$.uuid',
@@ -61,7 +64,9 @@ BEGIN
             total NUMERIC(18,5) '$.total',
             obs VARCHAR(500) '$.obs',
             quickSale BIT '$.quickSale',
-            bodegaId INT '$.bodegaId'
+            bodegaId INT '$.bodegaId',
+            userId              INT '$.userId',
+            TaxPercentId INT '$.taxPercentId'
         )
 
     IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
@@ -90,11 +95,12 @@ BEGIN
                 discount NUMERIC(18,5),
                 total NUMERIC(18,5) NOT NULL,
                 obs VARCHAR(500) NULL,
-                bodegaId int not null
+                bodegaId int not null,
+                medidaId INT NOT NULL
             )
 
-            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId)
-            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId
+            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId, medidaId)
+            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId, medidaId
             FROM OPENJSON(@itemsJson)
                 WITH (
                         uuid UNIQUEIDENTIFIER '$.uuid',
@@ -112,7 +118,8 @@ BEGIN
                         total NUMERIC(18,5) '$.total',
                         feeId INT         '$.feeId',
                         obs NVARCHAR(500) '$.obs',
-                        bodegaId int '$.bodegaId'
+                        bodegaId int '$.bodegaId',
+                        medidaId INT '$.medidaId'
                       )
 
             IF NOT EXISTS(SELECT 1 FROM @tblItems)
@@ -147,10 +154,15 @@ BEGIN
 
     SELECT @companyId   = idEntidad
             , @ruc      = rucEmpresa
-            , @userId   = idUsuario 
     FROM v_usuario
     WHERE idUsuarioRol = @userRoleId
     
+    
+    IF (@userId = 0)
+        BEGIN
+            SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+        END
+
 	BEGIN TRY
 		BEGIN TRAN
             ----------------ORDER------------------
@@ -159,9 +171,9 @@ BEGIN
                     SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
                     
                     INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId
-                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt, Uuid)
+                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt, Uuid, TaxPercentId)
                     VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId
-                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid)
+                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid, @TaxPercentId)
 
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
                     
@@ -171,7 +183,8 @@ BEGIN
                         END
 
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId, RemainingQuantity)
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId
+                                                    , MenuId, RemainingQuantity, medidaId)
                     SELECT @orderId
                             ,uuid
                             ,IIF(itemId = 0, NULL, itemId)
@@ -191,6 +204,7 @@ BEGIN
                             ,mt.Id
                             ,IIF(i.menuId = 0, NULL, i.menuId)
                             ,i.quantity
+                            ,i.medidaId
                     FROM @tblItems i
                     INNER JOIN Restaurant.ItemType mt ON mt.Code = i.itemTypeCode
 

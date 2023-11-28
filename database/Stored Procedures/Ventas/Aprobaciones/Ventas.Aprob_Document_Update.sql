@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Ventas.Aprob_Document_Update', N'P') IS NOT NULL
-DROP PROCEDURE Ventas.Aprob_Document_Update 
-GO
-CREATE PROCEDURE Ventas.Aprob_Document_Update 
+CREATE OR ALTER PROCEDURE Ventas.Aprob_Document_Update 
 	@idUsuarioRol INT
    ,@id INT
    ,@comprobante VARCHAR(MAX)
@@ -34,11 +31,13 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	SET LANGUAGE SPANISH;
+
 	DECLARE @idEntidad INT 
 	DECLARE @idUsuario INT
 	DECLARE @uniqueId VARCHAR(150)
 	DECLARE @idTipoDocumento INT 
-	DECLARE @fechaEmision DATETIME
+	DECLARE @fechaEmision DATETIME2
 	DECLARE @observacion VARCHAR(300)
 	DECLARE @identificacionComprador VARCHAR(20)
     DECLARE @codDoc VARCHAR(5) = '01'
@@ -58,7 +57,7 @@ BEGIN
 	DECLARE @tbComprobante  AS TABLE (
 		 idCliente INT NOT NULL
 		,idPuntoEmision INT NOT NULL
-		,fechaEmision VARCHAR(300)
+		,fechaEmision DATETIME2 NOT NULL
 		,codDoc VARCHAR(5) NOT NULL
 		,totalSinImpuestos NUMERIC(18,5) NOT NULL
 		,totalDescuento NUMERIC(18,5) NOT NULL
@@ -86,6 +85,7 @@ BEGIN
 		,codigoPorcentaje INT NOT NULL
 		,tarifa NUMERIC(18,5) NOT NULL
 		,baseImponible NUMERIC(18,5) NOT NULL
+        ,fechaEmision DATETIME2 NOT NULL
 	)
 
 	DECLARE @tblInfoAdicional AS TABLE (
@@ -99,7 +99,7 @@ BEGIN
 	)
 
 	BEGIN TRY 
-		
+
 		INSERT INTO @tbComprobante
 		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen,observacion)
 		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen,observacion
@@ -107,7 +107,7 @@ BEGIN
 		WITH (
 				idCliente                   INT '$.idCliente' 
 			   ,idPuntoEmision              INT '$.idPuntoEmision' 
-			   ,fechaEmision       VARCHAR(300) '$.fechaEmision'
+			   ,fechaEmision          DATETIME2 '$.fechaEmision'
 			   ,codDoc               VARCHAR(5) '$.codDoc'
 			   ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos' 
 			   ,totalDescuento    NUMERIC(18,5) '$.totalDescuento'
@@ -120,8 +120,8 @@ BEGIN
 		     )
 
 		INSERT INTO @tbDetalle 
-			  (orderIndex, idTarifa,idBodega,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible)
-		SELECT orderIndex, idTarifa,idBodega,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible
+			  (orderIndex, idTarifa,idBodega,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible,fechaEmision)
+		SELECT orderIndex, idTarifa,idBodega,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible,fechaEmision
 		FROM OPENJSON(@detalle)
 		WITH (
 				orderIndex                       INT '$.orderIndex'
@@ -139,33 +139,32 @@ BEGIN
 		       ,codigoPorcentaje                 INT '$.codigoPorcentaje'
 		       ,tarifa                 NUMERIC(18,5) '$.tarifa'
 		       ,baseImponible          NUMERIC(18,5) '$.baseImponible'
+               ,fechaEmision           DATETIME2     '$.fechaEmision'
 		     )
 
-		INSERT INTO @historyInfoAdicional SELECT * FROM OPENJSON(@historialVenta)WITH(idArticulo INT, idInfoAdicional INT)
+		INSERT INTO @historyInfoAdicional SELECT * FROM OPENJSON(@historialVenta) WITH (idArticulo INT, idInfoAdicional INT)
 
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-		SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
+		
+        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-		SELECT 
-			@uniqueId     = uniqueId
-		   ,@secuencial   = secuencial 
-		   ,@estab        = estab
-		   ,@ptoEmi       = ptoEmi
-		   ,@ambiente     = ambiente
-		   ,@fechaEmision = fechaEmision
+		SELECT @uniqueId     = uniqueId
+		      ,@secuencial   = secuencial 
+		      ,@estab        = estab
+		      ,@ptoEmi       = ptoEmi
+		      ,@ambiente     = ambiente
 		FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
 
-		SELECT	
-			@observacion             = dt.observacion
-		   ,@identificacionComprador = cl.numeroIdentificacion
-		   ,@fechaEmision            = dt.fechaEmision
-		   ,@totalSinImpuestos       = dt.totalSinImpuestos
-		   ,@totalDescuento          = dt.totalDescuento 
-		   ,@totalConImpuestos       = dt.totalConImpuestos 
-		   ,@propina                 = dt.propina
-		   ,@importeTotal            = dt.importeTotal
+		SELECT @observacion             = dt.observacion
+		      ,@identificacionComprador = cl.numeroIdentificacion
+		      ,@fechaEmision            = dt.fechaEmision
+		      ,@totalSinImpuestos       = dt.totalSinImpuestos
+		      ,@totalDescuento          = dt.totalDescuento 
+		      ,@totalConImpuestos       = dt.totalConImpuestos 
+		      ,@propina                 = dt.propina
+		      ,@importeTotal            = dt.importeTotal
 		FROM @tbComprobante dt
 		INNER JOIN dbo.Cliente cl WITH (NOLOCK) ON cl.idCliente = dt.idCliente 
 		
@@ -186,18 +185,11 @@ BEGIN
 				RETURN
 			END 
 
-		IF  CAST(@fechaEmision AS DATE)  >  CAST(dbo.ufnGetDateEcuador() AS DATE)
-			BEGIN 
-				SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
-				RETURN 
-			END
-
 		IF (SELECT COUNT(*) FROM @tbDetalle) = 0 
 			BEGIN
 				SELECT '0'code,'Erro en la informacion del detalle' as 'message'
 				RETURN
 			END 
-
    
 		IF @claveAcceso IS NULL
 			BEGIN
@@ -244,6 +236,7 @@ BEGIN
 			   ,codigoPorcentaje
 			   ,tarifa
 			   ,baseImponible
+               ,fechaEmision
 			)
 			SELECT 
 			    @uniqueId
@@ -262,6 +255,7 @@ BEGIN
 			   ,ti.codigoPorcentaje
 			   ,ti.porcentaje
 			   ,dt.precioTotalSinImpuesto
+               ,@fechaEmision
 			FROM @tbDetalle dt
 			LEFT JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
 			LEFT JOIN dbo.TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva  = dt.idTipoIva

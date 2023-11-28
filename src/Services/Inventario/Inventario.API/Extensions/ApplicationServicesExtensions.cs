@@ -15,8 +15,10 @@ namespace Inventario.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IStockFisicoService, StockFisicoService>();
-            services.AddScoped<IStorageService, StorageService>();
+            services.AddScoped<IS3StorageService, S3StorageService>();
             services.AddScoped<IArticuloFraccionadoService, ArticuloFraccionadoService>();
+            services.AddScoped<ITransaccionService, TransaccionService>();
+            services.AddScoped<IStockService, StockService>();
             return services;
         }
     }

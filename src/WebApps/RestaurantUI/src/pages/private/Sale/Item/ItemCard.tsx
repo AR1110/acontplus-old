@@ -6,9 +6,9 @@ import Typography from '@mui/material/Typography';
 import { Badge, Box, CardActionArea, Divider } from '@mui/material';
 import brand_img from '/assets/images/imgProductDefault.png';
 
-import { ItemReadDto, Measure, ProductPVPReadDto } from '@/core/models';
+import { ItemReadDto } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
-import { productService } from '@/core/services'; 
+import { productService } from '@/core/services';
 import { PricingCalculateUtility, RoundNumber } from '@/core/utilities';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,7 +27,7 @@ export default function ItemCard({ item }: ItemCardProps) {
     const { items, dataForm } = useSaleStore(state => ({
         items: state.items,
         dataForm: state.dataForm,
-    })) 
+    }))
     const order = useSaleStore(state => state.order)
     // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([]) 
 
@@ -35,7 +35,8 @@ export default function ItemCard({ item }: ItemCardProps) {
 
 
     const handleSelectItem = (item: ItemReadDto) => {
-        showLoader(); 
+        
+        showLoader();
         const decimal = dataForm.decimal;
         // const warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
 
@@ -58,8 +59,9 @@ export default function ItemCard({ item }: ItemCardProps) {
 
 
         productService.findForSale(item.productId, order.bodegaId).then(response => {
-            const { product, measures } = response;
-            const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
+            const { product, measures, consolidacionesFecha } = response;
+            const measureData = measures.find(medida => (medida.defaultMedida));
+           // const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
 
             const taxRateData = dataForm.taxRates.find(item => item.taxRateCode === product.taxRateCode); // Tarifa Impuesto 
             const taxData = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode); // Impuesto IVA-ICE 
@@ -104,7 +106,16 @@ export default function ItemCard({ item }: ItemCardProps) {
 
             function addItem() {
                 const uuid = uuidv4();
-                const { salePrice, priceWithVat, feeId } = measureData.pvps[0] as ProductPVPReadDto
+                let salePrice = 0, priceWithVat = 0, feeId = 0; 
+                if(measureData){
+                    const dataPVP = measureData.pvps.find(pvp=>(pvp.default));
+                    if(dataPVP){
+                        salePrice = dataPVP.salePrice;
+                        priceWithVat = dataPVP.priceWithVat;
+                        feeId = dataPVP.feeId
+
+                    }
+                } 
                 const taxValue = PricingCalculateUtility.calculateTaxValue(salePrice, taxRateData?.percentage ?? 0)
 
                 addItemToCart({
@@ -138,12 +149,14 @@ export default function ItemCard({ item }: ItemCardProps) {
                         taxBase: salePrice ?? 0,
                         taxValue: taxValue,
                     }],
-                    pvps: measureData.pvps,
+                    measureId: measureData ? measureData.measureId : 0,
+                    measures: measures,
+                    pvps: measureData ? measureData.pvps : [],
                     uuid: uuid,
                     obs: "",
                     itemTypeCode: item.itemTypeCode,
                     envioSri: false,
-                    paid: false
+                    paid: false,
                 })
             }
 
@@ -151,115 +164,105 @@ export default function ItemCard({ item }: ItemCardProps) {
 
     }
 
+    const truncateText = (text: string, maxLength: number) => {
+        if (text.length > maxLength) {
+            return text.substring(0, maxLength) + '...';
+        }
+        return text;
+    };
+
+
     return (
+        <Box height={200}>
+            <Card sx={{
+                maxWidth: 200,
+               
+                '&:hover': {
+                    transform: 'scale(1.05)',
+                },
+                borderRadius: "16px",
+                borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                border: items.some(cartItem => cartItem.productId === item.productId) ? '1px solid' : '',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'stretch',
+            }}>
+                <HtmlTooltip followCursor  title={
+                    item.summary && item.summary.split(',').map((ss, i) => {
+                        return (
+                            <Box key={i}>
+                                <Typography variant="caption" gutterBottom>
+                                    {ss}
+                                </Typography>
+                                <Divider />
+                            </Box>
+                        )
+                    })
+                }>
+                    <CardActionArea onClick={() => handleSelectItem(item)}>
 
-        <Card sx={{
-            maxWidth: 300,
-            '&:hover': {
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)'
-            },
-            borderRadius: "16px",
-            borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
-
-            border: items.some(cartItem => cartItem.productId === item.productId) ? '1px solid' : '',
-        }}>
-            <HtmlTooltip followCursor title={ 
-                item.summary && item.summary.split(',').map((ss, i) => {
-                    return (
-                        <Box key={i}>
-                            <Typography variant="caption" gutterBottom>
-                                {ss}
-                            </Typography>
-                            <Divider />
+                        <Badge
+                            badgeContent={item.stock.toString()}
+                            color={item.stock > 0 ? 'success' : 'error'}
+                            overlap="circular"
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            style={{ position: 'absolute', top: '20px', left: '20px' }}
+                        />
+                        <CardMedia sx={{
+                            borderTopLeftRadius: '16px',
+                            borderTopRightRadius: '16px',
+                        }} component="img" height="120" image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img} />
+                        <CardContent>
+                            <Box sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}>
+                                <Typography variant="h5" sx={{
+                                    fontSize: '11px',
+                                    fontWeight: 'bold',
+                                    width: '75%',
+                                }}>
+                                    {truncateText(item.description, 60)}
+                                </Typography>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',  // Centra el contenido horizontalmente
+                                    justifyContent: 'center',  // Centra el contenido verticalmente
+                                    
+                                }}>
+                                    <Typography variant="subtitle2" sx={{
+                                        
+                                        fontWeight: 'bold',
+                                        color: 'red',  // Cambia el color del texto a blanco o el color que desees
+                                    }}>
+                                        ${RoundNumber(item.pvps.priceWithVat, 2)}
+                                    </Typography>
+                                </Box>
+                            </Box> 
+                        </CardContent>
+                        {/* <Box margin={0.6}>
+                            <span style={{
+                                fontSize: '11px',
+                                fontWeight: 'bold',
+                            }}>
+                                {truncateText(item.description, 50)}
+                            </span>
                         </Box>
-                    )
-                }) 
-            }>
-                <CardActionArea onClick={() => handleSelectItem(item)}>
-
-                    <Badge
-                        badgeContent={item.stock.toString()}
-                        color={item.stock > 0 ? 'success' : 'error'}
-                        overlap="circular"
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                        }}
-                        style={{ position: 'absolute', top: '20px', left: '20px' }}
-                    />
-                    <CardMedia component="img" height="120" image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img} />
-                    <CardContent>
-                        <Typography variant="body2" gutterBottom noWrap>
-                            {item.description}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {item.code}
-                        </Typography>
-                    </CardContent>
-                    <Box sx={{ display: 'flex', color: 'white', justifyContent: 'center', alignItems: 'center', backgroundColor: 'primary.dark', }}>
-                        <Typography variant='h6'>
-                            $ {RoundNumber(item.pvps.priceWithVat, 2)}
-                        </Typography>
-                    </Box>
-                </CardActionArea>
-            </HtmlTooltip>
-        </Card>
-        // <Card sx={
-        //     {
-        //         display: 'flex',
-        //         flexDirection: 'column',
-        //         height: '190px',
-        //         //maxHeight: "200px",
-        //         borderRadius: "16px",
-        //         borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
-
-        //         border: items.some(cartItem => cartItem.productId === item.productId) ? '1px solid' : '',
-        //     }
-        // }>
-        //     <CardActionArea onClick={() => handleSelectItem(item)}>
-        //         <Tooltip title="Stock">
-        //             <Badge
-        //                 badgeContent={item.stock.toString()}
-        //                 color={item.stock > 0 ? 'success' : 'error'}
-        //                 overlap="circular"
-        //                 anchorOrigin={{
-        //                     vertical: 'top',
-        //                     horizontal: 'left',
-        //                 }}
-        //                 style={{ position: 'absolute', top: '20px', left: '20px' }}
-        //             />
-        //         </Tooltip>
-
-
-        //         <CardMedia
-        //             component="img"
-        //             height="120"
-        //             image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img}
-        //             alt="green iguana"
-        //         /> 
-
-        //         <CardContent> 
-        //             <Grid container alignItems="center">
-        //                 <Grid item xs>
-        //                     <Typography gutterBottom color="text.secondary" variant="caption" component="div">
-        //                         {item.code}
-        //                     </Typography>
-
-        //                 </Grid>
-        //                 <Grid item>
-        //                     <Typography gutterBottom variant="body1" component="div">
-        //                         ${RoundNumber(item.pvps.priceWithVat, 2)}
-        //                     </Typography>
-        //                 </Grid>
-        //                 <Grid item xs={12}>
-        //                     <Typography variant="caption" component="div" noWrap>
-        //                         {item.description}
-        //                     </Typography>
-        //                 </Grid>
-        //             </Grid>
-        //         </CardContent>
-
-        //     </CardActionArea>
-        // </Card>
+                        <Box sx={{ display: 'flex', color: 'white', justifyContent: 'center', alignItems: 'center', backgroundColor: 'primary.dark' }}>
+                            <Typography variant="body1" gutterBottom>
+                                $ {RoundNumber(item.pvps.priceWithVat, 2)}
+                            </Typography>
+                        </Box> */}
+                    </CardActionArea>
+                </HtmlTooltip>
+            </Card>
+        </Box> 
     );
 }

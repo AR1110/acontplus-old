@@ -36,6 +36,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
     $scope.initiload = async function () {
         try {
+            showLoader();
             await clienteSvc.getDataForm().then(response => {
                 let {
                     tipoIdentificacion,
@@ -67,10 +68,11 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
  
             }).catch(error => {
                 console.log(error);
-            })
+            }).finally(()=>hideLoader())
 
 
             if ($scope.tipoRegistro === 2) {
+                showLoader();
                 clienteSvc.findById(params.idCliente).then(response => {
 
                     let {
@@ -95,18 +97,19 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     //Cuando el estado este Inactivo se presenta el estado para activar
                     $scope.showEstado = !estado;
 
-                    if(!(this.data.idTiempoCredito>0)){
-                        $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
-                    }
+                    // if(!(this.data.idTiempoCredito>0)){
+                    //     $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
+                    // }
 
                     $("#nombreComercial").focus();
 
                 }).catch(error => {
                     console.log(error);
-                })
+                }).finally(()=>hideLoader())
             }
 
         } catch (error) {
+            hideLoader();
             console.log(error);
         }
     }
@@ -466,7 +469,9 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
     $scope.selected = [];
     $scope.dataSearch = { 
         pageIndex: 1,
-        pageSize: 50
+        pageSize: 50,
+        maxSize: 5
+
     }
     
 

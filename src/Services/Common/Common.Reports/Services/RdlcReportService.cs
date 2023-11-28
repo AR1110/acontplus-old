@@ -13,53 +13,51 @@ namespace Common.Reports.Services
     {
         public byte[] GetCustomReport(DataSet dsParams, DataSet ds)
         {
+            DataTable reportParams = dsParams.Tables[0];
+            DataTable dataSources = dsParams.Tables[1];
+            DataTable rdlcParams = dsParams.Tables[2];
             using (var lr = new LocalReport())
             {
-                if (dsParams.Tables[0].Rows.Count == 0)
-                    return null;
-
                 var mainPath = Directory.GetCurrentDirectory() + "\\Reports\\";
 
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dsParams.Tables[0].Rows[0]["reportPath"].ToString());
-                    var paths = dsParams.Tables[0].Rows[0].Field<string>("reportPath").Split("/");
-                    paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dsParams.Tables[0].Rows[0]["reportPath"].ToString());
+                var reportPath = reportParams.Rows[0].Field<string>("reportPath");
+                bool hasParams = Convert.ToBoolean(reportParams.Rows[0]["hasParams"]);
+                var format = reportParams.Rows[0].Field<string>("format");
 
-                    switch (paths.Length)
-                    {
-                        case 1:
-                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
-                            break;
-                        case 2:
-                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
-                            break;
-                        default:
-                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(mainPath + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
-                            break;
-                    }
-                }
-                else
+                var paths = reportPath.Split("/");
+                paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+
+                switch (paths.Length)
                 {
-                    return null;
+                    case 1:
+                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
+                        break;
+                    case 2:
+                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
+                        break;
+                    default:
+                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(mainPath + reportPath));
+                        break;
                 }
                 //Recorremos los datatbles con sus respectivas posiciones,para llenar la información
-                foreach (DataRow row in dsParams.Tables[1].Rows)
+                foreach (DataRow row in dataSources.Rows)
                 {
-                    lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(), ds.Tables[Convert.ToInt32(row["position"])]));
+                    lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(), ds.Tables[row.Field<int>("position")]));
                 }
                 //Recorremos los parametros del reporte como logos, textos, etc
-                if (Convert.ToBoolean(dsParams.Tables[0].Rows[0]["hasParams"]))
+                if (hasParams)
                 {
-                    if (ds.Tables[0].Columns.Contains("codigoAutorizacion"))
+                    DataTable firstDataSource = ds.Tables[0];
+                    if (firstDataSource.Columns.Contains("codigoAutorizacion"))
                     {
-                        lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(ds.Tables[0].Rows[0]["codigoAutorizacion"].ToString()), 0, BarcodeGen.Create(ds.Tables[0].Rows[0]["codigoAutorizacion"].ToString()).Length)));
+                        lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion")), 0, BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion")).Length)));
                         lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
                     }
                     //Recorremos los parametros del reporte como logos, textos, etc
-                    if (dsParams.Tables[2].Rows.Count > 0)
+                    if (rdlcParams.Rows.Count > 0)
                     {
-                        foreach (DataRow item in dsParams.Tables[2].Rows)
+                        foreach (DataRow item in rdlcParams.Rows)
                         {
                             if (Convert.ToBoolean(item["isByte"]))
                             {
@@ -73,7 +71,7 @@ namespace Common.Reports.Services
                     }
                 }
 
-                return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
+                return lr.Render(format, null, out _, out _, out _, out _, out _);
             }
         }
         public ReportResponse GetDynamicReport(DataSet ds)
