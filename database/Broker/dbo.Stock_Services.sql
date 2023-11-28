@@ -12,6 +12,10 @@ IF (@is_broker_enabled = 0)
         ALTER DATABASE Acontplus SET ENABLE_BROKER WITH ROLLBACK IMMEDIATE;
 END
 GO
+
+ALTER AUTHORIZATION ON DATABASE::[Acontplus] TO [sa]
+GO
+
 USE Acontplus
 GO
 IF EXISTS (SELECT * FROM sys.services WHERE name = N'StockService')
