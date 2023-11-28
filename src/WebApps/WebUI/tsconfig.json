@@ -1,6 +1,8 @@
 {
     "extends": "@tsconfig/svelte/tsconfig.json",
     "compilerOptions": {
+        "baseUrl": "./",
+        "outDir": "./dist/out-tsc",
         "target": "ESNext",
         "useDefineForClassFields": true,
         "module": "ESNext",
@@ -18,11 +20,10 @@
         "allowJs": true,
         "checkJs": true,
         "isolatedModules": true,
-        "baseUrl": "./",
         "paths": {
             "@/*": [
                 "src/*"
-            ],
+            ]
         }
     },
     "include": [
