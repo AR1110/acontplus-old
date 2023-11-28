@@ -11,7 +11,7 @@ GO
 -- Description:	GET para traer la configuracion del sistema
 -- =============================================
 
-CREATE PROCEDURE Config.Sistema_Get @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Config.Sistema_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
