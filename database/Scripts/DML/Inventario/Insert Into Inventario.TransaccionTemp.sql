@@ -1,5 +1,5 @@
---use [Acontplus]
---go 
+use [Acontplus]
+go 
 
 
 --INSERT INTO Inventario.TransaccionTemp
