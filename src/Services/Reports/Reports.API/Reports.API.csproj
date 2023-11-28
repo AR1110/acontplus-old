@@ -64,6 +64,7 @@
     <None Remove="Reports\Test.rdlc" />
     <None Remove="Reports\Ventas\AprobDocument.rdl" />
     <None Remove="Reports\Ventas\Clientes.rdl" />
+    <None Remove="Reports\Ventas\CuentaPorCobrar.rdl" />
     <None Remove="Reports\Ventas\CuentaPorCobrarCuotas.rdl" />
     <None Remove="Reports\Ventas\NotaCreditoCliente.rdlc" />
     <None Remove="Reports\Ventas\NotaEntrega.rdlc" />
@@ -237,6 +238,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\Clientes.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\CuentaPorCobrar.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\CuentaPorCobrarCuotas.rdl">
