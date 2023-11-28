@@ -24,7 +24,8 @@
             checkBoxFecha: true,
             checkBoxBodega: false,
             consolidacion: 0,
-            checkBoxDefault: false
+            checkBoxDefault: false,
+            estado: false
         };
 
         $scope.articuloFiltro = {

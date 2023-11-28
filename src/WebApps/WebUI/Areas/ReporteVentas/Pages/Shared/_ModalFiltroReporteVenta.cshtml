@@ -136,14 +136,14 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12" ng-if="dataSearch.codDoc!=='FVNE'">
                         <div ng-show="dataSearch.checkboxClienteFiltro">
-                            @await Html.PartialAsync("~/Views/Cliente/_ClienteAutocompleteFiltro.cshtml")
+                            @await Html.PartialAsync("~/Views/Cliente/_ClienteAutocompleteFiltro.cshtml") 
                         </div>
                     </div>
 
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12" ng-show="dataSearch.checkboxUsuarioFiltro">
                         <div class="form-group">
-                            <label>Usuario:</label>
-                            @await Html.PartialAsync("~/Views/Usuario/_UsuarioSearchFilter.cshtml") 
+                            <label>Usuario:</label> 
+                            @await Html.PartialAsync("~/Pages/Usuario/_UsuarioSearchFilter.cshtml") 
                         </div>
                     </div>
                 </div>
