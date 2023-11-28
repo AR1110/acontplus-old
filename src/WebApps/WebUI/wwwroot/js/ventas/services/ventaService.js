@@ -235,11 +235,11 @@
                     // if(articuloDefaultTemp && articuloDefaultTemp.length>0){
                     //     articuloDefault = articuloDefaultTemp[0];
                     // }
-                    // let clienteDefaultTemp = mainData[7][0];
-                    // let clienteDefault = {};
-                    // if(clienteDefaultTemp && clienteDefaultTemp.length>0){
-                    //     clienteDefault = clienteDefaultTemp[0];
-                    // }
+                    let clienteDefaultTemp = mainData[5];
+                    let clienteDefault = {};
+                    if(clienteDefaultTemp && clienteDefaultTemp.length>0){
+                        clienteDefault = clienteDefaultTemp[0];
+                    }
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
                     let notificacionVenta = {
@@ -292,6 +292,7 @@
                         estabs,
                         tarifaImpuestoVigente,
                         tarifasImpuesto,
+                        clienteDefault,
                         tiemposCredito,
                         tarifas,
                         permisoVenta,

@@ -1003,7 +1003,8 @@
                 notificacionVenta,
                 decimal,
                 config,
-                vendedores
+                vendedores,
+                clienteDefault
             } = mainDataForm;
             $scope.establecimientos = estabs;
             let dataEstab = {};
@@ -1047,6 +1048,10 @@
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
+                }
+                //Cliente Predeterminado 
+                if (clienteDefault.idCliente > 0) {
+                    $scope.cliente = clienteDefault;
                 }
                 getFechaVencimiento();
             }
