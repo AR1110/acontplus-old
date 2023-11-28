@@ -89,3 +89,10 @@ export interface Measure {
     defaultMedida: boolean
     pvps: Array<ProductPVPReadDto>
 }
+
+//Conolidaciones Fechas 
+export interface ConsolidacionFecha {
+    idArticulo: number
+    idBodega: number
+    fechaConsolidacion: Date
+}

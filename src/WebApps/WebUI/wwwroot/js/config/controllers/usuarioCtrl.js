@@ -399,7 +399,7 @@
 
 
         $scope.isRoleMain = function () {
-            return ['RT', 'ADM', 'BS', 'ALT', 'ADMFREE', 'SU'].includes($scope.role)
+            return ['RT', 'ADM', 'BS', 'ALT', 'ADMFREE', 'SU', 'ADM_V','ADM_POS'].includes($scope.role)
         }
 
 
