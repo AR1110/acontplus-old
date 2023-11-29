@@ -46,8 +46,8 @@
           <DataField>contribuyenteEspecialNro</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="obligadoLlevarContabilidad">
-          <DataField>obligadoLlevarContabilidad</DataField>
+        <Field Name="obligadoContabilidad">
+          <DataField>obligadoContabilidad</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="nroDocumento">
@@ -169,6 +169,10 @@
         <Field Name="porcentajeIva">
           <DataField>porcentajeIva</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="contribuyenteRimpe">
+          <DataField>contribuyenteRimpe</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
       <rd:DataSetInfo>
@@ -404,7 +408,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!obligadoLlevarContabilidad.Value, "LiquidacionCompraDs")</Value>
+                    <Value>=First(Fields!obligadoContabilidad.Value, "LiquidacionCompraDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -3472,6 +3476,37 @@
               </Border>
             </Style>
           </Rectangle>
+          <Textbox Name="Textbox120">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!contribuyenteRimpe.Value, "LiquidacionCompraDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox119</rd:DefaultName>
+            <Top>7.33189cm</Top>
+            <Left>0.04974cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.13844cm</Width>
+            <ZIndex>17</ZIndex>
+            <Style>
+              <Border />
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
         <Height>7.7067in</Height>
         <Style />
