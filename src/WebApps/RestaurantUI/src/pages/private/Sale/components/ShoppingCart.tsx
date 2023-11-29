@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { RoundNumber } from '@/core/utilities';
 import { ItemRead } from '@/core/models';
 import { useSaleStore, useStoreCartSidebar } from '@/stores'; 
+import { useState } from 'react';
 
 const StyledCard = styled(Card)({
     margin: '10px 0',
@@ -105,10 +106,12 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
 
     const setOpenCartSidebar = useStoreCartSidebar(state => state.setOpenCartSidebar)
     const setDataItem = useStoreCartSidebar(state => state.setDataItem);
+    const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem);
     const {order, setOrder} = useSaleStore(state => ({
         setOrder: state.setSummary,
         order: state.order
     }))
+    const [updatedQuantity, setUpdatedQuantity] = useState(false)
 
     const onClickShoppingCart = (event: React.MouseEvent<HTMLElement>) => {
 
@@ -124,6 +127,8 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
     };
 
     const handleBlur = () => {
+        console.log(updatedQuantity)
+        console.log(item.quantity)
         // if(quantityItem!==item.quantity){
         //     setItemChangeQty(index, quantityItem);
         // } 
@@ -231,18 +236,17 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
                                                 onClick: handleFocus
                                             }}
                                             onChange={e=>{
-                                                e.preventDefault();
+                                                e.stopPropagation();
                                                 let quantity = Number(e.target.value);
                                                 if(quantity===0){
                                                     setTimeout(() => {
                                                         e.target.select();
                                                     }, 0);
-                                                    quantity = 1;
-                                                } 
-                                                setOrder({
-                                                    ...order,
-                                                    obs: e.target.value
-                                                })
+                                                    quantity = 1; 
+                                                    setChangeValueOrderItem(index, "quantity", quantity)
+                                                } else if(quantity !==item.quantity){
+                                                    setItemChangeQty(index, quantity);
+                                                }
                                             }}
                                             onBlur={handleBlur}
                                         />

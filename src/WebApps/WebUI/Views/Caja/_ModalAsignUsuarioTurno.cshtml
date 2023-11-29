@@ -9,7 +9,7 @@
     <div class="form-group">
         <label class="control-label"> Usuario <span class="text-danger">*</span></label>
         <div ng-if="$ctrl.tipoRegistro===1">
-            @await Html.PartialAsync("~/Views/Usuario/_UibModalUsuarioSearch.cshtml")
+            @await Html.PartialAsync("~/Pages/Usuario/_UibModalUsuarioSearch.cshtml")
         </div>
         <div ng-if="$ctrl.tipoRegistro===2">
             <input type="text" class="form-control" ng-value="$ctrl.usuarioSearch.nombreCompleto" disabled>

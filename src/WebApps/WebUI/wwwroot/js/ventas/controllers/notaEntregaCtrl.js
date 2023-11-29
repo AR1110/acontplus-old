@@ -333,6 +333,11 @@
                     return
                 }
 
+                if (item.codEstado === 'TRA') {
+                    fS.sweetAlert('warning', 'No puede ser editada; ¡tiene un documento de aprobación!');
+                    return
+                }
+
                 let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
                 if (result.code === "2") {
                     commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
@@ -998,7 +1003,8 @@
                 notificacionVenta,
                 decimal,
                 config,
-                vendedores
+                vendedores,
+                clienteDefault
             } = mainDataForm;
             $scope.establecimientos = estabs;
             let dataEstab = {};
@@ -1042,6 +1048,10 @@
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
+                }
+                //Cliente Predeterminado 
+                if (clienteDefault.idCliente > 0) {
+                    $scope.cliente = clienteDefault;
                 }
                 getFechaVencimiento();
             }
@@ -1826,7 +1836,7 @@
                     item => item.llevaInventario && item.idArticulo === articulo.idArticulo
                 );
 
-                if (findIndexById === -1) { 
+                if (findIndexById === -1) {
                     addRow();
                     index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
@@ -2077,22 +2087,22 @@
                 //     $scope.data.fechaEmision = fechaEmisionDocCreado;
                 // }
             }
-            if(isRegister()){
+            if (isRegister()) {
                 let fechaEmisionModificada = $scope.data.fechaEmision;
                 let fechaActual = new Date();
                 if (fechaEmisionModificada > fechaActual) {
                     fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
                     return
                 }
-                if (fS.getDate(fechaEmisionModificada) == fS.getDate(fechaActual)){
+                if (fS.getDate(fechaEmisionModificada) == fS.getDate(fechaActual)) {
                     $scope.data.fechaEmision = fechaActual;
-                }else{
+                } else {
                     if (fechaEmisionModificada < fechaActual) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    } 
+                    }
                 }
-            } 
-            
+            }
+
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return

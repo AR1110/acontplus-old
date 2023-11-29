@@ -27,8 +27,8 @@ export default defineConfig({
         name: 'Acontplus Restaurante',
         short_name: 'Acontplus Restaurante',
         description: 'GESTIÓN DE PEDIDOS Y FACTURACIÓN ELECTRÓNICA',
-        theme_color: "#f69435",
-        background_color: "#f69435",
+        theme_color: "#D61672",
+        background_color: "#D61672",
         display: "standalone",
         start_url: '/',
         icons: [

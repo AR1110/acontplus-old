@@ -8,14 +8,14 @@
 
     reporteInventarioCtrl.$inject = [
         '$scope',
-        'commonService',
-        'mainService',
-        'formulario',
-        'toastService',
-        'articuloService'
+        '$injector',  
     ];
 
-    function reporteInventarioCtrl($scope, _commonSvc, mS, fS, tS, articuloSvc) {
+    function reporteInventarioCtrl($scope, $injector) {
+        let _commonSvc = $injector.get('commonService');
+        let fS = $injector.get('formulario');
+        let tS = $injector.get('toastService');
+        let articuloSvc = $injector.get('articuloService');
 
         $scope.dataSearch = {};
         $scope.dataSearch.byOrderCampo = 'ar.descripcion';
@@ -27,11 +27,13 @@
         $scope.dataSearch.tipoReporteArticulo = 'INVRV';
         $scope.proveedor = {};
 
-        $scope.getAsignaciones = function () {
-            let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
+        $scope.establecimientos = [];
 
-            $scope.bodegas = dataEstab.bodegas;
-            $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
+        $scope.getAsignaciones = function () {
+            // let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
+
+            // $scope.bodegas = dataEstab.bodegas;
+            // $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
             // _commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
             //     $scope.bodegas = response[1]
             // })
@@ -39,15 +41,41 @@
 
         $scope.initiload = function () {
 
-            articuloSvc.getDataForForm().then(response => {
-                console.log(response)
-                $scope.establecimientos = response.establecimientos;
+            articuloSvc.getDataFormReport().then(response => {
+                const {estabs, subFamilias} = response;
+                $scope.establecimientos = estabs;
                 let dataEstab = $scope.establecimientos.find(item => (item.defaultEstab))
-                $scope.dataSearch.codEstab = dataEstab.codEstab;
+                console.log(dataEstab)
+                $scope.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
 
+                console.log(dataEstab.idEstablecimiento)
                 $scope.bodegas = dataEstab.bodegas;
                 $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
-                $scope.subFamilias = response.subFamilias;
+                $scope.subFamilias = subFamilias.reduce(function (acc, obj) {
+                    var key = obj.familia;
+                    var existingGroup = acc.find(function (group) {
+                        return group.familia === key;
+                    });
+
+                    if (existingGroup) {
+                        existingGroup.subFamilias.push({
+                            idSubFamilia: obj.idSubFamilia,
+                            subFamilia: obj.subFamilia
+                        });
+                    } else {
+                        acc.push({
+                            familia: key,
+                            subFamilias: [{
+                                idSubFamilia: obj.idSubFamilia,
+                                subFamilia: obj.subFamilia
+                            }]
+                        });
+                    }
+
+                    return acc;
+                }, []);
+
+                console.log($scope.subFamilias)
 
             })
         }
@@ -73,9 +101,14 @@
         }
 
         $scope.onChangeEstab = function () {
-            let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
-            $scope.bodegas = $scope.tempBodegas.filter(item => item.idEstab_Asig === dataEstab.idEstab_Asig);
-            $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
+            if($scope.establecimientos.length===0) return
+            let dataEstab = $scope.establecimientos.find(item => item.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
+            $scope.bodegas = dataEstab.bodegas;
+            if($scope.bodegas.length>0){
+                $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
+            }else{
+                $scope.dataSearch.idBodega = 0;
+            }
         }
 
         $scope.onChangeCheckProveedor = function () {
@@ -220,7 +253,7 @@
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                 chkUbicacion: $scope.dataSearch.chkUbicacion,
-                idBodega: $scope.dataSearch.idBodega,
+                idBodega: ["", 0, null, undefined].includes($scope.dataSearch.idBodega) ? null : $scope.dataSearch.idBodega,
                 textUbicacion: $scope.dataSearch.textUbicacion,
                 bySubFamilia: $scope.dataSearch.bySubFamilia,
                 byOrderCampo: $scope.dataSearch.byOrderCampo,
@@ -260,7 +293,7 @@
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                 chkUbicacion: $scope.dataSearch.chkUbicacion,
-                idBodega: $scope.dataSearch.idBodega,
+                idBodega: ["", 0, null, undefined].includes($scope.dataSearch.idBodega) ? null : $scope.dataSearch.idBodega,
                 textUbicacion: $scope.dataSearch.textUbicacion,
                 chkEstado: true,
                 estado: $scope.dataSearch.estado,

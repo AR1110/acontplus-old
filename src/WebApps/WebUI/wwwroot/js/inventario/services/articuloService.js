@@ -754,6 +754,26 @@
             return mS.getData('delete', `${url}${id}`, null, true);
         }
 
+
+        //Reports 
+        service.getDataFormReport = function(){            
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({tipo: 13}), null, true).then(
+                response=>{
+                    if(response.code==="0"){
+                        throw response
+                    }
+                    if(response.code==="1"){
+                        let [estabsTemp, subFamilias] = JSON.parse(response.payload);
+                        console.log(estabsTemp)
+                        const estabs = fS.groupEstabBodega(estabsTemp)
+                        return {
+                            estabs,
+                            subFamilias
+                        }
+                    }
+                }
+            )
+        }
         return service;
 
     }])

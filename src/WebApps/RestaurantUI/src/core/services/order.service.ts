@@ -88,10 +88,8 @@ const orderService = {
     async delete(id: number) {
         const resultAxios = await Http({
             method: 'delete',
-            url: `${PATHS.PRIVATE}${URL}${id}`,
-            params: {
-                id
-            }
+            url: `${PATHS.PRIVATE}${URL}/${id}`,
+             
         })
 
         const response: ApiResponse = resultAxios.data;

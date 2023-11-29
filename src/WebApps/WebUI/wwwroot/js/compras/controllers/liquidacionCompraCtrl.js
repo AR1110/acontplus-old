@@ -36,17 +36,19 @@
             pageSize: 1000
         }
 
+        //primero tu me fallaste cuando hiciste esa cosa, de ahi juu ya no baje a shimpim
         $scope.sumTotalColumna = function () {
-            let total = 0, totalAbono = 0, totalSaldo = 0;
+            let total = 0;
+            //let totalAbono = 0, totalSaldo = 0;
             for (let item of $scope.liquidacionesCompra) {
                 total += item.total;
-                totalAbono += item.abono;
-                totalSaldo += item.saldo;
+                // totalAbono += item.abono;
+                // totalSaldo += item.saldo;
             }
 
             $scope.total = fS.roundNumber(total, 5);
-            $scope.totalAbono = fS.roundNumber(totalAbono, 5);
-            $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
+            // $scope.totalAbono = fS.roundNumber(totalAbono, 5);
+            // $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
         }
 
 
@@ -220,8 +222,7 @@
                     id: item.idLiquidacionCompra,
                     codigoDocumento: TIPO_DOC.codigo
                 })
-
-                console.log(response)
+ 
                 if (!response.isComplete) return
 
                 let params = {
