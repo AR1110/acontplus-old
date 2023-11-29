@@ -84,7 +84,22 @@
 
                 if ($scope.tipo > 0) {
                     showLoader();
-                    docElectSvc.getByStatus({ tipo: Number($scope.tipo) }).then(response => {
+                    let dataSearch = {
+                        tipo: Number($scope.tipo),
+                        codDoc: $scope.dataSearch.codDoc,
+                        codEstado: $scope.dataSearch.codEstado,
+                        checkBoxDate: $scope.dataSearch.checkBoxDate,
+                        dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                        dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                        codEstab: $scope.dataSearch.codEstab,
+                        idPuntoEmision: $scope.dataSearch.idPuntoEmision,
+                        identificacionReceptor: $scope.dataSearch.identificacionReceptor,
+                        idUsuario: $scope.dataSearch.idUsuario,
+                        pageIndex: $scope.dataSearch.pageIndex,
+                        pageSize: $scope.dataSearch.pageSize,
+                        nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                    }
+                    docElectSvc.getByStatus(dataSearch).then(response => {
                         if (!$scope.isMobile) {
                             document.getElementById('menu_toggle').click();
                         }
@@ -456,7 +471,7 @@
             } = await Swal.fire({
                 title: '<small>Actualizar XML</small>',
                 icon: 'warning',
-                html: `<small>Esta seguro de actualizar el Xml de este Comprobante <b>Nro. ${item.serie}</b></small>`,
+                html: `<small>Esta seguro de actualizar el Xml de este Comprobante <b>Nro. ${item.serieComprobante}</b></small>`,
                 showDenyButton: true,
                 confirmButtonText: 'Si, actualizar',
                 denyButtonText: 'No, cancelar',
@@ -466,13 +481,11 @@
             if (isConfirmed) {
                 showLoader();
                 docElectSvc.updateXml(item.idDocumentoElectronico).then(response => {
-                    if (response.code === '0') {
-                        tS.toastr('warning', response.message, response.titleSms);
-                    }
-                    if (response.code === '1') {
+                    if((response)){
                         tS.toastr('success', response.message, response.titleSms);
-                        $scope.getComprobantes();
+                        $scope.getComprobantes(); 
                     }
+                      
                 })
                     .catch(error => {
                         console.log(error)
