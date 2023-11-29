@@ -33,17 +33,23 @@
                     <li class="nav-item">
                         <a class="nav-link" ng-click="onTab($event, 1)" data-toggle="tab" href="#" role="tab">
                             <span class="hidden-sm-up"></span>
-                            <span class="hidden-xs-down">Artículo</span>
+                            <span class="hidden-xs-down">Stock</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" ng-click="onTab($event, 2)" data-toggle="tab" href="#" role="tab">
                             <span class="hidden-sm-up"></span>
-                            <span class="hidden-xs-down">Articulos fraccionados</span>
+                            <span class="hidden-xs-down">PVPs</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" ng-click="onTab($event, 3)" data-toggle="tab" href="#" role="tab">
+                            <span class="hidden-sm-up"></span>
+                            <span class="hidden-xs-down">Articulos fraccionados</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" ng-click="onTab($event, 4)" data-toggle="tab" href="#" role="tab">
                             <span class="hidden-sm-up"></span>
                             <span class="hidden-xs-down">Caducidad</span>
                         </a>
@@ -136,7 +142,7 @@
                         </div>
                     </div>
 
-                    <!--Articulo con valoracion o lista precios-->
+                    <!--Articulo stock (General, Valoración)-->
                     <div class="tab-pane p-20" id="tab2" role="tabpanel">
                         <div class="row">
                             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -148,16 +154,33 @@
                             </div>
 
                             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                                <div class="icheck-info" ng-if="!dataSearch.chkProveedor">
-                                    <input type="checkbox" ng-model="dataSearch.checkboxSubFamiliaFiltro"
-                                        class="form-control" name="checkboxSubFamiliaFiltro"
-                                        id="checkboxSubFamiliaFiltro">
-                                    <label for="checkboxSubFamiliaFiltro">SubFamilia</label>
+                                <div class="icheck-info icheck-inline">
+                                    <input type="radio" ng-model="dataSearch.tipoReporteArticulo" value="INVAT"
+                                        name="tipoReporteArticulo" id="tipoReporteArticuloListaPrecio">
+                                    <label for="tipoReporteArticuloListaPrecio">General</label>
+                                </div>
+                                <div class="icheck-info icheck-inline">
+                                    <input type="radio" ng-model="dataSearch.tipoReporteArticulo" value='INVRV'
+                                        name="tipoReporteArticulo" id="tipoReporteArticuloValoracion">
+                                    <label for="tipoReporteArticuloValoracion">Con valoración</label>
                                 </div>
                             </div>
                         </div>
                         <hr>
                         <div class="row">
+                             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="estab">Estab.:</label>
+                                    <select name="estab" id="estab" class="form-control border-select"
+                                        ng-model="dataSearch.idEstablecimiento" ng-change="onChangeEstab()">
+                                        <option ng-value="0">Todos</option>
+                                        <option ng-value="item.idEstablecimiento" ng-repeat="item in establecimientos">
+                                            {{item.nombreComercial}}
+                                        </option>
+                                    </select>
+                                </div> 
+                            </div>
+
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" ng-if="dataSearch.chkProveedor">
                                 <div class="form-group">
                                     <label for="proveedorFiltro">Proveedor:</label>
@@ -174,58 +197,35 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"
-                                ng-if="dataSearch.checkboxSubFamiliaFiltro">
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="">SubFamilia</label>
-                                    <select class="form-control border-select" ng-model="dataSearch.bySubFamilia"
-                                        ng-options="sf.idSubFamilia as sf.subFamilia group by sf.familia  for sf in subFamilias">
+                                    <label for="subFamilia">SubFamilia</label>
+                                    <select id="subFamilia" name="subFamilia" class="form-control border-select"
+                                        ng-model="dataSearch.bySubFamilia">
+                                        <option value="0">Todos</option>
+                                        <optgroup ng-repeat="group in subFamilias"
+                                            label="{{ group.familia }}">
+                                            <option ng-repeat="sf in group.subFamilias"
+                                                ng-value="sf.idSubFamilia">
+                                                {{ sf.subFamilia }}
+                                            </option>
+                                        </optgroup>
                                     </select>
-                                </div>
-                            </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" ng-if="dataSearch.chkUbicacion">
-                                <div class="form-group">
-                                    <label for="estab">Establecimiento</label>
-                                    <select name="estab" id="estab" class="form-control border-select"
-                                        ng-model="dataSearch.codEstab" ng-change="onChangeEstab()">
-                                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                                            {{item.nombreComercial}}
-                                        </option>
-                                    </select>
                                 </div>
+                            </div> 
+                        </div>
 
-                            </div>
-                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" ng-if="dataSearch.chkUbicacion">
+                        <div class="row">
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label for="bodega">Bodega</label>
                                     <select name="bodega" id="bodega" class="form-control border-select"
                                         ng-model="dataSearch.idBodega">
                                         <option ng-value="item.idBodega" ng-repeat="item in bodegas">
-                                            {{item.bodega}}
+                                            {{item.descripcion}}
                                         </option>
                                     </select>
-                                </div>
-
-                            </div>
-                            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12" ng-if="dataSearch.chkUbicacion">
-                                <div class="form-group">
-                                    <label for="ubicacion">Ubicación</label>
-                                    <input type="text" class="form-control border-select"
-                                        ng-model="dataSearch.textUbicacion">
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"
-                                ng-if="dataSearch.ckFechaCaducidad">
-                                <div class="form-group">
-                                    <label>Rango Fechas</label>
-                                    <date-range-filter current-date="dataSearch.fechaInicio"
-                                        start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                        result-range-date="resultRangeFilter(result)"></date-range-filter>
                                 </div>
                             </div>
 
@@ -255,23 +255,51 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                                <div class="icheck-info mt-3">
-                                    <input type="radio" ng-model="dataSearch.tipoReporteArticulo" value='INVRV'
-                                        name="tipoReporteArticulo" id="tipoReporteArticuloValoracion">
-                                    <label for="tipoReporteArticuloValoracion">Con valoración</label>
-                                </div>
-                                <div class="icheck-info">
-                                    <input type="radio" ng-model="dataSearch.tipoReporteArticulo" value="INVAT"
-                                        name="tipoReporteArticulo" id="tipoReporteArticuloListaPrecio">
-                                    <label for="tipoReporteArticuloListaPrecio">Con lista de precios</label>
-                                </div>
-                            </div>
+                           
                         </div>
                     </div>
 
+                    <!--Articulo lista precios-->
+                    <div class="tab-pane p-20" id="tab3" role="tabpanel"> 
+                        <div class="row"> 
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="">SubFamilia</label>
+                                    <select class="form-control border-select" ng-model="dataSearch.bySubFamilia"
+                                        ng-options="sf.idSubFamilia as sf.subFamilia group by sf.familia  for sf in subFamilias">
+                                    </select>
+                                </div>
+                            </div> 
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="ordenar">Ordenar por:</label>
+                                    <select class="form-control border-select" ng-model="dataSearch.byOrderCampo">
+                                        <option value="ar.codigo">Codigo</option>
+                                        <option value="ar.descripcion">Descripción</option>
+                                        <option value="ar.idSubFamilia">SubFamilia</option>
+                                        <option value="ar.stock">Stock</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                <div class="icheck-info mt-3">
+                                    <input type="radio" ng-model="dataSearch.byOrder" value='ASC' name="radioByOrder"
+                                        id="byOrderAsc">
+                                    <label for="byOrderAsc">Ascendente</label>
+                                </div>
+                                <div class="icheck-info">
+                                    <input type="radio" ng-model="dataSearch.byOrder" value="DESC" name="radioByOrder"
+                                        id="byOrderDesc">
+                                    <label for="byOrderDesc">Descendente</label>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+
                     <!--Articulo Fraccionado-->
-                    <div class="tab-pane p-20" id="tab3" role="tabpanel">
+                    <div class="tab-pane p-20" id="tab4" role="tabpanel">
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                                 <div class="icheck-info">
@@ -349,7 +377,7 @@
                     </div>
 
                     <!--Articulo con configuracion de caducidad-->
-                    <div class="tab-pane p-20" id="tab4" role="tabpanel">
+                    <div class="tab-pane p-20" id="tab5" role="tabpanel">
                         <div class="row">
                             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                                 <div class="icheck-info">
@@ -416,9 +444,13 @@
                             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" ng-if="dataSearch.chkUbicacion">
                                 <div class="form-group">
                                     <label for="estab">Establecimiento</label>
-                                    <select name="estab" id="estab" class="form-control border-select"
-                                        ng-model="dataSearch.codEstab" ng-change="onChangeEstab()">
-                                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                    <select 
+                                    name="estab" 
+                                    id="estab" 
+                                    class="form-control border-select"
+                                    ng-model="dataSearch.idEstablecimiento" 
+                                    ng-change="onChangeEstab()">
+                                        <option ng-value="item.idEstablecimiento" ng-repeat="item in establecimientos">
                                             {{item.nombreComercial}}
                                         </option>
                                     </select>

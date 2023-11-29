@@ -409,6 +409,36 @@
 
         }
 
+        formSvc.groupEstabBodega = function (tempEstabBodega){            
+            const estabs = tempEstabBodega.reduce((acc, item) => {
+                const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                if (!existingItem) {
+                    acc.push({
+                        idEstablecimiento: item.idEstablecimiento,
+                        nombreComercial: item.nombreComercial,
+                        codEstab: item.codEstab,
+                        defaultEstab: item.defaultEstab,
+                        bodegas: [{
+                            idBodega: item.idBodega,
+                            descripcion: item.bodega,
+                            defaultBodega: item.defaultBodega
+                        }]
+                    });
+                } else {
+                    existingItem.bodegas.push({
+                        idBodega: item.idBodega,
+                        descripcion: item.bodega,
+                        defaultBodega: item.defaultBodega
+                    });
+                }
+                return acc;
+            }, []);
+
+            return estabs;
+
+        }
+
         return formSvc;
     }
 })(window.angular)
