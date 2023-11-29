@@ -199,7 +199,8 @@ BEGIN
                         total       NUMERIC(18,5) '$.total'
                     )
             ) AS ij ON ij.uuid = oi.uuid
-                       
+            WHERE oi.Deleted IS NULL
+                AND oi.[Enabled] = 1
             --- Insert Taxes---
             INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
             SELECT oi.Uuid
@@ -213,6 +214,8 @@ BEGIN
                                             uuid UNIQUEIDENTIFIER '$.uuid'
                                             )
                         ) AS ij ON ij.uuid = oi.uuid
+            WHERE oi.Deleted IS NULL
+                AND oi.[Enabled] = 1
 
             UPDATE oi 
             SET  oi.Paid = IIF((oi.RemainingQuantity - ISNULL(ij.quantity,0)) = 0, 1, NULL) 
@@ -224,14 +227,18 @@ BEGIN
                                             quantity    NUMERIC(18,2) '$.quantity'
                                             )
                         ) AS ij ON ij.uuid = oi.uuid
+            WHERE  oi.Deleted IS NULL
+                AND oi.[Enabled] = 1
                         
             UPDATE Restaurant.[Order] WITH (ROWLOCK)
             SET Divided = 1
             WHERE Id = @orderId
             
-            IF NOT EXISTS(SELECT 1 FROM Restaurant.OrderItem WITH (NOLOCK) 
+            IF NOT EXISTS(SELECT 1 FROM Restaurant.OrderItem oi WITH (NOLOCK) 
                                 WHERE orderId = @orderId 
-                                    AND Paid IS NULL)
+                                    AND oi.Deleted IS NULL
+                                    AND oi.[Enabled] = 1
+                                    AND oi.Paid IS NULL)
                 BEGIN
                     UPDATE Restaurant.[Order] WITH (ROWLOCK)
                     SET Finished = 1
@@ -272,6 +279,8 @@ BEGIN
                 INNER JOIN Restaurant.[Order] o WITH (NOLOCK) ON oi.OrderId = o.ID
 			    INNER JOIN Restaurant.Item i WITH (NOLOCK) ON oi.ItemId = i.Id
             WHERE OrderId = @orderId
+                AND oi.Deleted IS NULL
+                AND oi.[Enabled] = 1
             
             --- Insert Taxes---
             INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
@@ -280,8 +289,10 @@ BEGIN
                 , TaxPercentId
                 , Price
                 , TaxValue
-            FROM Restaurant.OrderItem 
+            FROM Restaurant.OrderItem oi
             WHERE OrderId = @orderId
+                AND oi.Deleted IS NULL
+                AND oi.[Enabled] = 1
             
             IF NOT EXISTS(SELECT TOP 1 1 FROM @tblItems)
                 BEGIN
@@ -293,6 +304,8 @@ BEGIN
 
              FROM Restaurant.OrderItem oi WITH(ROWLOCK)
              WHERE oi.orderId = @orderId
+                AND oi.Deleted IS NULL
+                AND oi.[Enabled] = 1
 
               UPDATE Restaurant.[Order] WITH (ROWLOCK)
                     SET Finished = 1
@@ -622,55 +635,6 @@ BEGIN
                 , uuid
                 , envioSri
             FROM @FacturaDetalleInsert
-
-            --SELECT @documentoId
-            --     ,CASE WHEN i.idArticulo = 0 THEN CASE WHEN it.code = 'MENU' 
-            --                                      THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) 
-            --                                 ELSE (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
-            --      END 
-            --      ELSE i.idArticulo 
-            --      END
-            --    ,i.feeId
-            --    ,bodegaId
-            --     ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.medidaId FROM Restaurant.Menu m
-            --                INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            --            WHERE m.id = i.MenuId) ELSE
-            --                (SELECT TOP 1 a.medidaId FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
-            --            END 
-        
-            --    ,0
-            --    ,i.quantity
-            --    ,i.cost
-            --    ,0
-            --    ,i.taxValue
-            --    ,i.discount
-            --    ,0
-            --    ,i.total
-            --    ,i.obs
-            --    ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.descripcion FROM Restaurant.Menu m
-            --                INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            --            WHERE m.id = i.MenuId) ELSE
-            --                (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
-            --            END
-            --                     ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.precioCosto FROM Restaurant.Menu m
-            --                INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            --            WHERE m.id = i.MenuId) ELSE
-            --                (SELECT TOP 1 a.precioCosto FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
-            --            END
-            --    ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
-            --    ,0
-            --    ,(CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.porcentaje FROM Restaurant.Menu m
-            --                INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            --            WHERE m.id = i.MenuId) ELSE
-            --                (SELECT TOP 1 a.porcentaje FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
-            --            END/100) * total
-            --    ,i.uuid
-            --    ,i.envioSri
-            --FROM @tblItems i
-            --INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
-            --INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
-
-            ---------------------------------------------------------------
                       
             INSERT INTO Ventas.FacturaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, Uuid, UserId)                    
                     SELECT t.taxId
