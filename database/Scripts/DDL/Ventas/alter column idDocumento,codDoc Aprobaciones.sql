@@ -6,7 +6,8 @@ go
 
 --ALTER TABLE Ventas.Aprob_Document_Audit ADD idDocumento INT 
 
-select  * from Ventas.Aprob_Document_Audit aa 
+select  * from Ventas.Aprob_Document_Audit aa
+
 --update aa set
 --	codDoc = (SELECT ad.codDoc FROM Ventas.Aprob_Document ad where ad.uniqueId = aa.uniqueId)
 --from  Ventas.Aprob_Document_Audit aa

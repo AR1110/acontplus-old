@@ -10,9 +10,6 @@ GO
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
 -- =============================================
---Almacen.Articulo_Get 28, '{"tipo":10,"idArticulo":5}'
--- Inventario.Articulo_Get 28, '{"tipo":5}'
--- Inventario.Articulo_Get 28, '{"tipo":7,"idArticulo":32546,"cantidad":"2","idBodega":149,"idMedida":278}'
 CREATE OR ALTER PROCEDURE Inventario.Articulo_Get @idRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
@@ -433,7 +430,7 @@ BEGIN
 			RETURN 
 		END
 
-	--> Configuracion 
+	--> Configuracion Stock
 	IF @tipo = 7
 		BEGIN
 			
@@ -442,20 +439,18 @@ BEGIN
                   ,@cantidad   = cantidad * -1
             FROM OPENJSON(@json) WITH
             (
-                idArticulo INT           '$.idArticulo'
-               ,idBodega   INT           '$.idBodega'
-               ,cantidad   NUMERIC(18,5) '$.cantidad'
+                idArticulo INT          
+               ,idBodega   INT          
+               ,cantidad   NUMERIC(18,5)
             )
 
            
 			SELECT TOP 1 @stock = cantidad - @cantidad FROM Inventario.Stock WITH (NOLOCK) WHERE idBodega = @idBodega AND idArticulo = @idArticulo
 
-			SELECT TOP 1 @stockMinimo = stockMinimo FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
-
             --> No permitir la venta de artículos sin stock
 			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'NPS' AND idEntidad = @idEntidad AND estado = 1)
 				BEGIN
-					IF @stock <= 0
+					IF @stock < 0
 						BEGIN
 							SELECT '0' code
 							      ,descripcion + ' <b>(' + codigo + ')</b> stock de : ' + CAST(cantidad as varchar) + ' cantidad a vender es de: ' + CAST(@cantidad as varchar) as 'message'
@@ -485,6 +480,9 @@ BEGIN
             --> Mostrar notificacion de artículos con stock mínimo
 			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNM' AND idEntidad = @idEntidad AND estado = 1)
 				BEGIN
+                    
+                    SELECT TOP 1 @stockMinimo = stockMinimo FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
+
 					IF @stock <= @stockMinimo 
 						BEGIN
 							SELECT '2' as 'code'
@@ -710,6 +708,23 @@ BEGIN
 			
             RETURN 
 		END
+    
+    --> Filter Report
+    IF @tipo = 13
+        BEGIN
+
+           SELECT idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
+           
+           SELECT sf.idSubFamilia
+                 ,sf.descripcion as subFamilia
+                 ,sf.codigo
+                 ,fa.descripcion as familia
+           FROM dbo.SubFamilia    sf WITH (NOLOCK) 
+           INNER JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
+           WHERE idEntidad = @idEntidad
+
+           RETURN 
+        END 
 
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
