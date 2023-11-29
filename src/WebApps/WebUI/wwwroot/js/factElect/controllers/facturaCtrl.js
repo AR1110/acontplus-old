@@ -1701,7 +1701,9 @@
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
             if (!($scope.data.idFactura > 0)) {
-                $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
+                if (($scope.cliente.idTiempoCredito>0)){
+                    $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
+                }
                 $scope.data.fechaEmision = new Date();
                 getFechaVencimiento();
             }
