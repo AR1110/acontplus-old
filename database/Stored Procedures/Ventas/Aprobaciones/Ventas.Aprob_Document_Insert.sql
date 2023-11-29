@@ -329,7 +329,7 @@ BEGIN
 			ORDER BY dt.orderIndex ASC
 
 			INSERT INTO Ventas.Aprob_Document_Hist(uniqueId,idDocumento,codDocumento,serie)
-			SELECT @uniqueId,idDocumento,@codDoc,serie FROM @tbHistorial 
+			SELECT @uniqueId,idDocumento,@docOrigen,serie FROM @tbHistorial 
 
 			INSERT INTO InfoAdicionalDoc (idComprobante,idTipoDocumento,nombre,valor)
 						          SELECT @idAprobacion,@idTipoDocumento,nombre,valor FROM @tbInfoAdicional
@@ -339,31 +339,10 @@ BEGIN
 
 			IF @docOrigen = 'NE'
 				BEGIN
-
-					DECLARE @idDocumento AS INT
-
-					DECLARE cursor_inventory CURSOR LOCAL FOR
-					SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
-				    WHERE dt.uniqueId = @uniqueId
-
 					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'TRA'
 
 					UPDATE cc SET cc.idEstadoPago = @idEstadoDocumento FROM Contabilidad.CuentaPorCobrar cc WITH(NOLOCK)
 				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = cc.idDocumento AND cc.codDoc = 'NE'
-
-					OPEN cursor_inventory
-
-						FETCH NEXT FROM cursor_inventory INTO @idDocumento
-
-						WHILE @@FETCH_STATUS = 0
-							BEGIN
-								--tipo transaccion  salidas
-								--tipo documento  NotaEntrega
-								EXEC Inventario.Transaccion_Update 'S','NE',@idDocumento,2
-								FETCH NEXT FROM cursor_inventory INTO @idDocumento
-							END
-					CLOSE cursor_inventory
-					DEALLOCATE cursor_inventory 
 
 				END 
 

@@ -42,7 +42,7 @@ BEGIN
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 	
 	--> Fraccionados
 	IF @tipo = 1
@@ -203,9 +203,9 @@ BEGIN
 						  ,@byOrder      VARCHAR(10)									
 						  ,@byOrderCampo VARCHAR(50)
 						  ,@rucProveedor VARCHAR(25)
-						  ,@fechaInicio DATETIME
-						  ,@fechaFin DATETIME
-						  ,@ubicacion VARCHAR(300)'
+						  ,@fechaInicio  DATETIME
+						  ,@fechaFin     DATETIME
+						  ,@ubicacion    VARCHAR(300)'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -296,6 +296,7 @@ BEGIN
 			
 			SET @params =  '@idArticulo INT
 	                       ,@idUsuario INT
+                           ,@idBodega INT
 						   ,@fechaInicio DATETIME
 						   ,@fechaFin DATETIME
 						   ,@idEntidad INT
@@ -317,7 +318,7 @@ BEGIN
 							  ,fechaRegistro           = FORMAT(tt.fechaRegistro, ''dd/MM/yyyy HH:mm'')
 							  ,tt.codDoc
 							  ,serieComprobante = tt.nroDocumento
-						FROM v_InventarioTransaccion tt
+						FROM v_InventarioTransaccion tt WITH (NOLOCK)
 						WHERE tt.idEntidad = @idEntidad AND tt.estado = 1 '
 
 			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
@@ -328,6 +329,7 @@ BEGIN
 				  ,@codTransaccion      = codTransaccion
 				  ,@fechaFin            = fechaFin
 				  ,@fechaInicio         = fechaInicio
+                  ,@idBodega            = idBodega
 			FROM OPENJSON(@json) WITH 
 				(
 				 checkBoxArticulo      BIT '$.checkBoxArticulo'
@@ -337,6 +339,7 @@ BEGIN
 				,codTransaccion VARCHAR(5) '$.codTransaccion'
 				,fechaInicio      DATETIME '$.fechaInicio'
 				,fechaFin         DATETIME '$.fechaFin'
+                ,idBodega              INT '$.idBodega' 
 				)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -361,6 +364,11 @@ BEGIN
 					SET @sql = @sql + 'AND tt.idUsuario = @idUsuario '
 				END
 
+            IF @idBodega > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND tt.idBodega = @idBodega '
+                END 
+
 			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
 			--Entidad 
@@ -378,6 +386,7 @@ BEGIN
 			EXEC sp_executesql @sql
 							  ,@params
 							  ,@idArticulo     = @idArticulo
+                              ,@idBodega       = @idBodega
 							  ,@idEntidad      = @idEntidad
 							  ,@idUsuario      = @idUsuario
 							  ,@codTransaccion = @codTransaccion
