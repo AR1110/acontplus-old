@@ -841,7 +841,9 @@ app.constant('DOC_TYPE', {
     FV_SRI: '01',    
     FV: 'FV',
     NE: 'NE',
-    PR: 'PR'
+    PR: 'PR',
+    NC: 'NC',
+    NC_SRI:'04'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC : "04",

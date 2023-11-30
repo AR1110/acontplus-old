@@ -3,28 +3,12 @@
 
     app.controller('homeCtrl', homeCtrl);
 
-    homeCtrl.$inject = ['$scope', 'mainService', 'docElectService', '$interval'];
+    homeCtrl.$inject = ['$scope', 'mainService', 'docElectService', '$interval', '$q'];
 
-    function homeCtrl($scope, mS, docElectSvc, $interval) {
+    function homeCtrl($scope, mS, docElectSvc, $interval, $q) {
         $scope.docs = []
-
-        if (JSON.parse(localStorage.getItem('userData')) === null) {
-            $scope.logout();
-            return
-        }
-
-        $scope.userData = JSON.parse(localStorage.getItem('userData'));
-
-        $scope.licenseExpiration = $scope.userData.licenseExpiration || {};
-        if (angular.equals($scope.licenseExpiration, {})) {
-            $scope.logout();
-            return
-        }
-
-        let { hasSubscription, expiryDate, messageExpiration } = JSON.parse($scope.licenseExpiration)
-
-        //var countDownDate = new Date($scope.userData.expiryDate).getTime();
-        let countDownDate = new Date(expiryDate).setMinutes(new Date().getMinutes() + 5);
+        $scope.countDownDate = 0;
+        let warningMessage = '';
         $scope.expired = false;
         $scope.alertIsOpened = false;
 
@@ -33,7 +17,41 @@
             swal.fire({
                 icon: 'warning',
                 title: 'Alerta',
-                html: `${messageExpiration}<br><h2 class="text-warning" id="expirationCounter"></h2>`,
+                html: `${warningMessage}<br><h2 class="text-warning" id="expirationCounter"></h2>`,
+                showConfirmButton: true,
+            }).then((result) => {
+                $scope.stopTimer();
+            });
+        }
+
+
+        $scope.openAlertMultiple = () => {
+            let message
+            message = `<h5>Licencias Pendientes a Pagar</h5><br><table class="table table-bordered">
+                            <thead>
+                                <tr class="small">
+                                    <th>Licencia</th>
+                                    <th>Suscripcion</th>
+                                    <th>F. Max Pago</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>`
+            for (const art of $scope.licenses) {
+                message += `<tr class="small">
+                                <td>${art.licenseCode} - ${art.licenseType}</td>
+                                <td>${art.susbscriptionType}</td>
+                                <td>${art.maxPaymentDate}</td>
+                                <td class"text-right">$ ${art.total}</td>
+                            </tr>`
+            }
+            message += `</tbody></table>`
+
+            swal.fire({
+                icon: 'warning',
+                title: 'Alerta',
+                html: message,
+                width: '800px',
                 showConfirmButton: true,
             }).then((result) => {
                 $scope.stopTimer();
@@ -43,11 +61,10 @@
         $scope.openAlertExpired = () => {
             $scope.expired = true
             let timerInterval
-
             swal.fire({
                 icon: 'warning',
                 title: 'Alerta',
-                html: `${messageExpiration}`,
+                html: `${warningMessage}`,
                 timer: 6000,
                 showConfirmButton: false,
                 allowOutsideClick: false,
@@ -86,12 +103,10 @@
             }
         };
 
-        $scope.updateTimer = function () {
-
+        $scope.startTimer = function () {
             $scope.timer = $interval(function () {
-                console.log('updating')
                 let now = new Date().getTime();
-                let distance = countDownDate - now;
+                let distance = $scope.countDownDate - now;
 
                 $scope.days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 $scope.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -113,46 +128,62 @@
                 }
             }, 1000)
         };
-
-        if (hasSubscription) {
-            var date1 = new Date();
-            var date2 = new Date(expiryDate);
-            console.log(date2)
-            // To calculate the time difference of two dates 
-            var differenceInTime = date2.getTime() - date1.getTime();
-
-            // To calculate the no. of days between two dates 
-            var differenceInDays = differenceInTime / (1000 * 3600 * 24);
-            if (differenceInDays <= 30) {
-                $scope.updateTimer();
-            }
+        function getDashboard() {
+            return mS.getData('get', 'Dashboard/', null, true);
         }
 
         function getDocs() {
-            docElectSvc.getByStatus({ tipo: 3 }).then(response => {
-                $scope.docs = response;
-                $('#comprobantesErroneosModal').modal('show');
-            }
-            ).catch(error => {
-                console.log(error)
-            })
+            return docElectSvc.getByStatus({ tipo: 3 });
         }
 
-        $scope.init = () => {
-            mS.getData('get', 'Dashboard/', null, true).then(function (response) {
-                if (response.code == 0) {
-                    toast.toastr('warning', response.message, response.titleSms);
-                    return
+        function init() {
+            const dashboardPromises = getDashboard().catch(error => { console.log(error) });
+            const documentsPromises = getDocs().catch(error => { console.log(error) });
+            $q.all([dashboardPromises, documentsPromises]).then(response => {
+                if (response[0]) {
+                    let dashboard = JSON.parse(response[0].payload);
+                    $scope.cantidad = angular.fromJson(dashboard[0].statistics);
+                    $scope.licenses = angular.fromJson(dashboard[0].licenses) || []
+
+                    if ($scope.licenses.length > 0) {
+                        let expired = angular.fromJson(dashboard[0].licenses)[0].expired || false
+
+                        if (expired) {
+                            warningMessage = angular.fromJson(dashboard[0].licenses)[0].warningMessage
+                            $scope.openAlertExpired()
+                            return
+                        }
+                    }
+
+                    if ($scope.licenses.length == 1) {
+                        let maxPaymentDate = $scope.licenses[0].maxPaymentDate;
+                        warningMessage = $scope.licenses[0].warningMessage;
+                        $scope.countDownDate = new Date(maxPaymentDate).setMinutes(new Date().getMinutes() + 5);
+
+                        let date1 = new Date();
+                        let date2 = new Date(maxPaymentDate);
+
+                        // To calculate the time difference of two dates 
+                        let differenceInTime = date2.getTime() - date1.getTime();
+
+                        // To calculate the no. of days between two dates 
+                        let differenceInDays = differenceInTime / (1000 * 3600 * 24);
+                        if (differenceInDays <= 30) {
+                            $scope.startTimer();
+                        }
+                    }
+                    if ($scope.licenses.length > 1) {
+                        $scope.openAlertMultiple();
+                    }
                 }
-                $scope.cantidad = JSON.parse(response.payload)
-            }).catch(error => {
-                console.log(error)
-            })
-            getDocs()
+                if (response[1]) {
+                    $scope.docs = response[1]
+                    $('#comprobantesErroneosModal').modal('show');
+                }
+
+            });
         }
-
-        $scope.init();
-
+        init()
 
         $scope.fixDocs = () => {
             location.href = '/DocumentoElectronico/Index?tipo=' + 3
