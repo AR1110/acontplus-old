@@ -3,9 +3,9 @@
     angular.module('acontPlusApp')
         .factory('formulario', formulario);
 
-    formulario.$inject = ['$rootScope', 'mainService'];
+    formulario.$inject = [];
 
-    function formulario($rootScope, mS) {
+    function formulario() {
         let formSvc = {};
 
         formSvc.dataDocumento = {};
@@ -441,4 +441,105 @@
 
         return formSvc;
     }
+
+    angular.module('acontPlusApp')
+    .factory('pricingUtils', function () {
+        let service = {}
+
+        service.calcularPrecioConIva = function (precioVenta, porcentaje) {
+            try {
+                let resultadoPorcentaje = Number(porcentaje) / 100;
+                let result = Number(precioVenta) * Number(resultadoPorcentaje)
+                let precioConIva = result + Number(precioVenta);
+                return precioConIva;
+
+            } catch (error) {
+                console.log('pricingUtils -> CALCULO PRECIO CON IVA', error);
+            }
+        }
+
+        service.calcularPrecioVenta = function (precioConIva, porcentaje) {
+            try {
+                let resultadoPorcentaje = Number(porcentaje) / 100 + 1;
+                let precioVenta = Number(precioConIva) / Number(resultadoPorcentaje);
+                return precioVenta;
+            } catch (error) {
+                console.log('pricingUtils -> CALCULO PRECIO Unitario', error);
+            }
+        }
+        //cuando edito porcentaje utilidad
+        service.calcularPorcentajeUtilidad = function (precioCosto, porcentajeUtilidad) {
+            try {
+                let resultPorcentajeUtilidad = Number(porcentajeUtilidad) / 100;
+                let result = Number(precioCosto) * resultPorcentajeUtilidad;
+                let precioVenta = Number(precioCosto) + result;
+                return precioVenta
+
+            } catch (error) {
+                console.log('pricingUtils -> calcularPorcentajeUtilidad', error);
+            }
+
+        }
+
+
+        //cuando cambio precio venta
+        //Get Campo Porcentaje Utilidad
+        service.campoPorcentajeUtilidad = function (precioCosto, precioVenta) {
+            try {
+                let porcentajeUtilidad = (Number(precioVenta) / Number(precioCosto) * 100) - 100;
+                return porcentajeUtilidad;
+
+            } catch (error) {
+                console.log('pricingUtils -> campoPorcentajeUtilidad', error);
+            }
+        }
+
+
+        //EN VENTA 
+        service.getPrecioIvaConDescuento = function (precioConIva, porcentajeDescuento) {
+            try {
+                let porcentaje = Number(porcentajeDescuento) / 100;
+                let descuento = Number(porcentaje) * Number(precioConIva);
+                let precioIvaConDescuento = Number(precioConIva) - Number(descuento);
+                return precioIvaConDescuento;
+            } catch (error) {
+                console.log('pricingUtils -> getPrecioIvaConDescuento', error);
+            }
+
+        }
+
+        service.getValorDescuento = function (precioUnitario, porcentajeDescuento) {
+            try {
+                let porcentaje = Number(porcentajeDescuento) / 100;
+                let descuento = Number(porcentaje) * Number(precioUnitario);
+                return descuento;
+            } catch (error) {
+                console.log('pricingUtils -> getValorDescuento', error);
+            }
+        }
+
+        service.getPorcentajeDescuento = function (precioUnitario, valorDescuento) {
+            try {
+                let porcentaje = valorDescuento / precioUnitario;
+                let porcentajeDescuento = porcentaje * 100;
+                return porcentajeDescuento;
+
+            } catch (error) {
+                console.log('pricingUtils -> getPorcentajeDescuento', error);
+            }
+        }
+
+        service.calculateTaxValue = function (price, percentage) {
+            try {
+                const tax = (price * percentage) / 100;
+                return tax;
+            } catch (error) {
+                console.log('pricingUtils -> ERROR CALCULATE TAX VALUE', error);
+                return -1;
+            }
+        };
+
+        return service;
+
+    })
 })(window.angular)

@@ -1040,6 +1040,7 @@
                 clienteDefault,
                 articuloDefault
             } = structuredClone(mainDataForm);
+            console.log(mainDataForm)
             $scope.establecimientos = estabs;
 
             let dataEstab = {};
@@ -1870,7 +1871,7 @@
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
             try {
                 $scope.dataArticulo = dataArticulo;
-
+                console.log(dataArticulo)
                 const {
                     articulo,
                     medidas,
@@ -1878,7 +1879,7 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {};
+                let index = 0, entity = {}, tarifaImpuesto = {};
 
                 //verificar si hay un articulo que lleva inventario mas de uno 
                 let itemsDuplicated = $scope.gridOptions.data.filter(item => (
@@ -1913,11 +1914,15 @@
                     && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
                 ) {
                     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
+                    entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
                     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
                     entity.tarifa = dataImpuestoTarifa.tarifa;
 
                 } else {
+                    tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
+                   
+                    entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = articulo.idTipoIva;
                     entity.codigoPorcentaje = articulo.codigoPorcentaje;
                     entity.tarifa = articulo.tarifa;
@@ -2305,7 +2310,10 @@
                         }
                         if (response.code === "1") {
                             fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
-                            $uibModalInstance.close(response)
+                            $uibModalInstance.close({
+                                ...response,
+                                isUpdate: true
+                            })
                         }
                     }).catch(error => {
                         console.error(error);
