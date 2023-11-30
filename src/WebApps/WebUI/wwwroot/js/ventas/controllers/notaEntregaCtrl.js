@@ -1005,7 +1005,7 @@
                 config,
                 vendedores,
                 clienteDefault
-            } = mainDataForm;
+            } = structuredClone(mainDataForm);
             $scope.establecimientos = estabs;
             let dataEstab = {};
 
@@ -1052,6 +1052,8 @@
                 //Cliente Predeterminado 
                 if (clienteDefault.idCliente > 0) {
                     $scope.cliente = clienteDefault;
+                    console.log($scope.cliente)
+
                 }
                 getFechaVencimiento();
             }
@@ -1614,6 +1616,12 @@
         }
 
         //==============================START CUSTOMER===========================
+        $scope.onKeyupCustomer = function() {
+            if (!$scope.cliente.nombreFiscal) {
+                $scope.cliente = {};
+            }
+
+        }
         $scope.onSelectedClienteChange = async function (item) {
             try {
 
