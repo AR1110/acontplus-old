@@ -163,7 +163,7 @@ BEGIN
     IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
         BEGIN
             INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue
-                                 , quantity, cost, price, discount, total, medidaId, cantidadStock, cantidadTransaccion)
+                                 , quantity, cost, price, discount, total, medidaId, cantidadStock, cantidadTransaccion, envioSri)
             SELECT oi.Uuid
                 ,oi.bodegaId
                 ,itemTypeId
@@ -187,6 +187,7 @@ BEGIN
 					ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)
 				END, 0)
                 ,ISNULL(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity), 0)
+                ,1
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
             INNER JOIN Restaurant.[Order] o ON oi.OrderId = o.ID
 			INNER JOIN Restaurant.v_Item i ON oi.ItemId = i.Id
@@ -274,7 +275,7 @@ BEGIN
 					ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity)
 				END,0)
                ,ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity)
-               ,0
+               ,1
            FROM Restaurant.OrderItem oi WITH (NOLOCK)
                 INNER JOIN Restaurant.[Order] o WITH (NOLOCK) ON oi.OrderId = o.ID
 			    INNER JOIN Restaurant.Item i WITH (NOLOCK) ON oi.ItemId = i.Id
@@ -428,7 +429,7 @@ BEGIN
                 (SELECT TOP 1 a.porcentaje FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
                 END/100) * total
         ,i.uuid
-        ,i.envioSri
+        ,CASE WHEN ISJSON(@customDetail) = 1 AND LEN(RTRIM(LTRIM(@customDetail))) > 0 THEN 0 ELSE 1 END
     FROM @tblItems i
     INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
     INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
