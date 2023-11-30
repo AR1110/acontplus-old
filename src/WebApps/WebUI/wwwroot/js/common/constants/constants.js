@@ -140,6 +140,7 @@ app.constant('nombreModalVenta', {
             NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
             FV_SRI: '~/Pages/Factura/_ModalDetalle.cshtml',
             PR: '~/Pages/Proforma/_ModalDetalle.cshtml',
+            NC_SRI: '~/Pages/NotaCredito/_ModalDetalle.cshtml'
         }
 
     },

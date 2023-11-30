@@ -16,6 +16,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     const notaEntregaSvc = $injector.get('notaEntregaService');
     const facturaSvc = $injector.get('facturaService');
     const proformaSvc = $injector.get('proformaService');
+    const notaCreditoSvc = $injector.get('notaCreditoService');
 
     let { id, codDoc } = params;
     let tarifaImpuesto = {
@@ -87,6 +88,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         }
     }
  
+    //Proforma
     if(codDoc==='09'){
         try {
             showLoader();
@@ -106,6 +108,32 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             console.log(error)
             hideLoader();
         }
+    }
+
+    //Nota Credito 
+    console.log(codDoc)
+    if (codDoc === DOC_TYPE['NC_SRI']){
+        try {
+            showLoader();
+            notaCreditoSvc.getIdForInfo(id).then(response => {
+                console.log(response)
+                let { data, cliente, items, factura, infoAdicionalDocumento } = response;
+                $scope.data = data;
+                $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
+                $scope.cliente = cliente;
+                $scope.gridOptions.data = items;
+                $scope.factura = factura;
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
+                gridOptionsEnumeracion();
+            }).catch(error => {
+                console.error(error)
+            }).finally(() => {
+                hideLoader();
+            })
+        } catch (error) {
+            console.log(error)
+            hideLoader();
+        }       
     }
 
 

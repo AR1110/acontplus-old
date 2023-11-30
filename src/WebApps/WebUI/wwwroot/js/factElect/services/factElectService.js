@@ -907,6 +907,7 @@
 
     app.factory('notaCreditoService', function ($injector) {
         const mS = $injector.get('mainService');
+        const fS = $injector.get('formulario');
         const URL = 'FactElect/NotaCredito/'
         const service = {};
 
@@ -926,7 +927,14 @@
 
                     if (params.tipo === 1) {
                         let tempNotasCredito = mainData[0];
-                        return tempNotasCredito;
+                        const notasCredito = tempNotasCredito.map((item)=>({
+                            ...item,
+                            idDocumento: item.idNotaCredito,
+                            serieComprobante: item.nroDocumento,
+                            codEstado: item.codDoc,
+                            codDoc: '04'
+                        }))
+                        return notasCredito;
                     }
 
                     if (params.tipo === 3) {
@@ -986,6 +994,33 @@
             return mS.getData('delete', `${URL}${id}`, null, true)
         }
 
+
+        service.getIdForInfo = function(id){
+            return mS.getData('get', URL + '?json=' + JSON.stringify({tipo: 5, id}), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if(response.code==="1"){
+                    const [mainData, mainDataFactura, mainDataCliente, mainDetalle, mainInfoAdicional] = JSON.parse(response.payload)
+                    
+                    let { fechaEmision, ...restData } = mainData[0];
+                    let comprobante = {
+                        ...restData, 
+                        fechaEmision: fS.formatDate(fechaEmision), 
+                        fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)), 
+                    } 
+
+                    return {
+                        data: comprobante,
+                        factura: mainDataFactura.length>0 ? mainDataFactura[0]: {},
+                        cliente: mainDataCliente[0],
+                        items: mainDetalle,
+                        infoAdicionalDocumento: mainInfoAdicional
+                    }
+
+                }
+            })
+        }
 
         return service;
 
