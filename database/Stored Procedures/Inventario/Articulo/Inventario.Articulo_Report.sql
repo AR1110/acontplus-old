@@ -25,7 +25,6 @@ BEGIN
     --> Filters
     DECLARE @filtroFecha   VARCHAR(50)
 	       ,@idSubFamilia          INT
-	       ,@byStock               INT
 	       ,@idArticulo            INT
 	       ,@rucProveedor  VARCHAR(25)
 	       ,@idBodega              INT 
@@ -36,9 +35,8 @@ BEGIN
 	       ,@idUsuario             INT
 	       ,@codTransaccion VARCHAR(5)
 	       ,@estado         VARCHAR(5)
-	       ,@byOrder      NVARCHAR(10)			
-	       ,@byOrderCampo NVARCHAR(50)
 	       ,@usuario      VARCHAR(150)
+           ,@codEstab     VARCHAR(100)
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
@@ -51,11 +49,11 @@ BEGIN
 			SELECT @idArticulo         = idArticulo 
 				  ,@idSubFamilia       = bySubFamilia           
 				  ,@rucProveedor       = numeroIdentificacion
-			FROM OPENJSON(@json) 
-			WITH (idArticulo                   INT '$.idArticulo'
-				 ,bySubFamilia                 INT '$.bySubFamilia'
-				 ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-			     )
+			FROM OPENJSON(@json) WITH 
+            (    idArticulo INT 
+			    ,bySubFamilia                 INT 
+			    ,numeroIdentificacion VARCHAR(25) 
+			)
 
 			SET @params = '@idEntidad INT
 			              ,@idArticulo INT
@@ -111,11 +109,16 @@ BEGIN
 	IF @tipo = 2
 		BEGIN
 			
+            SELECT @idSubFamilia  = bySubFamilia
+				  ,@rucProveedor  = numeroIdentificacion
+			FROM OPENJSON(@json) WITH 
+            ( 
+              bySubFamilia                 INT  
+             ,numeroIdentificacion VARCHAR(25)
+		    ) AS dt
+
 			SET @params = '@idEntidad    INT									
-						  ,@idSubFamilia INT
-						  ,@byOrder      VARCHAR(10)									
-						  ,@byOrderCampo VARCHAR(50)
-						  ,@rucProveedor VARCHAR(25)'
+						  ,@idSubFamilia INT'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -127,49 +130,12 @@ BEGIN
 						FROM Inventario.v_Articulo_Tarifa ar WITH (NOLOCK)
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '
 
-			SELECT
-				 @filtroFecha   = filtroFecha
-				,@idSubFamilia  = bySubFamilia
-				,@byStock       = byStock
-				,@rucProveedor  = numeroIdentificacion
-				,@byOrder       = byOrder			 
-				,@byOrderCampo  = byOrderCampo		
-			FROM OPENJSON(@json)
-			WITH ( filtroFecha          VARCHAR(50) '$.filtroFecha'			
-				  ,bySubFamilia                 INT '$.bySubFamilia'	
-				  ,byStock                      INT '$.byStock'	
-				  ,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-				  ,byOrder              VARCHAR(10) '$.byOrder'
-				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
-				) AS dt
-
-			IF @rucProveedor IS NOT NULL
-				BEGIN
-					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
-				END
-
 			IF @idSubFamilia > 0
 				BEGIN
 					SET @sql = @sql + 'AND ar.idSubFamilia = @idSubFamilia '
 				END
 
-			IF @byStock = 1 
-				BEGIN			
-					SET @sql = @sql + 'AND ar.stock > 0 '
-				END 
-
-			--Articulo sin Stock 
-			IF @byStock = 2 
-				BEGIN			
-					SET @sql = @sql + 'AND ar.stock <= 0 '
-				END
-
-			IF @byOrderCampo = 'ar.idSubFamilia'
-				BEGIN
-					SET @byOrderCampo = 'ar.idSubFamilia '
-				END
-
-			SET @sql = @sql + ' ORDER BY '+ @byOrderCampo+ ' ' +  @byOrder
+			SET @sql = @sql + ' ORDER BY ar.idArticulo '
 		
 			SELECT e.ruc
 			      ,e.razonSocial 
@@ -186,9 +152,6 @@ BEGIN
 							  ,@params
 							  ,@idEntidad    = @idEntidad
 							  ,@idSubFamilia = @idSubFamilia
-							  ,@byOrder      = @byOrder
-							  ,@byOrderCampo = @byOrderCampo
-							  ,@rucProveedor = @rucProveedor
 
 			RETURN 
 		END 
@@ -197,15 +160,23 @@ BEGIN
 	IF @tipo = 3
 		BEGIN 
 			
+            SELECT @idSubFamilia = bySubFamilia
+				  ,@rucProveedor = numeroIdentificacion
+                  ,@idBodega     = idBodega
+                  ,@codEstab     = codEstab
+			FROM OPENJSON(@json) WITH 
+            (      
+                 bySubFamilia                 INT 	
+			    ,numeroIdentificacion VARCHAR(25) 
+                ,idBodega                     INT
+                ,codEstab             VARCHAR(50)
+			) AS dt
+
 			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
 						  ,@idBodega     INT
-						  ,@byOrder      VARCHAR(10)									
-						  ,@byOrderCampo VARCHAR(50)
-						  ,@rucProveedor VARCHAR(25)
-						  ,@fechaInicio  DATETIME
-						  ,@fechaFin     DATETIME
-						  ,@ubicacion    VARCHAR(300)'
+                          ,@codEstab     VARCHAR(50)
+						  ,@rucProveedor VARCHAR(25)'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -218,60 +189,40 @@ BEGIN
 							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad 
 							  ,CAST(ar.stock AS NUMERIC(18,2)) as stockTotal
 							  ,CAST(ar.stock * ar.precioCosto as numeric(15, 2)) as totalInventario
+                              ,ar.idEstablecimiento 
+                              ,ar.nombreComercial
 						FROM Inventario.v_Articulo_Stock ar
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '	
 
-			SELECT
-				 @filtroFecha  = filtroFecha
-				,@idSubFamilia = bySubFamilia
-				,@byStock      = byStock
-				,@rucProveedor = numeroIdentificacion
-				,@byOrder      = byOrder			 
-				,@byOrderCampo = byOrderCampo		
-			FROM OPENJSON(@json)
-			WITH ( filtroFecha          VARCHAR(50) '$.filtroFecha'			
-				  ,bySubFamilia                 INT '$.bySubFamilia'	
-				  ,byStock                      INT '$.byStock'	
-				  ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-				  ,byOrder              VARCHAR(10) '$.byOrder'
-				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
-				) AS dt
-
 			IF @rucProveedor IS NOT NULL
 				BEGIN
-					SET @sql = @sql + ' AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
+					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
 				END
 
 			IF @idSubFamilia > 0
 				BEGIN
-					SET @sql = @sql + ' AND ar.idSubFamilia = @idSubFamilia '
-				END
-		
-			--Articulo con stock
-			IF @byStock = 1
-				BEGIN
-					SET @sql = @sql + ' AND ar.stock > 0 '
+					SET @sql = @sql + 'AND ar.idSubFamilia = @idSubFamilia '
 				END
 
-			--Articulo sin Stock 
-			IF @byStock = 2
-				BEGIN
-					SET @sql = @sql + ' AND ar.stock <= 0 '
-				END
+            IF @idBodega > 0
+                BEGIN
+                    SET @sql = @sql + 'AND ar.idBodega = @idBodega '
+                END 
 
-			IF @byOrderCampo = 'ar.idSubFamilia'
-				BEGIN
-					SET @byOrderCampo = 'ar.subfamilia'
-				END
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND ar.codEstab = @codEstab '
+                END 
 
-			SET @sql = @sql + ' ORDER BY ' + @byOrderCampo + ' ' + @byOrder
+			SET @sql = @sql + ' ORDER BY ar.idArticulo '
 
 			SELECT e.ruc
 				,e.razonSocial
 				,e.nombreComercial
-				,ISNULL(e.telefono, '') telefonoEntidad
-				,ISNULL(e.direccion, '') direccionEntidad
-				,@filtroFecha AS filtroFecha
+				,ISNULL(e.telefono, '')  as telefonoEntidad
+				,ISNULL(e.direccion, '') as direccionEntidad
+				,@filtroFecha            as filtroFecha
+                ,'Reporte Stock'         as title
 			FROM dbo.Entidad e WITH (NOLOCK)
 			WHERE e.idEntidad = @idEntidad
 
@@ -280,12 +231,8 @@ BEGIN
 							  ,@idEntidad    = @idEntidad
 							  ,@idSubFamilia = @idSubFamilia
 							  ,@idBodega     = @idBodega
-							  ,@fechaInicio  = @fechaInicio
-							  ,@fechaFin     = @fechaFin
-							  ,@byOrder      = @byOrder
-							  ,@byOrderCampo = @byOrderCampo
 							  ,@rucProveedor = @rucProveedor
-							  ,@ubicacion    = @ubicacion
+                              ,@codEstab     = @codEstab
 
 			RETURN 
 		END
@@ -511,11 +458,7 @@ BEGIN
 			RETURN
 		END 
     
-    --> Kardex 
-    IF @tipo = 6
-        BEGIN
-            RETURN 
-        END 
+
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END
