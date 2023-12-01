@@ -15,6 +15,7 @@ namespace Configuracion.API.Extensions
 
             services.AddScoped<IEstablecimientoAsignacionService, EstablecimientoAsignacionService>();
             services.AddScoped<IEstadoDocumentoService, EstadoDocumentoService>();
+            services.AddScoped<IPrinterService, PrinterService>();
 
             services.AddSingleton<LogWriter>();
             return services;
