@@ -103,6 +103,13 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
                     $("#nombreComercial").focus();
 
+
+                    //Cuando actualizan desde factura o nota entrega realizar busqueda de dato del cliente a SRI 
+                    if (params.isUpdateDataCustomerFromSRI){
+                        let dataIdentificacion = $scope.dataFindByIdTipoIdentificacion();
+                        $scope.consultaIdentificacionSRI(dataIdentificacion.codigo, params);                
+                    }
+
                 }).catch(error => {
                     console.log(error);
                 }).finally(() => hideLoader())
@@ -218,47 +225,61 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             $scope.typeNotify = '';
             $scope.message = '';
 
-            clienteSvc.checkClientByIdentification(query, codigoIdentificacion, $scope.consultaIdentificacionSRI)
+            clienteSvc.checkClientByIdentification(query, codigoIdentificacion, $scope.consultaIdentificacionSRI, $scope.data.idCliente)
         } catch (error) {
             console.log(error);
         }
 
     }
 
-    $scope.consultaIdentificacionSRI = function (codigoIdentificacion) {
+    /**
+     * 
+     * @param {*} codigoIdentificacion 
+     * @param {*} dataCustomerAcontPlus 
+     */
+    $scope.consultaIdentificacionSRI = function (codigoIdentificacion, dataCustomerAcontPlus) {
         if (codigoIdentificacion === 'R') {
             showLoader();
             clienteSvc.checkClientSRIByRUC($scope.data.numeroIdentificacion).then(response => {
                 hideLoader();
-                if (response.numeroRuc) {
-
-                    let {
-                        razonSocial,
-                        direccion,
-                        telefono,
-                        email
-                    } = response;
-
-                    $scope.data.nombreComercial = razonSocial.replaceAll('"', '');
-                    $scope.data.nombreFiscal = razonSocial.replaceAll('"', '');
-                    //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
-                    if (direccion) {
-                        $scope.data.direccion = direccion
-                    }
-                    if (telefono) {
-                        $scope.telefonos = new Array(telefono)
-                    }
-                    if (email) {
-                        $scope.correos = new Array(email)
-                    }
-                    $scope.data.validationSri = true;
-
-                    $scope.typeNotify = 'is-valid';
-                    $scope.message = 'Número de RUC correcta';
-
-                } else {
+                if (response.error) {
                     $scope.typeNotify = 'is-invalid';
                     $scope.message = 'No se encontró los datos';
+                    tS.toastr('info', response.error);
+                    return
+                }
+                let {
+                    razonSocial,
+                    direccion,
+                    telefono,
+                    email
+                } = response;
+                $scope.data.validationSri = true;
+                $scope.typeNotify = 'is-valid';
+                $scope.message = 'Número de RUC correcta';
+
+                if (typeof dataCustomerAcontPlus === 'object') {
+                    updateDataWithSRI(dataCustomerAcontPlus.idCliente, {
+                        razonSocial: razonSocial,
+                        direccion,
+                        telefonos: telefono && new Array(telefono) || [],
+                        correos: email && new Array(email) || []
+                    })
+                    return
+                }
+
+
+                $scope.data.nombreComercial = razonSocial;
+                $scope.data.nombreFiscal = razonSocial;
+                //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
+                if (direccion) {
+                    $scope.data.direccion = direccion
+                }
+                if (telefono) {
+                    $scope.telefonos = new Array(telefono)
+                }
+                if (email) {
+                    $scope.correos = new Array(email)
                 }
             }).catch(error => {
                 hideLoader();
@@ -272,33 +293,42 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             showLoader();
             clienteSvc.checkClientSRIByCedula($scope.data.numeroIdentificacion).then(response => {
                 hideLoader();
-                if (response.numeroRuc || response.nombreCompleto) {
-
-                    let {
-                        nombreCompleto,
-                        direccion,
-                        telefono,
-                        email
-                    } = response;
-                    $scope.data.nombreComercial = nombreCompleto.replaceAll('"', '');
-                    $scope.data.nombreFiscal = nombreCompleto.replaceAll('"', '');
-                    if (direccion) {
-                        $scope.data.direccion = direccion
-                    }
-                    if (telefono) {
-                        $scope.telefonos = new Array(telefono)
-                    }
-                    if (email) {
-                        $scope.correos = new Array(email)
-                    }
-                    $scope.data.validationSri = true;
-                    $scope.data.validationSri = true;
-
-                    $scope.typeNotify = 'is-valid';
-                    $scope.message = 'Número de Cédula correcta';
-                } else {
+                if (response.error) {
                     $scope.typeNotify = 'is-invalid';
                     $scope.message = 'No se encontró los datos';
+                    tS.toastr('info', response.error);
+                    return
+                }
+                let {
+                    nombreCompleto,
+                    direccion,
+                    telefono,
+                    email
+                } = response;
+                $scope.data.validationSri = true;
+                $scope.typeNotify = 'is-valid';
+                $scope.message = 'Número de Cédula correcta';
+
+                if (typeof dataCustomerAcontPlus === 'object') {
+                    updateDataWithSRI(dataCustomerAcontPlus.idCliente, {
+                        razonSocial: nombreCompleto,
+                        direccion,
+                        telefonos: telefono && new Array(telefono) || [],
+                        correos: email && new Array(email) || []
+                    })
+                    return
+                }
+
+                $scope.data.nombreComercial = nombreCompleto
+                $scope.data.nombreFiscal = nombreCompleto;
+                if (direccion) {
+                    $scope.data.direccion = direccion
+                }
+                if (telefono) {
+                    $scope.telefonos = new Array(telefono)
+                }
+                if (email) {
+                    $scope.correos = new Array(email)
                 }
             }).catch(error => {
                 hideLoader();
@@ -308,6 +338,42 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             })
 
         }
+    }
+
+    function updateDataWithSRI(id, dataSRI) {
+        clienteSvc.findById(id).then(response => {
+            let {
+                placas,
+                empleado,
+                estado
+            } = response;
+
+            $scope.isDisableInputIdentificacion = false;
+
+            $scope.data = Object.assign($scope.data, {
+                nombreComercial: dataSRI.razonSocial,
+                nombreFiscal: dataSRI.razonSocial
+            });
+            $scope.tempIdTipoIdentificacion = $scope.data.idTipoIdentificacion;
+
+            $scope.correos = dataSRI.correos;
+            $scope.telefonos = dataSRI.telefonos;
+            $scope.placas = placas;
+
+            $scope.selectedEmpleado = empleado;
+
+            //Cuando el estado este Inactivo se presenta el estado para activar
+            $scope.showEstado = !estado;
+
+            if (!($scope.data.idTiempoCredito > 0)) {
+                $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
+            } 
+
+            $("#nombreComercial").focus();
+
+        }).catch(error => {
+            console.log(error);
+        }).finally(() => hideLoader())
     }
 
 
