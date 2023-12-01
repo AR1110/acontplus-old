@@ -224,7 +224,19 @@ mainService.$inject = [
 function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
     let service = {}
 
-    function _getData(method, url, data = null, forApi = false) {
+    function _getData(method, url, data = null, forApi = false, externalApi = false) {
+        if (externalApi) {
+            return fetch(url, {
+                method: method,
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }).then(response => {
+                return response.json()
+            })
+        }
         return $http({
             method: method,
             url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
@@ -623,7 +635,7 @@ app.filter('mapBodega', () => {
             [curr.idBodega]: curr.descripcion
         }), {
             0: 'Seleccionar bodega'
-        }); 
+        });
         return !idBodega ? result[0] : result[idBodega];
     };
 });
