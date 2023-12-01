@@ -61,6 +61,18 @@ const columns: GridColDef[] = [
         type: 'number',
         width: 80,
     },
+    {
+        field: 'abono',
+        headerName: 'Abono',
+        type: 'number',
+        width: 80,
+    },
+    {
+        field: 'saldo',
+        headerName: 'Saldo',
+        type: 'number',
+        width: 80,
+    },
 
 ];
 
@@ -180,7 +192,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
         <>
             <Dialog
                 fullWidth={true}
-                maxWidth="md"
+                maxWidth="lg"
                 TransitionComponent={Transition}
                 keepMounted
                 open={open}

@@ -184,7 +184,7 @@ export default function OrderTable() {
                                                 </Tooltip>
 
                                                 {
-                                                    ((!(order.divided)) && !(order.finished)) && (
+                                                    ((order.divided==false) || (order.finished==false)) && (
                                                         <Tooltip describeChild title="Dividir la cuenta">
                                                             <Button variant="contained" size="large" color="inherit"
                                                                 aria-label="Dividir"

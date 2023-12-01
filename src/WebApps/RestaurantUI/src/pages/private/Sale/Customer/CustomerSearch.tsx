@@ -39,7 +39,7 @@ const CustomerSearch = () => {
             setCustomers([])
         })
             .finally(() => {
-                console.log('finally')
+                console.log('')
             })
     }
     const handleInputChange = (_: any, value: string) => {
@@ -83,7 +83,6 @@ const CustomerSearch = () => {
             cancelButtonText: 'No!'
         }).then(result => {
             if (result.isConfirmed) {
-                console.log('dhoidhf')
                 dataCustomerSRI.current = {
                     numeroRuc: textSearch,
                     razonSocial: "",
@@ -105,11 +104,20 @@ const CustomerSearch = () => {
                     return
                 }
 
-                const response = await customerService.search(textSearch);
-                if (response.length > 0) {
-                    SnackbarUtility.info('Selecciona al cliente de entre los clientes que se han encontrado!');
+                showLoader();
+                const response = await customerService.getByICard({
+                    textSearch: textSearch.trim()
+                }).finally(() => hideLoader())
+               
+                if (response.customerCompanyId > 0) {
+                    setOrder({
+                        ...order,
+                        customerName: response.tradeName,
+                        customerCompanyId: response.customerCompanyId,
+                    })
                     return
-                } 
+                }
+
 
                 //Numero de RUC 
                 if (textSearch.length === 13) {
@@ -118,15 +126,15 @@ const CustomerSearch = () => {
                         SharedService.checkClientSRIByRUC(textSearch).then(response => {
                             const { numeroRuc, razonSocial, direccion, telefono, email, error } = response;
                             if (!numeroRuc) {
-                                SnackbarUtility.info(error!)
+                                SnackbarUtility.info(error as string)
                                 return
                             }
                             dataCustomerSRI.current = {
                                 numeroRuc,
                                 razonSocial,
-                                direccion: direccion!,
-                                telefono: telefono!,
-                                email: email!
+                                direccion: direccion as string,
+                                telefono: telefono as string,
+                                email: email as string
                             }
                             setOpenCustomerDialog(true)
                         })
@@ -149,15 +157,15 @@ const CustomerSearch = () => {
                         SharedService.checkClientSRIByCedula(textSearch).then(response => {
                             const { identificacion, nombreCompleto, direccion, telefono, email, error } = response;
                             if (!identificacion || !nombreCompleto) {
-                                SnackbarUtility.info(error!)
+                                SnackbarUtility.info(error as string)
                                 return
                             }
                             dataCustomerSRI.current = {
                                 numeroRuc: identificacion,
                                 razonSocial: nombreCompleto,
-                                direccion: direccion!,
-                                telefono: telefono!,
-                                email: email!
+                                direccion: direccion as string,
+                                telefono: telefono as string,
+                                email: email as string
                             }
                             setOpenCustomerDialog(true)
 
@@ -186,7 +194,7 @@ const CustomerSearch = () => {
             email: ""
         }
 
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && textSearch) {
             event.preventDefault();
             onSearchToSRI(textSearch)
         }
@@ -216,7 +224,7 @@ const CustomerSearch = () => {
     }
 
     const handleTooltipInfo = () => {
-        setOpenTooltip((state)=>!state);
+        setOpenTooltip((state) => !state);
     };
 
     // const handleTooltipOpen = () => {
