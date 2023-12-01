@@ -713,7 +713,7 @@ BEGIN
     IF @tipo = 13
         BEGIN
 
-           SELECT idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
+           SELECT codEstab,idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
            
            SELECT sf.idSubFamilia
                  ,sf.descripcion as subFamilia
