@@ -1,0 +1,128 @@
+﻿@page
+@model WebUI.Pages.ReporteVentas.IndexModel 
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewBag.title = "Reporte Ventas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div ng-controller="reporteVentaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Reporte Ventas</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Tipo Documento: </span>
+                        <select class="form-control border-select" ng-model="dataSearch.idTipoDocumento">
+                            <option ng-value="item.idTipoDocumento" ng-repeat="item in tiposDoc">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Establecimiento:</span>
+                        <select class="form-control border-select" ng-model="dataSearch.idEstablecimiento">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="item.idEstablecimiento" ng-repeat="item in establecimientos">
+                                {{item.nombreComercial}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Punto Emisión</span>
+                        <select class="form-control border-select" ng-model="dataSearch.idPuntoEmision">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                {{item.ptoEmi}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Tipo Cliente</span>
+                        <select class="form-control border-select">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <span for="date-range-filter">Rango Fechas: </span>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                    <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
+                                        ng-disabled="!(dataSearch.idCliente>0)" class="custom-control-input"
+                                        id="checkBoxFecha">
+                                    <label class="custom-control-label" for="checkBoxFecha"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <date-range-filter current-date="dataSearch.fechaInicio"
+                            start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Estado</span>
+                        <select class="form-control border-select" ng-model="dataSearch.idEstadoDocumento">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="item.idEstadoDocumento" ng-repeat="item in estadosDoc">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-success" ng-click="getReportPDF()">PDF</button>
+            <button type="button" class="btn btn-info" ng-click="getReportEXCEL()" >EXCEL</button>
+        </div>
+    </div>
+
+
+
+            <div class="card">
+                <div class="card-body">
+                    
+                    <canvas id="chartBarAnualVentas" width="400" style="display: inline; width: 1239px; height: 140px;"></canvas>
+                    
+                </div>
+            </div>
+              <div class="card">
+                <div class="card-body">
+                    
+                    <canvas id="chartPieAnualVentas" width="400" style="display: inline; width: 1239px; height: 100px;"></canvas>
+                </div>
+            </div>
+
+
+    @section Scripts {
+            <script src="~/js/ventas/services/reporteVentaService.min.js" asp-append-version="true"></script>
+            <script src="~/js/ventas/controllers/reporteVentaCtrl.min.js" asp-append-version="true"></script>
+    }
+
+
+</div>

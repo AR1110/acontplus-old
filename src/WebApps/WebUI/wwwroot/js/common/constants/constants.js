@@ -852,3 +852,8 @@ app.constant('SRI_IDENTIFITION_CODE', {
     PASSPORT : "06",
     CONSUMIR_FINAL: '07'
 })
+
+app.constant('CODE_REPORT', {
+    FG: "FG", //Factura General
+    CCR: 'CCR' //Cuenta por cobrar
+})

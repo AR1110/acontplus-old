@@ -1620,9 +1620,10 @@
 
                 // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
                 if (fS.getDate(fechaEmisionModificada) !== fS.getDate(fechaEmisionDocCreado)) {
-
+                    let getDateEmisionModificada = fS.getDate(fechaEmisionModificada);
+                    let getDateFechaActual = fS.getDate(fechaActual);
                     //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                    if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
+                    if (getDateEmisionModificada > getDateFechaActual) {
                         fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
                         return
                     }

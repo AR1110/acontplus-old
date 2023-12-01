@@ -115,6 +115,15 @@ class BaseSearchArticulo {
                     })
                     return
                 }
+
+                if (['PR'].includes(this.tipoDoc.codigo)) {
+                    hideLoader();
+                    this.setItemArticuloEnDetalle({
+                        item: dataArticuloApi
+                    })
+                    return
+                }
+
                 //Agregando validacion nueva el idMedida 07/10/2023 por emilio 
                 this.articuloSvc.checkNotificationStock({
                     idArticulo: this.dataArticulo.idArticulo,
