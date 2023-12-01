@@ -510,6 +510,7 @@
             let dataParms = {
                 id: item.idDocumento,
                 normalMethod: true,
+                tipo: 1
             }
 
             let parameters = {
@@ -1191,6 +1192,9 @@
                 }))
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
+
+                $scope.tarifaImpuestoVigente =  $scope.tarifasImpuesto.find(item=>item.codigoPorcentaje===$scope.data.codigoPorcentaje)
+
             }
 
             $uibModalInstance.rendered.then(() => {
