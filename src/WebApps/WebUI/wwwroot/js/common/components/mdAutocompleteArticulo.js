@@ -118,7 +118,7 @@ class BaseSearchArticulo {
                 //Agregando validacion nueva el idMedida 07/10/2023 por emilio 
                 this.articuloSvc.checkNotificationStock({
                     idArticulo: this.dataArticulo.idArticulo,
-                    cantidad: 1,
+                    cantidad: -1,
                     idBodega: this.dataArticulo.idBodega,
                     idMedida: dataArticuloApi.medidas[0].idMedida
                 }).then(async responseApi => {

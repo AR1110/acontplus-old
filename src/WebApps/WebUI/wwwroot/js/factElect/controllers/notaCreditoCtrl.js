@@ -32,7 +32,8 @@
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
         clienteSvc = $injector.get('clienteService');
-        const nombreModalFactElect = $injector.get("nombreModalFactElect");
+        const nombreModalVenta = $injector.get('nombreModalVenta');
+        // const nombreModalFactElect = $injector.get("nombreModalFactElect");
         
 
         const TIPO_DOC = commonSvc.tipoDoc['NC'];
@@ -213,24 +214,20 @@
         }
 
 
-        $scope.openModalDetalle = async (item) => {
+        $scope.openModalDetalle = async (params) => {
             try {
-
-                const { fileCtrl, controller, template } = nombreModalFactElect.NOTA_CREDITO
-                let ctrl = (await import('../../../' + fileCtrl))[controller];
-                showLoader();
-                let response = await commonSvc.getDataTipoDocVenta({
-                    id: item.idNotaCredito,
-                    codigoDocumento: TIPO_DOC.codigo
-                }).finally(() => hideLoader())
-
-                if (!response.isComplete) throw ''
-
+                console.log(params)
+                let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+                let ctrl = (await import(fileCtrl))[controller];
+                let template = templates['NC_SRI'];
                 modalSvc.openModalCustom({
                     controller: ctrl,
-                    template,
+                    template: template,
                     size: 'xl',
-                    params: response,
+                    params: {
+                        codDoc: params.codDoc,
+                        id: params.idDocumento
+                    },
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 })

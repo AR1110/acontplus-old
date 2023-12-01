@@ -125,6 +125,7 @@
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
+        let pricingUtils = $injector.get('pricingUtils');
         let service = {
             data: {}
         }
@@ -476,8 +477,8 @@
                          *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
                          */
                         // Combinar los dos arrays de medidas en uno solo
-                        
-                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal]; 
+
+                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
 
                         /**
                          * Ordenar el array de medidas en función de la propiedad "orden" y
@@ -584,9 +585,9 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true).then(response => {
+            return mS.getData('post', url + 'Insert', { data }, true).then(response => {
                 if (response.code === "0") {
-                    service.data = {}
+                    service.data = {};
                     return response;
                 }
                 if (response.code === "1") {
@@ -609,7 +610,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true).then(response => {
+            return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
                 if (response.code === "0") {
                     service.data = {}
                     return response;
@@ -631,14 +632,14 @@
         }
 
         service.queryMapper = function (params) {
-            const { 
-                data, 
-                cliente, 
-                detalles, 
-                itemsDeleted, 
-                infoAdicionalDocumento, 
-                historyDatosAdicionales,  
-                fromAprobacion=false
+            const {
+                data,
+                cliente,
+                detalles,
+                itemsDeleted,
+                infoAdicionalDocumento,
+                historyDatosAdicionales,
+                fromAprobacion = false
             } = params;
 
             //data que se usara dentro de la función "getCantidadStock"
@@ -663,18 +664,48 @@
 
             const itemsMainMapper = service.detalleMapperTo(detalles, fromAprobacion);
             const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted, fromAprobacion)
-
+            const impuestos = service.impuestoTarifaMapperTo(detalles);
             const mergeItems = [
                 ...itemsMainMapper,
                 ...itemsDeletedMapper
             ]
 
             return {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(mergeItems),
-                adicional: JSON.stringify(infoAdicionalDocumento || []),
-                infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
+                infoFactura: service.infoFacturaMapperTo(factura),
+                detalles: mergeItems,
+                impuestos: impuestos,
+                infoAdicional: infoAdicionalDocumento || [],
+                infoAdicionalArticulo: historyDatosAdicionales
             }
+        }
+
+        service.infoFacturaMapperTo = function (data) {
+            const result = {
+                idCliente: data.idCliente,
+                idTiempoCredito: data.idTiempoCredito,
+                idPuntoEmision: data.idPuntoEmision,
+                idUsuario: data.idUsuario,
+                tarifa: data.tarifa,
+                fechaEmision: data.fechaEmision,
+                fechaVencimiento: data.fechaVencimiento,
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                totalDescuento: data.totalDescuento,
+                porcentajeDescuento: data.porcentajeDescuento,
+                irbpnr: data.irbpnr,
+                propina: data.propina,
+                iva: data.iva,
+                recargo: data.recargo,
+                transporte: data.transporte,
+                total: data.total,
+                observacion: data.observacion,
+                placa: data.placa,
+                identificacionComprador: data.identificacionComprador,
+                razonSocialComprador: data.razonSocialComprador,
+                direccionComprador: data.direccionComprador,
+                email: data.email,
+                telefono: data.telefono,
+            }
+            return result;
         }
 
         /**
@@ -683,7 +714,7 @@
          * @param {*} fromAprobacion si es verdadero el origen del detalle es desde aprobacion del documento 
          * @returns 
          */
-        service.detalleMapperTo = function (detalles, fromAprobacion=false) {
+        service.detalleMapperTo = function (detalles, fromAprobacion = false) {
             let tempDetails = [];
             let orderIndex = 1;
 
@@ -721,7 +752,7 @@
                             cantidadStock = Math.abs(cantidadStock)
                             //  cantidadAnulada = item.cantidad;
                         }
-                    } 
+                    }
                 }
 
                 tempDetails.push({
@@ -753,7 +784,8 @@
                     precioCosto: item.precioCosto,  //✅
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : cantidadTransaccion, //✅
                     // cantidadAnulada,
-                    estado: item.estado //✅     
+                    estado: item.estado, //✅                      
+                    valorImpuesto: service.getTaxBaseAndTaxValue(item).taxValue
                 })
             }
             return tempDetails;
@@ -871,6 +903,34 @@
             };
         }
 
+
+
+        service.impuestoTarifaMapperTo = function (items) {
+            let impuestosTarifa = items.map(item => {
+                const { taxBase, taxValue} = service.getTaxBaseAndTaxValue(item); 
+                const discount = item.cantidad * item.valorDescuento; 
+                const obj = {
+                    taxId: item.idImpuesto,
+                    taxPercentId: item.idTipoIva,
+                    percent: item.tarifa,
+                    taxBase: fS.roundNumber(taxBase, 5),
+                    taxValue: fS.roundNumber(taxValue, 5),
+                    discount: fS.roundNumber(discount, 5)
+                }
+                return obj;
+            })
+            return impuestosTarifa;
+        }
+
+        service.getTaxBaseAndTaxValue = function(item){
+            const taxBase = ((item.cantidad * item.precioUnitario)) - item.valorDescuento; 
+            const taxValue = pricingUtils.calculateTaxValue(taxBase, item.tarifa); 
+            return {
+                taxBase: fS.roundNumber(taxBase, 5),
+                taxValue: fS.roundNumber(taxValue, 5),
+            };
+        }
+
         return service;
 
     })
@@ -907,6 +967,7 @@
 
     app.factory('notaCreditoService', function ($injector) {
         const mS = $injector.get('mainService');
+        const fS = $injector.get('formulario');
         const URL = 'FactElect/NotaCredito/'
         const service = {};
 
@@ -926,7 +987,14 @@
 
                     if (params.tipo === 1) {
                         let tempNotasCredito = mainData[0];
-                        return tempNotasCredito;
+                        const notasCredito = tempNotasCredito.map((item) => ({
+                            ...item,
+                            idDocumento: item.idNotaCredito,
+                            serieComprobante: item.nroDocumento,
+                            codEstado: item.codDoc,
+                            codDoc: '04'
+                        }))
+                        return notasCredito;
                     }
 
                     if (params.tipo === 3) {
@@ -986,6 +1054,33 @@
             return mS.getData('delete', `${URL}${id}`, null, true)
         }
 
+
+        service.getIdForInfo = function (id) {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 5, id }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    const [mainData, mainDataFactura, mainDataCliente, mainDetalle, mainInfoAdicional] = JSON.parse(response.payload)
+
+                    let { fechaEmision, ...restData } = mainData[0];
+                    let comprobante = {
+                        ...restData,
+                        fechaEmision: fS.formatDate(fechaEmision),
+                        fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
+                    }
+
+                    return {
+                        data: comprobante,
+                        factura: mainDataFactura.length > 0 ? mainDataFactura[0] : {},
+                        cliente: mainDataCliente[0],
+                        items: mainDetalle,
+                        infoAdicionalDocumento: mainInfoAdicional
+                    }
+
+                }
+            })
+        }
 
         return service;
 

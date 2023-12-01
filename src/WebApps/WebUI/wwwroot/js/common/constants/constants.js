@@ -140,6 +140,7 @@ app.constant('nombreModalVenta', {
             NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
             FV_SRI: '~/Pages/Factura/_ModalDetalle.cshtml',
             PR: '~/Pages/Proforma/_ModalDetalle.cshtml',
+            NC_SRI: '~/Pages/NotaCredito/_ModalDetalle.cshtml'
         }
 
     },
@@ -841,7 +842,9 @@ app.constant('DOC_TYPE', {
     FV_SRI: '01',    
     FV: 'FV',
     NE: 'NE',
-    PR: 'PR'
+    PR: 'PR',
+    NC: 'NC',
+    NC_SRI:'04'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC : "04",

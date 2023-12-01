@@ -426,7 +426,7 @@
     /**
      * ====================================START DIRECTIVES SALES=============================
      */
-    app.directive('btnCliente', function (modalService, nombreModalVenta) {
+    app.directive('btnCliente', function (modalService, nombreModalVenta, toastService) {
         return {
             restrict: 'A',
             scope: {
@@ -434,7 +434,11 @@
                 params: '='
             },
             link: function (scope, element) {
-                element.on('click', async function () {
+                element.on('click', async function () { 
+                    if (typeof scope.params === 'object' && /^9{13}$/.test(scope.params.numeroIdentificacion)){
+                        toastService.toastr('warning', 'Consumir Final no puede ser editada.');
+                        return
+                    } 
 
                     let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['M']];

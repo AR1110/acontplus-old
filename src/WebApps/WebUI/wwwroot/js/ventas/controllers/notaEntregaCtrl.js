@@ -11,6 +11,7 @@
     let modalSvc = {};
     let TIPO_DOC_NE = {};
     const NUM_CONSUMIDOR_FINAL = "9999999999999";
+    let nombreModalVenta = {}
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
 
@@ -28,7 +29,7 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        let nombreModalVenta = $injector.get('nombreModalVenta');
+        nombreModalVenta = $injector.get('nombreModalVenta');
 
         TIPO_DOC_NE = commonSvc.tipoDoc['NE'];
         const PERMISSION_KEY_ACTIONS = {
@@ -1005,7 +1006,7 @@
                 config,
                 vendedores,
                 clienteDefault
-            } = mainDataForm;
+            } = structuredClone(mainDataForm);
             $scope.establecimientos = estabs;
             let dataEstab = {};
 
@@ -1052,6 +1053,8 @@
                 //Cliente Predeterminado 
                 if (clienteDefault.idCliente > 0) {
                     $scope.cliente = clienteDefault;
+                    console.log($scope.cliente)
+
                 }
                 getFechaVencimiento();
             }
@@ -1614,17 +1617,46 @@
         }
 
         //==============================START CUSTOMER===========================
+        $scope.onKeyupCustomer = function() {
+            if (!$scope.cliente.nombreFiscal) {
+                $scope.cliente = {};
+            }
+
+        }
         $scope.onSelectedClienteChange = async function (item) {
             try {
 
                 if (!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Datos Incorrectos',
-                        html: 'Número de identificación no validado!',
+                        html: 'Datos Incorrectos!',
                         showConfirmButton: true,
                         showCancelButton: true,
+                        confirmButtonText: 'Actualizar con el SRI!.',
                         cancelButtonText: 'Cancelar'
+                    }).then(async result => {
+                        if (result.isConfirmed) {
+                            let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
+                            let ctrl = (await import(fileCtrl))[controllers['M']];
+                            let template = templates['M'];
+
+                            let modalRef = modalSvc.openModalCustom({
+                                controller: ctrl,
+                                template,
+                                size: 'xl',
+                                params: {
+                                    ...item,
+                                    isUpdateDataCustomerFromSRI: true
+                                },
+                                isRenderRazorPartial: true
+                            })
+
+                            modalRef.result.then(result => {
+                                if (typeof result === 'object') {
+                                    setCustomerData(item)
+                                }
+                            })
+                        }
                     })
                     return
                 }

@@ -10,6 +10,7 @@
     let modalSvc = {};
     let tipoDoc = {}
     const NUM_CONSUMIDOR_FINAL = "9999999999999";
+    let nombreModalVenta = {}
 
 
     app.controller('facturaCtrl', facturaCtrl)
@@ -24,7 +25,7 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        let nombreModalVenta = $injector.get('nombreModalVenta');
+        nombreModalVenta = $injector.get('nombreModalVenta');
         let DOC_TYPE = $injector.get('DOC_TYPE');
         tipoDoc = {
             codigo: DOC_TYPE['FV']
@@ -509,6 +510,7 @@
             let dataParms = {
                 id: item.idDocumento,
                 normalMethod: true,
+                tipo: 1
             }
 
             let parameters = {
@@ -1039,7 +1041,8 @@
                 vendedores,
                 clienteDefault,
                 articuloDefault
-            } = mainDataForm;
+            } = structuredClone(mainDataForm);
+            console.log(mainDataForm)
             $scope.establecimientos = estabs;
 
             let dataEstab = {};
@@ -1097,7 +1100,7 @@
 
                 //Cliente Predeterminado 
                 if (clienteDefault.idCliente > 0) {
-                    $scope.cliente = clienteDefault;
+                    $scope.cliente = structuredClone(clienteDefault);
                 }
 
                 //Articulo Predeterminado
@@ -1189,6 +1192,9 @@
                 }))
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
+
+                $scope.tarifaImpuestoVigente =  $scope.tarifasImpuesto.find(item=>item.codigoPorcentaje===$scope.data.codigoPorcentaje)
+
             }
 
             $uibModalInstance.rendered.then(() => {
@@ -1662,17 +1668,47 @@
         }
 
         //==============================START CUSTOMER===========================
+        $scope.onKeyupCustomer = function () {
+            if (!$scope.cliente.nombreFiscal) {
+                $scope.cliente = {};
+            }
+
+        }
+
         $scope.onSelectedClienteChange = async function (item) {
             try {
 
                 if (!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Datos Incorrectos',
-                        html: 'Número de identificación no validado!',
+                        html: 'Datos Incorrectos!',
                         showConfirmButton: true,
                         showCancelButton: true,
+                        confirmButtonText: 'Actualizar con el SRI!.',
                         cancelButtonText: 'Cancelar'
+                    }).then(async result => {
+                        if (result.isConfirmed) {
+                            let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
+                            let ctrl = (await import(fileCtrl))[controllers['M']];
+                            let template = templates['M'];
+
+                            let modalRef = modalSvc.openModalCustom({
+                                controller: ctrl,
+                                template,
+                                size: 'xl',
+                                params: {
+                                    ...item,
+                                    isUpdateDataCustomerFromSRI: true
+                                },
+                                isRenderRazorPartial: true
+                            })
+
+                            modalRef.result.then(result => {
+                                if (typeof result === 'object') {
+                                    setCustomerData(item)
+                                }
+                            })
+                        }
                     })
                     return
                 }
@@ -1701,7 +1737,7 @@
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
             if (!($scope.data.idFactura > 0)) {
-                if (($scope.cliente.idTiempoCredito>0)){
+                if (($scope.cliente.idTiempoCredito > 0)) {
                     $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
                 }
                 $scope.data.fechaEmision = new Date();
@@ -1837,7 +1873,7 @@
                 codigo: "",
                 idArticulo: 0,
                 descripcion: "",
-                cantidad: 1,
+                cantidad: 0,
                 cantidadStock: 0,
                 codigoPorcentaje: "",
                 tarifa: 0,
@@ -1863,7 +1899,7 @@
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
             try {
                 $scope.dataArticulo = dataArticulo;
-
+                console.log(dataArticulo)
                 const {
                     articulo,
                     medidas,
@@ -1871,7 +1907,7 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {};
+                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
 
                 //verificar si hay un articulo que lleva inventario mas de uno 
                 let itemsDuplicated = $scope.gridOptions.data.filter(item => (
@@ -1883,16 +1919,20 @@
                 }
 
                 let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
-                
+
                 if (findIndexById === -1) {
                     addRow();
                     index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
+                    entity.cantidad = 1;
                 } else {
                     index = findIndexById;
                     entity = $scope.gridOptions.data[index];
-                    entity.cantidad = entity.cantidad + 1;
+                    cantidad = entity.cantidad;
+                    entity.cantidad = cantidad + 1;
                 }
+
+
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
 
@@ -1906,11 +1946,15 @@
                     && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
                 ) {
                     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
+                    entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
                     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
                     entity.tarifa = dataImpuestoTarifa.tarifa;
 
                 } else {
+                    tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
+
+                    entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = articulo.idTipoIva;
                     entity.codigoPorcentaje = articulo.codigoPorcentaje;
                     entity.tarifa = articulo.tarifa;
@@ -1940,6 +1984,7 @@
                 $scope.indexRow = index;
                 setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
+                //checkNotificationStock("cantidad", entity, cantidad);
             } catch (error) {
                 console.log(error)
             }
@@ -2149,7 +2194,7 @@
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     }
                 }
-            } 
+            }
 
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
@@ -2167,6 +2212,11 @@
 
             if ($scope.gridOptions.data.length === 0) {
                 tS.toastr('warning', 'Ingrese al menon un artículo en el detalle');
+                return
+            }
+
+            if ($scope.gridOptions.data.some(row => row.llevaInventario && row.cantidad === 0)) {
+                tS.toastr('warning', 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.');
                 return
             }
 
@@ -2298,7 +2348,10 @@
                         }
                         if (response.code === "1") {
                             fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
-                            $uibModalInstance.close(response)
+                            $uibModalInstance.close({
+                                ...response,
+                                isUpdate: true
+                            })
                         }
                     }).catch(error => {
                         console.error(error);

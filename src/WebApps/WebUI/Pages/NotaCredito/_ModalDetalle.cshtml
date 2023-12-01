@@ -10,19 +10,13 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
-                    <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="data.codEstab" disabled>
-                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                            {{item.nombreComercial}}
-                        </option>
-                    </select>
+                    <input type="text" ng-model="data.establecimiento" disabled class="form-control border-select"> 
                 </div>            
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
-                    <select name="puntoEmision" id="puntoEmision" class="form-control border-select" ng-model="data.idPuntoEmision" disabled>
-                        <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
-                    </select>
+                    <input type="text" ng-model="data.ptoEmi" disabled class="form-control border-select">  
                 </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
@@ -37,33 +31,25 @@
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">            
                 <div class="form-group">
                     <label for="">Cliente: <span class="text-danger">*</span></label>
-                    <input type="text" ng-value="cliente.nombreFiscal" class="form form-control" disabled>                    
+                    <input type="text" ng-value="cliente.razonSocialComprador" class="form form-control" disabled>                    
                 </div>                       
             </div>
 
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="nroIndentificacion" class="">Nro. Identificación:</label>
-                    <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly ng-value="cliente.numeroIdentificacion" placeholder="..." />
+                    <input type="text" name="nroIndentificacion" id="nroIndentificacion" class="form-control" readonly 
+                        ng-value="cliente.identificacionComprador" placeholder="..." />
                 </div>
             </div>
 
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    @* <label for="Facturas"><code>{{facturas.length}}</code> Facturas</label>                    
-                    <input type="text" class="form-control border-select" 
-                            ng-disabled="!(cliente.idCliente>0)"
-                            ng-model="nroFactura"
-                            placeholder="Buscar Nro. Factura"
-                            ng-keyup="onKeyupInvoice()"
-                            uib-typeahead="item as item.nroFactura for item in facturas | filter:{nroFactura:$viewValue}"                                            
-                            typeahead-show-hint="true" typeahead-min-length="0"
-                            typeahead-on-select="selectedInvoiceChange($item)"
-                            typeahead-editable="false">
-                            <button type="button" class="btn btn-info btn-xs mt-1">
-                                <i class="ti-file"></i> Ver documento
-                            </button> *@
-                                                      
+                    <label for="Facturas">Factura</label>                    
+                    <input type="text" class="form-control border-select" ng-value="factura.serieComprobante" disabled>
+                    <button type="button" class="btn btn-info btn-xs mt-1">
+                        <i class="ti-file"></i> Ver documento
+                    </button>                               
                 </div>      
             </div>
         </div>

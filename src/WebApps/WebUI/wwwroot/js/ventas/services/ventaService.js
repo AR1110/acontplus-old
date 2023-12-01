@@ -1593,7 +1593,7 @@
             return true;
         }
 
-        service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
+        service.checkClientByIdentification = function (query, codigoIdentificacion, callback, id) {
             mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     callback(codigoIdentificacion)
@@ -1601,8 +1601,9 @@
                 }
                 if (response.code === "1") {
 
-                    let clienteRepository = JSON.parse(response.payload)[0][0]
-
+                    let clienteRepository = JSON.parse(response.payload)[0][0];
+                  
+                    let showConfirmButton = id>0 && ['C', 'R'].includes(codigoIdentificacion);
                     // return {
                     //     idCliente: clienteRepository.idCliente,
                     //     numeroIdentificacion: clienteRepository.numeroIdentificacion,
@@ -1629,17 +1630,16 @@
                                 <small><strong>Nombre Comercial</strong></small> <br>
                                 <p class="text-muted small">${clienteRepository.nombreComercial}</p>
                             `,
-                        icon: 'info',
-                        showCloseButton: true,
+                        icon: 'info', 
                         showCancelButton: true,
-                        focusConfirm: true,
-                        confirmButtonText: '<i class="fa fa-thumbs-up"></i> Validar datos!',
-                        confirmButtonAriaLabel: 'Validar datos!',
-                        cancelButtonText: '<i class="fa fa-thumbs-down"></i> Cancelar',
-                        cancelButtonAriaLabel: 'Cancelar'
+                        showConfirmButton,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Actualizar con el SRI!",
+                        cancelButtonText: 'Cancelar'
                     }).then(result => {
                         if (result.isConfirmed) {
-                            callback(codigoIdentificacion);
+                            callback(codigoIdentificacion, clienteRepository);
                         }
                     })
                 }

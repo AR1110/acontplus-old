@@ -55,9 +55,7 @@ instance.interceptors.response.use(
     // if (error.response.status === 401) {
     //   console.log(error);
     //   // redirect();
-    // }
-
-    console.log(error)    
+    // }   
     // SnackbarUtilities.error(getValidationError(error.code)!);
     // SnackbarUtility.error(error.message);
     return Promise.reject(error);
