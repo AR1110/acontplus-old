@@ -1869,7 +1869,7 @@
                 codigo: "",
                 idArticulo: 0,
                 descripcion: "",
-                cantidad: 1,
+                cantidad: 0,
                 cantidadStock: 0,
                 codigoPorcentaje: "",
                 tarifa: 0,
@@ -1903,7 +1903,7 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {}, tarifaImpuesto = {};
+                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
 
                 //verificar si hay un articulo que lleva inventario mas de uno 
                 let itemsDuplicated = $scope.gridOptions.data.filter(item => (
@@ -1920,11 +1920,15 @@
                     addRow();
                     index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
+                    entity.cantidad = 1;
                 } else {
                     index = findIndexById;
                     entity = $scope.gridOptions.data[index];
-                    entity.cantidad = entity.cantidad + 1;
+                    cantidad = entity.cantidad;
+                    entity.cantidad = cantidad + 1;
                 }
+
+
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
 
@@ -1976,6 +1980,7 @@
                 $scope.indexRow = index;
                 setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
+                //checkNotificationStock("cantidad", entity, cantidad);
             } catch (error) {
                 console.log(error)
             }
@@ -2203,6 +2208,11 @@
 
             if ($scope.gridOptions.data.length === 0) {
                 tS.toastr('warning', 'Ingrese al menon un artículo en el detalle');
+                return
+            }
+
+            if ($scope.gridOptions.data.some(row => row.llevaInventario && row.cantidad === 0)) {
+                tS.toastr('warning', 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.');
                 return
             }
 
