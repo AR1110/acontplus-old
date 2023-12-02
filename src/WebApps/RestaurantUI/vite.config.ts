@@ -21,6 +21,9 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
+      workbox: {
+        cleanupOutdatedCaches: true
+      },
       //registerType: 'prompt',
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],

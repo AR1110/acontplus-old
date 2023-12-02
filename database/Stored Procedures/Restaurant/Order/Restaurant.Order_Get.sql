@@ -289,19 +289,24 @@ BEGIN
           
             SELECT
                 v_cpc.codEstab
+                ,v_cpc.idCuentaPorCobrar 
                 ,od.DocumentoId
                 ,od.orderId
                 ,docType = IIF(v_cpc.codDoc='01', 'FV', v_cpc.codDoc)
                 ,serie = v_cpc.serieComprobante
+                ,serieComprobante = v_cpc.serieComprobante
                 ,createAt = FORMAT(v_cpc.fechaEmision, 'dd/MM/yyyy HH:mm')
                 ,customerName = v_cpc.razonSocialComprador
                 ,userName = v_cpc.usuario
+                ,v_cpc.tiempoCredito
                 ,v_cpc.importeTotal
                 ,v_cpc.abono
                 ,v_cpc.saldo
+                ,v_cpc.estado
                 ,telefono = ISNULL(v_cpc.telefono, '')
                 ,v_cpc.telefonoEstablecimiento
                 ,v_cpc.nombreComercial
+                ,v_cpc.codEstado
             FROM Restaurant.OrderDocument od WITH(NOLOCK)
             INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
             WHERE v_cpc.idEntidad = @idEntidad AND od.orderId = @id AND v_cpc.codDoc IN('01', 'NE') 

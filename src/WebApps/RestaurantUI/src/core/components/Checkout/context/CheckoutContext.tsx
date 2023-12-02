@@ -108,16 +108,25 @@ export const CheckoutProvider = ({ children }: Props) => {
     const onChangeReceivedAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { voucher } = state.checkout;
         const inputValue = event.target.value.replace(/[^0-9.]/g, '');
+        // Utilizar replace para eliminar el primer dígito "0" si no hay un punto después
+        const resultValueIngreasada = inputValue.replace(/^0(?![.])/, '');
         const numeroStr = voucher.receivedAmount.toString();
         if (!inputValue) {
-            setReceivedAmount('0')
+            setTimeout(() => {
+                setReceivedAmount('0')
+                event.target.select();
+                setChangeReturn()
+            }, 0);
             return
         }
+        
         if (numeroStr === "0") {
             setReceivedAmount('')
         }
-        setReceivedAmount(inputValue)
-        setChangeReturn()
+        setTimeout(()=>{
+            setReceivedAmount(resultValueIngreasada)
+            setChangeReturn()
+        },0)
     }
 
     const handleChangeSetReceivedAmount = (value: number | string) => {
@@ -166,6 +175,13 @@ export const CheckoutProvider = ({ children }: Props) => {
     }
 
     const handleClickOptionReceivedAmount = (value: number) => {
+        //const { voucher } = state.checkout;
+        //let valueReceivedAmount = 0;
+        // if (Number(voucher.receivedAmount)===0){
+        //     valueReceivedAmount = value
+        // }else{
+        //     valueReceivedAmount = Number(voucher.receivedAmount) + value;
+        // } 
         setReceivedAmount(value.toString());
         setIsOptionReceivedAmount(true)
         setChangeReturn()

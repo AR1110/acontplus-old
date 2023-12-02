@@ -159,16 +159,16 @@ export default function OrderTable() {
                                         <TableCell>
                                             <Stack direction="row" spacing={1}>
                                                 {
-                                                    (order.finished || order.divided) ? '': (
+                                                    (order.finished || order.divided) ? '' : (
                                                         <Tooltip describeChild title="Editar">
                                                             <Button variant="contained" color="success"
                                                                 aria-label="Editar"
                                                                 onClick={() => handleEdit(order.orderId)}
-                                                            > 
+                                                            >
                                                                 <EditIcon />
                                                             </Button>
                                                         </Tooltip>
-                                                    ) 
+                                                    )
                                                 }
 
                                                 <Tooltip describeChild title="PDF e Impresión">
@@ -181,15 +181,18 @@ export default function OrderTable() {
                                                     >
                                                         <AspectRatioIcon />
                                                     </Button>
-                                                </Tooltip>
+                                                </Tooltip> 
+
 
                                                 {
-                                                    ((order.divided==false) || (order.finished==false)) && (
+                                                    (order.divided || order.finished) ? '': (
+
                                                         <Tooltip describeChild title="Dividir la cuenta">
                                                             <Button variant="contained" size="large" color="inherit"
                                                                 aria-label="Dividir"
                                                                 onClick={() => dividerCuenta(order.orderId)}
                                                             >
+                                                                {`Hola${order.finished}`}
                                                                 <AccountTreeIcon />
                                                             </Button>
                                                         </Tooltip>
@@ -205,9 +208,9 @@ export default function OrderTable() {
                                                                 <ClearIcon />
                                                             </Button>
                                                         </Tooltip>
-                                                    ) 
+                                                    )
                                                 }
-                                               
+
                                             </Stack>
                                         </TableCell>
                                         <TableCell align="center"> {order.serie}</TableCell>

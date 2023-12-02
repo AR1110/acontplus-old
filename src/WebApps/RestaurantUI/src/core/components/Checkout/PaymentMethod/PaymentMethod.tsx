@@ -30,6 +30,11 @@ const PaymentMethod = () => {
     //const onChangeReceivedAmount = useCheckoutStore(state => state.onChangeReceivedAmount)
     //const save = useCheckoutStore(state => state.save)
     const paymentTypes = dataForm.paymentTypes;
+
+    const handleFocus = (event: any) => {
+        event.target.select(); // Seleccionar el texto
+    };
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <Card variant="outlined">
@@ -98,7 +103,7 @@ const PaymentMethod = () => {
                                 label="Valor Cobro"
                                 value={voucher.receivedAmount}
                                 onChange={onChangeReceivedAmount}
-
+                                onFocus={handleFocus}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">
                                         <PaymentsIcon />
@@ -164,10 +169,10 @@ const PaymentMethod = () => {
                                     <>
                                         <Box sx={{ flexGrow: 1 }}>
                                             <Grid container spacing={3}>
-                                                <Grid item xs={12} sm={4}>
+                                                <Grid item xs={12} sm={12} md={12} lg={4}>
                                                     <PaymentSubType />
                                                 </Grid>
-                                                <Grid item xs={12} sm={4}>
+                                                <Grid item xs={12} sm={6} md={6} lg={4}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -183,7 +188,7 @@ const PaymentMethod = () => {
                                                         }}
                                                     />
                                                 </Grid>
-                                                <Grid item xs={12} sm={4}>
+                                                <Grid item xs={12} sm={6} md={6} lg={4}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -202,10 +207,10 @@ const PaymentMethod = () => {
 
 
                                                 {/* second grid */}
-                                                <Grid item xs={12} sm={4}>
+                                                <Grid item xs={12} sm={6} md={6} lg={4}>
                                                     <City />
                                                 </Grid>
-                                                <Grid item xs={12} sm={4}>
+                                                <Grid item xs={12} sm={6} md={6} lg={4}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -221,7 +226,7 @@ const PaymentMethod = () => {
                                                         }}
                                                     />
                                                 </Grid>
-                                                <Grid item xs={12} sm={4}>
+                                                <Grid item xs={12} sm={6} md={6} lg={4}>
                                                     <TextField
                                                         fullWidth
                                                         required

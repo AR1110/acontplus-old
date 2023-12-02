@@ -61,20 +61,25 @@ export interface OrderReadDto {
 
 export type IOrderDocument = {
   id: number
+  idCuentaPorCobrar: number
   codEstab: string
   documentoId: number
   orderId: number
   docType: DOC_TYPE.FV | DOC_TYPE.NE
   serie: string
+  serieComprobante: string
   createAt: string
   customerName: string
   userName: string
   importeTotal: number
   abono: number
   saldo: number
+  estado: string
   telefono?: string
   telefonoEstablecimiento?: string
   nombreComercial?: string
+  tiempoCredito: number
+  codEstado: string
 }
 
 
