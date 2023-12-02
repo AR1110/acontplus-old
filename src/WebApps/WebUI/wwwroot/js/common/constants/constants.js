@@ -144,7 +144,7 @@ app.constant('nombreModalVenta', {
         }
 
     },
-    CLIENTE: { 
+    CLIENTE: {
         fileCtrl: '/js/ventas/modals/modalClienteCtrl.js' + CHANGE_VERSION(),
         controllers: {
             M: 'ModalClienteCtrl',
@@ -839,21 +839,22 @@ app.constant('TAX_RATE_CODE', {
 })
 
 app.constant('DOC_TYPE', {
-    FV_SRI: '01',    
+    FV_SRI: '01',
     FV: 'FV',
     NE: 'NE',
     PR: 'PR',
     NC: 'NC',
-    NC_SRI:'04'
+    NC_SRI: '04'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
-    RUC : "04",
-    LICENSE : "05",
-    PASSPORT : "06",
+    RUC: "04",
+    LICENSE: "05",
+    PASSPORT: "06",
     CONSUMIR_FINAL: '07'
 })
 
 app.constant('CODE_REPORT', {
-    FG: "FG", //Factura General
-    CCR: 'CCR' //Cuenta por cobrar
+    FG: "FG", //Ventas -> Factura General
+    CCR: 'CCR', //Cuenta por cobrar
+    FEG: 'FEG' //Facturacion Electronica -> Factura General
 })

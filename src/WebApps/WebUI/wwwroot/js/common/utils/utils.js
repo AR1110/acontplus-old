@@ -442,6 +442,13 @@
 
         }
 
+        formSvc.isValidField = function (field) {
+            let invalid = ["", null, undefined, 0].includes(field)
+            if (invalid) {
+                return null;
+            }
+            return field;
+        }
         return formSvc;
     }
 
@@ -541,6 +548,8 @@
                     return -1;
                 }
             };
+
+           
 
             return service;
 
