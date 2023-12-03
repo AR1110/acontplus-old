@@ -1,4 +1,4 @@
-import { CheckoutDataForm, CheckoutParams, CheckoutState, Payment } from "@/core/models";
+import { CheckoutDataForm, CheckoutParams, CheckoutState, Payment, PaymentSubType } from "@/core/models";
 import {
     GET_CHECKOUT_BEGIN,
     GET_CHECKOUT_SUCCESS,
@@ -7,7 +7,8 @@ import {
     SET_RECEIVE_AMOUNT,
     SET_CHANGE_RETURN,
     SET_OPTION_RECEIVED_AMOUNT,
-    SET_REPLACE_RECEIVED_AMOUNT,
+    SET_REPLACE_RECEIVED_AMOUNT, 
+    SET_CHANGE_PAYMENT_TYPE_DATA,
 } from '.'
 import { PaymentTypeCode } from "@/core/constants";
 import { RoundNumber } from "@/core/utilities";
@@ -22,7 +23,10 @@ type CheckoutAction =
         }
     }
     | { type: typeof GET_CHECKOUT_ERROR }
-    | { type: typeof SET_PAYMENT_DATA, payload: Partial<Payment> }
+    | { type: typeof SET_CHANGE_PAYMENT_TYPE_DATA, payload: {
+        paymentData: Partial<Payment>,
+        paymentSubTypes?:Array<PaymentSubType>
+    } }
     | { type: typeof SET_RECEIVE_AMOUNT, payload: string }
     | { type: typeof SET_CHANGE_RETURN }
     | { type: typeof SET_OPTION_RECEIVED_AMOUNT, payload: boolean }
@@ -35,16 +39,20 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
             return { ...state, checkoutLoading: true }
         case GET_CHECKOUT_SUCCESS: {
             const { data, closeDialog, checkoutParams } = action.payload;
-            const { paymentTypes, paymentSubTypes } = data;
+            const { paymentTypes } = data;            
             const paymentData = paymentTypes.find(item => item.code === PaymentTypeCode.EFE);
-            const paymentSubTypeData = paymentSubTypes.filter(item => item.paymentTypeId === paymentData?.paymentTypeId)[0];
+            if(paymentData){
+                state.checkout.paymentSubTypes = paymentData.paymentSubTypes;
+                state.checkout.paymentData.paymentTypeId = paymentData.paymentTypeId ;
+                state.checkout.paymentData.paymentTypeCode = paymentData.code
+                state.checkout.paymentData.paymentTypeDescription = paymentData.description;
+                const paymentSubTypeData = state.checkout.paymentSubTypes[0]
+                if (paymentSubTypeData){
+                    state.checkout.paymentData.paymentSubtypeId = paymentSubTypeData.paymentSubtypeId;
+                }
+            }
 
             state.checkout.dataForm = data;
-            state.checkout.payments.paymentTypeId = paymentData?.paymentTypeId ?? 0;
-            state.checkout.payments.paymentSubtypeId = paymentSubTypeData?.paymentSubtypeId ?? 0;
-
-            state.checkout.payments.paymentTypeCode = paymentData?.code
-            state.checkout.payments.paymentTypeDescription = paymentData?.description;
             state.checkout.voucher = data.comprobante;
             return {
                 ...state,
@@ -56,14 +64,22 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
         case GET_CHECKOUT_ERROR:
             return { ...state, checkoutError: true, checkoutLoading: false }
 
-        case SET_PAYMENT_DATA: {
-            const payments = state.checkout.payments;
+        case SET_CHANGE_PAYMENT_TYPE_DATA: {
+            const payments = state.checkout.paymentData;
             const obj = Object.assign(payments, action.payload);
             return {
                 ...state,
                 checkout: Object.assign(state.checkout, obj)
             }
         }
+        // case SET_PAYMENT_DATA: {
+        //     const payments = state.checkout.payments;
+        //     const obj = Object.assign(payments, action.payload);
+        //     return {
+        //         ...state,
+        //         checkout: Object.assign(state.checkout, obj)
+        //     }
+        // }
 
         case SET_RECEIVE_AMOUNT: {
             const voucher = Object.assign(state.checkout.voucher, {

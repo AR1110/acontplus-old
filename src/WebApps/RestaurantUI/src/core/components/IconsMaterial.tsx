@@ -51,6 +51,7 @@ import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import SendToMobileIcon from '@mui/icons-material/SendToMobile';
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear'; 
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -102,5 +103,6 @@ export {
     AspectRatioIcon,
     SendToMobileIcon,
     SendIcon,
-    ClearIcon
+    ClearIcon,
+    SaveAltIcon
 }

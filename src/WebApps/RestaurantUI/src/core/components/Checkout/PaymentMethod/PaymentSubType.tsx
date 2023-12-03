@@ -13,6 +13,7 @@ const PaymentSubType = () => {
                 id="paymentType"
                 name="paymentType"
                 label="SubEntidad Financiera"
+                
                 select
                 value={payments.paymentSubtypeId}
                 onChange={(e) => {

@@ -26,12 +26,6 @@ export interface RawPaymentSubType {
 //End Api
 
 //Start Adapter Front End
-export interface PaymentType {
-    paymentTypeId: number
-    description: string
-    code: PaymentCode
-}
-
 export interface PaymentSubType {
     paymentTypeId: number,
     paymentSubtypeId: number,
@@ -39,5 +33,14 @@ export interface PaymentSubType {
     code: string
     isControlBox: boolean
 }
+
+export interface PaymentType {
+    paymentTypeId: number
+    description: string
+    code: PaymentCode
+    paymentSubTypes: Array<PaymentSubType>
+}
+
+
 
 //Start Adapter Front End

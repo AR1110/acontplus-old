@@ -1,11 +1,25 @@
 import { Bank, City, PaymentSubType, PaymentType, RawBankData, RawCityData, RawPaymentSubType, RawPaymentType, Voucher, VoucherQuota } from "../models"; 
 
-function paymentTypeAdapter(paymentTypes: RawPaymentType[]): Array<PaymentType> { 
-    return paymentTypes.map(paymentType=>({
-        paymentTypeId: paymentType.idEntidadFinanciera,
-        code: paymentType.codigo,
-        description: paymentType.descripcion
-    }) )   
+function paymentTypeAdapter(paymentTypes: RawPaymentType[], paymentSubTypes: RawPaymentSubType[]): Array<PaymentType> { 
+    const resultado = paymentTypes.map(paymentType => {
+        const codigo = paymentType.codigo;
+        const mapperPaymentSubTypes = paymentSubTypes.filter(secundarioItem => secundarioItem.codigo === codigo);
+         
+        const obj = {
+            paymentTypeId: paymentType.idEntidadFinanciera,
+            code: paymentType.codigo,
+            description: paymentType.descripcion,
+            paymentSubTypes: paymentSubTypeAdapter(mapperPaymentSubTypes)
+
+        }
+        return obj;
+    });
+    return resultado;
+    // return paymentTypes.map(paymentType=>({
+    //     paymentTypeId: paymentType.idEntidadFinanciera,
+    //     code: paymentType.codigo,
+    //     description: paymentType.descripcion
+    // }) )   
 }
 
 function paymentSubTypeAdapter(paymentSubTypes: RawPaymentSubType[]): Array<PaymentSubType> {  
@@ -61,8 +75,7 @@ function comprobanteAdpater(comprobante: any): Voucher {
 
 
 export {
-    paymentTypeAdapter,
-    paymentSubTypeAdapter,
+    paymentTypeAdapter, 
     bankAdapter,
     cityAdapter,
     voucherQuotaAdapter,

@@ -47,8 +47,7 @@ export interface Payment {
 }
 
 export interface CheckoutDataForm {
-    paymentTypes: Array<PaymentType>
-    paymentSubTypes: Array<PaymentSubType>
+    paymentTypes: Array<PaymentType> 
     voucherQuotas: Array<VoucherQuota>
     banks: Array<Bank>
     cities: Array<City>
@@ -58,7 +57,8 @@ export interface CheckoutDataForm {
 export interface Checkout {
     dataForm: CheckoutDataForm
     voucher: Voucher
-    payments: Payment
+    paymentData: Payment,
+    paymentSubTypes: Array<PaymentSubType>
 }
 export interface PaymentDetail {
     idCuentaPorCobrar: number
@@ -110,15 +110,19 @@ export interface CheckoutState {
 }
 
 export type CheckoutActions = ActionCalculator & {
-    fetchCheckout<T extends CheckoutParams>(data: T, callback: () => void): void
-    setPayment<T extends Payment>(data: Partial<T>): void
+    fetchCheckout<T extends CheckoutParams>(data: T, callback: () => void): void 
+    setChangePaymentType<T extends keyof typeof paymentDataInitialState>(
+        prop: T,
+        value: typeof paymentDataInitialState[T], paymentSubTypes: PaymentSubType[]
+    ): void;
+    addPaymentType<T>(data:T):void
     onChangeReceivedAmount(event: React.ChangeEvent<HTMLInputElement>): void
     handleChangeSetReceivedAmount(value: number | string): void  
     save(): void
 }
 
 
-export const paymentInitialState: Payment = {
+export const paymentDataInitialState: Payment = {
     paymentTypeId: 0,
     paymentSubtypeId: 0,
     creationDate: "",
@@ -140,7 +144,6 @@ export const paymentInitialState: Payment = {
 
 export const checkoutDataFormInitialState: CheckoutDataForm = {
     paymentTypes: [],
-    paymentSubTypes: [],
     voucherQuotas: [],
     banks: [],
     cities: [],
@@ -162,7 +165,8 @@ export const initialCheckoutState: Checkout = {
         creationDate: "",
         nroDoc: ""
     },
-    payments: structuredClone(paymentInitialState)
+    paymentData: structuredClone(paymentDataInitialState),
+    paymentSubTypes: [],
 }
 
 

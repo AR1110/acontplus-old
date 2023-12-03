@@ -1,10 +1,10 @@
 import { createContext, useContext, useReducer } from "react";
 import axios, { CancelTokenSource } from "axios";
-import { CheckoutState, CheckoutActions, initialCheckoutState, Payment, CheckoutParams } from "@/core/models";
-import { GET_CHECKOUT_BEGIN, GET_CHECKOUT_ERROR, GET_CHECKOUT_SUCCESS, SET_CHANGE_RETURN, SET_OPTION_RECEIVED_AMOUNT, SET_PAYMENT_DATA, SET_RECEIVE_AMOUNT, SET_REPLACE_RECEIVED_AMOUNT, checkoutReducer } from ".";
+import { CheckoutState, CheckoutActions, initialCheckoutState, Payment, CheckoutParams, PaymentSubType } from "@/core/models";
+import { GET_CHECKOUT_BEGIN, GET_CHECKOUT_ERROR, GET_CHECKOUT_SUCCESS, SET_CHANGE_PAYMENT_TYPE_DATA, SET_CHANGE_RETURN, SET_OPTION_RECEIVED_AMOUNT, SET_PAYMENT_DATA, SET_RECEIVE_AMOUNT, SET_REPLACE_RECEIVED_AMOUNT, checkoutReducer } from ".";
 import { SharedService, accountReceivableService as accountReceivableSvc } from "@/core/services";
 import { CheckoutUtility, RoundNumber, SnackbarUtility } from "@/core/utilities";
-import { PaymentTypeCode } from "@/core/constants"; 
+import { PaymentTypeCode } from "@/core/constants";
 import Swal from "sweetalert2";
 import { showLoader, hideLoader } from "@/spinner";
 const initialCheckoutParams: CheckoutParams = {
@@ -31,7 +31,8 @@ const initialState: CheckoutState = {
 }
 const initialActions: CheckoutActions = {
     fetchCheckout: () => [],
-    setPayment: () => [],
+    setChangePaymentType: () => [],
+    addPaymentType: () => [],
     onChangeReceivedAmount: () => [],
     handleChangeSetReceivedAmount: () => [],
     handleClickOptionReceivedAmount: () => [],
@@ -91,10 +92,24 @@ export const CheckoutProvider = ({ children }: Props) => {
             dispatch({ type: GET_CHECKOUT_ERROR })
         }
     }
+  
 
-    const setPayment = <T extends Payment>(payload: Partial<T>) => {
-        console.log(payload)
-        dispatch({ type: SET_PAYMENT_DATA, payload });
+    function setChangePaymentType<T extends keyof typeof state.checkout.paymentData>(prop: T, value: typeof state.checkout.paymentData[T], paymentSubTypes?: PaymentSubType[]) {
+        const paymentData = {
+            ...state.checkout.paymentData,
+            [prop]: value,
+        }
+        dispatch({
+            type: SET_CHANGE_PAYMENT_TYPE_DATA, payload: {
+                paymentData,
+                paymentSubTypes
+            }
+        }); 
+
+    }
+
+    function addPaymentType<T>(data: T) {
+        console.log(data)
     }
 
     const setReceivedAmount = (payload: string) => {
@@ -119,14 +134,14 @@ export const CheckoutProvider = ({ children }: Props) => {
             }, 0);
             return
         }
-        
+
         if (numeroStr === "0") {
             setReceivedAmount('')
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             setReceivedAmount(resultValueIngreasada)
             setChangeReturn()
-        },0)
+        }, 0)
     }
 
     const handleChangeSetReceivedAmount = (value: number | string) => {
@@ -210,8 +225,8 @@ export const CheckoutProvider = ({ children }: Props) => {
     }
 
     const isValidData = () => {
-        const { payments } = state.checkout;
-        if (!(payments.paymentSubtypeId > 0)) {
+        const { paymentData } = state.checkout;
+        if (!(paymentData.paymentSubtypeId > 0)) {
             SnackbarUtility.warning('Seleccione la SubEntidad Financiera');
             return
         }
@@ -231,25 +246,25 @@ export const CheckoutProvider = ({ children }: Props) => {
         // }
 
         // =================== TARJETA DE CREDITO / DEBITO  =================================== //
-        if (payments.paymentTypeCode === PaymentTypeCode.TAR) {
-            if (!payments.nro) {
+        if (paymentData.paymentTypeCode === PaymentTypeCode.TAR) {
+            if (!paymentData.nro) {
                 SnackbarUtility.warning('Ingrese el Número')
                 return
             }
 
-            if (!(payments.cityId && payments.cityId > 0)) {
+            if (!(paymentData.cityId && paymentData.cityId > 0)) {
                 SnackbarUtility.warning('Ingrese la Ciudad')
                 return
             }
-            if (!payments.referencia) {
+            if (!paymentData.referencia) {
                 SnackbarUtility.warning('Ingrese la referencia')
                 return
             }
-            if (!payments.aprobacion) {
+            if (!paymentData.aprobacion) {
                 SnackbarUtility.warning('Ingrese la Aprobación')
                 return
             }
-            if (!payments.lote) {
+            if (!paymentData.lote) {
                 SnackbarUtility.warning('Ingrese el Lote')
                 return
             }
@@ -257,12 +272,12 @@ export const CheckoutProvider = ({ children }: Props) => {
 
         // =================== TRANSFERENCIAS  =================================== //
 
-        if (payments.paymentTypeCode === PaymentTypeCode.TRA) {
-            if (!(payments.idBanco && payments.idBanco > 0)) {
+        if (paymentData.paymentTypeCode === PaymentTypeCode.TRA) {
+            if (!(paymentData.idBanco && paymentData.idBanco > 0)) {
                 SnackbarUtility.warning('Seleccione el Banco')
                 return
             }
-            if (!payments.nro) {
+            if (!paymentData.nro) {
                 SnackbarUtility.warning('Ingrese el Número')
                 return
             }
@@ -270,21 +285,21 @@ export const CheckoutProvider = ({ children }: Props) => {
 
         // =================== CHEQUES  =================================== //
 
-        if (payments.paymentTypeCode === PaymentTypeCode.CHE) {
-            if (!(payments.idBanco && payments.idBanco > 0)) {
+        if (paymentData.paymentTypeCode === PaymentTypeCode.CHE) {
+            if (!(paymentData.idBanco && paymentData.idBanco > 0)) {
                 SnackbarUtility.warning('Seleccione el Banco')
                 return
             }
-            if (!payments.nro) {
+            if (!paymentData.nro) {
                 SnackbarUtility.warning('Ingrese el Número')
                 return
             }
 
-            if (!(payments.cityId && payments.cityId > 0)) {
+            if (!(paymentData.cityId && paymentData.cityId > 0)) {
                 SnackbarUtility.warning('Ingrese la Ciudad')
                 return
             }
-            if (!payments.referencia) {
+            if (!paymentData.referencia) {
                 SnackbarUtility.warning('Ingrese a quien va dirigido el Cheque')
                 return
             }
@@ -306,8 +321,8 @@ export const CheckoutProvider = ({ children }: Props) => {
     }
 
     const save = async () => {
-        const { voucher, dataForm, payments } = state.checkout;
-        const { paymentSubTypes, voucherQuotas } = dataForm; 
+        const { voucher, dataForm, paymentData, paymentSubTypes } = state.checkout;
+        const { voucherQuotas } = dataForm;
         try {
             if (!(Number(voucher.payingAmount) > 0)) {
                 SnackbarUtility.warning('El valor total del comprobante es 0; por lo tanto, no es posible realizar el cobro.')
@@ -346,72 +361,72 @@ export const CheckoutProvider = ({ children }: Props) => {
                 nombreFiscal: voucher.customerName
             }
 
-            const infoCobro = [{
-                nro: payments.nro,
-                lote: payments.lote,
-                aprobacion: payments.aprobacion,
-                referencia: payments.referencia,
-                idCiudad: payments.cityId
-            }]
-            const dataPaymentSubType = paymentSubTypes.find(item => item.paymentSubtypeId === payments.paymentSubtypeId)
+            // const infoCobro = [{
+            //     nro: payments.nro,
+            //     lote: payments.lote,
+            //     aprobacion: payments.aprobacion,
+            //     referencia: payments.referencia,
+            //     idCiudad: payments.cityId
+            // }]
+            // const dataPaymentSubType = paymentSubTypes.find(item => item.paymentSubtypeId === payments.paymentSubtypeId)
 
-            const cobros = [{
-                idEntidadFinanciera: payments.paymentTypeId,
-                idSubEntidadFinanciera: payments.paymentSubtypeId,
-                idBanco: payments.idBanco,
-                idCuentaBancaria: 0,
-                fechaEmision: new Date(),
-                valor: voucher.receivedAmount,
-                posfechado: payments.posfechado,
-                secuencial: 0,
-                infoCobro: payments.paymentTypeCode === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
-                abono: getValuePayment(),
-                controlCaja: dataPaymentSubType?.isControlBox
-            }]
+            // const cobros = [{
+            //     idEntidadFinanciera: payments.paymentTypeId,
+            //     idSubEntidadFinanciera: payments.paymentSubtypeId,
+            //     idBanco: payments.idBanco,
+            //     idCuentaBancaria: 0,
+            //     fechaEmision: new Date(),
+            //     valor: voucher.receivedAmount,
+            //     posfechado: payments.posfechado,
+            //     secuencial: 0,
+            //     infoCobro: payments.paymentTypeCode === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
+            //     abono: getValuePayment(),
+            //     controlCaja: dataPaymentSubType?.isControlBox
+            // }]
 
-            checkoutUtility.setReceivedAmount(Number(voucher.receivedAmount))
+            // checkoutUtility.setReceivedAmount(Number(voucher.receivedAmount))
 
-            const modifiedQuotas = checkoutUtility.applyReceivedAmountToQuota(voucherQuotas);
-            const historyPayments = checkoutUtility.getHistoryPayments(modifiedQuotas);
+            // const modifiedQuotas = checkoutUtility.applyReceivedAmountToQuota(voucherQuotas);
+            // const historyPayments = checkoutUtility.getHistoryPayments(modifiedQuotas);
 
-            if (checkoutUtility.paymentDetails.length === 0) {
-                SnackbarUtility.warning('Cobro detalle vacio')
-                return
-            }
+            // if (checkoutUtility.paymentDetails.length === 0) {
+            //     SnackbarUtility.warning('Cobro detalle vacio')
+            //     return
+            // }
 
-            const data = {
-                comprobante,
-                cobros,
-                cobroDetalle: checkoutUtility.paymentDetails.filter(item => (item.abono > 0)),
-                historial: historyPayments,
-            }
+            // const data = {
+            //     comprobante,
+            //     cobros,
+            //     cobroDetalle: checkoutUtility.paymentDetails.filter(item => (item.abono > 0)),
+            //     historial: historyPayments,
+            // }
 
-            showLoader();
-            accountReceivableSvc.post(data).then(response => {
-                if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
+            // showLoader();
+            // accountReceivableSvc.post(data).then(response => {
+            //     if (response.code === "1") {
+            //         SnackbarUtility.success(response.message);
 
-                    if (state.checkoutParams.printerAutomatic) {
-                        if(["01", 'FV'].includes(state.checkoutParams.codDoc)){
-                            SharedService.getPrinter({
-                                id: state.checkoutParams.orderId,
-                                documentoId: state.checkoutParams.idDocumento,
-                                tipo: 3
-                            })
-                        }
-                        if (['NE'].includes(state.checkoutParams.codDoc)) {
-                            SharedService.getPrinter({
-                                id: state.checkoutParams.orderId,
-                                documentoId: state.checkoutParams.idDocumento,
-                                tipo: 4
-                            })
-                        }
-                    }
-                    state.closeDialog();
-                } else {
-                    SnackbarUtility.warning(response.message)
-                }
-            }).finally(() => hideLoader())
+            //         if (state.checkoutParams.printerAutomatic) {
+            //             if (["01", 'FV'].includes(state.checkoutParams.codDoc)) {
+            //                 SharedService.getPrinter({
+            //                     id: state.checkoutParams.orderId,
+            //                     documentoId: state.checkoutParams.idDocumento,
+            //                     tipo: 3
+            //                 })
+            //             }
+            //             if (['NE'].includes(state.checkoutParams.codDoc)) {
+            //                 SharedService.getPrinter({
+            //                     id: state.checkoutParams.orderId,
+            //                     documentoId: state.checkoutParams.idDocumento,
+            //                     tipo: 4
+            //                 })
+            //             }
+            //         }
+            //         state.closeDialog();
+            //     } else {
+            //         SnackbarUtility.warning(response.message)
+            //     }
+            // }).finally(() => hideLoader())
 
 
         } catch (error) {
@@ -424,7 +439,8 @@ export const CheckoutProvider = ({ children }: Props) => {
         <CheckoutContext.Provider value={{
             ...state,
             fetchCheckout,
-            setPayment,
+            setChangePaymentType,
+            addPaymentType,
             onChangeReceivedAmount,
             handleChangeSetReceivedAmount,
             handleClickOptionReceivedAmount,

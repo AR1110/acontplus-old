@@ -1,7 +1,6 @@
 
 import {
-    bankAdapter,
-    paymentSubTypeAdapter,
+    bankAdapter, 
     paymentTypeAdapter,
     voucherQuotaAdapter,
     comprobanteAdpater
@@ -32,13 +31,13 @@ export const accountReceivableService = {
         }
 
         const dataRepository = JSON.parse(response.payload);
+        const paymentTypes = dataRepository[0], paymentSubTypes = dataRepository[1]
+        
+        console.log(dataRepository)
         const voucherRepository = dataRepository[6][0] ?? {};
 
         const resultMapper = {
-            paymentTypes: paymentTypeAdapter(dataRepository[0] ?? []).filter(item => {
-                return item.code !== 'DOC'
-            }),
-            paymentSubTypes: paymentSubTypeAdapter(dataRepository[1] ?? []),
+            paymentTypes: paymentTypeAdapter(paymentTypes, paymentSubTypes), 
             banks: bankAdapter(dataRepository[2]),
             cities: cityAdapter(dataRepository[3] ?? []),
             voucherQuotas: voucherQuotaAdapter(dataRepository[5] ?? []), //cuotas
@@ -47,7 +46,7 @@ export const accountReceivableService = {
         return resultMapper;
     },
 
-    async post(data: any) {
+    async post(data: object) {
         const resultAxios = await Http({
             method: 'post',
             url: `${PATHS.ACCOUNTING}ComprobanteIngreso/Insert`,
