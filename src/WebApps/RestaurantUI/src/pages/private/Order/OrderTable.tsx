@@ -13,7 +13,7 @@ import { ChangeEvent, lazy, useRef, useState } from "react";
 import { Button, Stack, Tooltip } from "@mui/material";
 
 import {
-    AccountTreeIcon,
+    PointOfSaleIcon,
     ArrowBackIcon,
     AspectRatioIcon,
     ClearIcon,
@@ -181,19 +181,18 @@ export default function OrderTable() {
                                                     >
                                                         <AspectRatioIcon />
                                                     </Button>
-                                                </Tooltip> 
+                                                </Tooltip>
 
 
                                                 {
-                                                    (order.divided || order.finished) ? '': (
+                                                    (order.divided || order.finished) ? '' : (
 
-                                                        <Tooltip describeChild title="Dividir la cuenta">
+                                                        <Tooltip describeChild title="Completar Venta">
                                                             <Button variant="contained" size="large" color="inherit"
                                                                 aria-label="Dividir"
                                                                 onClick={() => dividerCuenta(order.orderId)}
                                                             >
-                                                                {`Hola${order.finished}`}
-                                                                <AccountTreeIcon />
+                                                                <PointOfSaleIcon />
                                                             </Button>
                                                         </Tooltip>
                                                     )
