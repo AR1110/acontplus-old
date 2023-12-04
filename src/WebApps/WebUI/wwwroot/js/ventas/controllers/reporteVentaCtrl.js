@@ -9,13 +9,14 @@
     function reporteVentaCtrl($scope, $injector) {
         const reporteVentaSvc = $injector.get('reporteVentaService');
         const decodeToken = $injector.get('decodeToken');
-        const tS = $injector.get('toastService');
+        // const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
         const commonSvc = $injector.get('commonService');
 
         let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
         const DOC_TYPE = $injector.get('DOC_TYPE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
+        const CONSOLIDADO_VENTA = 'CV'
 
         let format = 'pdf'
 
@@ -72,10 +73,10 @@
                         idTipoDocumento: 0,
                         descripcion: "Consolidado Diario de Venta",
                         codigoSri: "",
-                        codigo: "FVNE",
+                        codigo: CONSOLIDADO_VENTA,
                     }]
                     const dataTipoDoc = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigoSri === DOC_TYPE.FV_SRI);
-                    $scope.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
+                    $scope.dataSearch.codigoTipoDoc = dataTipoDoc.codigo;
                     $scope.estadosDoc = estadosDoc.map(item => ({
                         ...item,
                         idEstadoDocumento: item.idEstadoPago
@@ -93,7 +94,9 @@
         }
 
         $scope.onChangeTipoDoc = function(){
-            
+            let dataEstado = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigo === $scope.dataSearch.codigoTipoDoc);
+
+            console.log(dataEstado)
         }
 
         $scope.resultRangeFilter = function (item) {
@@ -120,13 +123,10 @@
 
         function getReport() {
             try {
-                if (!($scope.dataSearch.idTipoDocumento > 0)) {
-                    tS.toastr('warning', 'Seleccione el Tipo Documento');
-                    return
-                }
+                
                 let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
                 let dataEstado = $scope.estadosDoc.find(estado => estado.idEstadoDocumento === $scope.dataSearch.idEstadoDocumento);
-                let dataTipoDoc = $scope.tiposDoc.find(item => item.idTipoDocumento === $scope.dataSearch.idTipoDocumento)
+                let dataTipoDoc = $scope.tiposDoc.find(item => item.codigo === $scope.dataSearch.codigoTipoDoc)
                 let dataParams = {
                     tipo: 2,
                     ckFecha: true,

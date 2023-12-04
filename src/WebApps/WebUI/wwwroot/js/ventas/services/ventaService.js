@@ -424,7 +424,8 @@
             })
         }
 
-        service.queryMapper = function ({ data, cliente, detalles, itemsDeleted, historyDatosAdicionales }) {
+        service.queryMapper = function (params) {
+            const { data, cliente, detalles, itemsDeleted, historyDatosAdicionales, infoAdicionalDocumento }  = params;
             //data que se usara dentro de la función "getCantidadStock"
             service.data = Object.assign({}, data);
 
@@ -457,6 +458,7 @@
                 notaEntrega: service.infoComprobanteMapperTo(notaEntrega),
                 detalles: mergeItems,
                 impuestos: impuestos,
+                infoAdicional: infoAdicionalDocumento || [],
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
             }
         }
