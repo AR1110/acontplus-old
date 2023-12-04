@@ -786,3 +786,29 @@ go
 
 DROP PROCEDURE IF EXISTS Sri.aspCodigoEnvioSriGet  
 go
+
+--> Ramirez Alexis -> fecha : 11/30/2023
+DROP PROCEDURE IF EXISTS [dbo].[ASPFacturaCobroGetId]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspFacturaGetClaveAcceso]
+GO
+
+DROP PROCEDURE IF EXISTS ReporteVentas.Factura
+GO
+
+DROP PROCEDURE IF EXISTS aspFacturaVentaReporteGeneral
+GO
+
+DROP PROCEDURE IF EXISTS ReporteVentas.NotaEntrega
+GO
+
+DROP PROCEDURE IF EXISTS aspNotaEntregaReporteGeneral
+go
+
+DROP PROCEDURE IF EXISTS aspConsumoClienteReporteGeneral
+go
+
+
+DROP PROCEDURE IF EXISTS ReporteVentas.Consolidado_Venta
+GO

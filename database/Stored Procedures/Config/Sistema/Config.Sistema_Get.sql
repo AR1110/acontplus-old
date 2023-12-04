@@ -100,7 +100,7 @@ BEGIN
                   ,vs.idNotificacionSistema
             FROM Config.v_Sistema_Notificacion    vs WITH (NOLOCK)
             INNER JOIN Config.NotificacionSistema ns WITH (NOLOCK) ON ns.idNotificacionSistema = vs.idNotificacionSistema
-            WHERE idEntidad = 50
+            WHERE idEntidad = @idEntidad
 		END 
 END
 GO

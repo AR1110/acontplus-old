@@ -1,44 +1,44 @@
 USE Acontplus
 GO
 
-ALTER TABLE NotaEntregaDetalle ALTER COLUMN descripcion NVARCHAR(255) NULL
+--ALTER TABLE NotaEntregaDetalle ALTER COLUMN descripcion NVARCHAR(255) NULL
 
-GO
+--GO
 
-ALTER TABLE NotaEntregaDetalle ALTER COLUMN porcentajeDescuento DECIMAL(15,5) NULL
+--ALTER TABLE NotaEntregaDetalle ALTER COLUMN porcentajeDescuento DECIMAL(15,5) NULL
 
-GO
+--GO
 
 
-ALTER TABLE NotaEntregaDetalle ALTER COLUMN idTipoIva INT NULL
+--ALTER TABLE NotaEntregaDetalle ALTER COLUMN idTipoIva INT NULL
 
-GO
+--GO
 
-ALTER TABLE NotaEntregaDetalle ADD uuid UNIQUEIDENTIFIER NULL
+--ALTER TABLE NotaEntregaDetalle ADD uuid UNIQUEIDENTIFIER NULL
 
-GO
+--GO
 
-ALTER TABLE NotaEntregaDetalle ALTER COLUMN idPresentacion INT NULL
+--ALTER TABLE NotaEntregaDetalle ALTER COLUMN idPresentacion INT NULL
 
-GO
+--GO
 
-CREATE TABLE Ventas.NotaEntregaImpuesto (
-		Id INT NOT NULL PRIMARY KEY IDENTITY (1,1)
-    ,Uuid UNIQUEIDENTIFIER NOT NULL
-	,NotaEntregaDetalleId BIGINT NULL CONSTRAINT fk_NotaEntregaImpuesto_NotaEntregaDetalle FOREIGN KEY (NotaEntregaDetalleId) REFERENCES NotaEntregaDetalle (idNotaEntregaDetalle) ON DELETE CASCADE
-	,TaxId INT NOT NULL CONSTRAINT fk_NotaEntregaImpuesto_SriImpuesto FOREIGN KEY (TaxId) REFERENCES Sri.Impuesto(idImpuesto)
-	,TaxPercentId INT NOT NULL CONSTRAINT fk_NotaEntregaImpuesto_SriPorcentajeImpuesto FOREIGN KEY (TaxPercentId) REFERENCES Sri.TarifaImpuesto (idTarifaImpuesto)
-	,[Percent] NUMERIC(18,5) NOT NULL
-	,TaxBase NUMERIC(18,5) NOT NULL
-	,TaxValue NUMERIC(18,5) NOT NULL
-	,CreateAt DATETIME2 NOT NULL DEFAULT GETDATE()
-	,UpdatedAt DATETIME2 NULL
-	,[Enabled] BIT NOT NULL DEFAULT 1
-	,Deleted BIT NULL
-	,UserId INT NULL
-)
+--CREATE TABLE Ventas.NotaEntregaImpuesto (
+--		Id INT NOT NULL PRIMARY KEY IDENTITY (1,1)
+--    ,Uuid UNIQUEIDENTIFIER NOT NULL
+--	,NotaEntregaDetalleId BIGINT NULL CONSTRAINT fk_NotaEntregaImpuesto_NotaEntregaDetalle FOREIGN KEY (NotaEntregaDetalleId) REFERENCES NotaEntregaDetalle (idNotaEntregaDetalle) ON DELETE CASCADE
+--	,TaxId INT NOT NULL CONSTRAINT fk_NotaEntregaImpuesto_SriImpuesto FOREIGN KEY (TaxId) REFERENCES Sri.Impuesto(idImpuesto)
+--	,TaxPercentId INT NOT NULL CONSTRAINT fk_NotaEntregaImpuesto_SriPorcentajeImpuesto FOREIGN KEY (TaxPercentId) REFERENCES Sri.TarifaImpuesto (idTarifaImpuesto)
+--	,[Percent] NUMERIC(18,5) NOT NULL
+--	,TaxBase NUMERIC(18,5) NOT NULL
+--	,TaxValue NUMERIC(18,5) NOT NULL
+--	,CreateAt DATETIME2 NOT NULL DEFAULT GETDATE()
+--	,UpdatedAt DATETIME2 NULL
+--	,[Enabled] BIT NOT NULL DEFAULT 1
+--	,Deleted BIT NULL
+--	,UserId INT NULL
+--)
 
-GO
+--GO
 
 IF EXISTS (SELECT name
 FROM sys.indexes
@@ -47,6 +47,6 @@ WHERE name = N'IX_NotaEntregaImpuesto_Detail_Tax_TaxPercent')
 GO
 
 CREATE NONCLUSTERED INDEX [IX_NotaEntregaImpuesto_Detail_Tax_TaxPercent]
-ON [Ventas].[NotaEntregaImpuesto] ([NotaEntregaDetalleId] ASC, [TaxId], [TaxPercentId])
+ON [Ventas].[NotaEntregaImpuesto] (NotaEntregaId ASC, [TaxId], [TaxPercentId])
 INCLUDE ([Id], [Percent], [TaxBase], [TaxValue])
 GO
