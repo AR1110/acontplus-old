@@ -171,15 +171,14 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
                 sequential++;
 
                 const checkoutUtility = new CheckoutUtility(sequential);
-                checkoutUtility.setReceivedAmount(Number(item.receivedAmount))
+                checkoutUtility.setReceivedAmount(Number(item.receivedAmount));
+                checkoutUtility.setPaymentDetail(paymentDetails)
 
                 tempVoucherQuotas = checkoutUtility.applyReceivedAmountToQuota(tempVoucherQuotas);
                 paymentDetails = checkoutUtility.paymentDetails;
             }
             const dataSubTotal = getCheckoutSubTotales(tempVoucherQuotas, tempMultiplesPaymentType, state.checkout.dataForm.comprobante)
-
-
-            console.log(tempMultiplesPaymentType)
+ 
             return {
                 ...state,
                 checkout: {

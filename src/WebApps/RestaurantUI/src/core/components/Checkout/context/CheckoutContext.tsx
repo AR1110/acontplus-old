@@ -75,8 +75,8 @@ export const CheckoutProvider = ({ children }: Props) => {
      * @param callback para cerrar modal combro  
      */
     const fetchCheckout = async <T extends CheckoutParams>(params: T, callback: () => void) => {
-       
-        
+
+
         try {
             const { codEstab, idCuentaPorCobrar, tiempoCredito } = params;
             // Inicia el indicador de carga
@@ -145,7 +145,8 @@ export const CheckoutProvider = ({ children }: Props) => {
                 dataForm,
                 paymentData,
                 multiplesPaymentType,
-                paymentSubTypes
+                paymentSubTypes,
+                paymentDetails
             } = state.checkout;
             const { voucherQuotas } = dataForm;
             if (voucher.totalBalance == 0 || voucher.totalBalance < 0) {
@@ -156,13 +157,17 @@ export const CheckoutProvider = ({ children }: Props) => {
                 return
             }
             if (!isValidData()) return;
+            const tempPaymentDetails = structuredClone(paymentDetails);
+
             const sequential = multiplesPaymentType.length;
             const checkoutUtility = new CheckoutUtility(sequential);
             checkoutUtility.setReceivedAmount(Number(voucher.receivedAmount))
+            checkoutUtility.setPaymentDetail(tempPaymentDetails)
 
             const modifiedQuotas = checkoutUtility.applyReceivedAmountToQuota(voucherQuotas);
-            const paymentDetails = checkoutUtility.paymentDetails;
-            const payingAmount = paymentDetails.filter(item => item.secuencial === sequential)
+            const resultPaymentDetails = checkoutUtility.paymentDetails;
+            
+            const payingAmount = resultPaymentDetails.filter(item => item.secuencial === sequential)
                 .reduce((prev, curr) => prev + curr.abono, 0)
 
             const dataPaymentSubType = paymentSubTypes.find(item => item.paymentSubTypeId === paymentData.paymentSubTypeId)
@@ -198,7 +203,7 @@ export const CheckoutProvider = ({ children }: Props) => {
             const payload = {
                 voucherQuotas: modifiedQuotas,
                 dataPaymentTypeForm: dataPaymentTypeForm,
-                paymentDetails: paymentDetails,
+                paymentDetails: resultPaymentDetails,
             }
             dispatch({ type: SET_ADD_PAYMENT_DATA, payload });
             SnackbarUtility.success('Agregado correctamente')
@@ -512,7 +517,7 @@ export const CheckoutProvider = ({ children }: Props) => {
                 cobros,
                 cobroDetalle: paymentDetails.filter(item => (item.abono > 0)),
                 historial: historyPayments,
-            }
+            } 
 
             showLoader();
             accountReceivableSvc.post(data).then(response => {

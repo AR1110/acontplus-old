@@ -21,6 +21,10 @@ class CheckoutUtility {
         this.receivedAmount = value;
     }
 
+    setPaymentDetail(paymentDetails: Array<PaymentDetail>) {
+        this.paymentDetails = paymentDetails;
+    }
+
     applyReceivedAmountToQuota(voucherQuotas: Array<VoucherQuota>): Array<VoucherQuota> {
         const tempVoucherQuotas = JSON.parse(JSON.stringify(voucherQuotas));
 
@@ -165,7 +169,7 @@ class CheckoutUtility {
         const historialCobros: Array<PaymentHistory> = [];
         for (const item of voucherQuotas) {
             const totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
-                                            .reduce((prev, curr) => prev + curr.abono, 0);
+                .reduce((prev, curr) => prev + curr.abono, 0);
             // if (paymentDetails) {
             //     totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
             //         .reduce((prev, curr) => prev + curr.abono, 0);

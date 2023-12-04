@@ -4,10 +4,10 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useCheckoutContext } from '../context';
 
 export default function Bank() {
-    const {checkout, setChangeFieldFormPayment} = useCheckoutContext(); 
+    const {checkout, setChangeFieldFormPayment,} = useCheckoutContext(); 
     const {dataForm} = checkout
+    const banks = dataForm.banks;  
 
-    const banks = dataForm.banks; 
     return (
         <>
             {
