@@ -1157,7 +1157,7 @@ export class CommonService {
 
     getPrinter(parameters) {
         try {
-            let url = `Impresion/?json=${parameters}`
+            let url = `Config/Print/?json=${parameters}`
             this.mS.getData('get', url, null, true).then(
                 response => {
                     if (response.code === '0') {
