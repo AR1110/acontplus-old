@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuentaPorCobrar_Get', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuentaPorCobrar_Get
-GO
-CREATE PROCEDURE Contabilidad.CuentaPorCobrar_Get @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	DECLARE @fecha AS DATE
@@ -467,7 +464,7 @@ BEGIN
             RETURN 
         END 
 
-    --> Filter for report
+    --> Filter for report Cartera
     IF @tipo = 6
         BEGIN
             SELECT idEstablecimiento
@@ -483,5 +480,25 @@ BEGIN
 
             RETURN 
         END
+
+    -->Filter Reporte General
+    IF @tipo = 7
+        BEGIN
+
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NCBR','CBR')
+
+            SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
+
+            RETURN 
+        END 
 END
 GO

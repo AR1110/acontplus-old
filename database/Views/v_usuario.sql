@@ -36,6 +36,9 @@ CREATE VIEW v_usuario AS (
 	,ur.idRol
 	,e.ruc rucEmpresa
 	,e.razonSocial entidad
+    ,e.nombreComercial
+    ,e.telefono
+    ,e.direccion
 	,r.codigo codRol
 	,r.descripcion rol
 	FROM Usuario u WITH (NOLOCK)
