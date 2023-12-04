@@ -2194,7 +2194,7 @@
                 } else {
                     if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    } 
+                    }
                 }
             }
 

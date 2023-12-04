@@ -1907,7 +1907,7 @@
 
                 } else {
                     tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
-                    
+
                     entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = articulo.idTipoIva;
                     entity.codigoPorcentaje = articulo.codigoPorcentaje;
