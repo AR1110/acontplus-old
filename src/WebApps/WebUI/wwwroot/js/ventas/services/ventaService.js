@@ -834,7 +834,8 @@
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
-                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                        irbpnr: comprobanteTemp.irbpnr || 0
                     }
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
@@ -1303,7 +1304,8 @@
                         serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
-                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                        irbpnr: comprobanteTemp.irbpnr || 0
                     }
 
                     return {

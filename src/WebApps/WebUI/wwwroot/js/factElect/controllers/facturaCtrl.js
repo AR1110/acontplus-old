@@ -955,12 +955,15 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-                showLoader();
 
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
-                if (cantidadStock === 0) return
-                console.log(cantidadStock)
+                if (cantidadStock === 0) {
+                    setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
+                showLoader();
+
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -2169,7 +2172,7 @@
                     }
 
                     if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
-                      //  fechaEmisionModificada.setHours(0, 0, 0, 0);
+                        //  fechaEmisionModificada.setHours(0, 0, 0, 0);
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();

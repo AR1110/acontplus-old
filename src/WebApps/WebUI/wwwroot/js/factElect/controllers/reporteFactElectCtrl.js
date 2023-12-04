@@ -93,8 +93,13 @@
 
         $scope.onChangeEstab = function(){
             let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
-            $scope.puntosEmision = dataEstab.puntosEmision;
-            $scope.dataSearch.idPuntoEmision = 0;
+            if (dataEstab) {
+                $scope.puntosEmision = dataEstab.puntosEmision;
+                $scope.dataSearch.idPuntoEmision = 0;
+            } else {
+                $scope.puntosEmision = [];
+                $scope.dataSearch.idPuntoEmision = 0;
+            }
         }
 
 

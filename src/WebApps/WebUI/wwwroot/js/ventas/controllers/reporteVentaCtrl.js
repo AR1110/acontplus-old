@@ -9,7 +9,7 @@
     function reporteVentaCtrl($scope, $injector) {
         const reporteVentaSvc = $injector.get('reporteVentaService');
         const decodeToken = $injector.get('decodeToken');
-        // const tS = $injector.get('toastService');
+        const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
         const commonSvc = $injector.get('commonService');
 
@@ -65,10 +65,10 @@
                     $scope.establecimientos = estabs;
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
-                        $scope.puntosEmision = dataEstab.puntosEmision;
+                        // $scope.puntosEmision = dataEstab.puntosEmision;
                         $scope.dataSearchEstadistica.codEstab = dataEstab.codEstab;
                     }
-              
+
                     $scope.tiposDoc = [...tiposDoc, {
                         idTipoDocumento: 0,
                         descripcion: "Consolidado Diario de Venta",
@@ -93,15 +93,56 @@
             }
         }
 
-        $scope.onChangeTipoDoc = function(){
+        $scope.onChangeTipoDoc = function () {
             let dataEstado = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigo === $scope.dataSearch.codigoTipoDoc);
 
             console.log(dataEstado)
         }
 
+        $scope.onChangeEstab = function () {
+            let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
+            if (dataEstab) {
+                $scope.puntosEmision = dataEstab.puntosEmision;
+                $scope.dataSearch.idPuntoEmision = 0;
+            } else {
+                $scope.puntosEmision = [];
+                $scope.dataSearch.idPuntoEmision = 0;
+            }
+        }
+
+
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
                 $scope.dataSearch.fechaFin = item.endDate;
+        }
+
+
+        $scope.onKeyupCliente = function () {
+            console.log($scope.cliente)
+            if (!$scope.cliente.nombreCliente) {
+                $scope.dataSearch.identificacion = null;
+
+            }
+        }
+
+        $scope.onSelectCliente = function (data) {
+            console.log(data)
+            $scope.dataSearch.identificacion = data.numeroIdentificacion;
+            $scope.dataSearch.idCliente = data.idCliente;
+
+        }
+
+
+        $scope.onKeyupUser = function () {
+            console.log($scope.cliente)
+            if (!$scope.cliente.nombreUser) {
+                $scope.dataSearch.idUsuario = 0;
+            }
+        }
+
+        $scope.onSelectUser = function (data) {
+            $scope.dataSearch.idUsuario = data.idUsuario;
+
         }
 
 
@@ -123,7 +164,14 @@
 
         function getReport() {
             try {
-                
+                if ($scope.dataSearch.checkBoxCustomer && !fS.isValidField($scope.dataSearch.identificacion)) {
+                    tS.toastr('warning', 'Seleccione el Cliente');
+                    return
+                }
+                if ($scope.dataSearch.checkBoxUser && !fS.isValidField($scope.dataSearch.idUsuario)) {
+                    tS.toastr('warning', 'Seleccione el Usuario');
+                    return
+                }
                 let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
                 let dataEstado = $scope.estadosDoc.find(estado => estado.idEstadoDocumento === $scope.dataSearch.idEstadoDocumento);
                 let dataTipoDoc = $scope.tiposDoc.find(item => item.codigo === $scope.dataSearch.codigoTipoDoc)
@@ -132,10 +180,12 @@
                     ckFecha: true,
                     codDoc: getTipoDoc(dataTipoDoc.codigo),
                     codEstab: dataEstab && dataEstab.codEstab || null,
-                    idCliente: $scope.dataSearch.idCliente,
                     codEstado: dataEstado && dataEstado.codigo || null,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    identificacion: $scope.dataSearch.checkBoxCustomer ? fS.isValidField($scope.dataSearch.identificacion) : null,
+                    idUsuario: $scope.dataSearch.checkBoxUser ? fS.isValidField($scope.dataSearch.idUsuario) : null,
+                    idCliente: $scope.dataSearch.checkBoxCustomer ? fS.isValidField($scope.dataSearch.idCliente) : null,
                 }
                 const parameters = {
                     hasIdUsuarioRol: true,

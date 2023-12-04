@@ -124,7 +124,7 @@
     app.factory('facturaService', function ($injector) {
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario'); 
+        let fS = $injector.get('formulario');
         let service = {
             data: {}
         }
@@ -558,7 +558,8 @@
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
-                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                        irbpnr: comprobanteTemp.irbpnr || 0
                     }
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
@@ -900,7 +901,7 @@
                 cantidadStock: resultCantStock,
                 action
             };
-        } 
+        }
 
         return service;
 

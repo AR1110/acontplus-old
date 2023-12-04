@@ -1,5 +1,5 @@
 ﻿@page
-@model WebUI.Pages.ReporteVentas.IndexModel 
+@model WebUI.Pages.ReporteVentas.IndexModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewBag.title = "Reporte Ventas";
@@ -36,7 +36,9 @@
                 <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Establecimiento:</span>
-                        <select class="form-control border-select" ng-model="dataSearch.idEstablecimiento">
+                        <select class="form-control border-select" 
+                        ng-change="onChangeEstab()"
+                        ng-model="dataSearch.idEstablecimiento">
                             <option ng-value="0">Todos</option>
                             <option ng-value="item.idEstablecimiento" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
@@ -55,23 +57,6 @@
                         </select>
                     </div>
                 </div>
-                @* <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span>Tipo Cliente</span>
-                        <select class="form-control border-select">
-                            <option></option>
-                        </select>
-                    </div>
-                </div> *@
-            </div>
-            <div class="row">
-                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                    <span for="date-range-filter">Rango Fechas: </span> 
-                    <date-range-filter current-date="dataSearch.fechaInicio"
-                        start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                        result-range-date="resultRangeFilter(result)"></date-range-filter>
-                     
-                </div>
                 <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado</span>
@@ -83,11 +68,74 @@
                         </select>
                     </div>
                 </div>
+                @* <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                <div class="form-group">
+                <span>Tipo Cliente</span>
+                <select class="form-control border-select">
+                <option></option>
+                </select>
+                </div>
+                </div> *@
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <span for="date-range-filter">Rango Fechas: </span>
+                    <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                        end-date="dataSearch.fechaFin"
+                        result-range-date="resultRangeFilter(result)"></date-range-filter>
+
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                    <span for="date-range-filter">Cliente: </span>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="checkBoxCustomer" ng-model="dataSearch.checkBoxCustomer"
+                                    name="checkBoxCustomerName" />
+                                <label for="checkBoxCustomer"></label>
+                            </div>
+                        </div>
+
+                        <input type="text" id="customerInputSearch" class="form-control border-select"
+                            ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
+                            on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                            onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                        <div class="autocomplete-suggestion-uib-typeahead">
+                            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                        </div>
+                    </script>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                    <span for="date-range-filter">Usuario: </span>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="checkBoxUser" ng-model="dataSearch.checkBoxUser"
+                                    name="checkBoxUserName" />
+                                <label for="checkBoxUser"></label>
+                            </div>
+                        </div>
+
+                        <input type="text" id="userInputSearch" class="form-control border-select"
+                            ng-model="user.nombreUser" user-search-drtv on-select="onSelectUser(result)"
+                            on-keyup="onKeyupUser()" placeholder="..." onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                        <div class="autocomplete-suggestion-uib-typeahead">
+                            <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                        </div>
+                    </script>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="card-footer">
             <button type="button" class="btn btn-success" ng-click="getReportPDF()">PDF</button>
-            <button type="button" class="btn btn-info" ng-click="getReportEXCEL()" >EXCEL</button>
+            <button type="button" class="btn btn-info" ng-click="getReportEXCEL()">EXCEL</button>
         </div>
     </div>
 
@@ -95,22 +143,23 @@
 
     <div class="card">
         <div class="card-body">
-            
-            <canvas id="chartBarAnualVentas" width="400" style="display: inline; width: 1239px; height: 140px;"></canvas>
-            
+
+            <canvas id="chartBarAnualVentas" width="400"
+                style="display: inline; width: 1239px; height: 140px;"></canvas>
+
         </div>
     </div>
     @* <div class="card">
-        <div class="card-body">
-            
-            <canvas id="chartPieAnualVentas" width="400" style="display: inline; width: 1239px; height: 100px;"></canvas>
-        </div>
+    <div class="card-body">
+
+    <canvas id="chartPieAnualVentas" width="400" style="display: inline; width: 1239px; height: 100px;"></canvas>
+    </div>
     </div> *@
 
 
     @section Scripts {
-            <script src="~/js/ventas/services/reporteVentaService.min.js" asp-append-version="true"></script>
-            <script src="~/js/ventas/controllers/reporteVentaCtrl.min.js" asp-append-version="true"></script>
+        <script src="~/js/ventas/services/reporteVentaService.min.js" asp-append-version="true"></script>
+        <script src="~/js/ventas/controllers/reporteVentaCtrl.min.js" asp-append-version="true"></script>
     }
 
 
