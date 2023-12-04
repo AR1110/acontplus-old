@@ -75,6 +75,9 @@ namespace Configuracion.API.Data.Migrations
                     b.Property<int>("PrinterTypeId")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("ServerDevice")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 

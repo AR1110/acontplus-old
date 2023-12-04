@@ -20,6 +20,7 @@ namespace Configuracion.API.Entities
         [Required]
         [MaxLength(150)]
         public string Machine { get; set; }
+        public bool? ServerDevice {  get; set; }
         [MaxLength(17)]
         public string MacAddress { get; set; }
         public List<PrinterDocument> Documents { get; set; }

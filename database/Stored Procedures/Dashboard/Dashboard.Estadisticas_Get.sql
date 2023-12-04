@@ -46,14 +46,20 @@ BEGIN
     IF (SELECT COUNT(*) FROM App.UsuarioRol ur WITH (NOLOCK)
                                                         INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                                                         INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
-                                                        INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId AND s.[Enabled] = 1 AND s.Deleted IS NULL 
+                                                        INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+                                                            AND s.Paid IS NULL
+                                                            AND s.[Enabled] = 1 
+                                                            AND s.Deleted IS NULL 
                                                         WHERE ur.idUsuarioRol = @idUsuarioRol
                                                         AND dbo.ufnGetDateEcuador() <=  s.MaxPaymentDate                                  
                                                         AND ur.estado = 1) = 0
                               AND (SELECT COUNT(*) FROM App.UsuarioRol ur WITH (NOLOCK)
                                                         INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                                                         INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
-                                                        INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId AND s.[Enabled] = 1 AND s.Deleted IS NULL 
+                                                        INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+                                                            AND s.Paid IS NULL
+                                                            AND s.[Enabled] = 1
+                                                            AND s.Deleted IS NULL 
                                                         WHERE ur.idUsuarioRol = @idUsuarioRol                                              
                                                         AND ur.estado = 1) > 0
         BEGIN 
@@ -63,7 +69,10 @@ BEGIN
     ELSE IF (SELECT COUNT(*) FROM App.UsuarioRol ur WITH (NOLOCK)
                                                         INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                                                         INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
-                                                        INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId AND s.[Enabled] = 1 AND s.Deleted IS NULL 
+                                                        INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+                                                            AND s.Paid IS NULL
+                                                            AND s.[Enabled] = 1
+                                                            AND s.Deleted IS NULL
                                                         WHERE ur.idUsuarioRol = @idUsuarioRol
                                                         AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate                                           
                                                         AND ur.estado = 1) > 0
@@ -80,7 +89,10 @@ BEGIN
                              FROM App.UsuarioRol ur WITH (NOLOCK)
                              INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                              INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
-                             INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId AND s.[Enabled] = 1 AND s.Deleted IS NULL
+                             INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+                                AND s.Paid IS NULL
+                                AND s.[Enabled] = 1
+                                AND s.Deleted IS NULL
                              INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON s.LicenciaId = l.Id
                              INNER JOIN AcontplusAdmin.Config.LicenseType lt ON l.LicenseTypeId = lt.Id
                              INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH (NOLOCK) ON s.SubscriptionTypeId = st.Id

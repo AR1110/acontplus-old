@@ -34,8 +34,8 @@
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
     <PackageVersion Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.303.2" />
-    <PackageVersion Include="AWSSDK.Core" Version="3.7.300.10" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.304.1" />
+    <PackageVersion Include="AWSSDK.Core" Version="3.7.300.12" />
     <PackageVersion Include="ReportViewerCore.NETCore" Version="15.1.19" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.0" />
     <PackageVersion Include="ZXing.Net" Version="0.16.9" />

@@ -27,7 +27,8 @@
 
         $scope.openAlertMultiple = () => {
             let message
-            message = `<h5>Licencias Pendientes a Pagar</h5><br><table class="table table-bordered">
+            message = `<h5>Licencias Pendientes a Pagar</h5><br>
+                        <table class="table table-bordered">
                             <thead>
                                 <tr class="small">
                                     <th>Licencia</th>
@@ -42,10 +43,17 @@
                                 <td>${art.licenseCode} - ${art.licenseType}</td>
                                 <td>${art.susbscriptionType}</td>
                                 <td>${art.maxPaymentDate}</td>
-                                <td class"text-right">$ ${art.total}</td>
+                                <td class="text-right">$ ${art.total.toFixed(2)}</td>
                             </tr>`
             }
-            message += `</tbody></table>`
+            message += `</tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-right"><b>Total: </b></td>
+                                    <td class="text-right">$ ${$scope.licenses.reduce((prev, next) => prev + next.total, 0).toFixed(2) }</td>
+                                </tr>
+                            </tfoot>
+                         </table>`
 
             swal.fire({
                 icon: 'warning',
