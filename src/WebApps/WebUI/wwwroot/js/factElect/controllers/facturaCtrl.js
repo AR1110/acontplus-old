@@ -27,6 +27,8 @@
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
         nombreModalVenta = $injector.get('nombreModalVenta');
         let DOC_TYPE = $injector.get('DOC_TYPE');
+        const CODE_REPORT = $injector.get('CODE_REPORT');
+
         tipoDoc = {
             codigo: DOC_TYPE['FV']
         }
@@ -516,7 +518,7 @@
             let parameters = {
                 dataParams: JSON.stringify(dataParms),
                 reportParams: JSON.stringify({
-                    codigo: 'RF',
+                    codigo: CODE_REPORT.RF,
                     codEstab: item.codEstab,
                     format,
                 }),
@@ -1193,7 +1195,7 @@
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
 
-                $scope.tarifaImpuestoVigente =  $scope.tarifasImpuesto.find(item=>item.codigoPorcentaje===$scope.data.codigoPorcentaje)
+                $scope.tarifaImpuestoVigente = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.data.codigoPorcentaje)
 
             }
 
@@ -1899,7 +1901,7 @@
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
             try {
                 $scope.dataArticulo = dataArticulo;
-                console.log(dataArticulo)
+
                 const {
                     articulo,
                     medidas,
@@ -2169,7 +2171,7 @@
                         return
                     }
 
-                    if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();
@@ -2187,12 +2189,12 @@
                     fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
                     return
                 }
-                if (fS.getDate(fechaEmisionModificada) == fS.getDate(fechaActual)) {
+                if (fS.formatDateShort(fechaEmisionModificada) == fS.formatDateShort(fechaActual)) {
                     $scope.data.fechaEmision = fechaActual;
                 } else {
-                    if (fechaEmisionModificada < fechaActual) {
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    }
+                    } 
                 }
             }
 
@@ -2234,7 +2236,7 @@
                 return
             }
 
-            if ($scope.data.total < 0) {
+            if ($scope.data.total === 0 || $scope.data.total < 0) {
                 tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                 return
             }

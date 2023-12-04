@@ -30,6 +30,7 @@
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
         nombreModalVenta = $injector.get('nombreModalVenta');
+        const CODE_REPORT = $injector.get('CODE_REPORT');
 
         TIPO_DOC_NE = commonSvc.tipoDoc['NE'];
         const PERMISSION_KEY_ACTIONS = {
@@ -658,7 +659,7 @@
                     reportParams: {
                         hasParams: true,
                         codEstab: item.codEstab,
-                        codigo: "RNE",
+                        codigo: CODE_REPORT.RNE,
                         format: "pdf"
                     },
                     spParams: {
@@ -672,14 +673,15 @@
         $scope.getReport = function (item) {
             let format = 'pdf';
             let dataParms = {
-                id: item.idDocumento
+                id: item.idDocumento,
+                tipo: 1
             }
 
             const parameters = {
                 hasService: true,
                 reportParams: JSON.stringify({
                     hasParams: true,
-                    codigo: 'RNE',
+                    codigo: CODE_REPORT.RNE,
                     codEstab: item.codEstab,
                     format,
                     aditionalParams: [
@@ -1130,6 +1132,7 @@
                 }))
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
+                $scope.tarifaImpuestoVigente = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.data.codigoPorcentaje)
             }
 
 
@@ -1617,7 +1620,7 @@
         }
 
         //==============================START CUSTOMER===========================
-        $scope.onKeyupCustomer = function() {
+        $scope.onKeyupCustomer = function () {
             if (!$scope.cliente.nombreFiscal) {
                 $scope.cliente = {};
             }
@@ -1687,7 +1690,7 @@
             if (!($scope.data.idNotaEntrega > 0)) {
                 if (($scope.cliente.idTiempoCredito > 0)) {
                     $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
-                } 
+                }
                 $scope.data.fechaEmision = new Date();
                 getFechaVencimiento();
             }
@@ -1855,7 +1858,7 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {};
+                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
 
                 //verificar si hay un articulo que lleva inventario mas de uno 
                 let itemsDuplicated = $scope.gridOptions.data.filter(item => (
@@ -1874,10 +1877,12 @@
                     addRow();
                     index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
+                    entity.cantidad = 1;
                 } else {
                     index = findIndexById;
                     entity = $scope.gridOptions.data[index];
-                    entity.cantidad = entity.cantidad + 1;
+                    cantidad = entity.cantidad;
+                    entity.cantidad = cantidad + 1;
                 }
 
 
@@ -1894,11 +1899,16 @@
                     && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
                 ) {
                     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
+
+                    entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
                     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
                     entity.tarifa = dataImpuestoTarifa.tarifa;
 
                 } else {
+                    tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
+                    
+                    entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = articulo.idTipoIva;
                     entity.codigoPorcentaje = articulo.codigoPorcentaje;
                     entity.tarifa = articulo.tarifa;
@@ -2111,7 +2121,7 @@
                         return
                     }
 
-                    if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();
@@ -2128,10 +2138,10 @@
                     fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
                     return
                 }
-                if (fS.getDate(fechaEmisionModificada) == fS.getDate(fechaActual)) {
+                if (fS.formatDateShort(fechaEmisionModificada) == fS.formatDateShort(fechaActual)) {
                     $scope.data.fechaEmision = fechaActual;
                 } else {
-                    if (fechaEmisionModificada < fechaActual) {
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     }
                 }
@@ -2172,7 +2182,7 @@
                 return
             }
 
-            if ($scope.data.total < 0) {
+            if ($scope.data.total === 0 || $scope.data.total < 0) {
                 tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                 return
             }

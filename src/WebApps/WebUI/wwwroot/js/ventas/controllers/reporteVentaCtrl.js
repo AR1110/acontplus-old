@@ -228,7 +228,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: `Reporte Venta ${$scope.dataSearch.byAnio}`,
+                            text: `Reporte Venta ${$scope.dataSearchEstadistica.byAnio}`,
                             padding: {
                                 top: 10,
                                 bottom: 30
