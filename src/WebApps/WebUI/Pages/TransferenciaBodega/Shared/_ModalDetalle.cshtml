@@ -10,7 +10,7 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-sm-12">
                         <div class="form-group">
                             <label for="">Establecimiento Origen: <span class="text-danger">*</span></label>                        
-                              <input type="text" ng-model="data.estabOrigen" class="form-control" disabled>                                                
+                              <input type="text" ng-model="data.establecimientoOrigen" class="form-control" disabled>                                                
                         </div>                    
                     </div>
 
@@ -27,17 +27,13 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="Establecimiento">Establecimiento Destino: <span class="text-danger">*</span></label>
-                            <input type="text" ng-model="data.estabDestino" class="form-control" disabled>     
+                            <input type="text" ng-model="data.establecimientoDestino" class="form-control" disabled>     
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Bodega Destino: <span class="text-danger">*</span> </label>
-                            <select class="form-control border-select" ng-model="data.idBodegaDestino" disabled>
-                                <option ng-value="item.idBodega" ng-repeat="item in bodegasDestino">
-                                    {{item.descripcion}}
-                                </option>                           
-                            </select>
+                            <input type="text" ng-model="data.bodegaDestino" class="form-control" disabled>     
                         </div> 
                     </div>
                 </div>             
@@ -48,11 +44,7 @@
             <div class="col-lg-3 col-md-4 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="">Punto Emision: <span class="text-danger"></span></label>                        
-                    <select class="form-control border-select" ng-model="data.idPuntoEmision" disabled>
-                        <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
-                            {{item.ptoEmi}}
-                        </option>
-                    </select>
+                     <input type="text" ng-model="data.ptoEmi" class="form-control" disabled>     
                 </div>
             </div>
             <div class="col-lg-3 col-md-4 col-sm-12 col-12">

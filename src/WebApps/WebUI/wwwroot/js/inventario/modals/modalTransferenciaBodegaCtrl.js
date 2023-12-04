@@ -7,14 +7,8 @@ function ModalTransferenciaBodegaDetalleCtrl($scope,  $uibModalInstance, commonS
      
     let {dataDocumento, detalleDocumento} = params.data;
     
-    $scope.data = dataDocumento;
-
-    $scope.establecimientoOrigen = establecimientoOrigen;
-    $scope.establecimientoDestino = establecimientoDestino;
-    $scope.detalleDocumento = detalleDocumento;
-
-    $scope.data.codEstabOrigen = $scope.establecimientoOrigen.codEstab;
-    $scope.data.codEstabDestino = $scope.establecimientoDestino.codEstab;
+   
+ 
         
     $scope.gridOptions = {
         enableColumnMenus: false,
@@ -83,23 +77,9 @@ function ModalTransferenciaBodegaDetalleCtrl($scope,  $uibModalInstance, commonS
         },
         {
             name: 'Medida',
-            field: 'idMedida',
-            cellFilter: 'mapMedida:row.entity.medidas',
-            editableCellTemplate: 'ui-grid/dropdownEditor',
+            field: 'medida',  
             enableCellEdit: false,
-            enableCellEditOnFocus: false,
-            editDropdownOptionsFunction: function (rowEntity, colDef) {
-                return rowEntity.medidas.map(function (val) {
-                    //if (val.articuloPvP.idTarifa == rowEntity.idTarifa && rowEntity.precioVenta !== val.articuloPvP.precioVenta) {
-                    //    val.articuloPvP.precioVenta = rowEntity.precioVenta
-                    //}
-                    return {
-                        id: val.idMedida,
-                        value: val.descripcion
-                    }
-                })
-
-            },
+            enableCellEditOnFocus: false, 
             type: 'number',
             width: '8%',
             minWidth: '100'
@@ -153,45 +133,13 @@ function ModalTransferenciaBodegaDetalleCtrl($scope,  $uibModalInstance, commonS
     initiload();
     async function initiload(){
         try {
-            showLoader();
-            let establecimientos = await commonSvc.getEstabAsign();           
-            
-            $scope.establecimientosOrigen = establecimientos
-            $scope.establecimientosDestino = establecimientos;
-
-            if($scope.establecimientosOrigen.length>0){
-                                             
-                let dataEstabOrigen  = $scope.establecimientosOrigen.find(item=>item.codEstab===$scope.data.codEstabOrigen);         
-                let dataEstabDestino  = $scope.establecimientosOrigen.find(item=>item.codEstab===$scope.data.codEstabDestino);         
-                       
-                //Obtenemos Puntos de Emision, Bodegas, actividad Tipo Iva 
-                let dataFormEstabOrigen = await commonSvc.getDataFormEstabAsig(dataEstabOrigen);               
-                let dataFormEstabDestino = await commonSvc.getDataFormEstabAsig(dataEstabDestino);               
-                
-                //Punto de Emision
-                $scope.puntosEmision = dataFormEstabOrigen[0]; 
-                            
-                //Bodega Origen 
-                $scope.bodegasOrigen = dataFormEstabOrigen[1];                               
              
-
-                //Bodega Destino 
-                $scope.bodegasDestino = dataFormEstabDestino[1];                               
-                
-            
-                
-            }else{
-                tS.toastr('info', 'No tienes asignado ningún Establecimiento')
-            }
-            
+            $scope.data = dataDocumento;
             $scope.gridOptions.data = detalleDocumento;
 
-            enumGridOptions();
-            $scope.$apply();
+            enumGridOptions(); 
         } catch (error) {
             console.log(error)
-        }finally{
-            hideLoader()
         }             
     }
 

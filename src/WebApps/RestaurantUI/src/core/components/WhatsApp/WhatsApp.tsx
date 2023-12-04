@@ -73,7 +73,7 @@ const phoneNumberFormatter = (number: string) => {
  * @returns 
  */
 const WhatsApp = <T extends {
-    telefono: string,
+    telefono?: string,
     documentoId: number,
     docType: string,
     codEstab: string

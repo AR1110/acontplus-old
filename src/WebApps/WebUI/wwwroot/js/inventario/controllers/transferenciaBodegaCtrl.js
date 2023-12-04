@@ -87,7 +87,6 @@
                 showLoader();
                 transBogegaSvc.getDataFilter().then(response => {
                     $scope.establecimientos = response.estabs;
-                    console.log($scope.establecimientos)
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
                         $scope.dataSearch.codEstab = dataEstab.codEstab;
@@ -96,7 +95,6 @@
                 }).finally(()=>hideLoader())
                 transBogegaSvc.getDataForm().then(response => {
                     mainDataForm = response;
-                    console.log(response)
                 })
  
 

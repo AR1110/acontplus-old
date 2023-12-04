@@ -46,8 +46,8 @@
           <DataField>contribuyenteEspecialNro</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="obligadoLlevarContabilidad">
-          <DataField>obligadoLlevarContabilidad</DataField>
+        <Field Name="obligadoContabilidad">
+          <DataField>obligadoContabilidad</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="nroDocumento">
@@ -170,11 +170,63 @@
           <DataField>porcentajeIva</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="contribuyenteRimpe">
+          <DataField>contribuyenteRimpe</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesElectronicosCompra</rd:DataSetName>
         <rd:SchemaPath>C:\Users\AleXx\Source\Workspaces\ApiReports\ApiReports\DataSets\ComprobantesElectronicosCompra.xsd</rd:SchemaPath>
         <rd:TableName>DTLiquidacionCompra</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="TipoDocDetalleDs">
+      <Query>
+        <DataSourceName>ComprobantesElectronicosCompra</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="descripcion">
+          <DataField>descripcion</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="codigo">
+          <DataField>codigo</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="cantidad">
+          <DataField>cantidad</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="precioUnitario">
+          <DataField>precioUnitario</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="tipoIva">
+          <DataField>tipoIva</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="medida">
+          <DataField>medida</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="valorDescuento">
+          <DataField>valorDescuento</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="precioTotal">
+          <DataField>precioTotal</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>ComprobantesElectronicosCompra</rd:DataSetName>
+        <rd:SchemaPath>C:\Users\VMC\source\Workspaces\ApiReports\ApiReports\DataSets\ComprobantesElectronicosCompra.xsd</rd:SchemaPath>
+        <rd:TableName>DTFormaPago</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
@@ -192,54 +244,6 @@
         </Field>
         <Field Name="valor">
           <DataField>valor</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>ComprobantesElectronicosCompra</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\VMC\source\Workspaces\ApiReports\ApiReports\DataSets\ComprobantesElectronicosCompra.xsd</rd:SchemaPath>
-        <rd:TableName>DTFormaPago</rd:TableName>
-        <rd:TableAdapterFillMethod />
-        <rd:TableAdapterGetDataMethod />
-        <rd:TableAdapterName />
-      </rd:DataSetInfo>
-    </DataSet>
-    <DataSet Name="TipoDocDetalleDs">
-      <Query>
-        <DataSourceName>ComprobantesElectronicosCompra</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="codigo">
-          <DataField>codigo</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="descripcion">
-          <DataField>descripcion</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="cantidad">
-          <DataField>cantidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="precioUnitario">
-          <DataField>precioUnitario</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="tipoIva">
-          <DataField>tipoIva</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="medida">
-          <DataField>medida</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="valorDescuento">
-          <DataField>valorDescuento</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="precioTotal">
-          <DataField>precioTotal</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -404,7 +408,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!obligadoLlevarContabilidad.Value, "LiquidacionCompraDs")</Value>
+                    <Value>=First(Fields!obligadoContabilidad.Value, "LiquidacionCompraDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -3472,6 +3476,37 @@
               </Border>
             </Style>
           </Rectangle>
+          <Textbox Name="Textbox120">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!contribuyenteRimpe.Value, "LiquidacionCompraDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox119</rd:DefaultName>
+            <Top>7.33189cm</Top>
+            <Left>0.04974cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.13844cm</Width>
+            <ZIndex>17</ZIndex>
+            <Style>
+              <Border />
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
         <Height>7.7067in</Height>
         <Style />

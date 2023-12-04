@@ -11,6 +11,7 @@
     let modalSvc = {};
     let TIPO_DOC_NE = {};
     const NUM_CONSUMIDOR_FINAL = "9999999999999";
+    let nombreModalVenta = {}
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
 
@@ -28,7 +29,8 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        let nombreModalVenta = $injector.get('nombreModalVenta');
+        nombreModalVenta = $injector.get('nombreModalVenta');
+        const CODE_REPORT = $injector.get('CODE_REPORT');
 
         TIPO_DOC_NE = commonSvc.tipoDoc['NE'];
         const PERMISSION_KEY_ACTIONS = {
@@ -330,6 +332,11 @@
             try {
                 if (item.anulada) {
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
+                    return
+                }
+
+                if (item.codEstado === 'TRA') {
+                    fS.sweetAlert('warning', 'No puede ser editada; ¡tiene un documento de aprobación!');
                     return
                 }
 
@@ -652,7 +659,7 @@
                     reportParams: {
                         hasParams: true,
                         codEstab: item.codEstab,
-                        codigo: "RNE",
+                        codigo: CODE_REPORT.RNE,
                         format: "pdf"
                     },
                     spParams: {
@@ -666,14 +673,15 @@
         $scope.getReport = function (item) {
             let format = 'pdf';
             let dataParms = {
-                id: item.idDocumento
+                id: item.idDocumento,
+                tipo: 1
             }
 
             const parameters = {
                 hasService: true,
                 reportParams: JSON.stringify({
                     hasParams: true,
-                    codigo: 'RNE',
+                    codigo: CODE_REPORT.RNE,
                     codEstab: item.codEstab,
                     format,
                     aditionalParams: [
@@ -749,8 +757,11 @@
         $scope.bodegas = [];
         $scope.tarifasImpuesto = [];
 
-        $scope.datosAdicionalesArticulo = []
-        $scope.historyDatosAdicionales = []
+        $scope.datosAdicionalesArticulo = [];
+        $scope.historyDatosAdicionales = [];
+
+        //Informacion adicional del documento 
+        $scope.infoAdicionalDocumento = [];
 
         //Habilitar cuando la acción es editar
         $scope.isDisabledFormField = false;
@@ -924,12 +935,15 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-                showLoader();
 
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
-                if (cantidadStock === 0) return
+                if (cantidadStock === 0) {
+                    setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
 
+                showLoader();
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -998,8 +1012,9 @@
                 notificacionVenta,
                 decimal,
                 config,
-                vendedores
-            } = mainDataForm;
+                vendedores,
+                clienteDefault
+            } = structuredClone(mainDataForm);
             $scope.establecimientos = estabs;
             let dataEstab = {};
 
@@ -1042,6 +1057,12 @@
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
+                }
+                //Cliente Predeterminado 
+                if (clienteDefault.idCliente > 0) {
+                    $scope.cliente = clienteDefault;
+                    console.log($scope.cliente)
+
                 }
                 getFechaVencimiento();
             }
@@ -1117,6 +1138,7 @@
                 }))
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
+                $scope.tarifaImpuestoVigente = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.data.codigoPorcentaje)
             }
 
 
@@ -1604,17 +1626,46 @@
         }
 
         //==============================START CUSTOMER===========================
+        $scope.onKeyupCustomer = function () {
+            if (!$scope.cliente.nombreFiscal) {
+                $scope.cliente = {};
+            }
+
+        }
         $scope.onSelectedClienteChange = async function (item) {
             try {
 
                 if (!item.validationSri && ['R', 'C'].includes(item.tipoIdentificacion)) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Datos Incorrectos',
-                        html: 'Número de identificación no validado!',
+                        html: 'Datos Incorrectos!',
                         showConfirmButton: true,
                         showCancelButton: true,
+                        confirmButtonText: 'Actualizar con el SRI!.',
                         cancelButtonText: 'Cancelar'
+                    }).then(async result => {
+                        if (result.isConfirmed) {
+                            let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
+                            let ctrl = (await import(fileCtrl))[controllers['M']];
+                            let template = templates['M'];
+
+                            let modalRef = modalSvc.openModalCustom({
+                                controller: ctrl,
+                                template,
+                                size: 'xl',
+                                params: {
+                                    ...item,
+                                    isUpdateDataCustomerFromSRI: true
+                                },
+                                isRenderRazorPartial: true
+                            })
+
+                            modalRef.result.then(result => {
+                                if (typeof result === 'object') {
+                                    setCustomerData(item)
+                                }
+                            })
+                        }
                     })
                     return
                 }
@@ -1643,7 +1694,9 @@
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
             if (!($scope.data.idNotaEntrega > 0)) {
-                $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
+                if (($scope.cliente.idTiempoCredito > 0)) {
+                    $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
+                }
                 $scope.data.fechaEmision = new Date();
                 getFechaVencimiento();
             }
@@ -1811,7 +1864,7 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {};
+                let index = 0, entity = {}, tarifaImpuesto = {}, cantidad = 0;
 
                 //verificar si hay un articulo que lleva inventario mas de uno 
                 let itemsDuplicated = $scope.gridOptions.data.filter(item => (
@@ -1826,14 +1879,16 @@
                     item => item.llevaInventario && item.idArticulo === articulo.idArticulo
                 );
 
-                if (findIndexById === -1) { 
+                if (findIndexById === -1) {
                     addRow();
                     index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
+                    entity.cantidad = 1;
                 } else {
                     index = findIndexById;
                     entity = $scope.gridOptions.data[index];
-                    entity.cantidad = entity.cantidad + 1;
+                    cantidad = entity.cantidad;
+                    entity.cantidad = cantidad + 1;
                 }
 
 
@@ -1850,11 +1905,16 @@
                     && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
                 ) {
                     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
+
+                    entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
                     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
                     entity.tarifa = dataImpuestoTarifa.tarifa;
 
                 } else {
+                    tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
+
+                    entity.idImpuesto = tarifaImpuesto.idImpuesto;
                     entity.idTipoIva = articulo.idTipoIva;
                     entity.codigoPorcentaje = articulo.codigoPorcentaje;
                     entity.tarifa = articulo.tarifa;
@@ -2054,45 +2114,41 @@
             }
 
             if (isUpdate()) {
-                let fechaEmisionModificada = $scope.data.fechaEmision;
-                let fechaEmisionDocCreado = $scope.data.fechaEmisionDocCreado;
+                let fechaEmisionModificada = new Date($scope.data.fechaEmision);
+                let fechaEmisionDocCreado = new Date($scope.data.fechaEmisionDocCreado);
                 let fechaActual = new Date();
 
-                // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
-                if (fS.getDate(fechaEmisionModificada) !== fS.getDate(fechaEmisionDocCreado)) {
-
-                    //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                    if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
+                if (fechaEmisionModificada.getTime() !== fechaEmisionDocCreado.getTime()) {
+                    if (fechaEmisionModificada > fechaActual) {
                         fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                        return
+                        return;
                     }
 
-                    if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();
                     }
                 }
-                // else {
-                //     $scope.data.fechaEmision = fechaEmisionDocCreado;
-                // }
             }
-            if(isRegister()){
-                let fechaEmisionModificada = $scope.data.fechaEmision;
+
+            if (isRegister()) {
+                let fechaEmisionModificada = new Date($scope.data.fechaEmision);
                 let fechaActual = new Date();
+
                 if (fechaEmisionModificada > fechaActual) {
                     fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                    return
+                    return;
                 }
-                if (fS.getDate(fechaEmisionModificada) == fS.getDate(fechaActual)){
+
+                if (fS.formatDateShort(fechaEmisionModificada) == fS.formatDateShort(fechaActual)) {
                     $scope.data.fechaEmision = fechaActual;
-                }else{
-                    if (fechaEmisionModificada < fechaActual) {
-                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    } 
+                } else if (fechaEmisionModificada < fechaActual) {
+                    $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                 }
-            } 
-            
+            }
+
+
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
@@ -2128,7 +2184,7 @@
                 return
             }
 
-            if ($scope.data.total < 0) {
+            if ($scope.data.total === 0 || $scope.data.total < 0) {
                 tS.toastr('warning', 'No se puede generar el documento con valor total 0!');
                 return
             }
@@ -2204,6 +2260,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                     historyDatosAdicionales: $scope.historyDatosAdicionales
                 })
 
@@ -2319,7 +2376,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: [],
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                     historyDatosAdicionales: $scope.historyDatosAdicionales
                 })
 
@@ -2347,6 +2404,10 @@
                 hideLoader();
                 console.warn(error)
             }
+        }
+
+        $scope.resultModalDatoAdicional = function (result) {
+            $scope.infoAdicionalDocumento = result;
         }
 
         async function askToSaveStorage() {

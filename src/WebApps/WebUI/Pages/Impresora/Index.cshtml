@@ -12,57 +12,64 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <button class="btn btn-info" ng-click="openModalNew()"><i class="ti-printer"></i> Agregar
-                                Impresora</button>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="table-responsive">
-                        <table class="table table-no-bordered">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">Op.</th>
-                                    <th>N°</th>
-                                    <th class="text-center">Estab.</th> 
-                                    <th class="text-center">Impresora</th>
-                                    <th class="text-center">Usuario</th>  
-                                    <th class="text-center">Equipo</th>
-                                    <th class="text-center">Documento</th>
-                                    <th class="text-center">Tipo Impr.</th>                                     
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in printers |filter:buscar">
-                                    <td class="text-center">
-                                        <button class="btn btn-warning btn-sm" ng-click="openEdit(item.id)"><i
-                                                class="ti-pencil"></i></button>
-                                        <button class="btn btn-danger btn-sm" ng-click="askToDelete(item)"><i
-                                                class="ti-trash"></i></button>
-                                    </td>
-                                    <td >{{$index+1}}</td>
-                                    <td class="text-center">{{item.estab}}</td>
-                                    <td class="text-center">{{item.nombreImpresora}}</td>
-                                    <td class="text-center">{{item.nroIdentificacion}}</td>
-                                    <td class="text-center">{{item.nombreEquipo}}</td>
-                                    <td class="text-center">{{item.documento}}</td>
-                                    <td class="text-center">{{item.tipoImpresora}}</td>  
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <button class="btn btn-info" id="buttonNew" ng-click="openModalNew()"><i class="ti-plus"></i>
+                        Agregar
+                        Impresora</button>
                 </div>
+            </div>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-no-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Op.</th>
+                            <th class="text-center">N°</th>
+                            <th class="text-center">Estab.</th>
+                            <th class="text-center">Tipo</th>
+                            <th class="text-center">Impresora</th>
+                            <th class="text-center">Default</th>
+                            <th class="text-center">Equipo</th>
+                            <th class="text-center">Servidor</th>
+                            <th class="text-center">IP</th>
+                            <th class="text-center">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in printers |filter:buscar">
+                            <td class="text-center">
+                                <button class="btn btn-warning btn-sm" ng-click="openEdit(item.id)"><i
+                                        class="ti-pencil"></i></button>
+                                <button class="btn btn-danger btn-sm" ng-click="askToDelete(item)"><i
+                                        class="ti-trash"></i></button>
+                            </td>
+                            <td class="text-center">{{$index+1}}</td>
+                            <td class="text-center">{{item.estab}}</td>
+                            <td class="text-center">{{item.printerTypeName}}</td>
+                            <td class="text-center">{{item.name}}</td>
+                            <td class="text-center">{{item.default}}</td>
+                            <td class="text-center">{{item.machine}}</td>
+                            <td class="text-center">{{item.server}}</td>
+                            <td class="text-center">{{item.ipAddress}}</td>
+                            <td>
+                                <md-switch ng-model="item.enabled" aria-label="Toggle switch"
+                                    ng-change="updateStatus(item)">
+                                    {{item.labelEnabled}}
+                                </md-switch>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    
-    <div id="addUpdatePrinter" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg">
+
+    <div id="addUpdatePrinter" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static"
+        data-keyboard="false">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <form ng-submit="saveEdit()">
                     <div class="modal-header">
@@ -75,116 +82,115 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label for="">Establecimiento: <span class="text-danger">*</span></label>
-                                    <select class="form-control border-select" ng-model="data.codEstab" ng-disabled="tipoRegistro==2">
-                                        <option ng-value="item.codEstab" ng-repeat="item in sucursales">
+                                    <label for="">Establecimiento: </label>
+                                    <select class="form-control border-select" ng-model="data.establecimientoId"
+                                        ng-disabled="tipoRegistro==2" required>
+                                        <option ng-value="0">Seleccione un establecimiento</option>
+                                        <option ng-value="item.idEstablecimiento" ng-repeat="item in sucursales">
                                             {{item.nombreComercial}}
                                         </option>
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12" >
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                                 <div class="form-group">
-                                    <label for="">Tipo Impresora <span class="text-danger">*</span></label>
-                                    <select class="form-control border-select" ng-model="data.idTipoImpresora" >
-                                        <option ng-value="item.idTipoImpresora" ng-repeat="item in tipoImpresoras">
-                                            {{item.descripcion}}
+                                    <label for="nameEquipment">Nombre Equipo:
+                                    </label>
+                                    <input type="text" id="nameEquipment" class="form-control border-select"
+                                        ng-model="data.machine" placeholder="PC-01" required>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
+                                <div class="form-group">
+                                    <label for="ipMaquina">IP Equipo: </label>
+                                    <input type="text" class="form-control border-select" ng-model="data.ipAddress"
+                                        placeholder="127.0.0.1:9200" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                                <div class="form-group">
+                                    <label for="">Tipo Impresora </label>
+                                    <select class="form-control border-select" ng-model="data.printerTypeId" required>
+                                        <option ng-value="0">Seleccione un tipo</option>
+                                        <option ng-value="item.id" ng-repeat="item in tipoImpresoras">
+                                            {{item.name}}
                                         </option>
                                     </select>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                                 <div class="form-group">
-                                    <label for="namePrinterEdit">Nombre Impresora: <span class="text-danger">*</span> </label>
+                                    <label for="namePrinterEdit">Impresora:</label>
                                     <input type="text" id="namePrinterEdit" class="form-control border-select"
-                                           ng-model="data.nombreImpresora" placeholder="epson l3150">
+                                        ng-if="localPrinters.length == 0" ng-model="data.name" placeholder="epson l3150"
+                                        required>
+                                    <select class="form-control border-select" ng-if="localPrinters.length > 0"
+                                        ng-model="data.name" required>
+                                        <option ng-value="0">Seleccione una impresora</option>
+                                        <option ng-value="item.name" ng-repeat="item in localPrinters">
+                                            {{item.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12" ng-if="data.serverDevice">
+                                <div class="form-group">
+                                    <label for="macAddress">MAC Address: </label>
+                                    <input type="text" name="macAddress" id="macAddress"
+                                        class="form-control border-select" ng-model="data.macAddress"
+                                        placeholder="00:00:00:00">
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
+                                <div class="form-group">
+                                    <div class="icheck-info">
+                                        <input type="checkbox" id="checkDefault" ng-model="data.isDefault" />
+                                        <label for="checkDefault">Predeterminada</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
+                                <div class="form-group">
+                                    <div class="icheck-primary">
+                                        <input type="checkbox" name="serverDevice" id="serverDevice"
+                                            ng-model="data.serverDevice" />
+                                        <label for="serverDevice">Servidor</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
                         <div class="table-responsive">
-                            <table class="table table-no-bordered">
+                            <table class="table">
                                 <thead>
-                                    <tr>
-                                        <th>N°</th>
+                                    <tr class="small">
+                                        <th class="text-center">N°</th>
                                         <th>Documento</th>
-                                        <th class="text-center">estado</th>
-                                        <th class="text-center">copia</th>
+                                        <th class="text-center">Estado</th>
+                                        <th class="text-center">Copia</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="item in documents |filter:buscar">
-                                        <td>{{$index+1}}</td>
-                                        <td>{{item.descripcion}}</td>
+                                    <tr ng-repeat="item in documents" class="small">
+                                        <td class="text-center">{{$index+1}}</td>
+                                        <td>{{item.name}}</td>
                                         <td class="text-center">
-                                            <div class="icheck-info">
-                                                <input type="checkbox" id="estado{{$index+1}}" ng-model="item.estado" ng-change="clearCopyPrint(item)"/>
-                                                <label for="estado{{$index+1}}"></label>
-                                            </div>
+                                            <input type="checkbox" class="form-check-input" id="estado{{$index+1}}"
+                                                ng-model="item.enabled" ng-change="updateDocument(item)">
                                         </td>
                                         <td class="text-center">
-                                            <div class="icheck-info">
-                                                <input type="checkbox" id="copy{{$index+1}}" ng-model="item.copyPrint" ng-disabled ="!item.estado"/>
-                                                <label for="copy{{$index+1}}"></label>
-                                            </div>
+                                            <input type="number" id="copies{{$index+1}}" class="form-control" min="1"
+                                                max="3" ng-model="item.copies" ng-disabled="!item.enabled"
+                                                ng-blur="updateDocument(item)">
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        
-                        <div class="row">
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="">Asignar Equipo</label>
-                                    <div class="icheck-info">
-                                        <input type="checkbox" id="asignarEquipo" ng-model="data.asignar" ng-disabled="isDisabledAsigEquipo" ng-change="clearNameEquipment()" />
-                                        <label for="asignarEquipo"></label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div ng-if="data.asignar" class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="nameEquipment">Nombre Equipo: <span class="text-danger">*</span> </label>
-                                    <input type="text" id="nameEquipment" class="form-control border-select"
-                                           ng-model="data.nombreEquipo" placeholder="PC-01">
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xl-4 colg-4 col-md-6 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label>Servicio: </label>
-                                    <div class="icheck-success">
-                                        <input type="checkbox" id="checkboxIsServer" ng-model="data.isServer" ng-change="onChangeIsServer()"/>
-                                        <label for="checkboxIsServer"></label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-xl-4 colg-4 col-md-6 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label for="isServer">IP Máquina: <span class="text-info"></span></label>
-                                    <input type="text" class="form-control border-select" ng-model="data.ipMaquina"  placeholder="127.0.0.1:9100"   ng-disabled="disabledInputIpMaquina">
-                                </div>
-                            </div>
-                            <div class="col-xl-4 colg-4 col-md-6 col-sm-12 col-12">                                 
-                                <div class="form-group">
-                                    <label>Predeterminada</label>
-                                    <div class="icheck-warning">
-                                        <input type="checkbox" id="checkDefault" ng-model="data.predeterminada" />
-                                        <label for="checkDefault"></label>
-                                    </div>
-                                </div>                                
-                            </div>
-                        </div>                       
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success"><i class="ti-save"></i> Guardar</button>
@@ -194,8 +200,7 @@
             </div>
         </div>
     </div>
-    @* <button class="btn btn-danger" ng-click="print()">print</button> *@
 </div>
-@section Scripts{
-<script src="~/js/config/controllers/impresoraCtrl.min.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="~/js/config/controllers/impresoraCtrl.min.js" asp-append-version="true"></script>
 }

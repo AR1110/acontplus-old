@@ -1,7 +1,7 @@
 const GATEWAY = "gateway/"
 export const enum PATHS {
-    ACCOUNT = "Restaurant/Account/login",
-    CREATE_TOKEN = 'Restaurant/Account/createToken',
+    ACCOUNT = `Restaurant/Account/login`,
+    CREATE_TOKEN = `Restaurant/Account/createToken`,
     PRIVATE = `${GATEWAY}Restaurant/`,
     INVENTARIO = `${GATEWAY}Inventario/`,
     SALE = `${GATEWAY}Venta/`,
@@ -53,5 +53,5 @@ export enum ITEM_TYPE_CODE {
 
 export enum DOC_TYPE_REPORT {
     FV = 'RF',
-    NE = 'RNE'    
+    NE = 'RNE'
 }

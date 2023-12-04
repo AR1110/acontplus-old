@@ -221,8 +221,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>1.65952cm</Top>
-            <Left>2.23197cm</Left>
+            <Top>1.58897cm</Top>
+            <Left>0.03593cm</Left>
             <Height>0.6cm</Height>
             <Width>15.61804cm</Width>
             <ZIndex>3</ZIndex>
@@ -277,7 +277,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!filtroFecha.Value, "headerDs")</Value>
+                    <Value>=Globals!ExecutionTime</Value>
                     <Style>
                       <FontSize>7pt</FontSize>
                     </Style>
@@ -307,6 +307,41 @@
             <TablixCorner>
               <TablixCornerRows>
                 <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox7">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value />
+                                <Style>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox7</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
                   <TablixCornerCell>
                     <CellContents>
                       <Textbox Name="Textbox15">
@@ -347,6 +382,41 @@
                   <TablixCornerCell />
                 </TablixCornerRow>
                 <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox10">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Nro.</Value>
+                                <Style>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox10</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
                   <TablixCornerCell>
                     <CellContents>
                       <Textbox Name="Textbox20">
@@ -609,16 +679,16 @@
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>3cm</Size>
+                    <Size>1.45114cm</Size>
                     <CellContents>
-                      <Textbox Name="codigo1">
+                      <Textbox Name="Textbox11">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!codigo.Value</Value>
+                                <Value>=Code.nroFila(RowNumber(Nothing))</Value>
                                 <Style>
                                   <FontSize>7pt</FontSize>
                                 </Style>
@@ -629,7 +699,7 @@
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>codigo1</rd:DefaultName>
+                        <rd:DefaultName>Textbox11</rd:DefaultName>
                         <Style>
                           <Border>
                             <Style>Solid</Style>
@@ -646,16 +716,16 @@
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>9.36022cm</Size>
+                        <Size>3cm</Size>
                         <CellContents>
-                          <Textbox Name="descripcion">
+                          <Textbox Name="codigo1">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Fields!descripcion.Value</Value>
+                                    <Value>=Fields!codigo.Value</Value>
                                     <Style>
                                       <FontSize>7pt</FontSize>
                                     </Style>
@@ -666,7 +736,7 @@
                                 </Style>
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>descripcion</rd:DefaultName>
+                            <rd:DefaultName>codigo1</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Style>Solid</Style>
@@ -683,16 +753,16 @@
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>4.0475cm</Size>
+                            <Size>9.36022cm</Size>
                             <CellContents>
-                              <Textbox Name="subFamilia">
+                              <Textbox Name="descripcion">
                                 <CanGrow>true</CanGrow>
                                 <KeepTogether>true</KeepTogether>
                                 <Paragraphs>
                                   <Paragraph>
                                     <TextRuns>
                                       <TextRun>
-                                        <Value>=Fields!subFamilia.Value</Value>
+                                        <Value>=Fields!descripcion.Value</Value>
                                         <Style>
                                           <FontSize>7pt</FontSize>
                                         </Style>
@@ -703,7 +773,7 @@
                                     </Style>
                                   </Paragraph>
                                 </Paragraphs>
-                                <rd:DefaultName>subFamilia</rd:DefaultName>
+                                <rd:DefaultName>descripcion</rd:DefaultName>
                                 <Style>
                                   <Border>
                                     <Style>Solid</Style>
@@ -718,7 +788,46 @@
                             </CellContents>
                           </TablixHeader>
                           <TablixMembers>
-                            <TablixMember />
+                            <TablixMember>
+                              <TablixHeader>
+                                <Size>4.0475cm</Size>
+                                <CellContents>
+                                  <Textbox Name="subFamilia">
+                                    <CanGrow>true</CanGrow>
+                                    <KeepTogether>true</KeepTogether>
+                                    <Paragraphs>
+                                      <Paragraph>
+                                        <TextRuns>
+                                          <TextRun>
+                                            <Value>=Fields!subFamilia.Value</Value>
+                                            <Style>
+                                              <FontSize>7pt</FontSize>
+                                            </Style>
+                                          </TextRun>
+                                        </TextRuns>
+                                        <Style>
+                                          <TextAlign>Center</TextAlign>
+                                        </Style>
+                                      </Paragraph>
+                                    </Paragraphs>
+                                    <rd:DefaultName>subFamilia</rd:DefaultName>
+                                    <Style>
+                                      <Border>
+                                        <Style>Solid</Style>
+                                      </Border>
+                                      <VerticalAlign>Middle</VerticalAlign>
+                                      <PaddingLeft>2pt</PaddingLeft>
+                                      <PaddingRight>2pt</PaddingRight>
+                                      <PaddingTop>2pt</PaddingTop>
+                                      <PaddingBottom>2pt</PaddingBottom>
+                                    </Style>
+                                  </Textbox>
+                                </CellContents>
+                              </TablixHeader>
+                              <TablixMembers>
+                                <TablixMember />
+                              </TablixMembers>
+                            </TablixMember>
                           </TablixMembers>
                         </TablixMember>
                       </TablixMembers>
@@ -729,9 +838,8 @@
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
             <Top>3.1605cm</Top>
-            <Left>0cm</Left>
             <Height>1.8cm</Height>
-            <Width>18.21981cm</Width>
+            <Width>19.67095cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -740,11 +848,57 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>1.95295in</Height>
+        <Height>2.03629in</Height>
         <Style />
       </Body>
-      <Width>7.17315in</Width>
+      <Width>8.15741in</Width>
       <Page>
+        <PageFooter>
+          <Height>0.74083cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox24">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>AcontPlus</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox19</rd:DefaultName>
+              <Top>0.07056cm</Top>
+              <Left>0.03593cm</Left>
+              <Height>0.6cm</Height>
+              <Width>2.5cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
         <PageHeight>30cm</PageHeight>
         <PageWidth>29.7cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
@@ -788,6 +942,34 @@
       </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
+  <Code>Dim GroupCounter as Integer=0
+
+Function GetGroupCounter() as String
+	GroupCounter=GroupCounter+1
+	return "" + GroupCounter.ToString()
+End Function
+
+Dim private count as integer = 0
+Dim private iniRow as integer = 0
+Public function nroFila(Byval rowNum as integer) as integer
+    if iniRow = 0 then
+        iniRow = rowNum
+    end if
+
+    if rowNum = iniRow then
+        count = 0
+    end if
+
+    count = count + 1
+    Return count
+End function
+
+
+
+
+
+
+</Code>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>2b17f36e-229a-498d-bb19-955ab1651ed0</rd:ReportID>

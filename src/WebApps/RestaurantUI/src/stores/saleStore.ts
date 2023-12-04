@@ -1,3 +1,4 @@
+import { ConsolidacionFecha } from './../core/models/product.model';
 import {
     ItemRead,
     ItemSearch,
@@ -63,6 +64,7 @@ type Actions = {
     setItemSearch(itemSearch: ItemSearch): void
     setSummary(order: Order): void
     filterOderItems(textSearch: string): void
+   // getCantidadStock<T extends { productId: number, idBodega: number, consolidacionesFecha: Array<ConsolidacionFecha> }>(data: T):number
     getItemQty(productId: number): number
     setDataForm(dataForm: DataFormSale): void
     setCollectionItems(products: Array<ItemReadDto>): void
@@ -165,6 +167,55 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
     },
 
+    // getCantidadStock(data){
+    //     const { order, items } = get();
+    //     console.log(data) 
+    //     try {
+    //         let fechaEmisionValidate = order.createdAt;
+    //         let cantidadStock = 0
+    //         let foundItemByArticuloAndBodega = items.filter(item => (
+    //             item.productId === data.productId &&
+    //             item.bodegaId === data.idBodega
+    //         ))
+
+    //         let totalCantidadFraccionada = foundItemByArticuloAndBodega.reduce((total, item) => {
+    //             let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO')
+    //             if (dataMedida) {
+    //                 let conversionSum = item.cantidad * dataMedida.conversion;
+    //                 total += conversionSum;
+    //             }
+    //             return total;
+    //         }, 0);
+
+    //         let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
+    //             let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+    //             if (dataMedida) {
+    //                 let conversionSum = item.cantidad * dataMedida.conversion;
+    //                 total += conversionSum;
+    //             }
+    //             return total;
+    //         }, 0)
+
+
+
+
+    //         let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+    //             cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+    //         )
+
+    //         if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+    //             if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+    //                 return 0;
+    //             }
+    //         }
+
+    //         let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+    //         return resultCantStock;
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    //     return 1;
+    // },
     getItemQty: (productId: number) => {
         const { items } = get();
         const dataCartItem = items.find(cartItem => cartItem.productId === productId);

@@ -2,19 +2,19 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
-    <DataSource Name="ComprobantesElectronicosVentas">
+    <DataSource Name="mainDs">
       <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
       </ConnectionProperties>
       <rd:SecurityType>None</rd:SecurityType>
-      <rd:DataSourceID>14688b8a-3b97-4664-8a47-15acc77d51d1</rd:DataSourceID>
+      <rd:DataSourceID>dac357b9-cd3d-4d82-a8a8-6a4974111099</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="NotaEntregaDs">
+    <DataSet Name="headerDs">
       <Query>
-        <DataSourceName>ComprobantesElectronicosVentas</DataSourceName>
+        <DataSourceName>mainDs</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -26,12 +26,8 @@
           <DataField>nombreComercial</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="dirMatriz">
-          <DataField>dirMatriz</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="dirSucursal">
-          <DataField>dirSucursal</DataField>
+        <Field Name="dirEstablecimiento">
+          <DataField>dirEstablecimiento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ruc">
@@ -42,76 +38,60 @@
           <DataField>tipoDoc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nroDoc">
-          <DataField>nroDoc</DataField>
+        <Field Name="serieComprobante">
+          <DataField>serieComprobante</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="cliente">
-          <DataField>cliente</DataField>
+        <Field Name="razonSocialComprador">
+          <DataField>razonSocialComprador</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nroIdentificacion">
-          <DataField>nroIdentificacion</DataField>
+        <Field Name="identificacionComprador">
+          <DataField>identificacionComprador</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="fechaEmision">
           <DataField>fechaEmision</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="direccion">
-          <DataField>direccion</DataField>
+        <Field Name="direccionComprador">
+          <DataField>direccionComprador</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="subsidio">
-          <DataField>subsidio</DataField>
+        <Field Name="emailEstablecimiento">
+          <DataField>emailEstablecimiento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="precioSinSubsidio">
-          <DataField>precioSinSubsidio</DataField>
+        <Field Name="subTotalIva">
+          <DataField>subTotalIva</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="descuento">
-          <DataField>descuento</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="direccionCliente">
-          <DataField>direccionCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="email">
-          <DataField>email</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="subtotalIva12">
-          <DataField>subtotalIva12</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="subtotalIva0">
-          <DataField>subtotalIva0</DataField>
+        <Field Name="subTotalIvaCero">
+          <DataField>subTotalIvaCero</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="subtotalNoObjetoIva">
           <DataField>subtotalNoObjetoIva</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="subtotalExcentoIva">
-          <DataField>subtotalExcentoIva</DataField>
+        <Field Name="subTotalExentoIva">
+          <DataField>subTotalExentoIva</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="subtotalSinImpuestos">
           <DataField>subtotalSinImpuestos</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="totalDescuentos">
-          <DataField>totalDescuentos</DataField>
+        <Field Name="totalDescuento">
+          <DataField>totalDescuento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ice">
-          <DataField>ice</DataField>
+        <Field Name="totalIce">
+          <DataField>totalIce</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="iva12">
-          <DataField>iva12</DataField>
+        <Field Name="iva">
+          <DataField>iva</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="irbpnr">
@@ -122,32 +102,20 @@
           <DataField>propina</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="valorTotal">
-          <DataField>valorTotal</DataField>
+        <Field Name="telefonoComprador">
+          <DataField>telefonoComprador</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="telefonoCliente">
-          <DataField>telefonoCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="vendedor">
-          <DataField>vendedor</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="identVendedor">
-          <DataField>identVendedor</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="telefono">
-          <DataField>telefono</DataField>
+        <Field Name="telefonoEstablecimiento">
+          <DataField>telefonoEstablecimiento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ciudad">
           <DataField>ciudad</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="correoCliente">
-          <DataField>correoCliente</DataField>
+        <Field Name="emailComprador">
+          <DataField>emailComprador</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="tipoIva">
@@ -158,9 +126,13 @@
           <DataField>observacion</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="importeTotal">
+          <DataField>importeTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="porcentajeIva">
           <DataField>porcentajeIva</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
       <rd:DataSetInfo>
@@ -172,9 +144,9 @@
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="TipoDocDetalleDs">
+    <DataSet Name="detalleDs">
       <Query>
-        <DataSourceName>ComprobantesElectronicosVentas</DataSourceName>
+        <DataSourceName>mainDs</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -220,9 +192,9 @@
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="InfoAdicionalDs">
+    <DataSet Name="infoAdicionalDs">
       <Query>
-        <DataSourceName>ComprobantesElectronicosVentas</DataSourceName>
+        <DataSourceName>mainDs</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -277,7 +249,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!direccion.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!dirEstablecimiento.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -346,7 +318,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ruc.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!ruc.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -380,7 +352,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!telefono.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!telefonoEstablecimiento.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -415,7 +387,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!email.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!emailEstablecimiento.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -486,7 +458,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaEmision.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!fechaEmision.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -626,7 +598,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!tipoDoc.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!tipoDoc.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>11pt</FontSize>
                           <FontWeight>Bold</FontWeight>
@@ -697,7 +669,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroDoc.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!serieComprobante.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -727,9 +699,9 @@
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>0.23495cm</Top>
-            <Left>9.73214cm</Left>
+            <Left>10.55022cm</Left>
             <Height>5.16945cm</Height>
-            <Width>9.65666cm</Width>
+            <Width>9.67207cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -744,7 +716,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!razonSocial.Value, "NotaEntregaDs")</Value>
+                    <Value>=First(Fields!razonSocial.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -796,7 +768,7 @@
                 <Top>0.05883in</Top>
                 <Left>0.15237in</Left>
                 <Height>0.21667in</Height>
-                <Width>0.71292in</Width>
+                <Width>0.62959in</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -831,7 +803,7 @@
                 <Top>0.29494in</Top>
                 <Left>0.15237in</Left>
                 <Height>0.25in</Height>
-                <Width>0.71292in</Width>
+                <Width>0.62959in</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
@@ -867,7 +839,7 @@
                 <Top>0.56439in</Top>
                 <Left>0.15237in</Left>
                 <Height>0.25in</Height>
-                <Width>0.71292in</Width>
+                <Width>0.62959in</Width>
                 <ZIndex>2</ZIndex>
                 <Style>
                   <Border>
@@ -887,7 +859,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!cliente.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!razonSocialComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontFamily>arial</FontFamily>
                           <FontSize>8pt</FontSize>
@@ -901,9 +873,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox19</rd:DefaultName>
                 <Top>0.05883in</Top>
-                <Left>0.89307in</Left>
+                <Left>0.79585in</Left>
                 <Height>0.21667in</Height>
-                <Width>3.07149in</Width>
+                <Width>3.5536in</Width>
                 <ZIndex>3</ZIndex>
                 <Style>
                   <Border />
@@ -921,7 +893,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!direccionCliente.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!direccionComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -934,9 +906,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox20</rd:DefaultName>
                 <Top>0.30327in</Top>
-                <Left>0.89307in</Left>
+                <Left>0.79585in</Left>
                 <Height>0.23611in</Height>
-                <Width>3.07149in</Width>
+                <Width>3.5536in</Width>
                 <ZIndex>4</ZIndex>
                 <Style>
                   <Border>
@@ -956,7 +928,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ciudad.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!ciudad.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -969,9 +941,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox21</rd:DefaultName>
                 <Top>0.56439in</Top>
-                <Left>0.89755in</Left>
+                <Left>0.80033in</Left>
                 <Height>0.25in</Height>
-                <Width>3.07149in</Width>
+                <Width>3.5536in</Width>
                 <ZIndex>5</ZIndex>
                 <Style>
                   <Border>
@@ -1005,9 +977,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox22</rd:DefaultName>
                 <Top>0.06162in</Top>
-                <Left>4.20681in</Left>
+                <Left>4.57433in</Left>
                 <Height>0.21388in</Height>
-                <Width>0.67088in</Width>
+                <Width>0.63405in</Width>
                 <ZIndex>6</ZIndex>
                 <Style>
                   <Border />
@@ -1039,9 +1011,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox16</rd:DefaultName>
                 <Top>0.30745in</Top>
-                <Left>4.20681in</Left>
+                <Left>4.57433in</Left>
                 <Height>0.225in</Height>
-                <Width>0.67088in</Width>
+                <Width>0.63405in</Width>
                 <ZIndex>7</ZIndex>
                 <Style>
                   <Border>
@@ -1073,9 +1045,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox16</rd:DefaultName>
                 <Top>0.56439in</Top>
-                <Left>4.20681in</Left>
+                <Left>4.57433in</Left>
                 <Height>0.25in</Height>
-                <Width>0.67088in</Width>
+                <Width>0.63405in</Width>
                 <ZIndex>8</ZIndex>
                 <Style>
                   <Border />
@@ -1092,23 +1064,26 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroIdentificacion.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!identificacionComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
-                    <Style />
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox19</rd:DefaultName>
                 <Top>0.06162in</Top>
-                <Left>4.9103in</Left>
+                <Left>5.20838in</Left>
                 <Height>0.20693in</Height>
-                <Width>2.23181in</Width>
+                <Width>2.30125in</Width>
                 <ZIndex>9</ZIndex>
                 <Style>
                   <Border />
+                  <VerticalAlign>Middle</VerticalAlign>
                   <PaddingLeft>2pt</PaddingLeft>
                   <PaddingRight>2pt</PaddingRight>
                   <PaddingTop>2pt</PaddingTop>
@@ -1122,23 +1097,26 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!correoCliente.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!emailComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
-                    <Style />
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox19</rd:DefaultName>
                 <Top>0.30745in</Top>
-                <Left>4.9103in</Left>
+                <Left>5.20838in</Left>
                 <Height>0.22777in</Height>
-                <Width>2.23181in</Width>
+                <Width>2.30125in</Width>
                 <ZIndex>10</ZIndex>
                 <Style>
                   <Border />
+                  <VerticalAlign>Middle</VerticalAlign>
                   <PaddingLeft>2pt</PaddingLeft>
                   <PaddingRight>2pt</PaddingRight>
                   <PaddingTop>2pt</PaddingTop>
@@ -1152,23 +1130,26 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!telefonoCliente.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!telefonoComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
-                    <Style />
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
                   </Paragraph>
                 </Paragraphs>
                 <rd:DefaultName>Textbox19</rd:DefaultName>
                 <Top>0.57689in</Top>
-                <Left>4.9103in</Left>
+                <Left>5.20838in</Left>
                 <Height>0.2375in</Height>
-                <Width>2.23181in</Width>
+                <Width>2.30125in</Width>
                 <ZIndex>11</ZIndex>
                 <Style>
                   <Border />
+                  <VerticalAlign>Middle</VerticalAlign>
                   <PaddingLeft>2pt</PaddingLeft>
                   <PaddingRight>2pt</PaddingRight>
                   <PaddingTop>2pt</PaddingTop>
@@ -1180,7 +1161,7 @@
             <Top>5.78238cm</Top>
             <Left>0.31433cm</Left>
             <Height>2.23542cm</Height>
-            <Width>19.07447cm</Width>
+            <Width>19.90796cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -1195,7 +1176,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!nombreComercial.Value, "NotaEntregaDs")</Value>
+                    <Value>=First(Fields!nombreComercial.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -1228,13 +1209,13 @@
                   <Width>0.94883cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.41344cm</Width>
+                  <Width>2.0145cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>9.40928cm</Width>
+                  <Width>9.08065cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.4548cm</Width>
+                  <Width>1.68723cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.44396cm</Width>
@@ -1243,7 +1224,7 @@
                   <Width>1.58913cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.35108cm</Width>
+                  <Width>1.66439cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.47927cm</Width>
@@ -1472,7 +1453,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Descuento</Value>
+                                  <Value>Desc.</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1507,7 +1488,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Precio Total</Value>
+                                  <Value>Total</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1836,11 +1817,11 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>TipoDocDetalleDs</DataSetName>
+            <DataSetName>detalleDs</DataSetName>
             <Top>8.12364cm</Top>
             <Left>0.31433cm</Left>
             <Height>1.2cm</Height>
-            <Width>19.08979cm</Width>
+            <Width>19.90796cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
               <Border>
@@ -1894,19 +1875,18 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subtotalIva12">
+                        <Textbox Name="subTotalIva">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!subtotalIva12.Value</Value>
+                                  <Value>=Fields!subTotalIva.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -1917,7 +1897,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subtotalIva12</rd:DefaultName>
+                          <rd:DefaultName>subTotalIva</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1929,7 +1909,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1969,19 +1948,18 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subtotalIva0">
+                        <Textbox Name="subTotalIvaCero">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!subtotalIva0.Value</Value>
+                                  <Value>=Fields!subTotalIvaCero.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -1992,7 +1970,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subtotalIva0</rd:DefaultName>
+                          <rd:DefaultName>subTotalIvaCero</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2004,7 +1982,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2044,7 +2021,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -2079,7 +2055,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2119,19 +2094,18 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subtotalExcentoIva">
+                        <Textbox Name="subTotalExentoIva">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!subtotalExcentoIva.Value</Value>
+                                  <Value>=Fields!subTotalExentoIva.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -2142,7 +2116,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subtotalExcentoIva</rd:DefaultName>
+                          <rd:DefaultName>subTotalExentoIva</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2154,7 +2128,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2194,7 +2167,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -2229,7 +2201,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2269,19 +2240,18 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="totalDescuentos">
+                        <Textbox Name="totalDescuento">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!totalDescuentos.Value</Value>
+                                  <Value>=Fields!totalDescuento.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -2292,7 +2262,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>totalDescuentos</rd:DefaultName>
+                          <rd:DefaultName>totalDescuento</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2304,7 +2274,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2344,19 +2313,18 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="ice">
+                        <Textbox Name="totalIce">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!ice.Value</Value>
+                                  <Value>=Fields!totalIce.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -2367,7 +2335,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>ice</rd:DefaultName>
+                          <rd:DefaultName>totalIce</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2379,7 +2347,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2419,19 +2386,18 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="iva12">
+                        <Textbox Name="iva">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!iva12.Value</Value>
+                                  <Value>=Fields!iva.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -2442,7 +2408,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>iva12</rd:DefaultName>
+                          <rd:DefaultName>iva</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2454,7 +2420,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2494,19 +2459,18 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="valorTotal">
+                        <Textbox Name="importeTotal">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!valorTotal.Value</Value>
+                                  <Value>=Fields!importeTotal.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -2517,7 +2481,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>valorTotal</rd:DefaultName>
+                          <rd:DefaultName>importeTotal</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2529,7 +2493,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -2555,9 +2518,9 @@
                 <TablixMember />
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>NotaEntregaDs</DataSetName>
-            <Top>9.39419cm</Top>
-            <Left>13.52538cm</Left>
+            <DataSetName>headerDs</DataSetName>
+            <Top>9.44683cm</Top>
+            <Left>14.35887cm</Left>
             <Height>5.02956cm</Height>
             <Width>5.86342cm</Width>
             <ZIndex>6</ZIndex>
@@ -2609,7 +2572,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!observacion.Value, "NotaEntregaDs")</Value>
+                        <Value>=First(Fields!observacion.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -2639,10 +2602,10 @@
                 <TablixBody>
                   <TablixColumns>
                     <TablixColumn>
-                      <Width>1.20121cm</Width>
+                      <Width>2.17883cm</Width>
                     </TablixColumn>
                     <TablixColumn>
-                      <Width>8.47959cm</Width>
+                      <Width>8.86353cm</Width>
                     </TablixColumn>
                   </TablixColumns>
                   <TablixRows>
@@ -2739,11 +2702,11 @@
                     </TablixMember>
                   </TablixMembers>
                 </TablixRowHierarchy>
-                <DataSetName>InfoAdicionalDs</DataSetName>
+                <DataSetName>infoAdicionalDs</DataSetName>
                 <Top>0.88202cm</Top>
-                <Left>0.40056cm</Left>
+                <Left>0.37348cm</Left>
                 <Height>0.6cm</Height>
-                <Width>9.6808cm</Width>
+                <Width>11.04236cm</Width>
                 <ZIndex>2</ZIndex>
                 <Style>
                   <Border>
@@ -2965,13 +2928,13 @@
             </Style>
           </Rectangle>
         </ReportItems>
-        <Height>5.81785in</Height>
+        <Height>5.70555in</Height>
         <Style />
       </Body>
-      <Width>7.63942in</Width>
+      <Width>7.96153in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
-        <PageWidth>20cm</PageWidth>
+        <PageWidth>21cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
         <TopMargin>0.25cm</TopMargin>

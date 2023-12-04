@@ -6,6 +6,7 @@
         public string BussinesName { get; set; }
         public string CodeRole { get; set; }
         public int CompanyId { get; set; }
+        public dynamic LicenseExpiration { get; set; }
         public dynamic Establecimientos { get; set; }
         public string Fullname { get; set; }
         public string IDCardCompany { get; set; }

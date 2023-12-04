@@ -1,6 +1,7 @@
+ 
 import { PATHS } from "@/core/constants"
 import { Http, searchFetch } from "@/core/utilities"
-import { ApiResponse} from "@/core/models"
+import { ApiResponse, CustomerReadDto} from "@/core/models"
 import { customerReadAdapter, dataFormReadAdapter } from "../adapters"
 import Swal from "sweetalert2"
 
@@ -68,7 +69,7 @@ const customerService = {
             const dataApi = response?.payload ? JSON.parse(response.payload) as [] : []      
             return customerReadAdapter(dataApi)
         } catch (error) {
-            console.log(error)
+            console.log('')
             throw error;
         }
     },
@@ -112,6 +113,36 @@ const customerService = {
         }
 
         return isRegistered;
+    },
+
+    /**
+     * 
+     * @param query {tipo: 3, textSearch: '}
+     * @returns devuelve true si el cliente esta registrado y sino false 
+     */
+    async getByICard<T extends {textSearch: string}>(query: T): Promise<CustomerReadDto> { 
+        const resultAxios = await Http({
+            method: 'get',
+            url: `${PATHS.SALE}${URL}Get`,
+            params: {
+                json: JSON.stringify(Object.assign({ tipo: 3 }, query))
+            }
+        })
+        const response: ApiResponse = resultAxios.data;
+        if(response.code==="0"){ 
+            const data: CustomerReadDto = {
+                customerCompanyId: 0,
+                fiscalName: "",
+                tradeName: "",
+                identificationNumber: "",
+                correo: "",
+                telefono: "",
+                direccion: ""
+            }
+            return data;
+        } 
+        const clienteRepository = JSON.parse(response.payload)[0][0]
+        return customerReadAdapter(clienteRepository)   
     }
 
 

@@ -16,12 +16,12 @@ import Swal from 'sweetalert2';
 type CustomerSearchProps = {
     customerCompanyId: number
     customerName: string
-    onChangeCustomer(data:any): void
+    onChangeCustomer(data: any): void
 }
 const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: CustomerSearchProps) => {
-    const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]); 
+    const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
     const refCustomerCompanyId = useRef(customerCompanyId)
-  
+
     //Modals 
     const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
     const [openTooltip, setOpenTooltip] = useState(false)
@@ -37,7 +37,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
     const customerSearch = (textSearch: string) => {
         setCustomers([])
         if (textSearch.length < 2) return
-        customerService.search(textSearch).then(response => { 
+        customerService.search(textSearch).then(response => {
             setCustomers(response)
         }).catch(() => {
             setCustomers([])
@@ -46,19 +46,19 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                 console.log('finally')
             })
     }
-    const handleInputChange = (_:any, value: string) => {
+    const handleInputChange = (_: any, value: string) => {
         customerSearch(value)
     };
 
     const customerDialogClose = (customerData?: CustomerReadDto) => {
-        if(customerData){
+        if (customerData) {
             onChangeCustomer({
                 customerName: customerData?.fiscalName ?? "",
                 customerCompanyId: customerData?.customerCompanyId ?? 0,
-            })  
+            })
         }
         refCustomerCompanyId.current = customerCompanyId > 0 ? customerCompanyId : 0
-        setOpenCustomerDialog(false) 
+        setOpenCustomerDialog(false)
     }
 
     function verificarNumero(numero: any) {
@@ -86,7 +86,6 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
             cancelButtonText: 'No!'
         }).then(result => {
             if (result.isConfirmed) {
-                console.log('dhoidhf')
                 dataCustomerSRI.current = {
                     numeroRuc: textSearch,
                     razonSocial: "",
@@ -108,9 +107,16 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                     return
                 }
 
-                const response = await customerService.search(textSearch);
-                if (response.length > 0) {
-                    SnackbarUtility.info('Selecciona al cliente de entre los clientes que se han encontrado!');
+                showLoader();
+                const response = await customerService.getByICard({
+                    textSearch: textSearch.trim()
+                }).finally(() => hideLoader())
+
+                if (response.customerCompanyId > 0) {
+                    onChangeCustomer({
+                        customerName: response.fiscalName,
+                        customerCompanyId: response.customerCompanyId,
+                    })
                     return
                 }
 
@@ -121,15 +127,15 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                         SharedService.checkClientSRIByRUC(textSearch).then(response => {
                             const { numeroRuc, razonSocial, direccion, telefono, email, error } = response;
                             if (!numeroRuc) {
-                                SnackbarUtility.info(error!)
+                                SnackbarUtility.info(error as string)
                                 return
                             }
                             dataCustomerSRI.current = {
                                 numeroRuc,
                                 razonSocial,
-                                direccion: direccion!,
-                                telefono: telefono!,
-                                email: email!
+                                direccion: direccion as string,
+                                telefono: telefono as string,
+                                email: email as string
                             }
                             setOpenCustomerDialog(true)
                         })
@@ -152,15 +158,15 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                         SharedService.checkClientSRIByCedula(textSearch).then(response => {
                             const { identificacion, nombreCompleto, direccion, telefono, email, error } = response;
                             if (!identificacion || !nombreCompleto) {
-                                SnackbarUtility.info(error!)
+                                SnackbarUtility.info(error as string)
                                 return
                             }
                             dataCustomerSRI.current = {
                                 numeroRuc: identificacion,
                                 razonSocial: nombreCompleto,
-                                direccion: direccion!,
-                                telefono: telefono!,
-                                email: email!
+                                direccion: direccion as string,
+                                telefono: telefono as string,
+                                email: email as string
                             }
                             setOpenCustomerDialog(true)
 
@@ -199,7 +205,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
     const onClickNewCustomer = () => {
         try {
             const elem = document.getElementById('customerSearch') as HTMLInputElement;
-            const textSearch = elem.value; 
+            const textSearch = elem.value;
             refCustomerCompanyId.current = 0;
             dataCustomerSRI.current = {
                 numeroRuc: '',
@@ -219,7 +225,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
     }
 
     const handleTooltipInfo = () => {
-        refCustomerCompanyId.current = customerCompanyId;        
+        refCustomerCompanyId.current = customerCompanyId;
         setOpenTooltip((state) => !state);
     };
 
@@ -233,11 +239,11 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                     console.log(customerData)
                     //Gestionar el agregar o actualizar clinte
                     refCustomerCompanyId.current = customerData?.customerCompanyId ?? 0;
- 
+
                     onChangeCustomer({
                         customerName: customerData?.fiscalName ?? "",
                         customerCompanyId: customerData?.customerCompanyId ?? 0,
-                    })  
+                    })
                 }}
 
                 selectOnFocus
@@ -309,11 +315,11 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                 )}
             />
             {
-                openCustomerDialog && <CustomerDialog 
-                open={openCustomerDialog} 
-                handleClose={customerDialogClose} 
-                dataCustomerSRI={dataCustomerSRI.current}
-                id={refCustomerCompanyId.current} />
+                openCustomerDialog && <CustomerDialog
+                    open={openCustomerDialog}
+                    handleClose={customerDialogClose}
+                    dataCustomerSRI={dataCustomerSRI.current}
+                    id={refCustomerCompanyId.current} />
             }
         </>
     );

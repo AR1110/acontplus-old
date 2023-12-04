@@ -141,15 +141,40 @@ namespace Restaurant.Infrastructure.Data
 
             foreach (var entityEntry in entries)
             {
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
-
-                if (entityEntry.State == EntityState.Added)
+                if (entityEntry.State == EntityState.Modified)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
+                    ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
                 }
+
+                //if (entityEntry.State == EntityState.Added)
+                //{
+                //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
+                //}
             }
 
             return base.SaveChanges();
+        }
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.Entity is BaseEntity && (
+                        e.State == EntityState.Added
+                        || e.State == EntityState.Modified));
+
+            foreach (var entityEntry in entries)
+            {
+                if (entityEntry.State == EntityState.Modified)
+                {
+                    ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
+                }
+                //if (entityEntry.State == EntityState.Added)
+                //{
+                //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
+                //}
+            }
+            int result = await base.SaveChangesAsync(cancellationToken);
+            return result;
         }
 
     }

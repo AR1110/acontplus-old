@@ -1,21 +1,18 @@
 (function () {
 
-    'use strict';
-
-
-
+    'use strict'; 
     app.controller('reporteInventarioCtrl', reporteInventarioCtrl);
 
     reporteInventarioCtrl.$inject = [
         '$scope',
-        'commonService',
-        'mainService',
-        'formulario',
-        'toastService',
-        'articuloService'
+        '$injector',
     ];
 
-    function reporteInventarioCtrl($scope, _commonSvc, mS, fS, tS, articuloSvc) {
+    function reporteInventarioCtrl($scope, $injector) {
+        let commonSvc = $injector.get('commonService');
+        let fS = $injector.get('formulario');
+        let tS = $injector.get('toastService');
+        let articuloSvc = $injector.get('articuloService');
 
         $scope.dataSearch = {};
         $scope.dataSearch.byOrderCampo = 'ar.descripcion';
@@ -24,30 +21,54 @@
         $scope.dataSearch.byTipoFormato = 'pdf';
         $scope.dataSearch.codTransaccion = 'S';
         $scope.dataSearch.estado = 'VI';
-        $scope.dataSearch.tipoReporteArticulo = 'INVRV';
         $scope.proveedor = {};
 
-        $scope.getAsignaciones = function () {
-            let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
+        $scope.establecimientos = [];
 
-            $scope.bodegas = dataEstab.bodegas;
-            $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
-            // _commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
-            //     $scope.bodegas = response[1]
-            // })
-        }
+        //Tabs Stock 
+        const REPORTE_STOCK_VALORACION = 'INVRV'; //Inventario Valoración
+        const REPORT_ARTICULO_PVP = 'INVAT';
+        $scope.isShowEstabStock = true;
+        $scope.dataSearch.tipoReporteStock = REPORTE_STOCK_VALORACION;
+
 
         $scope.initiload = function () {
 
-            articuloSvc.getDataForForm().then(response => {
-                console.log(response)
-                $scope.establecimientos = response.establecimientos;
+            articuloSvc.getDataFormReport().then(response => {
+                const { estabs, subFamilias } = response;
+                $scope.establecimientos = estabs;
                 let dataEstab = $scope.establecimientos.find(item => (item.defaultEstab))
-                $scope.dataSearch.codEstab = dataEstab.codEstab;
+                console.log(dataEstab)
+                $scope.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
 
+                console.log(dataEstab.idEstablecimiento)
                 $scope.bodegas = dataEstab.bodegas;
                 $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
-                $scope.subFamilias = response.subFamilias;
+                $scope.subFamilias = subFamilias.reduce(function (acc, obj) {
+                    let key = obj.familia;
+                    let existingGroup = acc.find(function (group) {
+                        return group.familia === key;
+                    });
+
+                    if (existingGroup) {
+                        existingGroup.subFamilias.push({
+                            idSubFamilia: obj.idSubFamilia,
+                            subFamilia: obj.subFamilia
+                        });
+                    } else {
+                        acc.push({
+                            familia: key,
+                            subFamilias: [{
+                                idSubFamilia: obj.idSubFamilia,
+                                subFamilia: obj.subFamilia
+                            }]
+                        });
+                    }
+
+                    return acc;
+                }, []);
+
+                console.log($scope.subFamilias)
 
             })
         }
@@ -73,9 +94,32 @@
         }
 
         $scope.onChangeEstab = function () {
-            let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
-            $scope.bodegas = $scope.tempBodegas.filter(item => item.idEstab_Asig === dataEstab.idEstab_Asig);
-            $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
+            if ($scope.establecimientos.length === 0) return
+            if (!($scope.dataSearch.idEstablecimiento > 0)) {
+                $scope.dataSearch.idBodega = 0;
+                $scope.dataSearch.idEstablecimiento = 0;
+                $scope.bodegas = [];
+                return
+            }
+            let dataEstab = $scope.establecimientos.find(item => item.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
+            $scope.bodegas = dataEstab.bodegas;
+            if ($scope.bodegas.length > 0) {
+                $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
+            } else {
+                $scope.dataSearch.idBodega = 0;
+
+            }
+        }
+
+
+        //Tabs Stock 
+        $scope.onChangeTipoReporteStock = function () {
+            console.log($scope.dataSearch.tipoReporteStock)
+            if ($scope.dataSearch.tipoReporteStock === REPORTE_STOCK_VALORACION) {
+                $scope.isShowEstabStock = true;
+            } else {
+                $scope.isShowEstabStock = false;
+            }
         }
 
         $scope.onChangeCheckProveedor = function () {
@@ -114,59 +158,99 @@
             }
         }
 
-        $scope.filtrar = async function () {
 
-            if ($scope.dataSearch.chkProveedor) {
-                if (!$scope.dataSearch.numeroIdentificacion) {
-                    tS.toastr('warning', 'Debe ingresar el proveedor', 'Reporte');
-                    return
+        $scope.getReport = function () {
+            try {
+                //Tabs 1
+                if ($scope.dataSearch.checkboxArticuloFiltro) {
+                    if (!($scope.dataSearch.idArticulo > 0)) {
+                        tS.toastr('warning', 'Seleccione el Artículo!');
+                        return
+                    }
+                    if ($scope.dataSearch.checkboxUsuarioFiltro) {
+                        if (!($scope.dataSearch.idUsuario > 0)) {
+                            tS.toastr('warning', 'Seleccione el Usuario!');
+                            return
+                        }
+                    }
                 }
-            }
 
-            if (!$scope.dataSearch.chkProveedor && $scope.dataSearch.checkboxSubFamiliaFiltro) {
-                if (!$scope.dataSearch.bySubFamilia) {
-                    tS.toastr('warning', 'Seleccione la SubFamilia', 'Reporte');
-                    return
+
+                if ($scope.dataSearch.chkProveedor) {
+                    if (!($scope.dataSearch.numeroIdentificacion)) {
+                        tS.toastr('warning', 'Seleccione el Proveedor!');
+                        return
+                    }
                 }
-            }
 
-            if ($scope.dataSearch.checkboxStockFiltro) {
-                if (!$scope.dataSearch.byStock) {
-                    tS.toastr('warning', 'Seleccione el Stock', 'Reporte');
-                    return
+                if (!$scope.dataSearch.chkProveedor && $scope.dataSearch.checkboxSubFamiliaFiltro) {
+                    if (!$scope.dataSearch.bySubFamilia) {
+                        tS.toastr('warning', 'Seleccione la SubFamilia', 'Reporte');
+                        return
+                    }
                 }
-            }
 
-            if ($scope.dataSearch.checkboxUsuarioFiltro) {
-                if (!($scope.dataSearch.idUsuario > 0)) {
-                    tS.toastr('warning', 'Seleccione el Usuario');
-                    return;
+                if ($scope.dataSearch.checkboxStockFiltro) {
+                    if (!$scope.dataSearch.byStock) {
+                        tS.toastr('warning', 'Seleccione el Stock', 'Reporte');
+                        return
+                    }
                 }
-            }
 
-            if ($scope.dataSearch.byTipoReporte == 3) {
-                if ($scope.dataSearch.chkUbicacion) {
-                    if (!$scope.dataSearch.textUbicacion) {
-                        tS.toastr('warning', 'Ingrese la ubicación ');
+                if ($scope.dataSearch.checkboxUsuarioFiltro) {
+                    if (!($scope.dataSearch.idUsuario > 0)) {
+                        tS.toastr('warning', 'Seleccione el Usuario');
                         return;
                     }
                 }
-            }
 
-            $scope.dataSearch.filtroFecha = getFilterDate();
+                if ($scope.dataSearch.byTipoReporte == 3) {
+                    if ($scope.dataSearch.chkUbicacion) {
+                        if (!$scope.dataSearch.textUbicacion) {
+                            tS.toastr('warning', 'Ingrese la ubicación ');
+                            return;
+                        }
+                    }
+                }
 
-            if ($scope.dataSearch.byTipoReporte === 0) {
-                $scope.getReportConsumoDiario();
+                $scope.dataSearch.filtroFecha = getFilterDate();
+
+                if ($scope.dataSearch.byTipoReporte === 0) {
+                    getReportConsumoDiario();
+                }
+
+                if ($scope.dataSearch.byTipoReporte === 1) {
+                    if (!($scope.dataSearch.bySubFamilia > 0)) {
+                        tS.toastr('warning', 'Seleccione la Subfamilia!');
+                        return
+                    }
+                    getReportArticuloStock();
+                }
+                if ($scope.dataSearch.byTipoReporte === 2) {
+                    if (!($scope.dataSearch.bySubFamilia > 0)) {
+                        tS.toastr('warning', 'Seleccione la Subfamilia!');
+                        return
+                    }
+                    getReportArticuloPVP();
+                }
+                if ($scope.dataSearch.byTipoReporte === 3) {
+                    getReportArticuloFraccionado();
+                }
+                if ($scope.dataSearch.byTipoReporte === 4) {
+                    getReportCaducidad();
+                }
+
+            } catch (error) {
+                console.log(error)
             }
-            if ($scope.dataSearch.byTipoReporte === 1) {
-                $scope.getReportArticle();
+        }
+
+        function isValidField(field) {
+            let invalid = ["", null, undefined, 0].includes(field)
+            if (invalid) {
+                return null;
             }
-            if ($scope.dataSearch.byTipoReporte === 2) {
-                $scope.getReportArticuloFraccionado();
-            }
-            if ($scope.dataSearch.byTipoReporte === 3) {
-                $scope.getReportCaducidad();
-            }
+            return field;
         }
 
         function getFilterDate() {
@@ -177,13 +261,10 @@
         }
 
         // REPORTE DE CONSUMO DIARIO DE ARTICULOS
-        $scope.getReportConsumoDiario = function () {
+        function getReportConsumoDiario() {
             let dataSearch = {
                 tipo: 4,
-                checkBoxArticulo: $scope.dataSearch.checkboxArticuloFiltro,
-                checkBoxUsuario: $scope.dataSearch.checkboxUsuarioFiltro,
                 checkBoxFecha: true,
-                checkBoxTransaccion: true,
                 idUsuario: $scope.dataSearch.idUsuario,
                 idArticulo: $scope.dataSearch.idArticulo,
                 codTransaccion: $scope.dataSearch.codTransaccion,
@@ -205,89 +286,117 @@
                 formatType: $scope.dataSearch.byTipoFormato
             }
 
-            _commonSvc.getReport(params)
+            commonSvc.getReport(params)
         }
+
+        //Reporte Stock General - Stock con valoración
+        function getReportArticuloStock() {
+            try {
+                let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
+                let codEstab = null;
+                if (dataEstab) {
+                    codEstab = dataEstab.codEstab;
+                }
+
+                let dataSearch = {
+                    tipo: 3,
+                    bySubFamilia: isValidField($scope.dataSearch.bySubFamilia),
+                    numeroIdentificacion: isValidField($scope.dataSearch.numeroIdentificacion),
+                    codEstab,
+                    idBodega: isValidField($scope.dataSearch.idBodega),
+                    filtroFecha: $scope.dataSearch.filtroFecha
+                }
+
+                const parameters = {
+                    reportParams: JSON.stringify({
+                        codigo: REPORTE_STOCK_VALORACION,
+                        format: $scope.dataSearch.byTipoFormato,
+                        aditionalParams: []
+                    }),
+                    dataParams: JSON.stringify(dataSearch)
+                }
+
+                const params = {
+                    parameters,
+                    formatType: $scope.dataSearch.byTipoFormato
+                }
+
+                commonSvc.getReport(params)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        function getReportArticuloPVP() {
+            try {
+
+                let dataSearch = {
+                    tipo: 2,
+                    bySubFamilia: isValidField($scope.dataSearch.bySubFamilia),
+                }
+                const parameters = {
+                    reportParams: JSON.stringify({
+                        codigo: REPORT_ARTICULO_PVP,
+                        format: $scope.dataSearch.byTipoFormato,
+                        aditionalParams: []
+                    }),
+                    dataParams: JSON.stringify(dataSearch)
+                }
+
+                const params = {
+                    parameters,
+                    formatType: $scope.dataSearch.byTipoFormato
+                }
+
+                commonSvc.getReport(params)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        //lista lista precios 
 
         // REPORTE DE ARTICULOS CON TARIFAS DE PRECIO ||  REPORTE DE ARTICULOS CON STOCK POR BODEGA
-        $scope.getReportArticle = function () {
-            let dataSearch = {
-                tipo: $scope.dataSearch.tipoReporteArticulo === 'INVRV' ? 3 : 2,
-                codEstab: $scope.dataSearch.codEstab,
-                chkProveedor: $scope.dataSearch.chkProveedor,
-                numeroIdentificacion: $scope.dataSearch.numeroIdentificacion,
-                checkboxSubFamiliaFiltro: $scope.dataSearch.checkboxSubFamiliaFiltro,
-                ckFechaCaducidad: $scope.dataSearch.ckFechaCaducidad,
-                fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                chkUbicacion: $scope.dataSearch.chkUbicacion,
-                idBodega: $scope.dataSearch.idBodega,
-                textUbicacion: $scope.dataSearch.textUbicacion,
-                bySubFamilia: $scope.dataSearch.bySubFamilia,
-                byOrderCampo: $scope.dataSearch.byOrderCampo,
-                byTipoFormato: $scope.dataSearch.byTipoFormato,
-                byTipoReporte: $scope.dataSearch.byTipoReporte,
-                byOrder: $scope.dataSearch.byOrder,
-                filtroFecha: $scope.dataSearch.filtroFecha
-            }
+        // $scope.getReportArticle = function () {
+        //     let dataSearch = {
+        //         tipo: $scope.dataSearch.tipoReporteArticulo === 'INVRV' ? 3 : 2,
+        //         codEstab: $scope.dataSearch.codEstab,
+        //         chkProveedor: $scope.dataSearch.chkProveedor,
+        //         numeroIdentificacion: $scope.dataSearch.numeroIdentificacion,
+        //         checkboxSubFamiliaFiltro: $scope.dataSearch.checkboxSubFamiliaFiltro,
+        //         ckFechaCaducidad: $scope.dataSearch.ckFechaCaducidad,
+        //         fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+        //         fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+        //         chkUbicacion: $scope.dataSearch.chkUbicacion,
+        //         idBodega: ["", 0, null, undefined].includes($scope.dataSearch.idBodega) ? null : $scope.dataSearch.idBodega,
+        //         textUbicacion: $scope.dataSearch.textUbicacion,
+        //         bySubFamilia: $scope.dataSearch.bySubFamilia,
+        //         byOrderCampo: $scope.dataSearch.byOrderCampo,
+        //         byTipoFormato: $scope.dataSearch.byTipoFormato,
+        //         byTipoReporte: $scope.dataSearch.byTipoReporte,
+        //         byOrder: $scope.dataSearch.byOrder,
+        //         filtroFecha: $scope.dataSearch.filtroFecha
+        //     }
 
-            const parameters = {
-                reportParams: JSON.stringify({
-                    codigo: $scope.dataSearch.tipoReporteArticulo === 'INVRV' ? 'INVRV' : 'INVAT',
-                    format: $scope.dataSearch.byTipoFormato,
-                    aditionalParams: []
-                }),
-                dataParams: JSON.stringify(dataSearch)
-            }
+        //     const parameters = {
+        //         reportParams: JSON.stringify({
+        //             codigo: $scope.dataSearch.tipoReporteArticulo === 'INVRV' ? 'INVRV' : 'INVAT',
+        //             format: $scope.dataSearch.byTipoFormato,
+        //             aditionalParams: []
+        //         }),
+        //         dataParams: JSON.stringify(dataSearch)
+        //     }
 
-            const params = {
-                parameters,
-                formatType: $scope.dataSearch.byTipoFormato
-            }
+        //     const params = {
+        //         parameters,
+        //         formatType: $scope.dataSearch.byTipoFormato
+        //     }
 
-            _commonSvc.getReport(params)
-        }
-
-        // REPORTE DE CADUCIDAD DE ARTICULOS 
-        $scope.getReportCaducidad = function () {
-            let dataSearch = {
-                tipo: 5,
-                codEstab: $scope.dataSearch.codEstab,
-                chkProveedor: $scope.dataSearch.chkProveedor,
-                numeroIdentificacion: $scope.dataSearch.numeroIdentificacion,
-                checkboxSubFamiliaFiltro: $scope.dataSearch.checkboxSubFamiliaFiltro,
-                bySubFamilia: $scope.dataSearch.bySubFamilia,
-                ckFechaCaducidad: $scope.dataSearch.ckFechaCaducidad,
-                fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                chkUbicacion: $scope.dataSearch.chkUbicacion,
-                idBodega: $scope.dataSearch.idBodega,
-                textUbicacion: $scope.dataSearch.textUbicacion,
-                chkEstado: true,
-                estado: $scope.dataSearch.estado,
-                byTipoFormato: $scope.dataSearch.byTipoFormato,
-                byTipoReporte: $scope.dataSearch.byTipoReporte,
-                filtroFecha: $scope.dataSearch.filtroFecha
-            }
-
-            const parameters = {
-                reportParams: JSON.stringify({
-                    codigo: 'RCAA',
-                    format: $scope.dataSearch.byTipoFormato,
-                    aditionalParams: []
-                }),
-                dataParams: JSON.stringify(dataSearch)
-            }
-
-            const params = {
-                parameters,
-                formatType: $scope.dataSearch.byTipoFormato
-            }
-
-            _commonSvc.getReport(params)
-        }
+        //     commonSvc.getReport(params)
+        // }
 
         // REPORTE DE ARTICULOS FRACCIONADOS 
-        $scope.getReportArticuloFraccionado = function () {
+        function getReportArticuloFraccionado() {
             let dataSearch = {
                 tipo: 1,
                 checkBoxArticulo: $scope.dataSearch.checkboxArticuloFiltro,
@@ -311,11 +420,47 @@
                 formatType: $scope.dataSearch.byTipoFormato
             }
 
-            _commonSvc.getReport(params)
+            commonSvc.getReport(params)
         }
+
+        // REPORTE DE CADUCIDAD DE ARTICULOS 
+        function getReportCaducidad() {
+            let dataSearch = {
+                tipo: 5,
+                codEstab: $scope.dataSearch.codEstab,
+                chkProveedor: $scope.dataSearch.chkProveedor,
+                numeroIdentificacion: $scope.dataSearch.numeroIdentificacion,
+                checkboxSubFamiliaFiltro: $scope.dataSearch.checkboxSubFamiliaFiltro,
+                bySubFamilia: $scope.dataSearch.bySubFamilia,
+                ckFechaCaducidad: $scope.dataSearch.ckFechaCaducidad,
+                fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                chkUbicacion: $scope.dataSearch.chkUbicacion,
+                idBodega: ["", 0, null, undefined].includes($scope.dataSearch.idBodega) ? null : $scope.dataSearch.idBodega,
+                textUbicacion: $scope.dataSearch.textUbicacion,
+                chkEstado: true,
+                estado: $scope.dataSearch.estado,
+                byTipoFormato: $scope.dataSearch.byTipoFormato,
+                byTipoReporte: $scope.dataSearch.byTipoReporte,
+                filtroFecha: $scope.dataSearch.filtroFecha
+            }
+
+            const parameters = {
+                reportParams: JSON.stringify({
+                    codigo: 'RCAA',
+                    format: $scope.dataSearch.byTipoFormato,
+                    aditionalParams: []
+                }),
+                dataParams: JSON.stringify(dataSearch)
+            }
+
+            const params = {
+                parameters,
+                formatType: $scope.dataSearch.byTipoFormato
+            }
+
+            commonSvc.getReport(params)
+        }
+
     }
-
-
-
-
 })(window.angular)

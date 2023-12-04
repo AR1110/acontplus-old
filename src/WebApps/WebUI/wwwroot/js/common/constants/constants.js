@@ -140,10 +140,11 @@ app.constant('nombreModalVenta', {
             NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
             FV_SRI: '~/Pages/Factura/_ModalDetalle.cshtml',
             PR: '~/Pages/Proforma/_ModalDetalle.cshtml',
+            NC_SRI: '~/Pages/NotaCredito/_ModalDetalle.cshtml'
         }
 
     },
-    CLIENTE: { 
+    CLIENTE: {
         fileCtrl: '/js/ventas/modals/modalClienteCtrl.js' + CHANGE_VERSION(),
         controllers: {
             M: 'ModalClienteCtrl',
@@ -838,14 +839,24 @@ app.constant('TAX_RATE_CODE', {
 })
 
 app.constant('DOC_TYPE', {
-    FV_SRI: '01',    
+    FV_SRI: '01',
     FV: 'FV',
     NE: 'NE',
-    PR: 'PR'
+    PR: 'PR',
+    NC: 'NC',
+    NC_SRI: '04'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
-    RUC : "04",
-    LICENSE : "05",
-    PASSPORT : "06",
+    RUC: "04",
+    LICENSE: "05",
+    PASSPORT: "06",
     CONSUMIR_FINAL: '07'
+})
+
+app.constant('CODE_REPORT', {
+    RF: 'RF', //Reporte Factura
+    FG: "FG", //Ventas -> Factura General
+    CCR: 'CCR', //Cuenta por cobrar
+    FEG: 'FEG', //Facturacion Electronica -> Factura General
+    RNE: 'RNE'
 })

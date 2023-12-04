@@ -59,7 +59,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
 
         productService.findForSale(item.productId, order.bodegaId).then(response => {
-            const { product, measures } = response;
+            const { product, measures, consolidacionesFecha } = response;
             const measureData = measures.find(medida => (medida.defaultMedida));
            // const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
 
@@ -156,7 +156,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     obs: "",
                     itemTypeCode: item.itemTypeCode,
                     envioSri: false,
-                    paid: false
+                    paid: false,
                 })
             }
 
