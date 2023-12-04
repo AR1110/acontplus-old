@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Configuracion.API.Data.Migrations
 {
     [DbContext(typeof(ConfigContext))]
-    [Migration("20231201221944_InitialConfigApiMigration")]
-    partial class InitialConfigApiMigration
+    [Migration("20231203153112_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,6 +77,9 @@ namespace Configuracion.API.Data.Migrations
 
                     b.Property<int>("PrinterTypeId")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("ServerDevice")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

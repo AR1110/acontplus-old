@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Configuracion.API.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialConfigApiMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,6 +50,7 @@ namespace Configuracion.API.Data.Migrations
                     IpAddress = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     IsDefault = table.Column<bool>(type: "bit", nullable: false),
                     Machine = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
+                    ServerDevice = table.Column<bool>(type: "bit", nullable: true),
                     MacAddress = table.Column<string>(type: "varchar(17)", unicode: false, maxLength: 17, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
