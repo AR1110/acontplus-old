@@ -47,7 +47,7 @@ BEGIN
                                                         INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                                                         INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
                                                         INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
-                                                            AND s.Paid IS NULL
+                                                            AND (s.Paid IS NULL OR s.Paid = 0)
                                                             AND s.[Enabled] = 1 
                                                             AND s.Deleted IS NULL 
                                                         WHERE ur.idUsuarioRol = @idUsuarioRol
@@ -57,7 +57,7 @@ BEGIN
                                                         INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                                                         INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
                                                         INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
-                                                            AND s.Paid IS NULL
+                                                            AND (s.Paid IS NULL OR s.Paid = 0)
                                                             AND s.[Enabled] = 1
                                                             AND s.Deleted IS NULL 
                                                         WHERE ur.idUsuarioRol = @idUsuarioRol                                              
@@ -70,7 +70,7 @@ BEGIN
                                                         INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                                                         INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
                                                         INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
-                                                            AND s.Paid IS NULL
+                                                            AND (s.Paid IS NULL OR s.Paid = 0)
                                                             AND s.[Enabled] = 1
                                                             AND s.Deleted IS NULL
                                                         WHERE ur.idUsuarioRol = @idUsuarioRol
@@ -90,7 +90,7 @@ BEGIN
                              INNER JOIN Entidad e WITH(NOLOCK) ON ur.idEntidad = e.idEntidad
                              INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
                              INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
-                                AND s.Paid IS NULL
+                                AND (s.Paid IS NULL OR s.Paid = 0)
                                 AND s.[Enabled] = 1
                                 AND s.Deleted IS NULL
                              INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON s.LicenciaId = l.Id
