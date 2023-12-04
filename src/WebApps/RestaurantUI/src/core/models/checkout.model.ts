@@ -11,6 +11,7 @@ export interface Voucher {
     codEstab: string
     creationDate: Date | string
     nroDoc: string
+    totalValorAbono: number
 }
 
 // {
@@ -29,13 +30,13 @@ export interface Voucher {
 
 export interface Payment {
     paymentTypeId: number
-    paymentSubtypeId: number
-    creationDate: string
+    paymentSubTypeId: number
+    creationDate: Date
     receivedAmount: number
     payingAmount: number
     sequential: number
-    isControlBox: number
-    paymentTypeCode?: string
+    isControlBox: boolean
+    paymentTypeCode: string
     paymentTypeDescription?: string
     nro?: string
     referencia?: string
@@ -46,12 +47,31 @@ export interface Payment {
     posfechado?: boolean
 }
 
+
+
 export interface CheckoutDataForm {
-    paymentTypes: Array<PaymentType> 
+    paymentTypes: Array<PaymentType>
     voucherQuotas: Array<VoucherQuota>
     banks: Array<Bank>
     cities: Array<City>
-    comprobante: any
+    comprobante: Voucher
+}
+
+
+export interface CheckoutSubTotal {
+    importeTotal:  number
+    totalAbonoAnterior:  number
+    totalSaldo: number
+    totalSaldoDoc: number
+}
+
+/**
+ * Datos cobro 
+ */
+export interface MultiplesPaymentType extends Payment  {
+    idCuentaBancaria:number
+    paymentSubTypeName: string
+    infoCobro?: string
 }
 
 export interface Checkout {
@@ -59,7 +79,11 @@ export interface Checkout {
     voucher: Voucher
     paymentData: Payment,
     paymentSubTypes: Array<PaymentSubType>
+    dataSubTotal: CheckoutSubTotal
+    multiplesPaymentType: Array<MultiplesPaymentType>
+    paymentDetails: Array<PaymentDetail>
 }
+
 export interface PaymentDetail {
     idCuentaPorCobrar: number
     idCuotaPorCobrar: number,
@@ -100,36 +124,39 @@ export interface CheckoutState {
     checkoutLoading: boolean
     checkoutError: boolean
     checkout: Checkout
-    closeDialog(): void
+    closeDialog(data?:any): void
 }
 
 
- type ActionCalculator = {
-    handleClickOptionReceivedAmount(value: number): void 
+
+type ActionCalculator = {
+    handleClickOptionReceivedAmount(value: number): void
     checkoutClearButton(): void
 }
 
 export type CheckoutActions = ActionCalculator & {
-    fetchCheckout<T extends CheckoutParams>(data: T, callback: () => void): void 
-    setChangePaymentType<T extends keyof typeof paymentDataInitialState>(
+    fetchCheckout<T extends CheckoutParams>(data: T, callback: () => void): void
+    setChangePaymentType(data: Partial<Payment>, paymentSubTypes: PaymentSubType[]): void;
+    setChangeFieldFormPayment<T extends keyof typeof paymentDataInitialState>(
         prop: T,
-        value: typeof paymentDataInitialState[T], paymentSubTypes: PaymentSubType[]
+        value: typeof paymentDataInitialState[T]
     ): void;
-    addPaymentType<T>(data:T):void
+    addPaymentType<T>(data: T): void
     onChangeReceivedAmount(event: React.ChangeEvent<HTMLInputElement>): void
-    handleChangeSetReceivedAmount(value: number | string): void  
+    handleChangeSetReceivedAmount(value: number | string): void
+    removePaymentType(index:number):void
     save(): void
 }
 
 
 export const paymentDataInitialState: Payment = {
     paymentTypeId: 0,
-    paymentSubtypeId: 0,
-    creationDate: "",
+    paymentSubTypeId: 0,
+    creationDate: new Date(),
     receivedAmount: 0,
     payingAmount: 0,
     sequential: 0,
-    isControlBox: 0,
+    isControlBox: false,
     paymentTypeCode: "",
     paymentTypeDescription: "",
     nro: "",
@@ -147,7 +174,19 @@ export const checkoutDataFormInitialState: CheckoutDataForm = {
     voucherQuotas: [],
     banks: [],
     cities: [],
-    comprobante: {}
+    comprobante: {
+        customerCompanyId: 0,
+        customerIdentification: "",
+        customerName: "",
+        payingAmount: 0,
+        receivedAmount: "",
+        changeReturn: 0,
+        totalBalance: 0,
+        codEstab: "",
+        creationDate: "",
+        nroDoc: "",
+        totalValorAbono: 0
+    }
 }
 
 
@@ -162,11 +201,20 @@ export const initialCheckoutState: Checkout = {
         changeReturn: 0,
         totalBalance: 0,
         codEstab: "",
-        creationDate: "",
-        nroDoc: ""
+        creationDate: new Date(),
+        nroDoc: "",
+        totalValorAbono: 0
     },
     paymentData: structuredClone(paymentDataInitialState),
     paymentSubTypes: [],
+    dataSubTotal: {
+        importeTotal: 0,
+        totalAbonoAnterior: 0,
+        totalSaldo: 0,
+        totalSaldoDoc: 0
+    },
+    multiplesPaymentType: [],
+    paymentDetails: []
 }
 
 

@@ -1,23 +1,15 @@
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
     Box,
     Button,
     Card,
-    CardActions,
     CardContent,
     Divider,
-    FormControlLabel,
     Grid,
-    InputAdornment,
     MenuItem,
-    Switch,
     TextField,
     Typography
 } from '@mui/material'
-import IconButton from '@mui/material/IconButton';
-import { ExpandMoreIcon, PaymentsIcon, SaveAltIcon, SaveIcon } from '../../IconsMaterial'
+import { SaveIcon } from '../../IconsMaterial'
 import { PaymentTypeCode } from '@/core/constants';
 import City from './City';
 import Bank from './Bank';
@@ -26,8 +18,8 @@ import { useCheckoutContext } from '../context';
 import { DatosCobro, InputReceivedAmount } from '.';
 
 const PaymentMethod = () => {
-    const { checkout, setChangePaymentType, onChangeReceivedAmount, save } = useCheckoutContext();
-    const { voucher, dataForm, paymentData, paymentSubTypes } = checkout;
+    const { checkout, setChangePaymentType, addPaymentType, setChangeFieldFormPayment, save } = useCheckoutContext();
+    const { voucher, dataForm, paymentData, dataSubTotal } = checkout;
 
     //const onChangeReceivedAmount = useCheckoutStore(state => state.onChangeReceivedAmount)
     //const save = useCheckoutStore(state => state.save)
@@ -39,19 +31,47 @@ const PaymentMethod = () => {
         <Box sx={{ flexGrow: 1 }}>
             <Card variant="outlined">
                 <CardContent>
-                    <Grid item xs={12} sm container>
-                        <Grid item xs container direction="column" spacing={1}>
-
-                            <Typography variant="h5" component="div">
-                                Total
-                            </Typography>
+                    <Grid item xs={12} sm container justifyContent="center">
+                        <Grid item xs container direction="row" spacing={1}>
+                            <Grid item xs>
+                                <Typography variant="h6" gutterBottom>
+                                    Total
+                                </Typography>
+                                <Typography variant="h5" gutterBottom>
+                                    ${dataSubTotal.importeTotal}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs>
+                                <Typography variant="h6" gutterBottom>
+                                    Saldo
+                                </Typography>
+                                <Typography variant="h5" gutterBottom>
+                                    ${voucher.totalBalance}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs>
+                                <Typography variant="h6" gutterBottom color="primary">
+                                    Abono
+                                </Typography>
+                                <Typography variant="h5" gutterBottom color="primary">
+                                    ${voucher.totalValorAbono}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs>
+                                <Typography variant="h6" gutterBottom color="error">
+                                    Cambio
+                                </Typography>
+                                <Typography variant="h5" gutterBottom color="error">
+                                    ${voucher.changeReturn}
+                                </Typography>
+                            </Grid>
 
                         </Grid>
-                        <Grid item>
+                        {/* <Grid item>
                             <Typography variant="h5" component="div">
                                 ${voucher.payingAmount}
                             </Typography>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                     <Divider sx={{ my: 1 }} />
                     <Grid container spacing={2}>
@@ -98,11 +118,12 @@ const PaymentMethod = () => {
                                             const paymentTypeData = paymentTypes.find(item => item.paymentTypeId === Number(e.target.value));
                                             if (paymentTypeData) {
                                                 const paymentSubTypeData = paymentTypeData.paymentSubTypes[0]
+
                                                 setChangePaymentType({
-                                                    paymentSubtypeId: paymentSubTypeData?.paymentSubtypeId ?? 0,
-                                                    paymentTypeId: paymentTypeData?.paymentTypeId ?? 0,
-                                                    paymentTypeCode: paymentTypeData?.code,
-                                                    paymentTypeDescription: paymentTypeData?.description,
+                                                    paymentSubTypeId: paymentSubTypeData?.paymentSubTypeId ?? 0,
+                                                    paymentTypeId: paymentTypeData.paymentTypeId ?? 0,
+                                                    paymentTypeCode: paymentTypeData.code,
+                                                    paymentTypeDescription: paymentTypeData.description,
                                                     nro: "",
                                                     referencia: "",
                                                     aprobacion: "",
@@ -144,9 +165,7 @@ const PaymentMethod = () => {
                                                 name="numero"
                                                 value={paymentData.nro}
                                                 onChange={(e) => {
-                                                    setChangePaymentType({
-                                                        nro: e.target.value 
-                                                    })
+                                                    setChangeFieldFormPayment("nro", e.target.value)
                                                 }}
                                             />
                                         </Grid>
@@ -159,10 +178,7 @@ const PaymentMethod = () => {
                                                 name="referencia"
                                                 value={paymentData.referencia}
                                                 onChange={(e) => {
-                                                    setChangePaymentType({
-                                                        referencia: e.target.value
-
-                                                    })
+                                                    setChangeFieldFormPayment("referencia", e.target.value)
                                                 }}
                                             />
                                         </Grid>
@@ -181,10 +197,7 @@ const PaymentMethod = () => {
                                                 name="aprobacion"
                                                 value={paymentData.aprobacion}
                                                 onChange={(e) => {
-                                                    setChangePaymentType({
-                                                        aprobacion: e.target.value
-
-                                                    })
+                                                    setChangeFieldFormPayment("aprobacion", e.target.value)
                                                 }}
                                             />
                                         </Grid>
@@ -197,10 +210,7 @@ const PaymentMethod = () => {
                                                 name="lote"
                                                 value={paymentData.lote}
                                                 onChange={(e) => {
-                                                    setChangePaymentType({
-                                                        lote: e.target.value
-
-                                                    })
+                                                    setChangeFieldFormPayment("lote", e.target.value)
                                                 }}
                                             />
                                         </Grid>
@@ -225,10 +235,7 @@ const PaymentMethod = () => {
                                                 name="numero"
                                                 value={paymentData.nro}
                                                 onChange={(e) => {
-                                                    setChangePaymentType({
-                                                        nro: e.target.value
-
-                                                    })
+                                                    setChangeFieldFormPayment("nro", e.target.value)
                                                 }}
                                             />
                                         </Grid>
@@ -257,10 +264,7 @@ const PaymentMethod = () => {
                                                 name="numero"
                                                 value={paymentData.nro}
                                                 onChange={(e) => {
-                                                    setChangePaymentType({
-                                                        nro: e.target.value
-
-                                                    })
+                                                    setChangeFieldFormPayment("nro", e.target.value)
                                                 }}
                                             />
                                         </Grid>
@@ -274,31 +278,28 @@ const PaymentMethod = () => {
                                                 name="referencia"
                                                 value={paymentData.referencia}
                                                 onChange={(e) => {
-                                                    setChangePaymentType({
-                                                        referencia: e.target.value
-
-                                                    })
+                                                    setChangeFieldFormPayment("referencia", e.target.value)
                                                 }}
                                             />
                                         </Grid>
 
-                                        <Grid item xs={12} sm={6}>
+                                        {/* <Grid item xs={12} sm={6}>
                                             <FormControlLabel label="Posfechado" control={
                                                 <Switch aria-label='Posfechado' value={paymentData.posfechado} defaultChecked={false} />
                                             } />
-                                        </Grid>
+                                        </Grid> */}
                                     </>
                                 )
                             }
                             <Grid item xs={12} md={12}>
                                 <Button
                                     variant='contained'
-
                                     size='large'
                                     fullWidth
                                     sx={{
                                         height: 60,
                                     }}
+                                    onClick={addPaymentType}
                                 >
                                     Agregar cobro
                                 </Button>
@@ -306,7 +307,7 @@ const PaymentMethod = () => {
                         </Grid>
                     </Box>
 
-                    {
+                    {/* {
                         voucher.changeReturn > 0 && (
                             <Grid container alignItems="center">
                                 <Grid item xs>
@@ -321,7 +322,7 @@ const PaymentMethod = () => {
                                 </Grid>
                             </Grid>
                         )
-                    }
+                    } */}
                     {/* disabled={paymentData.paymentTypeCode === PaymentTypeCode.EFE} */}
                     <Box
                         sx={{

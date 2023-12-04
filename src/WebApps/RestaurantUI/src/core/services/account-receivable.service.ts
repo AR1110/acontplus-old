@@ -31,9 +31,8 @@ export const accountReceivableService = {
         }
 
         const dataRepository = JSON.parse(response.payload);
-        const paymentTypes = dataRepository[0], paymentSubTypes = dataRepository[1]
+        const paymentTypes = dataRepository[0], paymentSubTypes = dataRepository[1];
         
-        console.log(dataRepository)
         const voucherRepository = dataRepository[6][0] ?? {};
 
         const resultMapper = {

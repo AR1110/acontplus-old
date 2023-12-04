@@ -26,4 +26,5 @@ export interface VoucherQuota {
     saldo: number,
     estado: string,
     cuotas: Array<Quota>
+    cloneCuotas: Array<Quota>
 }

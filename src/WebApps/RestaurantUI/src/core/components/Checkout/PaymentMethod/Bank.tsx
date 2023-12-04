@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useCheckoutContext } from '../context';
 
 export default function Bank() {
-    const {checkout, setPayment} = useCheckoutContext(); 
+    const {checkout, setChangeFieldFormPayment} = useCheckoutContext(); 
     const {dataForm} = checkout
 
     const banks = dataForm.banks; 
@@ -17,11 +17,8 @@ export default function Bank() {
                         disablePortal
                         id="banco" 
                         onChange={(_, newValue) => { 
-                            const bankId = newValue? newValue.bankId : 0                           
-                            setPayment({ 
-                                idBanco: bankId
-
-                            })
+                            const bankId = newValue? newValue.bankId : 0  
+                            setChangeFieldFormPayment("idBanco", bankId)     
                           }}
                         options={banks}
                         getOptionLabel={(option) => option.description}

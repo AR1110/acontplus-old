@@ -28,7 +28,7 @@ export interface RawPaymentSubType {
 //Start Adapter Front End
 export interface PaymentSubType {
     paymentTypeId: number,
-    paymentSubtypeId: number,
+    paymentSubTypeId: number,
     description: string,
     code: string
     isControlBox: boolean

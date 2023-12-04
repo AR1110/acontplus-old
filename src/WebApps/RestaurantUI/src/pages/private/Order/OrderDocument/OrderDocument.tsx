@@ -206,7 +206,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
-                                            <ButtonAction data={row}/>
+                                            <ButtonAction data={row} getOrderDocuments={getOrderDocuments }/>
                                         </TableCell>
                                         <TableCell>
                                             {index + 1}
