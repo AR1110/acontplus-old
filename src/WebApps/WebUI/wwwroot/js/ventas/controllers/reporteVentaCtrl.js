@@ -67,14 +67,20 @@
                         $scope.puntosEmision = dataEstab.puntosEmision;
                         $scope.dataSearchEstadistica.codEstab = dataEstab.codEstab;
                     }
-                    $scope.tiposDoc = tiposDoc;
+              
+                    $scope.tiposDoc = [...tiposDoc, {
+                        idTipoDocumento: 0,
+                        descripcion: "Consolidado Diario de Venta",
+                        codigoSri: "",
+                        codigo: "FVNE",
+                    }]
                     const dataTipoDoc = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigoSri === DOC_TYPE.FV_SRI);
                     $scope.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
                     $scope.estadosDoc = estadosDoc.map(item => ({
                         ...item,
                         idEstadoDocumento: item.idEstadoPago
                     }))
-                    console.log(response)
+
                 })
                     .catch(error => {
                         console.log(error)
@@ -86,6 +92,9 @@
             }
         }
 
+        $scope.onChangeTipoDoc = function(){
+            
+        }
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
@@ -103,9 +112,9 @@
         }
 
 
-        function getTipoDoc (codigo){
-            if(codigo===DOC_TYPE.FV) return DOC_TYPE.FV_SRI;
-            
+        function getTipoDoc(codigo) {
+            if (codigo === DOC_TYPE.FV) return DOC_TYPE.FV_SRI;
+
             return codigo;
         }
 
@@ -115,8 +124,8 @@
                     tS.toastr('warning', 'Seleccione el Tipo Documento');
                     return
                 }
-                let dataEstab = $scope.establecimientos.find(estab=>estab.idEstablecimiento===$scope.dataSearch.idEstablecimiento);
-                let dataEstado =$scope.estadosDoc.find(estado=>estado.idEstadoDocumento===$scope.dataSearch.idEstadoDocumento);
+                let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
+                let dataEstado = $scope.estadosDoc.find(estado => estado.idEstadoDocumento === $scope.dataSearch.idEstadoDocumento);
                 let dataTipoDoc = $scope.tiposDoc.find(item => item.idTipoDocumento === $scope.dataSearch.idTipoDocumento)
                 let dataParams = {
                     tipo: 2,
@@ -126,7 +135,7 @@
                     idCliente: $scope.dataSearch.idCliente,
                     codEstado: dataEstado && dataEstado.codigo || null,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin), 
+                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                 }
                 const parameters = {
                     hasIdUsuarioRol: true,
@@ -228,7 +237,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: `Reporte Venta ${$scope.dataSearch.byAnio}`,
+                            text: `Reporte Venta ${$scope.dataSearchEstadistica.byAnio}`,
                             padding: {
                                 top: 10,
                                 bottom: 30

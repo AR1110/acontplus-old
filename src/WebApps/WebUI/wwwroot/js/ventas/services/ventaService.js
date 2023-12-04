@@ -237,7 +237,7 @@
                     // }
                     let clienteDefaultTemp = mainData[5];
                     let clienteDefault = {};
-                    if(clienteDefaultTemp && clienteDefaultTemp.length>0){
+                    if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
                         clienteDefault = clienteDefaultTemp[0];
                     }
                     let config = mainData[6][0];
@@ -446,6 +446,7 @@
 
             const itemsMainMapper = service.detalleMapperTo(detalles);
             const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted)
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
 
             const mergeItems = [
                 ...itemsMainMapper,
@@ -453,10 +454,40 @@
             ]
 
             return {
-                notaEntrega,
+                notaEntrega: service.infoComprobanteMapperTo(notaEntrega),
                 detalles: mergeItems,
+                impuestos: impuestos,
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
             }
+        }
+
+        service.infoComprobanteMapperTo = function (data) {
+            const result = {
+                idCliente: data.idCliente,
+                idTiempoCredito: data.idTiempoCredito,
+                idPuntoEmision: data.idPuntoEmision,
+                idUsuario: data.idUsuario,
+                tarifa: data.tarifa,
+                fechaEmision: data.fechaEmision,
+                fechaVencimiento: data.fechaVencimiento,
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                totalDescuento: data.totalDescuento,
+                porcentajeDescuento: data.porcentajeDescuento,
+                irbpnr: data.irbpnr,
+                propina: data.propina,
+                iva: data.iva,
+                recargo: data.recargo,
+                transporte: data.transporte,
+                total: data.total,
+                observacion: data.observacion,
+                placa: data.placa,
+                identificacionComprador: data.identificacionComprador,
+                razonSocialComprador: data.razonSocialComprador,
+                direccionComprador: data.direccionComprador,
+                email: data.email,
+                telefono: data.telefono,
+            }
+            return result;
         }
 
         service.detalleMapperTo = function (detalles) {
@@ -527,7 +558,8 @@
                     precioCosto: item.precioCosto,  //✅
                     cantidadTransaccion, //✅
                     // cantidadAnulada,
-                    estado: item.estado //✅                    
+                    estado: item.estado, //✅                    
+                    valorImpuesto: fS.getTaxBaseAndTaxValue(item).taxValue
                 })
             }
             return tempDetails;
@@ -719,8 +751,8 @@
                          *
                          * Parámetros:
                          *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
-                         */ 
-                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal]; 
+                         */
+                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
 
                         /**
                          * Ordenar el array de medidas en función de la propiedad "orden" y
@@ -790,7 +822,7 @@
                                 estado: dataAdicional.estado
                             }))
                         }
- 
+
                         return restItem;
                     });
 
@@ -1602,8 +1634,8 @@
                 if (response.code === "1") {
 
                     let clienteRepository = JSON.parse(response.payload)[0][0];
-                  
-                    let showConfirmButton = id>0 && ['C', 'R'].includes(codigoIdentificacion);
+
+                    let showConfirmButton = id > 0 && ['C', 'R'].includes(codigoIdentificacion);
                     // return {
                     //     idCliente: clienteRepository.idCliente,
                     //     numeroIdentificacion: clienteRepository.numeroIdentificacion,
@@ -1630,7 +1662,7 @@
                                 <small><strong>Nombre Comercial</strong></small> <br>
                                 <p class="text-muted small">${clienteRepository.nombreComercial}</p>
                             `,
-                        icon: 'info', 
+                        icon: 'info',
                         showCancelButton: true,
                         showConfirmButton,
                         confirmButtonColor: "#3085d6",

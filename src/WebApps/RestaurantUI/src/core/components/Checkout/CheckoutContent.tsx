@@ -47,7 +47,7 @@ const CheckoutContent = ({ params, closeDialog }: CheckoutContentProps) => {
 
     return (
         <>
-            <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }}>
+            <Grid container spacing={2}>
                 <Grid item xs={12} sm={12} md={5} lg={5}>
                     {
                         !(isMobile) && <CheckoutCalculator />

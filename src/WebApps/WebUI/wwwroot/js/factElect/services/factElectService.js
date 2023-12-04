@@ -124,8 +124,7 @@
     app.factory('facturaService', function ($injector) {
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario');
-        let pricingUtils = $injector.get('pricingUtils');
+        let fS = $injector.get('formulario'); 
         let service = {
             data: {}
         }
@@ -664,14 +663,14 @@
 
             const itemsMainMapper = service.detalleMapperTo(detalles, fromAprobacion);
             const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted, fromAprobacion)
-            const impuestos = service.impuestoTarifaMapperTo(detalles);
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
             const mergeItems = [
                 ...itemsMainMapper,
                 ...itemsDeletedMapper
             ]
 
             return {
-                infoFactura: service.infoFacturaMapperTo(factura),
+                infoFactura: service.infoComprobanteMapperTo(factura),
                 detalles: mergeItems,
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumento || [],
@@ -679,7 +678,7 @@
             }
         }
 
-        service.infoFacturaMapperTo = function (data) {
+        service.infoComprobanteMapperTo = function (data) {
             const result = {
                 idCliente: data.idCliente,
                 idTiempoCredito: data.idTiempoCredito,
@@ -785,7 +784,7 @@
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : cantidadTransaccion, //✅
                     // cantidadAnulada,
                     estado: item.estado, //✅                      
-                    valorImpuesto: service.getTaxBaseAndTaxValue(item).taxValue
+                    valorImpuesto: fS.getTaxBaseAndTaxValue(item).taxValue
                 })
             }
             return tempDetails;
@@ -901,35 +900,7 @@
                 cantidadStock: resultCantStock,
                 action
             };
-        }
-
-
-
-        service.impuestoTarifaMapperTo = function (items) {
-            let impuestosTarifa = items.map(item => {
-                const { taxBase, taxValue} = service.getTaxBaseAndTaxValue(item); 
-                const discount = item.cantidad * item.valorDescuento; 
-                const obj = {
-                    taxId: item.idImpuesto,
-                    taxPercentId: item.idTipoIva,
-                    percent: item.tarifa,
-                    taxBase: fS.roundNumber(taxBase, 5),
-                    taxValue: fS.roundNumber(taxValue, 5),
-                    discount: fS.roundNumber(discount, 5)
-                }
-                return obj;
-            })
-            return impuestosTarifa;
-        }
-
-        service.getTaxBaseAndTaxValue = function(item){
-            const taxBase = ((item.cantidad * item.precioUnitario)) - item.valorDescuento; 
-            const taxValue = pricingUtils.calculateTaxValue(taxBase, item.tarifa); 
-            return {
-                taxBase: fS.roundNumber(taxBase, 5),
-                taxValue: fS.roundNumber(taxValue, 5),
-            };
-        }
+        } 
 
         return service;
 

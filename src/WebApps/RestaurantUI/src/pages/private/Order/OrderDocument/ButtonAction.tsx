@@ -1,4 +1,4 @@
- 
+
 import { PaymentsIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components/IconsMaterial';
 import WhatsApp from '@/core/components/WhatsApp/WhatsApp';
 import { DOC_TYPE, DOC_TYPE_REPORT } from '@/core/constants';
@@ -10,9 +10,10 @@ import Swal from 'sweetalert2';
 
 const Checkout = lazy(() => import("@/core/components/Checkout/Checkout"));
 type ActionsProps = {
-    data: IOrderDocument
+    data: IOrderDocument,
+    getOrderDocuments: () => void
 }
-const ButtonAction = ({ data }: ActionsProps) => {
+const ButtonAction = ({ data, getOrderDocuments }: ActionsProps) => {
     const [loadingPDF, setLoadingPDF] = useState(false);
     const [openDialogWhatsApp, setDialogWhatsApp] = useState(false);
     const [openCheckout, setOpenCheckout] = useState(false)
@@ -95,17 +96,20 @@ const ButtonAction = ({ data }: ActionsProps) => {
         setDialogWhatsApp(false)
     }
 
-    const openCheckoutDialog = ()=>{
-        if (["CBR", "A"].includes(data.codEstado)){
+    const openCheckoutDialog = () => {
+        if (["CBR", "A"].includes(data.codEstado)) {
             Swal.fire({
-                icon:'warning',
+                icon: 'warning',
                 html: 'Este documento ya se ha sido cobrada!'
             })
             return
         }
         setOpenCheckout(true)
     }
-    const closeCheckoutDialog = ()=>{
+    const closeCheckoutDialog = (action: string) => {
+        if (action === "REFRESH") {
+            getOrderDocuments()
+        }
         setOpenCheckout(false)
     }
 
@@ -141,7 +145,7 @@ const ButtonAction = ({ data }: ActionsProps) => {
                         color="warning"
                         size='small'
                         onClick={openCheckoutDialog}
-                        >
+                    >
                         <PaymentsIcon />
                     </Button>
                 </Tooltip>
@@ -157,8 +161,8 @@ const ButtonAction = ({ data }: ActionsProps) => {
                     tiempoCredito: data.tiempoCredito
                 }} />
             }
-           
-            
+
+
         </>
     )
 }

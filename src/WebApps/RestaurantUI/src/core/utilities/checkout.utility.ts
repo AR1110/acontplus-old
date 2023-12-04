@@ -1,9 +1,9 @@
 import { RoundNumber } from ".";
-import { PaymentDetail, PaymentHistory, Quota, VoucherQuota } from "../models";
- 
+import { MultiplesPaymentType, PaymentDetail, PaymentHistory, Quota, Voucher, VoucherQuota } from "../models";
+
 
 //--------------
-class CheckoutUtility  {
+class CheckoutUtility {
     private MAX_NUMBER_ROUND = 5;
     private receivedAmount = 0;
     private voucher = {} as VoucherQuota;
@@ -11,14 +11,18 @@ class CheckoutUtility  {
     paymentDetails: Array<PaymentDetail> = [];
     private sequencia = 0;
 
-    constructor(){
-        this.sequencia = 0;
+    constructor(sequencia: number) {
+        this.sequencia = sequencia;
         this.paymentDetails = [];
         this.receivedAmount = 0;
     }
 
     setReceivedAmount(value: number) {
         this.receivedAmount = value;
+    }
+
+    setPaymentDetail(paymentDetails: Array<PaymentDetail>) {
+        this.paymentDetails = paymentDetails;
     }
 
     applyReceivedAmountToQuota(voucherQuotas: Array<VoucherQuota>): Array<VoucherQuota> {
@@ -29,7 +33,7 @@ class CheckoutUtility  {
             for (const item of group.cuotas) {
                 item.abonoPosfechado = 0;
 
-                if (typeof this.receivedAmount !== "number" ||this.receivedAmount === 0)return []
+                if (typeof this.receivedAmount !== "number" || this.receivedAmount === 0) return []
 
                 //Si la cuota no tiene ningún abono
                 if (item.abono > 0) {
@@ -161,21 +165,70 @@ class CheckoutUtility  {
         item.saldo = RoundNumber(item.saldo, this.MAX_NUMBER_ROUND);
     }
 
-    getHistoryPayments(voucherQuotas: Array<VoucherQuota>): Array<PaymentHistory> {
+    getHistoryPayments(voucherQuotas: Array<VoucherQuota>, paymentDetails: Array<PaymentDetail>): Array<PaymentHistory> {
         const historialCobros: Array<PaymentHistory> = [];
-        for(const item of voucherQuotas){
-            const totalAbono = this.paymentDetails.filter(cd =>cd.idCuentaPorCobrar===item.idCuentaPorCobrar)
-                                              .reduce((prev, curr)=>prev + curr.abono, 0);
-            if(totalAbono > 0){
+        for (const item of voucherQuotas) {
+            const totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
+                .reduce((prev, curr) => prev + curr.abono, 0);
+            // if (paymentDetails) {
+            //     totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
+            //         .reduce((prev, curr) => prev + curr.abono, 0);
+            // } else {
+            //     totalAbono = this.paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
+            //         .reduce((prev, curr) => prev + curr.abono, 0);
+            // }
+            if (totalAbono > 0) {
                 historialCobros.push({
-                    idCuentaPorCobrar: item.idCuentaPorCobrar,                    
+                    idCuentaPorCobrar: item.idCuentaPorCobrar,
                     abono: totalAbono,
-                    diasMora : item.diasMora,
-                    mora : item.mora
+                    diasMora: item.diasMora,
+                    mora: item.mora
                 })
-            }else break;
+            } else break;
         }
         return historialCobros;
+    }
+}
+
+export const getTotalesCuota = (voucherQuotas: Array<VoucherQuota>) => {
+    const { importeTotal, totalAbonoAnterior, totalSaldo, totalSaldoDoc } = voucherQuotas.reduce((total, voucher) => {
+        total.importeTotal += voucher.importeTotal;
+        total.totalSaldo += voucher.saldo;
+        total.totalAbonoAnterior += voucher.abono;
+        total.totalMora += voucher.mora;
+        total.totalSaldoDoc += voucher.saldoDoc;
+        return total;
+    }, {
+        importeTotal: 0,
+        totalAbonoAnterior: 0,
+        totalSaldo: 0,
+        totalMora: 0,
+        totalSaldoDoc: 0
+    })
+
+    return {
+        importeTotal: RoundNumber(importeTotal, 5),
+        totalAbonoAnterior: RoundNumber(totalAbonoAnterior, 5),
+        totalSaldo: RoundNumber(totalSaldo, 5),
+        totalSaldoDoc: RoundNumber(totalSaldoDoc, 5),
+    }
+
+}
+
+export const getCheckoutSubTotales = (voucherQuotas: Array<VoucherQuota>, multiplesPaymentType: Array<MultiplesPaymentType>, comprobante: Voucher) => {
+    const totalValorAbono = multiplesPaymentType.reduce((prev, curr) => prev + curr.receivedAmount, 0)
+    const totalSaldo = voucherQuotas.flatMap(item => item.cuotas)
+        .reduce((prev, curr) => prev + curr.saldo, 0);
+    let valorCambio = 0;
+
+
+    if (totalValorAbono >= comprobante.totalBalance) {
+        valorCambio = totalValorAbono - comprobante.totalBalance;
+    }
+    return {
+        totalValorAbono: RoundNumber(totalValorAbono, 5),
+        totalSaldo: RoundNumber(totalSaldo, 5),
+        valorCambio: RoundNumber(valorCambio, 5)
     }
 }
 

@@ -854,7 +854,9 @@ app.constant('SRI_IDENTIFITION_CODE', {
 })
 
 app.constant('CODE_REPORT', {
+    RF: 'RF', //Reporte Factura
     FG: "FG", //Ventas -> Factura General
     CCR: 'CCR', //Cuenta por cobrar
-    FEG: 'FEG' //Facturacion Electronica -> Factura General
+    FEG: 'FEG', //Facturacion Electronica -> Factura General
+    RNE: 'RNE'
 })

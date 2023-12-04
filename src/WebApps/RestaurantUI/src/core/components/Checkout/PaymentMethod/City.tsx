@@ -20,7 +20,7 @@ const GroupItems = styled('ul')({
 });
 
 export default function City() {
-    const {checkout, setPayment} = useCheckoutContext(); 
+    const {checkout, setChangeFieldFormPayment} = useCheckoutContext(); 
     const {dataForm} = checkout
 
     const cities = dataForm.cities;  
@@ -33,10 +33,8 @@ export default function City() {
                         fullWidth
                         id="grouped-city"
                         onChange={(_, newValue) => {
-                            const cityId = newValue? newValue.cityId : 0                           
-                            setPayment({ 
-                                cityId 
-                            })
+                            const cityId = newValue? newValue.cityId : 0  
+                            setChangeFieldFormPayment("cityId", cityId)      
                           }}
                         options={sortedCities}                        
                         groupBy={(option) => option.province}

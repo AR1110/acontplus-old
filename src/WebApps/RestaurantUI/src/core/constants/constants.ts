@@ -1,7 +1,7 @@
 const GATEWAY = "gateway/"
 export const enum PATHS {
-    ACCOUNT = `${GATEWAY}Restaurant/Account/login`,
-    CREATE_TOKEN = `${GATEWAY}Restaurant/Account/createToken`,
+    ACCOUNT = `Restaurant/Account/login`,
+    CREATE_TOKEN = `Restaurant/Account/createToken`,
     PRIVATE = `${GATEWAY}Restaurant/`,
     INVENTARIO = `${GATEWAY}Inventario/`,
     SALE = `${GATEWAY}Venta/`,

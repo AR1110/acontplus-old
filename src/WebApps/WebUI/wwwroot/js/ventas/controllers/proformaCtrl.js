@@ -1628,7 +1628,7 @@
                         return
                     }
 
-                    if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();
@@ -1646,10 +1646,12 @@
                     fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
                     return
                 }
-                if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
-                    $scope.data.fechaEmision.setHours(0, 0, 0, 0);
+                if (fS.formatDateShort(fechaEmisionModificada) == fS.formatDateShort(fechaActual)) {
+                    $scope.data.fechaEmision = fechaActual;
                 } else {
-                    $scope.data.fechaEmision = new Date();
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
+                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
+                    }
                 }
             }
 
