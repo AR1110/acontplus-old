@@ -42,6 +42,14 @@ namespace Identity.API.Controllers.v1
         {
             try
             {
+                if (string.IsNullOrEmpty(authRequest.Username))
+                {
+                    return BadRequest("Usuario no puede estar vacio");
+                }
+                if (string.IsNullOrEmpty(authRequest.Password))
+                {
+                    return BadRequest("Contraseña no puede estar vacia");
+                }
                 var mainResponse = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
                 var _response = JsonConvert.DeserializeObject<APIResponse>(mainResponse);
                 //User founded

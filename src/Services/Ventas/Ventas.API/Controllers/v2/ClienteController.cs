@@ -78,6 +78,10 @@ namespace Ventas.API.Controllers.v2
             var _db = new DbAccess(_configuration);
             try
             {
+                if (!DataValidation.IsValidJson(json))
+                {
+                    return BadRequest("Caracteres de busqueda invalidos");
+                }
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
                 await _db.SPExecute("Ventas.Cliente_Get_Search_v2");
