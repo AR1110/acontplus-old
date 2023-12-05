@@ -151,7 +151,7 @@ BEGIN
                 descripcion         VARCHAR(300) NOT NULL,
                 s3ObjectUrl         VARCHAR(300) NULL,
                 llevaInventario     BIT DEFAULT 0,
-                taxRateCode         VARCHAR(2),
+                taxRateCode         VARCHAR(5),
                 summary             VARCHAR(300) NULL,
                 priceWithVat        NUMERIC (18,5) NOT NULL,
                 taxValue            NUMERIC (18,5) NOT NULL,
