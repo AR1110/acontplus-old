@@ -216,7 +216,7 @@
         }
         
         function getIdDetalle(id){
-            return mS.getData('get', `${url}GetId?id=` + id, null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign({id}, { tipo: 5 })), null, true).then(response => {
                 if (response.code === "0") {
                     throw response.message
                 }
@@ -224,10 +224,11 @@
                 if (response.code === "1") {
                     let dataMain = JSON.parse(response.payload);
                     let [dataTemp, detalleDocumento] = dataMain;
-                    console.log(dataMain)
 
                     let dataDocumento = dataTemp[0];
                     dataDocumento.fechaEmision = fS.formatDate(dataDocumento.fechaEmision); 
+
+
                     return {
                         dataDocumento,
                         detalleDocumento,

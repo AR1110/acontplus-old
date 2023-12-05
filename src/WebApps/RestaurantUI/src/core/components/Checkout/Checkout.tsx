@@ -13,7 +13,7 @@ type CheckoutProps = {
         tiempoCredito: number
     }
     open: boolean,
-    closeDialog(): void
+    closeDialog(data?: any): void
 }
 
 const Checkout = ({ params, open, closeDialog }: CheckoutProps) => {
@@ -51,7 +51,7 @@ const Checkout = ({ params, open, closeDialog }: CheckoutProps) => {
 
                         </>
                     }
-                > 
+                >
                     <CheckoutContent closeDialog={closeDialog} params={params} />
                 </FullScreenDialog>
             </CheckoutProvider>

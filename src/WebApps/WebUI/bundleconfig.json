@@ -604,5 +604,11 @@
     "inputFiles": [
       "wwwroot/js/common/constants/constants.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/controllers/impresoraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/controllers/impresoraCtrl.js"
+    ]
   }
 ]

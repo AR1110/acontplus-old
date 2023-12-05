@@ -1,11 +1,114 @@
 (function () {
 
     angular.module('acontPlusApp')
+        .factory('pricingUtils', function () {
+            let service = {}
+
+            service.calcularPrecioConIva = function (precioVenta, porcentaje) {
+                try {
+                    let resultadoPorcentaje = Number(porcentaje) / 100;
+                    let result = Number(precioVenta) * Number(resultadoPorcentaje)
+                    let precioConIva = result + Number(precioVenta);
+                    return precioConIva;
+
+                } catch (error) {
+                    console.log('pricingUtils -> CALCULO PRECIO CON IVA', error);
+                }
+            }
+
+            service.calcularPrecioVenta = function (precioConIva, porcentaje) {
+                try {
+                    let resultadoPorcentaje = Number(porcentaje) / 100 + 1;
+                    let precioVenta = Number(precioConIva) / Number(resultadoPorcentaje);
+                    return precioVenta;
+                } catch (error) {
+                    console.log('pricingUtils -> CALCULO PRECIO Unitario', error);
+                }
+            }
+            //cuando edito porcentaje utilidad
+            service.calcularPorcentajeUtilidad = function (precioCosto, porcentajeUtilidad) {
+                try {
+                    let resultPorcentajeUtilidad = Number(porcentajeUtilidad) / 100;
+                    let result = Number(precioCosto) * resultPorcentajeUtilidad;
+                    let precioVenta = Number(precioCosto) + result;
+                    return precioVenta
+
+                } catch (error) {
+                    console.log('pricingUtils -> calcularPorcentajeUtilidad', error);
+                }
+
+            }
+
+
+            //cuando cambio precio venta
+            //Get Campo Porcentaje Utilidad
+            service.campoPorcentajeUtilidad = function (precioCosto, precioVenta) {
+                try {
+                    let porcentajeUtilidad = (Number(precioVenta) / Number(precioCosto) * 100) - 100;
+                    return porcentajeUtilidad;
+
+                } catch (error) {
+                    console.log('pricingUtils -> campoPorcentajeUtilidad', error);
+                }
+            }
+
+
+            //EN VENTA 
+            service.getPrecioIvaConDescuento = function (precioConIva, porcentajeDescuento) {
+                try {
+                    let porcentaje = Number(porcentajeDescuento) / 100;
+                    let descuento = Number(porcentaje) * Number(precioConIva);
+                    let precioIvaConDescuento = Number(precioConIva) - Number(descuento);
+                    return precioIvaConDescuento;
+                } catch (error) {
+                    console.log('pricingUtils -> getPrecioIvaConDescuento', error);
+                }
+
+            }
+
+            service.getValorDescuento = function (precioUnitario, porcentajeDescuento) {
+                try {
+                    let porcentaje = Number(porcentajeDescuento) / 100;
+                    let descuento = Number(porcentaje) * Number(precioUnitario);
+                    return descuento;
+                } catch (error) {
+                    console.log('pricingUtils -> getValorDescuento', error);
+                }
+            }
+
+            service.getPorcentajeDescuento = function (precioUnitario, valorDescuento) {
+                try {
+                    let porcentaje = valorDescuento / precioUnitario;
+                    let porcentajeDescuento = porcentaje * 100;
+                    return porcentajeDescuento;
+
+                } catch (error) {
+                    console.log('pricingUtils -> getPorcentajeDescuento', error);
+                }
+            }
+
+            service.calculateTaxValue = function (price, percentage) {
+                try {
+                    const tax = (price * percentage) / 100;
+                    return tax;
+                } catch (error) {
+                    console.log('pricingUtils -> ERROR CALCULATE TAX VALUE', error);
+                    return -1;
+                }
+            };
+
+
+
+            return service;
+
+        })
+
+    angular.module('acontPlusApp')
         .factory('formulario', formulario);
 
-    formulario.$inject = ['$rootScope', 'mainService'];
+    formulario.$inject = ['pricingUtils'];
 
-    function formulario($rootScope, mS) {
+    function formulario(pricingUtils) {
         let formSvc = {};
 
         formSvc.dataDocumento = {};
@@ -207,17 +310,26 @@
             }
         }
 
+
+        formSvc.formatDateShort = function (date) {
+            const formatedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            return formatedDate;
+        }
+
         formSvc.getDate = function (fecha) {
             if (!fecha) new Error('Parametro fecha requerido: ' + fecha)
+            let newDate = new Date(fecha)
 
-            return fecha.getDate()
+            let resulDate = newDate;
+
+            return resulDate;
         }
 
         formSvc.setHoursToDate = function (fecha) {
             let fechaActual = new Date();
 
             // Comprobar si ambas fechas son la fecha actual
-            if (fechaActual.getDate() === fecha.getDate()) {
+            if (formSvc.formatDateShort(fechaActual) === formSvc.formatDateShort(fecha)) {
                 fecha.setHours(fechaActual.getHours());
                 fecha.setMinutes(fechaActual.getMinutes());
                 fecha.setSeconds(fechaActual.getSeconds());
@@ -360,10 +472,10 @@
          * 
          * @param {*} estabs 
          */
-        formSvc.groupingEstab = function(obj){ 
+        formSvc.groupingEstab = function (obj) {
             const tempEstabsAndPtosEmision = obj.estabs;
             const tempEstabsAndBodegas = obj.bodegas;
-            const isGroupBodega = obj.isGroupBodega;  
+            const isGroupBodega = obj.isGroupBodega;
             const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
                 const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
 
@@ -373,7 +485,7 @@
                         nombreComercial: item.nombreComercial,
                         codEstab: item.codEstab,
                         defaultEstab: item.defaultEstab,
-                        puntosEmision:  [{
+                        puntosEmision: [{
                             codEstab: item.codEstab,
                             idPuntoEmision: item.idPuntoEmision,
                             ptoEmi: item.ptoEmi,
@@ -391,7 +503,7 @@
                 return acc;
             }, []);
 
-            if (isGroupBodega){
+            if (isGroupBodega) {
                 let estabs = tempEstabs.map(estab => ({
                     ...estab,
                     bodegas: tempEstabsAndBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
@@ -409,6 +521,77 @@
 
         }
 
+        formSvc.groupEstabBodega = function (tempEstabBodega) {
+            const estabs = tempEstabBodega.reduce((acc, item) => {
+                const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                if (!existingItem) {
+                    acc.push({
+                        idEstablecimiento: item.idEstablecimiento,
+                        nombreComercial: item.nombreComercial,
+                        codEstab: item.codEstab,
+                        defaultEstab: item.defaultEstab,
+                        bodegas: [{
+                            idBodega: item.idBodega,
+                            descripcion: item.bodega,
+                            defaultBodega: item.defaultBodega
+                        }]
+                    });
+                } else {
+                    existingItem.bodegas.push({
+                        idBodega: item.idBodega,
+                        descripcion: item.bodega,
+                        defaultBodega: item.defaultBodega
+                    });
+                }
+                return acc;
+            }, []);
+
+            return estabs;
+
+        }
+
+        formSvc.isValidField = function (field) {
+            let invalid = ["", null, undefined, 0].includes(field)
+            if (invalid) {
+                return null;
+            }
+            return field;
+        }
+
+        /**
+         * 
+         * @param {*} items  (items de factura, nota entrega)
+         * @returns 
+         */
+        formSvc.impuestoTarifaMapperTo = function (items) {
+            let impuestosTarifa = items.map(item => {
+                const { taxBase, taxValue } = formSvc.getTaxBaseAndTaxValue(item);
+                const discount = item.cantidad * item.valorDescuento;
+                const obj = {
+                    taxId: item.idImpuesto,
+                    taxPercentId: item.idTipoIva,
+                    percent: item.tarifa,
+                    taxBase: formSvc.roundNumber(taxBase, 5),
+                    taxValue: formSvc.roundNumber(taxValue, 5),
+                    discount: formSvc.roundNumber(discount, 5)
+                }
+                return obj;
+            })
+            return impuestosTarifa;
+        }
+
+        formSvc.getTaxBaseAndTaxValue = function (item) {
+            const taxBase = ((item.cantidad * item.precioUnitario)) - item.valorDescuento;
+            const taxValue = pricingUtils.calculateTaxValue(taxBase, item.tarifa);
+            return {
+                taxBase: formSvc.roundNumber(taxBase, 5),
+                taxValue: formSvc.roundNumber(taxValue, 5),
+            };
+        }
+
         return formSvc;
     }
+
+
 })(window.angular)

@@ -3,29 +3,27 @@ import { useCheckoutContext } from "../context";
 
  
 const PaymentSubType = () => { 
-    const {checkout, setPayment} = useCheckoutContext(); 
-    const {dataForm, payments} = checkout
-
-    const paymentSubTypes = dataForm.paymentSubTypes;
+    const {checkout, setChangeFieldFormPayment} = useCheckoutContext(); 
+    const { paymentData} = checkout 
+    const paymentSubTypes = checkout.paymentSubTypes;
     return (
         <>
             {paymentSubTypes.length > 0 && <TextField fullWidth
-                id="paymentType"
-                name="paymentType"
+                id="paymentSubType"
+                name="paymentSubType"
                 label="SubEntidad Financiera"
+                
                 select
-                value={payments.paymentSubtypeId}
+                value={paymentData.paymentSubTypeId}
                 onChange={(e) => {
-                    const paymentData = paymentSubTypes.find(item => item.paymentSubtypeId === Number(e.target.value));
-                    setPayment({
-                        paymentSubtypeId: paymentData?.paymentSubtypeId ?? 0
-
-                    }) 
+                    const paymentData = paymentSubTypes.find(item => item.paymentSubTypeId === Number(e.target.value));
+                    const paymentSubTypeId = paymentData?.paymentSubTypeId ?? 0
+                    setChangeFieldFormPayment("paymentSubTypeId", paymentSubTypeId ) 
                 }}
             >
                 {
                     paymentSubTypes.map((item, index) => (
-                        <MenuItem value={item.paymentSubtypeId} key={index}>
+                        <MenuItem value={item.paymentSubTypeId} key={index}>
                             {item.description}
                         </MenuItem>
                     ))

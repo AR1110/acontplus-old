@@ -21,14 +21,18 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
-      registerType: 'prompt',
+      workbox: {
+        cleanupOutdatedCaches: true
+      },
+      //registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Acontplus Restaurante',
         short_name: 'Acontplus Restaurante',
         description: 'GESTIÓN DE PEDIDOS Y FACTURACIÓN ELECTRÓNICA',
-        theme_color: "#f69435",
-        background_color: "#f69435",
+        theme_color: "#D61672",
+        background_color: "#D61672",
         display: "standalone",
         start_url: '/',
         icons: [

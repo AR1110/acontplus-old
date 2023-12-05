@@ -24,7 +24,7 @@
          */
         service.calculoColDef = function ({ rowEntity, oldValue, decimal, idTarifa, columnDefs }) {
 
-            let dataTipoIva = columnDefs.find(item => item.field === 'idTipoIva').editDropdownOptionsArray
+            let tarifaImpuesto = columnDefs.find(item => item.field === 'idTipoIva').editDropdownOptionsArray
                 .find(item => item.idTipoIva === rowEntity.idTipoIva);
 
             const calculoColumnas = {
@@ -64,8 +64,9 @@
 
                         if (rowEntity.idTipoIva === oldValue) return
 
-                        rowEntity.tarifa = dataTipoIva.tarifa;
-                        rowEntity.codigoPorcentaje = dataTipoIva.codigoPorcentaje;
+                        rowEntity.idImpuesto = tarifaImpuesto.idImpuesto; 
+                        rowEntity.codigoPorcentaje = tarifaImpuesto.codigoPorcentaje;
+                        rowEntity.tarifa = tarifaImpuesto.tarifa; 
                         calculoColumnas["precioUnitario"]();
                     } catch (error) {
                         toastr.error(`CALCULO TIPO IVA: ${error}`)
@@ -76,8 +77,8 @@
                     try {
                         if (rowEntity.idTipoIva === oldValue) return
 
-                        rowEntity.tarifa = dataTipoIva.tarifa;
-                        rowEntity.codigoPorcentaje = dataTipoIva.codigoPorcentaje;
+                        rowEntity.tarifa = tarifaImpuesto.tarifa;
+                        rowEntity.codigoPorcentaje = tarifaImpuesto.codigoPorcentaje;
                         calculoColumnas["precioUnitario"]();
                     } catch (error) {
                         toastr.error(`CALCULO TIPO IVA: ${error}`)
@@ -89,7 +90,7 @@
                         if (rowEntity.idTarifa === oldValue) return
                         let tarifa = rowEntity.articuloTarifas.find(item => item.idTarifa === rowEntity.idTarifa);
 
-                        let precioConIva = pricingUtils.calcularPrecioConIva(tarifa.precioVenta, dataTipoIva.tarifa);
+                        let precioConIva = pricingUtils.calcularPrecioConIva(tarifa.precioVenta, tarifaImpuesto.tarifa);
                         let precioConIvaConDesuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                         let valorDescuento = pricingUtils.getValorDescuento(tarifa.precioVenta, rowEntity.porcentajeDescuento);
 
@@ -106,7 +107,7 @@
 
                         if (rowEntity.precioUnitario === oldValue) return;
 
-                        let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, dataTipoIva.tarifa);
+                        let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, tarifaImpuesto.tarifa);
                         let precioIvaDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                         let valorDescuento = pricingUtils.getValorDescuento(rowEntity.precioUnitario, rowEntity.porcentajeDescuento);
 
@@ -124,7 +125,7 @@
 
                         if (rowEntity.precioConIva === oldValue) return;
 
-                        let precioUnitario = pricingUtils.calcularPrecioVenta(rowEntity.precioConIva, dataTipoIva.tarifa);
+                        let precioUnitario = pricingUtils.calcularPrecioVenta(rowEntity.precioConIva, tarifaImpuesto.tarifa);
 
                         rowEntity.precioConIva = fS.roundNumber(rowEntity.precioConIva, decimal.nroPrecio);
                         rowEntity.precioUnitario = fS.roundNumber(precioUnitario, decimal.nroPrecio);
@@ -143,7 +144,7 @@
                         //Verificamos  si el porcentaje es un nuevo Valor y menor o  igual a 100
                         if (rowEntity.porcentajeDescuento <= 100) {
 
-                            let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, dataTipoIva.tarifa);
+                            let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, tarifaImpuesto.tarifa);
                             let precioIvaDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                             let valorDescuento = pricingUtils.getValorDescuento(rowEntity.precioUnitario, rowEntity.porcentajeDescuento);
 

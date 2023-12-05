@@ -6,7 +6,7 @@ export {
 ModalClienteCtrl.$inject = ["$uibModalInstance", "$scope", "commonService", "clienteService", "toastService", "params"]
 
 function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, params) {
- 
+
 
     $scope.tabContent = 0; //Por defecto tab general
     $scope.data = {};
@@ -21,12 +21,12 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
     $scope.onKeyupEmail = clienteSvc.onKeyupEmail
     $scope.transformChipEmail = clienteSvc.transformChipEmail;
 
-    if(params.idCliente>0){
+    if (params.idCliente > 0) {
         $scope.tipoRegistro = 2;
         $scope.titleModal = 'Editar Cliente';
         $scope.textBtnSaveModal = 'Actualizar';
         $scope.iconBtnSaveModal = 'ti-pencil';
-    }else{
+    } else {
         $scope.tipoRegistro = 1;
         $scope.titleModal = 'Nuevo Cliente';
         $scope.textBtnSaveModal = 'Guardar';
@@ -42,7 +42,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     tipoIdentificacion,
                     tipoContribuyentes,
                     tiempoCreditos,
-                    ciudades, 
+                    ciudades,
                     tiposCliente,
                     empresas,
                     cargos
@@ -57,18 +57,18 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 $scope.tiposCliente = tiposCliente;
                 $scope.empresas = empresas;
                 $scope.cargos = cargos;
-                
-                if ($scope.tipoRegistro ===1) {
-                    let {idTipoIdentificacion, codigo} =  $scope.tiposIdentificacion.find(item=>item.codigo==='R');
+
+                if ($scope.tipoRegistro === 1) {
+                    let { idTipoIdentificacion, codigo } = $scope.tiposIdentificacion.find(item => item.codigo === 'R');
                     $scope.data.idTipoIdentificacion = idTipoIdentificacion;
                     $scope.data.codigoIdentificacion = codigo;
 
                     $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
                 }
- 
+
             }).catch(error => {
                 console.log(error);
-            }).finally(()=>hideLoader())
+            }).finally(() => hideLoader())
 
 
             if ($scope.tipoRegistro === 2) {
@@ -97,15 +97,22 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     //Cuando el estado este Inactivo se presenta el estado para activar
                     $scope.showEstado = !estado;
 
-                    // if(!(this.data.idTiempoCredito>0)){
-                    //     $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
-                    // }
+                    if (!($scope.data.idTiempoCredito > 0)) {
+                        $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
+                    }
 
                     $("#nombreComercial").focus();
 
+
+                    //Cuando actualizan desde factura o nota entrega realizar busqueda de dato del cliente a SRI 
+                    if (params.isUpdateDataCustomerFromSRI){
+                        let dataIdentificacion = $scope.dataFindByIdTipoIdentificacion();
+                        $scope.consultaIdentificacionSRI(dataIdentificacion.codigo, params);                
+                    }
+
                 }).catch(error => {
                     console.log(error);
-                }).finally(()=>hideLoader())
+                }).finally(() => hideLoader())
             }
 
         } catch (error) {
@@ -131,9 +138,9 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
     }
 
     $scope.onChangeTipoIdentificacion = function () {
-        if($scope.tipoRegistro==2){
+        if ($scope.tipoRegistro == 2) {
             Swal.fire({
-            //    title: 'Are you sure?',
+                //    title: 'Are you sure?',
                 text: "Esta seguro de cambiar el tipo de identificación!",
                 icon: 'warning',
                 showCancelButton: true,
@@ -141,11 +148,11 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Si!',
                 cancelButtonText: 'No!'
-              }).then((result) => {
+            }).then((result) => {
                 if (result.isConfirmed) {
-                    $scope.setTipoIdentificacion();   
-                    $scope.$apply();                                  
-                }else{
+                    $scope.setTipoIdentificacion();
+                    $scope.$apply();
+                } else {
                     $scope.data.idTipoIdentificacion = $scope.tempIdTipoIdentificacion;
                     $scope.$apply();
                 }
@@ -153,10 +160,10 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             return
         }
         $scope.setTipoIdentificacion();
-       
+
     }
 
-    $scope.setTipoIdentificacion = function(){
+    $scope.setTipoIdentificacion = function () {
         $scope.data.codigoIdentificacion = $scope.dataFindByIdTipoIdentificacion().codigo;
 
         $scope.typeNotify = '';
@@ -218,47 +225,61 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             $scope.typeNotify = '';
             $scope.message = '';
 
-            clienteSvc.checkClientByIdentification(query, codigoIdentificacion, $scope.consultaIdentificacionSRI)
+            clienteSvc.checkClientByIdentification(query, codigoIdentificacion, $scope.consultaIdentificacionSRI, $scope.data.idCliente)
         } catch (error) {
             console.log(error);
         }
 
     }
 
-    $scope.consultaIdentificacionSRI = function (codigoIdentificacion) {
+    /**
+     * 
+     * @param {*} codigoIdentificacion 
+     * @param {*} dataCustomerAcontPlus 
+     */
+    $scope.consultaIdentificacionSRI = function (codigoIdentificacion, dataCustomerAcontPlus) {
         if (codigoIdentificacion === 'R') {
             showLoader();
             clienteSvc.checkClientSRIByRUC($scope.data.numeroIdentificacion).then(response => {
                 hideLoader();
-                if (response.numeroRuc) {
-
-                    let {
-                        razonSocial, 
-                        direccion,
-                        telefono,
-                        email
-                    } = response;
-
-                    $scope.data.nombreComercial = razonSocial.replaceAll('"', '');
-                    $scope.data.nombreFiscal = razonSocial.replaceAll('"', '');
-                    //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
-                    if (direccion) {
-                        $scope.data.direccion = direccion
-                    }
-                    if (telefono) {
-                        $scope.telefonos = new Array(telefono)
-                    }
-                    if (email) {
-                        $scope.correos = new Array(email)
-                    }
-                    $scope.data.validationSri = true;
-
-                    $scope.typeNotify = 'is-valid';
-                    $scope.message = 'Número de RUC correcta';
-
-                } else {
+                if (response.error) {
                     $scope.typeNotify = 'is-invalid';
                     $scope.message = 'No se encontró los datos';
+                    tS.toastr('info', response.error);
+                    return
+                }
+                let {
+                    razonSocial,
+                    direccion,
+                    telefono,
+                    email
+                } = response;
+                $scope.data.validationSri = true;
+                $scope.typeNotify = 'is-valid';
+                $scope.message = 'Número de RUC correcta';
+
+                if (typeof dataCustomerAcontPlus === 'object') {
+                    updateDataWithSRI(dataCustomerAcontPlus.idCliente, {
+                        razonSocial: razonSocial,
+                        direccion,
+                        telefonos: telefono && new Array(telefono) || [],
+                        correos: email && new Array(email) || []
+                    })
+                    return
+                }
+
+
+                $scope.data.nombreComercial = razonSocial;
+                $scope.data.nombreFiscal = razonSocial;
+                //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
+                if (direccion) {
+                    $scope.data.direccion = direccion
+                }
+                if (telefono) {
+                    $scope.telefonos = new Array(telefono)
+                }
+                if (email) {
+                    $scope.correos = new Array(email)
                 }
             }).catch(error => {
                 hideLoader();
@@ -272,33 +293,42 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             showLoader();
             clienteSvc.checkClientSRIByCedula($scope.data.numeroIdentificacion).then(response => {
                 hideLoader();
-                if (response.numeroRuc || response.nombreCompleto) {
-
-                    let {
-                        nombreCompleto,
-                        direccion,
-                        telefono,
-                        email
-                    } = response;
-                    $scope.data.nombreComercial = nombreCompleto.replaceAll('"', '');
-                    $scope.data.nombreFiscal = nombreCompleto.replaceAll('"', '');
-                    if (direccion) {
-                        $scope.data.direccion = direccion
-                    }
-                    if (telefono) {
-                        $scope.telefonos = new Array(telefono)
-                    }
-                    if (email) {
-                        $scope.correos = new Array(email)
-                    }
-                    $scope.data.validationSri = true;
-                    $scope.data.validationSri = true;
-
-                    $scope.typeNotify = 'is-valid';
-                    $scope.message = 'Número de Cédula correcta';
-                } else {
+                if (response.error) {
                     $scope.typeNotify = 'is-invalid';
                     $scope.message = 'No se encontró los datos';
+                    tS.toastr('info', response.error);
+                    return
+                }
+                let {
+                    nombreCompleto,
+                    direccion,
+                    telefono,
+                    email
+                } = response;
+                $scope.data.validationSri = true;
+                $scope.typeNotify = 'is-valid';
+                $scope.message = 'Número de Cédula correcta';
+
+                if (typeof dataCustomerAcontPlus === 'object') {
+                    updateDataWithSRI(dataCustomerAcontPlus.idCliente, {
+                        razonSocial: nombreCompleto,
+                        direccion,
+                        telefonos: telefono && new Array(telefono) || [],
+                        correos: email && new Array(email) || []
+                    })
+                    return
+                }
+
+                $scope.data.nombreComercial = nombreCompleto
+                $scope.data.nombreFiscal = nombreCompleto;
+                if (direccion) {
+                    $scope.data.direccion = direccion
+                }
+                if (telefono) {
+                    $scope.telefonos = new Array(telefono)
+                }
+                if (email) {
+                    $scope.correos = new Array(email)
                 }
             }).catch(error => {
                 hideLoader();
@@ -310,42 +340,78 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
         }
     }
 
+    function updateDataWithSRI(id, dataSRI) {
+        clienteSvc.findById(id).then(response => {
+            let {
+                placas,
+                empleado,
+                estado
+            } = response;
+
+            $scope.isDisableInputIdentificacion = false;
+
+            $scope.data = Object.assign($scope.data, {
+                nombreComercial: dataSRI.razonSocial,
+                nombreFiscal: dataSRI.razonSocial
+            });
+            $scope.tempIdTipoIdentificacion = $scope.data.idTipoIdentificacion;
+
+            $scope.correos = dataSRI.correos;
+            $scope.telefonos = dataSRI.telefonos;
+            $scope.placas = placas;
+
+            $scope.selectedEmpleado = empleado;
+
+            //Cuando el estado este Inactivo se presenta el estado para activar
+            $scope.showEstado = !estado;
+
+            if (!($scope.data.idTiempoCredito > 0)) {
+                $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
+            } 
+
+            $("#nombreComercial").focus();
+
+        }).catch(error => {
+            console.log(error);
+        }).finally(() => hideLoader())
+    }
 
 
-    $scope.copiarNombreComercial = function () {       
-        $scope.data.nombreComercial = $scope.data.nombreFiscal;        
+
+    $scope.copiarNombreComercial = function () {
+        $scope.data.nombreComercial = $scope.data.nombreFiscal;
     }
 
     $scope.resultModalEmpresa = async function (res) {
         if (typeof res === 'object') {
-            const {empresas} = await clienteSvc.getDataForm();
+            const { empresas } = await clienteSvc.getDataForm();
             $scope.empresas = empresas;
         }
     }
 
-    $scope.searchEmpleadoFilter = function(textSearch) {
+    $scope.searchEmpleadoFilter = function (textSearch) {
         return commonSvc.querySearchEmpleado(textSearch)
     }
 
-    $scope.onKeyupSearchEmpleado = function(searchText) {
+    $scope.onKeyupSearchEmpleado = function (searchText) {
         if (!searchText) {
             $scope.data.idEmpleado = null;
         }
     }
 
-    $scope.selectedEmpleadoChange = function(item) {
+    $scope.selectedEmpleadoChange = function (item) {
         $scope.data.idEmpleado = item.idEmpleado;
     }
 
-    $scope.resultModalCargo = async function(result) {
+    $scope.resultModalCargo = async function (result) {
         if (typeof result === 'object') {
-            const {cargos} = await clienteSvc.getDataForm();
+            const { cargos } = await clienteSvc.getDataForm();
             $scope.cargos = cargos;
         }
     }
 
-    $scope.refreshTiempoCredito = async function() {
-        const {tiempoCreditos} = await clienteSvc.getDataForm();
+    $scope.refreshTiempoCredito = async function () {
+        const { tiempoCreditos } = await clienteSvc.getDataForm();
         $scope.tiempoCreditos = tiempoCreditos;
     }
 
@@ -414,7 +480,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
             if (!clienteSvc.validateForm(params)) return
 
-            
+
             showLoader();
 
 
@@ -465,19 +531,19 @@ ModalClienteListaCtrl.$inject = ['$scope', 'clienteService', '$uibModalInstance'
 
 function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
 
-       
+
     $scope.selected = [];
-    $scope.dataSearch = { 
+    $scope.dataSearch = {
         pageIndex: 1,
         pageSize: 50,
         maxSize: 5
 
     }
-    
 
-    
 
-    $scope.copyTextSearch = function() {
+
+
+    $scope.copyTextSearch = function () {
         if (!$scope.dataSearch.textSearch) return
 
         let copyText = document.getElementById("searchCliente");
@@ -489,18 +555,18 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
         tS.toastr('info', 'Copiado: ' + $scope.dataSearch.textSearch)
     }
 
-    $scope.resultModal = function(result) {
-        if(typeof result==='object') {
+    $scope.resultModal = function (result) {
+        if (typeof result === 'object') {
             $scope.seleccionarCliente(result);
         }
     }
 
 
-    $scope.onKeyupSearchCliente = function() {
+    $scope.onKeyupSearchCliente = function () {
         $scope.getSearchCustomer();
     }
 
-    $scope.resetList = function() {
+    $scope.resetList = function () {
         $scope.dataSearch.textSearch = null;
         $scope.getSearchCustomer();
     }
@@ -514,21 +580,21 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
         $scope.getSearchCustomer();
     };
 
-    $scope.getSearchCustomer = function() {
+    $scope.getSearchCustomer = function () {
         try {
-            showLoader(); 
-            $scope.clientes = []; 
+            showLoader();
+            $scope.clientes = [];
             const dataSearch = {
                 pageIndex: $scope.dataSearch.pageIndex,
                 pageSize: $scope.dataSearch.pageSize,
-                checkTextSearch: $scope.dataSearch.textSearch?true: false,
+                checkTextSearch: $scope.dataSearch.textSearch ? true : false,
                 textSearch: $scope.dataSearch.textSearch
             }
-            clienteSvc.getAll(dataSearch).then(response => {                
-                    $scope.clientes = response;
-                    $scope.dataSearch.totalRecords = $scope.clientes.length > 0 ? $scope.clientes[0].totalRecords : 0
-                    hideLoader();                   
-                }
+            clienteSvc.getAll(dataSearch).then(response => {
+                $scope.clientes = response;
+                $scope.dataSearch.totalRecords = $scope.clientes.length > 0 ? $scope.clientes[0].totalRecords : 0
+                hideLoader();
+            }
             ).catch(error => {
                 $scope.dataSearch.totalRecords = 0;
                 console.error(error)
@@ -552,14 +618,14 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
                 title: 'Datos Incorrectos',
                 html: 'Número de identificación inválido, desea editar?',
                 showConfirmButton: true,
-                showCancelButton: true,                                
+                showCancelButton: true,
             })
             return
         }
         $uibModalInstance.close(item)
     }
 
-    $scope.closeModal = function() {
+    $scope.closeModal = function () {
         $uibModalInstance.close();
     }
 

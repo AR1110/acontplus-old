@@ -74,25 +74,6 @@ BEGIN
 
 					SET  @rdlcProps = (SELECT rdlcProps = (SELECT rdlcName = 'TicketTpv.rdl',printerName = @printerName,isThermal = @isThermal, 'format' = @format, deviceInfo = @deviceInfo FOR JSON PATH))
 
-					
-				
-					INSERT INTO ApiPrinter.Service_Printer_Document
-					(
-						idService_Printer_Document
-					   ,ruc
-					   ,numEstab
-					   ,rdlcProps
-					   ,rdlcParams
-					   ,fechaRegistro
-					)
-					SELECT 
-						NEWID()
-					   ,@ruc
-					   ,@estab
-					   ,@rdlcProps
-					   ,@rdlcParams
-					   ,dbo.ufnGetDateEcuador()
-
 		COMMIT TRAN
 
 	END TRY

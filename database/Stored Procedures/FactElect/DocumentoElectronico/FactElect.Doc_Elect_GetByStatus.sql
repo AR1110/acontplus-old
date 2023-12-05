@@ -25,9 +25,9 @@ BEGIN
 	DECLARE @textSearch VARCHAR(15)
 
 	DECLARE @checkboxEstablecimiento BIT 
-	DECLARE @estab VARCHAR(10)
+	DECLARE @codEstab VARCHAR(50)
 	DECLARE @checkboxPuntoEmision BIT
-	DECLARE @ptoEmi VARCHAR(10)
+	DECLARE @idPuntoEmision VARCHAR(10)
 
 	DECLARE @isSearchCustomerProvider BIT 
 	DECLARE @identificacionReceptor VARCHAR(20)
@@ -66,8 +66,8 @@ BEGIN
 
 	
 	DECLARE @params NVARCHAR(MAX) = '@idEntidad INT
-									,@estab VARCHAR(5)
-									,@ptoEmi VARCHAR(5)
+									,@codEstab VARCHAR(50)
+									,@idPuntoEmision VARCHAR(5)
 	                                ,@codDoc VARCHAR(10)
 									,@identificacionReceptor VARCHAR(20)
 									,@codEstado VARCHAR(5)
@@ -120,9 +120,9 @@ BEGIN
 	      ,@tipo                     = tipo
 	      ,@textSearch               = textSearch
 	      ,@checkboxEstablecimiento  = checkboxEstablecimiento
-	      ,@estab                    = estab
+	      ,@codEstab                    = codEstab
 	      ,@checkboxPuntoEmision     = checkboxPuntoEmision
-	      ,@ptoEmi                   = ptoEmi
+	      ,@idPuntoEmision           = idPuntoEmision
 	      ,@isSearchCustomerProvider = isSearchCustomerProvider
 	      ,@identificacionReceptor   = identificacionReceptor
 	      ,@isSearchUser             = isSearchUser
@@ -141,9 +141,9 @@ BEGIN
 		 ,tipo                    VARCHAR(2) '$.tipo'
 		 ,textSearch             VARCHAR(15) '$.textSearch'
 		 ,checkboxEstablecimiento        BIT '$.checkBoxEstab'
-		 ,estab                  VARCHAR(10) '$.estab'
+		 ,codEstab                  VARCHAR(100) '$.codEstab'
 		 ,checKboxPuntoEmision           BIT '$.checKboxPuntoEmision'
-		 ,ptoEmi                 VARCHAR(10) '$.ptoEmi'
+		 ,idPuntoEmision                 VARCHAR(10) '$.idPuntoEmision'
 		 ,isSearchCustomerProvider       BIT '$.isSearchCustomerProvider'
 		 ,identificacionReceptor VARCHAR(20) '$.identificacionReceptor'
 		 ,isSearchUser                   BIT '$.isSearchUser'
@@ -154,14 +154,14 @@ BEGIN
 
 	
 
-	IF @checkboxEstablecimiento = 1
+	IF @codEstab IS NOT NULL
 		BEGIN 
-			SET @sql = @sql + ' AND de.estab = @estab'
+			SET @sql = @sql +  ' AND de.codEstab = @codEstab '
 		END 
 
-	IF @checkboxPuntoEmision = 1
+	IF @idPuntoEmision > 0
 		BEGIN 
-			SET @sql = @sql + ' AND de.ptoEmi = @ptoEmi'
+			SET @sql = @sql + ' AND de.idPuntoEmision = @idPuntoEmision'
 		END 
 
 	IF @checkBoxDate = 1
@@ -234,8 +234,8 @@ BEGIN
 
 	EXEC sp_executesql @sql,@params
 				           ,@idEntidad              = @idEntidad
-						   ,@estab                  = @estab
-						   ,@ptoEmi                 = @ptoEmi
+						   ,@codEstab               = @codEstab
+						   ,@idPuntoEmision         = @idPuntoEmision
 						   ,@codDoc                 = @codDoc 
 						   ,@identificacionReceptor = @identificacionReceptor
 						   ,@codEstado              = @codEstado

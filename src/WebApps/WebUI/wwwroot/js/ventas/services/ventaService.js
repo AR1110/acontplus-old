@@ -235,11 +235,11 @@
                     // if(articuloDefaultTemp && articuloDefaultTemp.length>0){
                     //     articuloDefault = articuloDefaultTemp[0];
                     // }
-                    // let clienteDefaultTemp = mainData[7][0];
-                    // let clienteDefault = {};
-                    // if(clienteDefaultTemp && clienteDefaultTemp.length>0){
-                    //     clienteDefault = clienteDefaultTemp[0];
-                    // }
+                    let clienteDefaultTemp = mainData[5];
+                    let clienteDefault = {};
+                    if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
+                        clienteDefault = clienteDefaultTemp[0];
+                    }
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
                     let notificacionVenta = {
@@ -292,6 +292,7 @@
                         estabs,
                         tarifaImpuestoVigente,
                         tarifasImpuesto,
+                        clienteDefault,
                         tiemposCredito,
                         tarifas,
                         permisoVenta,
@@ -423,7 +424,8 @@
             })
         }
 
-        service.queryMapper = function ({ data, cliente, detalles, itemsDeleted, historyDatosAdicionales }) {
+        service.queryMapper = function (params) {
+            const { data, cliente, detalles, itemsDeleted, historyDatosAdicionales, infoAdicionalDocumento }  = params;
             //data que se usara dentro de la función "getCantidadStock"
             service.data = Object.assign({}, data);
 
@@ -445,6 +447,7 @@
 
             const itemsMainMapper = service.detalleMapperTo(detalles);
             const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted)
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
 
             const mergeItems = [
                 ...itemsMainMapper,
@@ -452,10 +455,41 @@
             ]
 
             return {
-                notaEntrega,
+                notaEntrega: service.infoComprobanteMapperTo(notaEntrega),
                 detalles: mergeItems,
+                impuestos: impuestos,
+                infoAdicional: infoAdicionalDocumento || [],
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
             }
+        }
+
+        service.infoComprobanteMapperTo = function (data) {
+            const result = {
+                idCliente: data.idCliente,
+                idTiempoCredito: data.idTiempoCredito,
+                idPuntoEmision: data.idPuntoEmision,
+                idUsuario: data.idUsuario,
+                tarifa: data.tarifa,
+                fechaEmision: data.fechaEmision,
+                fechaVencimiento: data.fechaVencimiento,
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                totalDescuento: data.totalDescuento,
+                porcentajeDescuento: data.porcentajeDescuento,
+                irbpnr: data.irbpnr,
+                propina: data.propina,
+                iva: data.iva,
+                recargo: data.recargo,
+                transporte: data.transporte,
+                total: data.total,
+                observacion: data.observacion,
+                placa: data.placa,
+                identificacionComprador: data.identificacionComprador,
+                razonSocialComprador: data.razonSocialComprador,
+                direccionComprador: data.direccionComprador,
+                email: data.email,
+                telefono: data.telefono,
+            }
+            return result;
         }
 
         service.detalleMapperTo = function (detalles) {
@@ -526,7 +560,8 @@
                     precioCosto: item.precioCosto,  //✅
                     cantidadTransaccion, //✅
                     // cantidadAnulada,
-                    estado: item.estado //✅                    
+                    estado: item.estado, //✅                    
+                    valorImpuesto: fS.getTaxBaseAndTaxValue(item).taxValue
                 })
             }
             return tempDetails;
@@ -718,8 +753,8 @@
                          *
                          * Parámetros:
                          *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
-                         */ 
-                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal]; 
+                         */
+                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
 
                         /**
                          * Ordenar el array de medidas en función de la propiedad "orden" y
@@ -789,7 +824,7 @@
                                 estado: dataAdicional.estado
                             }))
                         }
- 
+
                         return restItem;
                     });
 
@@ -799,7 +834,8 @@
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
-                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                        irbpnr: comprobanteTemp.irbpnr || 0
                     }
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
@@ -1268,7 +1304,8 @@
                         serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
-                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                        irbpnr: comprobanteTemp.irbpnr || 0
                     }
 
                     return {
@@ -1592,7 +1629,7 @@
             return true;
         }
 
-        service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
+        service.checkClientByIdentification = function (query, codigoIdentificacion, callback, id) {
             mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     callback(codigoIdentificacion)
@@ -1600,8 +1637,9 @@
                 }
                 if (response.code === "1") {
 
-                    let clienteRepository = JSON.parse(response.payload)[0][0]
+                    let clienteRepository = JSON.parse(response.payload)[0][0];
 
+                    let showConfirmButton = id > 0 && ['C', 'R'].includes(codigoIdentificacion);
                     // return {
                     //     idCliente: clienteRepository.idCliente,
                     //     numeroIdentificacion: clienteRepository.numeroIdentificacion,
@@ -1629,16 +1667,15 @@
                                 <p class="text-muted small">${clienteRepository.nombreComercial}</p>
                             `,
                         icon: 'info',
-                        showCloseButton: true,
                         showCancelButton: true,
-                        focusConfirm: true,
-                        confirmButtonText: '<i class="fa fa-thumbs-up"></i> Validar datos!',
-                        confirmButtonAriaLabel: 'Validar datos!',
-                        cancelButtonText: '<i class="fa fa-thumbs-down"></i> Cancelar',
-                        cancelButtonAriaLabel: 'Cancelar'
+                        showConfirmButton,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Actualizar con el SRI!",
+                        cancelButtonText: 'Cancelar'
                     }).then(result => {
                         if (result.isConfirmed) {
-                            callback(codigoIdentificacion);
+                            callback(codigoIdentificacion, clienteRepository);
                         }
                     })
                 }

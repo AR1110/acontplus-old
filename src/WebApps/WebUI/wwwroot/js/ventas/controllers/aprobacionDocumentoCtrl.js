@@ -2828,7 +2828,7 @@
                         return
                     }
 
-                    if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();
@@ -3856,7 +3856,7 @@
                         return
                     }
 
-                    if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
+                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();

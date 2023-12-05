@@ -113,7 +113,7 @@ BEGIN
 			INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
             LEFT JOIN Familia f ON f.siglas = a.siglaFamilia
 			LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
-			WHERE a.idEntidad = @idEntidad '
+			WHERE a.idEntidad = @idEntidad AND a.estado = 1 '
     -- ===== PARTE ADMINISTRATIVA ===== --
     IF @tipo = 1
         BEGIN

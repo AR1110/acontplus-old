@@ -1,36 +1,41 @@
-import { PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components/IconsMaterial';
+
+import { PaymentsIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components/IconsMaterial';
 import WhatsApp from '@/core/components/WhatsApp/WhatsApp';
 import { DOC_TYPE, DOC_TYPE_REPORT } from '@/core/constants';
 import { IOrderDocument } from '@/core/models';
 import { SharedService } from '@/core/services';
-import { Button } from '@mui/material';
-import { GridRenderCellParams } from '@mui/x-data-grid';
-import { useState } from 'react'
+import { Button, Stack, Tooltip } from '@mui/material';
+import { lazy, useState } from 'react'
+import Swal from 'sweetalert2';
+
+const Checkout = lazy(() => import("@/core/components/Checkout/Checkout"));
 type ActionsProps = {
-    data: GridRenderCellParams
+    data: IOrderDocument,
+    getOrderDocuments: () => void
 }
-const ButtonAction = ({ data }: ActionsProps) => {
+const ButtonAction = ({ data, getOrderDocuments }: ActionsProps) => {
     const [loadingPDF, setLoadingPDF] = useState(false);
     const [openDialogWhatsApp, setDialogWhatsApp] = useState(false);
-    const row = data.row as IOrderDocument
+    const [openCheckout, setOpenCheckout] = useState(false)
+
     const documentReport = () => {
         try {
             const format = 'pdf';
             const dataParms = {
-                id: row.documentoId,
+                id: data.documentoId,
                 //Factura
                 format,
-                codEstab: row.codEstab,
+                codEstab: data.codEstab,
             }
 
-            if (row.docType === DOC_TYPE.NE) {
+            if (data.docType === DOC_TYPE.NE) {
                 setLoadingPDF(true)
                 const parameters = {
                     hasService: true,
                     reportParams: JSON.stringify({
                         hasParams: true,
                         codigo: DOC_TYPE_REPORT.NE,
-                        codEstab: row.codEstab,
+                        codEstab: data.codEstab,
                         format,
                         aditionalParams: []
                     }),
@@ -40,21 +45,21 @@ const ButtonAction = ({ data }: ActionsProps) => {
                     .finally(() => setLoadingPDF(false));
             }
 
-            if (row.docType === DOC_TYPE.FV) {
+            if (data.docType === DOC_TYPE.FV) {
                 setLoadingPDF(true);
                 const parameters = {
                     hasService: true,
                     reportParams: JSON.stringify({
                         hasParams: true,
                         codigo: DOC_TYPE_REPORT.FV,
-                        codEstab: row.codEstab,
+                        codEstab: data.codEstab,
                         format,
                         aditionalParams: []
                     }),
                     dataParams: JSON.stringify(dataParms)
                 }
                 SharedService.downloadExternal(parameters)
-                .finally(() => setLoadingPDF(false)); 
+                    .finally(() => setLoadingPDF(false));
             }
         } catch (error) {
             console.log(error)
@@ -64,17 +69,17 @@ const ButtonAction = ({ data }: ActionsProps) => {
 
     const documentPrint = () => {
         try {
-            if (row.docType === DOC_TYPE.FV) {
+            if (data.docType === DOC_TYPE.FV) {
                 SharedService.askToPrint({
-                    id: row.orderId,
-                    documentoId: row.documentoId,
+                    id: data.orderId,
+                    documentoId: data.documentoId,
                     tipo: 3
                 })
             }
-            if (row.docType === DOC_TYPE.NE) {
+            if (data.docType === DOC_TYPE.NE) {
                 SharedService.askToPrint({
-                    id: row.orderId,
-                    documentoId: row.documentoId,
+                    id: data.orderId,
+                    documentoId: data.documentoId,
                     tipo: 4
                 })
             }
@@ -90,37 +95,74 @@ const ButtonAction = ({ data }: ActionsProps) => {
     const closeDialogWhatsApp = () => {
         setDialogWhatsApp(false)
     }
+
+    const openCheckoutDialog = () => {
+        if (["CBR", "A"].includes(data.codEstado)) {
+            Swal.fire({
+                icon: 'warning',
+                html: 'Este documento ya se ha sido cobrada!'
+            })
+            return
+        }
+        setOpenCheckout(true)
+    }
+    const closeCheckoutDialog = (action: string) => {
+        if (action === "REFRESH") {
+            getOrderDocuments()
+        }
+        setOpenCheckout(false)
+    }
+
     return (
         <>
-            <Button
-                variant="contained"
-                color="primary"
-                size='large'
-                onClick={documentPrint}
-                sx={{ ml: 1 }}>
-                <PrintIcon />
-            </Button>
-            <Button
-                variant="contained"
-                color="secondary"
-                size='large'
-                disabled={loadingPDF}
-                onClick={documentReport}
-                sx={{ ml: 1 }}>
-                <SaveAltSharpIcon />
-            </Button>
-            <Button
-                variant="contained"
-                color="success"
-                size='large'
-                onClick={handleClickBtnDialogWhatsApp}
-                sx={{ ml: 1, mr: 1 }}>
-                <ShareSharpIcon />
-            </Button>
+            <Stack direction="row"
+                spacing={1}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    size='small'
+                    onClick={documentPrint} >
+                    <PrintIcon />
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    size='small'
+                    disabled={loadingPDF}
+                    onClick={documentReport} >
+                    <SaveAltSharpIcon />
+                </Button>
+                <Button
+                    variant="contained"
+                    color="success"
+                    size='small'
+                    onClick={handleClickBtnDialogWhatsApp} >
+                    <ShareSharpIcon />
+                </Button>
+                <Tooltip title="Cobro">
+                    <Button
+                        variant="contained"
+                        color="warning"
+                        size='small'
+                        onClick={openCheckoutDialog}
+                    >
+                        <PaymentsIcon />
+                    </Button>
+                </Tooltip>
+            </Stack>
+            {
+                openDialogWhatsApp && <WhatsApp data={data} open={openDialogWhatsApp} setOpen={closeDialogWhatsApp} />
+            }
 
             {
-                openDialogWhatsApp && <WhatsApp data={data.row} open={openDialogWhatsApp} setOpen={closeDialogWhatsApp} />
+                openCheckout && <Checkout open={openCheckout} closeDialog={closeCheckoutDialog} params={{
+                    codEstab: data.codEstab,
+                    idCuentaPorCobrar: data.idCuentaPorCobrar,
+                    tiempoCredito: data.tiempoCredito
+                }} />
             }
+
+
         </>
     )
 }

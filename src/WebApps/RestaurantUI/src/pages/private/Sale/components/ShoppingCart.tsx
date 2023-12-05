@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { RoundNumber } from '@/core/utilities';
 import { ItemRead } from '@/core/models';
 import { useSaleStore, useStoreCartSidebar } from '@/stores'; 
+import { useState } from 'react';
 
 const StyledCard = styled(Card)({
     margin: '10px 0',
@@ -105,10 +106,8 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
 
     const setOpenCartSidebar = useStoreCartSidebar(state => state.setOpenCartSidebar)
     const setDataItem = useStoreCartSidebar(state => state.setDataItem);
-    const {order, setOrder} = useSaleStore(state => ({
-        setOrder: state.setSummary,
-        order: state.order
-    }))
+    const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem);
+    
 
     const onClickShoppingCart = (event: React.MouseEvent<HTMLElement>) => {
 
@@ -123,7 +122,8 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
         event.target.select(); // Seleccionar el texto
     };
 
-    const handleBlur = () => {
+    const handleBlur = () => { 
+        console.log('_')
         // if(quantityItem!==item.quantity){
         //     setItemChangeQty(index, quantityItem);
         // } 
@@ -160,12 +160,12 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
                         }
 
                         <Grid container>
-                            <Grid item lg={4} md={4} sm={12} xs={12}>
+                            <Grid item xl={4} lg={4} md={12} sm={12} xs={12}>
                                 <Stack
-                                    direction={{ xs: 'row', sm: 'row', md: 'column', lg: 'column' }}
+                                    direction={{ xs: 'row', sm: 'row', md: 'row', lg: 'column' }}
                                     alignContent="center"
                                     justifyContent="center"
-                                    spacing={{ xs: 1, sm: 1, md: 0 }}
+                                    spacing={{ xs: 1, sm: 1, md: 1 }}
                                 >
                                     <Typography variant="caption" color="text.primary">
                                         <b>P. U.:</b> ${RoundNumber(item.price, 2)}
@@ -178,7 +178,7 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
                                     </Typography>
                                 </Stack>
                             </Grid>
-                            <Grid item lg={8} md={8} sm={12} xs={12}>
+                            <Grid item xl={4} lg={8} md={12} sm={12} xs={12}>
                                 {/* Segunda columna para los botones y TextField */}
                                 <Stack
                                     direction="row"
@@ -231,18 +231,17 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
                                                 onClick: handleFocus
                                             }}
                                             onChange={e=>{
-                                                e.preventDefault();
+                                                e.stopPropagation();
                                                 let quantity = Number(e.target.value);
                                                 if(quantity===0){
                                                     setTimeout(() => {
                                                         e.target.select();
                                                     }, 0);
-                                                    quantity = 1;
-                                                } 
-                                                setOrder({
-                                                    ...order,
-                                                    obs: e.target.value
-                                                })
+                                                    quantity = 1; 
+                                                    setChangeValueOrderItem(index, "quantity", quantity)
+                                                } else if(quantity !==item.quantity){
+                                                    setItemChangeQty(index, quantity);
+                                                }
                                             }}
                                             onBlur={handleBlur}
                                         />
