@@ -955,12 +955,15 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-                showLoader();
 
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
-                if (cantidadStock === 0) return
-                console.log(cantidadStock)
+                if (cantidadStock === 0) {
+                    setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
+                showLoader();
+
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -2158,43 +2161,38 @@
             }
 
             if (isUpdate()) {
-                let fechaEmisionModificada = $scope.data.fechaEmision;
-                let fechaEmisionDocCreado = $scope.data.fechaEmisionDocCreado;
+                let fechaEmisionModificada = new Date($scope.data.fechaEmision);
+                let fechaEmisionDocCreado = new Date($scope.data.fechaEmisionDocCreado);
                 let fechaActual = new Date();
 
-                // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
-                if (fS.getDate(fechaEmisionModificada) !== fS.getDate(fechaEmisionDocCreado)) {
-
-                    //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                    if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
+                if (fechaEmisionModificada.getTime() !== fechaEmisionDocCreado.getTime()) {
+                    if (fechaEmisionModificada > fechaActual) {
                         fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                        return
+                        return;
                     }
 
                     if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
+                        //  fechaEmisionModificada.setHours(0, 0, 0, 0);
                         $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                     } else {
                         $scope.data.fechaEmision = new Date();
                     }
                 }
-                // else {
-                //     $scope.data.fechaEmision = fechaEmisionDocCreado;
-                // }
             }
 
             if (isRegister()) {
-                let fechaEmisionModificada = $scope.data.fechaEmision;
+                let fechaEmisionModificada = new Date($scope.data.fechaEmision);
                 let fechaActual = new Date();
+
                 if (fechaEmisionModificada > fechaActual) {
                     fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                    return
+                    return;
                 }
+
                 if (fS.formatDateShort(fechaEmisionModificada) == fS.formatDateShort(fechaActual)) {
                     $scope.data.fechaEmision = fechaActual;
-                } else {
-                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
-                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    }
+                } else if (fechaEmisionModificada < fechaActual) {
+                    $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                 }
             }
 

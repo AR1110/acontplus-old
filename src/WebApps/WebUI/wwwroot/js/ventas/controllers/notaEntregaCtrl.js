@@ -757,8 +757,11 @@
         $scope.bodegas = [];
         $scope.tarifasImpuesto = [];
 
-        $scope.datosAdicionalesArticulo = []
-        $scope.historyDatosAdicionales = []
+        $scope.datosAdicionalesArticulo = [];
+        $scope.historyDatosAdicionales = [];
+
+        //Informacion adicional del documento 
+        $scope.infoAdicionalDocumento = [];
 
         //Habilitar cuando la acción es editar
         $scope.isDisabledFormField = false;
@@ -932,12 +935,15 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-                showLoader();
 
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
-                if (cantidadStock === 0) return
+                if (cantidadStock === 0) {
+                    setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
 
+                showLoader();
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -2108,17 +2114,14 @@
             }
 
             if (isUpdate()) {
-                let fechaEmisionModificada = $scope.data.fechaEmision;
-                let fechaEmisionDocCreado = $scope.data.fechaEmisionDocCreado;
+                let fechaEmisionModificada = new Date($scope.data.fechaEmision);
+                let fechaEmisionDocCreado = new Date($scope.data.fechaEmisionDocCreado);
                 let fechaActual = new Date();
 
-                // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
-                if (fS.getDate(fechaEmisionModificada) !== fS.getDate(fechaEmisionDocCreado)) {
-
-                    //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                    if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
+                if (fechaEmisionModificada.getTime() !== fechaEmisionDocCreado.getTime()) {
+                    if (fechaEmisionModificada > fechaActual) {
                         fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                        return
+                        return;
                     }
 
                     if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
@@ -2127,25 +2130,24 @@
                         $scope.data.fechaEmision = new Date();
                     }
                 }
-                // else {
-                //     $scope.data.fechaEmision = fechaEmisionDocCreado;
-                // }
             }
+
             if (isRegister()) {
-                let fechaEmisionModificada = $scope.data.fechaEmision;
+                let fechaEmisionModificada = new Date($scope.data.fechaEmision);
                 let fechaActual = new Date();
+
                 if (fechaEmisionModificada > fechaActual) {
                     fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                    return
+                    return;
                 }
+
                 if (fS.formatDateShort(fechaEmisionModificada) == fS.formatDateShort(fechaActual)) {
                     $scope.data.fechaEmision = fechaActual;
-                } else {
-                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
-                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    }
+                } else if (fechaEmisionModificada < fechaActual) {
+                    $scope.data.fechaEmision.setHours(0, 0, 0, 0);
                 }
             }
+
 
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
@@ -2258,6 +2260,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                     historyDatosAdicionales: $scope.historyDatosAdicionales
                 })
 
@@ -2373,7 +2376,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: [],
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                     historyDatosAdicionales: $scope.historyDatosAdicionales
                 })
 
@@ -2401,6 +2404,10 @@
                 hideLoader();
                 console.warn(error)
             }
+        }
+
+        $scope.resultModalDatoAdicional = function (result) {
+            $scope.infoAdicionalDocumento = result;
         }
 
         async function askToSaveStorage() {

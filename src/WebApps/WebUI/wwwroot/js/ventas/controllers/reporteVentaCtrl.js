@@ -16,6 +16,7 @@
         let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
         const DOC_TYPE = $injector.get('DOC_TYPE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
+        const CONSOLIDADO_VENTA = 'CV'
 
         let format = 'pdf'
 
@@ -64,18 +65,18 @@
                     $scope.establecimientos = estabs;
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
-                        $scope.puntosEmision = dataEstab.puntosEmision;
+                        // $scope.puntosEmision = dataEstab.puntosEmision;
                         $scope.dataSearchEstadistica.codEstab = dataEstab.codEstab;
                     }
-              
+
                     $scope.tiposDoc = [...tiposDoc, {
                         idTipoDocumento: 0,
                         descripcion: "Consolidado Diario de Venta",
                         codigoSri: "",
-                        codigo: "FVNE",
+                        codigo: CONSOLIDADO_VENTA,
                     }]
                     const dataTipoDoc = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigoSri === DOC_TYPE.FV_SRI);
-                    $scope.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
+                    $scope.dataSearch.codigoTipoDoc = dataTipoDoc.codigo;
                     $scope.estadosDoc = estadosDoc.map(item => ({
                         ...item,
                         idEstadoDocumento: item.idEstadoPago
@@ -92,13 +93,56 @@
             }
         }
 
-        $scope.onChangeTipoDoc = function(){
-            
+        $scope.onChangeTipoDoc = function () {
+            let dataEstado = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigo === $scope.dataSearch.codigoTipoDoc);
+
+            console.log(dataEstado)
         }
+
+        $scope.onChangeEstab = function () {
+            let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
+            if (dataEstab) {
+                $scope.puntosEmision = dataEstab.puntosEmision;
+                $scope.dataSearch.idPuntoEmision = 0;
+            } else {
+                $scope.puntosEmision = [];
+                $scope.dataSearch.idPuntoEmision = 0;
+            }
+        }
+
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
                 $scope.dataSearch.fechaFin = item.endDate;
+        }
+
+
+        $scope.onKeyupCliente = function () {
+            console.log($scope.cliente)
+            if (!$scope.cliente.nombreCliente) {
+                $scope.dataSearch.identificacion = null;
+
+            }
+        }
+
+        $scope.onSelectCliente = function (data) {
+            console.log(data)
+            $scope.dataSearch.identificacion = data.numeroIdentificacion;
+            $scope.dataSearch.idCliente = data.idCliente;
+
+        }
+
+
+        $scope.onKeyupUser = function () {
+            console.log($scope.cliente)
+            if (!$scope.cliente.nombreUser) {
+                $scope.dataSearch.idUsuario = 0;
+            }
+        }
+
+        $scope.onSelectUser = function (data) {
+            $scope.dataSearch.idUsuario = data.idUsuario;
+
         }
 
 
@@ -120,22 +164,28 @@
 
         function getReport() {
             try {
-                if (!($scope.dataSearch.idTipoDocumento > 0)) {
-                    tS.toastr('warning', 'Seleccione el Tipo Documento');
+                if ($scope.dataSearch.checkBoxCustomer && !fS.isValidField($scope.dataSearch.identificacion)) {
+                    tS.toastr('warning', 'Seleccione el Cliente');
+                    return
+                }
+                if ($scope.dataSearch.checkBoxUser && !fS.isValidField($scope.dataSearch.idUsuario)) {
+                    tS.toastr('warning', 'Seleccione el Usuario');
                     return
                 }
                 let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
                 let dataEstado = $scope.estadosDoc.find(estado => estado.idEstadoDocumento === $scope.dataSearch.idEstadoDocumento);
-                let dataTipoDoc = $scope.tiposDoc.find(item => item.idTipoDocumento === $scope.dataSearch.idTipoDocumento)
+                let dataTipoDoc = $scope.tiposDoc.find(item => item.codigo === $scope.dataSearch.codigoTipoDoc)
                 let dataParams = {
                     tipo: 2,
                     ckFecha: true,
                     codDoc: getTipoDoc(dataTipoDoc.codigo),
                     codEstab: dataEstab && dataEstab.codEstab || null,
-                    idCliente: $scope.dataSearch.idCliente,
                     codEstado: dataEstado && dataEstado.codigo || null,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    identificacion: $scope.dataSearch.checkBoxCustomer ? fS.isValidField($scope.dataSearch.identificacion) : null,
+                    idUsuario: $scope.dataSearch.checkBoxUser ? fS.isValidField($scope.dataSearch.idUsuario) : null,
+                    idCliente: $scope.dataSearch.checkBoxCustomer ? fS.isValidField($scope.dataSearch.idCliente) : null,
                 }
                 const parameters = {
                     hasIdUsuarioRol: true,

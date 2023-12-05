@@ -329,7 +329,7 @@
             let fechaActual = new Date();
 
             // Comprobar si ambas fechas son la fecha actual
-            if (fechaActual === fecha) {
+            if (formSvc.formatDateShort(fechaActual) === formSvc.formatDateShort(fecha)) {
                 fecha.setHours(fechaActual.getHours());
                 fecha.setMinutes(fechaActual.getMinutes());
                 fecha.setSeconds(fechaActual.getSeconds());
