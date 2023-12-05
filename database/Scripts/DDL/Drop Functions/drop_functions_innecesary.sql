@@ -174,3 +174,7 @@ DROP FUNCTION IF EXISTS [dbo].[afnStatusPaying]
 GO
 DROP FUNCTION IF EXISTS [dbo].[afnStatusPayment]
 GO
+
+-->Alexis Ramirez 11/30/2023
+DROP FUNCTION IF EXISTS [dbo].[afnStatusDocument]
+GO

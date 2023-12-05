@@ -38,7 +38,7 @@ GO
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Factura')   
     DROP INDEX IX_Factura ON dbo.Factura;  
 GO
-CREATE NONCLUSTERED INDEX IX_Factura ON dbo.Factura(idCliente, idPuntoEmision, idTipoDocumento, idTiempoCredito, fechaEmision, claveAcceso, idUsuario, idEntidad, idEstadoPago)
+CREATE NONCLUSTERED INDEX IX_Factura ON dbo.Factura(idCliente, idPuntoEmision, idTipoDocumento, fechaEmision, claveAcceso, idUsuario, idEntidad)
 GO
 
 IF EXISTS (SELECT name FROM sys.indexes WHERE name = N'IX_Factura_Detalle')   
