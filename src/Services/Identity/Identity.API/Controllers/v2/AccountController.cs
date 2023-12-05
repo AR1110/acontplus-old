@@ -35,6 +35,14 @@ namespace Identity.API.Controllers.v2
         {
             try
             {
+                if (string.IsNullOrEmpty(authRequest.Username))
+                {
+                    return BadRequest("Usuario no puede estar vacio");
+                }
+                if (string.IsNullOrEmpty(authRequest.Password))
+                {
+                    return BadRequest("Contraseña no puede estar vacia");
+                }
                 var mainResponse = await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
                 var _response = JsonConvert.DeserializeObject<APIResponse>(mainResponse);
 

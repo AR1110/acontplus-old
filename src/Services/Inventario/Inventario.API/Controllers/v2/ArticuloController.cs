@@ -28,6 +28,10 @@ namespace Inventario.API.Controllers.v2
             DbAccess _db = new DbAccess(_configuration);
             try
             {
+                if (!DataValidation.IsValidJson(json))
+                {
+                    return BadRequest("Caracteres de busqueda invalidos");
+                }
                 await _db.SPExecute("Inventario.Articulo_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));

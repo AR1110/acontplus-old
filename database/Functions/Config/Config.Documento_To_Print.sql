@@ -39,21 +39,38 @@ BEGIN
 	DECLARE @header VARCHAR(MAX)
 	DECLARE @detail VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
-	DECLARE @formaPago VARCHAR(MAX)
+	DECLARE @formaPago VARCHAR(100)
+    DECLARE @payments VARCHAR(MAX)
 	DECLARE @pago DECIMAL(15,2)
     DECLARE @cambio DECIMAL(15,2)
 	
     IF @codDoc = 'FV' OR @codDoc = 'NE'
-        BEGIN 
-	       SET @formaPago = (SELECT  
-		         ci.total
-		        , ci.cambio
-		        , ef.descripcion
+        BEGIN
+         SELECT TOP 1
+		         @pago =  ci.total
+		        ,@cambio = ci.cambio
+		        ,@formaPago = ef.descripcion
 	        FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) 
 	        INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
 	        INNER JOIN dbo.ComprobanteIngreso       ci WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
 	        INNER JOIN dbo.Cobro                     c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
 	        INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
+	        WHERE cc.codDoc = IIF(@codDoc = 'FV','01','NE') 
+              AND cc.idDocumento = @idDocument 
+              AND ci.estado = 1
+
+	       SET @payments = (SELECT  
+		         CAST(c.valor AS numeric(18,2)) valor
+		        ,CAST(c.vuelto AS numeric(18,2)) cambio
+                ,cc.importeTotal
+		        ,ef.descripcion
+                ,fp.codigo
+	        FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) 
+	        INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
+	        INNER JOIN dbo.ComprobanteIngreso       ci WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
+	        INNER JOIN dbo.Cobro                     c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
+	        INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
+            INNER JOIN dbo.FormaPagoSri fp WITH(NOLOCK) ON ef.idFormaPagoSri = fp.idFormaPagoSri
 	        WHERE cc.codDoc = IIF(@codDoc = 'FV','01','NE') 
               AND cc.idDocumento = @idDocument 
               AND ci.estado = 1 FOR JSON PATH)
@@ -110,7 +127,8 @@ BEGIN
 						        ,usuario = u.nombreUsuario
 						        ,pago = ISNULL(@pago,0)
 						        ,cambio = ISNULL(@cambio,0)
-						        ,formaPago = @formaPago
+						        ,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
+                                ,@payments payments
 					        FROM dbo.Factura f WITH (NOLOCK)
 					        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK)  ON pe.idPuntoEmision = f.idPuntoEmision 
 					        INNER JOIN Sri.Establecimiento s  WITH (NOLOCK)  ON s.codEstab        = pe.codEstab
@@ -186,7 +204,8 @@ BEGIN
 							,usuario = u.nombreUsuario
 							,pago = ISNULL(@pago,0)
 							,cambio = ISNULL(@cambio,0)
-							,formaPago = @formaPago
+						    ,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
+                            ,@payments payments
 						FROM dbo.NotaEntrega ne WITH (NOLOCK)
 						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
 						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.codEstab        = pe.codEstab
