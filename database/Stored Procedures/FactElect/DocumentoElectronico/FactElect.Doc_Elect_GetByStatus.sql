@@ -164,7 +164,7 @@ BEGIN
 			SET @sql = @sql + ' AND de.idPuntoEmision = @idPuntoEmision'
 		END 
 
-	IF @checkBoxDate = 1
+	IF @checkBoxDate = 1 AND @tipo !='3'
 		BEGIN 
 			SET @sql = @sql + ' AND CAST(de.fechaEmision AS date) BETWEEN CAST(@dateStart AS date) AND CAST(@dateEnd AS date) '
 		END 
