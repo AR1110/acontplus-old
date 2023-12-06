@@ -2111,44 +2111,18 @@
             if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
                 tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
                 return
+            } 
+
+            let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
+
+            if (ajusteFechaEmision) {
+                $scope.data.fechaEmision = ajusteFechaEmision;
+            } else {
+                console.log('Error al justar la fecha de Emisión')
+                return
             }
 
-            if (isUpdate()) {
-                let fechaEmisionModificada = new Date($scope.data.fechaEmision);
-                let fechaEmisionDocCreado = new Date($scope.data.fechaEmisionDocCreado);
-                let fechaActual = new Date();
-
-                if (fechaEmisionModificada.getTime() !== fechaEmisionDocCreado.getTime()) {
-                    if (fechaEmisionModificada > fechaActual) {
-                        fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                        return;
-                    }
-
-                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
-                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    } else {
-                        $scope.data.fechaEmision = new Date();
-                    }
-                }
-            }
-
-            if (isRegister()) {
-                let fechaEmisionModificada = new Date($scope.data.fechaEmision);
-                let fechaActual = new Date();
-
-                if (fechaEmisionModificada > fechaActual) {
-                    fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                    return;
-                }
-
-                if (fS.formatDateShort(fechaEmisionModificada) == fS.formatDateShort(fechaActual)) {
-                    $scope.data.fechaEmision = fechaActual;
-                } else if (fechaEmisionModificada < fechaActual) {
-                    $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                }
-            }
-
-
+            
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return

@@ -17,6 +17,8 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     const facturaSvc = $injector.get('facturaService');
     const proformaSvc = $injector.get('proformaService');
     const notaCreditoSvc = $injector.get('notaCreditoService');
+    const nombreModalVenta = $injector.get('nombreModalVenta');
+    const modalSvc = $injector.get('modalService');
 
     let { id, codDoc } = params;
     let tarifaImpuesto = {
@@ -53,7 +55,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = items;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
                 gridOptionsEnumeracion();
             }).catch(error => {
                 console.warn(error)
@@ -75,8 +77,8 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.data = data;
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
-                $scope.gridOptions.data = items; 
-                gridOptionsEnumeracion(); 
+                $scope.gridOptions.data = items;
+                gridOptionsEnumeracion();
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -87,9 +89,9 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             hideLoader();
         }
     }
- 
+
     //Proforma
-    if(codDoc==='09'){
+    if (codDoc === '09') {
         try {
             showLoader();
             proformaSvc.getIdForInfo(id).then(response => {
@@ -97,7 +99,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.data = data;
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
-                $scope.gridOptions.data = items; 
+                $scope.gridOptions.data = items;
                 gridOptionsEnumeracion();
             }).catch(error => {
                 console.error(error)
@@ -112,7 +114,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
 
     //Nota Credito 
     console.log(codDoc)
-    if (codDoc === DOC_TYPE['NC_SRI']){
+    if (codDoc === DOC_TYPE['NC_SRI']) {
         try {
             showLoader();
             notaCreditoSvc.getIdForInfo(id).then(response => {
@@ -123,7 +125,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = items;
                 $scope.factura = factura;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
                 gridOptionsEnumeracion();
             }).catch(error => {
                 console.error(error)
@@ -133,7 +135,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         } catch (error) {
             console.log(error)
             hideLoader();
-        }       
+        }
     }
 
 
@@ -244,6 +246,34 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         let index = 1;
         for (let item of $scope.gridOptions.data) {
             item.index = index++;
+        }
+    }
+
+
+    $scope.getDetalleFactura = async function () {
+        try {
+            console.log($scope.factura)
+            if (!($scope.factura.idDocumento > 0)) return
+
+
+            let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+            let ctrl = (await import(fileCtrl))[controller];
+            let template = templates['FV_SRI'];
+            modalSvc.openModalCustom({
+                controller: ctrl,
+                template: template,
+                size: 'xl',
+                params: {
+                    codDoc: DOC_TYPE.FV_SRI,
+                    id: $scope.factura.idDocumento
+                },
+                windowClass: 'uibModalFullScreen',
+                isRenderRazorPartial: true
+            })
+
+
+        } catch (error) {
+            console.error(error)
         }
     }
 

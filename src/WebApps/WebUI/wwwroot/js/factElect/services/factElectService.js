@@ -1014,18 +1014,52 @@
             })
         }
 
+        service.getAll = function (params) {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ ...params, tipo: 1 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let tempNotasCredito = mainData[0];
+                    const notasCredito = tempNotasCredito.map((item) => ({
+                        ...item,
+                        idDocumento: item.idNotaCredito,
+                        serieComprobante: item.nroDocumento,
+                        codEstado: item.codDoc,
+                        codDoc: '04'
+                    }))
+                    return notasCredito;
+                }
+            })
+        }
+
         service.post = function (data) {
-            return mS.getData('post', URL, data, true)
+            return mS.getData('post', URL, { data }, true)
         }
 
         service.put = function (id, data) {
-            return mS.getData('put', `${URL}${id}`, data, true)
+            return mS.getData('put', `${URL}${id}`, { data }, true)
         }
 
         service.delete = function (id) {
             return mS.getData('delete', `${URL}${id}`, null, true)
         }
 
+        service.generateSerieComprobante = function (query) {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(Object.assign(query, { tipo: 6 })), null, true).then(response => {
+                if (response.code === "0") {
+                    console.warn(response)
+                    throw null;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let data = mainData[0][0];
+                    return data.serieComprobante;
+                }
+            })
+        }
 
         service.getIdForInfo = function (id) {
             return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 5, id }), null, true).then(response => {
@@ -1052,6 +1086,180 @@
 
                 }
             })
+        }
+
+        service.getId = function (id) {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 4, id }), null, true).then(response => {
+                if (response.code === "0") {
+                    console.log(response)
+                }
+                if (response.code === "1") {
+                    let mainDataApi = JSON.parse(response.payload);
+                    const [
+                        comprobanteApi,
+                        facturaApi,
+                        clienteTempApi,
+                        itemsApi,
+                        infoAdicionalDocumento,
+                    ] = mainDataApi;
+
+
+                    let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
+
+                    let factura = facturaApi.reduce((acc, previous) => {
+                       
+                        acc.idDocumento = previous.idFactura;
+                        acc.serieComprobante = previous.nroFactura;
+                        return acc;
+                    }, { idDocumento: '', serieComprobante: '' });
+
+                    let cliente = clienteTempApi && clienteTempApi[0] || {};
+
+                    let detalleDocumento = itemsApi.map((itemPrincipal, index) => {
+
+                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
+
+                        let consolidacionesFechaTemp = consolidacion && JSON.parse(consolidacion) || [];
+                        let consolidacionesFecha = consolidacionesFechaTemp.map((data) => ({
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
+
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                        let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
+
+                        let obj = {
+                            n: index + 1,
+                            idNotaCreditoDetalle: itemPrincipal.idNotaCreditoDetalle,
+                            cantidad: itemPrincipal.cantidad,
+                            cantidadOriginal: itemPrincipal.cantidad,
+                            codigo: itemPrincipal.codigo,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,
+                            descripcion: itemPrincipal.descripcion,
+                            ice: itemPrincipal.ice,
+                            idArticulo: itemPrincipal.idArticulo,
+                            idBodega: itemPrincipal.idBodega,
+                            idImpuesto: itemPrincipal.idImpuesto,
+                            idMedida: itemPrincipal.idMedida,
+                            idTarifa: itemPrincipal.idTarifa,
+                            idTipoIva: itemPrincipal.idTipoIva,
+                            llevaInventario: itemPrincipal.llevaInventario,
+                            nota: itemPrincipal.nota,
+                            porcentajeDescuento: itemPrincipal.porcentajeDescuento,
+                            precioConIva: itemPrincipal.precioConIva,
+                            precioCosto: itemPrincipal.precioCosto,
+                            precioUnitario: itemPrincipal.precioUnitario,
+                            tarifa: itemPrincipal.tarifa,
+                            total: itemPrincipal.total,
+                            valorDescuento: itemPrincipal.valorDescuento,
+                            valorImpuesto: itemPrincipal.valorImpuesto,
+
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            articuloTarifas: dataMedida.tarifas,
+                            consolidacionesFecha,
+                            subTotal: restItem.cantidad * restItem.precioUnitario || 0,
+                            totalDescuento: restItem.cantidad * restItem.valorDescuento || 0
+                        }
+
+                        return obj;
+                    });
+
+                    let infoComprobante = {
+                        ...comprobanteTemp,
+                        serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
+                        puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
+                        fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                        irbpnr: comprobanteTemp.irbpnr || 0
+                    }
+
+                    return {
+                        infoComprobante,
+                        factura,
+                        cliente,
+                        detalleDocumento,
+                        infoAdicionalDocumento,
+                    }
+                }
+            })
+        }
+
+
+        service.paramsMapperToApi = function (params) {
+            const { infoComprbante, detalles, detallesDeleted, infoAdicional } = params;
+
+            let resultInfoComprobante = service.infoComprobanteMapperTo(infoComprbante);
+            const resultDetalles = service.detalleMapperTo(detalles);
+            const resultDetallesDeleted = service.detalleMapperTo(detallesDeleted);
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+
+            const mergeDetalles = [
+                ...resultDetalles,
+                resultDetallesDeleted
+            ]
+            return {
+                infoNotaCredito: resultInfoComprobante,
+                detalles: mergeDetalles,
+                impuestos: impuestos,
+                infoAdicional: infoAdicional || []
+            }
+
+        }
+
+
+
+
+        service.infoComprobanteMapperTo = function (data) {
+            let comprobante = {
+                idCliente: data.idCliente,
+                idPuntoEmision: data.idPuntoEmision,
+                idUsuario: data.idUsuario,
+                idFactura: data.idFactura,
+                fechaEmision: data.fechaEmision,
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                totalDescuento: data.totalDescuento,
+                porcentajeDescuento: data.porcentajeDescuento,
+                irbpnr: data.irbpnr,
+                propina: data.propina,
+                iva: data.iva,
+                recargo: data.recargo,
+                transporte: data.transporte,
+                total: data.total,
+                observacion: data.observacion
+            };
+            return comprobante;
+        }
+
+
+        service.detalleMapperTo = function (detalles) {
+            let resultMap = detalles.map((orderItem, index) => {
+                let cantidadTransaccion = orderItem.cantidad * orderItem.conversion;
+                let obj = {
+                    orderIndex: index,
+                    idArticulo: orderItem.idArticulo,
+                    idTarifa: orderItem.idTarifa,
+                    idBodega: orderItem.idBodega,
+                    idMedida: orderItem.idMedida,
+                    ice: orderItem.ice,
+                    cantidad: orderItem.cantidad,
+                    precioUnitario: orderItem.precioUnitario,
+                    precioConIva: orderItem.precioConIva,
+                    valorDescuento: orderItem.valorDescuento,
+                    porcentajeDescuento: orderItem.porcentajeDescuento,
+                    total: orderItem.total,
+                    nota: orderItem.nota,
+                    descripcion: orderItem.descripcion,
+                    idTipoIva: orderItem.idTipoIva,
+                    llevaInventario: orderItem.llevaInventario,
+                    cantidadTransaccion: cantidadTransaccion,
+                    precioCosto: orderItem.precioCosto,
+                    valorImpuesto: fS.getTaxBaseAndTaxValue(orderItem).taxValue
+                };
+                return obj;
+            })
+            return resultMap;
         }
 
         return service;

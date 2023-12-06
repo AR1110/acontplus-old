@@ -858,5 +858,6 @@ app.constant('CODE_REPORT', {
     FG: "FG", //Ventas -> Factura General
     CCR: 'CCR', //Cuenta por cobrar
     FEG: 'FEG', //Facturacion Electronica -> Factura General
-    RNE: 'RNE'
+    RNE: 'RNE',
+    RNC: 'RNCC' //Reporte Nota Credito 
 })
