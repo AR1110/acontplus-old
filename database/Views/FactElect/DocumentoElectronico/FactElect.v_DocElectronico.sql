@@ -62,7 +62,7 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
 					        WHEN de.codDoc = '07' THEN (SELECT TOP 1 p.correo FROM dbo.Proveedor p WITH(NOLOCK) WHERE p.idProveedor = de.idContribuyente)
 				        END) 
          ,de.codEstado
-         ,estado = (SELECT descripcion FROM FactElect.EstadoServicio es  WITH(NOLOCK) WHERE es.codigo = de.codEstado)
+         ,estado = (SELECT descripcion FROM FactElect.EstadoServicio es WITH(NOLOCK) WHERE es.codigo = de.codEstado)
          ,de.fechaRegistro
          ,de.idUsuario
          ,de.idPuntoEmision

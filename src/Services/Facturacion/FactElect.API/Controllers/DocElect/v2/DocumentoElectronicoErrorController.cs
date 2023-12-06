@@ -1,0 +1,45 @@
+﻿using Common.Core.Models;
+using DataAccess;
+using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
+
+namespace FactElect.API.Controllers.DocElect.v2
+{
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
+    [ApiVersion("2.0")]
+    public class DocumentoElectronicoErrorController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+        private readonly LogWriter _log;
+        public DocumentoElectronicoErrorController(IConfiguration configuration, LogWriter log)
+        {
+            _configuration = configuration;
+            _log = log;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
+            try
+            {
+                await _db.SPExecute("FactElect.Doc_Elect_Error_Get_Id");
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataTableAsync();
+            }
+            catch (Exception ex)
+            {
+                _response.Create(code: "0", message: "Error al obtener los errores");
+
+                _log.LogActivity("Error on get DocElectErrror: \n" + ex.ToString());
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+    }
+}

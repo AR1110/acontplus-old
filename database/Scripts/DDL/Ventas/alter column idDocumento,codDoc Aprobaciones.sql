@@ -1,5 +1,5 @@
-USE [Acontplus]
-go 
+--USE [Acontplus]
+--go 
 
 
 --ALTER TABLE Ventas.Aprob_Document_Audit ADD codDoc VARCHAR(10) 
@@ -13,10 +13,6 @@ select  * from Ventas.Aprob_Document_Audit aa
 --from  Ventas.Aprob_Document_Audit aa
 
 --ALTER TABLE Ventas.Aprob_Document_Audit ALTER COLUMN codDoc VARCHAR(10) NOT NULL
-
---update aa set
---	codDoc = (SELECT ad.codDoc FROM Ventas.Aprob_Document ad where ad.uniqueId = aa.uniqueId)
---from  Ventas.Aprob_Document_Audit aa
 
 
 --update aa set
@@ -34,6 +30,7 @@ select  * from Ventas.Aprob_Document_Audit aa
 --from Ventas.Aprob_Document_Audit aa
 
 --ALTER TABLE Ventas.Aprob_Document_Audit ALTER COLUMN idDocumento INT NOT NULL
+
 
 
 

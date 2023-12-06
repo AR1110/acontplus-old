@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Common.Core.Utils
 {
@@ -37,6 +39,19 @@ namespace Common.Core.Utils
             // Regular expression to match non-alphanumeric characters
             //Regex regex = new Regex("[^a-zA-Z0-9]");
             return Regex.Replace(text, "[^0-9A-Za-z _-]", "");
+        }
+        //https://www.techieclues.com/blogs/how-to-check-if-a-string-is-a-valid-json-in-csharp#:~:text=TryParse%20method%20from%20the%20System,that%20the%20string%20is%20valid.
+        public static bool IsValidJson(string jsonString)
+        {
+            try
+            {
+                JToken.Parse(jsonString);
+                return true;
+            }
+            catch (JsonReaderException)
+            {
+                return false;
+            }
         }
     }
 }

@@ -1532,8 +1532,7 @@
                 textSearch: text
             }
 
-
-            return mS.getData('get', url + 'Search?json=' + JSON.stringify(obj), null, true).then(response => {
+            return mS.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(obj)), null, true).then(response => {
                 if (response.code === '0') {
                     return response;
                 }
