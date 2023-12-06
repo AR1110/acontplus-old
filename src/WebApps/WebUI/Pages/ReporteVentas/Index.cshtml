@@ -36,9 +36,8 @@
                 <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Establecimiento:</span>
-                        <select class="form-control border-select" 
-                        ng-change="onChangeEstab()"
-                        ng-model="dataSearch.idEstablecimiento">
+                        <select class="form-control border-select" ng-change="onChangeEstab()"
+                            ng-model="dataSearch.idEstablecimiento">
                             <option ng-value="0">Todos</option>
                             <option ng-value="item.idEstablecimiento" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
@@ -143,7 +142,31 @@
 
     <div class="card">
         <div class="card-body">
-
+            <div class="row">
+                <div class="col-xl-2 col-md-2 col-sm-6 col-12">
+                    <div class="form-group">
+                        <span>Tipo Documento: </span>
+                        <select class="form-control border-select" ng-model="dataSearchEstadistica.codDoc"
+                            ng-change="onChangeEstadisticaTipoDoc()">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="item.codigo" ng-repeat="item in estadisticaTiposDoc">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-2 col-sm-6 col-12">
+                    <div class="form-group">
+                        <span>Año: </span>
+                        <select class="form-control border-select" ng-model="dataSearchEstadistica.anio"
+                            ng-change="onChangeEstadisticaAnio()">
+                            <option ng-value="item" ng-repeat="item in rangoDeAnios">
+                                {{item}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <canvas id="chartBarAnualVentas" width="400"
                 style="display: inline; width: 1239px; height: 140px;"></canvas>
 

@@ -96,7 +96,8 @@ function CartSidebar() {
                                             ...data,
                                             feeId,
                                             pvps: dataMeasure && dataMeasure.pvps || [],
-                                            measureId: measureId
+                                            measureId: measureId,
+                                            medida: dataMeasure?.description
                                         }, index)
                                     }}
                                 >
