@@ -1,4 +1,6 @@
-﻿using Common.Core.Utils;
+﻿using Autofac.Extensions.DependencyInjection;
+using Autofac;
+using Common.Core.Utils;
 using FactElect.API.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -17,6 +19,8 @@ namespace FactElect.API
             // Add services to the container.
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
+
+            builder.Services.AddApplicationServices(builder.Configuration);
 
             builder.Services.AddControllers()
                                        .AddNewtonsoftJson(x =>
@@ -57,6 +61,9 @@ namespace FactElect.API
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
             builder.Services.AddSingleton<LogWriter>();
+
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
             var app = builder.Build();
 
