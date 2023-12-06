@@ -67,7 +67,7 @@ function comprobanteAdpater(comprobante: any): Voucher {
         customerIdentification: comprobante.numeroIdentificacion,
         customerName: comprobante.nombreFiscal,
         payingAmount: comprobante.importeTotal,
-        receivedAmount: comprobante.importeTotal,
+        receivedAmount: comprobante.saldo,
         changeReturn: 0,
         totalBalance: comprobante.saldo,
         codEstab: comprobante.codEstab,

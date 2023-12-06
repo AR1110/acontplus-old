@@ -34,6 +34,7 @@ export interface RawOrderData {
   divided: boolean
   finished: boolean
   tableName: string
+  medida?:string
 }
 
 export interface OrderReadDto {

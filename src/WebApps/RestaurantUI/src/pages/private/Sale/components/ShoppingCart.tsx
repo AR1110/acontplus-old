@@ -158,6 +158,9 @@ const ShoppingCart = ({ index, item }: CartItemProps) => {
                                 </StyledTypographyBody>
                             )
                         }
+                        <Typography sx={{ mb: 1.5, fontSize: 12 }} color="text.secondary">
+                           { item.medida}
+                        </Typography>
 
                         <Grid container>
                             <Grid item xl={4} lg={4} md={12} sm={12} xs={12}>

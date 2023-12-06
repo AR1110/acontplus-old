@@ -21,6 +21,7 @@
         let format = 'pdf'
 
         // Obtén el año actual
+        const anioInicio = 2020;
         const anioActual = new Date().getFullYear();
 
         // Establece la fecha de inicio al primer día de enero
@@ -38,7 +39,11 @@
         $scope.puntosEmision = [];
         $scope.estadosDoc = [];
         $scope.tiposDoc = [];
+
+        //Estadisticas - Graficos 
         $scope.estadisticas = [];
+
+        $scope.rangoDeAnios = []
         let chartAnual = null;
         const CHART_COLORES = {
             0: 'rgb(255, 99, 132)',
@@ -50,7 +55,7 @@
             6: 'rgb(231,233,237)'
         };
         $scope.dataSearchEstadistica = {
-            byAnio: anioActual,
+            anio: anioActual,
             fechaInicio,
             fechaFin
         }
@@ -75,13 +80,19 @@
                         codigoSri: "",
                         codigo: CONSOLIDADO_VENTA,
                     }]
-                    const dataTipoDoc = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigoSri === DOC_TYPE.FV_SRI);
+                    const dataTipoDoc = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigo === CONSOLIDADO_VENTA);
                     $scope.dataSearch.codigoTipoDoc = dataTipoDoc.codigo;
                     $scope.estadosDoc = estadosDoc.map(item => ({
                         ...item,
                         idEstadoDocumento: item.idEstadoPago
                     }))
 
+
+                    $scope.estadisticaTiposDoc = tiposDoc;
+
+                    for (let anio = anioInicio; anio <= anioActual; anio++) {
+                        $scope.rangoDeAnios.push(anio)
+                    } 
                 })
                     .catch(error => {
                         console.log(error)
@@ -158,7 +169,7 @@
 
         function getTipoDoc(codigo) {
             if (codigo === DOC_TYPE.FV) return DOC_TYPE.FV_SRI;
-
+            if (codigo === CONSOLIDADO_VENTA) return null
             return codigo;
         }
 
@@ -287,7 +298,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: `Reporte Venta ${$scope.dataSearchEstadistica.byAnio}`,
+                            text: `Reporte Venta ${$scope.dataSearchEstadistica.anio}`,
                             padding: {
                                 top: 10,
                                 bottom: 30
