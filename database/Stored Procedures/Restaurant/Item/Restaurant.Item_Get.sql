@@ -80,7 +80,7 @@ BEGIN
 				    ,descripcion		            = a.descripcion
 				    ,s3ObjectUrl		            = a.s3ObjectUrl
 				    ,stockMinimo		            = a.stockMinimo
-				    ,stock				            = a.stock
+				    ,stock				            = ISNULL(a.stock, 0)
 				    ,codigo				            = a.codigo
                     ,medida                         = a.medida
 				    ,codigoAuxiliar		            = a.codigoAuxiliar
