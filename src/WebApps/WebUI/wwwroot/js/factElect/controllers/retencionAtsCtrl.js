@@ -336,6 +336,7 @@
                                 $scope.docSustento.numDocSustento = $scope.docData.numDocSustento.split('-').join('')
                                 $scope.docSustento.fechaEmisionDocSustento = formatDate($scope.docData.fechaEmisionDocSustento)
                                 $scope.docSustento.numAutDocSustento = $scope.docData.numAutDocSustento
+                                $scope.docSustento.importeTotal = $scope.docData.importeTotal || 0.00
                             } else {
                                 tS.toastr('warning', 'Impuestos no encontrados')
                             }
@@ -596,15 +597,15 @@
                     totalSinImpuestos: 0.00,
                     importeTotal: 0.00
                 })
-                //console.log($scope.docsAdded)
-                $scope.docSustento = {}
 
                 if ($scope.taxesAdded.length > 0) {
                     angular.forEach($scope.docsAdded, (value, key) => {
                         for (const taxxx of $scope.taxesAdded) {
                             if (taxxx.uniqueIdDoc == guid) {
-                                value.totalSinImpuestos += Number(taxxx.baseImponible)
-                                value.importeTotal += (Number(taxxx.baseImponible) + Number(taxxx.valorImpuesto))
+                                //value.totalSinImpuestos += Number(taxxx.baseImponible)
+                                //value.importeTotal += (Number(taxxx.baseImponible) + Number(taxxx.valorImpuesto))
+                                value.totalSinImpuestos = $scope.totalSinImpuestos
+                                value.importeTotal = $scope.docSustento.importeTotal
                             }
                         }
                     })
@@ -614,6 +615,7 @@
                         $window.location.reload()
                     }, 2200)
                 }
+                $scope.docSustento = {}
             }
         }
 
