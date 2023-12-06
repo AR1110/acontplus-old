@@ -111,7 +111,8 @@ BEGIN
 						      ,ti.formato
 						      ,ti.deviceInfo
 						      ,cd.copies copyPrint
-						      ,i.macAddress
+                              ,CAST(ISNULL(i.serverDevice,0) AS bit) serverDevice
+						      ,ISNULL(i.macAddress, '') macAddress
 						      ,rdlcName = CASE @codDoc WHEN 'FV' THEN 'Factura'       + ti.[Name] + '.rdl' 
 		                                               WHEN 'NE' THEN 'NotaEntrega'   + ti.[Name] + '.rdl'
 													   WHEN 'PR' THEN 'Proforma'      + ti.[Name] + '.rdl'
