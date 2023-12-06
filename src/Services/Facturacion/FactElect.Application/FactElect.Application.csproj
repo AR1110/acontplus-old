@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
     <ProjectReference Include="..\FactElect.Core\FactElect.Core.csproj" />
+    <ProjectReference Include="..\FactElect.Infrastructure\FactElect.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
