@@ -514,7 +514,7 @@
             fechaInicio: new Date(),
             fechaFin: new Date(),
             pageIndex: 1,
-            pageSize: 26,
+            pageSize: 100,
             totalRecords: 0
         };
 
