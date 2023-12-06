@@ -14,18 +14,9 @@ namespace FactElect.Application.Services
             _repository = repository;
         }
 
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<string> GetAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("FactElect.Doc_Elect_Error_Get_Id", parameters);
-
-            if (dt == null)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataTableToJSON(dt);
-            }
+            return await _repository.SPExecuteAsync("FactElect.Doc_Elect_Error_Get_Id", parameters);
         }
     }
 }

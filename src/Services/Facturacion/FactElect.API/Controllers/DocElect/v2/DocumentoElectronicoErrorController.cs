@@ -1,4 +1,6 @@
-﻿using FactElect.Core.Interfaces;
+﻿using Azure;
+using Common.Core.Models;
+using FactElect.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -29,17 +31,18 @@ namespace FactElect.API.Controllers.DocElect.v2
                     { "id", id}
                 };
                 var orders = await _factElect.GetAsync(parameters);
-                if (orders == null)
+
+                if (orders == null | string.IsNullOrEmpty(orders))
                 {
-                    _log.LogActivity("No se encontró datos");
                     return NotFound();
                 }
+
                 return Ok(orders);
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error on Get: \n" + ex.ToString());
-                return BadRequest("Error on get");
+                return BadRequest(ex.Message);
             }
         }
     }
