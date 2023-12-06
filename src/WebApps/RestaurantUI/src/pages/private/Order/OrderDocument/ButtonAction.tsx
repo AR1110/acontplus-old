@@ -100,7 +100,7 @@ const ButtonAction = ({ data, getOrderDocuments }: ActionsProps) => {
         if (["CBR", "A"].includes(data.codEstado)) {
             Swal.fire({
                 icon: 'warning',
-                html: 'Este documento ya se ha sido cobrada!'
+                html: 'Este documento ya se ha sido cobrado!'
             })
             return
         }
