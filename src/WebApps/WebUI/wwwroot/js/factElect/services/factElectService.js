@@ -822,7 +822,7 @@
             )
 
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (rowEntity.idFacturaDetalle > 0 && rowEntity.estado && fS.getDate(fechaEmisionDocCreado) !== fS.getDate(fechaEmisionValidate)) {
+                if (rowEntity.idFacturaDetalle > 0 && rowEntity.estado && fechaEmisionDocCreado.getTime() !== fechaEmisionValidate.getTime()) {
 
                     //si fecha documento creado es anterior a fecha consolidacion articulo
                     if (fechaEmisionDocCreado >= dataConsolidacionFecha.fechaConsolidacion) {
