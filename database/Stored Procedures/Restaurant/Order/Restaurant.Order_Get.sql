@@ -167,7 +167,8 @@ BEGIN
                 RemainingQuantity   NUMERIC(18,5) NULL,
 
                 medidasFraccionado VARCHAR(MAX) NOT NULL,
-                medidasPrincipal   VARCHAR(MAX) NOT NULL
+                medidasPrincipal   VARCHAR(MAX) NOT NULL,
+                medida VARCHAR(100) NOT NULL
             )
 
             SET @tableNames = 'order,orderItems'
@@ -186,7 +187,7 @@ BEGIN
             --ARTICULO- ITEMS 
             INSERT INTO @tblOrderItems(uuid, id, orderId, itemId, taxId, taxPercentId, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
                                         llevaInventario, taxRateCode, priceWithVat, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid,
-                                        itemTypeCode, remainingQuantity, medidasFraccionado, medidasPrincipal
+                                        itemTypeCode, remainingQuantity, medidasFraccionado, medidasPrincipal, medida
                                         )
             SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, 
                     va.descripcion, va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = CAST((o_i.Price + o_i.TaxValue) as numeric(18,5)),
@@ -222,8 +223,8 @@ BEGIN
 			                    FROM dbo.Articulo     a WITH (NOLOCK)
 			                    INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
 			                    WHERE a.idArticulo = va.idArticulo AND a.estado = 1 FOR JSON PATH
-                             ) as medidasPrincipal
-                    
+                             ) as medidasPrincipal,
+                             va.medida
 
             FROM Restaurant.[OrderItem] o_i with(nolock)
             INNER JOIN Restaurant.Item it               ON it.Id = o_i.ItemId
@@ -235,7 +236,7 @@ BEGIN
             --MENÚ- ITEMS 
             INSERT INTO @tblOrderItems(uuid,  id, orderId, itemTypeId, menuId, taxId, taxPercentId, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
                llevaInventario, taxRateCode, priceWithVat, summary, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid, itemTypeCode, remainingQuantity,
-               medidasFraccionado, medidasPrincipal
+               medidasFraccionado, medidasPrincipal, medida
             )
             SELECT o_i.uuid, o_i.id, o_i.orderId, o_i.ItemTypeId, o_i.MenuId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, va.descripcion,
                 va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = cast((o_i.Price + o_i.TaxValue) as numeric(18,5)),
@@ -270,7 +271,8 @@ BEGIN
 			                    FROM dbo.Articulo     a WITH (NOLOCK)
 			                    INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
 			                    WHERE a.idArticulo = va.idArticulo AND a.estado = 1 FOR JSON PATH
-                             ) as medidasPrincipal
+                             ) as medidasPrincipal,
+                             va.medida
             FROM Restaurant.[OrderItem] o_i with(nolock)
             INNER JOIN Restaurant.ItemType i_t          ON i_t.Id = o_i.ItemTypeId
             INNER JOIN Restaurant.Menu m            ON o_i.menuId = m.Id 
