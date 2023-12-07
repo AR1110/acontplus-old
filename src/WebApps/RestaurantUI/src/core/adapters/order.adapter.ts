@@ -143,7 +143,8 @@ async function orderReadForUpdateAdapter(obj: any) {
             paid: restOrderItem.paid ?? false,
             menuId: restOrderItem.menuId,
             itemTypeCode: restOrderItem.itemTypeCode,
-            remainingQuantity: restOrderItem.remainingQuantity
+            remainingQuantity: restOrderItem.remainingQuantity,
+            medida: restOrderItem.medida
         };
         
     }) 

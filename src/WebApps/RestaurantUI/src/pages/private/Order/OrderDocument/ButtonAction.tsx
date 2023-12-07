@@ -97,10 +97,17 @@ const ButtonAction = ({ data, getOrderDocuments }: ActionsProps) => {
     }
 
     const openCheckoutDialog = () => {
-        if (["CBR", "A"].includes(data.codEstado)) {
+        if (["A"].includes(data.codEstado)) {
             Swal.fire({
                 icon: 'warning',
-                html: 'Este documento ya se ha sido cobrado!'
+                html: 'Este documento ya esta anulado!'
+            })
+        }
+
+        if (["CBR"].includes(data.codEstado)) {
+            Swal.fire({
+                icon: 'warning',
+                html: 'Este documento ya ha sido cobrado!'
             })
             return
         }
