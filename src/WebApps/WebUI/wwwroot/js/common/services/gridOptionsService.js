@@ -211,23 +211,37 @@
         }
 
 
+        /**
+         * 
+         * @param {*} obj { items, decimal, tarifasImpuesto }
+         * @returns 
+         */
         service.getImpuestoTotales = function (obj) {
-            let { items, decimal, codigoPorcentaje } = obj;
-            let { totalNetoIva } = items.reduce((total, item) => {
-                // let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
-                let totalNetoIva = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+            const { items, decimal, tarifasImpuesto } = obj;
+            let htmlImpuestoTotal = '';
 
-                if (item.codigoPorcentaje === codigoPorcentaje) {
-                    total.totalNetoIva += totalNetoIva;
-                }
-                return total;
-            }, {
-                totalNetoIva: 0
-            })
+            for (let ti of tarifasImpuesto) {
+                let totalNetoIva = items.filter(item => item.codigoPorcentaje === ti.codigoPorcentaje)
+                    .reduce((acc, prev) => {
+                        let total = ((prev.precioUnitario * prev.cantidad)) - prev.valorDescuento;
+                        acc += total;
+                        return acc;
+                    }, 0);
+
+                htmlImpuestoTotal += `<tr>
+                                        <td class="left">
+                                            <strong class="text-dark">${ti.descripcion}</strong>
+                                        </td>
+                                        <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}
+                                        </td>
+                                    </tr>`
+            }
 
             return {
-                totalNetoIva: fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)
+                subTotalSinImpuestos: fS.roundNumber(service.getSubTotalSinImpuesto(items).subTotalSinImpuestos, decimal.nroTotalSubTotal),
+                htmlImpuestoTotal
             }
+
         }
 
         /**
@@ -521,10 +535,8 @@
             }, {
                 subTotalSinImpuestos: 0
             })
-            console.log(subTotalSinImpuestos)
             return { subTotalSinImpuestos };
         }
-
 
 
 
