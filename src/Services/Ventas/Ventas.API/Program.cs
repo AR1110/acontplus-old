@@ -2,12 +2,13 @@
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Asp.Versioning;
 using Services.Common;
 using Services.Common.Logs;
 using Newtonsoft.Json.Serialization;
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
+using Asp.Versioning.ApiExplorer;
 
 namespace Ventas.API
 {
@@ -44,13 +45,12 @@ namespace Ventas.API
                                                                 new QueryStringApiVersionReader("api-version"),
                                                                 new HeaderApiVersionReader("x-api-version"),
                                                                 new MediaTypeApiVersionReader("x-api-version"));
-            });
-
-            builder.Services.AddVersionedApiExplorer(setup =>
+            }).AddApiExplorer(setup =>
             {
                 setup.GroupNameFormat = "'v'VVV";
                 setup.SubstituteApiVersionInUrl = true;
             });
+
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -72,7 +72,7 @@ namespace Ventas.API
 
             //app.UseSwaggerDocumentation();
 
-            app.UseApiVersioning();
+            
 
             app.UseRouting();
 
