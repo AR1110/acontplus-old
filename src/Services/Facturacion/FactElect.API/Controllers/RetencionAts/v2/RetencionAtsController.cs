@@ -1,4 +1,5 @@
-﻿using Common.Core.Models;
+﻿using Asp.Versioning;
+using Common.Core.Models;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;

@@ -21,14 +21,14 @@ namespace Vet.Application.Services
         }
         public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
-            if (DataValidation.DataTableIsNull(dt))
+            var ds = await _repository.GetDataSetAsync("Pet.Pet_Get", parameters);
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
                 _response.Create(code: "0", "La transacción no devolvio respuesta");
             }
             else
             {
-                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds));
             }
             return _response;
         }
@@ -57,14 +57,14 @@ namespace Vet.Application.Services
 
         public async Task<APIResponse> SearchAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
-            if (DataValidation.DataTableIsNull(dt))
+            var ds = await _repository.GetDataSetAsync("Pet.Pet_Get", parameters);
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
                 _response.Create(code: "0", "La transacción no devolvio respuesta");
             }
             else
             {
-                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds));
             }
             return _response;
         }

@@ -1,4 +1,5 @@
-﻿using Common.Core.Interfaces;
+﻿using Asp.Versioning;
+using Common.Core.Interfaces;
 using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
