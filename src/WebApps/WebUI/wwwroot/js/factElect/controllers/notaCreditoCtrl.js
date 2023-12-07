@@ -1245,6 +1245,7 @@
                 entity.productoFraccionable = articulo.productoFraccionable;
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                entity.conversion = dataMedida.conversion;
                 entity.adicional = datosAdicionales; //
 
 

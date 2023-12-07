@@ -1107,7 +1107,7 @@
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
 
                     let factura = facturaApi.reduce((acc, previous) => {
-                       
+
                         acc.idDocumento = previous.idFactura;
                         acc.serieComprobante = previous.nroFactura;
                         return acc;
@@ -1160,7 +1160,8 @@
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             subTotal: restItem.cantidad * restItem.precioUnitario || 0,
-                            totalDescuento: restItem.cantidad * restItem.valorDescuento || 0
+                            totalDescuento: restItem.cantidad * restItem.valorDescuento || 0,
+                            estado: 1
                         }
 
                         return obj;
@@ -1197,7 +1198,7 @@
 
             const mergeDetalles = [
                 ...resultDetalles,
-                resultDetallesDeleted
+                ...resultDetallesDeleted
             ]
             return {
                 infoNotaCredito: resultInfoComprobante,
@@ -1237,6 +1238,7 @@
             let resultMap = detalles.map((orderItem, index) => {
                 let cantidadTransaccion = orderItem.cantidad * orderItem.conversion;
                 let obj = {
+                    idNotaCreditoDetalle: orderItem.idNotaCreditoDetalle || 0,
                     orderIndex: index,
                     idArticulo: orderItem.idArticulo,
                     idTarifa: orderItem.idTarifa,
@@ -1255,7 +1257,8 @@
                     llevaInventario: orderItem.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
                     precioCosto: orderItem.precioCosto,
-                    valorImpuesto: fS.getTaxBaseAndTaxValue(orderItem).taxValue
+                    valorImpuesto: fS.getTaxBaseAndTaxValue(orderItem).taxValue,
+                    estado: orderItem.estado
                 };
                 return obj;
             })

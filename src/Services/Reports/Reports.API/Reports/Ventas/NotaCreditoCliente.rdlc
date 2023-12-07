@@ -2,144 +2,36 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
-    <DataSource Name="ComprobantesElectronicosVentas">
+    <DataSource Name="mainDs">
       <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
       </ConnectionProperties>
       <rd:SecurityType>None</rd:SecurityType>
-      <rd:DataSourceID>ad8cce51-92f5-4376-8c75-80e06cec652c</rd:DataSourceID>
-    </DataSource>
-    <DataSource Name="ComprobantesElectronicos">
-      <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
-      </ConnectionProperties>
-      <rd:SecurityType>None</rd:SecurityType>
-      <rd:DataSourceID>a30b919f-a46b-4e23-ab77-9c1d7bf61626</rd:DataSourceID>
+      <rd:DataSourceID>f9087575-fc88-4ab4-ad07-94685034d67e</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="NotaCreditoClienteDs">
+    <DataSet Name="headerDs">
       <Query>
-        <DataSourceName>ComprobantesElectronicosVentas</DataSourceName>
+        <DataSourceName>mainDs</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="rucEntidad">
-          <DataField>rucEntidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="razonSocialEntidad">
-          <DataField>razonSocialEntidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="nombreComercialEntidad">
-          <DataField>nombreComercialEntidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="direccionEntidad">
-          <DataField>direccionEntidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="telefonoEntidad">
-          <DataField>telefonoEntidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="emailEntidad">
-          <DataField>emailEntidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="obligadoLlevarContabilidad">
-          <DataField>obligadoLlevarContabilidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="nroDocumento">
-          <DataField>nroDocumento</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="nroAutorizacion">
-          <DataField>nroAutorizacion</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="fechaAutorizacion">
-          <DataField>fechaAutorizacion</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="emision">
-          <DataField>emision</DataField>
+        <Field Name="serieComprobante">
+          <DataField>serieComprobante</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="claveAcceso">
           <DataField>claveAcceso</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nroIdentificacion">
-          <DataField>nroIdentificacion</DataField>
+        <Field Name="codigoAutorizacion">
+          <DataField>codigoAutorizacion</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nombreFiscalCliente">
-          <DataField>nombreFiscalCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="correoCliente">
-          <DataField>correoCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="telefonoCliente">
-          <DataField>telefonoCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="direccionCliente">
-          <DataField>direccionCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="fechaEmision">
-          <DataField>fechaEmision</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="subTotalIva12">
-          <DataField>subTotalIva12</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="subTotalIva0">
-          <DataField>subTotalIva0</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="subTotalNoObjetoIva">
-          <DataField>subTotalNoObjetoIva</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="subtotalExcentoIva">
-          <DataField>subtotalExcentoIva</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ice">
-          <DataField>ice</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="tipoIva">
-          <DataField>tipoIva</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="iva12">
-          <DataField>iva12</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="irbpnr">
-          <DataField>irbpnr</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="subTotalSinImpuestos">
-          <DataField>subTotalSinImpuestos</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="totalDescuento">
-          <DataField>totalDescuento</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="total">
-          <DataField>total</DataField>
+        <Field Name="fechaAutorizacion">
+          <DataField>fechaAutorizacion</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="tipoDocumento">
@@ -150,16 +42,124 @@
           <DataField>ambiente</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="emision">
+          <DataField>emision</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="razonSocial">
+          <DataField>razonSocial</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ruc">
+          <DataField>ruc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="establecimiento">
+          <DataField>nombreComercial</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="telefonoEstablecimiento">
+          <DataField>telefonoEstablecimiento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="correoEstablecimiento">
+          <DataField>correoEstablecimiento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="dirEstablecimiento">
+          <DataField>dirEstablecimiento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="obligadoContabilidad">
+          <DataField>obligadoContabilidad</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="contribuyenteRimpe">
+          <DataField>contribuyenteRimpe</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="agenteRetencion">
+          <DataField>agenteRetencion</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="identificacionComprador">
+          <DataField>identificacionComprador</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="razonSocialComprador">
+          <DataField>razonSocialComprador</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="correoComprador">
+          <DataField>correoComprador</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="telefonoComprador">
+          <DataField>telefonoComprador</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="direccionComprador">
+          <DataField>direccionComprador</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subTotalNetoIva">
+          <DataField>subTotalNetoIva</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subTotalIva">
+          <DataField>subTotalIva</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subTotalIvaCero">
+          <DataField>subTotalIvaCero</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subTotalNoObjetoIva">
+          <DataField>subTotalNoObjetoIva</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subTotalExentoIva">
+          <DataField>subTotalExentoIva</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subTotalSinImpuestos">
+          <DataField>subTotalSinImpuestos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="totalIce">
+          <DataField>totalIce</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="irbpnr">
+          <DataField>irbpnr</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="totalDescuento">
+          <DataField>totalDescuento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="iva">
+          <DataField>iva</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="propina">
           <DataField>propina</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="tipoDocFactura">
-          <DataField>tipoDocFactura</DataField>
+        <Field Name="total">
+          <DataField>total</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nroDocFactura">
-          <DataField>nroDocFactura</DataField>
+        <Field Name="fechaEmision">
+          <DataField>fechaEmision</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="tipoDoc">
+          <DataField>tipoDoc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="nroFactura">
+          <DataField>nroFactura</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="fechaEmisionFactura">
@@ -168,18 +168,14 @@
         </Field>
         <Field Name="observacion">
           <DataField>observacion</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="tipoRegimen">
-          <DataField>tipoRegimen</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="tipoIva">
+          <DataField>tipoIva</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="porcentajeIva">
           <DataField>porcentajeIva</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="contribuyenteRimpe">
-          <DataField>contribuyenteRimpe</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -192,9 +188,9 @@
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="NotaCreditoClienteDetalleDs">
+    <DataSet Name="detalleDs">
       <Query>
-        <DataSourceName>ComprobantesElectronicosVentas</DataSourceName>
+        <DataSourceName>mainDs</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -236,9 +232,9 @@
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="InfoAdicionalDs">
+    <DataSet Name="infoAdicionalDs">
       <Query>
-        <DataSourceName>ComprobantesElectronicosVentas</DataSourceName>
+        <DataSourceName>mainDs</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -274,7 +270,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!rucEntidad.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!ruc.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>9pt</FontSize>
                         </Style>
@@ -303,7 +299,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>NOTA DE CRÉDITO</Value>
+                        <Value>=First(Fields!tipoDocumento.Value, "headerDs")</Value>
                         <Style>
                           <FontWeight>Bold</FontWeight>
                         </Style>
@@ -338,7 +334,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroDocumento.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!serieComprobante.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -371,7 +367,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroAutorizacion.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!claveAcceso.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -404,7 +400,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaAutorizacion.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!fechaAutorizacion.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -437,7 +433,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ambiente.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!ambiente.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -470,7 +466,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!emision.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!emision.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -503,7 +499,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!claveAcceso.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!claveAcceso.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                           <FontWeight>Bold</FontWeight>
@@ -792,7 +788,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!direccionEntidad.Value, "NotaCreditoClienteDs")</Value>
+                    <Value>=First(Fields!dirEstablecimiento.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -827,7 +823,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!obligadoLlevarContabilidad.Value, "NotaCreditoClienteDs")</Value>
+                    <Value>=First(Fields!obligadoContabilidad.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>7pt</FontSize>
                     </Style>
@@ -839,8 +835,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox46</rd:DefaultName>
-            <Top>7.42935cm</Top>
-            <Left>5.2044cm</Left>
+            <Top>7.32352cm</Top>
+            <Left>5.20439cm</Left>
             <Height>0.6cm</Height>
             <Width>4.07119cm</Width>
             <ZIndex>2</ZIndex>
@@ -860,7 +856,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!telefonoEntidad.Value, "NotaCreditoClienteDs")</Value>
+                    <Value>=First(Fields!telefonoEstablecimiento.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -978,8 +974,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox119</rd:DefaultName>
-            <Top>7.42935cm</Top>
-            <Left>0.26142cm</Left>
+            <Top>7.32352cm</Top>
+            <Left>0.26141cm</Left>
             <Height>0.6cm</Height>
             <Width>4.90771cm</Width>
             <ZIndex>6</ZIndex>
@@ -999,7 +995,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!emailEntidad.Value, "NotaCreditoClienteDs")</Value>
+                    <Value>=First(Fields!correoEstablecimiento.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -1086,7 +1082,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox59</rd:DefaultName>
                 <Top>0.12819cm</Top>
-                <Left>0.22798cm</Left>
+                <Left>0.228cm</Left>
                 <Height>0.6cm</Height>
                 <Width>5.19875cm</Width>
                 <Style>
@@ -1121,7 +1117,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox61</rd:DefaultName>
                 <Top>0.12819cm</Top>
-                <Left>12.47979cm</Left>
+                <Left>12.47981cm</Left>
                 <Height>0.6cm</Height>
                 <Width>2.15604cm</Width>
                 <ZIndex>1</ZIndex>
@@ -1143,7 +1139,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroIdentificacion.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!identificacionComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -1156,7 +1152,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox62</rd:DefaultName>
                 <Top>0.12819cm</Top>
-                <Left>14.70638cm</Left>
+                <Left>14.7064cm</Left>
                 <Height>0.6cm</Height>
                 <Width>3.30097cm</Width>
                 <ZIndex>2</ZIndex>
@@ -1192,7 +1188,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox59</rd:DefaultName>
                 <Top>0.83403cm</Top>
-                <Left>0.22797cm</Left>
+                <Left>0.22799cm</Left>
                 <Height>0.56472cm</Height>
                 <Width>2.34125cm</Width>
                 <ZIndex>3</ZIndex>
@@ -1214,7 +1210,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaEmision.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!fechaEmision.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -1227,7 +1223,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox60</rd:DefaultName>
                 <Top>0.83403cm</Top>
-                <Left>2.6045cm</Left>
+                <Left>2.60452cm</Left>
                 <Height>0.56472cm</Height>
                 <Width>6.20417cm</Width>
                 <ZIndex>4</ZIndex>
@@ -1249,7 +1245,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nombreFiscalCliente.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!razonSocialComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -1262,7 +1258,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox60</rd:DefaultName>
                 <Top>0.12819cm</Top>
-                <Left>5.49728cm</Left>
+                <Left>5.4973cm</Left>
                 <Height>0.6cm</Height>
                 <Width>6.20417cm</Width>
                 <ZIndex>5</ZIndex>
@@ -1298,7 +1294,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox59</rd:DefaultName>
                 <Top>1.50459cm</Top>
-                <Left>0.22798cm</Left>
+                <Left>0.228cm</Left>
                 <Height>0.6cm</Height>
                 <Width>2.34125cm</Width>
                 <ZIndex>6</ZIndex>
@@ -1320,7 +1316,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!direccionCliente.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!direccionComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -1333,7 +1329,7 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox60</rd:DefaultName>
                 <Top>1.50459cm</Top>
-                <Left>2.60451cm</Left>
+                <Left>2.60453cm</Left>
                 <Height>0.6cm</Height>
                 <Width>12.03132cm</Width>
                 <ZIndex>7</ZIndex>
@@ -1348,12 +1344,307 @@
                   <PaddingBottom>2pt</PaddingBottom>
                 </Style>
               </Textbox>
+              <Rectangle Name="Rectangle4">
+                <ReportItems>
+                  <Textbox Name="Textbox32">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>Comprobante que se modifica:</Value>
+                            <Style>
+                              <FontSize>7pt</FontSize>
+                              <FontWeight>Bold</FontWeight>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style>
+                          <TextAlign>Left</TextAlign>
+                        </Style>
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox32</rd:DefaultName>
+                    <Top>0.1241cm</Top>
+                    <Left>0.22797cm</Left>
+                    <Height>0.6cm</Height>
+                    <Width>4.85479cm</Width>
+                    <Style>
+                      <Border>
+                        <Style>None</Style>
+                      </Border>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                  <Textbox Name="Textbox33">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>=First(Fields!tipoDoc.Value, "headerDs")</Value>
+                            <Style>
+                              <FontSize>7pt</FontSize>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style>
+                          <TextAlign>Left</TextAlign>
+                        </Style>
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox33</rd:DefaultName>
+                    <Top>0.1241cm</Top>
+                    <Left>5.15332cm</Left>
+                    <Height>0.6cm</Height>
+                    <Width>4.88126cm</Width>
+                    <ZIndex>1</ZIndex>
+                    <Style>
+                      <Border>
+                        <Style>None</Style>
+                      </Border>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                  <Textbox Name="Textbox34">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>Nro. Documento:</Value>
+                            <Style>
+                              <FontSize>7pt</FontSize>
+                              <FontWeight>Bold</FontWeight>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style>
+                          <TextAlign>Left</TextAlign>
+                        </Style>
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox34</rd:DefaultName>
+                    <Top>0.1241cm</Top>
+                    <Left>10.90675cm</Left>
+                    <Height>0.6cm</Height>
+                    <Width>2.69562cm</Width>
+                    <ZIndex>2</ZIndex>
+                    <Style>
+                      <Border>
+                        <Style>None</Style>
+                      </Border>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                  <Textbox Name="Textbox35">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>=First(Fields!nroFactura.Value, "headerDs")</Value>
+                            <Style>
+                              <FontSize>7pt</FontSize>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style>
+                          <TextAlign>Left</TextAlign>
+                        </Style>
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox35</rd:DefaultName>
+                    <Top>0.1241cm</Top>
+                    <Left>13.63764cm</Left>
+                    <Height>0.6cm</Height>
+                    <Width>5.01485cm</Width>
+                    <ZIndex>3</ZIndex>
+                    <Style>
+                      <Border>
+                        <Style>None</Style>
+                      </Border>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                  <Textbox Name="Textbox36">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>Fecha Emisión(Comprobante a modificar):</Value>
+                            <Style>
+                              <FontSize>7pt</FontSize>
+                              <FontWeight>Bold</FontWeight>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style>
+                          <TextAlign>Left</TextAlign>
+                        </Style>
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox32</rd:DefaultName>
+                    <Top>0.79466cm</Top>
+                    <Left>0.22797cm</Left>
+                    <Height>0.6cm</Height>
+                    <Width>5.28828cm</Width>
+                    <ZIndex>4</ZIndex>
+                    <Style>
+                      <Border>
+                        <Style>None</Style>
+                      </Border>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                  <Textbox Name="Textbox37">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>=First(Fields!fechaEmisionFactura.Value, "headerDs")</Value>
+                            <Style>
+                              <FontSize>7pt</FontSize>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style>
+                          <TextAlign>Left</TextAlign>
+                        </Style>
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox33</rd:DefaultName>
+                    <Top>0.79466cm</Top>
+                    <Left>5.58681cm</Left>
+                    <Height>0.6cm</Height>
+                    <Width>4.44777cm</Width>
+                    <ZIndex>5</ZIndex>
+                    <Style>
+                      <Border>
+                        <Style>None</Style>
+                      </Border>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                  <Textbox Name="Textbox38">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>Razón de modificación:</Value>
+                            <Style>
+                              <FontSize>7pt</FontSize>
+                              <FontWeight>Bold</FontWeight>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style>
+                          <TextAlign>Left</TextAlign>
+                        </Style>
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox34</rd:DefaultName>
+                    <Top>0.79466cm</Top>
+                    <Left>10.90674cm</Left>
+                    <Height>0.6cm</Height>
+                    <Width>3.07307cm</Width>
+                    <ZIndex>6</ZIndex>
+                    <Style>
+                      <Border>
+                        <Style>None</Style>
+                      </Border>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                  <Textbox Name="Textbox39">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>=First(Fields!observacion.Value, "headerDs")</Value>
+                            <Style>
+                              <FontSize>7pt</FontSize>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style>
+                          <TextAlign>Left</TextAlign>
+                        </Style>
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox35</rd:DefaultName>
+                    <Top>0.79466cm</Top>
+                    <Left>14.05037cm</Left>
+                    <Height>0.6cm</Height>
+                    <Width>4.60212cm</Width>
+                    <ZIndex>7</ZIndex>
+                    <Style>
+                      <Border />
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                </ReportItems>
+                <KeepTogether>true</KeepTogether>
+                <Top>2.37653cm</Top>
+                <Height>1.53459cm</Height>
+                <Width>19.35913cm</Width>
+                <ZIndex>8</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Rectangle>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>8.7939cm</Top>
-            <Left>0.26141cm</Left>
-            <Height>2.30597cm</Height>
-            <Width>19.35913cm</Width>
+            <Top>8.9824cm</Top>
+            <Left>0.2614cm</Left>
+            <Height>3.91112cm</Height>
+            <Width>19.35915cm</Width>
             <ZIndex>9</ZIndex>
             <Style>
               <Border>
@@ -1903,9 +2194,9 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>NotaCreditoClienteDetalleDs</DataSetName>
-            <Top>12.91669cm</Top>
-            <Left>0.26142cm</Left>
+            <DataSetName>detalleDs</DataSetName>
+            <Top>12.96407cm</Top>
+            <Left>0.2614cm</Left>
             <Height>1.2cm</Height>
             <Width>19.35912cm</Width>
             <ZIndex>10</ZIndex>
@@ -1990,7 +2281,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!direccionCliente.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!direccionComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -2061,7 +2352,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!correoCliente.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!correoComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -2132,7 +2423,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!telefonoCliente.Value, "NotaCreditoClienteDs")</Value>
+                        <Value>=First(Fields!telefonoComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                         </Style>
@@ -2257,7 +2548,7 @@
                     </TablixMember>
                   </TablixMembers>
                 </TablixRowHierarchy>
-                <DataSetName>InfoAdicionalDs</DataSetName>
+                <DataSetName>infoAdicionalDs</DataSetName>
                 <Top>2.85861cm</Top>
                 <Left>0.31751cm</Left>
                 <Height>0.6cm</Height>
@@ -2271,8 +2562,8 @@
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>14.29093cm</Top>
-            <Left>0.26141cm</Left>
+            <Top>14.22305cm</Top>
+            <Left>0.26143cm</Left>
             <Height>4.19705cm</Height>
             <Width>11.30154cm</Width>
             <ZIndex>11</ZIndex>
@@ -2332,14 +2623,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subTotalIva12">
+                        <Textbox Name="subTotalIva">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!subTotalIva12.Value</Value>
+                                  <Value>=Fields!subTotalIva.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                   </Style>
@@ -2350,7 +2641,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subTotalIva12</rd:DefaultName>
+                          <rd:DefaultName>subTotalIva</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2405,14 +2696,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subTotalIva0">
+                        <Textbox Name="subTotalIvaCero">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!subTotalIva0.Value</Value>
+                                  <Value>=Fields!subTotalIvaCero.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                   </Style>
@@ -2423,7 +2714,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subTotalIva0</rd:DefaultName>
+                          <rd:DefaultName>subTotalIvaCero</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2551,14 +2842,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subtotalExcentoIva">
+                        <Textbox Name="subTotalExentoIva">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!subtotalExcentoIva.Value</Value>
+                                  <Value>=Fields!subTotalExentoIva.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                   </Style>
@@ -2569,7 +2860,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subtotalExcentoIva</rd:DefaultName>
+                          <rd:DefaultName>subTotalExentoIva</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2770,14 +3061,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="ice">
+                        <Textbox Name="totalIce">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!ice.Value</Value>
+                                  <Value>=Fields!totalIce.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                   </Style>
@@ -2788,7 +3079,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>ice</rd:DefaultName>
+                          <rd:DefaultName>totalIce</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2843,14 +3134,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="iva12">
+                        <Textbox Name="iva">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!iva12.Value</Value>
+                                  <Value>=Fields!iva.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                   </Style>
@@ -2861,7 +3152,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>iva12</rd:DefaultName>
+                          <rd:DefaultName>iva</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -3119,9 +3410,9 @@
                 <TablixMember />
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>NotaCreditoClienteDs</DataSetName>
-            <Top>14.25699cm</Top>
-            <Left>13.39641cm</Left>
+            <DataSetName>headerDs</DataSetName>
+            <Top>14.22305cm</Top>
+            <Left>13.39643cm</Left>
             <Height>5.17121cm</Height>
             <Width>6.22413cm</Width>
             <ZIndex>12</ZIndex>
@@ -3131,302 +3422,6 @@
               </Border>
             </Style>
           </Tablix>
-          <Rectangle Name="Rectangle4">
-            <ReportItems>
-              <Textbox Name="Textbox32">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>Comprobante que se modifica:</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                          <FontWeight>Bold</FontWeight>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Left</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox32</rd:DefaultName>
-                <Top>0.1241cm</Top>
-                <Left>0.22797cm</Left>
-                <Height>0.6cm</Height>
-                <Width>4.85479cm</Width>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-              <Textbox Name="Textbox33">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>=First(Fields!tipoDocFactura.Value, "NotaCreditoClienteDs")</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Left</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox33</rd:DefaultName>
-                <Top>0.1241cm</Top>
-                <Left>5.15332cm</Left>
-                <Height>0.6cm</Height>
-                <Width>4.88126cm</Width>
-                <ZIndex>1</ZIndex>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-              <Textbox Name="Textbox34">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>Nro. Documento:</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                          <FontWeight>Bold</FontWeight>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Left</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox34</rd:DefaultName>
-                <Top>0.1241cm</Top>
-                <Left>10.90675cm</Left>
-                <Height>0.6cm</Height>
-                <Width>2.69562cm</Width>
-                <ZIndex>2</ZIndex>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-              <Textbox Name="Textbox35">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>=First(Fields!nroDocFactura.Value, "NotaCreditoClienteDs")</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Left</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox35</rd:DefaultName>
-                <Top>0.1241cm</Top>
-                <Left>13.63764cm</Left>
-                <Height>0.6cm</Height>
-                <Width>5.01485cm</Width>
-                <ZIndex>3</ZIndex>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-              <Textbox Name="Textbox36">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>Fecha Emisión(Comprobante a modificar):</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                          <FontWeight>Bold</FontWeight>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Left</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox32</rd:DefaultName>
-                <Top>0.79466cm</Top>
-                <Left>0.22797cm</Left>
-                <Height>0.6cm</Height>
-                <Width>5.28828cm</Width>
-                <ZIndex>4</ZIndex>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-              <Textbox Name="Textbox37">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>=First(Fields!fechaEmisionFactura.Value, "NotaCreditoClienteDs")</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Left</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox33</rd:DefaultName>
-                <Top>0.79466cm</Top>
-                <Left>5.58681cm</Left>
-                <Height>0.6cm</Height>
-                <Width>4.44777cm</Width>
-                <ZIndex>5</ZIndex>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-              <Textbox Name="Textbox38">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>Razón de modificación:</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                          <FontWeight>Bold</FontWeight>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Left</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox34</rd:DefaultName>
-                <Top>0.79466cm</Top>
-                <Left>10.90674cm</Left>
-                <Height>0.6cm</Height>
-                <Width>3.07307cm</Width>
-                <ZIndex>6</ZIndex>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-              <Textbox Name="Textbox39">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>=First(Fields!observacion.Value, "NotaCreditoClienteDs")</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Left</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox35</rd:DefaultName>
-                <Top>0.79466cm</Top>
-                <Left>14.05037cm</Left>
-                <Height>0.6cm</Height>
-                <Width>4.60212cm</Width>
-                <ZIndex>7</ZIndex>
-                <Style>
-                  <Border />
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-            </ReportItems>
-            <KeepTogether>true</KeepTogether>
-            <Top>11.20571cm</Top>
-            <Left>0.26141cm</Left>
-            <Height>1.53459cm</Height>
-            <Width>19.35913cm</Width>
-            <ZIndex>13</ZIndex>
-            <Style>
-              <Border>
-                <Style>Solid</Style>
-              </Border>
-            </Style>
-          </Rectangle>
           <Image Name="logo">
             <Source>Database</Source>
             <Value>=Parameters!logo.Value</Value>
@@ -3436,7 +3431,7 @@
             <Left>0.26142cm</Left>
             <Height>2.89437cm</Height>
             <Width>9.01417cm</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3454,7 +3449,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!razonSocialEntidad.Value, "NotaCreditoClienteDs")</Value>
+                    <Value>=First(Fields!razonSocial.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -3471,7 +3466,7 @@
             <Left>0.26142cm</Left>
             <Height>0.6cm</Height>
             <Width>9.01417cm</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -3488,7 +3483,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!nombreComercialEntidad.Value, "NotaCreditoClienteDs")</Value>
+                    <Value>=First(Fields!establecimiento.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -3504,7 +3499,7 @@
             <Left>0.26142cm</Left>
             <Height>0.67055cm</Height>
             <Width>9.01417cm</Width>
-            <ZIndex>16</ZIndex>
+            <ZIndex>15</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -3514,33 +3509,73 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox120">
+          <Textbox Name="Textbox2">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!contribuyenteRimpe.Value, "NotaCreditoClienteDs")</Value>
+                    <Value>=First(Fields!contribuyenteRimpe.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>7pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
+                <Style />
               </Paragraph>
             </Paragraphs>
-            <rd:DefaultName>Textbox119</rd:DefaultName>
-            <Top>8.08807cm</Top>
-            <Left>0.26141cm</Left>
-            <Height>0.6cm</Height>
-            <Width>9.01418cm</Width>
-            <ZIndex>17</ZIndex>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>7.92352cm</Top>
+            <Left>0.26143cm</Left>
+            <Height>0.42361cm</Height>
+            <Width>9.02128cm</Width>
+            <ZIndex>16</ZIndex>
+            <Visibility>
+              <Hidden>=IIF(First(Fields!contribuyenteRimpe.Value, "headerDs")="SN",True,False)</Hidden>
+            </Visibility>
             <Style>
-              <Border />
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox3">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!agenteRetencion.Value, "headerDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>8.3824cm</Top>
+            <Left>0.26143cm</Left>
+            <Height>0.49417cm</Height>
+            <Width>9.02128cm</Width>
+            <ZIndex>17</ZIndex>
+            <Visibility>
+              <Hidden>=IIF(First(Fields!agenteRetencion.Value, "headerDs") = "SN", True, False)</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
               <VerticalAlign>Middle</VerticalAlign>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
@@ -3549,14 +3584,14 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>7.67567in</Height>
+        <Height>7.64301in</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>7.83641in</Width>
+      <Width>7.72463in</Width>
       <Page>
         <PageHeight>26cm</PageHeight>
         <PageWidth>21cm</PageWidth>
