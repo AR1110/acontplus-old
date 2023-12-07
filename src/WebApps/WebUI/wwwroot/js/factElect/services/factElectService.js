@@ -14,7 +14,33 @@
         let URL_RETENCION_ATS = 'FactElect/RetencionAts/'
         let mS = $injector.get('mainService');
         let FileSaver = $injector.get('FileSaver');
+        let fS = $injector.get('formulario');
         let service = {}
+
+
+        service.getDataFilter = function () {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({tipo: 2}), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload)
+
+                    let tempEstabsAndPtosEmision = mainData[0];
+                    let tiposDoc = mainData[1];
+                    let estadosDoc = mainData[2];
+
+                    const estabs = fS.groupingEstab({ estabs: tempEstabsAndPtosEmision });  
+                    return {
+                        estabs,
+                        tiposDoc,
+                        estadosDoc
+                    }
+
+                }
+            })
+        }
 
         /**
          * tipo 1: get listado general 
@@ -35,45 +61,7 @@
                     let mainData = JSON.parse(response.payload)
                     if (params.tipo === 1) {
                         return mainData[0];
-                    }
-
-                    if (params.tipo === 2) {
-                        let tempEstabsAndPtosEmision = mainData[0];
-                        let tiposDoc = mainData[1];
-                        let estadosDoc = mainData[2];
-
-                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                            if (!existingItem) {
-                                acc.push({
-                                    idEstablecimiento: item.idEstablecimiento,
-                                    nombreComercial: item.nombreComercial,
-                                    codEstab: item.codEstab,
-                                    defaultEstab: item.defaultEstab,
-                                    puntosEmision: [{
-                                        idPuntoEmision: item.idPuntoEmision,
-                                        ptoEmi: item.ptoEmi,
-                                        defaultPtoEmi: item.defaultPtoEmi
-                                    }]
-                                });
-                            } else {
-                                existingItem.puntosEmision.push({
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                });
-                            }
-                            return acc;
-                        }, []);
-
-
-                        return {
-                            estabs,
-                            tiposDoc,
-                            estadosDoc
-                        }
-                    }
+                    }                     
                 }
             })
         }

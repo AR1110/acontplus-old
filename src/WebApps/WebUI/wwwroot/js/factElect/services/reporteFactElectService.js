@@ -6,7 +6,7 @@
 
     reporteFactElectService.$inject = ['mainService', 'formulario'];
     function reporteFactElectService(mS, fS) {
-        const URL = 'Contabilidad/CuentaPorCobrar/';
+        const URL = 'FacteElect/CuentaPorCobrar/';
         let service = {};
 
         service.getDataForm = function () {
