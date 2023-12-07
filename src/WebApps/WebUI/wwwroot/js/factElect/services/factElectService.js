@@ -126,6 +126,7 @@
 
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
+                    console.log(mainData)
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -158,10 +159,7 @@
                     // Extrae datos temporales para establecimientos y puntos de emisión
                     let tempEstabsAndPtosEmision = mainData[9];
                     let tempBodegas = mainData[10];
-
-                    // Extrae la tarifa actual para el impuesto
-                    let tarifaImpuestoVigente = mainData[11][0];
-
+  
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
                     let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
 
@@ -206,7 +204,6 @@
                     // Devuelve los datos finales estructurados
                     return {
                         estabs,
-                        tarifaImpuestoVigente,
                         tarifasImpuesto,
                         tiemposCredito,
                         tarifas,
