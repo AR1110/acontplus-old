@@ -17,7 +17,6 @@ namespace Mechanical.API.Extensions
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<ISupportDetailService, SupportDetailService>();
             services.AddScoped<IInspectionService, InspectionService>();
-            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
         }
     }

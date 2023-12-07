@@ -32,8 +32,6 @@ namespace Restaurant.API.Extensions
             services.AddScoped<IConsumptionConfigService, ConsumptionConfigService>();
             services.AddScoped<IConsumptionService, ConsumptionService>();
             services.AddScoped<IConsumptionCancelledService, ConsumptionCancelledService>();
-
-            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
         }
     }
