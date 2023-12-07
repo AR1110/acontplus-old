@@ -60,7 +60,6 @@
   };
 
   onMount(async () => {
-    console.log("starting");
     await client.get("Vet/Diseases/").then((response) => {
       diseases = response.data;
     });
@@ -115,7 +114,7 @@
           tempArray["healthChecks"].forEach((value, key) => {
             addDiseaseStatus(value.diseaseId, value.diseaseStatusId, false);
             document.getElementById(
-              `${value.diseaseId}-${value.diseaseStatusId}-chkdds`
+              `${value.diseaseId}-${value.diseaseStatusId}-chkdds`,
             ).checked = true;
           });
 
@@ -123,7 +122,7 @@
           tempArray["behaviors"].forEach((value, key) => {
             addBehaviorStatus(value.behaviorId, value.behaviorStatusId);
             document.getElementById(
-              `${value.behaviorId}-${value.behaviorStatusId}-chkbbs`
+              `${value.behaviorId}-${value.behaviorStatusId}-chkbbs`,
             ).checked = true;
           });
         })
@@ -142,7 +141,7 @@
   }
   const updateHealthCheck = async (d, ds) => {
     let id = healthChecks.find(
-      (check) => check.diseaseId === d && check.diseaseStatusId === ds
+      (check) => check.diseaseId === d && check.diseaseStatusId === ds,
     ).id;
     let checkUpdated = {
       id: id,
@@ -185,7 +184,7 @@
   const updateBehaviorTest = async (b, bs) => {
     let id = behaviorTests.find(
       (behavior) =>
-        behavior.behaviorId === b && behavior.behaviorStatusId === bs
+        behavior.behaviorId === b && behavior.behaviorStatusId === bs,
     ).id;
     let testUpdated = {
       id: id,
@@ -224,11 +223,12 @@
   let pets = [];
   const onInput = async (e) => {
     value = e.target.value;
-    console.log(value);
     if (value.length >= 3) {
       showLoader();
       let data = {
         tipo: 2,
+        pageIndex: 1,
+        pageSize: 50,
         textSearch: value,
       };
       await client
@@ -236,8 +236,8 @@
         .then((response) => {
           hideLoader();
           if (response.data.code == 1) {
-            pets = JSON.parse(response.data.payload);
-            console.log(pets);
+            let tempArray = JSON.parse(response.data.payload) || [];
+            pets = tempArray["pets"];
           }
         })
         .catch((error) => {
@@ -584,6 +584,7 @@
                 id="age"
                 class="form-control"
                 step="any"
+                onclick="this.select()"
                 bind:value={medicalHistory.age}
               />
             </div>
@@ -597,6 +598,7 @@
                 class="form-control"
                 placeholder="5.5"
                 step="any"
+                onclick="this.select()"
                 bind:value={medicalHistory.weight}
               />
             </div>
