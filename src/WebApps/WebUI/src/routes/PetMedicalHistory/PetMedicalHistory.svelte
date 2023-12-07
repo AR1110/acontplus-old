@@ -25,7 +25,6 @@
     await client
       .get(`EstabAsig/?json=` + JSON.stringify({ tipo: 1 }))
       .then((response) => {
-        console.log(response);
         if (response.data.length > 0) {
           establecimientos = response.data;
           if (establecimientos.length > 0) {
@@ -81,14 +80,12 @@
 
   const onPageChange = (event) => {
     page = event.detail.page;
-    pageCurrent = page + 1;
-    console.log("one");
+    pageCurrent = page + 1; 
     initialLoad();
   };
 
   const onChange = (e) => {
-    pageSize = parseInt(e.target.value);
-    console.log("two");
+    pageSize = parseInt(e.target.value); 
     initialLoad();
   };
 
@@ -274,7 +271,7 @@
   </div>
 </div>
 
-{#if newRecord | editStatus}
+{#if newRecord || editStatus}
   <Add {newRecord} {editStatus} {historyEdited} {initialLoad} {codEstab} />
 {:else}
   <!-- <Search

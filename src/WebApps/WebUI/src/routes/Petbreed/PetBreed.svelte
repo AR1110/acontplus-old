@@ -93,7 +93,6 @@
     await client
       .post("Vet/Breeds/", newBreed)
       .then((response) => {
-        console.log(response);
         breeds.push(response);
         breeds = breeds;
         toast({
@@ -153,7 +152,6 @@
       await client
         .delete("Vet/Breeds/" + id)
         .then((response) => {
-          console.log(response);
           toast({
             type: "success",
             message: "Eliminada exitosamente",
