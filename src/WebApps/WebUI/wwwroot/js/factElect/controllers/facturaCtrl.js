@@ -2160,6 +2160,10 @@
         }
 
 
+
+
+
+
         function drawImpuestoTotales() {
             try {
                 let {
