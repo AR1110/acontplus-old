@@ -1,14 +1,12 @@
-﻿using Azure.Core;
-using Common.Core.Interfaces;
-using Common.Core.Models;
+﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
 using Configuracion.API.Interfaces;
 
 namespace Configuracion.API.Services
 {
-    public class TurnoService:ITurnoService
+    public class TurnoService : ITurnoService
     {
-        private IADORepository _repository; 
+        private IADORepository _repository;
         public TurnoService(IADORepository respository)
         {
             _repository = respository;
@@ -26,6 +24,6 @@ namespace Configuracion.API.Services
                 return null;
             }
         }
-        
+
     }
 }

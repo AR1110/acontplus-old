@@ -1,10 +1,10 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
+using Compras.API.Extensions;
 using Compras.Application;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
-using Compras.API.Extensions;
 
 namespace Compras.API
 {

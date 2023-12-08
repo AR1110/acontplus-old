@@ -4,7 +4,7 @@ using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion; 
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FactElect.Infrastructure.Data
 {
@@ -14,7 +14,7 @@ namespace FactElect.Infrastructure.Data
         {
 
         }
-        
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
@@ -11,7 +6,7 @@ using Inventario.Core.Interfaces;
 
 namespace Inventario.Application.Services
 {
-    public class ArticuloFraccionadoService: IArticuloFraccionadoService
+    public class ArticuloFraccionadoService : IArticuloFraccionadoService
     {
         private readonly IADORepository _repository;
         public ArticuloFraccionadoService(IADORepository repository)
@@ -46,7 +41,7 @@ namespace Inventario.Application.Services
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
-        { 
+        {
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
                 {"id", id},
@@ -56,7 +51,7 @@ namespace Inventario.Application.Services
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-        {   
+        {
             return await _repository.SPExecuteAsync("Inventario.Fraccionado_Delete", parameters);
         }
 

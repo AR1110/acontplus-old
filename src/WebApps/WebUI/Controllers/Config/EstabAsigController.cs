@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Models.Config;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -69,7 +68,7 @@ namespace WebUI.Controllers.Config
             return Ok(_response);
         }
 
-         
+
     }
 }
 

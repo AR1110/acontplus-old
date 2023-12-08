@@ -13,7 +13,7 @@ namespace FactElect.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             //           
-            services.AddScoped<IDocumentoElectronicoErrorService, DocumentoElectronicoErrorService>(); 
+            services.AddScoped<IDocumentoElectronicoErrorService, DocumentoElectronicoErrorService>();
             return services;
         }
     }

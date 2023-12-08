@@ -1,14 +1,11 @@
-﻿using Ventas.API.Extensions;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Asp.Versioning;
-using Services.Common;
-using Services.Common.Logs;
-using Newtonsoft.Json.Serialization;
-using Autofac.Extensions.DependencyInjection;
-using Autofac;
+﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.Core.Utils;
+using Newtonsoft.Json.Serialization;
+using Services.Common;
+using Ventas.API.Extensions;
 
 namespace Ventas.API
 {
@@ -30,7 +27,7 @@ namespace Ventas.API
                                 x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                                 x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                             });
-            
+
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -72,7 +69,7 @@ namespace Ventas.API
 
             //app.UseSwaggerDocumentation();
 
-            
+
 
             app.UseRouting();
 

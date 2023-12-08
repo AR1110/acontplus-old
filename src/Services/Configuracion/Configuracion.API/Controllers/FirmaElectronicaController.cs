@@ -1,6 +1,6 @@
-﻿using Configuracion.API.Helpers;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
+using Configuracion.API.Helpers;
 using DataAccess;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;

@@ -1,5 +1,4 @@
-﻿using Mechanical.API.Helpers;
-using Mechanical.Application.Services;
+﻿using Mechanical.Application.Services;
 using Mechanical.Core.Interfaces;
 using Mechanical.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

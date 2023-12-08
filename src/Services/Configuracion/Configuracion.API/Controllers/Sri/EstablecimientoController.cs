@@ -1,6 +1,5 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Configuracion.API.Controllers;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
