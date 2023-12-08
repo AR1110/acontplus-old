@@ -4,9 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Autofac" Version="7.1.0" />
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.4" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="5.1.2" />
     <PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="8.0.0" />
     <PackageVersion Include="Ocelot" Version="22.0.0" />
