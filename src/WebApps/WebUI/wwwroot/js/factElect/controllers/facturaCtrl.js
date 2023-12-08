@@ -738,7 +738,7 @@
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let storageSvc = $injector.get('storageService');
         let articuloSvc = $injector.get('articuloService');
-        let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE'); 
+        let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
 
         $scope.tipoDoc = tipoDoc;
         $scope.infoEstabPtoEmi = {};
@@ -1060,7 +1060,7 @@
                 vendedores,
                 clienteDefault,
                 articuloDefault
-            } = structuredClone(mainDataForm); 
+            } = structuredClone(mainDataForm);
 
             $scope.establecimientos = estabs;
 
@@ -1978,7 +1978,7 @@
                 //     entity.tarifa = dataImpuestoTarifa.tarifa;
 
                 // } else {
-                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.idTipoIva === articulo.idTipoIva);
+                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
                 entity.idTipoIva = articulo.idTipoIva;
@@ -2158,10 +2158,6 @@
             $scope.data.total = importeTotal;
             return fS.roundNumber(importeTotal, $scope.decimal.importeTotal);
         }
-
-
-
-
 
 
         function drawImpuestoTotales() {
