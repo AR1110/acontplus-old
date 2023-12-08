@@ -2161,9 +2161,15 @@
                     return {
                         codigoPorcentaje: item.codigoPorcentaje,
                         descripcion: taxRateCodeLabel[item.codigoPorcentaje],
-                        value: 0
                     }
-                });
+                })
+                let dataTotals = gridOptionsSvc.getImpuestoTotales({
+                    items: $scope.gridOptions.data,
+                    decimal: $scope.decimal,
+                    tarifasImpuesto: tempImpuestos
+                })
+
+
 
                 // Crear la estructura HTML con un template literal
                 const htmlTemplate = `
@@ -2174,17 +2180,9 @@
                             <td class="left">
                                 <strong class="text-dark">Subtotal sin Impuestos</strong>
                             </td>
-                            <td class="right">$0</td>
+                            <td class="right">$${dataTotals.subTotalSinImpuestos}</td>
                         </tr>
-                        ${tempImpuestos.map(rowData => `
-                            <tr>
-                                <td class="left">
-                                    <strong class="text-dark">${rowData.descripcion}</strong>
-                                </td>
-                                <td class="right">$${gridOptionsSvc.getImpuestoTotales({ items: $scope.gridOptions.data, decimal: $scope.decimal, codigoPorcentaje: rowData.codigoPorcentaje }).totalNetoIva}
-                                </td>
-                            </tr>`).join('')
-                    }
+                        ${dataTotals.htmlImpuestoTotal}
                         <tr>
                             <td class="left">
                                 <strong class="text-dark">Total descuento</strong>
