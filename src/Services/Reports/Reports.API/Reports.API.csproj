@@ -25,6 +25,8 @@
     <None Remove="Reports\Contabilidad\GestionCaja.rdl" />
     <None Remove="Reports\FactElect\ComprobanteRetencion.rdl" />
     <None Remove="Reports\FactElect\Factura.rdl" />
+    <None Remove="Reports\FactElect\FacturaGeneral.rdl" />
+    <None Remove="Reports\FactElect\NotaCreditoRG.rdl" />
     <None Remove="Reports\Factura.rdlc" />
     <None Remove="Reports\FacturaAutomatica.rdlc" />
     <None Remove="Reports\GestionFinanciera\Anticipo.rdl" />
@@ -122,6 +124,12 @@
     </Content>
     <Content Include="Reports\FactElect\Factura.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FactElect\FacturaGeneral.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FactElect\NotaCreditoRG.rdl">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Factura.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

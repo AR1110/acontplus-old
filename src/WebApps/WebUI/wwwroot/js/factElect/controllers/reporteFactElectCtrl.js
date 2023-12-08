@@ -4,16 +4,16 @@
 
     app.controller('reporteVentaCtrl', reporteVentaCtrl);
 
-    reporteVentaCtrl.$inject = ['$scope', '$injector'];
+    reporteVentaCtrl.$inject = ['$scope', '$injector', 'docElectService'];
 
-    function reporteVentaCtrl($scope, $injector) {
+    function reporteVentaCtrl($scope, $injector, docElectSvc) {
         const reporteVentaSvc = $injector.get('reporteFactElectService');
-       // const decodeToken = $injector.get('decodeToken');
+        // const decodeToken = $injector.get('decodeToken');
         const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
         const commonSvc = $injector.get('commonService');
 
-      //  let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
+        //  let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
         const DOC_TYPE = $injector.get('DOC_TYPE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
 
@@ -55,25 +55,28 @@
             { code: 'SD', descripcion: 'Sin Devolución' },
         ]
 
+        $scope.showField = true;
+
         initiload();
         function initiload() {
             try {
                 showLoader();
-                reporteVentaSvc.getDataForm().then(response => {
+                docElectSvc.getDataFilter().then(response => {
                     let { estabs, estadosDoc, tiposDoc } = response;
+                    console.log(response)
                     $scope.establecimientos = estabs;
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
                         $scope.puntosEmision = dataEstab.puntosEmision;
                     }
                     $scope.tiposDoc = tiposDoc;
-                    const dataTipoDoc = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigoSri === DOC_TYPE.FV_SRI);
+                    const dataTipoDoc = $scope.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FV_SRI);
                     $scope.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
-                    $scope.estadosDoc = estadosDoc.map(item => ({
-                        ...item,
-                        idEstadoDocumento: item.idEstadoPago
-                    }))
-                    console.log(response)
+                    $scope.estadosDoc = [...estadosDoc, {
+                        codDoc: '0',
+                        idTipoDocumento: 0,
+                        descripcion: 'NO AUTORIZADO'
+                    }]
                 })
                     .catch(error => {
                         console.log(error)
@@ -85,13 +88,22 @@
             }
         }
 
+        $scope.onChangeTipoDoc = function () {
+            let dataTipoDoc = $scope.tiposDoc.find(td => td.idTipoDocumento === $scope.dataSearch.idTipoDocumento);
+            $scope.showField = false;
+
+            if (dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE.FV_SRI) {
+                $scope.showField = true;
+            }
+            console.log('test')
+        }
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
                 $scope.dataSearch.fechaFin = item.endDate;
         }
 
-        $scope.onChangeEstab = function(){
+        $scope.onChangeEstab = function () {
             let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
             if (dataEstab) {
                 $scope.puntosEmision = dataEstab.puntosEmision;
@@ -103,15 +115,15 @@
         }
 
 
-        $scope.onKeyupCliente = function(){
+        $scope.onKeyupCliente = function () {
             console.log($scope.cliente)
-            if (!$scope.cliente.nombreCliente){
+            if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.identificacion = null;
 
             }
         }
 
-        $scope.onSelectCliente = function(data){
+        $scope.onSelectCliente = function (data) {
             console.log(data)
             $scope.dataSearch.identificacion = data.numeroIdentificacion;
 
@@ -125,7 +137,7 @@
             }
         }
 
-        $scope.onSelectUser = function (data) { 
+        $scope.onSelectUser = function (data) {
             $scope.dataSearch.idUsuario = data.idUsuario;
 
         }
@@ -139,20 +151,24 @@
             getReport();
         }
 
-
-        function getTipoDoc(codigo) {
-            if (codigo === DOC_TYPE.FV) return DOC_TYPE.FV_SRI;
-
-            return codigo;
+        const dataReporte = {
+            [DOC_TYPE.FV_SRI]: {
+                tipo: 2,
+                codigo: CODE_REPORT.FEG
+            },
+            [DOC_TYPE.NC_SRI]: {
+                tipo: 3,
+                codigo: CODE_REPORT.NCRG
+            }
         }
 
         function getReport() {
             try {
-                if (!($scope.dataSearch.idTipoDocumento > 0)) {
-                    tS.toastr('warning', 'Seleccione el Tipo Documento');
-                    return
-                }
-                if ($scope.dataSearch.checkBoxCustomer && !fS.isValidField($scope.dataSearch.identificacion)){
+                // if (!($scope.dataSearch.idTipoDocumento > 0)) {
+                //     tS.toastr('warning', 'Seleccione el Tipo Documento');
+                //     return
+                // }
+                if ($scope.dataSearch.checkBoxCustomer && !fS.isValidField($scope.dataSearch.identificacion)) {
                     tS.toastr('warning', 'Seleccione el Cliente');
                     return
                 }
@@ -162,11 +178,13 @@
                 }
                 let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === $scope.dataSearch.idEstablecimiento);
                 let dataEstado = $scope.estadosDoc.find(estado => estado.idEstadoDocumento === $scope.dataSearch.idEstadoDocumento);
-                let dataTipoDoc = $scope.tiposDoc.find(item => item.idTipoDocumento === $scope.dataSearch.idTipoDocumento)
+                let { codDoc } = $scope.tiposDoc.find(item => item.idTipoDocumento === $scope.dataSearch.idTipoDocumento)
+
+                let getDataReport = dataReporte[codDoc]
                 let dataParams = {
-                    tipo: 2,
+                    tipo: getDataReport.tipo,
                     ckFecha: true,
-                    codDoc: getTipoDoc(dataTipoDoc.codigo),
+                    codDoc,
                     codEstab: dataEstab && dataEstab.codEstab || null,
                     idCliente: $scope.dataSearch.idCliente,
                     codEstado: dataEstado && dataEstado.codigo || null,
@@ -179,7 +197,7 @@
                     hasIdUsuarioRol: true,
                     reportParams: JSON.stringify({
                         hasParams: false,
-                        codigo: CODE_REPORT.FEG,
+                        codigo: getDataReport.codigo,
                         format,
                         aditionalParams: [],
                     }),

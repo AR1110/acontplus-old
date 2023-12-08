@@ -14,7 +14,33 @@
         let URL_RETENCION_ATS = 'FactElect/RetencionAts/'
         let mS = $injector.get('mainService');
         let FileSaver = $injector.get('FileSaver');
+        let fS = $injector.get('formulario');
         let service = {}
+
+
+        service.getDataFilter = function () {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({tipo: 2}), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload)
+
+                    let tempEstabsAndPtosEmision = mainData[0];
+                    let tiposDoc = mainData[1];
+                    let estadosDoc = mainData[2];
+
+                    const estabs = fS.groupingEstab({ estabs: tempEstabsAndPtosEmision });  
+                    return {
+                        estabs,
+                        tiposDoc,
+                        estadosDoc
+                    }
+
+                }
+            })
+        }
 
         /**
          * tipo 1: get listado general 
@@ -35,45 +61,7 @@
                     let mainData = JSON.parse(response.payload)
                     if (params.tipo === 1) {
                         return mainData[0];
-                    }
-
-                    if (params.tipo === 2) {
-                        let tempEstabsAndPtosEmision = mainData[0];
-                        let tiposDoc = mainData[1];
-                        let estadosDoc = mainData[2];
-
-                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                            if (!existingItem) {
-                                acc.push({
-                                    idEstablecimiento: item.idEstablecimiento,
-                                    nombreComercial: item.nombreComercial,
-                                    codEstab: item.codEstab,
-                                    defaultEstab: item.defaultEstab,
-                                    puntosEmision: [{
-                                        idPuntoEmision: item.idPuntoEmision,
-                                        ptoEmi: item.ptoEmi,
-                                        defaultPtoEmi: item.defaultPtoEmi
-                                    }]
-                                });
-                            } else {
-                                existingItem.puntosEmision.push({
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                });
-                            }
-                            return acc;
-                        }, []);
-
-
-                        return {
-                            estabs,
-                            tiposDoc,
-                            estadosDoc
-                        }
-                    }
+                    }                     
                 }
             })
         }
@@ -138,6 +126,7 @@
 
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
+                    console.log(mainData)
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -170,10 +159,7 @@
                     // Extrae datos temporales para establecimientos y puntos de emisión
                     let tempEstabsAndPtosEmision = mainData[9];
                     let tempBodegas = mainData[10];
-
-                    // Extrae la tarifa actual para el impuesto
-                    let tarifaImpuestoVigente = mainData[11][0];
-
+  
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
                     let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
 
@@ -218,7 +204,6 @@
                     // Devuelve los datos finales estructurados
                     return {
                         estabs,
-                        tarifaImpuestoVigente,
                         tarifasImpuesto,
                         tiemposCredito,
                         tarifas,
@@ -1107,7 +1092,7 @@
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
 
                     let factura = facturaApi.reduce((acc, previous) => {
-                       
+
                         acc.idDocumento = previous.idFactura;
                         acc.serieComprobante = previous.nroFactura;
                         return acc;
@@ -1160,7 +1145,8 @@
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             subTotal: restItem.cantidad * restItem.precioUnitario || 0,
-                            totalDescuento: restItem.cantidad * restItem.valorDescuento || 0
+                            totalDescuento: restItem.cantidad * restItem.valorDescuento || 0,
+                            estado: 1
                         }
 
                         return obj;
@@ -1197,7 +1183,7 @@
 
             const mergeDetalles = [
                 ...resultDetalles,
-                resultDetallesDeleted
+                ...resultDetallesDeleted
             ]
             return {
                 infoNotaCredito: resultInfoComprobante,
@@ -1237,6 +1223,7 @@
             let resultMap = detalles.map((orderItem, index) => {
                 let cantidadTransaccion = orderItem.cantidad * orderItem.conversion;
                 let obj = {
+                    idNotaCreditoDetalle: orderItem.idNotaCreditoDetalle || 0,
                     orderIndex: index,
                     idArticulo: orderItem.idArticulo,
                     idTarifa: orderItem.idTarifa,
@@ -1255,7 +1242,8 @@
                     llevaInventario: orderItem.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
                     precioCosto: orderItem.precioCosto,
-                    valorImpuesto: fS.getTaxBaseAndTaxValue(orderItem).taxValue
+                    valorImpuesto: fS.getTaxBaseAndTaxValue(orderItem).taxValue,
+                    estado: orderItem.estado
                 };
                 return obj;
             })

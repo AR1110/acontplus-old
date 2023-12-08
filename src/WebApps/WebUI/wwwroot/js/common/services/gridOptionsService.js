@@ -64,9 +64,9 @@
 
                         if (rowEntity.idTipoIva === oldValue) return
 
-                        rowEntity.idImpuesto = tarifaImpuesto.idImpuesto; 
+                        rowEntity.idImpuesto = tarifaImpuesto.idImpuesto;
                         rowEntity.codigoPorcentaje = tarifaImpuesto.codigoPorcentaje;
-                        rowEntity.tarifa = tarifaImpuesto.tarifa; 
+                        rowEntity.tarifa = tarifaImpuesto.tarifa;
                         calculoColumnas["precioUnitario"]();
                     } catch (error) {
                         toastr.error(`CALCULO TIPO IVA: ${error}`)
@@ -213,6 +213,39 @@
 
         /**
          * 
+         * @param {*} obj { items, decimal, tarifasImpuesto }
+         * @returns 
+         */
+        service.getImpuestoTotales = function (obj) {
+            const { items, decimal, tarifasImpuesto } = obj;
+            let htmlImpuestoTotal = '';
+
+            for (let ti of tarifasImpuesto) {
+                let totalNetoIva = items.filter(item => item.codigoPorcentaje === ti.codigoPorcentaje)
+                    .reduce((acc, prev) => {
+                        let total = ((prev.precioUnitario * prev.cantidad)) - prev.valorDescuento;
+                        acc += total;
+                        return acc;
+                    }, 0);
+
+                htmlImpuestoTotal += `<tr>
+                                        <td class="left">
+                                            <strong class="text-dark">${ti.descripcion}</strong>
+                                        </td>
+                                        <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}
+                                        </td>
+                                    </tr>`
+            }
+
+            return {
+                subTotalSinImpuestos: fS.roundNumber(service.getSubTotalSinImpuesto(items).subTotalSinImpuestos, decimal.nroTotalSubTotal),
+                htmlImpuestoTotal
+            }
+
+        }
+
+        /**
+         * 
          * @param {*} object 
          * @returns object
          */
@@ -222,7 +255,7 @@
                 ZERO_PERCENT,
                 NOT_SUBJECT_TO_TAX,
                 TAX_EXEMPT,
-            } = TAX_RATE_CODE; 
+            } = TAX_RATE_CODE;
 
             const obj = {
                 getSubTotalSinImpuesto: function () {
@@ -241,7 +274,7 @@
                 getTotalIva: function (codigoPorcentaje) {
                     let { totalSubSinImpuesto, totalNetoIva } = items.reduce((total, item) => {
                         let totalSubSinImpuesto = item.cantidad * item.precioUnitario;
-                       // let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                        // let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
                         let totalNetoIva = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
 
                         if (item.codigoPorcentaje === codigoPorcentaje) {
@@ -303,11 +336,11 @@
 
                     //     totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalle) * 100) / subTotalSinImpuesto; 
                     // }
-                    if(subTotalSinImpuesto>0){
+                    if (subTotalSinImpuesto > 0) {
                         totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalleNeto) * 100) / subTotalSinImpuesto;
-                    } 
-                   
-                    
+                    }
+
+
                     return fS.roundNumber(totalPorcentajeDescuento, decimal.nroPorcentaje);
                 },
 
@@ -330,7 +363,7 @@
             // let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;                
 
             // let total = iva + obj.getTotalDetalle();
- 
+
             let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;
 
             let total = obj.getSubTotalSinImpuesto() + iva + obj.getTotalIce();
@@ -502,10 +535,8 @@
             }, {
                 subTotalSinImpuestos: 0
             })
-            console.log(subTotalSinImpuestos)
             return { subTotalSinImpuestos };
         }
-
 
 
 

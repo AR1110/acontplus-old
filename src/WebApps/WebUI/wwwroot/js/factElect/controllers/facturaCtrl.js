@@ -1035,7 +1035,6 @@
         function initiload() {
             let {
                 estabs,
-                tarifaImpuestoVigente,
                 tarifasImpuesto,
                 tiemposCredito,
                 tarifas,
@@ -1047,6 +1046,7 @@
                 clienteDefault,
                 articuloDefault
             } = structuredClone(mainDataForm);
+            console.log(mainDataForm)
 
             $scope.establecimientos = estabs;
 
@@ -1120,7 +1120,8 @@
 
                 getFechaVencimiento();
             }
-            $scope.tarifaImpuestoVigente = tarifaImpuestoVigente;
+
+            $scope.tarifaImpuestoVigente = tarifasImpuesto.find(ti => ti.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT);
 
 
             //Cuando el documento es duplicar
@@ -1229,7 +1230,12 @@
             }
             $scope.setInfoEstabPtoEmi();
 
+            $uibModalInstance.rendered.then(() => {
+                drawImpuestoTotales();
+            })
+
         }
+
         function getFechaVencimiento() {
             if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
                 let fechaEmision = fS.setHoursToDate($scope.data.fechaEmision)
@@ -2062,6 +2068,7 @@
 
             $scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
             $scope.dataClone.totalDescuento = $scope.data.totalDescuento;
+            drawImpuestoTotales();
         }
 
 
@@ -2136,6 +2143,97 @@
             $scope.data.total = importeTotal;
             return fS.roundNumber(importeTotal, $scope.decimal.importeTotal);
         }
+
+
+
+        const taxRateCodeLabel = {
+            [TAX_RATE_CODE.TWELVE_PERCENT]: 'Subtotal Iva 12%',
+            [TAX_RATE_CODE.ZERO_PERCENT]: 'Subtotal 0%',
+            [TAX_RATE_CODE.NOT_SUBJECT_TO_TAX]: 'Subtotal no objeto de iva',
+            [TAX_RATE_CODE.TAX_EXEMPT]: 'Subtotal Exento de iva',
+            [TAX_RATE_CODE.DIFFERENTIATED_TAX]: 'Subtotal Iva Diferenciado'
+        }
+
+
+        function drawImpuestoTotales() {
+            try {
+                let tempImpuestos = $scope.tarifasImpuesto.map(item => {
+                    return {
+                        codigoPorcentaje: item.codigoPorcentaje,
+                        descripcion: taxRateCodeLabel[item.codigoPorcentaje],
+                    }
+                })
+                let dataTotals = gridOptionsSvc.getImpuestoTotales({
+                    items: $scope.gridOptions.data,
+                    decimal: $scope.decimal,
+                    tarifasImpuesto: tempImpuestos
+                })
+
+
+
+                // Crear la estructura HTML con un template literal
+                const htmlTemplate = `
+            <div class="table-responsive">
+                <table class="table table-clear table-sm">
+                    <tbody>
+                        <tr>
+                            <td class="left">
+                                <strong class="text-dark">Subtotal sin Impuestos</strong>
+                            </td>
+                            <td class="right">$${dataTotals.subTotalSinImpuestos}</td>
+                        </tr>
+                        ${dataTotals.htmlImpuestoTotal}
+                        <tr>
+                            <td class="left">
+                                <strong class="text-dark">Total descuento</strong>
+                            </td>
+                            <td class="right">$0</td>
+                        </tr>
+                        <tr>
+                            <td class="left">
+                                <strong class="text-dark">Valor ICE</strong>
+                            </td>
+                            <td class="right">$0</td>
+                        </tr>
+                        <tr>
+                            <td class="left">
+                                <strong class="text-dark">Valor irbpnr</strong>
+                            </td>
+                            <td class="right">$0</td>
+                        </tr>
+                        <tr>
+                            <td class="left">
+                                <strong class="text-dark">Iva 12%</strong>
+                            </td>
+                            <td class="right">$0</td>
+                        </tr>
+                        <tr>
+                            <td class="left">
+                                <strong class="text-dark">Iva Diferenciado</strong>
+                            </td>
+                            <td class="right">$0</td>
+                        </tr>
+                        <tr>
+                            <td class="left">
+                                <strong class="font-weight-bold">Valor Total</strong>
+                            </td>
+                            <td class="right font-weight-bold">$0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+                // Obtener el elemento con el id "drawImpuestoTotales"
+                var drawImpuestoTotalesElement = document.getElementById("drawImpuestoTotales");
+
+                // Adjuntar el HTML generado al elemento
+                drawImpuestoTotalesElement.innerHTML = htmlTemplate;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
 
         function isValidForm() {
             if (!$scope.data.codEstab) {

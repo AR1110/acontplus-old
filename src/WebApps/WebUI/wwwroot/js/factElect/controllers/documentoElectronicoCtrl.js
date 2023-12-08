@@ -152,7 +152,7 @@
 
         $scope.initiload = () => {
             showLoader();
-            docElectSvc.get({ tipo: 2 }).then(response => {
+            docElectSvc.getDataFilter().then(response => {
                 let {
                     estabs,
                     tiposDoc,

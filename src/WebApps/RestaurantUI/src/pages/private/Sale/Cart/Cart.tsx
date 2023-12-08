@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography } from '@mui/material'
 // import CartItem from '../CartItem/CartItem'
-import {useSaleStore } from '@/stores';
-import Swal from 'sweetalert2'; 
+import { useSaleStore } from '@/stores';
+import Swal from 'sweetalert2';
 import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components/IconsMaterial';
 import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
@@ -19,7 +19,7 @@ const Cart = () => {
         save: state.save
     }));
     const setOrder = useSaleStore(state => state.setSummary)
-    const resetForm = useSaleStore(state => state.resetForm); 
+    const resetForm = useSaleStore(state => state.resetForm);
 
     //Modal Tables
     const [openTableDialog, setOpenTableDialog] = useState(false);
@@ -40,7 +40,7 @@ const Cart = () => {
         if (isConfirmed) {
             resetForm();
         }
-    } 
+    }
 
     return (
         <Paper elevation={0} sx={{
@@ -89,6 +89,7 @@ const Cart = () => {
                         }} variant="outlined" onClick={() => {
                             setOpenTableDialog(true)
                         }}>
+
                             {
                                 order.tableId > 0 ? (
                                     (
@@ -125,7 +126,7 @@ const Cart = () => {
                             {
                                 order.orderId > 0 ? (
                                     <b>Impuesto({tarifaImpuestoVigente.description}): ${order.tax}</b>
-                                ): (
+                                ) : (
                                     <b>Impuesto({tarifaImpuestoVigente.description}): ${order.tax}</b>
                                 )
                             }
