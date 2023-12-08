@@ -45,3 +45,5 @@ go
 --INNER JOIN Impuesto im with (nolock) on im.idImpuesto = ti.idImpuesto
 --order by idFactura asc
 
+
+
