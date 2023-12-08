@@ -2159,76 +2159,92 @@
             try {
                 let tempImpuestos = $scope.tarifasImpuesto.map(item => {
                     return {
+                        idTipoIva: item.idTipoIva,
                         codigoPorcentaje: item.codigoPorcentaje,
                         descripcion: taxRateCodeLabel[item.codigoPorcentaje],
+                        tarifa: item.tarifa
                     }
                 })
-                let dataTotals = gridOptionsSvc.getImpuestoTotales({
+                let {
+                    subTotalSinImpuestos,
+                    htmlImpuestoTotal,
+                    iva,
+                    ivaDiferenciado,
+                    irbpnr,
+                    importeTotal
+                } = gridOptionsSvc.getImpuestoTotales({
                     items: $scope.gridOptions.data,
                     decimal: $scope.decimal,
-                    tarifasImpuesto: tempImpuestos
+                    tarifasImpuesto: tempImpuestos,
+                    TAX_RATE_CODE
                 })
 
 
 
                 // Crear la estructura HTML con un template literal
-                const htmlTemplate = `
-            <div class="table-responsive">
-                <table class="table table-clear table-sm">
-                    <tbody>
-                        <tr>
-                            <td class="left">
-                                <strong class="text-dark">Subtotal sin Impuestos</strong>
-                            </td>
-                            <td class="right">$${dataTotals.subTotalSinImpuestos}</td>
-                        </tr>
-                        ${dataTotals.htmlImpuestoTotal}
-                        <tr>
-                            <td class="left">
-                                <strong class="text-dark">Total descuento</strong>
-                            </td>
-                            <td class="right">$0</td>
-                        </tr>
-                        <tr>
-                            <td class="left">
-                                <strong class="text-dark">Valor ICE</strong>
-                            </td>
-                            <td class="right">$0</td>
-                        </tr>
-                        <tr>
-                            <td class="left">
-                                <strong class="text-dark">Valor irbpnr</strong>
-                            </td>
-                            <td class="right">$0</td>
-                        </tr>
-                        <tr>
-                            <td class="left">
-                                <strong class="text-dark">Iva 12%</strong>
-                            </td>
-                            <td class="right">$0</td>
-                        </tr>
-                        <tr>
-                            <td class="left">
-                                <strong class="text-dark">Iva Diferenciado</strong>
-                            </td>
-                            <td class="right">$0</td>
-                        </tr>
-                        <tr>
-                            <td class="left">
-                                <strong class="font-weight-bold">Valor Total</strong>
-                            </td>
-                            <td class="right font-weight-bold">$0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        `;
-
-                // Obtener el elemento con el id "drawImpuestoTotales"
-                var drawImpuestoTotalesElement = document.getElementById("drawImpuestoTotales");
-
-                // Adjuntar el HTML generado al elemento
+                const htmlTemplate = `<div class="table-responsive">
+                                        <table class="table table-clear table-sm">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="left">
+                                                        <strong class="text-dark">Subtotal sin Impuestos</strong>
+                                                    </td>
+                                                    <td class="right">$${subTotalSinImpuestos}</td>
+                                                </tr>
+                                                ${htmlImpuestoTotal}
+                                                <tr>
+                                                    <td class="left">
+                                                        <strong class="text-dark">Total descuento</strong>
+                                                    </td>
+                                                    <td class="right">$${totalDescuento}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="left">
+                                                        <strong class="text-dark">Valor ICE</strong>
+                                                    </td>
+                                                    <td class="right">$${totalIce}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="left">
+                                                        <strong class="text-dark">Valor irbpnr</strong>
+                                                    </td>
+                                                    <td class="right">$${irbpnr}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="left">
+                                                        <strong class="text-dark">Iva 12%</strong>
+                                                    </td>
+                                                    <td class="right">${iva}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="left">
+                                                        <strong class="text-dark">Iva Diferenciado</strong>
+                                                    </td>
+                                                    <td class="right">$${ivaDiferenciado}</td>
+                                                </tr>
+                                               
+                                                <tr>
+                                                    <td class="left">
+                                                        <strong class="font-weight-bold">Valor Total</strong>
+                                                    </td>
+                                                    <td class="right font-weight-bold">$${importeTotal}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                `;
+                let drawImpuestoTotalesElement = document.getElementById("drawImpuestoTotales");
                 drawImpuestoTotalesElement.innerHTML = htmlTemplate;
+
+                // <tr>
+                //     <td class="left">
+                //         <div class="custom-control custom-switch">
+                //             <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                //                 <label class="custom-control-label" for="customSwitch1">Toggle this switch element</label>
+                //         </div>
+                //     </td>
+                //     <td class="right font-weight-bold">$${importeTotal}</td>
+                // </tr>
             } catch (error) {
                 console.log(error);
             }
