@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TechnicalSupport.Application.Services;
-using TechnicalSupport.Core.Interfaces;
-using TechnicalSupport.Infrastructure.Data;
-
+using TechnicalSupport.API.Data;
+using TechnicalSupport.API.Interfaces;
+using TechnicalSupport.API.Services;
 namespace TechnicalSupport.API.Extensions
 {
     public static class ApplicationServicesExtensions

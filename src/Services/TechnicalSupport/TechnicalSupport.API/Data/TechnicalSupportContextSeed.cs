@@ -1,8 +1,9 @@
 ﻿using System.Reflection;
 using System.Text.Json;
-using TechnicalSupport.Core.Entities;
+using TechnicalSupport.API.Entities;
 
-namespace TechnicalSupport.Infrastructure.Data
+
+namespace TechnicalSupport.API.Data
 {
     public class TechnicalSupportContextSeed
     {

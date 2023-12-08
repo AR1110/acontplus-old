@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TechnicalSupport.Infrastructure.Data;
+using TechnicalSupport.API.Data;
 
 #nullable disable
 
 namespace TechnicalSupport.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
-    [Migration("20231005150258_Initial")]
-    partial class Initial
+    partial class TechnicalSupportContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,9 +267,6 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("numeric(18,5), not null");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -281,16 +275,13 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("Discount")
-                        .HasColumnType("numeric(18,5), null");
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("Enabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
-
-                    b.Property<int>("FeeId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
@@ -299,27 +290,6 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<int?>("TaxId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TaxPercentId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("TaxValue")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("numeric(18,5), not null");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -332,9 +302,9 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("DeviceId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetail", "TechnicalSupport");
                 });
@@ -467,21 +437,21 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("TechnicalSupport.Core.Entities.OrderDetail", b =>
                 {
+                    b.HasOne("TechnicalSupport.Core.Entities.Device", "Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TechnicalSupport.Core.Entities.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TechnicalSupport.Core.Entities.Device", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Device");
 
                     b.Navigation("Order");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("TechnicalSupport.Core.Entities.TechSpec", b =>

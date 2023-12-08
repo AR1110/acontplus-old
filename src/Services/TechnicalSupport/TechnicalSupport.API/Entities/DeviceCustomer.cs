@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace TechnicalSupport.Core.Entities
+namespace TechnicalSupport.API.Entities
 {
     [Table("DeviceCustomer", Schema = "TechnicalSupport")]
     public class DeviceCustomer : BaseEntity

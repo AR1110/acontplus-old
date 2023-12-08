@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
-using TechnicalSupport.Core.Entities;
+using TechnicalSupport.API.Data;
+using TechnicalSupport.API.Entities;
+
 using TechnicalSupport.Infrastructure.Data;
 
 namespace TechnicalSupport.API.Controllers

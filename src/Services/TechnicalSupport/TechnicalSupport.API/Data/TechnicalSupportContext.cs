@@ -2,9 +2,10 @@
 using Common.Core.Entities;
 using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using TechnicalSupport.Core.Entities;
+using TechnicalSupport.API.Entities;
 
-namespace TechnicalSupport.Infrastructure.Data
+
+namespace TechnicalSupport.API.Data
 {
     public class TechnicalSupportContext : BaseContext
     {
@@ -120,7 +121,7 @@ namespace TechnicalSupport.Infrastructure.Data
                 //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
                 //}
             }
-            int result = await base.SaveChangesAsync(cancellationToken);
+            var result = await base.SaveChangesAsync(cancellationToken);
             return result;
         }
 
