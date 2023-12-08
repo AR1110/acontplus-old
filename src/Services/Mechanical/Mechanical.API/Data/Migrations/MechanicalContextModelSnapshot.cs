@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Mechanical.Infrastructure.Data.Migrations
+namespace Mechanical.API.Data.Migrations
 {
     [DbContext(typeof(MechanicalContext))]
     partial class MechanicalContextModelSnapshot : ModelSnapshot

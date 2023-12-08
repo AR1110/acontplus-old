@@ -4,8 +4,6 @@ using Services.Common.Logs;
 using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Entities;
 
-using TechnicalSupport.Infrastructure.Data;
-
 namespace TechnicalSupport.API.Controllers
 {
     public class CategoryController : BaseApiController
