@@ -1,9 +1,10 @@
 ﻿using Common.Core.Interfaces;
 using Common.Reports.Services;
 using Microsoft.EntityFrameworkCore;
-using Vet.Application.Services;
-using Vet.Core.Interfaces;
-using Vet.Infrastructure.Data;
+using Vet.API.Data;
+using Vet.API.Interfaces;
+using Vet.API.Services;
+
 
 namespace Vet.API.Extensions
 {

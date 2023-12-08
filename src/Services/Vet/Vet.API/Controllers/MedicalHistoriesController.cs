@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
-using Vet.Core.Entities;
-using Vet.Core.Interfaces;
-using Vet.Infrastructure.Data;
-
+using Vet.API.Data;
+using Vet.API.Entities;
+using Vet.API.Interfaces;
 namespace Vet.API.Controllers
 {
     public class MedicalHistoriesController : BaseApiController
