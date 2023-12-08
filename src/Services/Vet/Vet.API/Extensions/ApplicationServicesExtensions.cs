@@ -1,10 +1,7 @@
-﻿using Common.Core.Interfaces;
-using Common.Reports.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Vet.API.Data;
 using Vet.API.Interfaces;
 using Vet.API.Services;
-
 
 namespace Vet.API.Extensions
 {
@@ -14,13 +11,6 @@ namespace Vet.API.Extensions
         {
             services.AddDbContextPool<VetContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            //services.AddTransient(provider =>
-            //{
-            //    var optionsBuilder = new DbContextOptionsBuilder<RestaurantContext>();
-            //    optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"), builder => builder.MigrationsAssembly("Restaurant.Infrastructure"));
-            //    return new RestaurantContext(optionsBuilder.Options);
-            //});
-            services.AddScoped<IRdlcReportService, RdlcReportService>();
             services.AddScoped<IMedicalHistory, MedicalHistoryService>();
             services.AddScoped<IPetService, PetService>();
             return services;

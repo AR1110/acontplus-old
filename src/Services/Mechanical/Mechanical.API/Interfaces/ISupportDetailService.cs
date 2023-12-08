@@ -1,6 +1,6 @@
-﻿namespace Mechanical.Core.Interfaces
+﻿namespace Mechanical.API.Interfaces
 {
-    public interface IInspectionService
+    public interface ISupportDetailService
     {
         Task<object> GetAsync(Dictionary<string, object> parameters);
         Task<string> AddAsync(Dictionary<string, object> parameters);

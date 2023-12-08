@@ -2,16 +2,16 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace Mechanical.Infrastructure.Data
+namespace Mechanical.API.Data
 {
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<MechanicalContext>
     {
         private const string _databaseName = "DefaultConnection";
-        private const string _migrationAssembly = "Mechanical.Infrastructure";
+        private const string _migrationAssembly = "Mechanical.API";
 
         public MechanicalContext CreateDbContext(string[] args)
         {
-            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings")) //old ../Vet.API
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)

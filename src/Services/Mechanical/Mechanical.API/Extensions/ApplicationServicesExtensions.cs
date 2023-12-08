@@ -1,6 +1,6 @@
-﻿using Mechanical.Application.Services;
-using Mechanical.Core.Interfaces;
-using Mechanical.Infrastructure.Data;
+﻿using Mechanical.API.Data;
+using Mechanical.API.Interfaces;
+using Mechanical.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mechanical.API.Extensions

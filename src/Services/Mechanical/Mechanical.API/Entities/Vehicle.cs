@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace Mechanical.Core.Entities
+namespace Mechanical.API.Entities
 {
     [Table("Vehicle", Schema = "Mechanical")]
     public class Vehicle : BaseEntity

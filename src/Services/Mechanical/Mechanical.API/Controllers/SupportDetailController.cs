@@ -1,6 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Mechanical.Core.Interfaces;
+using Mechanical.API.Interfaces;
+using Mechanical.API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;

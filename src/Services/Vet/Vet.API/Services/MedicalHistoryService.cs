@@ -50,23 +50,5 @@ namespace Vet.API.Services
             }
             return _response;
         }
-        //public async Task<APIResponse> AddAsync(MedicalHistory medicalHistory)
-        //{
-        //    return _response;
-        //}
-        //public async Task<APIResponse> UpdateAsync(int id, MedicalHistory medicalHistory)
-        //{
-        //    return _response;
-        //}
-        //public async Task<APIResponse> DeleteAsync(int id)
-        //{
-        //    return _response;
-        //}
-
-        public async Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_Report", parameters);
-            return _report.GetDynamicReport(ds);
-        }
     }
 }

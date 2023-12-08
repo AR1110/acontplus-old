@@ -61,23 +61,6 @@ namespace Vet.API.Controllers
             }
         }
 
-        [HttpPost("Report/{id}")]
-        public async Task<IActionResult> GetReport(int id)
-        {
-            try
-            {
-                var data = await _medicalHistory.GetReportAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
-                if (data == null) { return BadRequest("No se pudo obtener el reporte"); };
-                return File(data.FileContents, data.ContentType, data.FileDownloadName);
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-                return BadRequest("Error al obtener el reporte");
-            }
-
-        }
-
         // PUT: api/MedicalHistories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
