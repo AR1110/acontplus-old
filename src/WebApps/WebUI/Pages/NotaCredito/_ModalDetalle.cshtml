@@ -2,7 +2,7 @@
     <div class="modal-header">
         <h5 class="modal-title">Detalle Nota Crédito Cliente</h5>       
         <div class="pull-right text-right">
-            <span class="h3"><b>Total:</b> {{getImporteTotal()}} </span>
+            <span class="h3"><b>Total:</b> {{data.total}} </span>
         </div>
     </div>
     <div class="modal-body">
@@ -47,7 +47,7 @@
                 <div class="form-group">
                     <label for="Facturas">Factura</label>                    
                     <input type="text" class="form-control border-select" ng-value="factura.serieComprobante" disabled>
-                    <button type="button" class="btn btn-info btn-xs mt-1">
+                    <button type="button" class="btn btn-info btn-xs mt-1" ng-click="getDetalleFactura()">
                         <i class="ti-file"></i> Ver documento
                     </button>                               
                 </div>      
@@ -73,7 +73,7 @@
                                 <tbody>
                                     <tr>
                                         <td class="left">
-                                            <strong class="text-dark">SubTotal Iva {{actividadTipoIva.tarifa}}%</strong>
+                                            <strong class="text-dark">SubTotal {{tarifaImpuestoVigente}}</strong>
                                         </td>
                                         <td class="right">${{data.subTotalIva}}</td>
                                     </tr>
@@ -199,7 +199,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                    @* <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Transporte</label>
                             <input type="text" decimal ng-model="data.transporte" disabled class="form-control border-select" placeholder="0.00" />
@@ -211,7 +211,7 @@
                             <label>Rercargo</label>
                             <input type="text" decimal ng-model="data.recargo" disabled class="form-control border-select" placeholder="0.00" />
                         </div>
-                    </div>
+                    </div> *@
 
                     <div class="col-lg-4">
                         <div class="form-group">
@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="left">
-                                    <strong class="text-dark">IVA {{actividadTipoIva.tarifa}}%</strong>
+                                    <strong class="text-dark">{{data.tarifaImpuestoVigente}}</strong>
                                 </td>
                                 <td class="right">${{data.iva}}</td>
                             </tr>
@@ -252,7 +252,7 @@
                                     <h4> <strong class="text-dark">Total</strong></h4>                                       
                                 </td>
                                 <td class="right">
-                                    <h4><strong class="text-dark">${{getImporteTotal()}}</strong></h4>
+                                    <h4><strong class="text-dark">${{data.total}}</strong></h4>
                                 </td>
                             </tr>
                         </tbody>

@@ -5,19 +5,20 @@ import { useMobileDetect } from "@/hooks";
 import { SaleService, getEstabs } from "@/core/services";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
-import { lazy, useEffect, useState } from "react"; 
+import { lazy, useEffect, useState } from "react";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import Category from "./Category/Category";
 import Cart from "./Cart/Cart";
 import CartMobile from "./Mobile/CartMobile";
 import InputSearchItem from "./InputSearchItem/InputSearchItem";
 import TableDialog from "./Table/TableDialog";
-import { ArrowBackIcon } from "@/core/components/IconsMaterial"; 
+import { ArrowBackIcon } from "@/core/components/IconsMaterial";
 import ItemContent from "./Item/ItemContent";
-import useFetchItems from "./hooks/useFetchItems.hook"; 
+import useFetchItems from "./hooks/useFetchItems.hook";
 import VendedorSelect from "./components/VendedorSelect";
+import { TableReadDto } from "@/core/models";
 const Checkout = lazy(() => import("@/core/components/Checkout/Checkout"));
-const CartSidebar = lazy(()=> import("./components/CartSidebar"));
+const CartSidebar = lazy(() => import("./components/CartSidebar"));
 
 export default function Sale() {
     const { isMobile } = useMobileDetect();
@@ -54,11 +55,11 @@ export default function Sale() {
 
         SaleService.getDataForForm(JSON.stringify({
             codEstab: dataEstab?.codEstab
-        })).then(response => { 
+        })).then(response => {
             const warehouseData = response.warehouses.filter(
                 warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(warehouse => (warehouse.defaultBodega));
- 
+
             const emissionPointData = response.emissionPoints.filter(
                 emissionPoint => emissionPoint.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(emissionPoint => (emissionPoint.predeterminado));
@@ -67,26 +68,47 @@ export default function Sale() {
                 vendedor => (vendedor.predeterminado)
             )
 
+            let tableName = '', numberTable = 0, tableId = 0;
+            const moreTables = response.tables.length===1;
+            if (!(order.orderId > 0) && moreTables) {
+                const dataTable = response.tables[0];
+                if (dataTable) {
+                    const dataRoom = response.rooms.find(r => r.id === dataTable.roomId)
+                    tableName = `${dataRoom?.description} - ${dataTable.description}`;
+                    numberTable = dataTable.numberTable;
+                    tableId = dataTable.tableId
+                }
+            } else if (order.orderId > 0) {
+                tableName = order.table.tableName;
+                numberTable = order.table.numberTable;
+                tableId = order.tableId
+            }
+
             setSummary({
                 ...order,
                 establecimientoId: dataEstab.idEstablecimiento,
-                puntoEmisionId: order.orderId>0? order.puntoEmisionId : emissionPointData?.idPuntoEmision ?? 0,
+                puntoEmisionId: order.orderId > 0 ? order.puntoEmisionId : emissionPointData?.idPuntoEmision ?? 0,
                 bodegaId: warehouseData?.idBodega ?? 0,
-                userId: order.orderId>0? order.userId : vendedorData?.idUsuario ?? 0
+                userId: order.orderId > 0 ? order.userId : vendedorData?.idUsuario ?? 0,
+                tableId,
+                table: {
+                    tableName,
+                    numberTable
+                }
             })
-            if(emissionPointData){
+            if (emissionPointData) {
                 setPuntoEmision(emissionPointData.ptoEmi)
             }
             setDataForm(response)
         })
 
-        return ()=>{
+        return () => {
             resetForm();
         }
     }, [])
 
     useEffect(() => {
-        
+
         setCollectionItems([])
         fetchItem(itemSearch).then(response => {
             setCollectionItems(response)
@@ -100,15 +122,15 @@ export default function Sale() {
                 <Grid item xs={12} md={7}>
                     <Grid item xs={12} md={12} lg={12}>
                         {/* <InputSearchItem /> */}
-                         <Grid container spacing={1}>
+                        <Grid container spacing={1}>
                             <Grid item xs={12} md={8} lg={8}>
                                 <InputSearchItem />
                             </Grid>
                             <Grid item xs={12} md={4} lg={4}>
-                                <VendedorSelect/>
+                                <VendedorSelect />
                                 {/* <Button variant="contained"   size="large" fullWidth>Promoción</Button> */}
                             </Grid>
-                        </Grid>  
+                        </Grid>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Category />
@@ -165,7 +187,7 @@ export default function Sale() {
             <CustomBottomNavigation />
             {/* <KeyCombinationDetector /> */}
 
-            <CartSidebar/>
+            <CartSidebar />
         </ErrorBoundary>
     );
 }

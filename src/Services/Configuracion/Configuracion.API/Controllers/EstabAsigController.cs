@@ -1,11 +1,6 @@
-﻿using Azure.Core;
-using Common.Core.Models;
-using Common.Core.Utils;
+﻿using Common.Core.Models;
 using Configuracion.API.Interfaces;
-using DataAccess;
-using Domain.Models.Config;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Services.Common;
 using Services.Common.Logs;
 
@@ -66,7 +61,7 @@ namespace Configuracion.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody]ApiRequest request)
+        public async Task<IActionResult> Insert([FromBody] ApiRequest request)
         {
             request.UserRoleId = User.GetUserRoleId();
             try
@@ -89,7 +84,7 @@ namespace Configuracion.API.Controllers
                 var parameters = new Dictionary<string, object>{
                     {"userRoleId",  User.GetUserRoleId()},
                     {"id", id}
-                }; 
+                };
                 var response = await _estab.UpdateAsync(parameters);
                 return Ok(response);
             }

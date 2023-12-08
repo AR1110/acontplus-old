@@ -14,9 +14,7 @@
     };
 
     const onPopupClose = (data) => {
-        showPopup = false;
-
-        console.log(data);
+        showPopup = false; 
     };
 </script>
 

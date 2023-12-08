@@ -19,12 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
+    <PackageReference Include="Asp.Versioning.Mvc" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
   </ItemGroup>
 
   <ItemGroup>

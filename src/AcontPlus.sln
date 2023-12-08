@@ -140,6 +140,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuracion.API", "Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contabilidad.API", "Services\Contabilidad\Contabilidad.API\Contabilidad.API.csproj", "{F98381BC-EF2D-4F77-BDD0-F71D61EEAE85}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactElect.Infrastructure", "Services\Facturacion\FactElect.Infrastructure\FactElect.Infrastructure.csproj", "{8EFF02A6-D1F4-47F4-A7F5-0845B7A585ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -326,6 +328,10 @@ Global
 		{F98381BC-EF2D-4F77-BDD0-F71D61EEAE85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F98381BC-EF2D-4F77-BDD0-F71D61EEAE85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F98381BC-EF2D-4F77-BDD0-F71D61EEAE85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EFF02A6-D1F4-47F4-A7F5-0845B7A585ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EFF02A6-D1F4-47F4-A7F5-0845B7A585ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EFF02A6-D1F4-47F4-A7F5-0845B7A585ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EFF02A6-D1F4-47F4-A7F5-0845B7A585ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -390,6 +396,7 @@ Global
 		{68C0A7A9-C384-4819-A3E7-5CDF52D3DC6F} = {6A1E7C25-C4EC-4B49-BCAE-31A42AFEB9D9}
 		{30481BED-26F9-4F92-832E-F404C2871805} = {C757EAA5-16B1-4A93-B3A1-A091A9F1D6A7}
 		{F98381BC-EF2D-4F77-BDD0-F71D61EEAE85} = {EADA5D72-C80E-437F-AABE-2E16D75B83BE}
+		{8EFF02A6-D1F4-47F4-A7F5-0845B7A585ED} = {93B17BC7-9BE0-4D5A-9BC0-444DA1C1D105}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}

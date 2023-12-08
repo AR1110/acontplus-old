@@ -2,11 +2,30 @@
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase'; 
 import IconButton from '@mui/material/IconButton'; 
-import SearchIcon from '@mui/icons-material/Search'; 
 import { useSaleStore } from '@/stores';
+import { itemSearchInitialState } from '@/core/models';
+import useFetchItems from '../hooks/useFetchItems.hook';
+import { SyncIcon } from '@/core/components/IconsMaterial';
 
 const InputSearchItem = () => {
   const filterOderItems = useSaleStore(state=>state.filterOderItems);
+
+  const setItemSearch = useSaleStore(state => state.setItemSearch);
+  const itemSearch = useSaleStore(state => state.itemSearch); 
+  const setCollectionItems = useSaleStore(state => state.setCollectionItems);
+  const { fetchItem } = useFetchItems()
+  
+  const refresh = ()=>{
+    const paramsQuery = {
+      ...itemSearchInitialState,
+      ...itemSearch, 
+    }
+    setItemSearch(paramsQuery)
+
+    fetchItem(paramsQuery).then(response => {
+      setCollectionItems(response)
+    })
+  }
 
   return (
     <Paper
@@ -23,8 +42,8 @@ const InputSearchItem = () => {
         placeholder="Buscar Item"
         inputProps={{ 'aria-label': 'Buscar Item' }}
       />
-      <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-        <SearchIcon /> 
+      <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={refresh}>
+        <SyncIcon /> 
       </IconButton>
       {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
       <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">

@@ -514,7 +514,7 @@
             fechaInicio: new Date(),
             fechaFin: new Date(),
             pageIndex: 1,
-            pageSize: 26,
+            pageSize: 100,
             totalRecords: 0
         };
 
@@ -1113,10 +1113,10 @@
                 if ($scope.docOrigen.codDoc === DOC_TYPE.NE) {
                     await notaEntregaSvc.getId(item.idDocumento).then(response => {
                         let { comprobante, items, datosAdicionalesArticulo, infoAdicionalDocumento } = response;
-                      
-                        item.subGridOptions.data = items.map(itemDetalle=>({
+
+                        item.subGridOptions.data = items.map(itemDetalle => ({
                             ...itemDetalle,
-                            fechaEmision:comprobante.fechaEmision
+                            fechaEmision: comprobante.fechaEmision
                         }));
                         tempHistorialInfoAdicional.push(datosAdicionalesArticulo);
                         tempInfoAdicionalDocumento.push(infoAdicionalDocumento)
@@ -1292,20 +1292,20 @@
                     aggregationHideLabel: true,
                     footerCellFilter: `number:${$scope.decimal.nroTotalDetalle}`
                 },
-                // {
-                //     name: 'bodega',
-                //     field: 'idBodega',
-                //     enableCellEdit: true,
-                //     allowCellFocus: true,
-                //     enableCellEditOnFocus: true,
-                //     editableCellTemplate: 'ui-grid/dropdownEditor',
-                //     cellFilter: 'cellFilterBodega:this',
-                //     editDropdownValueLabel: 'descripcion',
-                //     editDropdownIdLabel: 'idBodega',
-                //     type: 'number',
-                //     width: '11%',
-                //     minWidth: '100'
-                // },
+                    // {
+                    //     name: 'bodega',
+                    //     field: 'idBodega',
+                    //     enableCellEdit: true,
+                    //     allowCellFocus: true,
+                    //     enableCellEditOnFocus: true,
+                    //     editableCellTemplate: 'ui-grid/dropdownEditor',
+                    //     cellFilter: 'cellFilterBodega:this',
+                    //     editDropdownValueLabel: 'descripcion',
+                    //     editDropdownIdLabel: 'idBodega',
+                    //     type: 'number',
+                    //     width: '11%',
+                    //     minWidth: '100'
+                    // },
                 ]
             }
         }
@@ -1639,21 +1639,20 @@
                     return
                 }
 
-
-                let fechaEmisionModificada = $scope.data.fechaEmision;
-
-                let fechaActual = new Date();
-                //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
-                    fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
+                if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                    tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
                     return
                 }
 
-                if (fS.getDate(fechaEmisionModificada) < fS.getDate(fechaActual)) {
-                    $scope.data.fechaEmision.setHours(0, 0, 0, 0);
+                let ajusteFechaEmision = fS.ajustarFechaEmision(null, $scope.data.fechaEmision);
+
+                if (ajusteFechaEmision) {
+                    $scope.data.fechaEmision = ajusteFechaEmision;
                 } else {
-                    $scope.data.fechaEmision = new Date();
-                } 
+                    console.log('Error al justar la fecha de Emisión')
+                    return
+                }
+
 
                 let { isConfirmed } = await Swal.fire({
                     //title: 'Are you sure?',
@@ -2219,12 +2218,15 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-                showLoader();
 
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
-                if (cantidadStock === 0) return
+                if (cantidadStock === 0) {
+                    $scope.setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
 
+                showLoader();
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -2815,24 +2817,18 @@
                     return
                 }
 
-                let fechaEmisionModificada = $scope.data.fechaEmision;
-                let fechaEmisionDocCreado = $scope.data.fechaEmisionDocCreado;
-                let fechaActual = new Date();
+                if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                    tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                    return
+                }
 
-                // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
-                if (fS.getDate(fechaEmisionModificada) !== fS.getDate(fechaEmisionDocCreado)) {
+                let ajusteFechaEmision = fS.ajustarFechaEmision(true, $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
 
-                    //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                    if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
-                        fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                        return
-                    }
-
-                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
-                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    } else {
-                        $scope.data.fechaEmision = new Date();
-                    }
+                if (ajusteFechaEmision) {
+                    $scope.data.fechaEmision = ajusteFechaEmision;
+                } else {
+                    console.log('Error al justar la fecha de Emisión')
+                    return
                 }
 
 
@@ -2858,10 +2854,10 @@
                     //Tarifa Aplicada al Documento
                     jsonHeader.tarifa = $scope.dataTarifaImpuesto.tarifa;
                     jsonHeader.codigoPorcentaje = $scope.dataTarifaImpuesto.codigoPorcentaje;
-                    let detalles = $scope.gridOptionsDetalle.data.map(item=>({
+                    let detalles = $scope.gridOptionsDetalle.data.map(item => ({
                         ...item,
                         fechaEmision: item.idAprob_Document_Detailt > 0 ? item.fechaEmision : $scope.data.fechaEmision
-                    })) 
+                    }))
 
                     let restultDetalles = aprobacionDocSvc.detalleMapperTo(detalles, $scope.decimal);
 
@@ -2908,7 +2904,7 @@
     function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
-        
+
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
 
@@ -3097,12 +3093,15 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-                showLoader();
 
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
-                if (cantidadStock === 0) return
+                if (cantidadStock === 0) {
+                    $scope.setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
 
+                showLoader();
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -3843,24 +3842,18 @@
                     return
                 }
 
-                let fechaEmisionModificada = $scope.data.fechaEmision;
-                let fechaEmisionDocCreado = $scope.data.fechaEmisionDocCreado;
-                let fechaActual = new Date();
+                if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                    tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                    return
+                }
 
-                // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
-                if (fS.getDate(fechaEmisionModificada) !== fS.getDate(fechaEmisionDocCreado)) {
+                let ajusteFechaEmision = fS.ajustarFechaEmision(null, $scope.data.fechaEmision);
 
-                    //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-                    if (fS.getDate(fechaEmisionModificada) > fS.getDate(fechaActual)) {
-                        fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-                        return
-                    }
-
-                    if (fS.formatDateShort(fechaEmisionModificada) < fS.formatDateShort(fechaActual)) {
-                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
-                    } else {
-                        $scope.data.fechaEmision = new Date();
-                    }
+                if (ajusteFechaEmision) {
+                    $scope.data.fechaEmision = ajusteFechaEmision;
+                } else {
+                    console.log('Error al justar la fecha de Emisión')
+                    return
                 }
 
                 if ($scope.data.total <= 0) {
@@ -3987,15 +3980,16 @@
         }
 
 
-        function checkStockDetalle(){
+        function checkStockDetalle() {
             let fechaEmisionAprobacion = $scope.data.fechaEmision;//fecha emision de aprobacion documento 
 
             let resultsItem = $scope.gridOptionsDetalle.data.map(item => {
                 let cantidadStock = 0;
-                let cantidadTransaccion = item.cantidad * item.conversion;
+                let conversion = item.conversion || 1;
+                let cantidadTransaccion = item.cantidad * conversion;
 
                 let fechaEmisionDocumento = item.idAprob_Document_Detailt > 0 ? item.fechaEmision : $scope.data.fechaEmision; //Fecha Emision del Doc. (Proforma, Nota Entrega)
-                
+
                 let dataConsolidacion = item.consolidacionesFecha.find(
                     consolidacionFecha => consolidacionFecha.idBodega === item.idBodega
                 )

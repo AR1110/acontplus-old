@@ -99,8 +99,7 @@
             add();
         }
     };
-    const edit = (e) => {
-        console.log(e);
+    const edit = (e) => { 
         editStatus = true;
         data = e;
     };

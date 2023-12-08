@@ -1,14 +1,14 @@
 <!-- svelte-ignore tag-option-deprecated -->
-<script>
-  import { v4 } from "uuid";
+<script type="js">
   import { onMount } from "svelte";
   import { client } from "@/lib/utils/axiosClient";
   import toast from "@/lib/utils/toast";
   import Swal from "sweetalert2";
-  import Search from "@/lib/components/Search.svelte";
   import AdvancedSearch from "@/lib/components/AdvancedSearch.svelte";
   import { showLoader, hideLoader } from "@/lib/utils/loading-spinner";
   import { Chart, registerables } from "chart.js";
+  import Pagination from "@/lib/components/Pagination.svelte";
+
   Chart.register(...registerables);
 
   let genderes = [],
@@ -17,13 +17,80 @@
     petTypes = [],
     pets = [];
 
+  let tipo = 1;
+
+  let recordsQuantity = [10, 25, 50, 100];
+
+  let page = 0;
+  let pageCurrent = 0;
+  let pageSize = recordsQuantity[0];
+  let textSearch = "";
+  let totalRecords = 0;
+  let timer;
+  let totalPetTypes = [],
+    totalBreeds = [],
+    totalGenders = [];
+
+  const getTotals = async () => {
+    showLoader();
+    await client
+      .get(
+        `Vet/Pets/?json=` +
+          JSON.stringify({
+            tipo: 3,
+            pageIndex: pageCurrent == 0 ? 1 : pageCurrent,
+            pageSize: pageSize == 0 ? 9 : pageSize,
+            textSearch: textSearch,
+          }),
+      )
+      .then((response) => {
+        if (response.data.code == 1) {
+          let tempArray = JSON.parse(response.data.payload) || [];
+          totalPetTypes = tempArray["totalPetTypes"] || [];
+          if (totalPetTypes.length > 0) {
+            drawChartPetType();
+          }
+
+          totalBreeds = tempArray["totalBreeds"] || [];
+          if (totalBreeds.length > 0) {
+            drawChartPetBreed();
+          }
+          totalGenders = tempArray["totalGenders"] || [];
+          if (totalGenders) {
+            drawChartPetSex();
+          }
+        }
+        hideLoader();
+      })
+      .catch((error) => {
+        hideLoader();
+        console.log(error);
+      });
+  };
+
   const getPets = async () => {
     showLoader();
     await client
-      .get(`Vet/Pets/?json=` + JSON.stringify({ tipo: 1 }))
+      .get(
+        `Vet/Pets/?json=` +
+          JSON.stringify({
+            tipo,
+            pageIndex: pageCurrent == 0 ? 1 : pageCurrent,
+            pageSize: pageSize == 0 ? 9 : pageSize,
+            textSearch: textSearch,
+          }),
+      )
       .then((response) => {
         if (response.data.code == 1) {
-          pets = JSON.parse(response.data.payload);
+          let tempArray = JSON.parse(response.data.payload) || [];
+          totalPetTypes = tempArray["totalPetTypes"];
+          totalBreeds = tempArray["totalBreeds"];
+          totalGenders = tempArray["totalGenders"];
+
+          pets = tempArray["pets"];
+          if (pets.length > 0) {
+            totalRecords = pets[0]["totalRecords"];
+          }
           pets.forEach((element, index) => {
             if (element.weight === null) {
               element.weight = "N/A";
@@ -35,11 +102,6 @@
               element.color = "N/A";
             }
           });
-          if (pets.length > 0) {
-            drawChartPetType();
-            drawChartPetBreed();
-            drawChartPetSex();
-          }
         }
         hideLoader();
       })
@@ -47,6 +109,17 @@
         hideLoader();
         console.log(error);
       });
+  };
+
+  const onPageChange = (event) => {
+    page = event.detail.page;
+    pageCurrent = page + 1;
+    getPets();
+  };
+
+  const onChange = (e) => {
+    pageSize = parseInt(e.target.value);
+    getPets();
   };
 
   onMount(async () => {
@@ -60,6 +133,7 @@
       breeds = response.data;
     });
     await getPets();
+    await getTotals();
   });
 
   const filterBreed = (id) => {
@@ -117,9 +191,7 @@
       petTypeId: pet.petTypeId,
       breedId: pet.breedId,
       genderId: pet.genderId,
-      // age: pet.age,
       color: pet.color,
-      // weight: pet.weight,
     };
     await client
       .post("Vet/Pets/", newPet)
@@ -135,7 +207,7 @@
       });
     cleanPet();
     await getPets();
-    //window.location.reload(true);
+    await getTotals();
   };
 
   const deletePet = async (id) => {
@@ -161,6 +233,7 @@
         .catch((error) => {
           console.log(error);
         });
+      await getTotals();
     }
   };
 
@@ -287,6 +360,28 @@
     }));
   };
 
+  const search = (e) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (e.target.value != "" && e.target.value.length >= 3) {
+        tipo = 2;
+        textSearch = e.target.value;
+        getPets();
+      } else {
+        tipo = 1;
+        textSearch = "";
+        getPets();
+      }
+    }, 750);
+  };
+
+  const clearInput = () => {
+    document.querySelector("input").value = "";
+    tipo = 1;
+    textSearch = "";
+    search({ target: { value: "" } });
+  };
+
   let chartPetType = null,
     chartPetBreed = null,
     chartPetSex = null;
@@ -295,14 +390,14 @@
     if (chartPetType != null) {
       chartPetType.destroy();
     }
-    let groupedPets = pets.reduce((groups, item) => {
-      const group = groups[item.petType] || [];
+    let groupedPets = totalPetTypes.reduce((groups, item) => {
+      const group = groups[item.name] || [];
       group.push(item);
-      groups[item.petType] = group;
+      groups[item.name] = group;
       return groups;
     }, {});
     let labels = Object.keys(groupedPets);
-    let lengths = labels.map((key) => groupedPets[key].length);
+    let lengths = labels.map((key) => groupedPets[key][0]["total"]);
     const ctx = document.getElementById("chartPetType").getContext("2d");
 
     chartPetType = new Chart(ctx, {
@@ -350,14 +445,14 @@
     if (chartPetBreed != null) {
       chartPetBreed.destroy();
     }
-    let groupedPets = pets.reduce((groups, item) => {
-      const group = groups[item.breed] || [];
+    let groupedPets = totalBreeds.reduce((groups, item) => {
+      const group = groups[item.name] || [];
       group.push(item);
-      groups[item.breed] = group;
+      groups[item.name] = group;
       return groups;
     }, {});
     let labels = Object.keys(groupedPets);
-    let lengths = labels.map((key) => groupedPets[key].length);
+    let lengths = labels.map((key) => groupedPets[key][0]["total"]);
     const ctx = document.getElementById("chartPetBreed").getContext("2d");
 
     chartPetBreed = new Chart(ctx, {
@@ -403,14 +498,14 @@
     if (chartPetSex != null) {
       chartPetSex.destroy();
     }
-    let groupedPets = pets.reduce((groups, item) => {
-      const group = groups[item.gender] || [];
+    let groupedPets = totalGenders.reduce((groups, item) => {
+      const group = groups[item.name] || [];
       group.push(item);
-      groups[item.gender] = group;
+      groups[item.name] = group;
       return groups;
     }, {});
     let labels = Object.keys(groupedPets);
-    let lengths = labels.map((key) => groupedPets[key].length);
+    let lengths = labels.map((key) => groupedPets[key][0]["total"]);
     const ctx = document.getElementById("chartPetSex").getContext("2d");
 
     chartPetSex = new Chart(ctx, {
@@ -482,22 +577,7 @@
   </div>
 </div>
 
-<!-- <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="http://3.21.205.190:8006/"
-					width="100%"
-					height="500"
-					allowfullscreen
-					sandbox>
-				<p>
-					<a href="/en-US/docs/Glossary">
-						Fallback link for browsers that don't support iframes
-					</a>
-				</p>
-			</iframe>
-		<svelte-app id="khalid" name="Khalid"></svelte-app>
-		<svelte-app id="paul" name="Paul"></svelte-app>
-		<test-counter></test-counter> -->
-
-{#if showForm | editStatus}
+{#if showForm || editStatus}
   <form on:submit|preventDefault={save}>
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -526,7 +606,7 @@
         </div>
       </div>
     </div>
-    {#if isCustomerSelected | editStatus}
+    {#if isCustomerSelected || editStatus}
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Datos del Cliente</h5>
@@ -687,9 +767,12 @@
 
           <button type="submit" class="btn btn-success">
             <i class="ti-save" />
-            {#if !editStatus} Guardar {:else} Actualizar{/if}
+            {#if !editStatus}
+              Guardar
+            {:else}
+              Actualizar{/if}
           </button>
-          {#if showForm | editStatus}
+          {#if showForm || editStatus}
             <button
               type="button"
               class="btn btn-warning"
@@ -703,8 +786,40 @@
     {/if}
   </form>
 {/if}
-
-<Search bind:searchTerm on:input={searchPets} placeholder="Buscar Mascota" />
+<div class="row">
+  <div class="col-lg-9 col-md-9 col-sm-9 col-12">
+    <span class="form-group pull-left page-size form-inline">
+      <select class="form-control control-color" on:change={(e) => onChange(e)}>
+        {#each recordsQuantity as record}
+          <option value={record}>{record}</option>
+        {/each}
+      </select>
+    </span>
+  </div>
+  <div class="col-lg-3 col-md-3 col-sm-3 col-12">
+    <div class="input-group mb-3">
+      <input
+        type="text"
+        class="form-control form-control-lg search-input"
+        placeholder="Buscar..."
+        aria-label=""
+        aria-describedby="basic-addon1"
+        on:keyup={(e) => {
+          search(e);
+        }}
+      />
+      <div class="input-group-append">
+        <button
+          class="btn btn-outline-secondary"
+          on:click={() => {
+            clearInput();
+          }}
+          type="button"><i class="fa fa-sync" /></button
+        >
+      </div>
+    </div>
+  </div>
+</div>
 <div class="card">
   <div class="card-body">
     <div class="table-responsive">
@@ -804,6 +919,13 @@
           {/if}
         </tbody>
       </table>
+      <!-- Add pagination -->
+      <Pagination
+        {page}
+        {pageSize}
+        count={totalRecords}
+        on:pageChange={onPageChange}
+      />
     </div>
   </div>
 </div>

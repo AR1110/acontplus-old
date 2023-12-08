@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Common.Core.Interfaces;
+﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Compras.API.Interfaces;
@@ -27,7 +26,7 @@ namespace Compras.API.Services
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
             return await _repository.SPExecuteAsync("Compra.Proveedor_Insert", parameters);
-             
+
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -42,7 +41,7 @@ namespace Compras.API.Services
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-        { 
+        {
             return await _repository.SPExecuteAsync("Compra.Proveedor_Delete", parameters);
 
         }

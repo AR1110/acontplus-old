@@ -425,7 +425,7 @@
         }
 
         service.queryMapper = function (params) {
-            const { data, cliente, detalles, itemsDeleted, historyDatosAdicionales, infoAdicionalDocumento }  = params;
+            const { data, cliente, detalles, itemsDeleted, historyDatosAdicionales, infoAdicionalDocumento } = params;
             //data que se usara dentro de la función "getCantidadStock"
             service.data = Object.assign({}, data);
 
@@ -597,7 +597,7 @@
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (rowEntity.idNotaEntregaDetalle > 0 && rowEntity.estado && fS.getDate(fechaEmisionDocCreado) !== fS.getDate(fechaEmisionValidate)) {
+                if (rowEntity.idNotaEntregaDetalle > 0 && rowEntity.estado && fechaEmisionDocCreado.getTime() !== fechaEmisionValidate.getTime()) {
 
                     //si fecha documento creado es anterior a fecha consolidacion articulo
                     if (fechaEmisionDocCreado >= dataConsolidacionFecha.fechaConsolidacion) {

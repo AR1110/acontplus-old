@@ -8,7 +8,6 @@
     //AWS Dev
     "DefaultConnection": "Server=52.14.110.123;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
 
-
     //AWS Staging
     //"DefaultConnection": "Server=18.224.78.45;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
   },

@@ -1,4 +1,5 @@
-﻿using Common.Core.Models;
+﻿using Asp.Versioning;
+using Common.Core.Models;
 using Identity.API.Dtos;
 using Identity.Core.Interfaces;
 using Identity.Core.Models;

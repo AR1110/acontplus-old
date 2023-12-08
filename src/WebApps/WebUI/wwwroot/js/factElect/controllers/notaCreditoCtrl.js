@@ -14,6 +14,7 @@
     let clienteSvc = {};
 
     let mainDataForm = {};
+    let tipoDoc = {}
 
     //main Controller Ctrl
     app.controller('notaCreditoClienteCtrl', notaCreditoClienteCtrl);
@@ -33,10 +34,12 @@
         tS = $injector.get('toastService');
         clienteSvc = $injector.get('clienteService');
         const nombreModalVenta = $injector.get('nombreModalVenta');
-        // const nombreModalFactElect = $injector.get("nombreModalFactElect");
-        
-
-        const TIPO_DOC = commonSvc.tipoDoc['NC'];
+        const CODE_REPORT = $injector.get('CODE_REPORT');
+        const DOC_TYPE = $injector.get('DOC_TYPE');
+        tipoDoc = {
+            codigo: DOC_TYPE.NC
+        }
+        // const nombreModalFactElect = $injector.get("nombreModalFactElect"); 
 
         $scope.dataSearch = {
             pageIndex: 1,
@@ -126,7 +129,6 @@
 
                 showLoader();
                 let dataSearch = {
-                    tipo: 1,
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     byCliente: $scope.dataSearch.idCliente,
@@ -140,7 +142,7 @@
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                 }
                 $scope.notaCreditos = [];
-                notaCreditoSvc.get(dataSearch).then(response => {
+                notaCreditoSvc.getAll(dataSearch).then(response => {
                     $scope.notaCreditos = response || [];
                     $scope.cloneNotaCreditos = JSON.parse(JSON.stringify($scope.notaCreditos))
                 })
@@ -216,7 +218,7 @@
 
         $scope.openModalDetalle = async (params) => {
             try {
-                console.log(params)
+
                 let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
                 let ctrl = (await import(fileCtrl))[controller];
                 let template = templates['NC_SRI'];
@@ -238,20 +240,15 @@
 
         $scope.openModalEditar = async (item) => {
             try {
-
                 showLoader();
-                let response = await commonSvc.getDataTipoDocVenta({
-                    id: item.idNotaCredito,
-                    codigoDocumento: TIPO_DOC.codigo
+                notaCreditoSvc.getId(item.idDocumento).then(response => {
+                    $scope.openModalParam({
+                        controller: 'modalNotaCreditoCtrl',
+                        template: URL_TEMPLATE + '_ModalEditar.cshtml',
+                        params: response
+                    })
                 }).finally(() => hideLoader())
 
-
-                if (!response.isComplete) return
-                $scope.openModalParam({
-                    controller: 'modalNotaCreditoCtrl',
-                    template: URL_TEMPLATE + '_ModalEditar.cshtml',
-                    params: response
-                })
             } catch (error) {
                 console.log(error)
             }
@@ -306,7 +303,7 @@
                     }),
                     reportParams: JSON.stringify({
                         codEstab: item.codEstab,
-                        codigo: 'RNCC',
+                        codigo: CODE_REPORT.RNC,
                         format,
                     }),
                     hasService: true,
@@ -350,8 +347,8 @@
 
         $scope.clienteSearch = {};
         $scope.cliente = {};
-        
-        $scope.tipoDoc = commonSvc.tipoDoc['NC'];
+
+        $scope.tipoDoc = tipoDoc
         $scope.dataArticulo = {};
 
 
@@ -390,6 +387,7 @@
             }, 100);
         }
 
+        const detallesDeleted = [];
         //GridOptions Invoice 
         $scope.gridOptions = {
             enableColumnMenus: false,
@@ -442,23 +440,22 @@
         function initiload() {
             try {
                 let {
-                    dataDocumento,
+                    infoComprobante,
                     factura,
                     cliente,
                     detalleDocumento,
                     infoAdicionalDocumento,
-                    actividadTipoIva
                 } = params;
+                console.log(params)
 
-                if (dataDocumento && dataDocumento.idNotaCredito > 0) {
+                if (infoComprobante && infoComprobante.idNotaCredito > 0) {
                     $scope.factura = factura;
                     $scope.cliente = cliente;
 
                     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
                     //Cargamos los Datos 
-                    $scope.data = Object.assign({}, dataDocumento);
-                    $scope.data.tarifa = actividadTipoIva.tarifa;
-                    $scope.data.idFactura = $scope.factura.idFactura;
+                    $scope.data = Object.assign({}, infoComprobante);
+                    $scope.data.idFactura = $scope.factura.idDocumento;
                     $scope.gridOptions.data = detalleDocumento;
 
                     let dataEstab = $scope.establecimientos.find(estab => (estab.codEstab === $scope.data.codEstab));
@@ -483,6 +480,9 @@
                     //     decimal: $scope.decimal,
                     //     dataTarifaImpuesto: $scope.tarifaImpuestoVigente
                     // }))
+                    $scope.tarifaImpuestoVigente = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.data.codigoPorcentaje)
+
+                    $scope.data.tarifa = $scope.tarifaImpuestoVigente.tarifa;
                 } else {
                     let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
 
@@ -813,6 +813,15 @@
                 if (isConfirmed) {
                     let index = $scope.gridOptions.data.indexOf(rowEntity);
                     $scope.gridOptions.data.splice(index, 1);
+
+                    if (rowEntity.idNotaCreditoDetalle > 0) {
+                        detallesDeleted.push({
+                            ...rowEntity,
+                            cantidad: rowEntity.cantidadOriginal,
+                            estado: 0
+                        });
+                    }
+
                     //Recalculamos los totales 
                     $scope.setCalculoTotales("cantidad", rowEntity, 0);
                     $scope.$apply();
@@ -1091,6 +1100,7 @@
         $scope.selectedInvoiceChange = function (item) {
             $scope.data.idFactura = item.idDocumento;
             $scope.nroFactura = item.nroFactura;
+            $scope.factura = item;
             $scope.getDataFactura();
         }
 
@@ -1120,7 +1130,7 @@
 
         $scope.getDetalleDoc = async function () {
             try {
-                if (!($scope.data.idFactura > 0)) return
+                if (!($scope.factura.idDocumento > 0)) return
 
 
                 let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
@@ -1132,7 +1142,7 @@
                     size: 'xl',
                     params: {
                         codDoc: DOC_TYPE.FV_SRI,
-                        id: $scope.data.idFactura
+                        id: $scope.factura.idDocumento
                     },
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
@@ -1169,7 +1179,8 @@
                 total: 0,
                 nota: "S/N",
                 llevaInventario: false,
-                datosAdicionales: false
+                datosAdicionales: false,
+                estado: 1
             }
             $scope.gridOptions.data.push(obj)
         }
@@ -1178,17 +1189,45 @@
             try {
                 $scope.dataArticulo = dataArticulo;
 
-                addRow();
-
                 const {
                     articulo,
                     medidas,
                     datosAdicionales
                 } = $scope.dataArticulo;
-                $scope.indexRow = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
-                let entity = $scope.gridOptions.data[$scope.indexRow];
 
-                let dataMedida = medidas[0];
+                let index = 0, entity = {}, tarifaImpuesto = {};
+
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptions.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
+                if (itemsDuplicated.length > 1) {
+                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                    return
+                }
+
+                let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
+
+                if (findIndexById === -1) {
+                    addRow();
+                    index = $scope.gridOptions.data.length - 1;
+                    entity = $scope.gridOptions.data[index];
+                    entity.cantidad = 1;
+                } else {
+                    index = findIndexById;
+                    entity = $scope.gridOptions.data[index];
+                    cantidad = entity.cantidad;
+                    entity.cantidad = cantidad + 1;
+                }
+
+                let dataMedida = medidas.find(medida => (medida.defaultMedida));
+
+                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
+
+                entity.idImpuesto = tarifaImpuesto.idImpuesto;
+                entity.idTipoIva = articulo.idTipoIva;
+                entity.codigoPorcentaje = articulo.codigoPorcentaje;
+                entity.tarifa = articulo.tarifa;
 
 
 
@@ -1206,16 +1245,22 @@
                 entity.productoFraccionable = articulo.productoFraccionable;
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                entity.conversion = dataMedida.conversion;
                 entity.adicional = datosAdicionales; //
 
 
-                entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
+                entity.articuloTarifas = dataMedida.tarifas;
+
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
+
                 entity.idTarifa = $scope.data.idTarifa;
+
+                entity.precioCosto = articulo.precioCosto;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
 
                 $scope.setCalculoTotales('precioUnitario', entity, 0);
+                $scope.indexRow = index;
                 focusColumnCantidad();
             } catch (error) {
                 console.log(error)
@@ -1234,8 +1279,6 @@
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
             )
-            console.log($scope.indexRow)
-            console.log($scope.index)
 
             $timeout(() => {
                 $scope.gridApi.cellNav.scrollToFocus(
@@ -1268,57 +1311,84 @@
             $scope.infoAdicionalDocumento = result;
         }
 
+        function isUpdate() {
+            return $scope.data.idNotaCredito > 0;
+        }
+        function isRegister() {
+            return !($scope.data.idNotaCredito > 0)
+        }
+
+
+        function isValidForm() {
+            const NUM_CONSUMIDOR_FINAL = "9999999999999";
+            if (!$scope.data.codEstab) {
+                tS.toastr('warning', 'Seleccione el establecimiento');
+                return
+            }
+
+            if (!($scope.data.idPuntoEmision)) {
+                tS.toastr('warning', 'Seleccione el punto de emisión')
+                return
+            }
+
+            if (!(fS.isDateValid($scope.data.fechaEmision))) {
+                tS.toastr('warning', 'Ingrese fecha de emisión');
+                return
+            }
+
+            if (!($scope.cliente.idCliente > 0)) {
+                tS.toastr('warning', 'Seleccione el cliente');
+                return
+            }
+
+            if (!($scope.data.idFactura > 0)) {
+                tS.toastr('warning', 'Seleccione la factura');
+                return
+            }
+
+            if ($scope.gridOptions.data.length === 0) {
+                tS.toastr('warning', 'Ingrese al menos un Articulo en el Detalle');
+                return
+            }
+            if (!($scope.gridOptions.data.some(item => (item.idBodega > 0)))) {
+                tS.toastr('warning', 'Agregue  bodega a los artículos')
+                return
+            }
+
+            if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL) {
+                tS.toastr('warning', 'Realizar nota de credito a nombre del consumidor final no esta disponible!')
+                return
+                // fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
+
+            }
+
+            if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                return
+            }
+
+            let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
+
+            if (!ajusteFechaEmision) {
+                console.log('Error al justar la fecha de Emisión')
+                return
+            }
+            $scope.data.fechaEmision = ajusteFechaEmision;
+
+            return true;
+        }
 
         $scope.onSave = async function () {
             try {
-                const NUM_CONSUMIDOR_FINAL = "9999999999999";
+
                 let nroDocumentoSecuencial = null;
-                if (!$scope.data.codEstab) {
-                    tS.toastr('warning', 'Seleccione el establecimiento');
-                    return
-                }
 
-                if (!($scope.data.idPuntoEmision)) {
-                    tS.toastr('warning', 'Seleccione el punto de emisión')
-                    return
-                }
+                if (!isValidForm()) return
 
-                if (!($scope.data.fechaEmision instanceof Date && !isNaN($scope.data.fechaEmision))) {
-                    tS.toastr('warning', 'Ingrese fecha de emisión');
-                    return
-                }
-
-                if (!($scope.cliente.idCliente > 0)) {
-                    tS.toastr('warning', 'Seleccione el cliente');
-                    return
-                }
-
-                if (!($scope.data.idFactura > 0)) {
-                    tS.toastr('warning', 'Seleccione la factura');
-                    return
-                }
-
-                if ($scope.gridOptions.data.length === 0) {
-                    tS.toastr('warning', 'Ingrese al menos un Articulo en el Detalle');
-                    return
-                }
-                if (!($scope.gridOptions.data.some(item => (item.idBodega > 0)))) {
-                    tS.toastr('warning', 'Agregue  bodega a los artículos')
-                    return
-                }
-
-                if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL) {
-                    tS.toastr('warning', 'Realizar nota de credito a nombre del consumidor final no esta disponible!')
-                    return
-                    // fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
-
-                }
-
-                if (!($scope.data.idNotaCredito > 0)) {
+                if (isRegister()) {
                     showLoader();
-                    nroDocumentoSecuencial = await commonSvc.generarNroDocumentoVenta({
+                    nroDocumentoSecuencial = await notaCreditoSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
-                        codigoDocumento: $scope.tipoDoc.codigo,
                     })
                     hideLoader();
                     if (!nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
@@ -1326,8 +1396,8 @@
 
 
 
-                let textAccion = $scope.data.idNotaCredito > 0 ? 'Actualizar' : 'Guardar';
-                let textHtml = $scope.data.idNotaCredito > 0 ? (`<small>Esta Ud. seguro de ${textAccion} este documento </small>?`) : (`<small>Esta Ud. seguro de ${textAccion} este documento <b>N° ${nroDocumentoSecuencial}</b></small>?`);
+                let textAccion = isUpdate() ? 'Actualizar' : 'Guardar';
+                let textHtml = isUpdate() ? (`<small>Esta Ud. seguro de ${textAccion} este documento </small>?`) : (`<small>Esta Ud. seguro de ${textAccion} este documento <b>N° ${nroDocumentoSecuencial}</b></small>?`);
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -1350,42 +1420,43 @@
                     allowEscapeKey: false
                 })
 
-
-                if (isConfirmed) {
-
-                    let notaCredito = Object.assign({}, $scope.data);
-                    notaCredito.idCliente = $scope.cliente.idCliente;
-                    notaCredito.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision);
-                    notaCredito.tarifa = $scope.tarifaImpuestoVigente.tarifa;
-
-                    let data = {
-                        nota: notaCredito,
-                        detalle: $scope.gridOptions.data,
-                        adicional: $scope.infoAdicionalDocumento,
-                    }
+                if (!isConfirmed) return
 
 
-                    if ($scope.data.idNotaCredito > 0) {
-                        showLoader();
-                        notaCreditoSvc.put($scope.data.idNotaCredito, data)
-                            .then($scope.successResponse)
-                            .catch(error => {
-                                console.log(error)
-                            }).finally(() => hideLoader())
-                    }
 
+                let notaCredito = Object.assign({}, $scope.data);
+                notaCredito.idCliente = $scope.cliente.idCliente;
+                notaCredito.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision);
+                notaCredito.tarifa = $scope.tarifaImpuestoVigente.tarifa;
 
-                    if (!($scope.data.idNotaCredito > 0)) {
-                        showLoader();
-                        notaCreditoSvc.post(data)
-                            .then($scope.successResponse)
-                            .catch(error => {
-                                console.log(error)
-                            }).finally(() => hideLoader())
-                    }
+                let params = {
+                    infoComprbante: notaCredito,
+                    detalles: $scope.gridOptions.data,
+                    detallesDeleted: detallesDeleted,
+                    infoAdicional: $scope.infoAdicionalDocumento
+                }
+
+                let paramsMapper = notaCreditoSvc.paramsMapperToApi(params);
+                console.log(paramsMapper)
+
+                if (isUpdate()) {
+                    showLoader();
+                    notaCreditoSvc.put($scope.data.idNotaCredito, paramsMapper)
+                        .then($scope.successResponse)
+                        .catch(error => {
+                            console.log(error)
+                        }).finally(() => hideLoader())
                 }
 
 
+                if (isRegister()) {
+                    showLoader();
+                    notaCreditoSvc.post(paramsMapper)
+                        .then($scope.successResponse)
+                        .catch(error => {
+                            console.log(error)
+                        }).finally(() => hideLoader())
+                }
             } catch (error) {
                 hideLoader();
                 console.log(error)

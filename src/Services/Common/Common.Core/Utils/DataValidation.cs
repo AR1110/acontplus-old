@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Common.Core.Utils
 {

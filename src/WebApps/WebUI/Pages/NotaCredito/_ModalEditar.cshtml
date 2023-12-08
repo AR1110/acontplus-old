@@ -55,7 +55,7 @@
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="Facturas">Factura</label>
-                    <input type="text" ng-model="factura.nroFactura" class="form-control border-select" disabled>
+                    <input type="text" ng-model="factura.serieComprobante" class="form-control border-select" disabled>
                     <button type="button" class="btn btn-info btn-xs mt-1" ng-click="getDetalleDoc()"><i
                             class="ti-file"></i> Ver documento
                     </button>
@@ -254,7 +254,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                    @* <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Transporte</label>
                             <input type="text" decimal ng-model="data.transporte"
@@ -268,7 +268,7 @@
                             <input type="text" decimal ng-model="data.recargo" class="form-control border-select"
                                 placeholder="0.00" />
                         </div>
-                    </div>
+                    </div> *@
 
                     <div class="col-lg-4">
                         <div class="form-group">

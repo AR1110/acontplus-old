@@ -549,7 +549,8 @@ app.filter('tipo', function ($sce) {
 });
 app.filter('ambienteSri', function ($sce) {
     return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>PRUEBAS</span>") : $sce.trustAsHtml("<span class='text-info'>PRODUCCIÓN</span>");
+        let sriEnvironment = text == "2" ? true : false
+        return sriEnvironment ? $sce.trustAsHtml("<span class='text-success'>PRODUCCIÓN</span>") : $sce.trustAsHtml("<span class='text-warning'>PRUEBAS</span>");
     }
 })
 app.filter('tipoEmisionSri', function ($sce) {

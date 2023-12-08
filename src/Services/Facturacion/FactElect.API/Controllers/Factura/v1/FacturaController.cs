@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using FactElect.API.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -74,7 +73,7 @@ namespace FactElect.API.Controllers.Factura.v1
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ApiRequest data)
-        { 
+        {
             var _response = new GenericResponse();
             try
             {
@@ -98,13 +97,13 @@ namespace FactElect.API.Controllers.Factura.v1
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
-        { 
+        {
             var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Factura_Get_Id", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id); 
+                _db.AddDynamicParam("id", id);
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -122,7 +121,7 @@ namespace FactElect.API.Controllers.Factura.v1
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
-        { 
+        {
             var _response = new GenericResponse();
             try
             {

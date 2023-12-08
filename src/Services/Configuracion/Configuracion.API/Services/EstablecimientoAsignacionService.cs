@@ -44,7 +44,7 @@ namespace Configuracion.API.Services
         }
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
-        { 
+        {
             return await _repository.SPExecuteAsync("Config.Estab_Asig_Update", parameters);
         }
     }

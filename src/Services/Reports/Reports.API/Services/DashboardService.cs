@@ -1,5 +1,4 @@
 ﻿using Common.Core.Interfaces;
-using Common.Core.Utils;
 using Reports.API.Interfaces;
 
 namespace Reports.API.Services

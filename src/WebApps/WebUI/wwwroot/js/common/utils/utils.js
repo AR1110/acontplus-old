@@ -566,15 +566,13 @@
          */
         formSvc.impuestoTarifaMapperTo = function (items) {
             let impuestosTarifa = items.map(item => {
-                const { taxBase, taxValue } = formSvc.getTaxBaseAndTaxValue(item);
-                const discount = item.cantidad * item.valorDescuento;
                 const obj = {
                     taxId: item.idImpuesto,
                     taxPercentId: item.idTipoIva,
                     percent: item.tarifa,
-                    taxBase: formSvc.roundNumber(taxBase, 5),
-                    taxValue: formSvc.roundNumber(taxValue, 5),
-                    discount: formSvc.roundNumber(discount, 5)
+                    taxBase: formSvc.roundNumber(item.precioTotalSinImpuesto, 5),
+                    taxValue: formSvc.roundNumber(item.valorImpuesto, 5),
+                    discount: formSvc.roundNumber(item.valorDescuento, 5)
                 }
                 return obj;
             })
@@ -589,6 +587,130 @@
                 taxValue: formSvc.roundNumber(taxValue, 5),
             };
         }
+
+        /**
+         * 
+         * @param {*} fecha1 
+         * @param {*} fecha2 
+         * @returns 
+         */
+        formSvc.sonFechasIguales = function (fecha1, fecha2) {
+            // Verificar si alguna fecha es null
+            if (!fecha1 || !fecha2) {
+                return {
+                    esMismaFecha: false,
+                    esMismoDia: false,
+                    esMismoMes: false,
+                    esMismoAnio: false
+                };
+            }
+
+            // Comparar solo el día, mes y año
+            const esMismaFecha = fecha1.getDate() === fecha2.getDate() &&
+                fecha1.getMonth() === fecha2.getMonth() &&
+                fecha1.getFullYear() === fecha2.getFullYear();
+
+            return {
+                esMismaFecha,
+                esMismoDia: fecha1.getDate() === fecha2.getDate(),
+                esMismoMes: fecha1.getMonth() === fecha2.getMonth(),
+                esMismoAnio: fecha1.getFullYear() === fecha2.getFullYear()
+            };
+        };
+
+
+        formSvc.ajustarFechaEmision = function (isActualizacion, fechaEmision, fechaEmisionDocCreado) {
+            let fechaEmisionModificada = new Date(fechaEmision);
+            let fechaActual = new Date();
+
+            let dataFechaAnterior = formSvc.sonFechasIguales(fechaEmisionModificada, fechaEmisionDocCreado);
+
+            if (isActualizacion && dataFechaAnterior.esMismaFecha) {
+                return fechaEmisionDocCreado;
+            }
+
+            let dataFechaActual = formSvc.sonFechasIguales(fechaEmisionModificada, fechaActual);
+
+            if ((isActualizacion || !isActualizacion) && dataFechaActual.esMismaFecha) {
+                fechaEmisionModificada.setHours(
+                    fechaActual.getHours(),
+                    fechaActual.getMinutes(),
+                    fechaActual.getSeconds(),
+                    fechaActual.getMilliseconds()
+                );
+            } else {
+                fechaEmisionModificada.setHours(0, 0, 0, 0);
+            }
+
+            return fechaEmisionModificada;
+        }
+
+
+        /**
+         * 
+         * @param {*} medidasFraccionado 
+         * @param {*} medidasPrincipal 
+         * @returns 
+         */
+
+        formSvc.processAndSortMeasures = function (medidasPrincipal, medidasFraccionado) {
+            // Medidas del artículo fraccionado del principal
+            let medidasFraccionadoTemp = JSON.parse(medidasFraccionado) || [];
+
+            // Medida principal con las tarifas
+            let medidasPrincipalTemp = JSON.parse(medidasPrincipal) || [];
+
+            const medidasPrincipalMapper = medidasPrincipalTemp.map(medidaPrincipal => ({
+                ...medidaPrincipal,
+                tipo: 'PRINCIPAL'
+            }))
+            const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
+                ...medidaFraccionado,
+                tipo: 'FRACCIONADO'
+            }))
+
+            /**
+             * Combinar los dos arrays de medidas en uno solo
+             *
+             * Parámetros:
+             *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
+             */
+            // Combinar los dos arrays de medidas en uno solo
+
+            const mergedMedidasArray = [...medidasFraccionadoMapper, ...medidasPrincipalMapper];
+
+            /**
+             * Ordenar el array de medidas en función de la propiedad "orden" y
+             * establecer la propiedad "defaultMedida" en falso para todos los elementos
+             *
+             * Parámetros:
+             *  - orderMedidaArray: El array de medidas ordenado
+             */
+            let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
+                ...medida,
+                defaultMedida: false
+            }));
+
+            // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
+            orderMedidaArray[0].defaultMedida = true;
+
+
+            // Crear un nuevo array de medidas con un formato específico
+            let medidas = orderMedidaArray.map(item => ({
+                idMedida: item.idMedida,
+                conversion: item.conversion,
+                descripcion: item.descripcion,
+                defaultMedida: item.defaultMedida,
+                tipo: item.tipo,
+                tarifas: item.tarifas || []
+            }))
+
+            return medidas;
+        }
+
+
+
+
 
         return formSvc;
     }

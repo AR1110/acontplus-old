@@ -21,6 +21,7 @@ GO
 -- =============================================
 CREATE OR ALTER PROCEDURE Pet.Pet_Get @companyId INT
 ,@json VARCHAR(MAX)
+,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -28,16 +29,55 @@ BEGIN
 	DECLARE @tipo INT,
 			@textSearch VARCHAR(100),
 			@sqlQuery NVARCHAR(MAX),
-			@params NVARCHAR(MAX)
+			@params NVARCHAR(MAX), 
+            @pageIndex INT,
+            @pageSize INT 
 
 	
 	SET @params = N'@companyId INT,
-				   @textSearch VARCHAR(100) '
+				   @textSearch VARCHAR(100), @pageIndex INT, @pageSize INT '
 
-	SELECT @tipo = tipo, @textSearch = textSearch FROM OPENJSON(@json) WITH(
+	SELECT @tipo = tipo, @textSearch = textSearch,@pageIndex = pageIndex
+        ,@pageSize = pageSize
+        FROM OPENJSON(@json) WITH(
 		tipo INT '$.tipo',
+          pageIndex		    INT         '$.pageIndex',
+		                       pageSize		    INT         '$.pageSize',
 		textSearch VARCHAR(100) '$.textSearch'
 	)
+
+    IF (@tipo = 3)
+        BEGIN
+
+            SET @tableNames = 'totalPetTypes,totalBreeds,totalGenders'
+
+            SELECT  pt.[Name], COUNT(*) total
+            FROM Pet.Pet p WITH(NOLOCK)
+            INNER JOIN Pet.PetType pt  WITH(NOLOCK) ON p.PetTypeId = pt.Id
+            WHERE p.[Enabled] = 1 
+                AND p.Deleted IS NULL
+                AND p.CompanyId = @companyId
+            GROUP BY pt.[Name]
+            ORDER BY pt.[Name] ASC
+
+            SELECT  b.[Name], COUNT(*) total
+            FROM Pet.Pet p  WITH(NOLOCK)
+            INNER JOIN Pet.Breed b  WITH(NOLOCK) ON p.BreedId = b.Id
+            WHERE p.[Enabled] = 1 
+                AND p.Deleted IS NULL
+                AND p.CompanyId = @companyId
+            GROUP BY b.[Name]
+            ORDER BY b.[Name] ASC
+
+            SELECT  g.[Name], COUNT(*) total
+            FROM Pet.Pet p  WITH(NOLOCK)
+            INNER JOIN Pet.Gender g  WITH(NOLOCK) ON p.GenderId = g.Id
+            WHERE p.[Enabled] = 1 
+                AND p.Deleted IS NULL
+                AND p.CompanyId = @companyId
+            GROUP BY g.[Name]
+            RETURN
+    END
 
 	SET @sqlQuery = N'SELECT p.Id
 				,p.[Name]
@@ -56,16 +96,18 @@ BEGIN
 				,c.businessName customer
 				,c.IDCard customerIdCard
 				,cc.correo email
-			FROM Pet.Pet p
-				INNER JOIN Customer.Customer c ON p.CustomerId = c.Id
+                ,totalRecords = COUNT(*) over()
+			FROM Pet.Pet p  WITH(NOLOCK)
+				INNER JOIN Customer.Customer c  WITH(NOLOCK) ON p.CustomerId = c.Id
 				LEFT JOIN Cliente cc WITH(NOLOCK) ON c.Id = cc.customerId AND cc.idEntidad = @companyId
-				LEFT JOIN Pet.Gender g ON p.genderId = g.Id
-				LEFT JOIN Pet.PetType pt ON p.petTypeId = pt.Id
-				LEFT JOIN Pet.Breed b ON p.breedId = b.Id
+				LEFT JOIN Pet.Gender g  WITH(NOLOCK) ON p.genderId = g.Id
+				LEFT JOIN Pet.PetType pt  WITH(NOLOCK) ON p.petTypeId = pt.Id
+				LEFT JOIN Pet.Breed b  WITH(NOLOCK) ON p.breedId = b.Id
 			WHERE p.CompanyId = @companyId
 			AND p.Deleted IS NULL '
 
 
+    SET @tableNames = 'pets'
 	IF (@tipo = 2)
 		BEGIN
 			SET @sqlQuery = @sqlQuery + 'AND (
@@ -74,6 +116,12 @@ BEGIN
 					P.[Name] LIKE ''%'' + @textSearch + ''%''
 				)'
 		END
-	EXEC sp_executesql @sqlQuery, @params, @companyId, @textSearch;
+
+
+
+    SET @sqlQuery = @sqlQuery + ' ORDER BY p.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
+
+	EXEC sp_executesql @sqlQuery, @params, @companyId, @textSearch, @pageIndex
+                                ,@pageSize;
 END
 GO

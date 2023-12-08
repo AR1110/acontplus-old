@@ -134,16 +134,16 @@ const TableDialog = (props: SimpleDialogProps) => {
 
     const handleChangeChecked = async (obj: TableReadDto) => {
         try {
-            const { isConfirmed } = await Swal.fire({
-                icon: 'warning',
-                html: 'Esta seguro de liberar la mesa?',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si!',
-                cancelButtonText: 'No!'
-            })
-            if (isConfirmed) {
+            // const { isConfirmed } = await Swal.fire({
+            //     icon: 'warning',
+            //     html: 'Esta seguro de liberar la mesa?',
+            //     showCancelButton: true,
+            //     confirmButtonColor: '#3085d6',
+            //     cancelButtonColor: '#d33',
+            //     confirmButtonText: 'Si!',
+            //     cancelButtonText: 'No!'
+            // })
+            // if (isConfirmed) {
                 showLoader();
                 tableService.putStateAssigned(obj.tableId, {
                     id: obj.tableId,
@@ -163,7 +163,7 @@ const TableDialog = (props: SimpleDialogProps) => {
                     }
                     
                 }).finally(() => hideLoader())
-            }
+           // }
         } catch (error) {
             console.log(error)
         } 
