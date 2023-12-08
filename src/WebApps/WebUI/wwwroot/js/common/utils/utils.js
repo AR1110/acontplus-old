@@ -566,15 +566,13 @@
          */
         formSvc.impuestoTarifaMapperTo = function (items) {
             let impuestosTarifa = items.map(item => {
-                const { taxBase, taxValue } = formSvc.getTaxBaseAndTaxValue(item);
-                const discount = item.cantidad * item.valorDescuento;
                 const obj = {
                     taxId: item.idImpuesto,
                     taxPercentId: item.idTipoIva,
                     percent: item.tarifa,
-                    taxBase: formSvc.roundNumber(taxBase, 5),
-                    taxValue: formSvc.roundNumber(taxValue, 5),
-                    discount: formSvc.roundNumber(discount, 5)
+                    taxBase: formSvc.roundNumber(item.precioTotalSinImpuesto, 5),
+                    taxValue: formSvc.roundNumber(item.valorImpuesto, 5),
+                    discount: formSvc.roundNumber(item.valorDescuento, 5)
                 }
                 return obj;
             })
@@ -712,7 +710,7 @@
 
 
 
-        
+
 
         return formSvc;
     }

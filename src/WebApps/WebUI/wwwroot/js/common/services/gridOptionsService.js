@@ -22,6 +22,9 @@
          * @param {string || number} oldValue valor numero o string 
          * @returns object 
          */
+
+
+
         service.calculoColDef = function ({ rowEntity, oldValue, decimal, idTarifa, columnDefs }) {
 
             let tarifaImpuesto = columnDefs.find(item => item.field === 'idTipoIva').editDropdownOptionsArray
@@ -108,11 +111,11 @@
                         if (rowEntity.precioUnitario === oldValue) return;
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, tarifaImpuesto.tarifa);
-                        let precioIvaDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
+                       // let precioIvaDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                         let valorDescuento = pricingUtils.getValorDescuento(rowEntity.precioUnitario, rowEntity.porcentajeDescuento);
 
                         rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, decimal.nroPrecio);
-                        rowEntity.precioConIva = fS.roundNumber(precioIvaDescuento, decimal.nroPrecio);
+                        rowEntity.precioConIva = fS.roundNumber(precioConIva, decimal.nroPrecio);
                         rowEntity.valorDescuento = fS.roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
                         // this.setTotalRow(entity, index)
 
@@ -143,14 +146,13 @@
 
                         //Verificamos  si el porcentaje es un nuevo Valor y menor o  igual a 100
                         if (rowEntity.porcentajeDescuento <= 100) {
-
-                            let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, tarifaImpuesto.tarifa);
-                            let precioIvaDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
+                            //  let precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioUnitario, tarifaImpuesto.tarifa);
+                            //  let precioIvaDescuento = pricingUtils.getPrecioIvaConDescuento(precioConIva, rowEntity.porcentajeDescuento);
                             let valorDescuento = pricingUtils.getValorDescuento(rowEntity.precioUnitario, rowEntity.porcentajeDescuento);
-
+                            console.log(valorDescuento)
                             rowEntity.porcentajeDescuento = fS.roundNumber(rowEntity.porcentajeDescuento, decimal.nroPorcentaje);
-                            rowEntity.precioConIva = fS.roundNumber(precioIvaDescuento, decimal.nroPrecio);
-                            rowEntity.valorDescuento = fS.roundNumber(valorDescuento, decimal.nroDescuento);
+                            // rowEntity.precioConIva = fS.roundNumber(precioIvaDescuento, decimal.nroPrecio);
+                            rowEntity.valorDescuento = fS.roundNumber(rowEntity.cantidad * valorDescuento, decimal.nroDescuento);
 
                         } else {
                             rowEntity.porcentajeDescuento = oldValue;
@@ -168,18 +170,20 @@
 
                         if (rowEntity.valorDescuento === oldValue) return
 
-                        if (rowEntity.valorDescuento <= rowEntity.precioUnitario) {
+                        let subTotal = ((rowEntity.precioUnitario * rowEntity.cantidad))
 
-                            let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(rowEntity.precioUnitario, rowEntity.valorDescuento);
-                            let precioConIva = rowEntity.precioUnitario - rowEntity.valorDescuento;
+                        if (rowEntity.valorDescuento <= subTotal) {
+
+                            let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(subTotal, rowEntity.valorDescuento);
+                            //  let precioConIva = rowEntity.precioUnitario - rowEntity.valorDescuento;
 
                             rowEntity.valorDescuento = fS.roundNumber(rowEntity.valorDescuento, decimal.nroDescuento);
                             rowEntity.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, decimal.nroPorcentaje);
-                            rowEntity.precioConIva = fS.roundNumber(precioConIva, decimal.nroPrecio);
+                            //  rowEntity.precioConIva = fS.roundNumber(precioConIva, decimal.nroPrecio);
 
                         } else {
                             rowEntity.valorDescuento = oldValue;
-                            toastr.warning('El valor Descuento tiene que ser menor o igual a Precio Venta', 'Ingreso Descuento');
+                            toastr.warning('El descuento no puede ser mayor al subtotal', 'Ingreso Descuento');
                         }
 
                         rowEntity.valorDescuento = fS.roundNumber(rowEntity.valorDescuento, decimal.nroDescuento);
@@ -191,13 +195,15 @@
                 "calculoTotalDetalle": function () {
                     try {
                         //let total = (rowEntity.precioUnitario - rowEntity.valorDescuento) * rowEntity.cantidad;
-                        let total = ((rowEntity.precioUnitario * rowEntity.cantidad)) - rowEntity.valorDescuento;
-                        let totalDescuento = rowEntity.cantidad * rowEntity.valorDescuento;
-                        let subTotal = rowEntity.cantidad * rowEntity.precioUnitario;
+                        // let totalDescuento = rowEntity.cantidad * rowEntity.valorDescuento;
+                        let precioTotalSinImpuesto = ((rowEntity.precioUnitario * rowEntity.cantidad)) - rowEntity.valorDescuento;
+                        let valorImpuesto = pricingUtils.calculateTaxValue(precioTotalSinImpuesto, rowEntity.tarifa);
+                        let total = precioTotalSinImpuesto + valorImpuesto;
                         let totalIce = rowEntity.cantidad * rowEntity.ice;
 
-                        rowEntity.totalDescuento = fS.roundNumber(totalDescuento, decimal.nroDescuentoDetalle)
-                        rowEntity.subTotal = fS.roundNumber(subTotal, 5);
+                        //   rowEntity.totalDescuento = fS.roundNumber(totalDescuento, decimal.nroDescuentoDetalle)
+                        rowEntity.precioTotalSinImpuesto = fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle);
+                        rowEntity.valorImpuesto = fS.roundNumber(valorImpuesto, decimal.nroIva)
                         rowEntity.total = fS.roundNumber(total, decimal.nroTotalDetalle);
                         rowEntity.totalIce = fS.roundNumber(totalIce, decimal.nroIce)
                         // this.getTotales();
@@ -221,21 +227,21 @@
             const { items, decimal, tarifasImpuesto, TAX_RATE_CODE } = obj;
 
             // Inicializar las variables para almacenar los totales de impuestos
-            let htmlImpuestoTotal = '';
+            let htmlImpuestoTotal = '', htmlIvaTotal = '';
             let iva = 0;
             let ivaDiferenciado = 0;
 
             // Calcular totales generales
             let { subTotalSinImpuestos, totalIce, totalDescuento } = items.reduce((acc, prev) => {
                 // Calcular el total neto con descuentos y el total de ICE
-                let totalNetoIva = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
+                // let totalDescuento = prev.cantidad * prev.valorDescuento;
+                let precioTotalSinImpuesto = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
                 let totalIce = prev.cantidad * prev.ice;
-                let totalDescuento = prev.cantidad * prev.valorDescuento;
 
                 // Acumular totales generales
                 acc.totalIce += totalIce;
-                acc.subTotalSinImpuestos += totalNetoIva;
-                acc.totalDescuento += totalDescuento;
+                acc.subTotalSinImpuestos += precioTotalSinImpuesto;
+                acc.totalDescuento += prev.valorDescuento;
 
                 return acc;
             }, {
@@ -249,17 +255,17 @@
                 let { totalNetoIva } = items
                     .filter(item => item.codigoPorcentaje === dataTarifaImpuesto.codigoPorcentaje)
                     .reduce((acc, prev) => {
-                        // Calcular el total neto con descuentos
-                        let total = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
-                        acc.totalNetoIva += total;
+                        // Calcular el total neto con descuentos 
+                        let precioTotalSinImpuesto = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
+                        acc.totalNetoIva += precioTotalSinImpuesto;
 
                         // Calcular IVA y IVA diferenciado según la tarifa
                         if (dataTarifaImpuesto.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT) {
-                            iva += fS.getTaxBaseAndTaxValue(prev).taxValue;
+                            iva += pricingUtils.calculateTaxValue(precioTotalSinImpuesto, prev.tarifa);
                         }
 
                         if (dataTarifaImpuesto.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX) {
-                            ivaDiferenciado += fS.getTaxBaseAndTaxValue(prev).taxValue;
+                            ivaDiferenciado += pricingUtils.calculateTaxValue(precioTotalSinImpuesto, prev.tarifa);
                         }
 
                         return acc;
@@ -270,7 +276,7 @@
                 // Construir el HTML para la tabla de impuestos
                 htmlImpuestoTotal += `<tr>
                                 <td class="left">
-                                    <strong class="text-dark">${dataTarifaImpuesto.descripcion}</strong>
+                                    <span class="text-dark">${dataTarifaImpuesto.descripcion}</span>
                                 </td>
                                 <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
                             </tr>`;
@@ -278,173 +284,190 @@
 
             const importeTotal = subTotalSinImpuestos + iva + ivaDiferenciado;
             // Retornar los totales calculados
+            htmlIvaTotal = `
+            <tr>
+                <td class="left">
+                    <span class="text-dark">Iva 12%</span>
+                </td>
+                <td class="right">$${fS.roundNumber(iva, decimal.nroIva)}</td>
+            </tr>
+            <tr>
+                <td class="left">
+                    <span class="text-dark">Iva Diferenciado</span>
+                </td>
+                <td class="right">$${fS.roundNumber(ivaDiferenciado, decimal.nroIva)}</td>
+            </tr>
+            `
 
             return {
                 subTotalSinImpuestos: fS.roundNumber(subTotalSinImpuestos, decimal.nroTotalSubTotal),
                 totalIce,
-                iva,
-                ivaDiferenciado,
                 irbpnr: 0,
                 propina: 0,
                 totalDescuento: fS.roundNumber(totalDescuento, decimal.nroTotalSubTotal),
                 porcentajeDescuento: fS.roundNumber(0, decimal.nroTotalSubTotal),
                 htmlImpuestoTotal,
+                htmlIvaTotal,
                 importeTotal: fS.roundNumber(importeTotal, decimal.importeTotal)
             };
         };
 
 
 
+
+        /**
+         * no usar, eliminar masl adelante
+         */
         /**
          * 
          * @param {*} object 
          * @returns object
          */
-        service.calculoTotales = function (params) {
-            let { items, decimal, dataTarifaImpuesto, TAX_RATE_CODE } = params;
-            let {
-                ZERO_PERCENT,
-                NOT_SUBJECT_TO_TAX,
-                TAX_EXEMPT,
-            } = TAX_RATE_CODE;
+        // service.calculoTotales = function (params) {
+        //     let { items, decimal, dataTarifaImpuesto, TAX_RATE_CODE } = params;
+        //     let {
+        //         ZERO_PERCENT,
+        //         NOT_SUBJECT_TO_TAX,
+        //         TAX_EXEMPT,
+        //     } = TAX_RATE_CODE;
 
-            const obj = {
-                getSubTotalSinImpuesto: function () {
-                    let { totalSubSinImpuesto } = items.reduce((total, item) => {
-                        let totalSubSinImpuesto = item.cantidad * item.precioUnitario;
-                        total.totalSubSinImpuesto += totalSubSinImpuesto;
-                        return total;
-                    }, {
-                        totalSubSinImpuesto: 0
-                    })
-                    return totalSubSinImpuesto;
-                    // let total = items.map(val => val.subTotal).reduce((acc, curr) => acc + curr, 0); 
-                    // return total;
-                },
+        //     const obj = {
+        //         getSubTotalSinImpuesto: function () {
+        //             let { totalSubSinImpuesto } = items.reduce((total, item) => {
+        //                 let totalSubSinImpuesto = item.cantidad * item.precioUnitario;
+        //                 total.totalSubSinImpuesto += totalSubSinImpuesto;
+        //                 return total;
+        //             }, {
+        //                 totalSubSinImpuesto: 0
+        //             })
+        //             return totalSubSinImpuesto;
+        //             // let total = items.map(val => val.subTotal).reduce((acc, curr) => acc + curr, 0); 
+        //             // return total;
+        //         },
 
-                getTotalIva: function (codigoPorcentaje) {
-                    let { totalSubSinImpuesto, totalNetoIva } = items.reduce((total, item) => {
-                        let totalSubSinImpuesto = item.cantidad * item.precioUnitario;
-                        // let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
-                        let totalNetoIva = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+        //         getTotalIva: function (codigoPorcentaje) {
+        //             let { totalSubSinImpuesto, totalNetoIva } = items.reduce((total, item) => {
+        //                 let totalSubSinImpuesto = item.cantidad * item.precioUnitario;
+        //                 // let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+        //                 let totalNetoIva = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
 
-                        if (item.codigoPorcentaje === codigoPorcentaje) {
-                            total.totalSubSinImpuesto += totalSubSinImpuesto;
-                            total.totalNetoIva += totalNetoIva;
-                        }
-                        return total;
-                    }, {
-                        totalSubSinImpuesto: 0,
-                        totalNetoIva: 0
-                    })
+        //                 if (item.codigoPorcentaje === codigoPorcentaje) {
+        //                     total.totalSubSinImpuesto += totalSubSinImpuesto;
+        //                     total.totalNetoIva += totalNetoIva;
+        //                 }
+        //                 return total;
+        //             }, {
+        //                 totalSubSinImpuesto: 0,
+        //                 totalNetoIva: 0
+        //             })
 
-                    // for (let item of items) {
-                    //     if (item.codigoPorcentaje === codigoPorcentaje) {
-                    //         total += item.subTotal
-                    //         totalNetoIva += item.total;
-                    //     }
-                    // }
+        //             // for (let item of items) {
+        //             //     if (item.codigoPorcentaje === codigoPorcentaje) {
+        //             //         total += item.subTotal
+        //             //         totalNetoIva += item.total;
+        //             //     }
+        //             // }
 
-                    return [
-                        totalSubSinImpuesto = fS.roundNumber(totalSubSinImpuesto, decimal.nroTotalSubTotal),
-                        totalNetoIva = fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)
-                    ]
-                },
+        //             return [
+        //                 totalSubSinImpuesto = fS.roundNumber(totalSubSinImpuesto, decimal.nroTotalSubTotal),
+        //                 totalNetoIva = fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)
+        //             ]
+        //         },
 
-                //Get Total Ice 
-                getTotalIce: function () {
-                    let { totalICE } = items.reduce((total, item) => {
-                        let totalIce = item.cantidad * item.ice;
-                        total.totalICE += totalIce;
-                        return total;
-                    }, { totalICE: 0 })
-                    return fS.roundNumber(totalICE, decimal.nroTotalSubTotal)
-                },
+        //         //Get Total Ice 
+        //         getTotalIce: function () {
+        //             let { totalICE } = items.reduce((total, item) => {
+        //                 let totalIce = item.cantidad * item.ice;
+        //                 total.totalICE += totalIce;
+        //                 return total;
+        //             }, { totalICE: 0 })
+        //             return fS.roundNumber(totalICE, decimal.nroTotalSubTotal)
+        //         },
 
-                //Suma columna total 
-                getTotalDetalle: function () {
-                    let { totalNetoIva } = items.reduce((total, item) => {
-                        //let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
-                        let totalNetoIva = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-                        total.totalNetoIva += totalNetoIva;
-                        return total;
-                    }, {
-                        totalNetoIva: 0
-                    })
-                    return totalNetoIva;
-                },
+        //         //Suma columna total 
+        //         getTotalDetalle: function () {
+        //             let { totalNetoIva } = items.reduce((total, item) => {
+        //                 //let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+        //                 let totalNetoIva = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+        //                 total.totalNetoIva += totalNetoIva;
+        //                 return total;
+        //             }, {
+        //                 totalNetoIva: 0
+        //             })
+        //             return totalNetoIva;
+        //         },
 
-                getTotalPorcentajeDescuento: function () {
-                    let totalPorcentajeDescuento = 0;
-                    let subTotalSinImpuesto = obj.getSubTotalSinImpuesto();
-                    let totalDetalleNeto = obj.getTotalDetalle();
-                    // if (items.length > 0 && subTotalSinImpuesto > 0) { 
-                    //     if (totalSumDetalle > subTotalSinImpuesto) {
-                    //         totalDetalle = subTotalSinImpuesto;
-                    //     } else {
-                    //         totalDetalle = totalSumDetalle;
-                    //     }
+        //         getTotalPorcentajeDescuento: function () {
+        //             let totalPorcentajeDescuento = 0;
+        //             let subTotalSinImpuesto = obj.getSubTotalSinImpuesto();
+        //             let totalDetalleNeto = obj.getTotalDetalle();
+        //             // if (items.length > 0 && subTotalSinImpuesto > 0) { 
+        //             //     if (totalSumDetalle > subTotalSinImpuesto) {
+        //             //         totalDetalle = subTotalSinImpuesto;
+        //             //     } else {
+        //             //         totalDetalle = totalSumDetalle;
+        //             //     }
 
-                    //     totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalle) * 100) / subTotalSinImpuesto; 
-                    // }
-                    if (subTotalSinImpuesto > 0) {
-                        totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalleNeto) * 100) / subTotalSinImpuesto;
-                    }
-
-
-                    return fS.roundNumber(totalPorcentajeDescuento, decimal.nroPorcentaje);
-                },
-
-                getTotalDescuento: function () {
-                    let { totalDescuento } = items.reduce((total, item) => {
-                        let totalDescuento = item.cantidad * item.valorDescuento;
-                        total.totalDescuento += totalDescuento;
-                        return total;
-                    }, { totalDescuento: 0 })
-                    return totalDescuento;
-                }
-            };
+        //             //     totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalle) * 100) / subTotalSinImpuesto; 
+        //             // }
+        //             if (subTotalSinImpuesto > 0) {
+        //                 totalPorcentajeDescuento = ((subTotalSinImpuesto - totalDetalleNeto) * 100) / subTotalSinImpuesto;
+        //             }
 
 
-            let [subTotalIva, subTotalNetoIva] = obj.getTotalIva(dataTarifaImpuesto.codigoPorcentaje);
-            let [subTotalIvaCero, subTotalNetoIvaCero] = obj.getTotalIva(ZERO_PERCENT);
-            let [subTotalExentoIva, subTotalNetoExentoIva] = obj.getTotalIva(TAX_EXEMPT);
-            let [subTotalNoObjetoIva, subTotalNetoNoObjetoIva] = obj.getTotalIva(NOT_SUBJECT_TO_TAX);
+        //             return fS.roundNumber(totalPorcentajeDescuento, decimal.nroPorcentaje);
+        //         },
 
-            // let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;                
+        //         getTotalDescuento: function () {
+        //             let { totalDescuento } = items.reduce((total, item) => {
+        //                 let totalDescuento = item.cantidad * item.valorDescuento;
+        //                 total.totalDescuento += totalDescuento;
+        //                 return total;
+        //             }, { totalDescuento: 0 })
+        //             return totalDescuento;
+        //         }
+        //     };
 
-            // let total = iva + obj.getTotalDetalle();
 
-            let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;
+        //     let [subTotalIva, subTotalNetoIva] = obj.getTotalIva(dataTarifaImpuesto.codigoPorcentaje);
+        //     let [subTotalIvaCero, subTotalNetoIvaCero] = obj.getTotalIva(ZERO_PERCENT);
+        //     let [subTotalExentoIva, subTotalNetoExentoIva] = obj.getTotalIva(TAX_EXEMPT);
+        //     let [subTotalNoObjetoIva, subTotalNetoNoObjetoIva] = obj.getTotalIva(NOT_SUBJECT_TO_TAX);
 
-            let total = obj.getSubTotalSinImpuesto() + iva + obj.getTotalIce();
-            let importeTotal = total - obj.getTotalDescuento();
+        //     // let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;                
 
-            return {
-                subTotalSinImpuestos: fS.roundNumber(obj.getSubTotalSinImpuesto(), decimal.nroTotalSubTotal),
-                subTotalIva,
-                subTotalNetoIva,
+        //     // let total = iva + obj.getTotalDetalle();
 
-                subTotalIvaCero,
-                subTotalNetoIvaCero,
+        //     let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;
 
-                subTotalExentoIva,
-                subTotalNetoExentoIva,
+        //     let total = obj.getSubTotalSinImpuesto() + iva + obj.getTotalIce();
+        //     let importeTotal = total - obj.getTotalDescuento();
 
-                subTotalNoObjetoIva,
-                subTotalNetoNoObjetoIva,
+        //     return {
+        //         subTotalSinImpuestos: fS.roundNumber(obj.getSubTotalSinImpuesto(), decimal.nroTotalSubTotal),
+        //         subTotalIva,
+        //         subTotalNetoIva,
 
-                totalDescuento: fS.roundNumber(obj.getTotalDescuento(), decimal.nroTotalSubTotal),
-                porcentajeDescuento: fS.roundNumber(obj.getTotalPorcentajeDescuento(), decimal.nroTotalSubTotal),
+        //         subTotalIvaCero,
+        //         subTotalNetoIvaCero,
 
-                totalIce: obj.getTotalIce(),
-                irbpnr: 0,
-                propina: 0,
-                iva: fS.roundNumber(iva, decimal.nroIva),
-                total: fS.roundNumber(importeTotal, decimal.importeTotal)
-            }
+        //         subTotalExentoIva,
+        //         subTotalNetoExentoIva,
 
-        }
+        //         subTotalNoObjetoIva,
+        //         subTotalNetoNoObjetoIva,
+
+        //         totalDescuento: fS.roundNumber(obj.getTotalDescuento(), decimal.nroTotalSubTotal),
+        //         porcentajeDescuento: fS.roundNumber(obj.getTotalPorcentajeDescuento(), decimal.nroTotalSubTotal),
+
+        //         totalIce: obj.getTotalIce(),
+        //         irbpnr: 0,
+        //         propina: 0,
+        //         iva: fS.roundNumber(iva, decimal.nroIva),
+        //         total: fS.roundNumber(importeTotal, decimal.importeTotal)
+        //     }
+
+        // }
 
 
 
