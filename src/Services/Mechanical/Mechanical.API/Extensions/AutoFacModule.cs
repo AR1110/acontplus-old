@@ -2,7 +2,7 @@
 using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
-using Mechanical.Infrastructure.Data;
+using Mechanical.API.Data;
 
 namespace Mechanical.API.Extensions
 {

@@ -1,9 +1,9 @@
 ﻿using Common.Core.Entities;
 using Common.Infrastructure.Data;
-using Mechanical.Core.Entities;
+using Mechanical.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mechanical.Infrastructure.Data
+namespace Mechanical.API.Data
 {
     public class MechanicalContext : BaseContext
     {
@@ -96,7 +96,7 @@ namespace Mechanical.Infrastructure.Data
                     ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
                 }
             }
-            int result = await base.SaveChangesAsync(cancellationToken);
+            var result = await base.SaveChangesAsync(cancellationToken);
             return result;
         }
     }

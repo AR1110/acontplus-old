@@ -1,10 +1,11 @@
 ﻿using System.Data;
 using Common.Core.Interfaces;
 using Common.Core.Utils;
-using Mechanical.Core.Interfaces;
-using Mechanical.Infrastructure.Data;
+using Mechanical.API.Data;
+using Mechanical.API.Interfaces;
+using Mechanical.API.Entities;
 
-namespace Mechanical.Application.Services
+namespace Mechanical.API.Services
 {
     public class SupportService : ISupportService
     {
@@ -19,7 +20,7 @@ namespace Mechanical.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("Mechanical.Support_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("Mechanical.Support_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
