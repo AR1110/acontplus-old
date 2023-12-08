@@ -212,37 +212,88 @@
 
 
         /**
-         * 
-         * @param {*} obj { items, decimal, tarifasImpuesto }
-         * @returns 
+         * Calcula los totales relacionados con impuestos y descuentos.
+         * @param {*} obj - Objeto que contiene las propiedades: items, decimal, tarifasImpuesto y TAX_RATE_CODE.
+         * @returns {Object} - Objeto con los totales calculados.
          */
         service.getImpuestoTotales = function (obj) {
-            const { items, decimal, tarifasImpuesto } = obj;
+            // Desestructurar el objeto de entrada
+            const { items, decimal, tarifasImpuesto, TAX_RATE_CODE } = obj;
+
+            // Inicializar las variables para almacenar los totales de impuestos
             let htmlImpuestoTotal = '';
+            let iva = 0;
+            let ivaDiferenciado = 0;
 
-            for (let ti of tarifasImpuesto) {
-                let totalNetoIva = items.filter(item => item.codigoPorcentaje === ti.codigoPorcentaje)
+            // Calcular totales generales
+            let { subTotalSinImpuestos, totalIce, totalDescuento } = items.reduce((acc, prev) => {
+                // Calcular el total neto con descuentos y el total de ICE
+                let totalNetoIva = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
+                let totalIce = prev.cantidad * prev.ice;
+                let totalDescuento = prev.cantidad * prev.valorDescuento;
+
+                // Acumular totales generales
+                acc.totalIce += totalIce;
+                acc.subTotalSinImpuestos += totalNetoIva;
+                acc.totalDescuento += totalDescuento;
+
+                return acc;
+            }, {
+                subTotalSinImpuestos: 0,
+                totalIce: 0,
+                totalDescuento: 0
+            });
+
+            // Calcular totales específicos por tarifa de impuesto
+            for (let dataTarifaImpuesto of tarifasImpuesto) {
+                let { totalNetoIva } = items
+                    .filter(item => item.codigoPorcentaje === dataTarifaImpuesto.codigoPorcentaje)
                     .reduce((acc, prev) => {
-                        let total = ((prev.precioUnitario * prev.cantidad)) - prev.valorDescuento;
-                        acc += total;
-                        return acc;
-                    }, 0);
+                        // Calcular el total neto con descuentos
+                        let total = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
+                        acc.totalNetoIva += total;
 
+                        // Calcular IVA y IVA diferenciado según la tarifa
+                        if (dataTarifaImpuesto.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT) {
+                            iva += fS.getTaxBaseAndTaxValue(prev).taxValue;
+                        }
+
+                        if (dataTarifaImpuesto.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX) {
+                            ivaDiferenciado += fS.getTaxBaseAndTaxValue(prev).taxValue;
+                        }
+
+                        return acc;
+                    }, {
+                        totalNetoIva: 0
+                    });
+
+                // Construir el HTML para la tabla de impuestos
                 htmlImpuestoTotal += `<tr>
-                                        <td class="left">
-                                            <strong class="text-dark">${ti.descripcion}</strong>
-                                        </td>
-                                        <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}
-                                        </td>
-                                    </tr>`
+                                <td class="left">
+                                    <strong class="text-dark">${dataTarifaImpuesto.descripcion}</strong>
+                                </td>
+                                <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
+                            </tr>`;
             }
+
+            const importeTotal = subTotalSinImpuestos + iva + ivaDiferenciado;
+            // Retornar los totales calculados
 
             return {
-                subTotalSinImpuestos: fS.roundNumber(service.getSubTotalSinImpuesto(items).subTotalSinImpuestos, decimal.nroTotalSubTotal),
-                htmlImpuestoTotal
-            }
+                subTotalSinImpuestos: fS.roundNumber(subTotalSinImpuestos, decimal.nroTotalSubTotal),
+                totalIce,
+                iva,
+                ivaDiferenciado,
+                irbpnr: 0,
+                propina: 0,
+                totalDescuento: fS.roundNumber(totalDescuento, decimal.nroTotalSubTotal),
+                porcentajeDescuento: fS.roundNumber(0, decimal.nroTotalSubTotal),
+                htmlImpuestoTotal,
+                importeTotal: fS.roundNumber(importeTotal, decimal.importeTotal)
+            };
+        };
 
-        }
+
 
         /**
          * 
