@@ -2,7 +2,7 @@
 using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
-using Identity.Infrastructure.Data;
+using Identity.API.Data;
 
 namespace Identity.API.Extensions
 {

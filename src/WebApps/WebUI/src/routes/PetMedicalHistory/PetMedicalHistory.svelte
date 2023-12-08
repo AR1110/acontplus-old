@@ -29,7 +29,7 @@
           establecimientos = response.data;
           if (establecimientos.length > 0) {
             codEstab = establecimientos.find(
-              (x) => x.predeterminado == true
+              (x) => x.predeterminado == true,
             ).codEstab;
 
             if (codEstab) {
@@ -64,7 +64,7 @@
             pageIndex: pageCurrent == 0 ? 1 : pageCurrent,
             pageSize: pageSize == 0 ? 9 : pageSize,
             textSearch: textSearch,
-          })
+          }),
       )
       .then((response) => {
         if (response.data.code == "1") {
@@ -80,12 +80,12 @@
 
   const onPageChange = (event) => {
     page = event.detail.page;
-    pageCurrent = page + 1; 
+    pageCurrent = page + 1;
     initialLoad();
   };
 
   const onChange = (e) => {
-    pageSize = parseInt(e.target.value); 
+    pageSize = parseInt(e.target.value);
     initialLoad();
   };
 
@@ -108,7 +108,7 @@
     search({ target: { value: "" } });
   };
 
-  const getReport = async (id) => {
+  const getReport = async (item) => {
     //Add authentication headers as params
     // var params = {
     //     access_token: "An access_token",
@@ -121,7 +121,17 @@
     //Open window
     //window.open(url);
     showLoader();
-    await clientFile(`Vet/MedicalHistories/Report/` + id)
+    let parameters = {
+      dataParams: JSON.stringify({
+        id: item.id
+      }),
+      reportParams: JSON.stringify({
+        codigo: "RVMH",
+        codEstab: item.codEstab,
+        format: "pdf",
+      }),
+    };
+    await clientFile(`Reporte/Dynamic/`, parameters)
       .then((response) => {
         var ieEDGE = navigator.userAgent.match(/Edge/g);
         var ie = navigator.userAgent.match(/.NET/g); // IE 11+
@@ -155,7 +165,7 @@
 					width=1200
 					height=650
 					screenY=${y}
-					screenX=${x}`
+					screenX=${x}`,
         );
         return;
         let serverData = new Blob([response.data], {
@@ -354,7 +364,7 @@
                   </button>
                   <button
                     class="btn btn-outline-danger btn-sm"
-                    on:click={getReport(item.id)}
+                    on:click={getReport(item)}
                     title="Obtener Reporte"
                   >
                     <i class="fa fa-file-pdf" />

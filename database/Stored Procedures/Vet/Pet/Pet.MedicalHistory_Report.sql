@@ -11,11 +11,15 @@ GO
 -- Description:	sp for get report 
 -- =============================================
 CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Report @userRoleId INT
-	,@id INT
+	,@json VARCHAR(MAX)
 	,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN 
 	SET NOCOUNT ON;
+
+    DECLARE @id INT
+
+    SELECT @id = id FROM OPENJSON (@json) WITH(id INT '$.id')
 
     DECLARE @dataSources AS TABLE (dsName VARCHAR(50))
     DECLARE @tblParams AS TABLE (
@@ -34,7 +38,7 @@ BEGIN
 	SET @tableNames = 'RdlcProps,RdlcDataSources,mainDataSet,behaviorTests,healthChecks,RdlcParams'
 
 	--RdlcProps
-	SELECT 'Reports\MedicalHistory.rdl' ReportPath, 'PDF' ReportFormat, 'Historial Clinico' ReportName
+	SELECT 'Reports\Vet\MedicalHistory.rdl' ReportPath, 'PDF' ReportFormat, 'Historial Clinico' ReportName
 
 	--RdlcDataSources
 	SELECT * FROM @dataSources
