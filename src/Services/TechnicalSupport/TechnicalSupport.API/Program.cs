@@ -6,8 +6,8 @@ using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
 using Services.Common.Middleware;
+using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Extensions;
-using TechnicalSupport.Infrastructure.Data;
 
 internal class Program
 {

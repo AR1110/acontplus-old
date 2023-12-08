@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace TechnicalSupport.Core.Entities
+namespace TechnicalSupport.API.Entities
 {
     [Table("TechSpec", Schema = "TechnicalSupport")]
     public class TechSpec : BaseEntity

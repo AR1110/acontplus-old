@@ -1,8 +1,8 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
-using TechnicalSupport.Core.Interfaces;
+using TechnicalSupport.API.Interfaces;
 
-namespace TechnicalSupport.Application.Services
+namespace TechnicalSupport.API.Services
 {
     public class DeviceService : IDeviceService
     {

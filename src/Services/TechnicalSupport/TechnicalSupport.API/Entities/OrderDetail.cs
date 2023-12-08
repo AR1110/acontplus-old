@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
-namespace TechnicalSupport.Core.Entities
+namespace TechnicalSupport.API.Entities
 {
     [Table("OrderDetail", Schema = "TechnicalSupport")]
     public class OrderDetail : BaseEntity

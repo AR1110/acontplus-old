@@ -1,9 +1,8 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
-using TechnicalSupport.Core.Interfaces;
-using TechnicalSupport.Infrastructure.Data;
-
-namespace TechnicalSupport.Application.Services
+using TechnicalSupport.API.Data;
+using TechnicalSupport.API.Interfaces;
+namespace TechnicalSupport.API.Services
 {
     public class OrderService : IOrderService
     {

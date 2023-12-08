@@ -1,4 +1,4 @@
-﻿namespace TechnicalSupport.Core.Interfaces
+﻿namespace TechnicalSupport.API.Interfaces
 {
     public interface IOrderService
     {

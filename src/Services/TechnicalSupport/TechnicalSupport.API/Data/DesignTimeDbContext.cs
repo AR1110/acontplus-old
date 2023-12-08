@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace TechnicalSupport.Infrastructure.Data
+namespace TechnicalSupport.API.Data
 {
     //to execute migrations from api
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<TechnicalSupportContext>
     {
         private const string _databaseName = "DefaultConnection";
-        private const string _migrationAssembly = "TechnicalSupport.Infrastructure";
+        private const string _migrationAssembly = "TechnicalSupport.API";
 
         public TechnicalSupportContext CreateDbContext(string[] args)
         {

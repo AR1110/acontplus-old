@@ -1,6 +1,6 @@
 ﻿using Common.Core.Entities;
 
-namespace TechnicalSupport.Core.Entities
+namespace TechnicalSupport.API.Entities
 {
     public class OrderMaintenance : BaseEntity
     {
