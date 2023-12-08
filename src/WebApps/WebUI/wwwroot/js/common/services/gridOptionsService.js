@@ -254,7 +254,7 @@
 
             // Calcular totales específicos por tarifa de impuesto
             for (let dataTarifaImpuesto of tarifasImpuesto) {
-                let filteredItems = items.filter(item => item.codigoPorcentaje === dataTarifaImpuesto.codigoPorcentaje);
+                let filteredItems = items.filter(item => item.idTipoIva === dataTarifaImpuesto.idTipoIva);
 
                 let { totalNetoIva } = filteredItems.reduce((acc, prev) => {
                     // Calcular el total neto con descuentos 

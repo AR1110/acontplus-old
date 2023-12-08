@@ -477,7 +477,6 @@
                 porcentajeDescuento: data.porcentajeDescuento,
                 irbpnr: data.irbpnr,
                 propina: data.propina,
-                iva: data.iva,
                 recargo: data.recargo,
                 transporte: data.transporte,
                 total: data.total,
@@ -497,39 +496,7 @@
             let orderIndex = 1;
 
             for (let item of detalles) {
-
-                // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
-                let {
-                    cantidadStock,
-                    action
-                } = service.getCantidadStock(item);
-                //let cantidadAnulada = Math.abs(cantidadStock);
                 let cantidadTransaccion = item.cantidad * item.conversion;
-
-                if (action === 0) {
-                    // Comprobar si el elemento tiene un 'idNotaEntregaDetalle' positivo y está en estado 'activo'
-                    if (item.idNotaEntregaDetalle > 0 && item.estado) {
-                        //cantidadAnulada = cantidadTransaccion;
-                        // Verificar si 'cantidad' es igual a 'cantidadOriginal'
-                        if (item.cantidad === item.cantidadOriginal) {
-                            cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
-
-                        } else {
-                            // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
-                            if (item.cantidad > item.cantidadOriginal) {
-                                cantidadStock = item.cantidadOriginal - item.cantidad;
-                            } else {
-                                cantidadStock = item.cantidadOriginal - item.cantidad;
-                            }
-                        }
-                    }
-                    if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
-                        cantidadStock = Math.abs(cantidadStock)
-                        //  cantidadAnulada = item.cantidad;
-                    }
-                }
-
-
 
                 tempDetails.push({
                     orderIndex: orderIndex++,
@@ -545,23 +512,18 @@
                     ice: item.ice,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
-                    precioCostoNeto: item.precioCostoNeto, //❌
                     precioUnitario: item.precioUnitario,
                     precioVenta: item.precioUnitario,
-                    precioConIva: item.precioConIva,
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
                     porcentajeDescuento: item.porcentajeDescuento,
                     total: item.total,
                     nota: item.nota, //✅
-
-                    cantidadStock, //✅
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
                     cantidadTransaccion, //✅
-                    // cantidadAnulada,
-                    estado: item.estado, //✅                    
-                    valorImpuesto: fS.getTaxBaseAndTaxValue(item).taxValue
+                    estado: item.estado, //✅
+                    valorImpuesto: item.valorImpuesto
                 })
             }
             return tempDetails;
@@ -725,94 +687,20 @@
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
 
-                    let items = itemsApi.map(itemPrincipal => {
+                    let items = itemsApi.map((itemPrincipal, index) => {
 
                         const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
 
-                        // Medidas del artículo fraccionado del principal
-                        let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
-
-                        // Medida principal con las tarifas
-                        let medidasPrincipalTemp = JSON.parse(principal) || [];
-
-                        // 
-                        let consolidacionesFecha = JSON.parse(consolidacion) || [];
-
-                        const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
-                            ...medidaPrincipal,
-                            tipo: 'PRINCIPAL'
-                        }))
-                        const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado => ({
-                            ...medidaFraccionado,
-                            tipo: 'FRACCIONADO'
-                        }))
-
-
-                        /**
-                         * Combinar los dos arrays de medidas en uno solo
-                         *
-                         * Parámetros:
-                         *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
-                         */
-                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
-
-                        /**
-                         * Ordenar el array de medidas en función de la propiedad "orden" y
-                         * establecer la propiedad "defaultMedida" en falso para todos los elementos
-                         *
-                         * Parámetros:
-                         *  - orderMedidaArray: El array de medidas ordenado
-                         */
-                        let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
-                            ...medida,
-                            defaultMedida: false
-                        }));
-
-                        // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
-                        orderMedidaArray[0].defaultMedida = true;
-
-
-                        /**
-                         * Obtener los datos de la medida
-                         *
-                         * Parámetros:
-                         *  - orderMedidaArray: El array de medidas ordenado
-                         *  - restItem: El artículo
-                         *
-                         * Devuelve:
-                         *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
-                         */
-                        let dataMedida = orderMedidaArray.find(m => m.idMedida === restItem.idMedida) || {};
-                        // Crear un nuevo array de medidas con un formato específico
-                        let medidas = orderMedidaArray.map(item => ({
-                            idMedida: item.idMedida,
-                            conversion: item.conversion,
-                            descripcion: item.descripcion,
-                            defaultMedida: item.defaultMedida,
-                            tipo: item.tipo,
-                            tarifas: item.tarifas
-                        }))
-
-                        // Asignar los datos de la medida al artículo
-                        restItem.medidas = medidas;
-                        restItem.conversion = dataMedida.conversion;
-                        // Asignar los datos de las tarifas obtenidos de data medida 
-                        restItem.articuloTarifas = dataMedida.tarifas || [];
-
-                        restItem.consolidacionesFecha = consolidacionesFecha.map((data) => ({
+                        let consolidacionesFechaTemp = consolidacion && JSON.parse(consolidacion) || [];
+                        let consolidacionesFecha = consolidacionesFechaTemp.map((data) => ({
                             ...data,
                             fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
                         }))
 
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
-                        let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
-                        let totalDescuento = restItem.cantidad * restItem.valorDescuento || 0;
+                        let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
-                        restItem.subTotal = subTotal || 0;
-                        restItem.totalDescuento = totalDescuento || 0;
-                        restItem.cantidadOriginal = restItem.cantidad;
-
-                        //Datos Adicionales 
                         if ('infoDatosAdicionales' in itemPrincipal) {
                             let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
                             restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
@@ -825,7 +713,39 @@
                             }))
                         }
 
-                        return restItem;
+                        let obj = {
+                            n: index + 1,
+                            idFacturaDetalle: itemPrincipal.idFacturaDetalle,
+                            cantidad: itemPrincipal.cantidad,
+                            cantidadOriginal: itemPrincipal.cantidad,
+                            codigo: itemPrincipal.codigo,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,
+                            descripcion: itemPrincipal.descripcion,
+                            ice: itemPrincipal.ice,
+                            idArticulo: itemPrincipal.idArticulo,
+                            idBodega: itemPrincipal.idBodega,
+                            idImpuesto: itemPrincipal.idImpuesto,
+                            idMedida: itemPrincipal.idMedida,
+                            idTarifa: itemPrincipal.idTarifa,
+                            idTipoIva: itemPrincipal.idTipoIva,
+                            llevaInventario: itemPrincipal.llevaInventario,
+                            nota: itemPrincipal.nota,
+                            porcentajeDescuento: itemPrincipal.porcentajeDescuento,
+                            precioSinSubsidio: itemPrincipal.precioSinSubsidio,
+                            precioCosto: itemPrincipal.precioCosto,
+                            precioUnitario: itemPrincipal.precioUnitario,
+                            tarifa: itemPrincipal.tarifa,
+                            valorDescuento: itemPrincipal.valorDescuento,
+                            valorImpuesto: itemPrincipal.valorImpuesto,
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            articuloTarifas: dataMedida.tarifas,
+                            consolidacionesFecha,
+                            estado: 1,
+                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || []
+                        }
+
+                        return obj;
                     });
 
                     let comprobante = {
