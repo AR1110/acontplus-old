@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
-using TechnicalSupport.Core.Entities;
-using TechnicalSupport.Core.Interfaces;
+using TechnicalSupport.API.Entities;
+using TechnicalSupport.API.Interfaces;
 
 namespace TechnicalSupport.API.Controllers
 {

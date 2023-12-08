@@ -12,13 +12,10 @@ namespace WebUI.Controllers.Ventas
 
         private readonly LogWriter _log;
 
-        private ProformaDao _prof;
-
         public ProformaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _log = log;
-            _prof = new ProformaDao(_configuration);
         }
         public IActionResult Index()
         {

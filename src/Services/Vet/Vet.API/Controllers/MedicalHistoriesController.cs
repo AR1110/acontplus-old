@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
-using Vet.Core.Entities;
-using Vet.Core.Interfaces;
-using Vet.Infrastructure.Data;
-
+using Vet.API.Data;
+using Vet.API.Entities;
+using Vet.API.Interfaces;
 namespace Vet.API.Controllers
 {
     public class MedicalHistoriesController : BaseApiController
@@ -60,23 +59,6 @@ namespace Vet.API.Controllers
             {
                 return BadRequest("Error on get by Id");
             }
-        }
-
-        [HttpPost("Report/{id}")]
-        public async Task<IActionResult> GetReport(int id)
-        {
-            try
-            {
-                var data = await _medicalHistory.GetReportAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
-                if (data == null) { return BadRequest("No se pudo obtener el reporte"); };
-                return File(data.FileContents, data.ContentType, data.FileDownloadName);
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
-                return BadRequest("Error al obtener el reporte");
-            }
-
         }
 
         // PUT: api/MedicalHistories/5

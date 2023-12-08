@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Vet.Core.Entities;
-using Vet.Infrastructure.Data;
+using Vet.API.Data;
+using Vet.API.Entities;
+
+
 
 namespace Vet.API.Controllers
 {
