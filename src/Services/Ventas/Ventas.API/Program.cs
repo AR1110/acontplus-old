@@ -1,13 +1,11 @@
-﻿using Ventas.API.Extensions;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using Services.Common;
-using Services.Common.Logs;
-using Newtonsoft.Json.Serialization;
-using Autofac.Extensions.DependencyInjection;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.Core.Utils;
+using Newtonsoft.Json.Serialization;
+using Services.Common;
+using Ventas.API.Extensions;
 
 namespace Ventas.API
 {
@@ -29,7 +27,7 @@ namespace Ventas.API
                                 x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                                 x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                             });
-            
+
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -44,13 +42,12 @@ namespace Ventas.API
                                                                 new QueryStringApiVersionReader("api-version"),
                                                                 new HeaderApiVersionReader("x-api-version"),
                                                                 new MediaTypeApiVersionReader("x-api-version"));
-            });
-
-            builder.Services.AddVersionedApiExplorer(setup =>
+            }).AddApiExplorer(setup =>
             {
                 setup.GroupNameFormat = "'v'VVV";
                 setup.SubstituteApiVersionInUrl = true;
             });
+
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -72,7 +69,7 @@ namespace Ventas.API
 
             //app.UseSwaggerDocumentation();
 
-            app.UseApiVersioning();
+
 
             app.UseRouting();
 

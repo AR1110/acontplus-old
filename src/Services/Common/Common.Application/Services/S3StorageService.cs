@@ -28,7 +28,7 @@ namespace Common.Application.Services
                 using var client = new AmazonS3Client(credentials);
                 var transferUtility = new TransferUtility(client);
                 await transferUtility.UploadAsync(uploadRequest);
-                
+
                 _response.StatusCode = 201;
                 _response.Message = $"El archivo {obj.Name} se subio correctamente a amazon s3";
             }
@@ -50,7 +50,7 @@ namespace Common.Application.Services
             AWSConfigs.AWSRegion = obj.Region;
             var _response = new S3Response();
             try
-            { 
+            {
                 using var client = new AmazonS3Client(credentials);
                 // Create a PutObject request
                 PutObjectRequest request = new PutObjectRequest

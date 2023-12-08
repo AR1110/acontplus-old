@@ -1,9 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.ViewModels.Ventas;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Services.Common.Logs;
 
 namespace FactElect.API.Controllers
@@ -57,7 +55,7 @@ namespace FactElect.API.Controllers
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.NotaCredito_Insert", true);
                 _db.AddDynamicParam("userRoleId", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));             
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,10 +1,9 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using FactElect.API.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
@@ -43,9 +42,7 @@ namespace FactElect.API
                                                                 new QueryStringApiVersionReader("api-version"),
                                                                 new HeaderApiVersionReader("x-api-version"),
                                                                 new MediaTypeApiVersionReader("x-api-version"));
-            });
-
-            builder.Services.AddVersionedApiExplorer(setup =>
+            }).AddApiExplorer(setup =>
             {
                 setup.GroupNameFormat = "'v'VVV";
                 setup.SubstituteApiVersionInUrl = true;
@@ -78,8 +75,6 @@ namespace FactElect.API
                         description.GroupName.ToUpperInvariant());
                 }
             });
-
-            app.UseApiVersioning();
 
             app.UseHttpsRedirection();
 

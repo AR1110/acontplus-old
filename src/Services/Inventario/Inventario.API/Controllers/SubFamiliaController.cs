@@ -135,7 +135,7 @@ namespace Inventario.API.Controllers
                     {
                         nofile = false;
                     }
-                   
+
                 }
                 await _db.SPExecute("Inventario.Subfamilia_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));

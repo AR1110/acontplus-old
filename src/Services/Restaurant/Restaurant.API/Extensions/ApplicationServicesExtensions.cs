@@ -2,7 +2,6 @@
 using Common.Core.Interfaces;
 using Common.Reports.Services;
 using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Helpers;
 using Restaurant.Application.Services;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
@@ -32,8 +31,6 @@ namespace Restaurant.API.Extensions
             services.AddScoped<IConsumptionConfigService, ConsumptionConfigService>();
             services.AddScoped<IConsumptionService, ConsumptionService>();
             services.AddScoped<IConsumptionCancelledService, ConsumptionCancelledService>();
-
-            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
         }
     }

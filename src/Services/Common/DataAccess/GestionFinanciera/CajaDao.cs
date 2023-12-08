@@ -2,9 +2,7 @@
 using System.Data;
 using Common.Core.Models;
 using Common.Core.Utils;
-using Domain.Models;
 using Domain.Models.Administracion;
-using Domain.ViewModels;
 using Domain.ViewModels.Administracion;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;

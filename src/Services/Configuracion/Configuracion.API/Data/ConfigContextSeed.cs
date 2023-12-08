@@ -15,7 +15,7 @@ namespace Configuracion.API.Data
                 var printerTypesData = File.ReadAllText(path + @"/Data/SeedData/PrinterTypes.json");
                 var printerTypes = JsonSerializer.Deserialize<List<PrinterType>>(printerTypesData);
                 context.PrinterTypes.AddRange(printerTypes);
-            } 
+            }
             if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();
         }
     }

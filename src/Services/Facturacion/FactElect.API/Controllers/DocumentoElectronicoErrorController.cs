@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-using DataAccess;
-using FactElect.Core.Interfaces;
+﻿using FactElect.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

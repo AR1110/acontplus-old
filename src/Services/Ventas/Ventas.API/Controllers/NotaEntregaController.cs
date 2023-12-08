@@ -53,7 +53,7 @@ namespace Ventas.API.Controllers
             }
         }
 
-        [HttpPost("Insert")]        
+        [HttpPost("Insert")]
         public async Task<IActionResult> Insert(ApiRequest data)
         {
             var _response = new GenericResponse();

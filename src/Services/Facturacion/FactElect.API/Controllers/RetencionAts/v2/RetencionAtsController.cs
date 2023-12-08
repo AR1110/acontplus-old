@@ -1,4 +1,5 @@
-﻿using Common.Core.Models;
+﻿using Asp.Versioning;
+using Common.Core.Models;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -31,7 +32,7 @@ namespace FactElect.API.Controllers.RetencionAts.v2
                 await _db.SPExecute("FactElect.RetencionAts_Cancel");
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _response = _db.GetDefault();                
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {

@@ -13,7 +13,7 @@ namespace Compras.API.Extensions
             services.AddDbContextPool<ComprasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IProveedorService, ProveedorService>(); 
+            services.AddScoped<IProveedorService, ProveedorService>();
 
             services.AddSingleton<LogWriter>();
             return services;

@@ -14,7 +14,7 @@ namespace Configuracion.API.Entities
         [MaxLength(3)]
         public string Code { get; set; }
         [Required]
-        [MaxLength (50)]
+        [MaxLength(50)]
         public string Formato { get; set; }
         [Required]
         public string DeviceInfo { get; set; }
