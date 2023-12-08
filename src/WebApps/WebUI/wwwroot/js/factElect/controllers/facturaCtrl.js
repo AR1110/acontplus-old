@@ -1978,7 +1978,7 @@
                 //     entity.tarifa = dataImpuestoTarifa.tarifa;
 
                 // } else {
-                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
+                tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.idTipoIva === articulo.idTipoIva);
 
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
                 entity.idTipoIva = articulo.idTipoIva;
