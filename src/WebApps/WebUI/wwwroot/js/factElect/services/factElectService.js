@@ -426,8 +426,7 @@
                         itemsApi,
                         infoAdicionalDocumento,
                         datosAdicionalesArticuloTemp
-                    ] = mainDataApi;
-                    console.log(mainDataApi)
+                    ] = mainDataApi; 
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
 
