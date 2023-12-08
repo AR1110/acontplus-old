@@ -205,7 +205,7 @@ BEGIN
 		precioSinImpuesto = cast(ad_d.precioTotalSinImpuesto as numeric(18,2))
 	FROM Ventas.Aprob_Document_Detailt ad_d
 	INNER JOIN Medida m ON m.codigo = ad_d.codMedida
-	WHERE ad_d.uniqueId = @uniqueId
+	WHERE ad_d.uniqueId = @uniqueId ORDER BY ad_d.idAprob_Document_Detailt ASC
 
 	-- Insertar los registros de InfoAdicionalDoc en la tabla
 	INSERT INTO @tbInfoAdicional (nombre, valor)

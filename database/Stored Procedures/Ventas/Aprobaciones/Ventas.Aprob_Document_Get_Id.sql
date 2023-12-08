@@ -115,7 +115,7 @@ BEGIN
 	INNER JOIN dbo.Articulo             a WITH (NOLOCK) ON a.code_unique      = dt.codArticulo
 	INNER JOIN dbo.Medida               m WITH (NOLOCK) ON m.codigo           = dt.codMedida
 	INNER JOIN dbo.TipoIva              t WITH (NOLOCK) ON t.codigoPorcentaje = dt.codigoPorcentaje
-	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1  
+	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY ad_d.idAprob_Document_Detailt ASC 
 
 	SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
 			               WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
