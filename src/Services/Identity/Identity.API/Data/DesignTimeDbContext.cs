@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace Identity.Infrastructure.Data
+namespace Identity.API.Data
 {
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
         private const string _databaseName = "DefaultConnection";
-        private const string _migrationAssembly = "Identity.Infrastructure";
+        private const string _migrationAssembly = "Identity.API";
 
         public ApplicationDbContext CreateDbContext(string[] args)
         {

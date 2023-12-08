@@ -1,4 +1,4 @@
-﻿namespace Identity.Core.Interfaces
+﻿namespace Identity.API.Interfaces
 {
     public interface IAccountService
     {

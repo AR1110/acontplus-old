@@ -1,6 +1,6 @@
-﻿using Identity.API.Services;
-using Identity.Core.Interfaces;
-using Identity.Infrastructure.Data;
+﻿using Identity.API.Data;
+using Identity.API.Interfaces;
+using Identity.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Extensions

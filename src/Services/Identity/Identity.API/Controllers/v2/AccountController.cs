@@ -1,8 +1,8 @@
 ﻿using Asp.Versioning;
 using Common.Core.Models;
 using Identity.API.Dtos;
-using Identity.Core.Interfaces;
-using Identity.Core.Models;
+using Identity.API.Interfaces;
+using Identity.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

@@ -71,6 +71,7 @@
     <None Remove="Reports\Ventas\NotaCreditoCliente.rdlc" />
     <None Remove="Reports\Ventas\NotaEntrega.rdlc" />
     <None Remove="Reports\Ventas\Proforma.rdlc" />
+    <None Remove="Reports\Vet\MedicalHistory.rdl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -262,6 +263,9 @@
     </Content>
     <Content Include="Reports\Ventas\Proforma.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Vet\MedicalHistory.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

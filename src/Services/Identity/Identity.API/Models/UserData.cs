@@ -1,4 +1,4 @@
-﻿namespace Identity.Core.Models
+﻿namespace Identity.API.Models
 {
     public class UserData
     {

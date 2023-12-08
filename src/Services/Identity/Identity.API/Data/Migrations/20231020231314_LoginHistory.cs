@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Identity.Infrastructure.Data.Migrations
+namespace Identity.API.Data.Migrations
 {
     /// <inheritdoc />
     public partial class LoginHistory : Migration
