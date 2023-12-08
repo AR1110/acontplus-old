@@ -26,11 +26,20 @@ GO
 --alter table NotaEntrega drop column [subTotalExentoIva]
 --alter table NotaEntrega drop column [subTotalNetoExentoIva]
 --alter table NotaEntrega drop column [totalIce]
+--alter table NotaEntrega drop column [iva]
+--alter table NotaEntrega drop column [tarifa]
+--alter table NotaEntrega drop column [irbpnr]
 
 --EXEC sp_RENAME 'NotaEntregaDetalle.iva' , 'valorImpuesto', 'COLUMN'
+--EXEC sp_RENAME 'NotaEntregaDetalle.total' , 'precioTotalSinImpuesto', 'COLUMN'
+--EXEC sp_RENAME 'NotaEntregaDetalle.precioVenta' , 'precioUnitario', 'COLUMN'
+
+
 --alter table NotaEntregaDetalle drop column precioVentaNeto
 --alter table NotaEntregaDetalle drop column ganancia
 --alter table NotaEntregaDetalle drop column porcentajeIva
 --alter table NotaEntregaDetalle drop column idPresentacion
+--alter table NotaEntregaDetalle drop column precioConIva
+--alter table NotaEntregaDetalle drop column idPresentacion
 
-select * from dbo.NotaEntregaDetalle 
+select top 1 * from dbo.NotaEntregaDetalle where valorDescuento > 0

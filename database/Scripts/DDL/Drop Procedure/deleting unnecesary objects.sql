@@ -812,3 +812,9 @@ go
 
 DROP PROCEDURE IF EXISTS ReporteVentas.Consolidado_Venta
 GO
+
+DROP PROCEDURE IF EXISTS ReporteVentas.NotaCredito
+go
+
+DROP PROCEDURE IF EXISTS aspNotaCreditoClienteReporteGeneral
+go

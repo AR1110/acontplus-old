@@ -32,12 +32,25 @@ GO
 --alter table factura drop column [saldo]
 --alter table factura drop column [abono]
 --alter table factura drop column [idEstadoPago]
+--alter table factura drop column iva
+--alter table factura drop column irbpnr
+--alter table factura drop column porcentaje
 
 --alter table FacturaDetalle drop column precioVentaNeto
 --alter table FacturaDetalle drop column ganancia
 --alter table FacturaDetalle drop column porcentajeIva
-
+--alter table FacturaDetalle drop column precioConIva
 
 --SELECT top 10 * FROM Dbo.Factura order by idFactura desc
+
+--EXEC sp_RENAME 'FacturaDetalle.total' , 'precioTotalSinImpuesto', 'COLUMN'
+
+--EXEC sp_RENAME 'FacturaDetalle.precioVenta' , 'precioUnitario', 'COLUMN'
+
+--ALTER TABLE FacturaDetalle ALTER COLUMN valorImpuesto NUMERIC(18,5) NOT NULL
+
+--ALTER TABLE FacturaDetalle ALTER COLUMN cantidad NUMERIC(18,5) NOT NULL
+
+--ALTER TABLE FacturaDetalle ALTER COLUMN descripcion VARCHAR(300) NOT NULL
 
 select top 10 * from dbo.FacturaDetalle 
