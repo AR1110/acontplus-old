@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using DataAccess.Almacen;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -12,12 +11,12 @@ namespace WebUI.Controllers.Compras
     {
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-          
+
         private readonly LogWriter _log;
 
         public FacturaCompraController(IConfiguration configuration, LogWriter log)
         {
-            _configuration = configuration; 
+            _configuration = configuration;
             _log = log;
         }
 

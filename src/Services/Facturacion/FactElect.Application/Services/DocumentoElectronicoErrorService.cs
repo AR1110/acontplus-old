@@ -1,7 +1,5 @@
 ﻿using Common.Core.Interfaces;
-using Common.Core.Utils;
 using FactElect.Core.Interfaces;
-using FactElect.Infrastructure.Data;
 
 namespace FactElect.Application.Services
 {

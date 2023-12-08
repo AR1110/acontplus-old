@@ -11,6 +11,6 @@
         public bool estado { get; set; }
         public decimal montoObjetivo { get; set; }
         public string S3ObjectKey { get; set; }
-        public string S3ObjectUrl { get; set;}
+        public string S3ObjectUrl { get; set; }
     }
 }

@@ -133,8 +133,8 @@ namespace Identity.API.Controllers.v1
                 }
                 else
                 {
-                   _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
-                   await _context.SaveChangesAsync();
+                    _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
+                    await _context.SaveChangesAsync();
                 }
                 userData.Token = token;
                 return Ok(new

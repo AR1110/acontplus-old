@@ -23,8 +23,8 @@ namespace Configuracion.API.Services
             return DataConverters.DataSetToJSON(ds);
         }
         public async Task<Printer> GetByIdAsync(int id)
-        { 
-            return await _context.Printers.Include(x=>x.Documents).FirstOrDefaultAsync(x=>x.Id == id);
+        {
+            return await _context.Printers.Include(x => x.Documents).FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task<object> AddAsync(Printer printer)
         {

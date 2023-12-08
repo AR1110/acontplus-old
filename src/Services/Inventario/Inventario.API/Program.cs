@@ -1,14 +1,12 @@
-﻿using Autofac;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Inventario.API.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Asp.Versioning;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
-using Asp.Versioning.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 

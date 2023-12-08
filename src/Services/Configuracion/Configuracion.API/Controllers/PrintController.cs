@@ -1,7 +1,5 @@
 ﻿using Common.Core.Utils;
 using Configuracion.API.Interfaces;
-using Configuracion.API.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -24,12 +22,12 @@ namespace Configuracion.API.Controllers
             {
                 var response = await _print.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
                 if (response == null || string.IsNullOrEmpty(response)) { return NotFound(); }
-                return Ok(response); 
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error on Get: " + json + "\n" + ex.ToString());
-                 return BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
     }
