@@ -16,13 +16,11 @@ namespace WebUI.Controllers.Compras
 
 
         GenericResponse _gr = new();
-        private PersonaDao p;
         private ProveedorDao _prov;
 
         public ProveedorController(IConfiguration configuration)
         {
             _configuration = configuration;
-            p = new PersonaDao(_configuration);
             _prov = new ProveedorDao(_configuration);
 
 
@@ -79,15 +77,6 @@ namespace WebUI.Controllers.Compras
             var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _prov.DeleteAsync(idRol, id);
             return Ok(res);
-        }
-
-        //Gestiones Especiales 
-        [HttpPost]
-        public async Task<IActionResult> SearchPersona([FromBody] HelpersResponse data)
-        {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            _gr = await p.SearchPersonaAsync(idRol, data);
-            return Ok(_gr);
         }
 
 
