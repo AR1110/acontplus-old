@@ -491,13 +491,17 @@
             return result;
         }
 
+        /**
+         * Detalle Mapper Nota Entrega
+         * @param {*} detalles 
+         * @returns 
+         */
         service.detalleMapperTo = function (detalles) {
             let tempDetails = [];
             let orderIndex = 1;
 
             for (let item of detalles) {
-                let cantidadTransaccion = item.cantidad * item.conversion;
-
+                let cantidadTransaccion = item.cantidad * (item.conversion || 1)
                 tempDetails.push({
                     orderIndex: orderIndex++,
                     idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
@@ -507,8 +511,8 @@
                     idBodega: item.idBodega,
                     idMedida: item.idMedida,
                     idTipoIva: item.idTipoIva,
-                    tarifa: item.tarifa,
-                    codigoPorcentaje: item.codigoPorcentaje,
+                    tarifa: item.tarifa, //✅
+                    codigoPorcentaje: item.codigoPorcentaje, //✅
                     ice: item.ice,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
@@ -517,11 +521,11 @@
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
                     porcentajeDescuento: item.porcentajeDescuento,
                     total: item.total,
-                    nota: item.nota, //✅
-                    llevaInventario: item.llevaInventario,//✅
-                    precioCosto: item.precioCosto,  //✅
-                    cantidadTransaccion, //✅
-                    estado: item.estado, //✅ 
+                    nota: item.nota,
+                    llevaInventario: item.llevaInventario,
+                    precioCosto: item.precioCosto,
+                    cantidadTransaccion,
+                    estado: item.estado,
                     valorImpuesto: item.valorImpuesto
                 })
             }
@@ -718,9 +722,9 @@
                             cantidad: itemPrincipal.cantidad,
                             cantidadOriginal: itemPrincipal.cantidad,
                             codigo: itemPrincipal.codigo,
-                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,//✅
                             descripcion: itemPrincipal.descripcion,
-                            ice: itemPrincipal.ice,
+                            ice: itemPrincipal.ice || 0,
                             idArticulo: itemPrincipal.idArticulo,
                             idBodega: itemPrincipal.idBodega,
                             idImpuesto: itemPrincipal.idImpuesto,
@@ -730,12 +734,12 @@
                             llevaInventario: itemPrincipal.llevaInventario,
                             nota: itemPrincipal.nota,
                             porcentajeDescuento: itemPrincipal.porcentajeDescuento,
-                            precioSinSubsidio: itemPrincipal.precioSinSubsidio,
+                            precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
                             precioCosto: itemPrincipal.precioCosto,
                             precioUnitario: itemPrincipal.precioUnitario,
-                            tarifa: itemPrincipal.tarifa,
+                            tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
-                            valorImpuesto: itemPrincipal.valorImpuesto,
+                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
                             articuloTarifas: dataMedida.tarifas,
@@ -796,24 +800,9 @@
                     let cliente = mainDataApi[1][0];
                     let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
 
-                    let itemsTemp = mainDataApi[2];
+                    let items = mainDataApi[2];
                     let infoAdicionalDocumento = mainDataApi[3];
                     let tarifasImpuesto = mainDataApi[4];
-
-                    let items = itemsTemp.map((item, index) => {
-                        let precioConIva = item.precioUnitario + item.valorImpuesto;
-                        let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
-                        let total = precioTotalSinImpuesto + item.valorImpuesto;
-                        return {
-                            n: index + 1,
-                            ...item,
-                            precioConIva: fS.roundNumber(precioConIva, 3),
-                            precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
-                            total: fS.roundNumber(total, 3)
-                        }
-                    })
-
-
 
                     let data = {
                         ...restData,
@@ -1732,7 +1721,7 @@
         function save(data) {
             return mS.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true)
                 .catch(error => {
-                    console.log('Error service save employee: ' + error)
+                    console.log(error)
                     throw error;
                 })
         }
@@ -1740,7 +1729,7 @@
         function update(id, data) {
             return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data), null, true)
                 .catch(error => {
-                    console.log('Error service update employee: ' + error)
+                    console.log(error)
                     throw error;
                 })
         }

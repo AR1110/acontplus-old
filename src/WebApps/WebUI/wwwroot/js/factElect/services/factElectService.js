@@ -125,7 +125,7 @@
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload); 
+                    let mainData = JSON.parse(response.payload);
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -379,6 +379,8 @@
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
                     let items = mainDataApi[2];
+                    let infoAdicionalDocumento = mainDataApi[3];
+                    let tarifasImpuesto = mainDataApi[4];
                     let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -392,7 +394,8 @@
                         data,
                         cliente,
                         items,
-                        infoAdicionalDocumento: []
+                        infoAdicionalDocumento: infoAdicionalDocumento || [],
+                        tarifasImpuesto
                     }
 
                 }
@@ -426,7 +429,7 @@
                         itemsApi,
                         infoAdicionalDocumento,
                         datosAdicionalesArticuloTemp
-                    ] = mainDataApi; 
+                    ] = mainDataApi;
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
 
@@ -465,9 +468,9 @@
                             cantidad: itemPrincipal.cantidad,
                             cantidadOriginal: itemPrincipal.cantidad,
                             codigo: itemPrincipal.codigo,
-                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje, //✅
                             descripcion: itemPrincipal.descripcion,
-                            ice: itemPrincipal.ice,
+                            ice: itemPrincipal.ice || 0,
                             idArticulo: itemPrincipal.idArticulo,
                             idBodega: itemPrincipal.idBodega,
                             idImpuesto: itemPrincipal.idImpuesto,
@@ -477,12 +480,12 @@
                             llevaInventario: itemPrincipal.llevaInventario,
                             nota: itemPrincipal.nota,
                             porcentajeDescuento: itemPrincipal.porcentajeDescuento,
-                            precioSinSubsidio: itemPrincipal.precioSinSubsidio,
+                            precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
                             precioCosto: itemPrincipal.precioCosto,
                             precioUnitario: itemPrincipal.precioUnitario,
-                            tarifa: itemPrincipal.tarifa,
+                            tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
-                            valorImpuesto: itemPrincipal.valorImpuesto,
+                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
                             articuloTarifas: dataMedida.tarifas,
@@ -649,7 +652,7 @@
         }
 
         /**
-         * 
+         * Detalle Mapper Factura
          * @param {*} detalles 
          * @param {*} fromAprobacion si es verdadero el origen del detalle es desde aprobacion del documento 
          * @returns 
@@ -660,41 +663,6 @@
 
             for (let item of detalles) {
 
-                // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
-                // let cantidadStock = 0, action = 0, cantidadTransaccion = 0;
-
-                // if (!fromAprobacion) {
-                //     let dataValidationStock = service.getCantidadStock(item);
-
-                //     cantidadStock = dataValidationStock.cantidadStock;
-                //     action = dataValidationStock.action;
-
-                //cantidadTransaccion = item.cantidad * item.conversion;
-
-                //     if (action === 0) {
-                //         // Comprobar si el elemento tiene un 'idFacturaDetalle' positivo y está en estado 'activo'
-                //         if (item.idFacturaDetalle > 0 && item.estado) {
-                //             //cantidadAnulada = cantidadTransaccion;
-                //             // Verificar si 'cantidad' es igual a 'cantidadOriginal'
-                //             if (item.cantidad === item.cantidadOriginal) {
-                //                 cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
-
-                //             } else {
-                //                 // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
-                //                 if (item.cantidad > item.cantidadOriginal) {
-                //                     cantidadStock = item.cantidadOriginal - item.cantidad;
-                //                 } else {
-                //                     cantidadStock = item.cantidadOriginal - item.cantidad;
-                //                 }
-                //             }
-                //         }
-                //         if (item.idFacturaDetalle > 0 && item.estado === 0) {
-                //             cantidadStock = Math.abs(cantidadStock)
-                //             //  cantidadAnulada = item.cantidad;
-                //         }
-                //     }
-                // }
-
                 tempDetails.push({
                     orderIndex: orderIndex++,
                     idFacturaDetalle: item.idFacturaDetalle || 0,
@@ -703,14 +671,14 @@
                     idBodega: item.idBodega,
                     idMedida: item.idMedida,
                     idTipoIva: item.idTipoIva,
-                    tarifa: item.tarifa,
-                    codigoPorcentaje: item.codigoPorcentaje,
+                    tarifa: item.tarifa, //✅
+                    codigoPorcentaje: item.codigoPorcentaje,//✅
                     ice: item.ice,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
                     precioSinSubsidio: item.precioSinSubsidio || 0,
                     precioCostoNeto: item.precioCostoNeto,
-                    precioUnitario: item.precioUnitario, 
+                    precioUnitario: item.precioUnitario,
                     precioConIva: item.precioConIva,
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
@@ -722,7 +690,7 @@
                     precioCosto: item.precioCosto,
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
                     estado: item.estado,
-                    valorImpuesto: item.valorImpuesto
+                    valorImpuesto: item.valorImpuesto //✅
                 })
             }
             return tempDetails;
