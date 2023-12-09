@@ -459,7 +459,7 @@
                 detalles: mergeItems,
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumento || [],
-                infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
+                infoAdicionalArticulo: historyDatosAdicionales
             }
         }
 
@@ -513,7 +513,6 @@
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
                     precioUnitario: item.precioUnitario,
-                    precioVenta: item.precioUnitario,
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
                     porcentajeDescuento: item.porcentajeDescuento,
@@ -522,7 +521,7 @@
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
                     cantidadTransaccion, //✅
-                    estado: item.estado, //✅
+                    estado: item.estado, //✅ 
                     valorImpuesto: item.valorImpuesto
                 })
             }
@@ -715,7 +714,7 @@
 
                         let obj = {
                             n: index + 1,
-                            idFacturaDetalle: itemPrincipal.idFacturaDetalle,
+                            idNotaEntregaDetalle: itemPrincipal.idNotaEntregaDetalle,
                             cantidad: itemPrincipal.cantidad,
                             cantidadOriginal: itemPrincipal.cantidad,
                             codigo: itemPrincipal.codigo,
@@ -792,10 +791,30 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
+                    console.log(mainDataApi)
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
-                    let items = mainDataApi[2];
                     let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
+
+                    let itemsTemp = mainDataApi[2];
+                    let infoAdicionalDocumento = mainDataApi[3];
+                    let tarifasImpuesto = mainDataApi[4];
+
+                    let items = itemsTemp.map((item, index) => {
+                        let precioConIva = item.precioUnitario + item.valorImpuesto;
+                        let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+                        let total = precioTotalSinImpuesto + item.valorImpuesto;
+                        return {
+                            n: index + 1,
+                            ...item,
+                            precioConIva: fS.roundNumber(precioConIva, 3),
+                            precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
+                            total: fS.roundNumber(total, 3)
+                        }
+                    })
+
+
+
                     let data = {
                         ...restData,
                         establecimiento: nombreComercial,
@@ -805,7 +824,9 @@
                     return {
                         data,
                         cliente,
-                        items
+                        items,
+                        infoAdicionalDocumento,
+                        tarifasImpuesto
                     }
 
                 }

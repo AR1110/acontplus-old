@@ -226,7 +226,15 @@
          */
         service.getImpuestoTotales = function (obj) {
             // Desestructurar el objeto de entrada
-            const { items, decimal, tarifasImpuesto } = obj;
+            let { items, decimal, tarifasImpuesto } = obj;
+
+            if (!decimal) {
+                decimal = {
+                    nroTotalSubTotal: 2,
+                    nroIva: 2,
+                    importeTotal: 2
+                }
+            }
 
             // Inicializar las variables para almacenar los totales de impuestos
             let htmlImpuestoTotal = '', htmlIvaTotal = '', sumTotalIva = 0, totalPorcentajeDescuento = 0;
@@ -254,7 +262,7 @@
 
             // Calcular totales específicos por tarifa de impuesto
             for (let dataTarifaImpuesto of tarifasImpuesto) {
-                let filteredItems = items.filter(item => item.idTipoIva === dataTarifaImpuesto.idTipoIva);
+                let filteredItems = items.filter(item => item.codigoPorcentaje === dataTarifaImpuesto.codigoPorcentaje);
 
                 let { totalNetoIva } = filteredItems.reduce((acc, prev) => {
                     // Calcular el total neto con descuentos 

@@ -713,7 +713,6 @@
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let storageSvc = $injector.get('storageService');
         let articuloSvc = $injector.get('articuloService');
-        let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
         let facturaSvc = $injector.get('facturaService');
 
 
@@ -1021,7 +1020,6 @@
         function initiload() {
             let {
                 estabs,
-                tarifaImpuestoVigente,
                 tarifasImpuesto,
                 tiemposCredito,
                 tarifas,
@@ -1436,6 +1434,21 @@
                 minWidth: '90',
                 cellEditableCondition: function (scope) {
                     return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario : true;
+                },
+                // cellFilter: "currency:'$'",
+            },
+            {
+                name: 'P. Iva',
+                field: 'precioConIva',
+                min: 0,
+                type: 'number',
+                enableCellEdit: true,
+                allowCellFocus: true,
+                enableCellEditOnFocus: true,
+                width: '7%',
+                minWidth: '90',
+                cellEditableCondition: function (scope) {
+                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva : true;
                 },
                 // cellFilter: "currency:'$'",
             },
@@ -1902,7 +1915,6 @@
         function addRow() {
             const obj = {
                 idNotaEntregaDetalle: 0,
-                idFacturaDetalle: 0,
                 n: 1,
                 codigo: "",
                 idArticulo: 0,
@@ -2191,7 +2203,7 @@
             if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
                 tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
                 return
-            } 
+            }
 
             let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
 
@@ -2202,7 +2214,7 @@
                 return
             }
 
-            
+
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
