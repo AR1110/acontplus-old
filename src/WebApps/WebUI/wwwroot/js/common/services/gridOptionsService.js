@@ -295,14 +295,14 @@
                     let { totalIva } = filteredItems.reduce((acc, prev) => {
                         // Calcular el total neto con descuentos 
                         let precioTotalSinImpuesto = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
-                        acc.totalIva += pricingUtils.calculateTaxValue(precioTotalSinImpuesto, prev.tarifa);
-
-                        sumTotalIva += acc.totalIva;
-
+                        acc.totalIva += pricingUtils.calculateTaxValue(precioTotalSinImpuesto, prev.tarifa); 
                         return acc;
                     }, {
                         totalIva: 0,
                     });
+                    
+                    sumTotalIva += totalIva;
+                    
                     htmlIvaTotal += `
                                 <tr>
                                     <td class="left">
@@ -312,7 +312,8 @@
                                 </tr>`
                 }
             }
-
+            console.log(sumTotalIva)
+            
             const importeTotal = totalPrecioTotalSinImpuesto + sumTotalIva;
             if (totalSinImpuesto > 0) {
                 totalPorcentajeDescuento = ((totalSinImpuesto - totalPrecioTotalSinImpuesto) * 100) / totalSinImpuesto;

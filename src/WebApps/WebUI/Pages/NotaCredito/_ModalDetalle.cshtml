@@ -223,41 +223,7 @@
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">             
-                <div class="table-responsive mt-2">
-                    <table class="table table-clear table-sm">
-                        <tbody>
-                            <tr>
-                                <td class="left">
-                                <strong class="text-dark">SubTotal sin Impuesto</strong>
-                                </td>
-                                <td class="right">${{data.subTotalSinImpuestos}}</td>
-                            </tr>
-
-                            <tr>
-                                <td class="left">
-                                    <strong class="text-dark">{{data.tarifaImpuestoVigente}}</strong>
-                                </td>
-                                <td class="right">${{data.iva}}</td>
-                            </tr>
-
-                            <tr>
-                                <td class="left">
-                                <strong class="text-dark">Total Descuento</strong>
-                                </td>
-                                <td class="right">${{data.totalDescuento}}</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="left">
-                                    <h4> <strong class="text-dark">Total</strong></h4>                                       
-                                </td>
-                                <td class="right">
-                                    <h4><strong class="text-dark">${{data.total}}</strong></h4>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>  
-                </div> 
+                 
                 <div class="mt-2">
                      <button type="button" 
                             class="btn btn-secondary btn-sm btn-lg btn-block" 
@@ -275,11 +241,7 @@
 
 
     </div>
-    <div class="modal-footer">
-        <div class="icheck-success icheck-inline">
-            <input type="checkbox" ng-model="showSubtotales" id="showSubTotales" />
-            <label for="showSubTotales">Mas datos</label>
-        </div>      
+    <div class="modal-footer">    
         <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
     </div>
 </form>    
