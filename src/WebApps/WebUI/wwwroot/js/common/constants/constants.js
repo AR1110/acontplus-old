@@ -845,7 +845,7 @@ app.constant('DOC_TYPE', {
     PR: 'PR',
     NC: 'NC',
     NC_SRI: '04',
-    
+
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",
@@ -861,5 +861,6 @@ app.constant('CODE_REPORT', {
     FEG: 'FEG', //Facturacion Electronica -> Factura General
     RNE: 'RNE',
     RNC: 'RNCC', //Reporte Nota Credito
-    NCRG: 'NCRG' //Reporte Nota Credito General
+    NCRG: 'NCRG', //Reporte Nota Credito General
+    PR: 'PR' //Reporte Proforma
 })

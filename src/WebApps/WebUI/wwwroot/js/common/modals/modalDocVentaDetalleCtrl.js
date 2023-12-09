@@ -54,7 +54,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         })
     }
 
-    function calculateTotalItems(items){
+    function calculateTotalItems(items) {
         return items.map((item, index) => {
             let precioConIva = item.precioUnitario + item.valorImpuesto;
             let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
@@ -66,7 +66,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
                 total: fS.roundNumber(total, 3)
             }
-        }) 
+        })
     }
 
     //Nota Entrega
@@ -122,11 +122,12 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         try {
             showLoader();
             proformaSvc.getIdForInfo(id).then(response => {
-                let { data, cliente, items } = response;
+                let { data, cliente, items, tarifasImpuesto } = response;
                 $scope.data = data;
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
-                $scope.gridOptions.data = items;
+                $scope.gridOptions.data = calculateTotalItems(items)
+                $scope.tarifasImpuesto = tarifasImpuesto;
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
