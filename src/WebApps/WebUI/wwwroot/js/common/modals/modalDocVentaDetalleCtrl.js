@@ -216,15 +216,15 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         {
             name: 'Tarifa',
             field: 'pvp',
-            width: '12%',
-            minWidth: '100',
+            width: '8%',
+            minWidth: '50',
         },
         {
             name: 'Precio U.',
             field: 'precioUnitario',
             type: 'number',
-            width: '8%',
-            minWidth: '100',
+            width: '7%',
+            minWidth: '50',
         },
         {
             name: 'P. Iva',
@@ -232,7 +232,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             min: 0,
             type: 'number',
             width: '7%',
-            minWidth: '90',
+            minWidth: '50',
         },
         {
             name: '%',

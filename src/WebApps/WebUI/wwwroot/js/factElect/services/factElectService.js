@@ -376,6 +376,7 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
+                    console.log(mainDataApi)
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
                     let items = mainDataApi[2];

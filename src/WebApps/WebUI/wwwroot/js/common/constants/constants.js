@@ -134,7 +134,7 @@ app.constant('nombreModalFactElect', {
 
 app.constant('nombreModalVenta', {
     DOC_VENTA_DETALLE: {
-        fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.js',
+        fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.js' + CHANGE_VERSION(),
         controller: 'modalDocVentaDetalleCtrl',
         templates: {
             NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
