@@ -2218,12 +2218,15 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-                showLoader();
 
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
-                if (cantidadStock === 0) return
+                if (cantidadStock === 0) {
+                    $scope.setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
 
+                showLoader();
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -3090,12 +3093,15 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
-                showLoader();
 
                 // Llama a un servicio para verificar la notificación de stock.
                 let cantidadStock = getCantidadStock(dataItemMerge);
-                if (cantidadStock === 0) return
+                if (cantidadStock === 0) {
+                    $scope.setCalculoTotales(field, rowEntity, oldValue);
+                    return;
+                }
 
+                showLoader();
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
                     cantidad: cantidadStock,
@@ -3979,7 +3985,8 @@
 
             let resultsItem = $scope.gridOptionsDetalle.data.map(item => {
                 let cantidadStock = 0;
-                let cantidadTransaccion = item.cantidad * item.conversion;
+                let conversion = item.conversion || 1;
+                let cantidadTransaccion = item.cantidad * conversion;
 
                 let fechaEmisionDocumento = item.idAprob_Document_Detailt > 0 ? item.fechaEmision : $scope.data.fechaEmision; //Fecha Emision del Doc. (Proforma, Nota Entrega)
 
