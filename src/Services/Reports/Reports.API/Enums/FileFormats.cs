@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Common.Reports.Enums
+namespace Reports.API.Enums
 {
     public static class FileFormats
     {

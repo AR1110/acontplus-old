@@ -1,4 +1,4 @@
-﻿namespace Common.Reports.Models
+﻿namespace Reports.API.Models
 {
     public static class RdlcHelpers
     {

@@ -3,26 +3,26 @@ using System.Text;
 using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
-using Common.Reports.Enums;
-using Common.Reports.Models;
 using Microsoft.Reporting.NETCore;
+using Reports.API.Enums;
+using Reports.API.Models;
 
-namespace Common.Reports.Services
+namespace Reports.API.Services
 {
     public class RdlcReportService : IRdlcReportService
     {
         public byte[] GetCustomReport(DataSet dsParams, DataSet ds)
         {
-            DataTable reportParams = dsParams.Tables[0];
-            DataTable dataSources = dsParams.Tables[1];
-            DataTable rdlcParams = dsParams.Tables[2];
+            var reportParams = dsParams.Tables[0];
+            var dataSources = dsParams.Tables[1];
+            var rdlcParams = dsParams.Tables[2];
             using (var lr = new LocalReport())
             {
                 var mainPath = Directory.GetCurrentDirectory() + "\\Reports\\";
 
                 //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dsParams.Tables[0].Rows[0]["reportPath"].ToString());
                 var reportPath = reportParams.Rows[0].Field<string>("reportPath");
-                bool hasParams = Convert.ToBoolean(reportParams.Rows[0]["hasParams"]);
+                var hasParams = Convert.ToBoolean(reportParams.Rows[0]["hasParams"]);
                 var format = reportParams.Rows[0].Field<string>("format");
 
                 var paths = reportPath.Split("/");
@@ -48,7 +48,7 @@ namespace Common.Reports.Services
                 //Recorremos los parametros del reporte como logos, textos, etc
                 if (hasParams)
                 {
-                    DataTable firstDataSource = ds.Tables[0];
+                    var firstDataSource = ds.Tables[0];
                     if (firstDataSource.Columns.Contains("codigoAutorizacion"))
                     {
                         lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion")), 0, BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion")).Length)));
@@ -86,10 +86,10 @@ namespace Common.Reports.Services
                 return null;
             }
 
-            using (LocalReport lr = new LocalReport())
+            using (var lr = new LocalReport())
             {
                 var rdlcProps = DataTableMapper.BindData<RdlcProps>(ds.Tables["RdlcProps"]);
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "Reports", rdlcProps.ReportPath);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "Reports", rdlcProps.ReportPath);
                 lr.ReportPath = path;
 
                 foreach (DataRow item in ds.Tables["RdlcDataSources"].Rows)
@@ -120,8 +120,8 @@ namespace Common.Reports.Services
         }
         public async Task<ReportResponse> GetErrorAsync()
         {
-            string errorFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "NotFound.pdf");
-            byte[] bytes = await File.ReadAllBytesAsync(errorFilePath);
+            var errorFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "NotFound.pdf");
+            var bytes = await File.ReadAllBytesAsync(errorFilePath);
             return new ReportResponse { FileContents = bytes, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
         }
     }
