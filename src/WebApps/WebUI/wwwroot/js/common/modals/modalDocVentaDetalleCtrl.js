@@ -19,6 +19,8 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     const notaCreditoSvc = $injector.get('notaCreditoService');
     const nombreModalVenta = $injector.get('nombreModalVenta');
     const modalSvc = $injector.get('modalService');
+    let gridOptionsSvc = $injector.get('gridOptionsService');
+    const fS = $injector.get('formulario')
 
     let { id, codDoc } = params;
     let tarifaImpuesto = {
@@ -28,6 +30,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     }
     $scope.showHeader = true;
     $scope.infoAdicionalDocumento = [];
+    $scope.tarifasImpuesto = [];
     $scope.gridOptions = {
         enableColumnMenus: false,
         enableColumnReordering: true,
@@ -45,18 +48,40 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     }
     setColumnDefsVista();
 
+    function renderedModal() {
+        $uibModalInstance.rendered.then(() => {
+            drawImpuestoTotales();
+        })
+    }
+
+    function calculateTotalItems(items) {
+        return items.map((item, index) => {
+            let precioConIva = item.precioUnitario + item.valorImpuesto;
+            let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+            let total = precioTotalSinImpuesto + item.valorImpuesto;
+            return {
+                n: index + 1,
+                ...item,
+                precioConIva: fS.roundNumber(precioConIva, 3),
+                precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
+                total: fS.roundNumber(total, 3)
+            }
+        })
+    }
+
     //Nota Entrega
     if (codDoc === DOC_TYPE['NE']) {
         try {
             showLoader();
             notaEntregaSvc.getIdForInfo(id).then(response => {
-                let { data, cliente, items, infoAdicionalDocumento } = response;
+                let { data, cliente, items, infoAdicionalDocumento, tarifasImpuesto } = response;
                 $scope.data = data;
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
-                $scope.gridOptions.data = items;
+                $scope.gridOptions.data = calculateTotalItems(items)
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                gridOptionsEnumeracion();
+                $scope.tarifasImpuesto = tarifasImpuesto;
+                renderedModal();
             }).catch(error => {
                 console.warn(error)
             }).finally(() => {
@@ -73,12 +98,14 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         try {
             showLoader();
             facturaSvc.getIdForInfo(id).then(response => {
-                let { data, cliente, items } = response;
+                let { data, cliente, items, infoAdicionalDocumento, tarifasImpuesto } = response;
                 $scope.data = data;
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
-                $scope.gridOptions.data = items;
-                gridOptionsEnumeracion();
+                $scope.gridOptions.data = calculateTotalItems(items);
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento || [];
+                $scope.tarifasImpuesto = tarifasImpuesto;
+                renderedModal();
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -95,12 +122,12 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         try {
             showLoader();
             proformaSvc.getIdForInfo(id).then(response => {
-                let { data, cliente, items } = response;
+                let { data, cliente, items, tarifasImpuesto } = response;
                 $scope.data = data;
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
-                $scope.gridOptions.data = items;
-                gridOptionsEnumeracion();
+                $scope.gridOptions.data = calculateTotalItems(items)
+                $scope.tarifasImpuesto = tarifasImpuesto;
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -112,13 +139,11 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         }
     }
 
-    //Nota Credito 
-    console.log(codDoc)
+    //Nota Credito  
     if (codDoc === DOC_TYPE['NC_SRI']) {
         try {
             showLoader();
             notaCreditoSvc.getIdForInfo(id).then(response => {
-                console.log(response)
                 let { data, cliente, items, factura, infoAdicionalDocumento } = response;
                 $scope.data = data;
                 $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
@@ -126,7 +151,6 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.gridOptions.data = items;
                 $scope.factura = factura;
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                gridOptionsEnumeracion();
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
@@ -150,7 +174,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         },
         {
             name: 'N°',
-            field: 'index',
+            field: 'n',
             width: '5%',
             minWidth: '50'
         },
@@ -192,16 +216,16 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         },
         {
             name: 'Tarifa',
-            field: 'tarifa',
-            width: '12%',
-            minWidth: '100',
+            field: 'pvp',
+            width: '8%',
+            minWidth: '50',
         },
         {
             name: 'Precio U.',
             field: 'precioUnitario',
             type: 'number',
-            width: '8%',
-            minWidth: '100',
+            width: '7%',
+            minWidth: '50',
         },
         {
             name: 'P. Iva',
@@ -209,16 +233,44 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             min: 0,
             type: 'number',
             width: '7%',
-            minWidth: '100',
+            minWidth: '50',
         },
-
+        {
+            name: '%',
+            field: 'porcentajeDescuento',
+            min: 0,
+            width: '4%',
+            minWidth: '60',
+            type: 'number',
+        },
+        {
+            name: 'Desc.',
+            field: 'valorDescuento',
+            min: 0,
+            type: 'number',
+            width: '4%',
+            minWidth: '65',
+        },
+        {
+            name: 'SubTotal',
+            field: 'precioTotalSinImpuesto',
+            type: 'number',
+            width: '7%',
+            minWidth: '50',
+        },
+        {
+            name: 'IVA',
+            field: 'valorImpuesto',
+            type: 'number',
+            width: '5%',
+            minWidth: '50',
+        },
         {
             name: 'Total',
             field: 'total',
             type: 'number',
             width: '5%',
             minWidth: '100',
-            visible: true,
         },
         {
             name: 'Nota',
@@ -242,12 +294,6 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         // this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
     }
 
-    function gridOptionsEnumeracion() {
-        let index = 1;
-        for (let item of $scope.gridOptions.data) {
-            item.index = index++;
-        }
-    }
 
 
     $scope.getDetalleFactura = async function () {
@@ -277,6 +323,70 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         }
     }
 
+
+    // * Add by Ignacio Manchu.
+    function drawImpuestoTotales() {
+        try {
+            let {
+                subTotalSinImpuestos,
+                htmlImpuestoTotal,
+                htmlIvaTotal,
+                irbpnr,
+                totalIce,
+                importeTotal,
+                totalDescuento,
+            } = gridOptionsSvc.getImpuestoTotales({
+                items: $scope.gridOptions.data,
+                tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+            });
+
+            const template = `<table class="table table-clear table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="text-dark">Subtotal sin Impuestos</strong>
+                                            </td>
+                                            <td class="right">$${subTotalSinImpuestos}</td>
+                                        </tr>
+                                        ${htmlImpuestoTotal}
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="text-dark">Total descuento</strong>
+                                            </td>
+                                            <td class="right">$${totalDescuento}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="text-dark">Valor ICE</strong>
+                                            </td>
+                                            <td class="right">$${totalIce}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="text-dark">Valor irbpnr</strong>
+                                            </td>
+                                            <td class="right">$${irbpnr}</td>
+                                        </tr>
+                                        ${htmlIvaTotal}
+                                        <tr>
+                                            <td class="left">
+                                                <strong class="font-weight-bold">Valor Total</strong>
+                                            </td>
+                                            <td class="right font-weight-bold">$${importeTotal}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>`;
+
+            const element = document.getElementById('draw-dynamic-subtotal');
+            if (element) {
+                element.innerHTML = template;
+            } else {
+                console.error('Elemento para dibujar totales impuestos no definido')
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
     $scope.closeModal = function () {

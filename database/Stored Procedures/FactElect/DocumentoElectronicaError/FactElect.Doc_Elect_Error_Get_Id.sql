@@ -14,7 +14,7 @@ BEGIN
     DECLARE @code CHAR(1)
     DECLARE @data NVARCHAR(MAX)
       
-	SET @data = (SELECT ISNULL(estado, CAST(0 AS BIT))      estado
+	SET @data = (SELECT ISNULL(estado, '')                  estado
                         , mensaje
                         , ISNULL(informacionAdicional, '')  informacionAdicional
                         , tipo
