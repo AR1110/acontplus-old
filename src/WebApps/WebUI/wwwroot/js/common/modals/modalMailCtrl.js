@@ -63,7 +63,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
             fS.showLoaderSendEmail();
            
             if (typeSend === 'N') {
-                url = '/Notificacion/Post?json='
+                url = 'Common/Notificacion/?json='
                 data = {
                     codDoc: $scope.data.codDoc,
                     serieComprobante: $scope.data.serieComprobante,
@@ -73,7 +73,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
                     receptor: $scope.correos.join(';')
                 }
 
-                mS.getData('post', url + JSON.stringify(data)).then($scope.successResponse).catch(error => {
+                mS.getData('post', url + JSON.stringify(data), null, true).then($scope.successResponse).catch(error => {
                     Swal.close();
                     console.log(error)
                 })
