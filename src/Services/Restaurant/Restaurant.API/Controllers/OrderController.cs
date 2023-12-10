@@ -120,6 +120,6 @@ namespace Restaurant.API.Controllers
                 _log.LogActivity($"Error on print {ex.Message}");
                 return BadRequest("Error on print " + ex.Message);
             }
-        } 
+        }
     }
 }

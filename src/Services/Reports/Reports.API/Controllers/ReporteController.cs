@@ -2,7 +2,6 @@
 using System.Text;
 using System.Web;
 using Common.Core.Interfaces;
-using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -112,8 +111,8 @@ namespace Reports.API.Controllers
 
                 var dataParams = new Dictionary<string, object>();
                 if (!data.hasService)
-                { 
-                        dataParams["userRoleId"] = userRoleId;
+                {
+                    dataParams["userRoleId"] = userRoleId;
                 }
 
                 dataParams["json"] = SqlStringParam.Sanitize(data.dataParams);

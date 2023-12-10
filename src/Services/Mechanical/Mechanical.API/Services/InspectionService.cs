@@ -2,7 +2,6 @@
 using Common.Core.Interfaces;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
-using Mechanical.API.Entities;
 
 namespace Mechanical.API.Services
 {

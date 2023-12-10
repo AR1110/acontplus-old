@@ -1,4 +1,4 @@
-﻿using DataAccess.Compras;
+﻿using Common.Infrastructure.Repository.Compras;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Compras

@@ -1,4 +1,4 @@
-﻿using DataAccess.Estadisticas;
+﻿using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Estadisticas

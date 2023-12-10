@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
-    <ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
     <ProjectReference Include="..\FactElect.Application\FactElect.Application.csproj" />
     <ProjectReference Include="..\FactElect.Core\FactElect.Core.csproj" />

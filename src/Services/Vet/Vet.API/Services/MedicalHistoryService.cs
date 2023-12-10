@@ -7,12 +7,12 @@ namespace Vet.API.Services
 {
     public class MedicalHistoryService : IMedicalHistory
     {
-        private readonly IADORepository _generic; 
+        private readonly IADORepository _generic;
         private readonly APIResponse _response;
         public MedicalHistoryService(IADORepository genericRepository)
         {
             _response = new APIResponse();
-            _generic = genericRepository; 
+            _generic = genericRepository;
         }
         public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
         {

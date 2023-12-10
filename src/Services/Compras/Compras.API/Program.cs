@@ -2,7 +2,6 @@
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Compras.API.Extensions;
-using Compras.API.Services;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 

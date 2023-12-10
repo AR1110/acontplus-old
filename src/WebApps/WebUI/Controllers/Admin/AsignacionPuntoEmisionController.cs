@@ -1,5 +1,5 @@
 ﻿using Common.Core.Models.Administracion;
-using DataAccess.Asignaciones;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin

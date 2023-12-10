@@ -3,7 +3,7 @@ using System.Text;
 using System.Web;
 using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

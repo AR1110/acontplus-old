@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Compras.API.Interfaces;
-using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
