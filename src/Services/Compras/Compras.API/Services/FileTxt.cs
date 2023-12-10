@@ -1,20 +1,13 @@
 ﻿using System.Data;
 using System.Text;
-using DataAccess;
-using Microsoft.Extensions.Configuration;
 
-namespace Compras.Application
+namespace Compras.API.Services
 {
     public sealed class FileTxt
     {
-        private readonly IConfiguration _configuration;
-        public FileTxt(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
         public async Task<DataTable> GetDocs(byte[] fileTxt)
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             dt.Columns.Add("id", typeof(int));
             dt.Columns.Add("uniqueId", typeof(string));
             dt.Columns.Add("comprobante", typeof(string));
@@ -30,13 +23,13 @@ namespace Compras.Application
             dt.Columns.Add("importeTotal", typeof(string));
             string line;
 
-            StreamReader reader = new StreamReader(new MemoryStream(fileTxt), Encoding.GetEncoding("iso-8859-1"), true);
+            var reader = new StreamReader(new MemoryStream(fileTxt), Encoding.GetEncoding("iso-8859-1"), true);
             DataRow row;
-            int positionDr = 0;
-            int index = 0;
+            var positionDr = 0;
+            var index = 0;
             while ((line = await reader.ReadLineAsync()) != null)
             {
-                string[] items = line.Split('\t');
+                var items = line.Split('\t');
                 if (index > 0 && items.Length > 1)
                 {
                     row = dt.NewRow();
@@ -83,20 +76,6 @@ namespace Compras.Application
             {
                 return null;
             }
-        }
-        public async Task<bool> exists(string claveAcceso)
-        {
-            DbAccess _db = new DbAccess(_configuration);
-            int exists = 0;
-            await _db.QueryExecute("SELECT COUNT(1) FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE claveAcceso = @claveAcceso");
-            _db.AddDynamicParam("claveAcceso", claveAcceso);
-            exists = (int)_db.ExecuteScalar();
-            _db.Close();
-            if (exists == 1)
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

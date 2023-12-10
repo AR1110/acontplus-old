@@ -2,7 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Compras.API.Extensions;
-using Compras.Application;
+using Compras.API.Services;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 
@@ -30,8 +30,6 @@ namespace Compras.API
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
             builder.Services.AddSwaggerDocumentation();
-
-            builder.Services.AddScoped<FileTxt>();
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
