@@ -1,6 +1,6 @@
-﻿namespace Domain.Dtos.Contabilidad
+﻿namespace Domain.Models
 {
-    public class CobroPagoDto
+    public class CobroPago
     {
         public string comprobante { get; set; }
         public string cobrosPagos { get; set; }
