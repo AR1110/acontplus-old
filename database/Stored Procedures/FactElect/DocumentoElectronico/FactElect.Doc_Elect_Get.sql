@@ -1,13 +1,7 @@
 USE AcontPlus
-
-IF OBJECT_ID('FactElect.Doc_Elect_Get') IS NOT NULL
-DROP PROCEDURE FactElect.Doc_Elect_Get
 GO
 
-
--- FactElect.Doc_Elect_Get 28, '{"isCurrentDate":false,"checkBoxDate":true,"isSearchCustomerProvider":false,"dateStart":"2023-04-01T05:00:00.000Z","dateEnd":"2023-05-01T04:59:59.999Z"}'
-
-CREATE PROCEDURE FactElect.Doc_Elect_Get @idRol INT,@json NVARCHAR(max)
+CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Get @idRol INT,@json NVARCHAR(max)
 AS
 BEGIN 
 	SET NOCOUNT ON;
@@ -191,7 +185,7 @@ BEGIN
 
             SELECT idTipoDocumento,descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','03','04','06','07') ORDER BY codigoSri
 
-            SELECT idEstadoServicio, codigo as codEstado , descripcion FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE estado = 1
+            SELECT idEstadoServicio, codigo as codEstado , descripcion FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE estado = 1 AND codigo IN (4,6)
 
             RETURN 
         END 

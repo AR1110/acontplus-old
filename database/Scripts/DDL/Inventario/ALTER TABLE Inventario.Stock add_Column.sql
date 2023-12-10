@@ -79,3 +79,5 @@ FROM Inventario.Stock s
 --							ORDER BY t.fechaRegistro DESC
 --						  )
 --from Inventario.Stock s
+
+--alter table Inventario.Stock ALTER COLUMN cantidad NUMERIC(18,5)

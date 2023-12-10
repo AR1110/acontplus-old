@@ -31,12 +31,8 @@ BEGIN
 	DECLARE @stock AS NUMERIC(15,5)
 	DECLARE @fechaEmision AS DATETIME
 	
-	SELECT TOP 1 @fechaEmision =  fechaRegistro, @cantidadActual =  cantidadEntrada 
-	FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
-	WHERE codTransaccion = 'A' AND idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
-	ORDER BY fechaRegistro DESC
+	SELECT TOP 1 @fechaEmision =  fechaConsolidacion, @cantidadActual =  consolidacion FROM Inventario.Stock WITH (NOLOCK) sWHERE idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
 
-	 
 	IF @fechaEmision IS NOT NULL
 		BEGIN
 			SELECT @cantidadActual = @cantidadActual + ISNULL(sum(cantidadEntrada - cantidadSalida),0)
