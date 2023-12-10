@@ -9,6 +9,5 @@ namespace Restaurant.Core.Interfaces
         Task<string> PutAsync(int id, ApiRequest data);
         Task<bool> DeleteAsync(int id);
         Task<string> PrintAsync(Dictionary<string, object> parameters);
-        Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters);
     }
 }

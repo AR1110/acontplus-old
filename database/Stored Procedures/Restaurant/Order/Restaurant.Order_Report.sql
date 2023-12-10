@@ -11,11 +11,15 @@ GO
 -- Description:	SP FOR GET ORDER REPORT
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Order_Report @userRoleId INT
-	,@id INT
+	,@json VARCHAR(MAX)
 	,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
+
+    DECLARE @id INT
+
+    SELECT @id = id FROM OPENJSON(@json) WITH(id INT '$.id')
 
 	DECLARE @dataSources AS TABLE (dsName VARCHAR(50))
     DECLARE @tblParams AS TABLE (
@@ -33,7 +37,7 @@ BEGIN
 	SET @tableNames = 'RdlcProps,RdlcDataSources,Order,OrderItems,RdlcParams'
 
 	--RdlcProps
-	SELECT 'Reports\Order.rdl' ReportPath, 'PDF' ReportFormat, 'Orden de Pedido' ReportName
+	SELECT 'Restaurant\Order.rdl' ReportPath, 'PDF' ReportFormat, 'Orden de Pedido' ReportName
 
 	--RdlcDataSources
 	SELECT * FROM @dataSources

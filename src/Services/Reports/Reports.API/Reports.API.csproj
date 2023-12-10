@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Order.rdl" />
     <None Remove="Reports\Cartera\CarteraCliente.rdlc" />
     <None Remove="Reports\Cartera\CarteraProveedor.rdlc" />
     <None Remove="Reports\Compras\CompraDetalle.rdl" />
@@ -77,6 +78,9 @@
   <ItemGroup>
     <Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Restaurant\Order.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Cartera\CarteraCliente.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

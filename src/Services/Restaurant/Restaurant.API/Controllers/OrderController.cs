@@ -120,21 +120,6 @@ namespace Restaurant.API.Controllers
                 _log.LogActivity($"Error on print {ex.Message}");
                 return BadRequest("Error on print " + ex.Message);
             }
-        }
-        [HttpPost("Report/{id}")]
-        public async Task<IActionResult> GetReport(int id)
-        {
-            try
-            {
-                var data = await _orderService.GetReportAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
-                if (data == null) { return BadRequest("No se pudo obtener el reporte"); };
-                return File(data.FileContents, data.ContentType, data.FileDownloadName);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error getting order report: " + ex.ToString());
-                return BadRequest("Error al obtener el reporte");
-            }
-        }
+        } 
     }
 }
