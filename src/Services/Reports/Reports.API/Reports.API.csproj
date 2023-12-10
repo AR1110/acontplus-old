@@ -64,7 +64,6 @@
     <None Remove="Reports\OrdenCompra.rdlc" />
     <None Remove="Reports\Restaurant\ItemIngredient.rdl" />
     <None Remove="Reports\Retencion.rdlc" />
-    <None Remove="Reports\Test.rdlc" />
     <None Remove="Reports\Ventas\AprobDocument.rdl" />
     <None Remove="Reports\Ventas\Clientes.rdl" />
     <None Remove="Reports\Ventas\CuentaPorCobrar.rdl" />
@@ -242,9 +241,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Retencion.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Test.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\AprobDocument.rdl">
