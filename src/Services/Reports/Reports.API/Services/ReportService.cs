@@ -20,9 +20,9 @@ namespace Reports.API.Services
             }
             return ds;
         }
-        public async Task<DataSet> GetDataAsync(string spname, Dictionary<string, object> parameters)
+        public async Task<DataSet> GetDataAsync(string spname, Dictionary<string, object> parameters, bool legacy)
         {
-            var ds = await _repository.GetDataSetAsync(spname, parameters, true);
+            var ds = await _repository.GetDataSetAsync(spname, parameters, legacy);
             if (ds.Tables[0].Rows.Count == 0)
             {
                 return null;

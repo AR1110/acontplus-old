@@ -2,6 +2,7 @@
 using System.Text;
 using System.Web;
 using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -83,6 +84,50 @@ namespace Reports.API.Controllers
                 }
 
                 return File(bytes, mimeType, HttpUtility.UrlEncode(filename, Encoding.UTF8));
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity($"Error in Download: \n {ex} \nReportParams: {data.reportParams}");
+                return BadRequest($"Error in Download: {ex.Message}");
+            }
+        }
+        [HttpPost("Dynamic")]
+        public async Task<IActionResult> GetReport(ApiReportParamsDto data)
+        {
+            try
+            {
+                string storedProcedure = "", filename = "";
+                var userRoleId = User.GetUserRoleId();
+
+                DataSet dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
+
+                if (dsParams.Tables[0].Rows.Count == 0)
+                {
+                    _log.LogActivity($"Can't get report params \nReportParams: {data.reportParams}");
+                    return BadRequest("Can't get report params");
+                }
+
+                storedProcedure = dsParams.Tables[0].Rows[0].Field<string>("storedProcedure");
+                filename = dsParams.Tables[0].Rows[0].Field<string>("fileName");
+
+                var dataParams = new Dictionary<string, object>();
+                if (!data.hasService)
+                { 
+                        dataParams["userRoleId"] = userRoleId;
+                }
+
+                dataParams["json"] = SqlStringParam.Sanitize(data.dataParams);
+
+                DataSet ds = await _reportService.GetDataAsync(storedProcedure, dataParams, false);
+
+                if (ds.Tables[0].Rows.Count == 0)
+                {
+                    _log.LogActivity($"Can't get report data \nReportParams: {data.reportParams}");
+                    return BadRequest("Can't get report data");
+                }
+
+                var response = _rdlcreport.GetDynamicReport(ds);
+                return File(response.FileContents, response.ContentType, HttpUtility.UrlEncode(response.FileDownloadName, Encoding.UTF8));
             }
             catch (Exception ex)
             {

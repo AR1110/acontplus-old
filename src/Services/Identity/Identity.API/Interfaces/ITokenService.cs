@@ -1,5 +1,5 @@
-﻿using Identity.Core.Models;
-namespace Identity.Core.Interfaces
+﻿using Identity.API.Models;
+namespace Identity.API.Interfaces
 {
     public interface ITokenService
     {

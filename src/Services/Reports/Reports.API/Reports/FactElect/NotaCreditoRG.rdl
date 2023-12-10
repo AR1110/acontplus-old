@@ -96,11 +96,11 @@
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="subTotalIvaCero">
-          <DataField>subTotalCero</DataField>
+          <DataField>subTotalIvaCero</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="subTotalSinImpuestos">
-          <DataField>subTotalSinImpuestos</DataField>
+        <Field Name="subTotalSinImpuesto">
+          <DataField>precioTotalSinImpuestos</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="iva">
@@ -1743,14 +1743,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subTotalSinImpuestos">
+                        <Textbox Name="subTotalSinImpuesto">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!subTotalSinImpuestos.Value</Value>
+                                  <Value>=Fields!subTotalSinImpuesto.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1762,7 +1762,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subTotalSinImpuestos</rd:DefaultName>
+                          <rd:DefaultName>subTotalSinImpuesto</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2364,14 +2364,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subTotalSinImpuestos1">
+                        <Textbox Name="subTotalSinImpuesto1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!subTotalSinImpuestos.Value)</Value>
+                                  <Value>=Fields!subTotalSinImpuesto.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2384,7 +2384,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subTotalSinImpuestos1</rd:DefaultName>
+                          <rd:DefaultName>subTotalSinImpuesto1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2981,14 +2981,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="subTotalSinImpuestos2">
+                        <Textbox Name="subTotalSinImpuesto2">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!subTotalSinImpuestos.Value)</Value>
+                                  <Value>=Fields!subTotalSinImpuesto.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2999,7 +2999,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>subTotalSinImpuestos2</rd:DefaultName>
+                          <rd:DefaultName>subTotalSinImpuesto2</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>

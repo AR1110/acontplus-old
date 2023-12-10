@@ -9,7 +9,7 @@ using TechnicalSupport.API.Data;
 
 #nullable disable
 
-namespace TechnicalSupport.Infrastructure.Data.Migrations
+namespace TechnicalSupport.API.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
     [Migration("20231005150258_Initial")]

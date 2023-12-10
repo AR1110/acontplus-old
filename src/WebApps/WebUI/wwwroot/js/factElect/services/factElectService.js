@@ -125,7 +125,7 @@
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload); 
+                    let mainData = JSON.parse(response.payload);
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -338,9 +338,7 @@
                 fDs.sweetAlert('warning', 'No se ha proporcionado el codEstab')
                 throw ''
             }
-            query.tipo = 2;
-            query.paraNotaCredito = true;
-            query.checkBoxCliente = true;
+            query.tipo = 2; 
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
@@ -351,9 +349,8 @@
                     let facturasRepository = mainData[0];
                     let facturas = facturasRepository.map(item => {
                         return {
-                            idDocumento: item.idDocumento,
-                            nroFactura: item.nroFactura,
-                            serieComprobante: item.nroFactura,
+                            idDocumento: item.idFactura,   
+                            serieComprobante: item.serieComprobante,
                         }
                     })
                     return {
@@ -376,9 +373,12 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
+
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
                     let items = mainDataApi[2];
+                    let infoAdicionalDocumento = mainDataApi[3];
+                    let tarifasImpuesto = mainDataApi[4];
                     let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -392,7 +392,8 @@
                         data,
                         cliente,
                         items,
-                        infoAdicionalDocumento: []
+                        infoAdicionalDocumento: infoAdicionalDocumento || [],
+                        tarifasImpuesto
                     }
 
                 }
@@ -426,7 +427,7 @@
                         itemsApi,
                         infoAdicionalDocumento,
                         datosAdicionalesArticuloTemp
-                    ] = mainDataApi; 
+                    ] = mainDataApi;
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
 
@@ -465,9 +466,9 @@
                             cantidad: itemPrincipal.cantidad,
                             cantidadOriginal: itemPrincipal.cantidad,
                             codigo: itemPrincipal.codigo,
-                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje, //✅
                             descripcion: itemPrincipal.descripcion,
-                            ice: itemPrincipal.ice,
+                            ice: itemPrincipal.ice || 0,
                             idArticulo: itemPrincipal.idArticulo,
                             idBodega: itemPrincipal.idBodega,
                             idImpuesto: itemPrincipal.idImpuesto,
@@ -477,12 +478,12 @@
                             llevaInventario: itemPrincipal.llevaInventario,
                             nota: itemPrincipal.nota,
                             porcentajeDescuento: itemPrincipal.porcentajeDescuento,
-                            precioSinSubsidio: itemPrincipal.precioSinSubsidio,
+                            precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
                             precioCosto: itemPrincipal.precioCosto,
                             precioUnitario: itemPrincipal.precioUnitario,
-                            tarifa: itemPrincipal.tarifa,
+                            tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
-                            valorImpuesto: itemPrincipal.valorImpuesto,
+                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
                             articuloTarifas: dataMedida.tarifas,
@@ -521,6 +522,95 @@
                         items,
                         infoAdicionalDocumento,
                         datosAdicionalesArticulo
+                    }
+                }
+            })
+        }
+
+        service.getDetalleDoc = function (id) {
+            let spParams = {
+                tipo: 9,
+                id
+            }
+            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
+                if (response.code === "0") {
+                    console.log("Get Data Info", response)
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let [itemsApi] = JSON.parse(response.payload);
+
+                    let items = itemsApi.map((itemPrincipal, index) => {
+
+                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
+
+                        let consolidacionesFechaTemp = consolidacion && JSON.parse(consolidacion) || [];
+                        let consolidacionesFecha = consolidacionesFechaTemp.map((data) => ({
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
+
+
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                        let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
+
+
+                        if ('infoDatosAdicionales' in itemPrincipal) {
+                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
+                            restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
+                                idArticulo: dataAdicional.idArticulo,
+                                idEtiqueta: dataAdicional.idEtiqueta,
+                                idInfoAdicional: dataAdicional.idInfoAdicional,
+                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),
+                                uniqueId: dataAdicional.uniqueId,
+                                estado: dataAdicional.estado
+                            }))
+                        }
+
+                        let precioConIva = itemPrincipal.precioUnitario + itemPrincipal.valorImpuesto;
+                        let precioTotalSinImpuesto = ((itemPrincipal.precioUnitario * itemPrincipal.cantidad)) - itemPrincipal.valorDescuento;
+                        let total = precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
+
+                        let obj = {
+                            n: index + 1,
+                            idFacturaDetalle: itemPrincipal.idFacturaDetalle,
+                            cantidad: itemPrincipal.cantidad,
+                            cantidadOriginal: itemPrincipal.cantidad,
+                            codigo: itemPrincipal.codigo,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje, //✅
+                            descripcion: itemPrincipal.descripcion,
+                            ice: itemPrincipal.ice || 0,
+                            idArticulo: itemPrincipal.idArticulo,
+                            idBodega: itemPrincipal.idBodega,
+                            idImpuesto: itemPrincipal.idImpuesto,
+                            idMedida: itemPrincipal.idMedida,
+                            idTarifa: itemPrincipal.idTarifa,
+                            idTipoIva: itemPrincipal.idTipoIva,
+                            llevaInventario: itemPrincipal.llevaInventario,
+                            nota: itemPrincipal.nota,
+                            porcentajeDescuento: itemPrincipal.porcentajeDescuento,
+                            precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
+                            precioCosto: itemPrincipal.precioCosto,
+                            precioUnitario: itemPrincipal.precioUnitario,
+                            tarifa: itemPrincipal.tarifa,//✅
+                            valorDescuento: itemPrincipal.valorDescuento,
+                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            articuloTarifas: dataMedida.tarifas,
+                            consolidacionesFecha,
+                            estado: 1,
+                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            precioConIva: fS.roundNumber(precioConIva, 3),
+                            precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
+                            total: fS.roundNumber(total, 3)
+                        }
+
+                        return obj;
+                    });
+                    return {
+                        items
                     }
                 }
             })
@@ -649,7 +739,7 @@
         }
 
         /**
-         * 
+         * Detalle Mapper Factura
          * @param {*} detalles 
          * @param {*} fromAprobacion si es verdadero el origen del detalle es desde aprobacion del documento 
          * @returns 
@@ -660,41 +750,6 @@
 
             for (let item of detalles) {
 
-                // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
-                // let cantidadStock = 0, action = 0, cantidadTransaccion = 0;
-
-                // if (!fromAprobacion) {
-                //     let dataValidationStock = service.getCantidadStock(item);
-
-                //     cantidadStock = dataValidationStock.cantidadStock;
-                //     action = dataValidationStock.action;
-
-                //cantidadTransaccion = item.cantidad * item.conversion;
-
-                //     if (action === 0) {
-                //         // Comprobar si el elemento tiene un 'idFacturaDetalle' positivo y está en estado 'activo'
-                //         if (item.idFacturaDetalle > 0 && item.estado) {
-                //             //cantidadAnulada = cantidadTransaccion;
-                //             // Verificar si 'cantidad' es igual a 'cantidadOriginal'
-                //             if (item.cantidad === item.cantidadOriginal) {
-                //                 cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
-
-                //             } else {
-                //                 // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
-                //                 if (item.cantidad > item.cantidadOriginal) {
-                //                     cantidadStock = item.cantidadOriginal - item.cantidad;
-                //                 } else {
-                //                     cantidadStock = item.cantidadOriginal - item.cantidad;
-                //                 }
-                //             }
-                //         }
-                //         if (item.idFacturaDetalle > 0 && item.estado === 0) {
-                //             cantidadStock = Math.abs(cantidadStock)
-                //             //  cantidadAnulada = item.cantidad;
-                //         }
-                //     }
-                // }
-
                 tempDetails.push({
                     orderIndex: orderIndex++,
                     idFacturaDetalle: item.idFacturaDetalle || 0,
@@ -703,15 +758,14 @@
                     idBodega: item.idBodega,
                     idMedida: item.idMedida,
                     idTipoIva: item.idTipoIva,
-                    tarifa: item.tarifa,
-                    codigoPorcentaje: item.codigoPorcentaje,
+                    tarifa: item.tarifa, //✅
+                    codigoPorcentaje: item.codigoPorcentaje,//✅
                     ice: item.ice,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
                     precioSinSubsidio: item.precioSinSubsidio || 0,
                     precioCostoNeto: item.precioCostoNeto,
                     precioUnitario: item.precioUnitario,
-                    precioVenta: item.precioUnitario,
                     precioConIva: item.precioConIva,
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
@@ -723,7 +777,7 @@
                     precioCosto: item.precioCosto,
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
                     estado: item.estado,
-                    valorImpuesto: item.valorImpuesto
+                    valorImpuesto: item.valorImpuesto //✅
                 })
             }
             return tempDetails;
@@ -886,6 +940,46 @@
          * tipo 5: get data for formulario   
          * @returns 
          */
+
+        service.getDataForm = () => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload); 
+                    let tempEstabsAndPtosEmision = mainData[0];
+                    let tempBodegas = mainData[1]; 
+                    let decimal = mainData[2][0];
+                    let tarifasImpuesto = mainData[3];
+                    let tarifas = mainData[4];
+                    let config = mainData[5][0];
+                    let vendedores = mainData[6];
+
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                        bodegas: tempBodegas, // Establecimientos con bodegas
+                        isGroupBodega: true
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup); 
+                    // Obtiene el permiso de venta a partir de los datos del rol del usuario
+                    let { permisoVenta } = fS.getDataUserRol(); 
+                  
+                    return {
+                        estabs, 
+                        decimal,
+                        tarifasImpuesto,
+                        tarifas,
+                        config,
+                        vendedores,
+                        permisoVenta
+                    }
+
+                }
+            })
+        }
+
         service.get = (params) => {
             return mS.getData('get', URL + '?json=' + JSON.stringify(params), null, true).then(response => {
                 if (response.code === "0") {
@@ -915,39 +1009,7 @@
                             estabs,
                             estadosDoc
                         }
-                    }
-
-                    if (params.tipo === 2) {
-                        let tempEstabsAndPtosEmision = mainData[0];
-                        let tempBodegas = mainData[1];
-                        let tarifaImpuestoVigente = mainData[2][0];
-                        let decimal = mainData[3][0];
-                        let tarifasImpuesto = mainData[4];
-                        let tarifas = mainData[5];
-                        let config = mainData[6][0];
-                        let vendedores = mainData[7];
-                        let tempEstabs = groupEstab(tempEstabsAndPtosEmision);
-
-                        let estabs = tempEstabs.map(estab => ({
-                            ...estab,
-                            bodegas: tempBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
-                                .map(bodega => ({
-                                    idBodega: bodega.idBodega,
-                                    bodega: bodega.bodega,
-                                    descripcion: bodega.bodega,
-                                    defaultBodega: bodega.defaultBodega,
-                                }))
-                        }))
-                        return {
-                            estabs,
-                            tarifaImpuestoVigente,
-                            decimal,
-                            tarifasImpuesto,
-                            tarifas,
-                            config,
-                            vendedores
-                        }
-                    }
+                    } 
                 }
             })
         }
@@ -1074,7 +1136,7 @@
                             cantidad: itemPrincipal.cantidad,
                             cantidadOriginal: itemPrincipal.cantidad,
                             codigo: itemPrincipal.codigo,
-                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,//✅
                             descripcion: itemPrincipal.descripcion,
                             ice: itemPrincipal.ice,
                             idArticulo: itemPrincipal.idArticulo,
@@ -1089,9 +1151,10 @@
                             precioConIva: itemPrincipal.precioConIva,
                             precioCosto: itemPrincipal.precioCosto,
                             precioUnitario: itemPrincipal.precioUnitario,
-                            tarifa: itemPrincipal.tarifa,
+                            tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
-                            valorImpuesto: itemPrincipal.valorImpuesto,
+                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
+                            precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
                             medidas,
                             conversion: dataMedida.conversion,
                             articuloTarifas: dataMedida.tarifas,
@@ -1158,8 +1221,7 @@
                 totalDescuento: data.totalDescuento,
                 porcentajeDescuento: data.porcentajeDescuento,
                 irbpnr: data.irbpnr,
-                propina: data.propina,
-                iva: data.iva,
+                propina: data.propina, 
                 recargo: data.recargo,
                 transporte: data.transporte,
                 total: data.total,
@@ -1182,8 +1244,11 @@
                     ice: orderItem.ice,
                     cantidad: orderItem.cantidad,
                     precioUnitario: orderItem.precioUnitario,
+                    codigoPorcentaje: orderItem.codigoPorcentaje,
+                    tarifa: orderItem.tarifa,
                     precioConIva: orderItem.precioConIva,
                     valorDescuento: orderItem.valorDescuento,
+                    precioTotalSinImpuesto: orderItem.precioTotalSinImpuesto,
                     porcentajeDescuento: orderItem.porcentajeDescuento,
                     total: orderItem.total,
                     nota: orderItem.nota,

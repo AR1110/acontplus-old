@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Identity.Core.Entities
+namespace Identity.API.Entities
 {
     [Table("LoginHistory", Schema = "Seguridad")]
     public class LoginHistory

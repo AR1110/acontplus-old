@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
 using TechnicalSupport.API.Data;
-using TechnicalSupport.Infrastructure.Data;
 
 namespace TechnicalSupport.API.Controllers
 {

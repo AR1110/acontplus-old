@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Mechanical.Infrastructure.Data.Migrations
+namespace Mechanical.API.Data.Migrations
 {
     [DbContext(typeof(MechanicalContext))]
     [Migration("20231010220035_Initial_Migration")]
