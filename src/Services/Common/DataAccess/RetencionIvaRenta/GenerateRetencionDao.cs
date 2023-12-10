@@ -1,9 +1,8 @@
 ﻿using System.Data;
 using Common.Core.Models;
-using Domain.Models;
-using Domain.Models.Ventas;
-using Domain.ViewModels;
-using Domain.ViewModels.Ventas;
+using Common.Core.Models.Ventas;
+using Common.Core.ViewModels;
+using Common.Core.ViewModels.Ventas;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using Common.Core.Models;
-using Domain.Models.Almacen;
+using Common.Core.Models.Almacen;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;

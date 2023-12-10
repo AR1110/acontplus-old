@@ -8,6 +8,6 @@
 	  <PackageReference Include="Microsoft.Data.SqlClient" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Domain\Domain.csproj" />
+	  <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
 	</ItemGroup>
 </Project>

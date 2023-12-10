@@ -1,6 +1,6 @@
 ﻿using Common.Core.Models;
+using Common.Core.Models.Administracion;
 using DataAccess.GestionFinanciera;
-using Domain.Models.Administracion;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Financiero

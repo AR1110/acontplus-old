@@ -3,7 +3,6 @@ using System.Text;
 using Common.Core.Enums;
 using Common.Core.Models;
 using DataAccess;
-using Domain.Models;
 using FactElect.Application;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;

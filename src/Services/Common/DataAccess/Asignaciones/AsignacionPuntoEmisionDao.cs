@@ -1,7 +1,8 @@
 ﻿using System.Data;
 using Common.Core.Models;
+using Common.Core.Models.Administracion;
 using Common.Core.Utils;
-using Domain.Models.Administracion;
+
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

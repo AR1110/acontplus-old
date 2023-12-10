@@ -1,6 +1,5 @@
 ﻿using Common.Core.Models;
 using DataAccess;
-using DataAccess.Ventas;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
+using Common.Core.Models.Administracion;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Models.Administracion;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 

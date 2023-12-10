@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using Common.Core.Models;
+using Common.Core.Models.Ventas;
 using Common.Core.Utils;
-using Domain.Models.Ventas;
-using Domain.ViewModels.Ventas;
+using Common.Core.ViewModels.Ventas;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;

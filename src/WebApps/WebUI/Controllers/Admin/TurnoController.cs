@@ -1,6 +1,5 @@
 ﻿using Common.Core.Models;
 using DataAccess;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin

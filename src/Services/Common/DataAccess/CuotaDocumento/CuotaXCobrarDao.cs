@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Common.Core.Models;
-using Domain.Models.CuotaDocumento;
-using Domain.ViewModels.CuotaDocumento;
+using Common.Core.Models.CuotaDocumento;
+using Common.Core.ViewModels.CuotaDocumento;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;

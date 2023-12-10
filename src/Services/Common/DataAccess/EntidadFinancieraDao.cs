@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using Common.Core.Models;
-using Domain.Models;
-using Domain.ViewModels;
+using Common.Core.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

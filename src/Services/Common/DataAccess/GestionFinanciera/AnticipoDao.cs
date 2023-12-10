@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Common.Core.Models;
+using Common.Core.Models.GestionFinanciera;
 using Common.Core.Utils;
-using Domain.Models.GestionFinanciera;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

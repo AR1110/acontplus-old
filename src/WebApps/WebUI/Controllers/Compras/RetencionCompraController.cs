@@ -1,8 +1,8 @@
 ﻿using Common.Core.Models;
+using Common.Core.ViewModels;
 using DataAccess;
 using DataAccess.Compras;
 using DataAccess.RetencionIvaRenta;
-using Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;

@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Common.Core.Models;
-using Domain.Models.GestionTributaria;
-using Domain.ViewModels.GestionTributaria;
+using Common.Core.Models.GestionTributaria;
+using Common.Core.ViewModels.GestionTributaria;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

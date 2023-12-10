@@ -2,7 +2,6 @@
 using Common.Core.Utils;
 using DataAccess;
 using DataAccess.Compras;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 

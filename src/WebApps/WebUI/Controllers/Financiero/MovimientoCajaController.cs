@@ -1,8 +1,8 @@
 ﻿using Common.Core.Models;
+using Common.Core.Models.GestionFinanciera;
 using Common.Core.Utils;
 using DataAccess;
 using DataAccess.GestionFinanciera;
-using Domain.Models.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

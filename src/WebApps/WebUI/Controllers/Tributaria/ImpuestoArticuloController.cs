@@ -1,6 +1,6 @@
 ﻿using Common.Core.Models;
+using Common.Core.Models.GestionTributaria;
 using DataAccess.GestionTributaria;
-using Domain.Models.GestionTributaria;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Tributaria

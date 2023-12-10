@@ -1,8 +1,8 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
+using Common.Core.Models.Almacen;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Models.Almacen;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using Common.Core.Models;
-using Domain.Models.Generic;
+using Common.Core.Models.Generic;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

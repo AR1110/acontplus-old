@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Common.Core.Models;
-using Domain.Models.Almacen;
-using Domain.ViewModels.Almacen;
+using Common.Core.Models.Almacen;
+using Common.Core.ViewModels.Almacen;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

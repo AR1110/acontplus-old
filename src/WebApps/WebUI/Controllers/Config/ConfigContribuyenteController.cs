@@ -1,5 +1,5 @@
-﻿using DataAccess.GestionTributaria;
-using Domain.ViewModels.GestionTributaria;
+﻿using Common.Core.ViewModels.GestionTributaria;
+using DataAccess.GestionTributaria;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Config

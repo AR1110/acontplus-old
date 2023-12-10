@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Common.Core.Models;
-using Domain.Models.Compras;
-using Domain.ViewModels.Compras;
+using Common.Core.Models.Compras;
+using Common.Core.ViewModels.Compras;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
