@@ -89,7 +89,7 @@ namespace Common.Reports.Services
             using (LocalReport lr = new LocalReport())
             {
                 var rdlcProps = DataTableMapper.BindData<RdlcProps>(ds.Tables["RdlcProps"]);
-                string path = Path.Combine(Directory.GetCurrentDirectory(), rdlcProps.ReportPath);
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "Reports", rdlcProps.ReportPath);
                 lr.ReportPath = path;
 
                 foreach (DataRow item in ds.Tables["RdlcDataSources"].Rows)
