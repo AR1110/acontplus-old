@@ -1,10 +1,9 @@
 ﻿using System.Data;
 using System.Text;
-using Common.Core.Interfaces;
-using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.Reporting.NETCore;
 using Reports.API.Enums;
+using Reports.API.Interfaces;
 using Reports.API.Models;
 
 namespace Reports.API.Services

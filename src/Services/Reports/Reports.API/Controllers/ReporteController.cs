@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Text;
 using System.Web;
-using Common.Core.Interfaces;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;

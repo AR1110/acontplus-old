@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using Common.Core.Models;
+using Reports.API.Models;
 
-namespace Common.Core.Interfaces
+namespace Reports.API.Interfaces
 {
     public interface IRdlcReportService
     {

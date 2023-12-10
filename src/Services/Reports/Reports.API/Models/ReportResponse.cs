@@ -1,4 +1,4 @@
-﻿namespace Common.Core.Models
+﻿namespace Reports.API.Models
 {
     public class ReportResponse
     {
