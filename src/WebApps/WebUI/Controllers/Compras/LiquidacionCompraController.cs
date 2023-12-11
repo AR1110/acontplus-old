@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.ViewModels.Compras;
+using Common.Core.ViewModels.Compras;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;

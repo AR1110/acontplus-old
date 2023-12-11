@@ -1,6 +1,5 @@
 ﻿using Common.Application.Services;
 using Common.Core.Interfaces;
-using Common.Reports.Services;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Application.Services;
 using Restaurant.Core.Interfaces;
@@ -14,9 +13,6 @@ namespace Restaurant.API.Extensions
         {
             services.AddDbContextPool<RestaurantContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-            //
-            services.AddScoped<IRdlcReportService, RdlcReportService>();
             services.AddScoped<IRecipe, RecipeService>();
             services.AddScoped<IAppTableService, AppTableService>();
             services.AddScoped<IMenuService, MenuService>();

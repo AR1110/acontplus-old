@@ -1,9 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.ViewModels.Ventas;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
 
@@ -54,7 +52,7 @@ namespace Ventas.API.Controllers
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Proforma_Insert", true); 
+                await _db.SPExecute("Ventas.Proforma_Insert", true);
                 _db.AddDynamicParam("userRoleId", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();

@@ -1,5 +1,5 @@
-﻿using DataAccess.GestionFinanciera;
-using Domain.Models.Tesoreria;
+﻿using Common.Core.Models.Tesoreria;
+using Common.Infrastructure.Repository.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Financiero

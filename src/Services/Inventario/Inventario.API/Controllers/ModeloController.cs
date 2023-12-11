@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
+using Common.Core.Models.Almacen;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.Models.Almacen;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

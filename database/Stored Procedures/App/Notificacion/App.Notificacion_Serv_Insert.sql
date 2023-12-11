@@ -116,7 +116,7 @@ BEGIN
 			BEGIN 
 				IF @id IS NULL
 					BEGIN	
-						SELECT '0'code, 'Id No Valido' as 'message', 'Reenvío por Correo' as titleSms	
+						SELECT Common.ufnSpResponse('0', 'Id No Valido', DEFAULT)
 						RETURN
 					END 
 
@@ -146,7 +146,7 @@ BEGIN
 				BEGIN
 					IF @id IS NULL
 					BEGIN	
-						SELECT '0'code, 'Id No Valido' as 'message', 'Reenvío por Correo' as titleSms	
+						SELECT Common.ufnSpResponse('0', 'Id No Valido', DEFAULT)
 						RETURN
 					END 
 
@@ -219,22 +219,16 @@ BEGIN
 			--return
 			INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
             VALUES(@params, @emailData, REPLACE(@receptor,';',','), 'NE', @idUsuario)
-			SELECT '1'code, 'Reenviado el Correo Correctamente' as 'message', 'Reenvío por Correo' as titleSms		
+			SELECT Common.ufnSpResponse('1', 'Reenviado el Correo Correctamente', DEFAULT)
 		
 		COMMIT TRAN 
 	END TRY
 
 	BEGIN CATCH 
-		SELECT '0'code,'Info: Error en el procedimiento de Reenvío por Correo ' + ERROR_MESSAGE() as 'message', 'Reenvío por Correo' as titleSms
+		SELECT Common.ufnSpResponse('0','Info: Error en el procedimiento de Reenvío por Correo ' + ERROR_MESSAGE(), DEFAULT)
 		IF @@TRANCOUNT > 0 
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-	END CATCH 
-
-	   
-
-
-
-
+	END CATCH
 END 

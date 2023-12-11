@@ -1,5 +1,5 @@
-﻿using DataAccess.Almacen;
-using Domain.Models.Almacen;
+﻿using Common.Core.Models.Almacen;
+using Common.Infrastructure.Repository.Almacen;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Almacen

@@ -105,7 +105,16 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
     const reportOrderPDF = async () => {
         try {
             setLoadingPDF(true)
-            SharedService.downloadReport(id)
+            const parameters = {
+                dataParams: JSON.stringify({
+                  id: id
+                }),
+                reportParams: JSON.stringify({
+                  codigo: "RRO",
+                  format: "pdf",
+                }),
+              };
+            SharedService.downloadDynamic(parameters)
                 .finally(() => setLoadingPDF(false));
         } catch (error) {
             setLoadingPDF(false)

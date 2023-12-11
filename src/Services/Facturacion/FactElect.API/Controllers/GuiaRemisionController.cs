@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.ViewModels.Logistica;
+using Common.Core.ViewModels.Logistica;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;

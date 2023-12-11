@@ -38,7 +38,7 @@ BEGIN
 	SET @tableNames = 'RdlcProps,RdlcDataSources,mainDataSet,behaviorTests,healthChecks,RdlcParams'
 
 	--RdlcProps
-	SELECT 'Reports\Vet\MedicalHistory.rdl' ReportPath, 'PDF' ReportFormat, 'Historial Clinico' ReportName
+	SELECT 'Vet\MedicalHistory.rdl' ReportPath, 'PDF' ReportFormat, 'Historial Clinico' ReportName
 
 	--RdlcDataSources
 	SELECT * FROM @dataSources

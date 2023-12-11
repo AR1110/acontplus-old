@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
+using Common.Core.Models.Inventario;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.Models.Inventario;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

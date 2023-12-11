@@ -1360,9 +1360,25 @@
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "https", 
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Compra{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7248
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/Common{everything}"
     }
   ]
 }

@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.Dtos.Contabilidad;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 
@@ -48,7 +47,7 @@ namespace WebUI.Controllers.Financiero
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CobroPagoDto data)
+        public async Task<IActionResult> Post([FromBody] CobroPago data)
         {
             var response = new GenericResponse();
             try
