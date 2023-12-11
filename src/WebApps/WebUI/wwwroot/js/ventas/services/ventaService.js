@@ -443,12 +443,12 @@
                 fechaEmision: data.fechaEmision,
                 fechaVencimiento: data.fechaVencimiento,
                 subTotalSinImpuestos: data.subTotalSinImpuestos,
-                totalDescuento: data.totalDescuento,
-                porcentajeDescuento: data.porcentajeDescuento,
-                irbpnr: data.irbpnr,
-                propina: data.propina,
-                recargo: data.recargo,
-                transporte: data.transporte,
+                totalDescuento: data.totalDescuento || 0,
+                porcentajeDescuento: data.porcentajeDescuento || 0,
+                irbpnr: data.irbpnr || 0,
+                propina: data.propina || 0,
+                recargo: data.recargo || 0,
+                transporte: data.transporte || 0,
                 total: data.total,
                 observacion: data.observacion,
                 placa: data.placa,
@@ -715,7 +715,8 @@
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
-                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || []
+                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            datosAdicionales: restItem.datosAdicionales
                         }
 
                         return obj;
@@ -1098,34 +1099,35 @@
 
                         let obj = {
                             n: index + 1,
-                            idProformaDetalle: itemPrincipal.idProformaDetalle,
-                            cantidad: itemPrincipal.cantidad,
-                            cantidadOriginal: itemPrincipal.cantidad,
-                            codigo: itemPrincipal.codigo,
-                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,//✅
-                            descripcion: itemPrincipal.descripcion,
-                            ice: itemPrincipal.ice || 0,
-                            idArticulo: itemPrincipal.idArticulo,
-                            idBodega: itemPrincipal.idBodega,
-                            idImpuesto: itemPrincipal.idImpuesto,
-                            idMedida: itemPrincipal.idMedida,
-                            idTarifa: itemPrincipal.idTarifa,
-                            idTipoIva: itemPrincipal.idTipoIva,
-                            llevaInventario: itemPrincipal.llevaInventario,
-                            nota: itemPrincipal.nota,
-                            porcentajeDescuento: itemPrincipal.porcentajeDescuento,
-                            precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
+                            idProformaDetalle: restItem.idProformaDetalle,
+                            cantidad: restItem.cantidad,
+                            cantidadOriginal: restItem.cantidad,
+                            codigo: restItem.codigo,
+                            codigoPorcentaje: restItem.codigoPorcentaje,//✅
+                            descripcion: restItem.descripcion,
+                            ice: restItem.ice || 0,
+                            idArticulo: restItem.idArticulo,
+                            idBodega: restItem.idBodega,
+                            idImpuesto: restItem.idImpuesto,
+                            idMedida: restItem.idMedida,
+                            idTarifa: restItem.idTarifa,
+                            idTipoIva: restItem.idTipoIva,
+                            llevaInventario: restItem.llevaInventario,
+                            nota: restItem.nota,
+                            porcentajeDescuento: restItem.porcentajeDescuento,
+                            precioSinSubsidio: restItem.precioSinSubsidio || 0,
                             precioCosto: 0,
-                            precioUnitario: itemPrincipal.precioUnitario,
-                            tarifa: itemPrincipal.tarifa,//✅
-                            valorDescuento: itemPrincipal.valorDescuento,
-                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
+                            precioUnitario: restItem.precioUnitario,
+                            tarifa: restItem.tarifa,//✅
+                            valorDescuento: restItem.valorDescuento,
+                            valorImpuesto: restItem.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha: [],
                             estado: 1,
-                            datosAdicionalesArticulo: []
+                            datosAdicionalesArticulo: [],
+                            datosAdicionales: restItem.datosAdicionales
                         }
 
                         return obj;
@@ -1301,18 +1303,19 @@
 
         service.infoComprobanteMapperTo = function (data) {
             const result = {
+                uniqueId: data.uniqueId, //se envia cuando el documento proviebe desde el modulo de aprobacion
                 idCliente: data.idCliente,
                 idPuntoEmision: data.idPuntoEmision,
                 idUsuario: data.idUsuario,
                 tarifa: data.tarifa,
                 fechaEmision: data.fechaEmision,
                 subTotalSinImpuestos: data.subTotalSinImpuestos,
-                totalDescuento: data.totalDescuento,
-                porcentajeDescuento: data.porcentajeDescuento,
-                irbpnr: data.irbpnr,
-                propina: data.propina,
-                recargo: data.recargo,
-                transporte: data.transporte,
+                totalDescuento: data.totalDescuento || 0,
+                porcentajeDescuento: data.porcentajeDescuento || 0,
+                irbpnr: data.irbpnr || 0,
+                propina: data.propina ||  0,
+                recargo: data.recargo || 0,
+                transporte: data.transporte || 0,
                 total: data.total,
                 observacion: data.observacion,
                 placa: data.placa,

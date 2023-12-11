@@ -338,7 +338,7 @@
                 fDs.sweetAlert('warning', 'No se ha proporcionado el codEstab')
                 throw ''
             }
-            query.tipo = 2; 
+            query.tipo = 2;
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
@@ -349,7 +349,7 @@
                     let facturasRepository = mainData[0];
                     let facturas = facturasRepository.map(item => {
                         return {
-                            idDocumento: item.idFactura,   
+                            idDocumento: item.idFactura,
                             serieComprobante: item.serieComprobante,
                         }
                     })
@@ -462,34 +462,35 @@
 
                         let obj = {
                             n: index + 1,
-                            idFacturaDetalle: itemPrincipal.idFacturaDetalle,
-                            cantidad: itemPrincipal.cantidad,
-                            cantidadOriginal: itemPrincipal.cantidad,
-                            codigo: itemPrincipal.codigo,
-                            codigoPorcentaje: itemPrincipal.codigoPorcentaje, //✅
-                            descripcion: itemPrincipal.descripcion,
-                            ice: itemPrincipal.ice || 0,
-                            idArticulo: itemPrincipal.idArticulo,
-                            idBodega: itemPrincipal.idBodega,
-                            idImpuesto: itemPrincipal.idImpuesto,
-                            idMedida: itemPrincipal.idMedida,
-                            idTarifa: itemPrincipal.idTarifa,
-                            idTipoIva: itemPrincipal.idTipoIva,
-                            llevaInventario: itemPrincipal.llevaInventario,
-                            nota: itemPrincipal.nota,
-                            porcentajeDescuento: itemPrincipal.porcentajeDescuento,
-                            precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
-                            precioCosto: itemPrincipal.precioCosto,
-                            precioUnitario: itemPrincipal.precioUnitario,
-                            tarifa: itemPrincipal.tarifa,//✅
-                            valorDescuento: itemPrincipal.valorDescuento,
-                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
+                            idFacturaDetalle: restItem.idFacturaDetalle,
+                            cantidad: restItem.cantidad,
+                            cantidadOriginal: restItem.cantidad,
+                            codigo: restItem.codigo,
+                            codigoPorcentaje: restItem.codigoPorcentaje, //✅
+                            descripcion: restItem.descripcion,
+                            ice: restItem.ice || 0,
+                            idArticulo: restItem.idArticulo,
+                            idBodega: restItem.idBodega,
+                            idImpuesto: restItem.idImpuesto,
+                            idMedida: restItem.idMedida,
+                            idTarifa: restItem.idTarifa,
+                            idTipoIva: restItem.idTipoIva,
+                            llevaInventario: restItem.llevaInventario,
+                            nota: restItem.nota,
+                            porcentajeDescuento: restItem.porcentajeDescuento,
+                            precioSinSubsidio: restItem.precioSinSubsidio || 0,
+                            precioCosto: restItem.precioCosto,
+                            precioUnitario: restItem.precioUnitario,
+                            tarifa: restItem.tarifa,//✅
+                            valorDescuento: restItem.valorDescuento,
+                            valorImpuesto: restItem.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
-                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || []
+                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            datosAdicionales: restItem.datosAdicionales
                         }
 
                         return obj;
@@ -713,6 +714,7 @@
 
         service.infoComprobanteMapperTo = function (data) {
             const result = {
+                uniqueId: data.uniqueId, //se envia cuando el documento proviebe desde el modulo de aprobacion
                 idCliente: data.idCliente,
                 idTiempoCredito: data.idTiempoCredito,
                 idPuntoEmision: data.idPuntoEmision,
@@ -720,12 +722,12 @@
                 fechaEmision: data.fechaEmision,
                 fechaVencimiento: data.fechaVencimiento,
                 subTotalSinImpuestos: data.subTotalSinImpuestos,
-                totalDescuento: data.totalDescuento,
-                porcentajeDescuento: data.porcentajeDescuento,
-                irbpnr: data.irbpnr,
-                propina: data.propina,
-                recargo: data.recargo,
-                transporte: data.transporte,
+                totalDescuento: data.totalDescuento || 0,
+                porcentajeDescuento: data.porcentajeDescuento || 0,
+                irbpnr: data.irbpnr || 0,
+                propina: data.propina || 0,
+                recargo: data.recargo || 0,
+                transporte: data.transporte || 0,
                 total: data.total,
                 observacion: data.observacion,
                 placa: data.placa,
@@ -783,117 +785,6 @@
             return tempDetails;
         }
 
-        /**
-        * 
-        * @param {*} rowEntity 
-        * @param {*} fechaEmision unicamente se envia desde el controlador de FacturaCtrl
-        * @returns 
-        */
-        service.getCantidadStock = function (rowEntity, fechaEmision) {
-            let fechaEmisionValidate = null;
-            let cantidadStock = 0;
-            let action = 0;
-            let fechaEmisionDocCreado = null;
-
-            if (fechaEmision) {
-                fechaEmisionValidate = fechaEmision;
-            } else {
-                fechaEmisionValidate = service.data.fechaEmision;
-            }
-
-            if (typeof service.data === 'object' && service.data.idFactura > 0) {
-                fechaEmisionDocCreado = service.data.fechaEmisionDocCreado;
-            }
-
-            if (!fechaEmisionValidate) {
-                console.warn('Para validacion del cantidad stock la fecha emision del comprobante es nula')
-            }
-
-            let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
-                cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
-            )
-
-            if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (rowEntity.idFacturaDetalle > 0 && rowEntity.estado && fechaEmisionDocCreado.getTime() !== fechaEmisionValidate.getTime()) {
-
-                    //si fecha documento creado es anterior a fecha consolidacion articulo
-                    if (fechaEmisionDocCreado >= dataConsolidacionFecha.fechaConsolidacion) {
-                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
-                        if (fechaEmisionValidate <= dataConsolidacionFecha.fechaConsolidacion) {
-                            return {
-                                cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                                action: 2
-                            }
-                        } else if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
-                            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-
-                            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-                            return {
-                                cantidadStock: resultCantStock,
-                                action: 2
-                            };
-                        }
-                    }
-
-                    //si fecha documento creado es anterior a fecha consolidacion articulo
-                    if (fechaEmisionDocCreado <= dataConsolidacionFecha.fechaConsolidacion) {
-                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
-                        if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
-                            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-
-                            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-
-                            return {
-                                cantidadStock: resultCantStock,
-                                action: 2
-                            };
-                        }
-                    }
-
-                    // if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
-                    //     fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
-                    // ) {
-                    //     return {
-                    //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                    //         action: 2
-                    //     }
-
-                    // }
-                }
-
-
-
-                // if (
-                //     rowEntity.idNotaEntregaDetalle > 0 &&
-                //     fechaEmisionDocCreado !== fechaEmisionValidate &&
-                //     rowEntity.estado &&
-                //     dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate
-                // ) {
-                //     return {
-                //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                //         action: 2
-                //     }
-                // }
-
-                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
-                    cantidadStock = 0;
-                    action = 1;
-                    return {
-                        cantidadStock,
-                        action
-                    };
-                }
-            }
-
-            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-
-            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-
-            return {
-                cantidadStock: resultCantStock,
-                action
-            };
-        }
 
         return service;
 
@@ -948,9 +839,9 @@
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload); 
+                    let mainData = JSON.parse(response.payload);
                     let tempEstabsAndPtosEmision = mainData[0];
-                    let tempBodegas = mainData[1]; 
+                    let tempBodegas = mainData[1];
                     let decimal = mainData[2][0];
                     let tarifasImpuesto = mainData[3];
                     let tarifas = mainData[4];
@@ -962,12 +853,12 @@
                         bodegas: tempBodegas, // Establecimientos con bodegas
                         isGroupBodega: true
                     }
-                    let estabs = fS.groupingEstab(dataToGroup); 
+                    let estabs = fS.groupingEstab(dataToGroup);
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
-                    let { permisoVenta } = fS.getDataUserRol(); 
-                  
+                    let { permisoVenta } = fS.getDataUserRol();
+
                     return {
-                        estabs, 
+                        estabs,
                         decimal,
                         tarifasImpuesto,
                         tarifas,
@@ -1009,7 +900,7 @@
                             estabs,
                             estadosDoc
                         }
-                    } 
+                    }
                 }
             })
         }
@@ -1159,7 +1050,8 @@
                             conversion: dataMedida.conversion,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
-                            estado: 1
+                            estado: 1,
+                            datosAdicionales: restItem.datosAdicionales
                         }
 
                         return obj;
@@ -1220,10 +1112,10 @@
                 subTotalSinImpuestos: data.subTotalSinImpuestos,
                 totalDescuento: data.totalDescuento,
                 porcentajeDescuento: data.porcentajeDescuento,
-                irbpnr: data.irbpnr,
-                propina: data.propina, 
-                recargo: data.recargo,
-                transporte: data.transporte,
+                irbpnr: data.irbpnr || 0,
+                propina: data.propina || 0,
+                recargo: data.recargo || 0,
+                transporte: data.transporte || 0,
                 total: data.total,
                 observacion: data.observacion
             };
