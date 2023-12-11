@@ -21,32 +21,10 @@
                     let mainData = JSON.parse(response.payload);
 
                     let tempEstabsAndPtosEmision = mainData[0];
-                    const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                puntosEmision: [{
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                }]
-                            });
-                        } else {
-                            existingItem.puntosEmision.push({
-                                idPuntoEmision: item.idPuntoEmision,
-                                ptoEmi: item.ptoEmi,
-                                defaultPtoEmi: item.defaultPtoEmi
-                            });
-                        }
-                        return acc;
-                    }, []);
-
-
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision 
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
                     return {
                         estabs,
                     }
@@ -74,50 +52,17 @@
 
                     let tempEstabsAndPtosEmision = mainData[4];
                     let tempBodegas = mainData[5];
-                    let tarifaImpuestoVigente = mainData[6][0];
                     let { permisoVenta } = fS.getDataUserRol();
 
-                    const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                puntosEmision: [{
-                                    codEstab: item.codEstab,
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                }]
-                            });
-                        } else {
-                            existingItem.puntosEmision.push({
-                                codEstab: item.codEstab,
-                                idPuntoEmision: item.idPuntoEmision,
-                                ptoEmi: item.ptoEmi,
-                                defaultPtoEmi: item.defaultPtoEmi
-                            });
-                        }
-                        return acc;
-                    }, []);
-
-                    let estabs = tempEstabs.map(estab => ({
-                        ...estab,
-                        bodegas: tempBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
-                            .map(bodega => ({
-                                idBodega: bodega.idBodega,
-                                bodega: bodega.bodega,
-                                descripcion: bodega.bodega,
-                                defaultBodega: bodega.defaultBodega,
-                            }))
-                    }))
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                        bodegas: tempBodegas, // Establecimientos con bodegas
+                        isGroupBodega: true
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
 
                     return {
                         estabs,
-                        tarifaImpuestoVigente,
                         tarifasImpuesto,
                         tiemposCredito,
                         tarifas,
@@ -198,10 +143,7 @@
                         docDestino: compRepository.codDoc,
                         docOrigen: compRepository.docOrigen,
                         observacion: compRepository.observacion,
-                        codigoPorcentaje: compRepository.codigoPorcentaje,
-                        totalSinImpuestos: compRepository.totalSinImpuestos,
                         totalDescuento: compRepository.totalDescuento,
-                        totalConImpuestos: compRepository.totalConImpuestos,
                         propina: compRepository.propina,
                         importeTotal: compRepository.importeTotal,
                         total: compRepository.importeTotal,
@@ -218,96 +160,19 @@
                         direccion: clienteRepository.direccion
                     }
 
-                    let items = detalleRepository.map(itemPrincipal => {
+                    let items = detalleRepository.map((itemPrincipal, index) => {
 
                         const { fraccionado, principal, consolidacion, fechaEmision, ...restItem } = itemPrincipal;
 
-                        // Medidas del artículo fraccionado del principal
-                        let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
-
-                        // Medida principal con las tarifas
-                        let medidasPrincipalTemp = JSON.parse(principal) || [];
-
-                        let consolidacionesFecha = JSON.parse(consolidacion) || [];
-
-                        const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
-                            ...medidaPrincipal,
-                            tipo: 'PRINCIPAL'
-                        }))
-                        const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado => ({
-                            ...medidaFraccionado,
-                            tipo: 'FRACCIONADO'
-                        }))
-
-                        /**
-                         * Combinar los dos arrays de medidas en uno solo
-                         *
-                         * Parámetros:
-                         *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
-                         */
-
-                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
-
-                        /**
-                         * Ordenar el array de medidas en función de la propiedad "orden" y
-                         * establecer la propiedad "defaultMedida" en falso para todos los elementos
-                         *
-                         * Parámetros:
-                         *  - orderMedidaArray: El array de medidas ordenado
-                         */
-                        let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
-                            ...medida,
-                            defaultMedida: false
-                        }));
-
-                        // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
-                        orderMedidaArray[0].defaultMedida = true;
-
-                        restItem.consolidacionesFecha = consolidacionesFecha.map((data) => ({
+                        let consolidacionesFechaTemp = consolidacion && JSON.parse(consolidacion) || [];
+                        let consolidacionesFecha = consolidacionesFechaTemp.map((data) => ({
                             ...data,
                             fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
-                        }));
-
-                        /**
-                         * Obtener los datos de la medida
-                         *
-                         * Parámetros:
-                         *  - orderMedidaArray: El array de medidas ordenado
-                         *  - restItem: El artículo
-                         *
-                         * Devuelve:
-                         *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
-                         */
-                        let dataMedida = orderMedidaArray.find(m => m.idMedida === restItem.idMedida) || {};
-
-                        let medidas = orderMedidaArray.map(item => ({
-                            idMedida: item.idMedida,
-                            conversion: item.conversion,
-                            descripcion: item.descripcion,
-                            defaultMedida: item.defaultMedida,
-                            tipo: item.tipo,
-                            tarifas: item.tarifas
                         }))
-                        // Asignar los datos de la medida al artículo
-                        restItem.medidas = medidas;
-                        restItem.conversion = dataMedida.conversion;
-                        // Asignar los datos de las tarifas obtenidos de data medida 
-                        restItem.articuloTarifas = dataMedida.tarifas || [];
 
-                        let precioConIva = ((restItem.precioUnitario * (restItem.tarifa / 100)) + restItem.precioUnitario);
-                        let porcentajeDescuento = restItem.precioUnitario === 0 ? 0 : (restItem.descuento / restItem.precioUnitario) * 100;
-                        restItem.precioConIva = fS.roundNumber(precioConIva, 3);
-                        restItem.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, 3)
-                        restItem.precioTotalSinImpuesto = (restItem.precioUnitario - restItem.descuento) * restItem.cantidad
-                        restItem.valorDescuento = restItem.descuento;
-                        let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
-                        let totalDescuento = restItem.cantidad * restItem.descuento || 0;
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
-                        restItem.subTotal = subTotal || 0;
-                        restItem.total = restItem.precioTotalSinImpuesto;
-                        restItem.totalDescuento = totalDescuento || 0;
-                        restItem.cantidadOriginal = restItem.cantidad;
-                        restItem.ice = 0;
+                        let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
                         if ('infoDatosAdicionales' in itemPrincipal) {
                             let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
@@ -321,8 +186,42 @@
                             }))
                         }
 
-                        restItem.fechaEmision = fechaEmision && fS.formatDate(fechaEmision) || null
-                        return restItem;
+                        let obj = {
+                            n: index + 1,
+                            idAprob_Document_Detailt: restItem.idAprob_Document_Detailt,
+                            cantidad: restItem.cantidad,
+                            cantidadOriginal: restItem.cantidad,
+                            codigo: restItem.codigo,
+                            codigoPorcentaje: restItem.codigoPorcentaje,//✅
+                            descripcion: restItem.descripcion,
+                            ice: restItem.ice || 0,
+                            idArticulo: restItem.idArticulo,
+                            idBodega: restItem.idBodega,
+                            idImpuesto: restItem.idImpuesto,
+                            idMedida: restItem.idMedida,
+                            idTarifa: restItem.idTarifa,
+                            idTipoIva: restItem.idTipoIva,
+                            llevaInventario: restItem.llevaInventario,
+                            nota: restItem.nota,
+                            porcentajeDescuento: restItem.porcentajeDescuento || 0,
+                            precioSinSubsidio: restItem.precioSinSubsidio || 0,
+                            precioCosto: restItem.precioCosto,
+                            precioUnitario: restItem.precioUnitario,
+                            tarifa: restItem.tarifa,//✅
+                            valorDescuento: restItem.descuento,
+                            valorImpuesto: restItem.valorImpuesto,//✅
+                            precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            articuloTarifas: dataMedida.tarifas,
+                            consolidacionesFecha,
+                            estado: 1,
+                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            fechaEmision: fechaEmision && fS.formatDate(fechaEmision) || null,
+                            datosAdicionales: restItem.datosAdicionales
+                        }
+
+                        return obj;
                     });
 
                     return {
@@ -352,15 +251,14 @@
 
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true)
+            return mS.getData('post', url + 'Insert', { data }, true)
                 .then(response => {
                     return response;
                 })
         }
 
-
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true)
+            return mS.getData('put', url + 'Update/' + id, { data }, true)
                 .then(response => {
                     return response;
                 })
@@ -390,6 +288,7 @@
                     let cliente = mainDataApi[1][0];
                     let itemsTemp = mainDataApi[2];
                     let historialRepository = mainDataApi[3];
+                    let tarifasImpuesto = mainDataApi[4];
                     let { nombreComercial, fechaEmision, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -400,32 +299,66 @@
                     return {
                         comprobante: data,
                         cliente,
-                        items: itemsTemp.map((item) => {
-                            let subTotal = item.cantidad * item.precioUnitario || 0;
-                            let precioTotalSinImpuesto = (item.precioUnitario - item.descuento) * item.cantidad;
-                            return {
-                                ...item,
-                                precioConIva: item.precioConIva || 0,
-                                ice: 0,
-                                valorDescuento: item.descuento || 0,
-
-                                subTotal: fS.roundNumber(subTotal, 3),
-                                total: precioTotalSinImpuesto,
-                            }
-                        }),
-                        historial: historialRepository || []
+                        items: itemsTemp,
+                        historial: historialRepository || [],
+                        tarifasImpuesto
                     }
 
                 }
             })
         }
 
-        service.detalleMapperTo = function (detalles, decimal) {
+        service.queryMapper = function (obj) {
+
+            let { comprobante, detalles, detallesDeleted, selectedDocshistorial, infoAdicionalDocumento, datosAdicionalesArticulo } = obj;
+
+
+            const itemsMainMapper = service.detalleMapperTo(detalles);
+            const itemsDeletedMapper = service.detalleMapperTo(detallesDeleted)
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+
+            const mergeItems = [
+                ...itemsMainMapper,
+                ...itemsDeletedMapper
+            ]
+
+
+            return {
+                comprobante: service.infoComprobanteMapperTo(comprobante),
+                detalles: mergeItems,
+                impuestos,
+                historial: selectedDocshistorial,
+                infoAdicional: infoAdicionalDocumento,
+                infoAdicionalArticulo: datosAdicionalesArticulo
+            }
+
+
+        }
+
+
+        service.infoComprobanteMapperTo = function (data) {
+            const result = {
+                idCliente: data.idCliente,
+                idTiempoCredito: data.idTiempoCredito,
+                idPuntoEmision: data.idPuntoEmision,
+                fechaEmision: data.fechaEmision,
+                codDoc: data.codDoc,
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                totalDescuento: data.totalDescuento,
+                total: data.total,
+                importeTotal: data.total,
+                propina: data.propina,
+                docOrigen: data.docOrigen,
+                docDestino: data.docDestino,
+                observacion: data.observacion,
+            }
+            return result;
+        }
+
+        service.detalleMapperTo = function (detalles) {
             let tempDetail = [];
             let orderIndex = 1;
             for (let item of detalles) {
-
-                let precioTotalSinImpuesto = (item.precioUnitario - item.valorDescuento) * item.cantidad;
                 let obj = {
                     orderIndex: orderIndex++,
                     idAprob_Document_Detailt: item.idAprob_Document_Detailt || 0,
@@ -437,13 +370,13 @@
                     descripcion: item.descripcion,
                     precioUnitario: item.precioUnitario,
                     precioConIva: item.precioConIva,
-                    valorDescuento: item.valorDescuento,
                     descuento: item.valorDescuento,
-                    precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle),
-                    baseImponible: fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle),
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto,
                     nota: item.nota,
-                    codigoPorcentaje: item.codigoPorcentaje,
-                    tarifa: item.tarifa,
+                    codigoPorcentaje: item.codigoPorcentaje, //✅
+                    tarifa: item.tarifa,//✅
+                    valorImpuesto: item.valorImpuesto,//✅
+                    llevaInventario: item.llevaInventario,
                     idBodega: item.idBodega,
                     fechaEmision: fS.formatDateTimeZone(item.fechaEmision)
                 }
@@ -462,10 +395,8 @@
                 idArticulo: 0,
                 descripcion: "",
                 cantidad: 1,
-                nombreMedida: "",
                 codigoPorcentaje: "",
                 tarifa: 0,
-                nombreTipoIva: "",
                 articuloTarifas: [],
                 idTarifa: 0,
                 precioUnitario: 0,
@@ -475,13 +406,14 @@
                 totalDescuento: 0,
                 ice: 0,
                 idBodega: 0,
-                subTotal: 0,
                 total: 0,
                 nota: "S/N",
                 llevaInventario: false,
-                datosAdicionales: false
+                datosAdicionales: false,
+                estado: 1
             }
         }
+
 
 
         return service;

@@ -30,8 +30,8 @@
           <DataField>nombreComercial</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="dirMatriz">
-          <DataField>dirMatriz</DataField>
+        <Field Name="dirEstablecimiento">
+          <DataField>dirEstablecimiento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="contibuyenteEpecial">
@@ -82,12 +82,12 @@
           <DataField>razonSocialComprador</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="telefonoEstab">
-          <DataField>telefonoEstab</DataField>
+        <Field Name="telefonoEstablecimiento">
+          <DataField>telefonoEstablecimiento</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="emailEstab">
-          <DataField>emailEstab</DataField>
+        <Field Name="emailEstablecimiento">
+          <DataField>emailEstablecimiento</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="fechaEmision">
@@ -377,7 +377,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!dirMatriz.Value, "headerDs")</Value>
+                    <Value>=First(Fields!dirEstablecimiento.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -1250,7 +1250,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!telefonoEstab.Value, "headerDs")</Value>
+                    <Value>=First(Fields!telefonoEstablecimiento.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -1908,7 +1908,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!emailEstab.Value, "headerDs")</Value>
+                    <Value>=First(Fields!emailEstablecimiento.Value, "headerDs")</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
