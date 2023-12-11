@@ -46,19 +46,9 @@ BEGIN
     ,@estadoPagoId          INT 
     ,@tableId               INT
     ,@subtotalSinImpuestos  NUMERIC(18,5)
-    ,@subTotalIva DECIMAL(18,5)
-    ,@subTotalNetoIva DECIMAL(18,5)
-    ,@subTotalIvaCero DECIMAL(18,5)
-    ,@subTotalNetoIvaCero DECIMAL(18,5)
-    ,@subTotalNoObjetoIva DECIMAL(18,5)
-    ,@subTotalNetoNoObjetoIva DECIMAL(18,5)
-    ,@subTotalExentoIva DECIMAL(18,5)
-    ,@subTotalNetoExentoIva DECIMAL(18,5)
     ,@totalDescuento DECIMAL(18,5)
     ,@porcentajeDescuento DECIMAL(18,5)
-    ,@totalIce DECIMAL(18,5)
     ,@propina DECIMAL(18,5)
-    ,@iva DECIMAL(18,5)
     ,@recargo DECIMAL(18,5)
     ,@transporte DECIMAL(18,5)
     ,@itemsToPay NVARCHAR(MAX)
@@ -105,18 +95,18 @@ BEGIN
         , medidaId              INT NOT NULL
         , ice                   NUMERIC(18,5) NULL
         , cantidad              NUMERIC(18,5) NULL
-        , precioVenta           NUMERIC(18,5) NOT NULL
+        , precioUnitario        NUMERIC(18,5) NOT NULL
         , precioSinSubsidio     NUMERIC(18,5) NULL
-        , precioConIva          NUMERIC(18,5) NOT NULL
         , valorDescuento        NUMERIC(18,5) NOT NULL
         , porcentajeDescuento   NUMERIC(18,5) NULL
-        , total                 NUMERIC(18,5) NOT NULL
+        ,precioTotalSinImpuesto NUMERIC(18,5) NOT NULL
         , nota                  NVARCHAR(100) NULL
         , descripcion           NVARCHAR(200) NULL
         , precioCosto           NUMERIC(18,5) NOT NULL
-        , idTipoIva             INT NULL
-        , porcentajeIva         NUMERIC(18,5) NULL
-        , iva                   NUMERIC(18,5) NULL
+        , idTipoIva             INT NOT NULL
+        , codigoPorcentaje      VARCHAR(5) NOT NULL
+        , tarifa                NUMERIC(18,5) NOT NULL
+        , valorImpuesto         NUMERIC(18,5) NOT NULL
         , uuid                  UNIQUEIDENTIFIER NOT NULL
         , envioSri              BIT NOT NULL
     )
@@ -344,54 +334,16 @@ BEGIN
 
    SET @taxPercent = (SELECT porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK) INNER JOIN Restaurant.[Order] o WITH (NOLOCK) ON ti.idTarifaImpuesto = o.TaxPercentId WHERE o.Id = @orderId )
     
-    
-    SELECT @subtotalIva = SUM((oi.price) * oi.quantity), @subTotalNetoIva = SUM(((oi.price) - (oi.discount)) * oi.quantity) FROM @tblItems oi
-                                                                                    INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
-                                                                                    INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
-                                                                                    WHERE i.codigo = '2'
-                                                                                        AND ISNULL(oi.envioSri, 0) = 0
-                                                                                    
-
-    SELECT  @subTotalIvaCero = SUM(oi.price), @subTotalNetoIvaCero = SUM(((oi.price) - (oi.discount)) * oi.quantity) FROM @tblItems oi
-                                                INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
-                                                INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
-                                                WHERE i.codigo = '2'
-                                                AND t.codigo = '0'
-                                                AND ISNULL(oi.envioSri, 0) = 0 --- Se agrega para diferenciar y calcular los registros que tienen envioSri = 0 por detalle personalizado
-
-    SELECT @subTotalNoObjetoIva = SUM(oi.price), @subTotalNetoNoObjetoIva = SUM(((oi.price) - (oi.discount)) * oi.quantity) FROM @tblItems oi
-                                                INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
-                                                INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
-                                                WHERE i.codigo = '2'
-                                                AND t.codigo = '6'
-                                                AND ISNULL(oi.envioSri, 0) = 0 --- Se agrega para diferenciar y calcular los registros que tienen envioSri = 0 por detalle personalizado
-
-    SELECT  @subTotalExentoIva = SUM(oi.price), @subTotalNetoExentoIva =  SUM(((oi.price) - (oi.discount)) * oi.quantity) FROM @tblItems oi
-                                                INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
-                                                INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
-                                                WHERE  i.codigo = '2'
-                                                AND t.codigo = '7'
-                                                AND ISNULL(oi.envioSri, 0) = 0 --- Se agrega para diferenciar y calcular los registros que tienen envioSri = 0 por detalle personalizado
-
-    SET @totalIce =  (SELECT SUM(oi.price) FROM @tblItems oi
-                                                INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
-                                                INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
-                                                WHERE  i.codigo = '3'
-                                                AND ISNULL(oi.envioSri, 0) = 0 --- Se agrega para diferenciar y calcular los registros que tienen envioSri = 0 por detalle personalizado
-                                                )
-
-                  
     ---------- INSERT NEW ---------------
-    INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioVenta, precioSinSubsidio    
-                                    , precioConIva, valorDescuento, porcentajeDescuento, total, nota, descripcion, precioCosto
-                                    , idTipoIva, porcentajeIva, iva, uuid, envioSri)
+    INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    
+                                    , valorDescuento, porcentajeDescuento, precioTotalSinImpuesto, nota, descripcion, precioCosto
+                                    , idTipoIva,codigoPorcentaje,tarifa,valorImpuesto, uuid, envioSri)
 
-    SELECT idArticulo = (CASE WHEN i.idArticulo = 0 
-                                THEN CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) 
-                                        ELSE (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
-                                    END 
-                                ELSE i.idArticulo 
-                            END)
+    SELECT idArticulo = (CASE WHEN i.idArticulo = 0 THEN CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) 
+                                                                                    ELSE (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
+                                                          END 
+                                                    ELSE i.idArticulo 
+                         END)
         ,i.feeId
         ,bodegaId
         ,i.medidaId
@@ -399,36 +351,39 @@ BEGIN
         ,i.quantity
         ,i.price
         ,0
-        ,i.taxValue + i.price
         ,i.discount
         ,0
         ,i.total
         ,i.obs
         ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.descripcion FROM Restaurant.Menu m
-                                                                        INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-                                                                        WHERE m.id = i.MenuId) 
-                ELSE
-                    (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii  
-                                                INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo 
-                                                WHERE ii.id = i.ItemId)
-                END
+                                                                     INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                                                                     WHERE m.id = i.MenuId) 
+
+                                    ELSE (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii  
+                                                                     INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo 
+                                                                     WHERE ii.id = i.ItemId)
+         END
 
 
-            ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.precioCosto FROM Restaurant.Menu m
-                                                                        INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-                                                                        WHERE m.id = i.MenuId) 
-                ELSE
-                (SELECT TOP 1 a.precioCosto FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
-                END
+        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.precioCosto FROM Restaurant.Menu m
+                                                                          INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                                                                          WHERE m.id = i.MenuId) 
+
+                                    ELSE (SELECT TOP 1 a.precioCosto FROM Restaurant.Item ii  
+                                                                     INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo 
+                                                                     WHERE ii.id = i.ItemId)
+         END
 
         ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
-        ,0
+        ,(sti.codigo)
+        ,(SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
+
         ,(CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.porcentaje FROM Restaurant.Menu m
-                                                                        INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-                                                                        WHERE m.id = i.MenuId) 
-                ELSE
-                (SELECT TOP 1 a.porcentaje FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
-                END/100) * total
+                                                                     INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                                                                     WHERE m.id = i.MenuId) 
+
+                                     ELSE (SELECT TOP 1 a.porcentaje FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+          END/100) * total
         ,i.uuid
         ,CASE WHEN ISJSON(@customDetail) = 1 AND LEN(RTRIM(LTRIM(@customDetail))) > 0 THEN 0 ELSE 1 END
     FROM @tblItems i
@@ -482,9 +437,9 @@ BEGIN
                 ,medidaId       INT                 '$.medidaId'
             )
 
-        INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioVenta, precioSinSubsidio    
-            , precioConIva, valorDescuento, porcentajeDescuento, total, nota, descripcion, precioCosto, idTipoIva, porcentajeIva        
-            , iva, uuid, envioSri)
+        INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    
+            , valorDescuento, porcentajeDescuento, precioTotalSinImpuesto, nota, descripcion, precioCosto, idTipoIva, tarifa        
+            , valorImpuesto, uuid, envioSri)
 
         SELECT i.idArticulo 
             ,i.feeId
@@ -494,7 +449,6 @@ BEGIN
             ,i.quantity                 AS cantidad
             ,i.price                    AS precioVenta
             ,0                          AS precioSinSubsidio
-            ,i.taxValue + i.price       AS precioConIva
             ,i.discount                 AS valorDescuento
             ,0                          AS porcentajeDescuento
             ,i.total      
@@ -502,7 +456,7 @@ BEGIN
             ,i.description
             ,0                         AS precioCosto
             ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS VARCHAR(1)) = sti.codigo) AS idTipoIva
-            ,0                         AS porcentajeIva
+            ,sti.porcentaje
             ,i.taxValue                AS iva
             ,i.uuid
             ,i.envioSri
@@ -517,73 +471,57 @@ BEGIN
         BEGIN
              
             INSERT INTO NotaEntrega 
-            (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, subTotalIva
-            ,subTotalNetoIva, subTotalIvaCero, subTotalNetoIvaCero, subTotalNoObjetoIva, subTotalNetoNoObjetoIva
-            ,subTotalExentoIva, subTotalNetoExentoIva, totalDescuento, porcentajeDescuento, totalIce
-            ,propina, iva, total, tarifa
-            ,observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago
-            , idTipoDocumento)
-            
-            VALUES(@customerCompanyId, @puntoEmisionId, @tiempoCreditoId, @nroDocumento, @subtotalSinImpuestos, ISNULL(@subTotalIva,0)
-            ,ISNULL(@subTotalNetoIva,0), ISNULL(@subTotalIvaCero,0), ISNULL(@subTotalNetoIvaCero,0), ISNULL(@subTotalNoObjetoIva,0), ISNULL(@subTotalNetoNoObjetoIva,0)
-            ,ISNULL(@subTotalExentoIva,0), ISNULL(@subTotalNetoExentoIva,0), @discount, 0, ISNULL(@totalIce,0)
-            , @tip, @tax, @total, @taxPercent
-            , @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId
-            , @tipoDocumentoId)
+                (idCliente,idPuntoEmision,nroDocumento,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,observacion,fechaRegistro,idUsuario,idEntidad,fechaEmision,idTipoDocumento)
+            SELECT @customerCompanyId,@puntoEmisionId, @nroDocumento, @subtotalSinImpuestos,@discount,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
             
             SET @documentoId = (SELECT SCOPE_IDENTITY())
 
             IF (@documentoId > 0)
                 BEGIN
-                    INSERT INTO NotaEntregaDetalle(idNotaEntrega, idArticulo, idBodega, idMedida, descripcion, cantidad, precioVenta
-                    ,idTarifa, idTipoIva, iva, precioConIva, valorDescuento, porcentajeDescuento, total, nota, fechaRegistro, uuid)
+                    INSERT INTO NotaEntregaDetalle(idNotaEntrega,idArticulo,idBodega,idMedida,descripcion,cantidad,precioUnitario
+                    ,idTarifa, idTipoIva,valorDescuento, porcentajeDescuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,nota, fechaRegistro, uuid)
 
                     SELECT @documentoId
-                        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) ELSE
-                            (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
+                        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId  FROM Restaurant.Menu m WITH (NOLOCK) WHERE m.id = i.MenuId) 
+                                                    ELSE (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WITH (NOLOCK) WHERE ii.id = i.ItemId)
                         END 
                         ,bodegaId
                         ,i.medidaId
                         ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.descripcion FROM Restaurant.Menu m
-                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-                        WHERE m.id = i.MenuId) ELSE
-                            (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
-                        END 
+                                                                                     INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                                                                                     WHERE m.id = i.MenuId) 
+
+                                                    ELSE (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii 
+                                                                                     INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo 
+                                                                                     WHERE ii.id = i.ItemId)
+                         END 
                         ,i.quantity
                         ,i.price
                         ,i.feeId
-                        ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
-                        ,i.taxValue
-                        ,i.taxValue + i.price
+                        ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(5)) = sti.codigo) 
                         ,i.discount
                         ,0
                         ,i.total
+                        ,sti.codImpuesto
+                        ,sti.porcentaje
+                        ,i.taxValue
                         ,i.obs
                         ,dbo.ufnGetDateEcuador()
                         ,i.uuid
                     FROM @tblItems i
                     INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
-                    --INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
-                    --INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
                     INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
 
-                    INSERT INTO Ventas.NotaEntregaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, Uuid, UserId)                    
-                    SELECT t.taxId
-                        , t.taxPercentId
-                        , ti.porcentaje
-                        , t.taxBase
-                        , t.taxValue
-                        , t.uuid
-                        , @userId
+                    INSERT INTO Ventas.NotaEntregaImpuesto(NotaEntregaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId)                    
+                    SELECT @documentoId
+                          ,(SELECT TOP 1 iv.idImpuesto FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
+                          ,(SELECT TOP 1 iv.idTipoIva FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
+                          ,ti.porcentaje
+                          ,t.taxBase
+                          ,t.taxValue
+                          ,@userId
                     FROM @tblTaxes t
                     INNER JOIN Sri.TarifaImpuesto ti ON t.TaxPercentId = ti.idTarifaImpuesto
-
-                    UPDATE ne 
-                    SET ne.NotaEntregaDetalleId = i.idNotaEntregaDetalle
-                    FROM Ventas.NotaEntregaImpuesto ne 
-                    JOIN (SELECT ii.uuid, nd.idNotaEntregaDetalle FROM @tblItems ii 
-                                                                  INNER JOIN NotaEntregaDetalle nd ON ii.uuid = nd.uuid
-                    ) AS i ON ne.Uuid = i.uuid
                 END
 
         END
@@ -595,71 +533,34 @@ BEGIN
            
             SET @claveAcceso = (SELECT dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab), '01', @ambiente, 1, dbo.AFTConvertDate(@fechaEmision), @ruc, @estab + @ptoEmi, Helper.F_Auto_Sequential(@nroDocumento)))
 
-            INSERT INTO Factura (idCliente, idPuntoEmision, idEstadoPago, idTipoDocumento, idTiempoCredito, ambiente, porcentaje
-                ,idEntidad, idUsuario, claveAcceso, nroFactura, fechaEmision, fechaVencimiento, subTotalSinImpuestos, subTotalIva
-                ,subTotalNetoIva, subTotalIvaCero, subTotalNetoIvaCero, subTotalNoObjetoIva, subTotalNetoNoObjetoIva
-                ,subTotalExentoIva, subTotalNetoExentoIva, totalDescuento, porcentajeDescuento, totalIce, propina
-                ,iva, recargo, transporte, total, observacion, fechaRegistro)
-        
-            VALUES(@customerCompanyId, @puntoEmisionId, @estadoPagoId, @tipoDocumentoId ,@tiempoCreditoId ,@ambiente, @taxPercent
-                ,@companyId, @userId, @claveAcceso, @nroDocumento, @fechaEmision, @fechaEmision, @subtotalSinImpuestos, ISNULL(@subtotalIva,0)
-                ,ISNULL(@subTotalNetoIva,0), ISNULL(@subTotalIvaCero,0), ISNULL(@subTotalNetoIvaCero,0), ISNULL(@subTotalNoObjetoIva,0), ISNULL(@subTotalNetoNoObjetoIva,0)
-                ,ISNULL(@subTotalExentoIva,0), ISNULL(@subTotalNetoExentoIva,0), @discount, 0, ISNULL(@totalIce,0), @tip
-                ,@tax, 0, 0, @total, @obs, dbo.ufnGetdateEcuador())
+            INSERT INTO Factura 
+                   (idCliente, idPuntoEmision, idTipoDocumento,ambiente,idEntidad, idUsuario,claveAcceso,nroFactura,fechaEmision,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,fechaRegistro)
+            SELECT @customerCompanyId,@puntoEmisionId,@tipoDocumentoId,@ambiente,@companyId, @userId, @claveAcceso, @nroDocumento, @fechaEmision, @subtotalSinImpuestos, @discount, 0, @tip,0,0, @total, @obs, dbo.ufnGetdateEcuador()
                                      
             SET @documentoId = (SELECT SCOPE_IDENTITY()) 
 
-            
             --------------------------- INSERT HERE NOW --------------                        
-            INSERT INTO FacturaDetalle(idFactura, idArticulo, idTarifa, idBodega, idMedida, ice, cantidad, precioVenta, precioSinSubsidio
-                                       ,precioConIva, valorDescuento, porcentajeDescuento, total, nota, descripcion, precioCosto
-                                       ,idTipoIva, porcentajeIva, iva, uuid, envioSri)
-
-            SELECT @documentoId
-                ,idArticulo
-                , idTarifa
-                , idBodega
-                , medidaId
-                , ice
-                , cantidad
-                , precioVenta
-                , precioSinSubsidio    
-                , precioConIva
-                , valorDescuento
-                , porcentajeDescuento
-                , total
-                , nota
-                , descripcion
-                , precioCosto
-                , idTipoIva
-                , porcentajeIva
-                , iva
-                , uuid
-                , envioSri
+            INSERT INTO FacturaDetalle
+                     (idFactura,idArticulo,idTarifa,idBodega,idMedida,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,nota,descripcion,precioCosto,idTipoIva,codigoPorcentaje,tarifa,valorImpuesto,uuid,envioSri)
+            SELECT @documentoId,idArticulo,idTarifa,idBodega,medidaId,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,nota,descripcion,precioCosto,idTipoIva,codigoPorcentaje,tarifa,valorImpuesto,uuid,envioSri
             FROM @FacturaDetalleInsert
                       
-            INSERT INTO Ventas.FacturaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, Uuid, UserId)                    
-                    SELECT t.taxId
-                        , t.taxPercentId
+            INSERT INTO Ventas.FacturaImpuesto(FacturaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId)                    
+                    SELECT @documentoId 
+                        ,(SELECT TOP 1 iv.idImpuesto FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
+                        ,(SELECT TOP 1 iv.idTipoIva FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
                         , ti.porcentaje
                         , t.taxBase
                         , t.taxValue
-                        , t.uuid
                         , @userId
                     FROM @tblTaxes t
                     INNER JOIN Sri.TarifaImpuesto ti ON t.TaxPercentId = ti.idTarifaImpuesto
 
-            UPDATE ne 
-            SET ne.FacturaDetalleId = i.idFacturaDetalle
-            FROM Ventas.FacturaImpuesto ne 
-            JOIN (SELECT ii.uuid, nd.idFacturaDetalle FROM @tblItems ii 
-                                                            INNER JOIN FacturaDetalle nd ON ii.uuid = nd.uuid
-            ) AS i ON ne.Uuid = i.uuid
 
-
-            --forma de pago
-			INSERT INTO dbo.FormaPagoFactura (idFactura, idFormaPagoSri, idTiempoCredito, abono, idUsuario, fechaRegistro)
-			SELECT @documentoId, Helper.F_FormaPago_Get_Generate(@documentoId, @tipoDocumentoId), @tiempoCreditoId, @total, @userId ,dbo.ufnGetDateEcuador()
+            --> Forma de pago
+			INSERT INTO dbo.FormaPagoFactura 
+                   (idFactura,idFormaPagoSri,idTiempoCredito,abono,idUsuario,fechaRegistro)
+            SELECT @documentoId,idFormaPagoSri,@tiempoCreditoId,@total,@userId,dbo.ufnGetDateEcuador() FROM dbo.FormaPagoSri WITH (NOLOCK) WHERE codigo = '20'
 			--forma de pago
 
 
@@ -782,8 +683,9 @@ BEGIN
 
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
 
-                    INSERT INTO Inventario.TransaccionTemp([TipoTransaccionId], [ProductId], [BodegaId], [TipoDocumentoId], [DocumentoId], [MedidaId], [TarifaId], [Cantidad], [CantidadStock], [PrecioUnitario], [PrecioCosto], [Total], [FechaRegistro], [idUsuario])
-			        SELECT @idTipoTransaccion, idArticulo, idBodega, @idTipoDocumentoIv, @documentoId, medidaId, idTarifa, cantidadTransaccion, cantidadStock, precioCosto, precioUnitario, precioTotalSinImpuesto, @fechaEmision, @userId 
+                   INSERT INTO Inventario.Transaccion 
+                           (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
+			        SELECT @idTipoTransaccion,idArticulo,idBodega, @idTipoDocumentoIv,@documentoId,medidaId,idTarifa,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto,@fechaEmision,@userId 
                     FROM @tblInventory
 
                    EXEC dbo.Transaccion_Handler_Init 'S', @codDocTran, @documentoId, DEFAULT

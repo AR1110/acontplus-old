@@ -13,7 +13,6 @@ CREATE OR ALTER VIEW Ventas.v_NotaEntrega WITH SCHEMABINDING AS (
 		  ,ne.subTotalSinImpuestos
 		  ,totalDescuento
 		  ,porcentajeDescuento
-		  ,0 as totalIce
 		  ,propina
 		  ,recargo
 		  ,transporte

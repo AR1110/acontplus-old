@@ -14,120 +14,13 @@ CREATE OR ALTER VIEW Ventas.v_NotaCredito WITH SCHEMABINDING AS (
         ,nc.fechaAutorizacion
         ,nc.claveAcceso
         ,nc.emision
-        ,ISNULL((
-                CASE WHEN nc.codigoPorcentaje = '2' THEN (
-                                                            SELECT SUM(TaxBase + Discount) 
-                                                            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-                                                            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-                                                            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-                                                            WHERE ni.NotaCreditoId = nc.idNotaCredito 
-                                                                AND im.codigo = '2' 
-                                                                AND ti.codigoPorcentaje = '2'
-                                                            )
-                        WHEN nc.codigoPorcentaje = '8' THEN (
-                                                            SELECT SUM(TaxBase + Discount) 
-                                                            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-                                                            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-                                                            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-                                                            WHERE ni.NotaCreditoId = nc.idNotaCredito 
-                                                                AND im.codigo = '2' 
-                                                                AND ti.codigoPorcentaje = '8'
-                                                            )
-                END 
-        ),0) as subTotalIva
-
-        ,ISNULL((
-                CASE WHEN nc.codigoPorcentaje = '2' THEN (
-                                                            SELECT SUM(TaxBase) 
-                                                            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-                                                            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-                                                            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-                                                            WHERE ni.NotaCreditoId = nc.idNotaCredito 
-                                                                AND im.codigo = '2' 
-                                                                AND ti.codigoPorcentaje = '2'
-                                                            )
-                        WHEN nc.codigoPorcentaje = '8' THEN (
-                                                            SELECT SUM(TaxBase) 
-                                                            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-                                                            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-                                                            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-                                                            WHERE ni.NotaCreditoId = nc.idNotaCredito 
-                                                                AND im.codigo = '2' 
-                                                                AND ti.codigoPorcentaje = '8'
-                                                            )
-                END 
-        ),0) as subTotalNetoIva
-
-        ,ISNULL
-        ((
-            SELECT SUM(TaxBase + Discount) 
-            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-            WHERE ni.NotaCreditoId = nc.idNotaCredito AND im.codigo = '2' AND ti.codigoPorcentaje = '0'
-
-        ),0) as subTotalIvaCero
-
-        ,ISNULL
-        ((
-            SELECT SUM(TaxBase ) 
-            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-            WHERE ni.NotaCreditoId = nc.idNotaCredito AND im.codigo = '2' AND ti.codigoPorcentaje = '0'
-
-        ),0) as subTotalNetoIvaCero
-
-        ,ISNULL
-        ((
-            SELECT SUM(TaxBase + Discount) 
-            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-            WHERE ni.NotaCreditoId = nc.idNotaCredito AND im.codigo = '2' AND ti.codigoPorcentaje = '6'
-
-        ),0) as subTotalNoObjetoIva
-
-        ,ISNULL
-        ((
-            SELECT SUM(TaxBase) 
-            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-            WHERE ni.NotaCreditoId = nc.idNotaCredito AND im.codigo = '2' AND ti.codigoPorcentaje = '6'
-
-        ),0) as subTotalNetoNoObjetoIva
-
-        ,ISNULL
-        ((
-            SELECT SUM(TaxBase + Discount) 
-            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-            WHERE ni.NotaCreditoId = nc.idNotaCredito AND im.codigo = '2' AND ti.codigoPorcentaje = '7'
-
-        ),0) as subTotalExentoIva
-
-        ,ISNULL
-        ((
-            SELECT SUM(TaxBase) 
-            FROM Ventas.NotaCreditoImpuesto ni WITH (NOLOCK) 
-            INNER JOIN dbo.Impuesto         im WITH (NOLOCK) ON im.idImpuesto = ni.TaxId
-            INNER JOIN dbo.TipoIva          ti WITH (NOLOCK) ON ti.idTipoIva  = ni.TaxPercentId
-            WHERE ni.NotaCreditoId = nc.idNotaCredito AND im.codigo = '2' AND ti.codigoPorcentaje = '7'
-
-        ),0) as subTotalNetoExentoIva
-        ,nc.iva
         ,0 as totalIce
         ,nc.totalDescuento
         ,nc.porcentajeDescuento
         ,nc.total
-        ,nc.irbpnr
         ,nc.propina
         ,nc.estado
         ,nc.observacion
-        ,nc.codigoPorcentaje
-        ,nc.tarifa
         ,pt.ptoEmi
         ,es.idEstablecimiento
         ,es.codEstab

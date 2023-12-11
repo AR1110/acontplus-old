@@ -15,7 +15,7 @@ select * from Menu where descripcion like '%reporte%'
 
 select * from Menu where descripcion like '%Ventas%'
 
-select * from SubMenu where descripcion like '%reporte%' and idSubMenu = 68
+select * from SubMenu where descripcion like '%rep%' and idSubMenu = 68
 
 --update SubMenu set idMenu = 3 where idSubMenu = 68
 
