@@ -845,6 +845,7 @@ app.constant('DOC_TYPE', {
     PR: 'PR',
     NC: 'NC',
     NC_SRI: '04',
+    APROB_DOC: ''
 
 })
 app.constant('SRI_IDENTIFITION_CODE', {
@@ -862,5 +863,7 @@ app.constant('CODE_REPORT', {
     RNE: 'RNE',
     RNC: 'RNCC', //Reporte Nota Credito
     NCRG: 'NCRG', //Reporte Nota Credito General
-    PR: 'PR' //Reporte Proforma
+    PR: 'PR', //Reporte Proforma,
+    PRE_F: 'RAC', //Aprobacion-Factura
+    P_NE: 'P-NE' //Aprobacion - Nota Entrega
 })
