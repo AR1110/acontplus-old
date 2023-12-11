@@ -1,8 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Configuracion.API.Helpers;
-using DataAccess;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;

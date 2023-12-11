@@ -9,14 +9,11 @@ namespace Restaurant.Application.Services
     public class OrderService : IOrderService
     {
         private readonly IADORepository _repository;
-        private readonly IRdlcReportService _report;
         private readonly RestaurantContext _context;
         public OrderService(IADORepository repository,
-            IRdlcReportService report,
             RestaurantContext context)
         {
             _repository = repository;
-            _report = report;
             _context = context;
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
@@ -61,11 +58,6 @@ namespace Restaurant.Application.Services
         public async Task<string> PrintAsync(Dictionary<string, object> parameters)
         {
             return await _repository.SPExecuteAsync("Restaurant.Order_Print", parameters);
-        }
-        public async Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Restaurant.Order_Report", parameters);
-            return _report.GetDynamicReport(ds);
         }
     }
 }

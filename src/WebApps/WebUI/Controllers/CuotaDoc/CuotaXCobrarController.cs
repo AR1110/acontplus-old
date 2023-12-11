@@ -1,6 +1,6 @@
-﻿using DataAccess.CuotaDocumento;
-using Domain.Models.CuotaDocumento;
-using Domain.ViewModels.CuotaDocumento;
+﻿using Common.Core.Models.CuotaDocumento;
+using Common.Core.ViewModels.CuotaDocumento;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.CuotaDoc

@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Order.rdl" />
     <None Remove="Reports\Cartera\CarteraCliente.rdlc" />
     <None Remove="Reports\Cartera\CarteraProveedor.rdlc" />
     <None Remove="Reports\Compras\CompraDetalle.rdl" />
@@ -63,7 +64,6 @@
     <None Remove="Reports\OrdenCompra.rdlc" />
     <None Remove="Reports\Restaurant\ItemIngredient.rdl" />
     <None Remove="Reports\Retencion.rdlc" />
-    <None Remove="Reports\Test.rdlc" />
     <None Remove="Reports\Ventas\AprobDocument.rdl" />
     <None Remove="Reports\Ventas\Clientes.rdl" />
     <None Remove="Reports\Ventas\CuentaPorCobrar.rdl" />
@@ -77,6 +77,9 @@
   <ItemGroup>
     <Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Restaurant\Order.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Cartera\CarteraCliente.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -240,9 +243,6 @@
     <Content Include="Reports\Retencion.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\Test.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\Ventas\AprobDocument.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -272,13 +272,13 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
     <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Common\Common.Reports\Common.Reports.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
 
 </Project>

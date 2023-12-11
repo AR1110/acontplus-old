@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 using Common.Core.Models;
-using DataAccess;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

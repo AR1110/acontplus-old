@@ -1,6 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Reports.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Reports.API.Data;
 using Reports.API.Interfaces;
 using Reports.API.Services;

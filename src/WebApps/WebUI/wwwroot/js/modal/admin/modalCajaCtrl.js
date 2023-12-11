@@ -836,7 +836,7 @@ class MovimientoCajaCtrl {
                 }
             }
         }
-        this._mS.getData('post', '/Notificacion/Post?json=' + JSON.stringify(data)).then(response => { 
+        this._mS.getData('post', 'Common/Notificacion/?json=' + JSON.stringify(data), null, true).then(response => { 
             // if(response.code==="0"){
             //     this._form.sweetAlert('warning', response.message, response.titleSms);                
             // }

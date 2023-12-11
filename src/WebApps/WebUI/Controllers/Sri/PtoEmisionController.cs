@@ -1,6 +1,6 @@
 ﻿using Common.Core.Models;
-using DataAccess;
-using Domain.Models.Sri;
+using Common.Core.Models.Sri;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
