@@ -1383,14 +1383,7 @@
                 type: 'number',
                 width: '8%',
                 minWidth: '100'
-            },
-            {
-                name: 'codigoTipoIva',
-                field: 'codigoTipoIva',
-                enableCellEdit: false,
-                width: '8%',
-                visible: false
-            },
+            }, 
             {
                 name: 'I.V.A',
                 field: 'idTipoIva',

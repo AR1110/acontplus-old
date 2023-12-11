@@ -45,19 +45,16 @@ namespace Ventas.API.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] AprobDocument data)
+        public async Task<IActionResult> Insert(ApiRequest parameters)
         {
             var _response = new GenericResponse();
             var _db = new DbAccess(_configuration);
             try
             {
+                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Aprob_Document_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("comprobante", SqlStringParam.Sanitize(data.comprobante));
-                _db.AddDynamicParam("detalle", SqlStringParam.Sanitize(data.detalle));
-                _db.AddDynamicParam("historial", SqlStringParam.Sanitize(data.historial));
-                _db.AddDynamicParam("infoAdicional", SqlStringParam.Sanitize(data.infoAdicional));
-                _db.AddDynamicParam("historialVenta", SqlStringParam.Sanitize(data.historialVenta));
+                _db.AddDynamicParam("userRoleId", userRoleId);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));                 
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -74,18 +71,17 @@ namespace Ventas.API.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] AprobDocument data)
+        public async Task<IActionResult> Update(int id, ApiRequest parameters)
         {
             var _db = new DbAccess(_configuration);
             var _response = new GenericResponse();
             try
             {
+                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Aprob_Document_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("userRoleId", userRoleId);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("comprobante", SqlStringParam.Sanitize(data.comprobante));
-                _db.AddDynamicParam("detalle", SqlStringParam.Sanitize(data.detalle));
-                _db.AddDynamicParam("historialVenta", SqlStringParam.Sanitize(data.historialVenta));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -109,8 +105,9 @@ namespace Ventas.API.Controllers
             var _response = new GenericResponse();
             try
             {
+                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Aprob_Document_Delete");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idUsuarioRol", userRoleId);
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }

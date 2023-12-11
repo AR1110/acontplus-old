@@ -21,32 +21,10 @@
                     let mainData = JSON.parse(response.payload);
 
                     let tempEstabsAndPtosEmision = mainData[0];
-                    const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                puntosEmision: [{
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                }]
-                            });
-                        } else {
-                            existingItem.puntosEmision.push({
-                                idPuntoEmision: item.idPuntoEmision,
-                                ptoEmi: item.ptoEmi,
-                                defaultPtoEmi: item.defaultPtoEmi
-                            });
-                        }
-                        return acc;
-                    }, []);
-
-
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision 
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
                     return {
                         estabs,
                     }
@@ -74,50 +52,17 @@
 
                     let tempEstabsAndPtosEmision = mainData[4];
                     let tempBodegas = mainData[5];
-                    let tarifaImpuestoVigente = mainData[6][0];
                     let { permisoVenta } = fS.getDataUserRol();
 
-                    const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                puntosEmision: [{
-                                    codEstab: item.codEstab,
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                }]
-                            });
-                        } else {
-                            existingItem.puntosEmision.push({
-                                codEstab: item.codEstab,
-                                idPuntoEmision: item.idPuntoEmision,
-                                ptoEmi: item.ptoEmi,
-                                defaultPtoEmi: item.defaultPtoEmi
-                            });
-                        }
-                        return acc;
-                    }, []);
-
-                    let estabs = tempEstabs.map(estab => ({
-                        ...estab,
-                        bodegas: tempBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
-                            .map(bodega => ({
-                                idBodega: bodega.idBodega,
-                                bodega: bodega.bodega,
-                                descripcion: bodega.bodega,
-                                defaultBodega: bodega.defaultBodega,
-                            }))
-                    }))
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                        bodegas: tempBodegas, // Establecimientos con bodegas
+                        isGroupBodega: true
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
 
                     return {
                         estabs,
-                        tarifaImpuestoVigente,
                         tarifasImpuesto,
                         tiemposCredito,
                         tarifas,
@@ -352,15 +297,14 @@
 
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true)
+            return mS.getData('post', url + 'Insert', {data}, true)
                 .then(response => {
                     return response;
                 })
         }
 
-
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true)
+            return mS.getData('put', url + 'Update/' + id, {data}, true)
                 .then(response => {
                     return response;
                 })
@@ -420,12 +364,56 @@
             })
         }
 
-        service.detalleMapperTo = function (detalles, decimal) {
+        service.queryMapper = function (obj) {
+
+            let { comprobante, detalles, detallesDeleted, selectedDocshistorial, infoAdicionalDocumento, historialVenta } = obj;
+
+
+            const itemsMainMapper = service.detalleMapperTo(detalles);
+            const itemsDeletedMapper = service.detalleMapperTo(detallesDeleted)
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+
+            const mergeItems = [
+                ...itemsMainMapper,
+                ...itemsDeletedMapper
+            ]
+
+
+            return {
+                comprobante: service.infoComprobanteMapperTo(comprobante),
+                detalles: mergeItems,
+                impuestos,
+                historial: selectedDocshistorial,
+                infoAdicionalDocumento: infoAdicionalDocumento,
+                historialVenta
+            }
+
+
+        }
+
+
+        service.infoComprobanteMapperTo = function (data) {
+            const result = {
+                idCliente: data.idCliente,
+                idTiempoCredito: data.idTiempoCredito,
+                idPuntoEmision: data.idPuntoEmision,
+                codDoc: data.codDoc,
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                totalDescuento: data.totalDescuento,
+                total: data.total,
+                importeTotal: data.total,
+                propina: data.propina,
+                docOrigen: data.docOrigen,
+                docDestino: data.docDestino,
+                observacion: data.observacion,
+            }
+            return result;
+        }
+
+        service.detalleMapperTo = function (detalles) {
             let tempDetail = [];
             let orderIndex = 1;
-            for (let item of detalles) {
-
-                let precioTotalSinImpuesto = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+            for (let item of detalles) { 
                 let obj = {
                     orderIndex: orderIndex++,
                     idAprob_Document_Detailt: item.idAprob_Document_Detailt || 0,
@@ -437,13 +425,13 @@
                     descripcion: item.descripcion,
                     precioUnitario: item.precioUnitario,
                     precioConIva: item.precioConIva,
-                    valorDescuento: item.valorDescuento,
-                    descuento: item.valorDescuento,
-                    precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle),
-                    baseImponible: fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle),
+                    valorDescuento: item.valorDescuento, 
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto, 
                     nota: item.nota,
-                    codigoPorcentaje: item.codigoPorcentaje,
-                    tarifa: item.tarifa,
+                    codigoPorcentaje: item.codigoPorcentaje, //✅
+                    tarifa: item.tarifa,//✅
+                    valorImpuesto: item.valorImpuesto,//✅
+                    llevaInventario: item.llevaInventario,
                     idBodega: item.idBodega,
                     fechaEmision: fS.formatDateTimeZone(item.fechaEmision)
                 }
@@ -462,10 +450,8 @@
                 idArticulo: 0,
                 descripcion: "",
                 cantidad: 1,
-                nombreMedida: "",
                 codigoPorcentaje: "",
                 tarifa: 0,
-                nombreTipoIva: "",
                 articuloTarifas: [],
                 idTarifa: 0,
                 precioUnitario: 0,
@@ -475,13 +461,14 @@
                 totalDescuento: 0,
                 ice: 0,
                 idBodega: 0,
-                subTotal: 0,
                 total: 0,
                 nota: "S/N",
                 llevaInventario: false,
-                datosAdicionales: false
+                datosAdicionales: false,
+                estado: 1
             }
         }
+
 
 
         return service;
