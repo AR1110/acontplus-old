@@ -131,7 +131,7 @@
         format: "pdf",
       }),
     };
-    await clientFile(`Reporte/Dynamic/`, parameters)
+    await clientFile(`Reporte/Dynamic`, parameters)
       .then((response) => {
         var ieEDGE = navigator.userAgent.match(/Edge/g);
         var ie = navigator.userAgent.match(/.NET/g); // IE 11+
