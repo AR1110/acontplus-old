@@ -138,6 +138,13 @@
                             placeholder="Ej: 123 o 1-30" />
                     </div>
                 </div>
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Dato Adicional:</span>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.infoAdicional"
+                            placeholder="Ej: SERIE" />
+                    </div>
+                </div>
 
                 <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
@@ -152,22 +159,24 @@
                     </div>
                 </div>
 
-                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span>Buscar</span>
-                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                            ng-model="dataSearch.bySearch" placeholder="...">
-                    </div>
-                </div>
+
             </div>
 
-            <div class="row justify-contend-start">
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+
+            <div class="row">
+                <div class="col-6 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
                             ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
+                </div>
+
+                <div class="col-6 d-flex justify-content-end">
+                    <div class="form-group">
+                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                            ng-model="dataSearch.bySearch" placeholder="...">
+                    </div>
                 </div>
             </div>
 
@@ -246,9 +255,8 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item
-                                                ng-if="accion.cobroPago && item.enabledActionCobro">
-                                                <md-button ng-click="opcionCobro(item)" >
+                                            <md-menu-item ng-if="accion.cobroPago && item.enabledActionCobro">
+                                                <md-button ng-click="opcionCobro(item)">
                                                     <span md-menu-align-target>
                                                         <i class=" fas fa-hand-holding-usd"></i>
                                                         Cobro
@@ -257,7 +265,7 @@
                                             </md-menu-item>
 
                                             <md-menu-item ng-if="accion.cuota && item.enabledActionCuota">
-                                                <md-button ng-click="openModalCuota(item)" >
+                                                <md-button ng-click="openModalCuota(item)">
                                                     <span md-menu-align-target>
                                                         <i class=" fas fa-hand-holding-usd"></i>
                                                         Cuotas
@@ -356,8 +364,8 @@
 
 </div>
 @section Scripts {
-        <script src="~/js/factElect/directives/factElectDirective.js" asp-append-version="true"></script>
-        <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
-        <script src="~/js/factElect/controllers/facturaCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/directives/factElectDirective.js" asp-append-version="true"></script>
+    <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/controllers/facturaCtrl.min.js" asp-append-version="true"></script>
 
 }

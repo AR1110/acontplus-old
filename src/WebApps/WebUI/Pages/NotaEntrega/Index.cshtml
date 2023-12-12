@@ -139,6 +139,14 @@
                     </div>
                 </div>
 
+                 <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                     <div class="form-group">
+                        <span>Dato Adicional:</span>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.infoAdicional"
+                            placeholder="Ej: SERIE" />
+                    </div>
+                </div>
+
                 <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
@@ -150,25 +158,25 @@
                             </option>
                         </select>
                     </div>
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span>Buscar</span>
-                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                               ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
-                    </div>
-                </div>
+                </div>               
             </div>
 
-            <div class="row justify-contend-start">
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="row">
+                <div class="col-6 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
-                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
                 </div>
-            </div>
+
+                <div class="col-6 d-flex justify-content-end">
+                    <div class="form-group">
+                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                            ng-model="dataSearch.bySearch" placeholder="...">
+                    </div>
+                </div>
+            </div> 
 
             <!--Lista Nota de Entregas-->
 

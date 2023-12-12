@@ -1,13 +1,15 @@
-﻿using Common.Core.Models;
+﻿using Asp.Versioning;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace Contabilidad.API.Controllers
+namespace Contabilidad.API.Controllers.v1
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/CuentaPorCobrar/")]
+    [ApiVersion("1.0")]
     public class CuentaPorCobrarController : ControllerBase
     {
         private readonly IConfiguration _configuration;

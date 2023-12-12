@@ -1,9 +1,12 @@
-﻿using Autofac;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Contabilidad.API.Extensions;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace Contabilidad.API
 {
@@ -13,11 +16,10 @@ namespace Contabilidad.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-
-            // Add services to the container.
-
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
+
+            builder.Services.AddApplicationServices(builder.Configuration);
 
             builder.Services.AddControllers()
                             .AddNewtonsoftJson(x =>
@@ -26,12 +28,28 @@ namespace Contabilidad.API
                                 x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                             });
 
-
-            builder.Services.AddApplicationServices(builder.Configuration);
-
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
             builder.Services.AddSwaggerDocumentation();
+
+            builder.Services.AddApiVersioning(opt =>
+            {
+                opt.DefaultApiVersion = new ApiVersion(1, 0);
+                opt.AssumeDefaultVersionWhenUnspecified = true;
+                opt.ReportApiVersions = true;
+                opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+                                                                new QueryStringApiVersionReader("api-version"),
+                                                                new HeaderApiVersionReader("x-api-version"),
+                                                                new MediaTypeApiVersionReader("x-api-version"));
+            }).AddApiExplorer(setup =>
+            {
+                setup.GroupNameFormat = "'v'VVV";
+                setup.SubstituteApiVersionInUrl = true;
+            });
+
+            builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+            builder.Services.AddSingleton<LogWriter>();
 
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -39,17 +57,25 @@ namespace Contabilidad.API
 
             var app = builder.Build();
 
-            app.UseSwaggerDocumentation();
+            var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
-            app.UseRouting();
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+                }
+            });
 
             app.UseHttpsRedirection();
+
+            app.UseRouting();
 
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-
 
             app.UseEndpoints(endpoints =>
             {
