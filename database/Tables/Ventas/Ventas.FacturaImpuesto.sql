@@ -1,15 +1,6 @@
 USE Acontplus
 GO
 
---ALTER TABLE FacturaDetalle ALTER COLUMN descripcion NVARCHAR(255) NULL
---GO
-
---ALTER TABLE FacturaDetalle ALTER COLUMN porcentajeDescuento DECIMAL(15,5) NULL
---GO
-
---ALTER TABLE FacturaDetalle ALTER COLUMN idTipoIva INT NULL
---GO
-
 --ALTER TABLE FacturaDetalle ADD uuid UNIQUEIDENTIFIER NULL
 GO
 

@@ -1,6 +1,8 @@
 use [Acontplus]
 go 
 
+--DELETE FROM Ventas.NotaEntregaImpuesto
+
 --ALTER TABLE Ventas.NotaEntregaImpuesto ADD NotaEntregaId BIGINT NOT NULL
 
 --ALTER TABLE Ventas.NotaEntregaImpuesto ADD Discount NUMERIC(15,5) NOT NULL
@@ -37,8 +39,8 @@ go
 --       ,ti.idImpuesto
 --       ,ti.idTipoIva
 --       ,ti.porcentaje as [Percent] 
---       ,total as TaxBase
---       ,iva as TaxValue
+--       ,preciototalSinimpuesto as TaxBase
+--       ,valorImpuesto as TaxValue
 --       ,nd.valorDescuento as Discount
 --FROM NotaEntregaDetalle nd WITH (NOLOCK)
 --INNER JOIN TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva = nd.idTipoIva

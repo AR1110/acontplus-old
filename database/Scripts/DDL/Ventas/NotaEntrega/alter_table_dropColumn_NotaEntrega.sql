@@ -12,11 +12,11 @@ GO
 --alter table NotaEntrega drop column idEstadoPago
 
 --alter table NotaEntrega drop [DF__NotaEntre__abono__4D2B3E9E]
+--alter table NotaEntrega drop column [saldo]
 --alter table NotaEntrega drop column [abono]
 
 -->
 --alter table NotaEntrega drop column [fechaVencimiento]
---alter table NotaEntrega drop column [saldo]
 --alter table NotaEntrega drop column [subTotalIva]
 --alter table NotaEntrega drop column [subTotalNetoIva]
 --alter table NotaEntrega drop column [subTotalIvaCero]
@@ -33,13 +33,23 @@ GO
 --EXEC sp_RENAME 'NotaEntregaDetalle.iva' , 'valorImpuesto', 'COLUMN'
 --EXEC sp_RENAME 'NotaEntregaDetalle.total' , 'precioTotalSinImpuesto', 'COLUMN'
 --EXEC sp_RENAME 'NotaEntregaDetalle.precioVenta' , 'precioUnitario', 'COLUMN'
+--EXEC sp_RENAME 'NotaEntregaDetalle.porcentajeIva' , 'tarifa', 'COLUMN'
+
 
 
 --alter table NotaEntregaDetalle drop column precioVentaNeto
 --alter table NotaEntregaDetalle drop column ganancia
---alter table NotaEntregaDetalle drop column porcentajeIva
 --alter table NotaEntregaDetalle drop column idPresentacion
 --alter table NotaEntregaDetalle drop column precioConIva
 --alter table NotaEntregaDetalle drop column idPresentacion
 
-select top 1 * from dbo.NotaEntregaDetalle where valorDescuento > 0
+--alter table NotaEntregaDetalle add codigoPorcentaje VARCHAR(5)
+
+--UPDATE ne set
+--    ne.codigoPorcentaje = ti.codigoPorcentaje
+--FROM NotaEntregaDetalle ne 
+--inner join dbo.TipoIva ti on ti.idTipoIva = ne.idTipoIva
+
+--alter table NotaEntregaDetalle alter column codigoPorcentaje VARCHAR(5) not null
+
+select top 10 * from dbo.NotaEntregaDetalle 

@@ -16,7 +16,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @uniqueId VARCHAR(150)
+	DECLARE @uniqueId VARCHAR(300)
 
 	DECLARE @idTipoDocumento INT 
 	
@@ -37,10 +37,8 @@ BEGIN
 	   ,d.docOrigen
 	   ,d.fechaEmision	 
 	   ,d.observacion
-	   ,codigoPorcentaje = CONVERT(VARCHAR(3), d.codigoPorcentaje)
 	   ,totalSinImpuestos
 	   ,totalDescuento
-	   ,totalConImpuestos
 	   ,propina
 	   ,importeTotal	   
 	FROM Ventas.Aprob_Document d WITH (NOLOCK)
@@ -60,25 +58,22 @@ BEGIN
 
 	SELECT 
 		idAprob_Document_Detailt
-	   ,a.idArticulo
-	   ,m.idMedida
-	   ,t.idTipoIva
+	   ,dt.idArticulo
+	   ,dt.idMedida
+	   ,dt.idTipoIva
 	   ,dt.idTarifa
 	   ,dt.idBodega
+       ,t.idImpuesto
 	   ,a.codigo
 	   ,dt.descripcion
-	   ,medida = m.descripcion
 	   ,dt.cantidad
 	   ,dt.precioUnitario
-	   ,((dt.precioUnitario - dt.descuento) * dt.cantidad) as precioTotalSinImpuesto
-	   ,dt.descuento
-	   ,dt.cantidad * dt.descuento                         as totalDescuento
-	   ,nombreTipoIva = t.descripcion
-	   ,valor = t.porcentaje
-	   ,codigoTipoIva = t.codigo
-	   ,CONVERT(VARCHAR(4), dt.codigoPorcentaje)           as codigoPorcentaje
-	   ,dt.tarifa                                          as tarifa
-	   ,a.datosAdicionales                                 as datosAdicionales
+       ,dt.descuento
+	   ,dt.precioTotalSinImpuesto
+       ,dt.codigoPorcentaje
+       ,dt.tarifa
+       ,dt.valorImpuesto
+	   ,a.datosAdicionales 
        ,ISNULL((SELECT idMedida     = m.idMedida 
 			          ,descripcion  = m.descripcion
 			          ,tarifas      = (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor
@@ -112,10 +107,12 @@ BEGIN
             ,a.precioCosto
             ,dt.fechaEmision
 	FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK)
-	INNER JOIN dbo.Articulo             a WITH (NOLOCK) ON a.code_unique      = dt.codArticulo
-	INNER JOIN dbo.Medida               m WITH (NOLOCK) ON m.codigo           = dt.codMedida
-	INNER JOIN dbo.TipoIva              t WITH (NOLOCK) ON t.codigoPorcentaje = dt.codigoPorcentaje
-	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY ad_d.idAprob_Document_Detailt ASC 
+	INNER JOIN dbo.Articulo             a WITH (NOLOCK) ON a.idArticulo = dt.idArticulo
+	INNER JOIN dbo.Medida               m WITH (NOLOCK) ON m.idMedida   = dt.idMedida
+	INNER JOIN dbo.TipoIva              t WITH (NOLOCK) ON t.idTipoIva  = dt.idTipoIva
+	WHERE dt.uniqueId = @uniqueId 
+      AND dt.estado = 1 
+    ORDER BY dt.idAprob_Document_Detailt ASC 
 
 	SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
 			               WHEN codDocumento = 'NE' THEN 'NotaEntrega' 

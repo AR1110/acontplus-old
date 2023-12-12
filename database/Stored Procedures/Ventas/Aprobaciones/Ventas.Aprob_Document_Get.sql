@@ -161,6 +161,7 @@ BEGIN
                 WHERE codTrasaccion = 'V' AND idEntidad = @idEntidad
 
 	            SELECT idTipoIva
+                      ,idImpuesto
 	                  ,descripcion
 	                  ,tarifa = porcentaje
 	                  ,codigoPorcentaje = CAST(codigoPorcentaje as varchar)
@@ -201,7 +202,6 @@ BEGIN
                 FROM v_Bodega_Asign WITH(NOLOCK) 
                 WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
 
-                SELECT descripcion = 'IVA '+descripcion , codigo = 'IVA', codigoPorcentaje = codigo, tarifa = porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo = '2' AND estado = 1 ORDER BY codigoPorcentaje DESC
             RETURN
         END 
 
@@ -225,7 +225,6 @@ BEGIN
     --> Ver Documento
     IF @tipo = 4
         BEGIN
-            
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
             SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
@@ -238,10 +237,8 @@ BEGIN
 	              ,d.docOrigen
 	              ,d.fechaEmision	 
 	              ,d.observacion
-	              ,CONVERT(VARCHAR(3), d.codigoPorcentaje) as codigoPorcentaje
 	              ,totalSinImpuestos
 	              ,totalDescuento
-	              ,totalConImpuestos
 	              ,propina
 	              ,importeTotal	   
              FROM Ventas.Aprob_Document d WITH (NOLOCK)
@@ -261,28 +258,28 @@ BEGIN
 	         WHERE ad.idAprob_Document = @id
 
              SELECT dt.idAprob_Document_Detailt
-                   ,ar.codigo 
+                   ,ar.codigo
                    ,dt.descripcion
                    ,dt.cantidad
-                   ,me.descripcion as medida
-                   ,ti.descripcion as tipoIva
-                   ,ta.descripcion as tarifa
                    ,dt.precioUnitario
                    ,dt.descuento
                    ,dt.precioTotalSinImpuesto
+	               ,dt.codigoPorcentaje
+	               ,dt.tarifa
+                   ,dt.valorImpuesto
                    ,bo.descripcion as bodega
-                   ,dt.cantidad * dt.descuento                         as totalDescuento
-                   ,valor = ti.porcentaje
-	               ,codigoTipoIva = ti.codigo
-	               ,CONVERT(VARCHAR(4), dt.codigoPorcentaje)           as codigoPorcentaje
-	               ,dt.tarifa                                          as tarifa
+                   ,ta.descripcion as pvp
+                   ,me.descripcion as medida
+                   ,ti.descripcion as tipoIva
              FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK) 
-             INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.code_unique       = dt.codArticulo
-             INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.codigo            = dt.codMedida
-             INNER JOIN dbo.TipoIva             ti WITH (NOLOCK) ON ti.codigoPorcentaje  = dt.codigoPorcentaje
-             INNER JOIN dbo.Tarifa              ta WITH (NOLOCK) ON ta.idTarifa          = dt.idTarifa
-             INNER JOIN dbo.Bodega              bo WITH (NOLOCK) ON bo.idBodega          = dt.idBodega
-             WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY dt.idAprob_Document_Detailt ASC
+             INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
+             INNER JOIN dbo.Bodega              bo WITH (NOLOCK) ON bo.idBodega   = dt.idBodega
+             INNER JOIN dbo.Tarifa              ta WITH (NOLOCK) ON ta.idTarifa   = dt.idTarifa
+             INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.idMedida   = dt.idMedida
+             INNER JOIn dbo.TipoIva             ti WITH (NOLOCK) ON ti.idTipoIva  = dt.idTipoIva
+             WHERE dt.uniqueId = @uniqueId 
+               AND dt.estado = 1 
+             ORDER BY dt.idAprob_Document_Detailt ASC
 
              
 	        SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
@@ -290,7 +287,16 @@ BEGIN
 			                       ELSE '' END 
 		          ,serieComprobante = serie
 	        FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
-             RETURN 
+            
+            SELECT idTipoIva
+                  ,idImpuesto
+	              ,descripcion
+	              ,tarifa = porcentaje
+	              ,codigoPorcentaje = CAST(codigoPorcentaje as varchar)
+	        FROM dbo.TipoIva WITH (NOLOCK) 
+	        WHERE estado = 1
+
+            RETURN 
         END 
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'

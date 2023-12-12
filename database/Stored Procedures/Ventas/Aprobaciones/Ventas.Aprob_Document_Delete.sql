@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Ventas.Aprob_Document_Delete', N'P') IS NOT NULL
-DROP PROCEDURE Ventas.Aprob_Document_Delete 
-GO
-CREATE PROCEDURE Ventas.Aprob_Document_Delete @idUsuarioRol INT, @id INT
+CREATE OR ALTER PROCEDURE Ventas.Aprob_Document_Delete @idUsuarioRol INT, @id INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
