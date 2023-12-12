@@ -128,6 +128,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = calculateTotalItems(items)
                 $scope.tarifasImpuesto = tarifasImpuesto;
+                renderedModal();
             }).catch(error => {
                 console.error(error)
             }).finally(() => {
