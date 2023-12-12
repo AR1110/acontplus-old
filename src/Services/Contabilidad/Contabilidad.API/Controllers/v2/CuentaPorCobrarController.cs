@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
 namespace Contabilidad.API.Controllers.v2
-{    
-    [ApiController]
+{
     [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]    
     [ApiVersion("2.0")]
     public class CuentaPorCobrarController : ControllerBase
     {
