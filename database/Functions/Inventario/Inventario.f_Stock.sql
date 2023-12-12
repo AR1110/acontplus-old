@@ -1,3 +1,5 @@
+USE [Acontplus]
+GO 
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Scalar Function (New Menu).SQL
@@ -31,7 +33,7 @@ BEGIN
 	DECLARE @stock AS NUMERIC(15,5)
 	DECLARE @fechaEmision AS DATETIME
 	
-	SELECT TOP 1 @fechaEmision =  fechaConsolidacion, @cantidadActual =  consolidacion FROM Inventario.Stock WITH (NOLOCK) sWHERE idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
+	SELECT TOP 1 @fechaEmision =  fechaConsolidacion, @cantidadActual =  consolidacion FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
 
 	IF @fechaEmision IS NOT NULL
 		BEGIN
