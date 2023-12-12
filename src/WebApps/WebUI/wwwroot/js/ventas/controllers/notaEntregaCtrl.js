@@ -147,15 +147,19 @@
 
         $scope.getNotaEntregas = async () => {
             try {
+                $scope.dataSearch.checkBoxFecha = true;
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
-                        $scope.dataSearch.checkBoxFecha = true;
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
                     }
                     if (!($scope.dataSearch.idCliente > 0)) {
                         $scope.dataSearch.checkBoxFecha = false;
                     }
+                }
+
+                if ($scope.dataSearch.infoAdicional) {
+                    $scope.dataSearch.checkBoxFecha = false;
                 }
 
                 let dataSearch = {
@@ -169,7 +173,8 @@
                     codEstado: ["", null, undefined].includes($scope.dataSearch.codEstado) ? null : $scope.dataSearch.codEstado,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
+                    infoAdicional: $scope.dataSearch.infoAdicional ? $scope.dataSearch.infoAdicional : null
                 }
 
                 showLoader();
@@ -1383,7 +1388,7 @@
                 type: 'number',
                 width: '8%',
                 minWidth: '100'
-            }, 
+            },
             {
                 name: 'I.V.A',
                 field: 'idTipoIva',

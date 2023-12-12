@@ -161,7 +161,7 @@
         $scope.getFacturas = function () {
 
             try {
-
+                $scope.dataSearch.checkBoxFecha = true;
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
@@ -171,6 +171,9 @@
                     if (!($scope.dataSearch.idCliente > 0)) {
                         $scope.dataSearch.checkBoxFecha = false;
                     }
+                }
+                if ($scope.dataSearch.infoAdicional) {
+                    $scope.dataSearch.checkBoxFecha = false;
                 }
 
                 let dataSearch = {
@@ -185,7 +188,8 @@
                     byEstado: $scope.dataSearch.byEstado,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
+                    infoAdicional: $scope.dataSearch.infoAdicional ? $scope.dataSearch.infoAdicional : null
                 }
 
                 showLoader();
@@ -1669,6 +1673,16 @@
             }
         }
 
+        $scope.getAllTiempoCredito = function () {
+            if (isUpdate()) {
+                tS.toastr('warning', 'No disponible en actualizar!');
+                return
+            }
+            showLoader();
+            facturaSvc.getDataForm().then(response => {
+                $scope.tiemposCredito = response.tiemposCredito;
+            }).finally(() => hideLoader())
+        }
 
 
         $scope.onChangeTiempoCredito = function () {
@@ -2159,11 +2173,6 @@
             return fS.roundNumber(importeTotal, $scope.decimal.importeTotal);
         }
 
-
-
-
-
-
         function drawImpuestoTotales() {
             try {
                 let {
@@ -2455,6 +2464,8 @@
         $scope.resultModalDatoAdicional = function (result) {
             $scope.infoAdicionalDocumento = result;
         }
+
+
 
         async function askToSaveStorage() {
             try {

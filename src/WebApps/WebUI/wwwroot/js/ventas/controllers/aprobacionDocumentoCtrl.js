@@ -117,7 +117,7 @@
                     }
                 }).then(result => {
                     if (result.isConfirmed) {
-
+                        showLoader();
                         let modalRef = modalSvc.openModalCustom({
                             controller: 'ModalSelectDocCtrl',
                             template: URL_TEMPLATE + '_ModalSelectDocumento.cshtml',
@@ -125,6 +125,10 @@
                             windowClass: 'uibModalFullScreen',
                             params: OPTION_APROBACION[result.value],
                             isRenderRazorPartial: true
+                        })
+
+                        modalRef.rendered.then(() => {
+                            hideLoader();
                         })
 
                         modalRef.result.then(result => {
@@ -343,7 +347,7 @@
         $scope.openModalEdit = function (item) {
             try {
                 showLoader();
-                aprobacionDocSvc.findById(item.idAprob_Document).then(response => { 
+                aprobacionDocSvc.findById(item.idAprob_Document).then(response => {
                     let modalRef = modalSvc.openModalCustom({
                         controller: 'ModalAprobDocEditarCtrl',
                         template: URL_TEMPLATE + '_ModalEditar.cshtml',
@@ -4154,7 +4158,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>`
-                for (const item of historial) { 
+                for (const item of historial) {
                     message += `<tr class="small"><td>${item.tipoDoc}</td><td>${item.serieComprobante}</td></tr>`
 
                 }
