@@ -818,3 +818,6 @@ go
 
 DROP PROCEDURE IF EXISTS aspNotaCreditoClienteReporteGeneral
 go
+
+DROP PROCEDURE IF EXISTS ReporteVentas.Proforma
+go

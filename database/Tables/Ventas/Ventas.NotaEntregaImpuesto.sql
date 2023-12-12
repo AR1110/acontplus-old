@@ -1,26 +1,10 @@
 USE Acontplus
 GO
 
---ALTER TABLE NotaEntregaDetalle ALTER COLUMN descripcion NVARCHAR(255) NULL
-
---GO
-
---ALTER TABLE NotaEntregaDetalle ALTER COLUMN porcentajeDescuento DECIMAL(15,5) NULL
-
---GO
-
-
---ALTER TABLE NotaEntregaDetalle ALTER COLUMN idTipoIva INT NULL
-
---GO
-
 --ALTER TABLE NotaEntregaDetalle ADD uuid UNIQUEIDENTIFIER NULL
 
 --GO
 
---ALTER TABLE NotaEntregaDetalle ALTER COLUMN idPresentacion INT NULL
-
---GO
 
 --CREATE TABLE Ventas.NotaEntregaImpuesto (
 --		Id INT NOT NULL PRIMARY KEY IDENTITY (1,1)

@@ -18,16 +18,7 @@ WHERE name = N'IX_Factura_TipoDocumentoId')
     DROP INDEX IX_Factura_TipoDocumentoId ON Factura;  
 GO
 
-IF EXISTS (SELECT name
-FROM sys.indexes
-WHERE name = N'IX_Factura_TiempoCreditoId')   
-    DROP INDEX IX_Factura_TiempoCreditoId ON Factura;  
-GO
-IF EXISTS (SELECT name
-FROM sys.indexes
-WHERE name = N'IX_Factura_EstadoPagoId')   
-    DROP INDEX IX_Factura_EstadoPagoId ON Factura;  
-GO   
+  
 IF EXISTS (SELECT name FROM sys.indexes  
             WHERE name = N'IX_Factura_IdCliente')   
     DROP INDEX IX_Factura_IdCliente ON Factura;  

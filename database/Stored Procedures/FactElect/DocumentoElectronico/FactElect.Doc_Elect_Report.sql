@@ -107,7 +107,7 @@ BEGIN
                                               ((
                                                  SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
                                                  FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.[Percent] > 0
+                                                 WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2''
 
                                               ),0) as iva
 
@@ -268,17 +268,51 @@ BEGIN
 							  ,ncp.identificacionComprador
 							  ,ncp.razonSocialComprador
 							  ,dbo.AFTGenerarNroDocumento(sFv.estab+peFv.ptoEmi,fv.nroFactura) as nroFactura										
-							  ,CAST(ncp.subTotalExentoIva as numeric(15,2))                    as subTotalExento
-							  ,CAST(ncp.subTotalNoObjetoIva as numeric(15,2))                  as subTotalNoIva
-							  ,CAST(ncp.subTotalIvaCero AS numeric(15, 2))                     as subTotalCero
-							  ,CAST(ncp.subTotalIva AS numeric(15, 2))                         as subTotalIva
-                              ,CAST(ncp.totalIce as numeric(15, 2))                            as totalIce
-                              ,CAST(ncp.subTotalNetoNoObjetoIva as numeric(15, 2))             as subTotalNoObjetoIva
-							  ,CAST(ncp.totalDescuento AS numeric(15,2))                       as descuento
-                              ,CAST(ncp.subTotalSinImpuestos as numeric(15,2))                 as subTotalSinImpuestos
-							  ,CAST(ncp.iva as numeric(15, 2))                                 as iva
-							  ,CAST(ncp.total as numeric(15, 2))                               as total			
-							  ,u.nombreUsuario                                                 as usuario
+							  ,ISNULL
+                                ((
+                                    SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2'' AND ni.codigoPorcentaje = ''7''
+
+                                ),0) as subTotalExento
+
+							  ,ISNULL
+                                ((
+                                    SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2'' AND ni.codigoPorcentaje = ''6''
+
+                                ),0) as subTotalNoObjetoIva
+
+	                           ,ISNULL
+                                ((
+                                    SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2'' AND ni.codigoPorcentaje = ''0''
+
+                                ),0) as subTotalIvaCero
+
+	                           ,ISNULL
+                                ((
+                                    SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2'' AND ni.[Percent] > 0
+
+                                ),0) as subTotalIva
+
+	                            ,CAST(ncp.subTotalSinImpuestos  as numeric(18,2))  as precioTotalSinImpuestos
+	                                          
+                               ,ISNULL
+                                ((
+                                    SELECT CAST(SUM(ni.TaxValue)as numeric(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2''
+
+                                ),0) as iva
+
+	                          ,CAST(ncp.totalDescuento as numeric(18,2))         as descuento
+	                          ,CAST(ncp.total as numeric(18,2))                  as total		
+							  ,u.nombreUsuario                                   as usuario
                               ,CASE WHEN codEstado = 4 THEN ''Autorizada''
                                     WHEN codEstado = 6 THEN ''Anulada''
                                                        ELSE ''No Autorizada'' 
