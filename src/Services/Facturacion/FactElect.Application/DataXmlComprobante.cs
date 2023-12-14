@@ -232,7 +232,7 @@ namespace FactElect.Application
             infoFac.razonSocialComprador = nodeInfoNotaCredito.SelectSingleNode("razonSocialComprador").InnerText;
             infoFac.identificacionComprador = nodeInfoNotaCredito.SelectSingleNode("identificacionComprador").InnerText;
             infoFac.contribuyenteEspecial = (nodeInfoNotaCredito.SelectSingleNode("contribuyenteEspecial") == null) ? "" : nodeInfoNotaCredito.SelectSingleNode("contribuyenteEspecial").InnerText;
-            infoFac.obligadoContabilidad = nodeInfoNotaCredito.SelectSingleNode("obligadoContabilidad").InnerText;
+            infoFac.obligadoContabilidad = (nodeInfoNotaCredito.SelectSingleNode("obligadoContabilidad") == null) ? "" : nodeInfoNotaCredito.SelectSingleNode("obligadoContabilidad").InnerText;
             infoFac.rise = (nodeInfoNotaCredito.SelectSingleNode("rise") == null) ? "" : nodeInfoNotaCredito.SelectSingleNode("rise").InnerText;
             infoFac.codDocModificado = nodeInfoNotaCredito.SelectSingleNode("codDocModificado").InnerText;
             infoFac.numDocModificado = nodeInfoNotaCredito.SelectSingleNode("numDocModificado").InnerText;
