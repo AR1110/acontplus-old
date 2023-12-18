@@ -2283,10 +2283,6 @@
                 return
             }
 
-            if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
-                tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
-                return
-            }
 
             let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
 
