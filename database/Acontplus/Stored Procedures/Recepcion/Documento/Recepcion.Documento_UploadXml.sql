@@ -20,10 +20,8 @@ GO
 -- Description: SP FOR GET DOCS RECEIVED TO DOWNLOAD XML FROM SRI
 -- =============================================
 --Recepcion.Doc_Service_Get 50
-IF OBJECT_ID(N'Recepcion.Documento_UploadXml', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.Documento_UploadXml 
-GO
-CREATE PROCEDURE Recepcion.Documento_UploadXml @idUsuarioRol INT
+
+CREATE OR ALTER PROCEDURE Recepcion.Documento_UploadXml @idUsuarioRol INT
 ,@json VARCHAR(1000)
 ,@codDoc VARCHAR(2)
 ,@claveAcceso AS VARCHAR(49)
@@ -136,10 +134,10 @@ BEGIN
 
 			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior]
 			, [fechaEmision], [fechaAutorizacion],
-			[tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [xmlDoc], [versionComp], [idUsuario], [fechaRegistro], downloaded)
+			[tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], xmlCompressed, [versionComp], [idUsuario], [fechaRegistro], downloaded)
 			VALUES(@idEstab, @codEstab, @comprobante, @codDoc, @serieComprobante, @identificacionCliProv
 			, @razonSocial, @fechaEmision,  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
-			, 'NORMAL', @rucReceptor, @claveAcceso, @claveAcceso, @importeTotal, @xmlDoc, @versionComp, @idUsuario, dbo.ufnGetDateEcuador(), 'DE')
+			, 'NORMAL', @rucReceptor, @claveAcceso, @claveAcceso, @importeTotal, COMPRESS(CONVERT(VARBINARY(MAX), @xmlDoc)), @versionComp, @idUsuario, dbo.ufnGetDateEcuador(), 'DE')
 
 			SET @idDocumento = @@IDENTITY
 

@@ -109,8 +109,8 @@ BEGIN
 	SELECT 
 		 idDocumento
 		,versionComp
-		,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX),dr.xmlDoc.query('//autorizacion/comprobante')))
-	FROM Recepcion.DocumentoRecibido dr WHERE dr.codDoc = '07'	AND dr.identificacionReceptor = @identificacionReceptor AND dr.xmlDoc IS NOT NULL
+		,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX),CONVERT(XML, DECOMPRESS(dr.xmlCompressed)).query('//autorizacion/comprobante')))
+	FROM Recepcion.DocumentoRecibido dr WHERE dr.codDoc = '07'	AND dr.identificacionReceptor = @identificacionReceptor AND dr.xmlCompressed IS NOT NULL
 
 	--INSERT INTO @docsSustento (idDocumento,codDocSustento,numDocSustento,fechaEmisionDocSustento)
 	--SELECT 

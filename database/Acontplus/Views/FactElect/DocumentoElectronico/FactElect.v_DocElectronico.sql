@@ -24,7 +24,7 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,de.numEstab + '-' + de.ptoEmision + '-' + RIGHT('000000000' + CONVERT(VARCHAR(9), de.nroDocumento), 9) serieComprobante
           ,de.fechaEmision
           ,de.xmlAcontPlus
-          ,de.xmlSri
+          ,CONVERT(XML, DECOMPRESS(de.xmlCompressed)) xmlSri
           ,de.codigoAutorizacion
           ,de.fechaAutorizacion
           ,de.claveAcceso
@@ -69,6 +69,8 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
          ,ISNULL(se.telefono, '') as telefonoEstablecimiento
          ,se.nombreComercial
          ,us.nombreUsuario as usuario
+         ,de.isAutomatic
+         ,se.idEstablecimiento
     FROM dbo.DocumentoElectronico  de WITH (NOLOCK)
     INNER JOIN dbo.Entidad          e WITH (NOLOCK) ON de.idEntidad      = e.idEntidad
     INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = de.idPuntoEmision
