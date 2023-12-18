@@ -37,6 +37,7 @@
 
 
                     rowEntity.cantidad = fS.roundNumber(rowEntity.cantidad, decimal.nroCantidad);
+                    calculoColumnas["porcentajeDescuento"]();
 
                 },
                 'idMedida': function () {
