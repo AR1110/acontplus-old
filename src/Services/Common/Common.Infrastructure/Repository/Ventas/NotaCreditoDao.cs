@@ -8,7 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
-namespace DataAccess.Ventas
+namespace Common.Infrastructure.Repository.Ventas
 {
     public class NotaCreditoDao
     {
@@ -25,17 +25,17 @@ namespace DataAccess.Ventas
 
         public async Task<GenericResponse> GetAsync(int idRol, string json)
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Ventas.NotaCredito_Get", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("json", json);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    var dataAdapter = new SqlDataAdapter(cmd);
                     dataAdapter.Fill(dt);
                     if (dt.Rows.Count > 0)
                     {
@@ -65,14 +65,14 @@ namespace DataAccess.Ventas
 
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Ventas.NotaCredito_Get_Id", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idNotaCredito", idNotaCredito);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -184,7 +184,7 @@ namespace DataAccess.Ventas
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Ventas.NotaCredito_Insert", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -193,7 +193,7 @@ namespace DataAccess.Ventas
                     var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -223,7 +223,7 @@ namespace DataAccess.Ventas
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Ventas.NotaCredito_Update", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -233,7 +233,7 @@ namespace DataAccess.Ventas
                     var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -262,14 +262,14 @@ namespace DataAccess.Ventas
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Ventas.NotaCredito_Delete", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idNotaCredito", idNotaCredito);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
