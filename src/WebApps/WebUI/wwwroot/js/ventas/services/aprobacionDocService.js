@@ -44,7 +44,7 @@
                 }
                 if (response.code === "1") {
                     const mainData = JSON.parse(response.payload);
-
+         
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -52,6 +52,7 @@
 
                     let tempEstabsAndPtosEmision = mainData[4];
                     let tempBodegas = mainData[5];
+                    let vendedores = mainData[6];
                     let { permisoVenta } = fS.getDataUserRol();
 
                     let dataToGroup = {
@@ -68,6 +69,7 @@
                         tarifas,
                         permisoVenta,
                         decimal,
+                        vendedores
                     }
                 }
             })
