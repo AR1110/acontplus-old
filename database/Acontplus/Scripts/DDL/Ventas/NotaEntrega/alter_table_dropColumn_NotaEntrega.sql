@@ -2,6 +2,11 @@ USE [AcontPlus]
 GO 
 
 
+alter table NotaEntrega ALTER COLUMN total NUMERIC(18,5) NOT NULL
+alter table NotaEntrega ALTER COLUMN recargo NUMERIC(18,5) NOT NULL
+alter table NotaEntrega ALTER COLUMN propina NUMERIC(18,5) NOT NULL
+alter table NotaEntrega ALTER COLUMN transporte NUMERIC(18,5) NOT NULL
+ 
 --alter table NotaEntrega drop constraint [FK__NotaEntre__idTip__46735417]
 --alter table NotaEntrega drop column idTipoIva 
 

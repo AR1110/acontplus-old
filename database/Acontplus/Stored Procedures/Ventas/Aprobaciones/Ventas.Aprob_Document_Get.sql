@@ -116,7 +116,7 @@ BEGIN
 
 			IF @codEstado IS NOT NULL
 				BEGIN
-						SET @sql = @sql + 'AND ad.codEstado = @codEstado '
+				    SET @sql = @sql + 'AND ad.codEstado = @codEstado '
 				END
 
 			IF @byUsuario > 0
