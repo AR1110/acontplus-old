@@ -10,10 +10,8 @@ GO
 -- Create date: 2022-07-31
 -- Description:	SP PARA ACTUALIZAR LOS COMPROBANTES ELECTRONICOS DEL SRI
 -- =============================================
-IF OBJECT_ID(N'Recepcion.Documento_Update', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.Documento_Update
-GO
-CREATE PROCEDURE [Recepcion].Documento_Update @idRol INT
+
+CREATE OR ALTER PROCEDURE [Recepcion].Documento_Update @idRol INT
 ,@idDocumento INT
 ,@tipo INT
 ,@xmlDoc XML
@@ -29,7 +27,7 @@ BEGIN
 	SELECT @idUsuario = idUsuario FROM AFTDataRol(@idRol)
 	
 
-	IF EXISTS(SELECT * FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND xmlDoc IS NOT NULL)
+	IF EXISTS(SELECT * FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND xmlCompressed IS NOT NULL)
 		BEGIN
 			SELECT '0' code, 'El xml ya ha sido actualizado' as 'message'
 			RETURN
@@ -51,7 +49,8 @@ BEGIN
 					SELECT @codDoc = ( X.Y.value('(codDoc)[1]', 'VARCHAR(2)'))
 					FROM  @xmlComp.nodes('infoTributaria') as X(Y)
 
-					UPDATE Recepcion.DocumentoRecibido SET codDoc = @codDoc, xmlDoc = @xmlDoc
+					UPDATE Recepcion.DocumentoRecibido SET codDoc = @codDoc
+                        ,xmlCompressed = COMPRESS(CONVERT(VARBINARY(MAX), @xmlDoc))
 					WHERE idDocumento = @idDocumento
 				END
 			SELECT '1' code, 'Xml Guardado Exitosamente' as 'message'
