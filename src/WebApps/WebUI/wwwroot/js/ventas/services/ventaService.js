@@ -435,6 +435,7 @@
 
         service.infoComprobanteMapperTo = function (data) {
             const result = {
+                uniqueId: data.uniqueId, //se envia cuando el documento proviebe desde el modulo de aprobacion
                 idCliente: data.idCliente,
                 idTiempoCredito: data.idTiempoCredito,
                 idPuntoEmision: data.idPuntoEmision,
