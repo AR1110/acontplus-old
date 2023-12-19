@@ -96,7 +96,7 @@ BEGIN
 		  ,xmlComp = CASE de.codEstado WHEN 4 THEN CONVERT(xml,dbo.f_sanitize_xml(convert(varchar(max), de.xmlSri.query('//autorizacion/comprobante'))))
 								   ELSE dbo.f_sanitize_xml(de.xmlAcontPlus)
 					 END
-	FROM dbo.DocumentoElectronico de
+	FROM FactElect.v_DocElectronico de
 	WHERE codDoc = '07' AND de.idEntidad = @idEntidad
 
 	INSERT INTO @mainRet (idDocumentoElectronico,versionComp, retenciones)

@@ -280,7 +280,7 @@
                     })
                     .finally(() => hideLoader())
 
-                aprobacionDocSvc.getDataForm().then(response => {
+                aprobacionDocSvc.getDataForm().then(response => { 
                     mainDataForm = response;
                 }).catch(error => {
                     console.log(error)
@@ -3008,8 +3008,8 @@
                     tarifas,
                     permisoVenta,
                     decimal,
+                    vendedores
                 } = mainDataForm;
-                console.log(detalles)
 
                 /**
                  * Establecimiento - Impuesto Tarifa 
@@ -3054,6 +3054,9 @@
                 //Permisos para detalle y documento    
                 $scope.permisoComprobanteVenta = permisoVenta.comprobante;
                 $scope.permisoDetalleVenta = permisoVenta.detalle;
+
+                //Vendedores-usuarios
+                $scope.vendedores = vendedores;
 
                 setColumnDefs();
                 $scope.gridOptionsDetalle.data = calculateTotalItems(detalles);
@@ -3727,6 +3730,14 @@
                 return
             }
 
+            let dataUsuario = $scope.vendedores.find(vendedor => (vendedor.predeterminado));
+            if (!dataUsuario) {
+                tS.toastr('warning', 'No se encontró los datos del usuario');
+                return
+            } else {
+                $scope.data.idUsuario = dataUsuario.idUsuario;
+            }
+
             if (
                 $scope.data.docDestino === DOC_TYPE.FV_SRI &&
                 $scope.cliente.tipoIdentificacion === SRI_IDENTIFITION_CODE.CONSUMIR_FINAL &&
@@ -3779,7 +3790,7 @@
 
                 if (isConfirmed) {
                     showLoader();
-                    $scope.data.idUsuario = 0;
+
                     //Documento Destino Factuta
                     if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
                         let detalles = checkStockDetalle($scope.gridOptionsDetalle.data)

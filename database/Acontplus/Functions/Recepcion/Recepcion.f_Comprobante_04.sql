@@ -90,15 +90,15 @@ BEGIN
 	SELECT 
 		 idDocumento
 		,versionComp
-		,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX),dr.xmlDoc.query('//autorizacion/comprobante')))
-	FROM Recepcion.DocumentoRecibido dr WHERE dr.codDoc = '04' AND dr.identificacionReceptor = @identificacionReceptor AND dr.xmlDoc IS NOT NULL
+		,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX),CONVERT(XML, DECOMPRESS(dr.xmlCompressed)).query('//autorizacion/comprobante')))
+	FROM Recepcion.DocumentoRecibido dr WHERE dr.codDoc = '04' AND dr.identificacionReceptor = @identificacionReceptor AND dr.xmlCompressed IS NOT NULL
 
 	INSERT INTO @comprobantes (idDocumento,versionComp,xmlComp)
 	SELECT 
 		 idDocumento
 		,versionComp
-		,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX),dr.xmlDoc.query('//autorizacion/comprobante')))
-	FROM Recepcion.DocumentoRecibido dr WHERE dr.codDoc = '04' AND dr.identificacionReceptor = @cedula AND dr.xmlDoc IS NOT NULL
+		,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX),CONVERT(XML, DECOMPRESS(dr.xmlCompressed)).query('//autorizacion/comprobante')))
+	FROM Recepcion.DocumentoRecibido dr WHERE dr.codDoc = '04' AND dr.identificacionReceptor = @cedula AND dr.xmlCompressed IS NOT NULL
 
 
 	INSERT INTO @infoNotaCredito (idDocumento,fechaEmision,numDocModificado)

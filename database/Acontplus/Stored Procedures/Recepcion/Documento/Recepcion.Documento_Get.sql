@@ -23,11 +23,7 @@ GO
 -- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS
 -- =============================================
 -- Recepcion.Documento_Get 63, '{"orderBy":"","sortBy":"","limit":50,"page":1,"codDoc":"","codEstab":"ESTAB-000000006","startDate":"2023-04-01T05:00:00.000Z","endDate":"2023-05-01T04:59:59.999Z","rucProveedor":"0990017514001"}'
-IF OBJECT_ID(N'Recepcion.Documento_Get ', N'P') IS NOT NULL
-	DROP PROCEDURE Recepcion.Documento_Get
-GO
-
-CREATE PROCEDURE Recepcion.Documento_Get @idRol INT
+CREATE OR ALTER PROCEDURE Recepcion.Documento_Get @idRol INT
 	,@json VARCHAR(MAX)
 	,@backendInfo VARCHAR(MAX) = NULL
 AS
@@ -38,11 +34,6 @@ BEGIN
 	DECLARE @idUsuario INT
 	DECLARE @codEstab VARCHAR(50)
 	DECLARE @codDoc VARCHAR(2)
-	--DECLARE @pageNumber AS INT
-	--DECLARE @rowsOfPage AS INT
-	--DECLARE @sortBy AS VARCHAR(50)
-	--DECLARE @orderBy AS VARCHAR(50)
-	--DECLARE @totalRecords AS INT
 	DECLARE @startDate DATETIME
 	DECLARE @endDate DATETIME
 	DECLARE @tipo VARCHAR(1)
@@ -169,13 +160,13 @@ BEGIN
 		,[numeroAutorizacion]
 		,[importeTotal]
 		,CASE 
-			WHEN xmlDoc IS NOT NULL
+			WHEN xmlCompressed IS NOT NULL
 				THEN 1
 			ELSE 0
 			END hasXml
 		,ISNULL(complete, 0) complete
 		,CASE 
-			WHEN xmlDoc IS NOT NULL
+			WHEN xmlCompressed IS NOT NULL
 				AND complete = 0
 				THEN ''background-color: #FFF5BD;''
 			WHEN complete = 1
