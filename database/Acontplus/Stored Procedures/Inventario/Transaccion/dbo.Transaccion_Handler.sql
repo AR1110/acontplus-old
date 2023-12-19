@@ -67,11 +67,11 @@ BEGIN
 					               )
 			    FROM dbo.Articulo ar WITH (ROWLOCK)
 			    WHERE ar.idArticulo IN (
-					    SELECT t.ProductId
-					    FROM Inventario.TransaccionTemp t
-					    WHERE t.TipoTransaccionId = @idTipoTransaccion
-						  AND t.TipoDocumentoId = @idTipoDocumento
-						  AND t.DocumentoId = @documentoId
+					    SELECT t.idArticulo
+					    FROM Inventario.Transaccion t
+					    WHERE t.idTransaccion   = @idTipoTransaccion
+						  AND t.idTipoDocumento = @idTipoDocumento
+						  AND t.idDocumento     = @documentoId
 					    )
 		    END
         END CONVERSATION @RecvReqDlgHandle;
