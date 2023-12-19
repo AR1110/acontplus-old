@@ -42,7 +42,7 @@
             <input type="text" ng-model="data.montoObjetivo" class="form-control border-select" valid-number maxlength="50" placeholder="0.00">
         </div>
     </div>
-     <div class="row">
+     <div class="row" ng-if="data.idSubFamilia>0">
         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
             <label for="secuencial">Secuencial: </label>
             <input type="text" name="secuencial" ng-model="data.ultimoSecuencial" class="form-control border-select" valid-number placeholder="0">
