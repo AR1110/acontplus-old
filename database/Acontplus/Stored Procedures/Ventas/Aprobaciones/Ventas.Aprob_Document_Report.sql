@@ -70,7 +70,7 @@ BEGIN
 		          ,cl.nombreFiscal                                                     as razonSocialComprador
 		          ,cl.numeroIdentificacion                                             as identificacionComprador
 		          ,cl.direccion                                                        as direccionComprador
-		          ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as correoComprador
+		          ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as emailComprador
 		          ,REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')                         as telefonoComprador
 		          ,ci.descripcion                                                      as ciudadComprador
 		          ,CAST(av.totalSinImpuestos as numeric(18,2))                         as subTotalSinImpuestos

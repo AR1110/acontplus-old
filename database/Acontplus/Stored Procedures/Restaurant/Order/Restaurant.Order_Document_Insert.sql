@@ -471,8 +471,8 @@ BEGIN
         BEGIN
              
             INSERT INTO NotaEntrega 
-                (idCliente,idPuntoEmision,nroDocumento,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,observacion,fechaRegistro,idUsuario,idEntidad,fechaEmision,idTipoDocumento)
-            SELECT @customerCompanyId,@puntoEmisionId, @nroDocumento, @subtotalSinImpuestos,@discount,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
+                   (idCliente         ,idPuntoEmision,  nroDocumento,  subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,fechaRegistro,idUsuario,idEntidad,fechaEmision,idTipoDocumento)
+            SELECT @customerCompanyId,@puntoEmisionId, @nroDocumento, @subtotalSinImpuestos,@discount,0,0,0,0,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
             
             SET @documentoId = (SELECT SCOPE_IDENTITY())
 
@@ -512,7 +512,7 @@ BEGIN
                     INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
                     INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
 
-                    INSERT INTO Ventas.NotaEntregaImpuesto(NotaEntregaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId)                    
+                    INSERT INTO Ventas.NotaEntregaImpuesto(NotaEntregaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId,Discount)                    
                     SELECT @documentoId
                           ,(SELECT TOP 1 iv.idImpuesto FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
                           ,(SELECT TOP 1 iv.idTipoIva FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
@@ -520,6 +520,7 @@ BEGIN
                           ,t.taxBase
                           ,t.taxValue
                           ,@userId
+                          ,0
                     FROM @tblTaxes t
                     INNER JOIN Sri.TarifaImpuesto ti ON t.TaxPercentId = ti.idTarifaImpuesto
                 END
@@ -545,7 +546,7 @@ BEGIN
             SELECT @documentoId,idArticulo,idTarifa,idBodega,medidaId,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,nota,descripcion,precioCosto,idTipoIva,codigoPorcentaje,tarifa,valorImpuesto,uuid,envioSri
             FROM @FacturaDetalleInsert
                       
-            INSERT INTO Ventas.FacturaImpuesto(FacturaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId)                    
+            INSERT INTO Ventas.FacturaImpuesto(FacturaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId,Discount)                    
                     SELECT @documentoId 
                         ,(SELECT TOP 1 iv.idImpuesto FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
                         ,(SELECT TOP 1 iv.idTipoIva FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
@@ -553,6 +554,7 @@ BEGIN
                         , t.taxBase
                         , t.taxValue
                         , @userId
+                        , 0
                     FROM @tblTaxes t
                     INNER JOIN Sri.TarifaImpuesto ti ON t.TaxPercentId = ti.idTarifaImpuesto
 

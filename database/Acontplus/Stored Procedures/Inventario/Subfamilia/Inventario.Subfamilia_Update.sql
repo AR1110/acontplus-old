@@ -21,13 +21,13 @@ BEGIN
 	SET NOCOUNT ON
 	SET LANGUAGE SPANISH
 
-    DECLARE @idFamilia INT ,@descripcion VARCHAR(50) ,@montoObjetivo NUMERIC(10,5) ,@estado BIT ,@secuencial INT ,@s3ObjectKey VARCHAR(500) ,@s3ObjectUrl VARCHAR(800)
+    DECLARE @idFamilia INT ,@descripcion VARCHAR(50) ,@montoObjetivo NUMERIC(10,5) ,@estado BIT ,@secuencial INT 
 
 	BEGIN TRY
         
         SELECT @idFamilia     = idFamilia
               ,@descripcion   = descripcion
-              ,@montoObjetivo = @montoObjetivo
+              ,@montoObjetivo = montoObjetivo
               ,@estado        = estado
               ,@secuencial    = secuencial
         FROM OPENJSON(@json) WITH 
