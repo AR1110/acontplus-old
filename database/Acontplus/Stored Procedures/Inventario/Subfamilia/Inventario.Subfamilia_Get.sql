@@ -10,10 +10,7 @@ GO
 -- Create date: 2021-06-21
 -- Description:	SP Para listar las subfamilias
 -- =============================================
-IF OBJECT_ID(N'Inventario.Subfamilia_Get', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Subfamilia_Get
-GO
-CREATE PROCEDURE Inventario.Subfamilia_Get @idUsuarioRol INT,@json VARCHAR(MAX) 
+CREATE OR ALTER PROCEDURE Inventario.Subfamilia_Get @idUsuarioRol INT,@json VARCHAR(MAX) 
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -39,7 +36,8 @@ BEGIN
 									   ,codigo = sf.codigo
 									   ,montoObjetivo = ISNULL(sf.montoObjetivo,0)
 									   ,nombreFamilia = ISNULL(f.descripcion, ''Ninguna'')
-									   ,s3ObjectKey
+									   ,ultimoSecuencial
+                                       ,s3ObjectKey
 									   ,s3ObjectUrl
 									   ,totalRecords = @totalRecords
 								   FROM SubFamilia  sf WITH (NOLOCK) 

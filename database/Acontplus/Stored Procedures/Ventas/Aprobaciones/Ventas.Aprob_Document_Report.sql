@@ -18,9 +18,9 @@ BEGIN
 
     IF @codDoc = '01'
         BEGIN
-            SELECT IIF(av.codDoc = '01','PRE FACTURA','Nota de Entrega Por Aprobar')    as tipoDoc
+            SELECT 'PRE FACTURA'                                                        as tipoDoc
 		          ,av.claveAcceso
-		          ,av.claveAcceso  as codigoAutorizacion
+		          ,av.claveAcceso                                                       as codigoAutorizacion
                   ,CASE WHEN pe.ambiente = '1' THEN 'Pruebas' ELSE 'Producción' END     as ambiente
 		          ,CASE WHEN av.tipoEmision = '1' THEN 'NORMAL' ELSE '' END             as emision
                   ,en.razonSocial
@@ -36,7 +36,7 @@ BEGIN
 		          ,cl.nombreFiscal                                                     as razonSocialComprador
 		          ,cl.numeroIdentificacion                                             as identificacionComprador
 		          ,cl.direccion                                                        as direccionComprador
-		          ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as correoComprador
+		          ,REPLACE(ISNULL(cl.correo , 'S/N'),';',',')                          as emailComprador
 		          ,REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')                         as telefonoComprador
 		          ,ci.descripcion                                                      as ciudadComprador
 		          ,CAST(av.totalSinImpuestos as numeric(18,2))                         as subTotalSinImpuestos
