@@ -56,9 +56,9 @@ BEGIN
 			    UPDATE st SET st.cantidad = Inventario.f_Stock(st.idArticulo,st.idBodega)
 			    FROM Inventario.Stock             st WITH (ROWLOCK)
 			    INNER JOIN Inventario.Transaccion td WITH (ROWLOCK) ON td.idArticulo = st.idArticulo AND td.idBodega = st.idBodega
-			    WHERE td.idTransaccion   = @idTipoTransaccion
-				  AND td.idTipoDocumento = @idTipoDocumento
-				  AND td.idDocumento     = @documentoId
+			    WHERE td.idTipoTransaccion  = @idTipoTransaccion
+				  AND td.idTipoDocumento    = @idTipoDocumento
+				  AND td.idDocumento        = @documentoId
 
                 --> Actualizar Stock General
                 UPDATE ar
@@ -69,9 +69,9 @@ BEGIN
 			    WHERE ar.idArticulo IN (
 					    SELECT t.idArticulo
 					    FROM Inventario.Transaccion t
-					    WHERE t.idTransaccion   = @idTipoTransaccion
-						  AND t.idTipoDocumento = @idTipoDocumento
-						  AND t.idDocumento     = @documentoId
+					    WHERE t.idTipoTransaccion = @idTipoTransaccion
+						  AND t.idTipoDocumento   = @idTipoDocumento
+						  AND t.idDocumento       = @documentoId
 					    )
 		    END
         END CONVERSATION @RecvReqDlgHandle;
