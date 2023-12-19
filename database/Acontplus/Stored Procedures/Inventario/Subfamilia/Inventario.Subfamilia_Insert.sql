@@ -10,34 +10,38 @@ GO
 -- Create date: 2021-06-21
 -- Description:	SP Par registrar sub familias 
 -- =============================================
-IF OBJECT_ID(N'Inventario.Subfamilia_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Subfamilia_Insert
-GO
-CREATE PROCEDURE Inventario.Subfamilia_Insert
-	@idUsuarioRol int 
-   ,@idFamilia int
-   ,@descripcion nvarchar(50)
-   ,@siglas nvarchar (30)
-   ,@montoObjetivo decimal(10,5)
+CREATE OR ALTER PROCEDURE Inventario.Subfamilia_Insert
+	@userRoleId int
+   ,@json VARCHAR(MAX)
    ,@s3ObjectKey VARCHAR(500) NULL
    ,@s3ObjectUrl VARCHAR(800) NULL
 AS
 BEGIN
 	SET NOCOUNT ON
 	SET LANGUAGE SPANISH;
-	DECLARE @idEntidad INT
-	DECLARE @idUsuario INT 
-	DECLARE @idSubFamilia INT 
-	DECLARE @payload VARCHAR(MAX)
-	DECLARE @sequential INT 
-	--DECLARE @code VARCHAR(15)
+
+    --> Global
+    DECLARE @idEntidad INT ,@idUsuario INT ,@idSubFamilia INT ,@payload VARCHAR(MAX)
+
+     --> Data
+    DECLARE @idFamilia INT ,@descripcion VARCHAR(300) ,@siglas VARCHAR(30) ,@montoObjetivo NUMERIC(10,5)
+    
 
 	BEGIN TRY 
-		SELECT @sequential = COUNT(*)+1 FROM dbo.SubFamilia WITH (NOLOCK)
 
-		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-		--SET @code = ('F'+Helper.F_Auto_Sequential(@sequential))
+        SELECT @idFamilia     = idFamilia
+              ,@descripcion   = descripcion
+              ,@montoObjetivo = montoObjetivo
+              ,@siglas        = siglas
+        FROM OPENJSON(@json) WITH 
+        ( 
+            idFamilia     INT 
+           ,descripcion   VARCHAR(300)
+           ,montoObjetivo NUMERIC(10,5)
+           ,siglas        VARCHAR(100)
+        )
 
 		IF EXISTS( SELECT 1 FROM SubFamilia WITH (NOLOCK) WHERE descripcion = @descripcion AND idEntidad = @idEntidad)
 			BEGIN 
@@ -56,12 +60,11 @@ BEGIN
 				SET @s3ObjectKey = NULL
 				SET @s3ObjectUrl = NULL
 			END
+
 		BEGIN TRAN 
-			      INSERT INTO SubFamilia 
-						(idFamilia
-						,descripcion,siglas,codigo,montoObjetivo,ultimoSecuencial,idUsuario,idEntidad, s3ObjectKey, s3ObjectUrl)
-				  SELECT CASE WHEN @idFamilia = 0 THEN NULL ELSE @idFamilia END
-						,@descripcion,@siglas,newid(),@montoObjetivo,1,@idUsuario,@idEntidad, @s3ObjectKey, @s3ObjectUrl
+			     INSERT INTO SubFamilia 
+						(idFamilia, descripcion, siglas,codigo  ,montoObjetivo,ultimoSecuencial,idUsuario,idEntidad, s3ObjectKey, s3ObjectUrl)
+				 SELECT @idFamilia,@descripcion,@siglas,newid(),@montoObjetivo,1,@idUsuario,@idEntidad, @s3ObjectKey, @s3ObjectUrl
 
 				 SET @idSubFamilia = @@IDENTITY
 
