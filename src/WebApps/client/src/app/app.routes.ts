@@ -10,4 +10,12 @@ export const routes: Routes = [
       breadcrumb: 'Home'
     }
   },
+  {
+    path: '',
+    canActivate: [sessionGuard],
+    loadChildren: () => import(`./modules/technical-support/technical-support.routes`).then(m => m.routes),
+    data: {
+      breadcrumb: 'Soporte Técnico'
+    }
+  },
 ];
