@@ -52,9 +52,15 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/sweetalert2/src/sweetalert2.scss",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/popper.js/dist/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js"
+            ]
           },
           "configurations": {
             "production": {
