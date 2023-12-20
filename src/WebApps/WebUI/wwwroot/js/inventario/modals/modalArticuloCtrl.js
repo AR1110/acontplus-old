@@ -436,8 +436,30 @@ function modalArticuloCtrl(
             })
             .finally(() => hideLoader());
     }
-    $scope.getArticuloCodigo = () => { 
-        if (params && params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra) return;
+    $scope.getArticuloCodigo = () => {
+        if ($scope.data.idArticulo > 0 || (params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra)) {
+            Swal.fire({
+                //title: "Are you sure?",
+                html: "¿Está de acuerdo en reemplazar automáticamente el <b>Código</b>, <b>Código Auxiliar</b> y <b>Código de Barra</b> con los datos generados por el sistema?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si!",
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if ($scope.subFamilias.length > 0) {
+                        let { codigo } = $scope.subFamilias.find(
+                            (val) => val.idSubFamilia === $scope.data.idSubFamilia
+                        );
+                        setCodigo(codigo);
+                        $scope.$apply();
+                    }
+                }
+            });
+        }
+        //if (params && params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra) return;
 
         if ($scope.tipoRegistro === 1 && $scope.subFamilias.length > 0) {
             let { codigo } = $scope.subFamilias.find(
@@ -507,6 +529,7 @@ function modalArticuloCtrl(
                         $scope.data.fechaCreacion = null;
                         $scope.data.fechaCaducidadLote = null;
                     }
+                    $scope.data.cloneIdSubFamilia = $scope.data.idSubFamilia;
                 })
                 .catch((error) => {
                     console.log(error);

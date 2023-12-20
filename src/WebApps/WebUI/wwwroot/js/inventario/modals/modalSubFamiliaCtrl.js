@@ -62,10 +62,19 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
                 tS.toastr('warning', 'Ingrese la Sigla', tituloModal);
                 return;
             }
-
+            if ($scope.data.idSubFamilia > 0 && $scope.data.secuencial) {
+                if (!$scope.data.secuencial) {
+                    tS.toastr('warning', 'Ingrese Nro. Secuencial', tituloModal);
+                    return;
+                }
+                if (isNaN($scope.data.secuencial)) {
+                    tS.toastr('warning', 'Nro. Secuencial tiene que ser un número', tituloModal);
+                    return;
+                }
+            }
             showLoader();
- 
-            let file = $scope.selectedFile 
+
+            let file = $scope.selectedFile
             if ($scope.data.idSubFamilia > 0) {
                 subFamiliaSvc.update($scope.data.idSubFamilia, file, $scope.data).then($scope.successReponse)
                     .catch(err => {

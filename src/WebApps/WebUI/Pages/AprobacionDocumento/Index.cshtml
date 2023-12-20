@@ -111,8 +111,8 @@
                         <span>Estado:</span>
                         <select id="estadoDocumentos" class="form-control border-select" ng-model="dataSearch.byEstado"
                                 ng-change="getAprobComprobantes()">
-                            <option value="">Todos</option>
-                            <option ng-value="item.codigo" ng-repeat="item in estadoDocumentos">
+                            <option ng-value="">Todos</option>
+                            <option ng-value="item.codEstado" ng-repeat="item in estadoDocumentos">
                                 {{item.descripcion}}
                             </option>
                         </select>

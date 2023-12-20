@@ -87,17 +87,33 @@
                         montoObjetivo: item.montoObjetivo,
                         nombreFamilia: item.nombreFamilia,
                         totalRecords: item.totalRecords,
+                        ultimoSecuencial: item.ultimoSecuencial
                     }))
                 }
             })
         }
 
         service.save = function (file, data) {
-            return mS.getDataFile(url + "Post/?json=" + JSON.stringify(data), file, null, true);
+            const spParams = {
+                idFamilia: data.idFamilia,
+                descripcion: data.descripcion,
+                montoObjetivo: data.montoObjetivo,
+                siglas: data.siglas,
+            }
+            return mS.getDataFile(url + "Post/?json=" + JSON.stringify(spParams), file, null, true);
         }
 
         service.update = function (id, file, data) {
-            return mS.getDataFile(url + `Put/${id}/?json=${JSON.stringify(data)}`, file, null, true);
+            let spParams = {
+                idFamilia: data.idFamilia,
+                descripcion: data.descripcion,
+                montoObjetivo: data.montoObjetivo,
+                estado: data.estado,
+                secuencial: data.ultimoSecuencial || 0,
+                s3ObjectKey: data.s3ObjectKey,
+                s3ObjectUrl: data.s3ObjectUrl
+            }
+            return mS.getDataFile(url + `Put/${id}/?json=${JSON.stringify(spParams)}`, file, null, true);
         }
 
         service.delete = function (id) {
@@ -323,32 +339,32 @@
         return service;
     })
 
-   
 
 
-    app.factory('kardexService', function($injector){
+
+    app.factory('kardexService', function ($injector) {
         let mS = $injector.get('mainService');
         let URL = 'Inventario/Kardex/'
         let service = {};
 
 
 
-        service.get = (params)=>{
-            return mS.getData('get',  URL + '?json=' + JSON.stringify(params), null, true).then(response=>{   
-                if(response.code==="0")             {
+        service.get = (params) => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
                     return response;
                 }
                 return JSON.parse(response.payload)
-            })            
+            })
         }
 
-        service.getDataFilters = ()=>{
-            return mS.getData('get', URL + 'Filters', null, true).then(response=>{
-                if(response.code==="0"){
+        service.getDataFilters = () => {
+            return mS.getData('get', URL + 'Filters', null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.code==="1"){
-                    let mainData = JSON.parse(response.payload);                
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
                     return {
                         estadoMovimientos: mainData[0]
                     }
@@ -360,6 +376,6 @@
     })
 
 
-    
+
 
 })(window.angular)

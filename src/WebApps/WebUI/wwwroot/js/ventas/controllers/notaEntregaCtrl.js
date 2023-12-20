@@ -1932,7 +1932,7 @@
                 idBodega: 0,
                 subTotal: 0,
                 total: 0,
-                nota: "S/N",
+                nota: null,
                 llevaInventario: false,
                 datosAdicionales: false,
                 estado: 1

@@ -52,6 +52,7 @@
             totalRecords: 0
         }
 
+        $scope.estadoDocumentos = [];
 
         let OPTION_APROBACION = Object.freeze({
             0: Object.freeze({
@@ -226,7 +227,7 @@
             try {
                 showLoader();
                 $scope.aprobComprobantes = [];
-
+                console.log($scope.dataSearch.byEstado)
                 let dataSearch = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
@@ -234,7 +235,7 @@
                     byCliente: $scope.dataSearch.byCliente,
                     checkBoxFecha: true,
                     byUsuario: $scope.dataSearch.byUsuario,
-                    byEstado: $scope.dataSearch.byEstado,
+                    byEstado: ["", 0, null, undefined].includes($scope.dataSearch.byEstado) ? null : $scope.dataSearch.byEstado,
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                     isSearchNroSequential: $scope.dataSearch.nroSecuencial ? true : false,
@@ -271,7 +272,7 @@
                 showLoader();
                 aprobacionDocSvc.getDataFilter().then(response => {
                     $scope.establecimientos = response.estabs;
-
+                    $scope.estadoDocumentos = response.estadoDocs; 
                     $scope.dataSearch.codEstab = $scope.establecimientos.find(item => (item.defaultEstab)).codEstab;
                     $scope.getAprobComprobantes();
                 })
@@ -280,7 +281,7 @@
                     })
                     .finally(() => hideLoader())
 
-                aprobacionDocSvc.getDataForm().then(response => { 
+                aprobacionDocSvc.getDataForm().then(response => {
                     mainDataForm = response;
                 }).catch(error => {
                     console.log(error)

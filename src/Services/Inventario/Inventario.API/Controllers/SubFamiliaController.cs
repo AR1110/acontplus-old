@@ -49,8 +49,7 @@ namespace Inventario.API.Controllers
 
         [HttpPost("Post")]
         public async Task<IActionResult> Post(string json, IFormFile file)
-        {
-            var data = JsonConvert.DeserializeObject<SubFamilia>(json);
+        { 
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             var s3file = new S3File();
@@ -64,12 +63,10 @@ namespace Inventario.API.Controllers
                     s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
+                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Inventario.Subfamilia_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("siglas", data.siglas);
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
+                _db.AddDynamicParam("userRoleId", userRoleId);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
                 _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
 
@@ -137,13 +134,11 @@ namespace Inventario.API.Controllers
                     }
 
                 }
+                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Inventario.Subfamilia_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("userRoleId", userRoleId);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
-                _db.AddDynamicParam("estado", data.estado);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _db.AddDynamicParam("s3ObjectKey", data.S3ObjectKey ?? "");
                 _db.AddDynamicParam("s3ObjectUrl", data.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
