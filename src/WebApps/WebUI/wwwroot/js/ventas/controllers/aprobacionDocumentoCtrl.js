@@ -273,8 +273,12 @@
                 aprobacionDocSvc.getDataFilter().then(response => {
                     $scope.establecimientos = response.estabs;
                     $scope.estadoDocumentos = response.estadoDocs; 
-                    $scope.dataSearch.codEstab = $scope.establecimientos.find(item => (item.defaultEstab)).codEstab;
-                    $scope.getAprobComprobantes();
+                    if($scope.establecimientos.length>0){
+                        $scope.dataSearch.codEstab = $scope.establecimientos.find(item => (item.defaultEstab)).codEstab;
+                        $scope.getAprobComprobantes();
+                    }else{
+                        tS.toastr('warning', 'No tienes asignado Establecimiento!')
+                    }
                 })
                     .catch(error => {
                         console.log(error)

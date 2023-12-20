@@ -214,6 +214,8 @@
                     $scope.dataSearch.codEstab = dataEstab.codEstab;
                     $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
                     $scope.getProformas();
+                }else{
+                    tS.toastr('warning', 'No tienes asignado Establecimiento!')
                 }
 
             }).finally(() => hideLoader())
