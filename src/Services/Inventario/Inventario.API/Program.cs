@@ -6,7 +6,6 @@ using Common.Core.Utils;
 using Inventario.API.Extensions;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
-using Services.Common.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,8 +45,6 @@ builder.Services.AddApiVersioning(opt =>
 
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
-builder.Services.AddSingleton<LogWriter>();
-
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
@@ -65,8 +62,6 @@ app.UseSwaggerUI(options =>
     }
 });
 
-
-
 app.UseRouting();
 
 app.UseHttpsRedirection();
@@ -79,11 +74,12 @@ app.MapControllers().RequireAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapGet("/", context =>
+    _ = endpoints.MapGet("/", context =>
     {
         context.Response.Redirect("swagger");
         return Task.CompletedTask;
     });
 });
+
 
 app.Run();

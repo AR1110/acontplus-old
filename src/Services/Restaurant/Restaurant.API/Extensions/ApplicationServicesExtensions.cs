@@ -1,9 +1,11 @@
 ﻿using Common.Application.Services;
 using Common.Core.Interfaces;
+using Common.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Application.Services;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Services.Common.Logs;
 
 namespace Restaurant.API.Extensions
 {
@@ -27,6 +29,9 @@ namespace Restaurant.API.Extensions
             services.AddScoped<IConsumptionConfigService, ConsumptionConfigService>();
             services.AddScoped<IConsumptionService, ConsumptionService>();
             services.AddScoped<IConsumptionCancelledService, ConsumptionCancelledService>();
+
+            services.AddSingleton<LogWriter>();
+            services.AddSingleton<S3ObjectCustom>();
             return services;
         }
     }
