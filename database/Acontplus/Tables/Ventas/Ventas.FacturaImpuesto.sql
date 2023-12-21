@@ -21,13 +21,3 @@ GO
 --)
 --GO
 
-IF EXISTS (SELECT name
-FROM sys.indexes
-WHERE name = N'IX_FacturaImpuesto_Detail_Tax_TaxPercent')   
-    DROP INDEX IX_FacturaImpuesto_Detail_Tax_TaxPercent ON Ventas.FacturaImpuesto
-GO
-
-CREATE NONCLUSTERED INDEX [IX_FacturaImpuesto_Detail_Tax_TaxPercent]
-ON [Ventas].[FacturaImpuesto] (FacturaId ASC, [TaxId], [TaxPercentId])
-INCLUDE ([Id], [Percent], [TaxBase], [TaxValue])
-GO
