@@ -161,7 +161,7 @@
         $scope.getFacturas = function () {
 
             try {
-                $scope.dataSearch.checkBoxFecha = true;
+              //  $scope.dataSearch.checkBoxFecha = true;
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
