@@ -34,7 +34,7 @@ BEGIN
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
 
     --> Filters
-    DECLARE @idCliente INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME ,@fechaFin DATETIME ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@ckCxcVencida BIT
+    DECLARE @idCliente INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@ckCxcVencida BIT
            ,@codDoc VARCHAR(10) ,@idPuntoEmision INT 
     
     --> Variables
@@ -57,8 +57,8 @@ BEGIN
             (
                 idCliente         INT '$.idCliente'
                ,ckFecha           BIT '$.ckFecha'
-               ,fechaInicio  DATETIME '$.fechaInicio'
-               ,fechaFin     DATETIME '$.fechaFin'
+               ,fechaInicio DATETIME2 '$.fechaInicio'
+               ,fechaFin    DATETIME2 '$.fechaFin'
                ,codEstab  VARCHAR(25) '$.codEstab'
                ,codEstado VARCHAR(15) '$.codEstado'
                ,ckCxcVencida      BIT '$.ckCxcVencida'
