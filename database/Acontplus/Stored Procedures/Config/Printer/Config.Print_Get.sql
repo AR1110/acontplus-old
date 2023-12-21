@@ -132,6 +132,7 @@ BEGIN
 						WHERE cd.codDoc    = @codDoc
 						    AND i.EstablecimientoId = @establecimientoId 
 						    AND cd.[enabled]  = 1
+                            AND i.[Enabled] = 1
                             AND (i.Machine IS NOT NULL AND LEN(LTRIM(RTRIM(i.Machine))) > 0)
                             FOR JSON PATH
 					 )
