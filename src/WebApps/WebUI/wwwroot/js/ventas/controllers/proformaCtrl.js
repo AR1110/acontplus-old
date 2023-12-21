@@ -214,6 +214,8 @@
                     $scope.dataSearch.codEstab = dataEstab.codEstab;
                     $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
                     $scope.getProformas();
+                }else{
+                    tS.toastr('warning', 'No tienes asignado Establecimiento!')
                 }
 
             }).finally(() => hideLoader())
@@ -1394,7 +1396,7 @@
                 idBodega: 0,
                 subTotal: 0,
                 total: 0,
-                nota: "S/N",
+                nota: null,
                 llevaInventario: false,
                 datosAdicionales: false,
                 estado: 1

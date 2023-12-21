@@ -19,14 +19,16 @@
                 }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
-
+            
                     let tempEstabsAndPtosEmision = mainData[0];
+                    let estadoDocs = mainData[1];
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision 
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
                     return {
                         estabs,
+                        estadoDocs
                     }
 
                 }
