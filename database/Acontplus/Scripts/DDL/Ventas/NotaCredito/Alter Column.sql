@@ -1,8 +1,6 @@
 use [Acontplus]
 go 
 
-
-
 --alter table NotaCredito drop constraint [FK__NotaCredi__idTip__61274A53]
 --alter table NotaCredito drop column idTipoIva 
 
@@ -43,6 +41,7 @@ go
 --    nc.valorImpuesto = nc.iva
 --from NotaCreditoDetalle nc 
 --alter table NotaCreditoDetalle ALTER COLUMN valorImpuesto NUMERIC(18,5) NOT NULL
+
 --alter table NotaCreditoDetalle drop column iva
 
 --alter table NotaCreditoDetalle add codigoPorcentaje VARCHAR(5)
@@ -54,7 +53,6 @@ go
 
 
 --> Detalles 
-
 
 select  * from dbo.NotaCreditoDetalle 
 
