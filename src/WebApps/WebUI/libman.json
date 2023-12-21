@@ -87,19 +87,19 @@
       "destination": "wwwroot/lib/jquery-sparklines/"
     },
     {
-      "library": "font-awesome@6.4.2",
+      "library": "font-awesome@6.5.1",
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
-      "library": "limonte-sweetalert2@11.9.1",
+      "library": "limonte-sweetalert2@11.10.1",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
-      "library": "jsbarcode@3.11.5",
+      "library": "jsbarcode@3.11.6",
       "destination": "wwwroot/lib/jsbarcode/"
     },
     {
-      "library": "Chart.js@4.4.0",
+      "library": "Chart.js@4.4.1",
       "destination": "wwwroot/lib/Chart.js/"
     },
     {
@@ -127,7 +127,7 @@
       "destination": "wwwroot/lib/ngStorage/"
     },
     {
-      "library": "microsoft-signalr@7.0.12",
+      "library": "microsoft-signalr@7.0.14",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -143,7 +143,7 @@
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "library": "axios@1.6.1",
+      "library": "axios@1.6.2",
       "destination": "wwwroot/lib/axios/"
     },
     {

@@ -1,5 +1,5 @@
 ﻿using Common.Core.Models;
-using DataAccess;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FactElect.API.Controllers.Sri

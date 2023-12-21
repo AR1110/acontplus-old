@@ -92,10 +92,8 @@
                     <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
                         class="form-control border-select" ng-model="cliente.nombreFiscal" customer-search-sale-drtv
                         on-select="onSelectedClienteChange(result)" on-keyup="onKeyupCustomer()"
-                        function-trigger="receiveDataCustomerSRI(result)" 
-                        autocomplete="off"
-                        placeholder="Ingrese C.I o Nombre Comercial"
-                        onclick="select();">
+                        function-trigger="receiveDataCustomerSRI(result)" autocomplete="off"
+                        placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary btn-xs border-select"
@@ -124,9 +122,7 @@
                     <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
                         class="form-control border-select" ng-model="cliente.nombreFiscal" cliente-search-drtv
                         on-select="onSelectedClienteChange(result)" on-keyup-cliente="onKeyupCustomer()"
-                        placeholder="Ingrese C.I o Nombre Comercial"
-                        autocomplete="off"
-                         onclick="select();">
+                        placeholder="Ingrese C.I o Nombre Comercial" autocomplete="off" onclick="select();">
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary btn-xs border-select"
                             id="btnNewCustomerDocument" btn-cliente result-modal="onSelectedClienteChange(result)">
@@ -168,12 +164,11 @@
         <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-                    <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select"
-                           ng-model="data.fechaEmision" 
-                           ng-change="onChangeFechaEmision()"
-                           ng-disabled="!permisoComprobanteVenta.fechaEmision"
-                           ng-keyup="onChangeFechaEmision()" tabindex="-1" />
-                    <small class="text-info">{{data.fechaEmisionEscrita}}</small>
+                <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select"
+                    ng-model="data.fechaEmision" ng-change="onChangeFechaEmision()"
+                    ng-disabled="!permisoComprobanteVenta.fechaEmision" ng-keyup="onChangeFechaEmision()"
+                    tabindex="-1" />
+                <small class="text-info">{{data.fechaEmisionEscrita}}</small>
             </div>
         </div>
 
@@ -284,7 +279,8 @@
                 <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-block btn-lg btn-success mt-4" id="btnSaveAndUpdateDocument"
                         ng-click="onSave()">
-                        <i class="ti-save"></i> Guardar
+                        <i class="{{data.idFactura>0?'ti-pencil': 'ti-save'}}"></i>
+                        {{data.idFactura>0?'Actualizar': 'Guardar'}}
                     </button>
                 </div>
             </div>
@@ -297,115 +293,114 @@
     </div>
 
     <!--SubTotales-->
-    <div class="row">
+    <div class="row mt-1">
         <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-            <div class="row mt-2" ng-if="showSubtotales">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <div class="table-responsive">
-                        <table class="table table-clear table-sm">
-                            <tbody>
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">
-                                            SubTotal Iva
-                                            {{tarifaImpuestoVigente.descripcion}}
-                                        </strong>
-                                    </td>
-                                    <td class="right">${{data.subTotalIva}}</td>
-                                </tr>
+            <div class="row">
+                @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="table-responsive">
+                <table class="table table-clear table-sm">
+                <tbody>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">
+                SubTotal Iva
+                {{tarifaImpuestoVigente.descripcion}}
+                </strong>
+                </td>
+                <td class="right">${{data.subTotalIva}}</td>
+                </tr>
 
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">SubTotal IVA 0</strong>
-                                    </td>
-                                    <td class="right">${{data.subTotalIvaCero}}</td>
-                                </tr>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">SubTotal IVA 0</strong>
+                </td>
+                <td class="right">${{data.subTotalIvaCero}}</td>
+                </tr>
 
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">SubTotal Exento IVA</strong>
-                                    </td>
-                                    <td class="right">${{data.subTotalExentoIva}}</td>
-                                </tr>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">SubTotal Exento IVA</strong>
+                </td>
+                <td class="right">${{data.subTotalExentoIva}}</td>
+                </tr>
 
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">SubTotal no Objeto IVA</strong>
-                                    </td>
-                                    <td class="right">${{data.subTotalNoObjetoIva}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">SubTotal no Objeto IVA</strong>
+                </td>
+                <td class="right">${{data.subTotalNoObjetoIva}}</td>
+                </tr>
+                </tbody>
+                </table>
                 </div>
+                </div> *@
 
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <div class="table-responsive">
-                        <table class="table table-clear table-sm">
-                            <tbody>
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">SubTotal Neto IVA</strong>
-                                    </td>
-                                    <td class="right">${{data.subTotalNetoIva}}</td>
-                                </tr>
+                @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="table-responsive">
+                <table class="table table-clear table-sm">
+                <tbody>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">SubTotal Neto IVA</strong>
+                </td>
+                <td class="right">${{data.subTotalNetoIva}}</td>
+                </tr>
 
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">SubTotal Neto IVA 0</strong>
-                                    </td>
-                                    <td class="right">${{data.subTotalNetoIvaCero}}</td>
-                                </tr>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">SubTotal Neto IVA 0</strong>
+                </td>
+                <td class="right">${{data.subTotalNetoIvaCero}}</td>
+                </tr>
 
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">SubTotal Neto Exento IVA</strong>
-                                    </td>
-                                    <td class="right">${{data.subTotalNetoExentoIva}}</td>
-                                </tr>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">SubTotal Neto Exento IVA</strong>
+                </td>
+                <td class="right">${{data.subTotalNetoExentoIva}}</td>
+                </tr>
 
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">SubTotal Neto no Objeto IVA</strong>
-                                    </td>
-                                    <td class="right">${{data.subTotalNetoNoObjetoIva}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">SubTotal Neto no Objeto IVA</strong>
+                </td>
+                <td class="right">${{data.subTotalNetoNoObjetoIva}}</td>
+                </tr>
+                </tbody>
+                </table>
                 </div>
+                </div> *@
 
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <div class="table-responsive">
-                        <table class="table table-clear table-sm">
-                            <tbody>
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">ICE</strong>
-                                    </td>
-                                    <td class="right">${{data.totalIce}}</td>
-                                </tr>
+                @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="table-responsive">
+                <table class="table table-clear table-sm">
+                <tbody>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">ICE</strong>
+                </td>
+                <td class="right">${{data.totalIce}}</td>
+                </tr>
 
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">IRBPNR</strong>
-                                    </td>
-                                    <td class="right">${{data.irbpnr}}</td>
-                                </tr>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">IRBPNR</strong>
+                </td>
+                <td class="right">${{data.irbpnr}}</td>
+                </tr>
 
-                                <tr>
-                                    <td class="left">
-                                        <strong class="text-dark">Propina</strong>
-                                    </td>
-                                    <td class="right">${{data.propina}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <tr>
+                <td class="left">
+                <strong class="text-dark">Propina</strong>
+                </td>
+                <td class="right">${{data.propina}}</td>
+                </tr>
+                </tbody>
+                </table>
                 </div>
+                </div> *@
             </div>
-            <md-divider></md-divider>
-            <div class="row mt-2" ng-if="showSubtotales">
+            <div class="row mt-2">
                 <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label>% Descuento</label>
@@ -439,7 +434,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                @* <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label>Transporte</label>
                         <input type="text" decimal ng-model="data.transporte" class="form-control border-select"
@@ -453,7 +448,7 @@
                         <input type="text" decimal ng-model="data.recargo" class="form-control border-select"
                             placeholder="0.00" />
                     </div>
-                </div>
+                </div> *@
 
                 <div class="col-lg-4">
                     <div class="form-group">
@@ -466,54 +461,52 @@
         </div>
 
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-            <div class="table-responsive mt-2">
-                <table class="table table-clear table-sm">
-                    <tbody>
-                        <tr>
-                            <td class="left">
-                                <strong class="text-dark">SubTotal sin Impuesto</strong>
-                            </td>
-                            <td class="right">${{data.subTotalSinImpuestos}}</td>
-                        </tr>
-
-                        <tr>
-                            <td class="left">
-                                @* <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa"
-                                ng-model="data.tarifa" class="form-control form-control-sm border-select"
-                                ng-change="recalculateImpuestoTarifa()" ng-disabled="disabledImpuestoTarifa">
-                                <option ng-value="item.tarifa" ng-repeat="item in impuestoTarifas">
-                                {{item.descripcion}}
-                                </option>
-                                </select> *@
-                                <span class="text-dark">{{tarifaImpuestoVigente.descripcion}}</span>
-
-                            </td>
-                            <td class="right">${{data.iva}}</td>
-                        </tr>
-
-                        <tr>
-                            <td class="left">
-                                <strong class="text-dark">Total Descuento</strong>
-                            </td>
-                            <td class="right">${{data.totalDescuento}}</td>
-                        </tr>
-
-                        <tr>
-                            <td class="left">
-                                <h4> <strong class="text-dark">Total</strong></h4>
-                            </td>
-                            <td class="right">
-                                <h4><strong class="text-dark">${{getImporteTotal()}}</strong></h4>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card border p-2">
+                 
+                    <div id="drawImpuestoTotales"></div>
+                
             </div>
+            @* <div class="table-responsive mt-2">
+            <table class="table table-clear table-sm">
+            <tbody>
+            <tr>
+            <td class="left">
+            <strong class="text-dark">SubTotal sin Impuesto</strong>
+            </td>
+            <td class="right">${{data.subTotalSinImpuestos}}</td>
+            </tr>
+
+            <tr>
+            <td class="left">
+            <span class="text-dark">{{tarifaImpuestoVigente.descripcion}}</span>
+
+            </td>
+            <td class="right">${{data.iva}}</td>
+            </tr>
+
+            <tr>
+            <td class="left">
+            <strong class="text-dark">Total Descuento</strong>
+            </td>
+            <td class="right">${{data.totalDescuento}}</td>
+            </tr>
+
+            <tr>
+            <td class="left">
+            <h4> <strong class="text-dark">Total</strong></h4>
+            </td>
+            <td class="right">
+            <h4><strong class="text-dark">${{getImporteTotal()}}</strong></h4>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </div> *@
             <div class="mt-2">
-                <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block" 
+                <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
                     open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento"
                     get-data-additional-document="resultModalDatoAdicional(result)"
-                ng-click="openModalInfoAdicional(false)">
+                    ng-click="openModalInfoAdicional(false)">
                     <i class="fas fa-info-circle text-info"></i> Dato Adicional
                 </button>
             </div>

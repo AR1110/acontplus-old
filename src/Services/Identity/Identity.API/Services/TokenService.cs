@@ -1,8 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Identity.Core.Interfaces;
-using Identity.Core.Models;
+using Identity.API.Interfaces;
+using Identity.API.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Identity.API.Services

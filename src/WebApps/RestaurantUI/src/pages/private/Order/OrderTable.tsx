@@ -13,7 +13,7 @@ import { ChangeEvent, lazy, useRef, useState } from "react";
 import { Button, Stack, Tooltip } from "@mui/material";
 
 import {
-    AccountTreeIcon,
+    PointOfSaleIcon,
     ArrowBackIcon,
     AspectRatioIcon,
     ClearIcon,
@@ -159,16 +159,16 @@ export default function OrderTable() {
                                         <TableCell>
                                             <Stack direction="row" spacing={1}>
                                                 {
-                                                    (order.finished || order.divided) ? '': (
+                                                    (order.finished || order.divided) ? '' : (
                                                         <Tooltip describeChild title="Editar">
                                                             <Button variant="contained" color="success"
                                                                 aria-label="Editar"
                                                                 onClick={() => handleEdit(order.orderId)}
-                                                            > 
+                                                            >
                                                                 <EditIcon />
                                                             </Button>
                                                         </Tooltip>
-                                                    ) 
+                                                    )
                                                 }
 
                                                 <Tooltip describeChild title="PDF e Impresión">
@@ -183,26 +183,33 @@ export default function OrderTable() {
                                                     </Button>
                                                 </Tooltip>
 
+
                                                 {
-                                                    ((!(order.divided) || order.divided) && !(order.finished)) && (
-                                                        <Tooltip describeChild title="Dividir la cuenta">
+                                                    (order.divided || order.finished) ? '' : (
+
+                                                        <Tooltip describeChild title="Completar Venta">
                                                             <Button variant="contained" size="large" color="inherit"
-                                                                aria-label="Impresión"
+                                                                aria-label="Dividir"
                                                                 onClick={() => dividerCuenta(order.orderId)}
                                                             >
-                                                                <AccountTreeIcon />
+                                                                <PointOfSaleIcon />
                                                             </Button>
                                                         </Tooltip>
                                                     )
                                                 }
-                                                <Tooltip describeChild title="Anular">
-                                                    <Button variant="contained" color="error"
-                                                        aria-label="Anular"
-                                                        onClick={() => askToDelete(order.orderId)}
-                                                    >
-                                                        <ClearIcon />
-                                                    </Button>
-                                                </Tooltip>
+                                                {
+                                                    (order.finished || order.divided) ? '' : (
+                                                        <Tooltip describeChild title="Anular">
+                                                            <Button variant="contained" color="error"
+                                                                aria-label="Anular"
+                                                                onClick={() => askToDelete(order.orderId)}
+                                                            >
+                                                                <ClearIcon />
+                                                            </Button>
+                                                        </Tooltip>
+                                                    )
+                                                }
+
                                             </Stack>
                                         </TableCell>
                                         <TableCell align="center"> {order.serie}</TableCell>

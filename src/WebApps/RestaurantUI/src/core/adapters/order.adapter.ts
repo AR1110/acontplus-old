@@ -20,7 +20,8 @@ function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {
         totalRecords: order.totalRecords,
         divided: order.divided,
         finished: order.finished,
-        tableName: order.tableName
+        tableName: order.tableName,
+        medida: order.medida
     })
     )
 }
@@ -142,7 +143,8 @@ async function orderReadForUpdateAdapter(obj: any) {
             paid: restOrderItem.paid ?? false,
             menuId: restOrderItem.menuId,
             itemTypeCode: restOrderItem.itemTypeCode,
-            remainingQuantity: restOrderItem.remainingQuantity
+            remainingQuantity: restOrderItem.remainingQuantity,
+            medida: restOrderItem.medida
         };
         
     }) 

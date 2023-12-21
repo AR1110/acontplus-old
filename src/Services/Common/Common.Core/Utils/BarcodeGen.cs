@@ -1,6 +1,6 @@
-﻿using ZXing.Common;
+﻿using System.Drawing.Imaging;
 using ZXing;
-using System.Drawing.Imaging;
+using ZXing.Common;
 
 namespace Common.Core.Utils
 {

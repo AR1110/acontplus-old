@@ -1,7 +1,8 @@
-﻿using Common.Core.Interfaces;
+﻿using Asp.Versioning;
+using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
@@ -15,11 +16,15 @@ namespace Inventario.API.Controllers.v1
     public class ArticuloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly S3ObjectCustom _s3ObjectCustom;
         private readonly IS3StorageService _storageService;
         private readonly LogWriter _log;
-        public ArticuloController(IConfiguration configuration, IS3StorageService storageService, LogWriter log)
+        public ArticuloController(IConfiguration configuration,
+            S3ObjectCustom s3ObjectCustom,
+            IS3StorageService storageService, LogWriter log)
         {
             _configuration = configuration;
+            _s3ObjectCustom = s3ObjectCustom;
             _storageService = storageService;
             _log = log;
         }
@@ -31,6 +36,10 @@ namespace Inventario.API.Controllers.v1
             DbAccess _db = new DbAccess(_configuration);
             try
             {
+                if (!DataValidation.IsValidJson(json))
+                {
+                    return BadRequest("Caracteres de busqueda invalidos");
+                }
                 await _db.SPExecute("Inventario.Articulo_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -39,7 +48,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
 
-                _log.LogActivity("Error al listar articulos: \n" + ex.ToString());
+                _log.LogActivity($"Error al listar articulos: {json} \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar articulos");
             }
             finally
@@ -80,44 +89,23 @@ namespace Inventario.API.Controllers.v1
 
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
-            var data = JsonConvert.DeserializeObject<ApiRequest>(json);
-            var s3file = new S3File();
+            var data = JsonConvert.DeserializeObject<ApiRequest>(json); 
 
             try
             {
                 if (file != null)
                 {
-                    var fileExt = Path.GetExtension(file.FileName);
-                    s3file.BucketName = _configuration["S3Bucket:Name"];
-                    s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/articulos/{Guid.NewGuid()}{fileExt}";
-                    s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/articulos/", file);
                 }
                 await _db.SPExecute("Inventario.Articulo_Insert", true);
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-                _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
-                _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
+                _db.AddDynamicParam("s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "");
+                _db.AddDynamicParam("s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
                 if (_response.code == "1" && file != null)
                 {
-
-                    await using var memoryStream = new MemoryStream();
-
-                    await file.CopyToAsync(memoryStream);
-                    var s3 = new S3ObjectCustom()
-                    {
-                        Region = s3file.Region,
-                        BucketName = s3file.BucketName,
-                        InputStream = memoryStream,
-                        Name = s3file.S3ObjectKey
-                    };
-                    var credentials = new AwsCredentials()
-                    {
-                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
-                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
-                    };
-                    var s3Response = await _storageService.UploadAsync(s3, credentials);
+                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                 }
             }
             catch (Exception ex)
@@ -139,41 +127,23 @@ namespace Inventario.API.Controllers.v1
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<ApiRequest>(json);
-            var s3file = new S3File();
+            
             try
             {
                 if (file != null)
                 {
-                    var fileExt = Path.GetExtension(file.FileName);
-                    s3file.BucketName = _configuration["S3Bucket:Name"];
-                    s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/articulos/{Guid.NewGuid()}{fileExt}";
-                    s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/articulos/", file);
                 }
                 await _db.SPExecute("Inventario.Articulo_Update");
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-                _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
-                _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
+                _db.AddDynamicParam("s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "");
+                _db.AddDynamicParam("s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
                 if (_response.code == "1" && file != null)
                 {
-                    await using var memoryStream = new MemoryStream();
-                    await file.CopyToAsync(memoryStream);
-                    var s3 = new S3ObjectCustom()
-                    {
-                        Region = s3file.Region,
-                        BucketName = s3file.BucketName,
-                        InputStream = memoryStream,
-                        Name = s3file.S3ObjectKey
-                    };
-                    var credentials = new AwsCredentials()
-                    {
-                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
-                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
-                    };
-                    var s3Response = await _storageService.UploadAsync(s3, credentials);
+                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                 }
             }
             catch (Exception ex)
@@ -221,6 +191,10 @@ namespace Inventario.API.Controllers.v1
             DbAccess _db = new DbAccess(_configuration);
             try
             {
+                if (!DataValidation.IsValidJson(json))
+                {
+                    return BadRequest("Caracteres de busqueda invalidos");
+                }
                 await _db.SPExecute("Almacen.Articulo_Get_Search");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));

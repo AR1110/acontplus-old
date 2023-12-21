@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
-using DataAccess;
-using DataAccess.Compras;
-using Domain.ViewModels.Compras;
+using Common.Core.ViewModels.Compras;
+using Common.Infrastructure.Repository;
+using Common.Infrastructure.Repository.Compras;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;

@@ -1,9 +1,11 @@
 ﻿using Common.Application.Services;
 using Common.Core.Interfaces;
+using Common.Core.Models;
 using Inventario.Application.Services;
 using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Services.Common.Logs;
 
 namespace Inventario.API.Extensions
 {
@@ -19,6 +21,10 @@ namespace Inventario.API.Extensions
             services.AddScoped<IArticuloFraccionadoService, ArticuloFraccionadoService>();
             services.AddScoped<ITransaccionService, TransaccionService>();
             services.AddScoped<IStockService, StockService>();
+            services.AddScoped<IProductPhotoService, ProductPhotoService>();
+
+            services.AddSingleton<LogWriter>();
+            services.AddSingleton<S3ObjectCustom>();
             return services;
         }
     }

@@ -1,13 +1,11 @@
-﻿using Autofac;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Inventario.API.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
-using Services.Common.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,17 +37,13 @@ builder.Services.AddApiVersioning(opt =>
                                                     new QueryStringApiVersionReader("api-version"),
                                                     new HeaderApiVersionReader("x-api-version"),
                                                     new MediaTypeApiVersionReader("x-api-version"));
-});
-
-builder.Services.AddVersionedApiExplorer(setup =>
+}).AddApiExplorer(setup =>
 {
     setup.GroupNameFormat = "'v'VVV";
     setup.SubstituteApiVersionInUrl = true;
 });
 
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
-builder.Services.AddSingleton<LogWriter>();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
@@ -68,8 +62,6 @@ app.UseSwaggerUI(options =>
     }
 });
 
-app.UseApiVersioning();
-
 app.UseRouting();
 
 app.UseHttpsRedirection();
@@ -82,11 +74,12 @@ app.MapControllers().RequireAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapGet("/", context =>
+    _ = endpoints.MapGet("/", context =>
     {
         context.Response.Redirect("swagger");
         return Task.CompletedTask;
     });
 });
+
 
 app.Run();

@@ -100,7 +100,10 @@ namespace Common.Infrastructure.Repository
 
                         for (int i = 0; i < tableNames.Length; i++)
                         {
-                            ds.Tables[i].TableName = tableNames[i];
+                            if (!string.IsNullOrEmpty(tableNames[i]))
+                            {
+                                ds.Tables[i].TableName = tableNames[i];
+                            }
                         }
                     }
                 }

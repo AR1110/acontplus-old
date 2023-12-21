@@ -4,9 +4,9 @@ using System.Text;
 using System.Xml;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
+using Compras.API.Services;
 using Compras.API.Utils;
-using Compras.Application;
-using DataAccess;
 using FactElect.Application;
 using FactElect.Application.Services;
 using FactElect.Core.Models;
@@ -118,14 +118,8 @@ namespace Compras.API.Controllers
             catch (Exception ex)
             {
                 _log.LogActivity("Error getting data of doc: " + ex.ToString());
-                return new BadRequestObjectResult(new
-                {
-                    code = 0,
-                    message = "Error al obtener los datos del comprobante"
-                });
+                return BadRequest(ex.Message);
             }
-
-
         }
         [HttpGet("Preview/{id}")]
         public async Task<IActionResult> Preview(int id)

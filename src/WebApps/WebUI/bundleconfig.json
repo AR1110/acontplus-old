@@ -604,5 +604,23 @@
     "inputFiles": [
       "wwwroot/js/common/constants/constants.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/controllers/impresoraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/controllers/impresoraCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/admin/modalCajaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/admin/modalCajaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/modals/modalMailCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/modals/modalMailCtrl.js"
+    ]
   }
 ]

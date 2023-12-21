@@ -157,6 +157,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     itemTypeCode: item.itemTypeCode,
                     envioSri: false,
                     paid: false,
+                    medida: measureData?.description
                 })
             }
 
@@ -212,6 +213,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                                 horizontal: 'left',
                             }}
                             style={{ position: 'absolute', top: '20px', left: '20px' }}
+                            max={9999}
                         />
                         <CardMedia sx={{
                             borderTopLeftRadius: '16px',

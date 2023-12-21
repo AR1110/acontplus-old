@@ -78,7 +78,8 @@ export interface ItemRead extends ItemBase {
     itemTypeCode: ITEM_TYPE_CODE.ITEM | ITEM_TYPE_CODE.MENU
     menuId?: number
     envioSri: boolean
-    paid: boolean
+    paid: boolean,
+    medida?: string
 }
 
 

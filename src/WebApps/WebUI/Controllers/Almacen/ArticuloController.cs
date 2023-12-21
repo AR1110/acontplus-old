@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using DataAccess.Almacen;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -17,7 +16,7 @@ namespace WebUI.Controllers.Almacen
 
 
         GenericResponse _gr = new();
-       // private ArticuloDao _a;
+        // private ArticuloDao _a;
         //
         private readonly DbAccess _db;
 
@@ -27,7 +26,7 @@ namespace WebUI.Controllers.Almacen
 
 
 
-           // _a = new ArticuloDao(_configuration);
+            // _a = new ArticuloDao(_configuration);
             //
             _db = new DbAccess(_configuration);
             _log = log;
@@ -236,7 +235,7 @@ namespace WebUI.Controllers.Almacen
             {
                 return BadRequest(ex.Message);
             }
-        }  
+        }
 
     }
 }

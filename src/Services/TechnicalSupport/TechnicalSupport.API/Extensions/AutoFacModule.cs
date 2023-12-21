@@ -2,7 +2,7 @@
 using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
-using TechnicalSupport.Infrastructure.Data;
+using TechnicalSupport.API.Data;
 
 namespace TechnicalSupport.API.Extensions
 {

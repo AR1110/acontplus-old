@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using DataAccess.GestionFinanciera;
+using Common.Infrastructure.Repository;
+using Common.Infrastructure.Repository.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 

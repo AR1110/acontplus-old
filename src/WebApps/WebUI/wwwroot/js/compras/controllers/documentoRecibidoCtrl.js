@@ -1432,7 +1432,8 @@
                         descripcion: $scope.articleMergeSearch.textSearch,
                         tipo: tipo
                     }
-                    //Recepcion/Articulo       mS.getData('get', 'Compra/Articulo/?json=' + encodeURIComponent(JSON.stringify(jsonData)), null, true).then(
+                    //Recepcion/Articulo       
+                    mS.getData('get', 'Compra/Articulo/?json=' + encodeURIComponent(JSON.stringify(jsonData)), null, true).then(
                         response => {
                             if (response.code == '1') {
                                 // if ($scope.articleNotFound) {

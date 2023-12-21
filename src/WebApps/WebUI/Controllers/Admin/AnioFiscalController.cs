@@ -1,5 +1,5 @@
-﻿using DataAccess;
-using Domain.Models;
+﻿using Common.Core.Models;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin

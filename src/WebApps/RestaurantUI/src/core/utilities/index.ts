@@ -10,3 +10,4 @@ export * from './round-number.utility';
 export { default as RoutesWithNotFound } from './routesWithNotFound';
 export * from './snackbar.utility';
 export * from './sound.utility';
+export * from './utils';

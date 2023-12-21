@@ -86,3 +86,5 @@ bin-release/
 /src/WebApps/WebUI/.vs/WebUI/FileContentIndex
 /src/Services/Facturacion/ApiFactElect/ApiFactElect.csproj.user
 /src/Services/Ventas/ApiVentas/ApiVentas.csproj.user
+/src/WebApps/RestaurantUI/dev-dist/sw.js
+/src/WebApps/RestaurantUI/dev-dist/workbox-5357ef54.js

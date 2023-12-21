@@ -50,7 +50,10 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import SendToMobileIcon from '@mui/icons-material/SendToMobile';
 import SendIcon from '@mui/icons-material/Send';
-import ClearIcon from '@mui/icons-material/Clear';
+import ClearIcon from '@mui/icons-material/Clear'; 
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import CloudSyncIcon from '@mui/icons-material/CloudSync';
+import SyncIcon from '@mui/icons-material/Sync';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -102,5 +105,8 @@ export {
     AspectRatioIcon,
     SendToMobileIcon,
     SendIcon,
-    ClearIcon
+    ClearIcon,
+    PointOfSaleIcon,
+    CloudSyncIcon,
+    SyncIcon
 }

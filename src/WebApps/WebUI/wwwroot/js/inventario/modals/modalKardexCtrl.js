@@ -31,7 +31,8 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
         checkBoxFecha: true,
         checkBoxBodega: false,
         consolidacion: 0,
-        checkBoxDefault: false
+        checkBoxDefault: false,
+        estado: false
     };
 
     $scope.articuloFiltro = {

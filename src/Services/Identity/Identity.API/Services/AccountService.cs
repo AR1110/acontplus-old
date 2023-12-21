@@ -1,5 +1,5 @@
 ﻿using Common.Core.Interfaces;
-using Identity.Core.Interfaces;
+using Identity.API.Interfaces;
 
 namespace Identity.API.Services
 {

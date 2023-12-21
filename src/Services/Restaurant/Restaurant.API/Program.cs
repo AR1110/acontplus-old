@@ -34,8 +34,6 @@ internal class Program
 
         builder.Services.AddSwaggerDocumentation();
 
-        builder.Services.AddSingleton<LogWriter>();
-
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 

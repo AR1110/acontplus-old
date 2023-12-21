@@ -1,9 +1,8 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.ViewModels.Ventas;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Ventas.API.Controllers
@@ -46,7 +45,7 @@ namespace Ventas.API.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] ProformaViewModel data)
+        public async Task<IActionResult> Insert(ApiRequest parameters)
         {
             var _response = new GenericResponse();
             var _db = new DbAccess(_configuration);
@@ -54,9 +53,8 @@ namespace Ventas.API.Controllers
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Proforma_Insert", true);
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonProforma", JsonConvert.SerializeObject(data.proforma));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
+                _db.AddDynamicParam("userRoleId", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -73,18 +71,18 @@ namespace Ventas.API.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ProformaViewModel data)
+        public async Task<IActionResult> Update(int id, ApiRequest parameters)
         {
             var _db = new DbAccess(_configuration);
 
             var _response = new GenericResponse();
             try
             {
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Proforma_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("jsonProforma", JsonConvert.SerializeObject(data.proforma));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

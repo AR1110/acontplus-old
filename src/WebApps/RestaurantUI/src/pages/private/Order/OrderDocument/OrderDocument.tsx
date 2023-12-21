@@ -10,13 +10,15 @@ import {
     DialogContent,
     DialogTitle,
     Grid,
+    Paper,
     Slide,
-    styled
-} from '@mui/material';
-import {
-    DataGrid,
-    GridColDef,
-} from '@mui/x-data-grid';
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow, 
+} from '@mui/material'; 
 import { TransitionProps } from '@mui/material/transitions';
 import { PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components/IconsMaterial';
 import { SharedService, orderService } from '@/core/services';
@@ -25,63 +27,9 @@ import ButtonAction from './ButtonAction';
 import { IOrderDocument, OrderReadDto } from '@/core/models';
 import WhatsApp from '@/core/components/WhatsApp/WhatsApp';
 import { DOC_TYPE } from '@/core/constants';
+import { hideLoader, showLoader } from '@/spinner';
 
-
-
-const columns: GridColDef[] = [
-    {
-        field: 'actions',
-        type: 'actions',
-        width: 220,
-        renderCell: (cellValues) => <ButtonAction data={cellValues} />
-    },
-    {
-        field: 'docType',
-        headerName: 'N°',
-        width: 50
-    },
-    {
-        field: 'serie',
-        headerName: 'Nro. Doc',
-        width: 160
-    },
-    {
-        field: 'createAt',
-        headerName: 'F. Emisión',
-        width: 150,
-    },
-    {
-        field: 'customerName',
-        headerName: 'Cliente',
-        width: 180,
-    },
-    {
-        field: 'importeTotal',
-        headerName: 'Total',
-        type: 'number',
-        width: 80,
-    },
-
-];
-
-const StyledBox = styled(Box)(({ theme }) => ({
-    height: 350,
-    width: '100%',
-    '& .MuiDataGrid-cell--editing': {
-        backgroundColor: 'rgb(255,215,115, 0.19)',
-        color: '#1a3e72',
-        '& .MuiInputBase-root': {
-            height: '100%',
-        },
-    },
-    '& .Mui-error': {
-        backgroundColor: `rgb(126,10,15, ${theme.palette.mode === 'dark' ? 0 : 0.1})`,
-        color: theme.palette.error.main,
-    },
-}));
-
-
-
+  
 const Transition = forwardRef(function Transition(
     props: TransitionProps & {
         children: React.ReactElement<any, any>;
@@ -98,10 +46,9 @@ type OrderDocumentProps = {
 }
 
 
-const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
-    const [loading, setLoading] = useState(false);
+const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => { 
     const [loadingPDF, setLoadingPDF] = useState(false);
-    const [orderDocuments, setOrderDocuments] = useState<Array<IOrderDocument>>([]);
+    const [orderDocuments, setOrderDocuments] = useState<Array<IOrderDocument & {index: number}>>([]);
     const [openDialogWhatsApp, setDialogWhatsApp] = useState(false);
     const id = data.orderId;
 
@@ -112,8 +59,8 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
     }
 
     const getOrderDocuments = async () => {
-        try {
-            setLoading(true)
+        try { 
+            showLoader();
             const dataFetch = orderService.getId(id, 3);
 
             if (dataFetch.controller) controller = dataFetch.controller;
@@ -121,14 +68,12 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
             const resultAxios = await dataFetch.call;
 
             const response = resultAxios.data;
-            setOrderDocuments(response.orderDocuments.map((orderDoc: IOrderDocument, index: number) => ({
-                ...orderDoc,
-                id: index
-            })))
-            setLoading(false)
+            setOrderDocuments(response.orderDocuments)
+            
+            hideLoader();
         } catch (error) {
-            console.log(error)
-            setLoading(false)
+            console.log(error) 
+            hideLoader()
         }
     }
 
@@ -160,7 +105,16 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
     const reportOrderPDF = async () => {
         try {
             setLoadingPDF(true)
-            SharedService.downloadReport(id)
+            const parameters = {
+                dataParams: JSON.stringify({
+                  id: id
+                }),
+                reportParams: JSON.stringify({
+                  codigo: "RRO",
+                  format: "pdf",
+                }),
+              };
+            SharedService.downloadDynamic(parameters)
                 .finally(() => setLoadingPDF(false));
         } catch (error) {
             setLoadingPDF(false)
@@ -180,7 +134,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
         <>
             <Dialog
                 fullWidth={true}
-                maxWidth="md"
+                maxWidth="lg"
                 TransitionComponent={Transition}
                 keepMounted
                 open={open}
@@ -239,7 +193,48 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
                             </Box>
                         </Grid>
                     </Grid>
-                    <StyledBox>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} size="medium" aria-label="a dense table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align='center'>Op.</TableCell>
+                                    <TableCell>N°.</TableCell>
+                                    <TableCell>Tipo Doc.</TableCell>
+                                    <TableCell>Nro. Doc.</TableCell>
+                                    <TableCell>Fecha Emisión</TableCell>
+                                    <TableCell>Cliente</TableCell>
+                                    <TableCell align="right">Total</TableCell>
+                                    <TableCell align="right">Abono</TableCell>
+                                    <TableCell align="right">Saldo</TableCell>
+                                    <TableCell>Estado</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {orderDocuments.map((row, index) => (
+                                    <TableRow
+                                        key={index}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            <ButtonAction data={row} getOrderDocuments={getOrderDocuments }/>
+                                        </TableCell>
+                                        <TableCell>
+                                            {index + 1}
+                                        </TableCell>
+                                        <TableCell>{row.docType}</TableCell>
+                                        <TableCell>{row.serie}</TableCell>
+                                        <TableCell>{row.createAt}</TableCell>
+                                        <TableCell>{row.customerName}</TableCell>
+                                        <TableCell align="right">{row.importeTotal}</TableCell>
+                                        <TableCell align="right">{row.abono}</TableCell>
+                                        <TableCell align="right">{row.saldo}</TableCell>
+                                        <TableCell>{row.estado}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    {/* <StyledBox>
                         <DataGrid
                             sx={{
                                 boxShadow: 2,
@@ -260,7 +255,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
                             }}
                             pageSizeOptions={[5, 10]}
                         />
-                    </StyledBox>
+                    </StyledBox> */}
                 </DialogContent>
                 <DialogActions>
                     <Button color='inherit' variant='outlined' sx={{

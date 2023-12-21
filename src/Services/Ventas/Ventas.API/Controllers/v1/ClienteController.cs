@@ -1,9 +1,10 @@
-﻿using Common.Core.Models;
+﻿using Asp.Versioning;
+using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.Models;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Ventas.API.Controllers.v1
@@ -79,17 +80,18 @@ namespace Ventas.API.Controllers.v1
             var _db = new DbAccess(_configuration);
             try
             {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
+                if (!DataValidation.IsValidJson(json))
+                {
+                    return BadRequest("Caracteres de busqueda invalidos");
+                }
                 await _db.SPExecute("Ventas.Cliente_Get_Search");
-                _db.AddDynamicParam("idRol ", idUsuarioRol);
+                _db.AddDynamicParam("idRol ", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-
-                _log.LogActivity("Error while searching data form customer: " + ex.ToString());
+                _log.LogActivity($"Error while searching data form customer: {json} " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar cliente");
             }
             finally { _db.Close(); }

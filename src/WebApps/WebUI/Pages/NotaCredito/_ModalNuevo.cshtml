@@ -101,14 +101,22 @@
             <div class="co-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="Facturas"><code>{{facturas.length}}</code> Facturas</label>
-                    <input type="text" class="form-control border-select" ng-disabled="!(cliente.idCliente>0)"
-                        ng-model="nroFactura" placeholder="Buscar Nro. Factura" ng-keyup="onKeyupInvoice()"
-                        uib-typeahead="item as item.nroFactura for item in facturas | filter:{nroFactura:$viewValue}"
+                    <div class="input-group">
+                         <input type="text" class="form-control border-select" ng-disabled="!(cliente.idCliente>0)"
+                        ng-model="textSearchFactura" placeholder="Buscar Nro. Factura" ng-keyup="onKeyupInvoice()"
+                        uib-typeahead="item as item.serieComprobante for item in facturas | filter:{serieComprobante:$viewValue}"
                         typeahead-show-hint="true" typeahead-min-length="0"
-                        typeahead-on-select="selectedInvoiceChange($item)" typeahead-editable="false">
-                    <button type="button" class="btn btn-info btn-xs mt-1" ng-click="getDetalleDoc()">
-                        <i class="ti-file"></i> Ver documento
-                    </button>
+                        typeahead-on-select="selectedInvoiceChange($item)" typeahead-editable="false" onClick="select()">
+                        <div class="input-group-append">
+                             
+      
+                            <button type="button" class="btn btn-secondary" ng-click="getDetalleDoc()">
+                        <i class="ti-eye"></i>
+                    </button> 
+                        </div>
+                    </div>
+                   
+                    
 
                 </div>
             </div>
@@ -177,10 +185,10 @@
             ui-grid-validate ui-grid-save-state class="grid">
         </div>
 
-        <div class="row">
+        <div class="row mt-1">
             <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-                <div class="row mt-2" ng-if="showSubtotales">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="row" >
+                    @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-clear table-sm">
                                 <tbody>
@@ -280,10 +288,9 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
-                <md-divider></md-divider>
-                <div class="row mt-2" ng-if="showSubtotales">
+                    </div> *@
+                </div> 
+                <div class="row">
                     <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>% Descuento</label>
@@ -317,7 +324,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                    @* <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Transporte</label>
                             <input type="text" decimal ng-model="data.transporte"
@@ -331,7 +338,7 @@
                             <input type="text" decimal ng-model="data.recargo" class="form-control border-select"
                                 placeholder="0.00" />
                         </div>
-                    </div>
+                    </div> *@
 
                     <div class="col-lg-4">
                         <div class="form-group">
@@ -344,50 +351,9 @@
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="table-responsive mt-2">
-                    <table class="table table-clear table-sm">
-                        <tbody>
-                            <tr>
-                                <td class="left">
-                                    <strong class="text-dark">SubTotal sin Impuesto</strong>
-                                </td>
-                                <td class="right">${{data.subTotalSinImpuestos}}</td>
-                            </tr>
-
-                            <tr>
-                                <td class="left">
-                                    @* <strong class="text-dark">IVA {{actividadTipoIva.tarifa}}%</strong> *@
-                                    @* <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa"
-                                        ng-model="data.tarifa" class="form-control form-control-sm border-select"
-                                        ng-change="recalculateImpuestoTarifa()">
-                                        <option ng-value="item.tarifa" ng-repeat="item in impuestoTarifas">
-                                            {{item.descripcion}}
-                                        </option>
-                                    </select> *@
-                                    <strong class="text-dark">{{tarifaImpuestoVigente.descripcion}}</strong>                                    
-                                </td>
-                                <td class="right">${{data.iva}}</td>
-                            </tr>
-
-                            <tr>
-                                <td class="left">
-                                    <strong class="text-dark">Total Descuento</strong>
-                                </td>
-                                <td class="right">${{data.totalDescuento}}</td>
-                            </tr>
-
-                            <tr>
-                                <td class="left">
-                                    <h4> <strong class="text-dark">Total</strong></h4>
-                                </td>
-                                <td class="right">
-                                    <h4><strong class="text-dark">${{getImporteTotal()}}</strong></h4>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-2">
+                <div class="card border p-2"> 
+                    <div id="drawImpuestoTotales"></div> 
+                 </div> 
                     <button type="button" 
                             class="btn btn-secondary btn-sm btn-lg btn-block" 
                             open-modal-additional-data-document
@@ -396,18 +362,14 @@
                             >
                         <i class="fas fa-info-circle text-info"></i> Dato Adicional
                     </button>
-                </div>
+                 
             </div>
         </div>
 
 
 
     </div>
-    <div class="modal-footer">
-        <div class="icheck-success icheck-inline">
-            <input type="checkbox" ng-model="showSubtotales" id="showSubTotales" />
-            <label for="showSubTotales">Mas datos</label>
-        </div>
+    <div class="modal-footer"> 
         <button type="button" class="btn btn-success" ng-click="onSave()">
             <i class="ti-save"></i> Guardar
         </button>

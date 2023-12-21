@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Inventario.Core.Interfaces;
-using Inventario.Infrastructure.Data; 
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 
@@ -10,16 +9,16 @@ namespace Inventario.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class ArticuloFraccionadoController : ControllerBase
-    { 
+    {
         private readonly IArticuloFraccionadoService _artSvc;
         public ArticuloFraccionadoController(IArticuloFraccionadoService artSvc)
-        { 
+        {
             _artSvc = artSvc;
         }
-         
+
         [HttpGet]
         public async Task<IActionResult> Get(string json)
-        { 
+        {
             try
             {
                 var parameters = new Dictionary<string, object>
@@ -37,7 +36,7 @@ namespace Inventario.API.Controllers
             }
         }
 
-        
+
         [HttpPost]
         public async Task<IActionResult> Post(ApiRequest request)
         {
@@ -56,7 +55,7 @@ namespace Inventario.API.Controllers
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, ApiRequest request)
-        { 
+        {
             try
             {
                 request.UserRoleId = User.GetUserRoleId();
@@ -80,7 +79,7 @@ namespace Inventario.API.Controllers
                     {"userRoleId", User.GetUserRoleId() },
                     {"id", id}
                 };
-                var response = await _artSvc.DeleteAsync(parameters);                
+                var response = await _artSvc.DeleteAsync(parameters);
                 return Ok(response);
             }
             catch (Exception ex)

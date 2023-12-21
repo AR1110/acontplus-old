@@ -1,10 +1,21 @@
 import { createContext, useContext, useReducer } from "react";
 import axios, { CancelTokenSource } from "axios";
-import { CheckoutState, CheckoutActions, initialCheckoutState, Payment, CheckoutParams } from "@/core/models";
-import { GET_CHECKOUT_BEGIN, GET_CHECKOUT_ERROR, GET_CHECKOUT_SUCCESS, SET_CHANGE_RETURN, SET_OPTION_RECEIVED_AMOUNT, SET_PAYMENT_DATA, SET_RECEIVE_AMOUNT, SET_REPLACE_RECEIVED_AMOUNT, checkoutReducer } from ".";
+import { CheckoutState, CheckoutActions, initialCheckoutState, Payment, CheckoutParams, PaymentSubType } from "@/core/models";
+import {
+    GET_CHECKOUT_BEGIN,
+    GET_CHECKOUT_ERROR,
+    GET_CHECKOUT_SUCCESS,
+    SET_ADD_PAYMENT_DATA,
+    SET_CHANGE_PAYMENT_TYPE_DATA,
+    SET_OPTION_RECEIVED_AMOUNT,
+    SET_RECEIVE_AMOUNT,
+    SET_REMOVE_PAYMENT_TYPE,
+    SET_REPLACE_RECEIVED_AMOUNT,
+    checkoutReducer
+} from ".";
 import { SharedService, accountReceivableService as accountReceivableSvc } from "@/core/services";
-import { CheckoutUtility, RoundNumber, SnackbarUtility } from "@/core/utilities";
-import { PaymentTypeCode } from "@/core/constants"; 
+import { CheckoutUtility, SnackbarUtility } from "@/core/utilities";
+import { PaymentTypeCode } from "@/core/constants";
 import Swal from "sweetalert2";
 import { showLoader, hideLoader } from "@/spinner";
 const initialCheckoutParams: CheckoutParams = {
@@ -31,7 +42,10 @@ const initialState: CheckoutState = {
 }
 const initialActions: CheckoutActions = {
     fetchCheckout: () => [],
-    setPayment: () => [],
+    setChangePaymentType: () => [],
+    setChangeFieldFormPayment: () => [],
+    addPaymentType: () => [],
+    removePaymentType: () => [],
     onChangeReceivedAmount: () => [],
     handleChangeSetReceivedAmount: () => [],
     handleClickOptionReceivedAmount: () => [],
@@ -61,7 +75,8 @@ export const CheckoutProvider = ({ children }: Props) => {
      * @param callback para cerrar modal combro  
      */
     const fetchCheckout = async <T extends CheckoutParams>(params: T, callback: () => void) => {
-        console.log(params)
+
+
         try {
             const { codEstab, idCuentaPorCobrar, tiempoCredito } = params;
             // Inicia el indicador de carga
@@ -92,32 +107,166 @@ export const CheckoutProvider = ({ children }: Props) => {
         }
     }
 
-    const setPayment = <T extends Payment>(payload: Partial<T>) => {
-        console.log(payload)
-        dispatch({ type: SET_PAYMENT_DATA, payload });
+
+
+    function setChangePaymentType(data: Partial<Payment>, paymentSubTypes: PaymentSubType[]) {
+        const paymentData = {
+            ...state.checkout.paymentData,
+            ...data
+        }
+        dispatch({
+            type: SET_CHANGE_PAYMENT_TYPE_DATA, payload: {
+                paymentData,
+                paymentSubTypes
+            }
+        });
+
+    }
+    function setChangeFieldFormPayment<T extends keyof typeof state.checkout.paymentData>(prop: T, value: typeof state.checkout.paymentData[T]) {
+        const paymentData = {
+            ...state.checkout.paymentData,
+            [prop]: value,
+        }
+        dispatch({
+            type: SET_CHANGE_PAYMENT_TYPE_DATA, payload: {
+                paymentData,
+                paymentSubTypes: state.checkout.paymentSubTypes
+            }
+        });
+
+    }
+
+
+
+    function addPaymentType() {
+        try {
+            const {
+                voucher,
+                dataForm,
+                paymentData,
+                multiplesPaymentType,
+                paymentSubTypes,
+                paymentDetails
+            } = state.checkout;
+            const { voucherQuotas } = dataForm;
+            if (voucher.totalBalance == 0 || voucher.totalBalance < 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    html: 'No tienes saldo pendiente!'
+                })
+                return
+            }
+            if (!isValidData()) return;
+            const tempPaymentDetails = structuredClone(paymentDetails);
+
+            const sequential = multiplesPaymentType.length;
+            const checkoutUtility = new CheckoutUtility(sequential);
+            checkoutUtility.setReceivedAmount(Number(voucher.receivedAmount))
+            checkoutUtility.setPaymentDetail(tempPaymentDetails)
+
+            const modifiedQuotas = checkoutUtility.applyReceivedAmountToQuota(voucherQuotas);
+            const resultPaymentDetails = checkoutUtility.paymentDetails;
+            
+            const payingAmount = resultPaymentDetails.filter(item => item.secuencial === sequential)
+                .reduce((prev, curr) => prev + curr.abono, 0)
+
+            const dataPaymentSubType = paymentSubTypes.find(item => item.paymentSubTypeId === paymentData.paymentSubTypeId)
+            const infoCobro = [{
+                nro: paymentData.nro,
+                lote: paymentData.lote,
+                aprobacion: paymentData.aprobacion,
+                referencia: paymentData.referencia,
+                idCiudad: paymentData.cityId
+            }]
+            const dataPaymentTypeForm = {
+                paymentTypeId: paymentData.paymentTypeId,
+                paymentSubTypeId: paymentData.paymentSubTypeId,
+                idBanco: paymentData.idBanco,
+                creationDate: new Date(),
+                receivedAmount: Number(voucher.receivedAmount),
+                payingAmount,
+                sequential,
+                isControlBox: dataPaymentSubType?.isControlBox || false,
+                paymentTypeCode: paymentData.paymentTypeCode,
+                paymentTypeDescription: paymentData.paymentTypeDescription,
+                posfechado: paymentData.posfechado,
+                nro: paymentData.nro,
+                lote: paymentData.lote,
+                aprobacion: paymentData.aprobacion,
+                referencia: paymentData.referencia,
+                idCiudad: paymentData.cityId,
+                infoCobro: paymentData.paymentTypeCode === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
+                paymentSubTypeName: dataPaymentSubType?.description || "",
+                idCuentaBancaria: 0,
+            }
+
+            const payload = {
+                voucherQuotas: modifiedQuotas,
+                dataPaymentTypeForm: dataPaymentTypeForm,
+                paymentDetails: resultPaymentDetails,
+            }
+            dispatch({ type: SET_ADD_PAYMENT_DATA, payload });
+            SnackbarUtility.success('Agregado correctamente')
+        } catch (error) {
+            console.log(error)
+            SnackbarUtility.error(error as string)
+        }
+
+    }
+
+    function removePaymentType(index: number) {
+        try {
+            Swal.fire({
+                html: `<small>Esta seguro/a de eliminar este Abono ahora?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar',
+                cancelButtonText: 'No, cancelar'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    dispatch({
+                        type: SET_REMOVE_PAYMENT_TYPE, payload: index
+                    });
+
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const setReceivedAmount = (payload: string) => {
         dispatch({ type: SET_RECEIVE_AMOUNT, payload });
     }
 
-    const setChangeReturn = () => {
-        dispatch({ type: SET_CHANGE_RETURN });
-    }
+    // const setChangeReturn = () => {
+    //     dispatch({ type: SET_CHANGE_RETURN });
+    // }
 
     const onChangeReceivedAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { voucher } = state.checkout;
         const inputValue = event.target.value.replace(/[^0-9.]/g, '');
+        // Utilizar replace para eliminar el primer dígito "0" si no hay un punto después
+        const resultValueIngreasada = inputValue.replace(/^0(?![.])/, '');
         const numeroStr = voucher.receivedAmount.toString();
         if (!inputValue) {
-            setReceivedAmount('0')
+            setTimeout(() => {
+                setReceivedAmount('0')
+                event.target.select();
+                // setChangeReturn()
+            }, 0);
             return
         }
+
         if (numeroStr === "0") {
             setReceivedAmount('')
         }
-        setReceivedAmount(inputValue)
-        setChangeReturn()
+        setTimeout(() => {
+            setReceivedAmount(resultValueIngreasada)
+            // setChangeReturn()
+        }, 0)
     }
 
     const handleChangeSetReceivedAmount = (value: number | string) => {
@@ -132,24 +281,24 @@ export const CheckoutProvider = ({ children }: Props) => {
 
         if (numeroStr === "0" && valueCalculator === '.') {
             setReceivedAmount(numeroStr + valueCalculator);
-            setChangeReturn()
+            //   setChangeReturn()
             return
         }
         if (numeroStr === "0" || state.isOptionReceivedAmount) {
             setReceivedAmount(valueCalculator);
             setIsOptionReceivedAmount(false);
-            setChangeReturn()
+            // setChangeReturn()
             return
         }
         if (state.isReplaceReceivedAmount) {
             setReceivedAmount(valueCalculator)
             setIsReplaceReceivedAmount(false);
-            setChangeReturn()
+            //setChangeReturn()
             return
         }
 
         setReceivedAmount(numeroStr + valueCalculator)
-        setChangeReturn()
+        // setChangeReturn()
     }
 
     const setIsOptionReceivedAmount = (payload: boolean) => {
@@ -166,9 +315,16 @@ export const CheckoutProvider = ({ children }: Props) => {
     }
 
     const handleClickOptionReceivedAmount = (value: number) => {
+        //const { voucher } = state.checkout;
+        //let valueReceivedAmount = 0;
+        // if (Number(voucher.receivedAmount)===0){
+        //     valueReceivedAmount = value
+        // }else{
+        //     valueReceivedAmount = Number(voucher.receivedAmount) + value;
+        // } 
         setReceivedAmount(value.toString());
         setIsOptionReceivedAmount(true)
-        setChangeReturn()
+        // setChangeReturn()
     }
     const checkoutClearButton = () => {
         try {
@@ -179,7 +335,7 @@ export const CheckoutProvider = ({ children }: Props) => {
 
             if (voucher.receivedAmount === "0") {
                 setReceivedAmount(receivedAmount);
-                setChangeReturn()
+                // setChangeReturn()
                 return
             }
             if (voucher.receivedAmount !== "0") {
@@ -187,15 +343,15 @@ export const CheckoutProvider = ({ children }: Props) => {
                 receivedAmount = nuevoNumeroStr ? nuevoNumeroStr : '0';
             }
             setReceivedAmount(receivedAmount)
-            setChangeReturn()
+            // setChangeReturn()
         } catch (error) {
             console.log(error)
         }
     }
 
     const isValidData = () => {
-        const { payments } = state.checkout;
-        if (!(payments.paymentSubtypeId > 0)) {
+        const { paymentData } = state.checkout;
+        if (!(paymentData.paymentSubTypeId > 0)) {
             SnackbarUtility.warning('Seleccione la SubEntidad Financiera');
             return
         }
@@ -215,25 +371,25 @@ export const CheckoutProvider = ({ children }: Props) => {
         // }
 
         // =================== TARJETA DE CREDITO / DEBITO  =================================== //
-        if (payments.paymentTypeCode === PaymentTypeCode.TAR) {
-            if (!payments.nro) {
+        if (paymentData.paymentTypeCode === PaymentTypeCode.TAR) {
+            if (!paymentData.nro) {
                 SnackbarUtility.warning('Ingrese el Número')
                 return
             }
 
-            if (!(payments.cityId && payments.cityId > 0)) {
+            if (!(paymentData.cityId && paymentData.cityId > 0)) {
                 SnackbarUtility.warning('Ingrese la Ciudad')
                 return
             }
-            if (!payments.referencia) {
+            if (!paymentData.referencia) {
                 SnackbarUtility.warning('Ingrese la referencia')
                 return
             }
-            if (!payments.aprobacion) {
+            if (!paymentData.aprobacion) {
                 SnackbarUtility.warning('Ingrese la Aprobación')
                 return
             }
-            if (!payments.lote) {
+            if (!paymentData.lote) {
                 SnackbarUtility.warning('Ingrese el Lote')
                 return
             }
@@ -241,12 +397,12 @@ export const CheckoutProvider = ({ children }: Props) => {
 
         // =================== TRANSFERENCIAS  =================================== //
 
-        if (payments.paymentTypeCode === PaymentTypeCode.TRA) {
-            if (!(payments.idBanco && payments.idBanco > 0)) {
+        if (paymentData.paymentTypeCode === PaymentTypeCode.TRA) {
+            if (!(paymentData.idBanco && paymentData.idBanco > 0)) {
                 SnackbarUtility.warning('Seleccione el Banco')
                 return
             }
-            if (!payments.nro) {
+            if (!paymentData.nro) {
                 SnackbarUtility.warning('Ingrese el Número')
                 return
             }
@@ -254,21 +410,21 @@ export const CheckoutProvider = ({ children }: Props) => {
 
         // =================== CHEQUES  =================================== //
 
-        if (payments.paymentTypeCode === PaymentTypeCode.CHE) {
-            if (!(payments.idBanco && payments.idBanco > 0)) {
+        if (paymentData.paymentTypeCode === PaymentTypeCode.CHE) {
+            if (!(paymentData.idBanco && paymentData.idBanco > 0)) {
                 SnackbarUtility.warning('Seleccione el Banco')
                 return
             }
-            if (!payments.nro) {
+            if (!paymentData.nro) {
                 SnackbarUtility.warning('Ingrese el Número')
                 return
             }
 
-            if (!(payments.cityId && payments.cityId > 0)) {
+            if (!(paymentData.cityId && paymentData.cityId > 0)) {
                 SnackbarUtility.warning('Ingrese la Ciudad')
                 return
             }
-            if (!payments.referencia) {
+            if (!paymentData.referencia) {
                 SnackbarUtility.warning('Ingrese a quien va dirigido el Cheque')
                 return
             }
@@ -277,35 +433,43 @@ export const CheckoutProvider = ({ children }: Props) => {
         return true;
     }
 
-    const getValuePayment = () => {
-        let valuePayment = 0;
-        const NUM_MAX_ROUND = 5;
-        const { voucher } = state.checkout;
-        if (Number(voucher.receivedAmount) >= voucher.totalBalance) {
-            valuePayment = RoundNumber(voucher.totalBalance, NUM_MAX_ROUND);
-        } else {
-            valuePayment = RoundNumber(Number(voucher.receivedAmount), NUM_MAX_ROUND)
-        }
-        return valuePayment;
-    }
+    // const getValuePayment = () => {
+    //     let valuePayment = 0;
+    //     const NUM_MAX_ROUND = 5;
+    //     const { voucher } = state.checkout;
+    //     if (Number(voucher.receivedAmount) >= voucher.totalBalance) {
+    //         valuePayment = RoundNumber(voucher.totalBalance, NUM_MAX_ROUND);
+    //     } else {
+    //         valuePayment = RoundNumber(Number(voucher.receivedAmount), NUM_MAX_ROUND)
+    //     }
+    //     return valuePayment;
+    // }
 
     const save = async () => {
-        const { voucher, dataForm, payments } = state.checkout;
-        const { paymentSubTypes, voucherQuotas } = dataForm; 
+        const { voucher, dataForm, multiplesPaymentType, paymentDetails } = state.checkout;
         try {
-            if (!(Number(voucher.payingAmount) > 0)) {
-                SnackbarUtility.warning('El valor total del comprobante es 0; por lo tanto, no es posible realizar el cobro.')
+            if (!(voucher.customerCompanyId > 0)) {
+                Swal.fire({
+                    icon: 'info',
+                    html: 'Seleccione el cliente'
+                })
                 return
             }
-            if (!(Number(voucher.receivedAmount) > 0)) {
-                SnackbarUtility.warning('Ingrese el valor de abono')
+            if (multiplesPaymentType.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    html: 'Ingrese al menos un abono'
+                })
                 return
             }
-            if (!(Number(voucher.payingAmount) > 0)) {
-                SnackbarUtility.warning('El valor total del comprobante es 0; por lo tanto, no es posible realizar el cobro.')
+
+            if (paymentDetails.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    html: 'Cobro detalle vacio!'
+                })
                 return
             }
-            if (!isValidData()) throw "Form Invalid";
 
             const { isConfirmed } = await Swal.fire({
                 // title: 'Guardar Cobro?',
@@ -319,56 +483,41 @@ export const CheckoutProvider = ({ children }: Props) => {
             })
             if (!isConfirmed) return
 
-            const checkoutUtility = new CheckoutUtility();
-
+            const checkoutUtility = new CheckoutUtility(0);
+            const historyPayments = checkoutUtility.getHistoryPayments(dataForm.voucherQuotas, paymentDetails);
             const comprobante = {
                 idCliente: voucher.customerCompanyId,
-                total: voucher.receivedAmount, //valor total ingresado 
-                abono: getValuePayment(),
+                total: multiplesPaymentType.reduce((acc, curr) => acc + curr.receivedAmount, 0),
+                abono: multiplesPaymentType.reduce((acc, curr) => acc + curr.payingAmount, 0),
                 codEstab: voucher.codEstab,
                 numeroIdentificacion: voucher.customerIdentification,
-                nombreFiscal: voucher.customerName
+                nombreFiscal: voucher.customerName,
             }
 
-            const infoCobro = [{
-                nro: payments.nro,
-                lote: payments.lote,
-                aprobacion: payments.aprobacion,
-                referencia: payments.referencia,
-                idCiudad: payments.cityId
-            }]
-            const dataPaymentSubType = paymentSubTypes.find(item => item.paymentSubtypeId === payments.paymentSubtypeId)
+            const cobros = multiplesPaymentType.map(item => {
 
-            const cobros = [{
-                idEntidadFinanciera: payments.paymentTypeId,
-                idSubEntidadFinanciera: payments.paymentSubtypeId,
-                idBanco: payments.idBanco,
-                idCuentaBancaria: 0,
-                fechaEmision: new Date(),
-                valor: voucher.receivedAmount,
-                posfechado: payments.posfechado,
-                secuencial: 0,
-                infoCobro: payments.paymentTypeCode === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
-                abono: getValuePayment(),
-                controlCaja: dataPaymentSubType?.isControlBox
-            }]
-
-            checkoutUtility.setReceivedAmount(Number(voucher.receivedAmount))
-
-            const modifiedQuotas = checkoutUtility.applyReceivedAmountToQuota(voucherQuotas);
-            const historyPayments = checkoutUtility.getHistoryPayments(modifiedQuotas);
-
-            if (checkoutUtility.paymentDetails.length === 0) {
-                SnackbarUtility.warning('Cobro detalle vacio')
-                return
-            }
+                const obj = {
+                    idEntidadFinanciera: item.paymentTypeId,
+                    idSubEntidadFinanciera: item.paymentSubTypeId,
+                    idBanco: item.idBanco,
+                    idCuentaBancaria: 0,
+                    fechaEmision: item.creationDate,
+                    valor: item.receivedAmount,
+                    posfechado: item.posfechado,
+                    secuencial: item.sequential,
+                    infoCobro: item.infoCobro,
+                    abono: item.payingAmount,
+                    controlCaja: item.isControlBox,
+                }
+                return obj;
+            })
 
             const data = {
                 comprobante,
                 cobros,
-                cobroDetalle: checkoutUtility.paymentDetails.filter(item => (item.abono > 0)),
+                cobroDetalle: paymentDetails.filter(item => (item.abono > 0)),
                 historial: historyPayments,
-            }
+            } 
 
             showLoader();
             accountReceivableSvc.post(data).then(response => {
@@ -376,7 +525,7 @@ export const CheckoutProvider = ({ children }: Props) => {
                     SnackbarUtility.success(response.message);
 
                     if (state.checkoutParams.printerAutomatic) {
-                        if(["01", 'FV'].includes(state.checkoutParams.codDoc)){
+                        if (["01", 'FV'].includes(state.checkoutParams.codDoc)) {
                             SharedService.getPrinter({
                                 id: state.checkoutParams.orderId,
                                 documentoId: state.checkoutParams.idDocumento,
@@ -391,7 +540,7 @@ export const CheckoutProvider = ({ children }: Props) => {
                             })
                         }
                     }
-                    state.closeDialog();
+                    state.closeDialog("REFRESH");
                 } else {
                     SnackbarUtility.warning(response.message)
                 }
@@ -408,7 +557,10 @@ export const CheckoutProvider = ({ children }: Props) => {
         <CheckoutContext.Provider value={{
             ...state,
             fetchCheckout,
-            setPayment,
+            setChangePaymentType,
+            setChangeFieldFormPayment,
+            addPaymentType,
+            removePaymentType,
             onChangeReceivedAmount,
             handleChangeSetReceivedAmount,
             handleClickOptionReceivedAmount,

@@ -1,7 +1,6 @@
-﻿using Mechanical.API.Helpers;
-using Mechanical.Application.Services;
-using Mechanical.Core.Interfaces;
-using Mechanical.Infrastructure.Data;
+﻿using Mechanical.API.Data;
+using Mechanical.API.Interfaces;
+using Mechanical.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mechanical.API.Extensions
@@ -17,7 +16,6 @@ namespace Mechanical.API.Extensions
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<ISupportDetailService, SupportDetailService>();
             services.AddScoped<IInspectionService, InspectionService>();
-            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
         }
     }

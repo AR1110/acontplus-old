@@ -1,9 +1,10 @@
-﻿using Common.Core.Models;
+﻿using Asp.Versioning;
+using Common.Core.Models;
+using Identity.API.Data;
 using Identity.API.Dtos;
-using Identity.Core.Entities;
-using Identity.Core.Interfaces;
-using Identity.Core.Models;
-using Identity.Infrastructure.Data;
+using Identity.API.Entities;
+using Identity.API.Interfaces;
+using Identity.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -42,6 +43,14 @@ namespace Identity.API.Controllers.v3
         {
             try
             {
+                if (string.IsNullOrEmpty(authRequest.Username))
+                {
+                    return BadRequest("Usuario no puede estar vacio");
+                }
+                if (string.IsNullOrEmpty(authRequest.Password))
+                {
+                    return BadRequest("Contraseña no puede estar vacia");
+                }
                 var _response = JsonConvert.DeserializeObject<APIResponse>(await _accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
 
                 if (_response.code == "1")

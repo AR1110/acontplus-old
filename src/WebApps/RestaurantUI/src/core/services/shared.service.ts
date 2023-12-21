@@ -66,11 +66,11 @@ class Shared {
     }
 
 
-    async downloadDynamicExternal(parameters: object, returnData = false) {
+    async downloadDynamic(parameters: object, returnData = false) {
 
         const resultAxios = await Http({
             method: 'post',
-            url: `${PATHS.REPORT}DynamicReport`,
+            url: `${PATHS.REPORT}Dynamic`,
             data: JSON.stringify(parameters),
             responseType: 'blob'
         })

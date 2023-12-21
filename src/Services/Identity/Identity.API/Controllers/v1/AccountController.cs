@@ -1,9 +1,10 @@
-﻿using Common.Core.Models;
+﻿using Asp.Versioning;
+using Common.Core.Models;
+using Identity.API.Data;
 using Identity.API.Dtos;
-using Identity.Core.Entities;
-using Identity.Core.Interfaces;
-using Identity.Core.Models;
-using Identity.Infrastructure.Data;
+using Identity.API.Entities;
+using Identity.API.Interfaces;
+using Identity.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -42,6 +43,14 @@ namespace Identity.API.Controllers.v1
         {
             try
             {
+                if (string.IsNullOrEmpty(authRequest.Username))
+                {
+                    return BadRequest("Usuario no puede estar vacio");
+                }
+                if (string.IsNullOrEmpty(authRequest.Password))
+                {
+                    return BadRequest("Contraseña no puede estar vacia");
+                }
                 var mainResponse = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
                 var _response = JsonConvert.DeserializeObject<APIResponse>(mainResponse);
                 //User founded
@@ -124,8 +133,8 @@ namespace Identity.API.Controllers.v1
                 }
                 else
                 {
-                   _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
-                   await _context.SaveChangesAsync();
+                    _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
+                    await _context.SaveChangesAsync();
                 }
                 userData.Token = token;
                 return Ok(new

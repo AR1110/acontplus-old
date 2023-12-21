@@ -20,6 +20,7 @@ const CheckoutContent = ({ params, closeDialog }: CheckoutContentProps) => {
 
     useEffect(() => {
         fetchCheckout(params, closeDialog)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     if (checkoutLoading) {
@@ -46,13 +47,13 @@ const CheckoutContent = ({ params, closeDialog }: CheckoutContentProps) => {
 
     return (
         <>
-            <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }}>
-                <Grid item xs={12} sm={5} md={5}>
+            <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} md={5} lg={5}>
                     {
                         !(isMobile) && <CheckoutCalculator />
                     }
                 </Grid>
-                <Grid item xs={12} sm={7} md={7}>
+                <Grid item xs={12} sm={12} md={7} lg={7}>
                     {
                         !(isMobile) && <CheckoutInfo />
                     }

@@ -87,17 +87,33 @@
                         montoObjetivo: item.montoObjetivo,
                         nombreFamilia: item.nombreFamilia,
                         totalRecords: item.totalRecords,
+                        ultimoSecuencial: item.ultimoSecuencial
                     }))
                 }
             })
         }
 
         service.save = function (file, data) {
-            return mS.getDataFile(url + "Post/?json=" + JSON.stringify(data), file, null, true);
+            const spParams = {
+                idFamilia: data.idFamilia,
+                descripcion: data.descripcion,
+                montoObjetivo: data.montoObjetivo,
+                siglas: data.siglas,
+            }
+            return mS.getDataFile(url + "Post/?json=" + JSON.stringify(spParams), file, null, true);
         }
 
         service.update = function (id, file, data) {
-            return mS.getDataFile(url + `Put/${id}/?json=${JSON.stringify(data)}`, file, null, true);
+            let spParams = {
+                idFamilia: data.idFamilia,
+                descripcion: data.descripcion,
+                montoObjetivo: data.montoObjetivo,
+                estado: data.estado,
+                secuencial: data.ultimoSecuencial || 0,
+                s3ObjectKey: data.s3ObjectKey,
+                s3ObjectUrl: data.s3ObjectUrl
+            }
+            return mS.getDataFile(url + `Put/${id}/?json=${JSON.stringify(spParams)}`, file, null, true);
         }
 
         service.delete = function (id) {
@@ -323,120 +339,32 @@
         return service;
     })
 
-    app.factory('pricingUtils', function () {
-        let service = {}
-
-        service.calcularPrecioConIva = function (precioVenta, porcentaje) {
-            try {
-                let resultadoPorcentaje = Number(porcentaje) / 100;
-                let result = Number(precioVenta) * Number(resultadoPorcentaje)
-                let precioConIva = result + Number(precioVenta);
-                return precioConIva;
-
-            } catch (error) {
-                console.log('pricingUtils -> CALCULO PRECIO CON IVA', error);
-            }
-        }
-
-        service.calcularPrecioVenta = function (precioConIva, porcentaje) {
-            try {
-                let resultadoPorcentaje = Number(porcentaje) / 100 + 1;
-                let precioVenta = Number(precioConIva) / Number(resultadoPorcentaje);
-                return precioVenta;
-            } catch (error) {
-                console.log('pricingUtils -> CALCULO PRECIO Unitario', error);
-            }
-        }
-        //cuando edito porcentaje utilidad
-        service.calcularPorcentajeUtilidad = function (precioCosto, porcentajeUtilidad) {
-            try {
-                let resultPorcentajeUtilidad = Number(porcentajeUtilidad) / 100;
-                let result = Number(precioCosto) * resultPorcentajeUtilidad;
-                let precioVenta = Number(precioCosto) + result;
-                return precioVenta
-
-            } catch (error) {
-                console.log('pricingUtils -> calcularPorcentajeUtilidad', error);
-            }
-
-        }
 
 
-        //cuando cambio precio venta
-        //Get Campo Porcentaje Utilidad
-        service.campoPorcentajeUtilidad = function (precioCosto, precioVenta) {
-            try {
-                let porcentajeUtilidad = (Number(precioVenta) / Number(precioCosto) * 100) - 100;
-                return porcentajeUtilidad;
 
-            } catch (error) {
-                console.log('pricingUtils -> campoPorcentajeUtilidad', error);
-            }
-        }
-
-
-        //EN VENTA 
-        service.getPrecioIvaConDescuento = function (precioConIva, porcentajeDescuento) {
-            try {
-                let porcentaje = Number(porcentajeDescuento) / 100;
-                let descuento = Number(porcentaje) * Number(precioConIva);
-                let precioIvaConDescuento = Number(precioConIva) - Number(descuento);
-                return precioIvaConDescuento;
-            } catch (error) {
-                console.log('pricingUtils -> getPrecioIvaConDescuento', error);
-            }
-
-        }
-
-        service.getValorDescuento = function (precioUnitario, porcentajeDescuento) {
-            try {
-                let porcentaje = Number(porcentajeDescuento) / 100;
-                let descuento = Number(porcentaje) * Number(precioUnitario);
-                return descuento;
-            } catch (error) {
-                console.log('pricingUtils -> getValorDescuento', error);
-            }
-        }
-
-        service.getPorcentajeDescuento = function (precioUnitario, valorDescuento) {
-            try {
-                let porcentaje = valorDescuento / precioUnitario;
-                let porcentajeDescuento = porcentaje * 100;
-                return porcentajeDescuento;
-
-            } catch (error) {
-                console.log('pricingUtils -> getPorcentajeDescuento', error);
-            }
-        }
-
-        return service;
-
-    })
-
-
-    app.factory('kardexService', function($injector){
+    app.factory('kardexService', function ($injector) {
         let mS = $injector.get('mainService');
         let URL = 'Inventario/Kardex/'
         let service = {};
 
 
 
-        service.get = (params)=>{
-            return mS.getData('get',  URL + '?json=' + JSON.stringify(params), null, true).then(response=>{   
-                if(response.code==="0")             {
+        service.get = (params) => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
                     return response;
                 }
                 return JSON.parse(response.payload)
-            })            
+            })
         }
 
-        service.getDataFilters = ()=>{
-            return mS.getData('get', URL + 'Filters', null, true).then(response=>{
-                if(response.code==="0"){
+        service.getDataFilters = () => {
+            return mS.getData('get', URL + 'Filters', null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.code==="1"){
-                    let mainData = JSON.parse(response.payload);                
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
                     return {
                         estadoMovimientos: mainData[0]
                     }
@@ -449,6 +377,5 @@
 
 
 
-    
 
 })(window.angular)

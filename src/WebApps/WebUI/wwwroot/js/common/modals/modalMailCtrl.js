@@ -16,7 +16,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
     // console.log(typeSend)
     onInit();
     function onInit() { 
-        if ($scope.data.hasOwnProperty("correo") && $scope.data.correo) {
+        if (("correo") in $scope.data && $scope.data.correo) {
             if ($scope.data.correo.includes(',')) {
                 $scope.correos = $scope.data.correo.split(',');
                 return
@@ -63,7 +63,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
             fS.showLoaderSendEmail();
            
             if (typeSend === 'N') {
-                url = '/Notificacion/Post?json='
+                url = 'Common/Notificacion/?json='
                 data = {
                     codDoc: $scope.data.codDoc,
                     serieComprobante: $scope.data.serieComprobante,
@@ -73,7 +73,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
                     receptor: $scope.correos.join(';')
                 }
 
-                mS.getData('post', url + JSON.stringify(data)).then($scope.successResponse).catch(error => {
+                mS.getData('post', url + JSON.stringify(data), null, true).then($scope.successResponse).catch(error => {
                     Swal.close();
                     console.log(error)
                 })
@@ -130,7 +130,7 @@ function StatusEmail($scope, $uibModalInstance, mS, commonSvc, tS, fS, params) {
 
     onInit();
     function onInit() {
-        if ($scope.data.hasOwnProperty('comprobantes')) {
+        if (('comprobantes') in $scope.data) {
             $scope.showStatusMailMasive = true;
             $scope.estadoCorreos = $scope.data.comprobantes.map(item => {
                 item.statusEmail = [];

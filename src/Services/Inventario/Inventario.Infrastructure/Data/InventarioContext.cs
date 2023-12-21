@@ -13,6 +13,7 @@ namespace Inventario.Infrastructure.Data
         public DbSet<MotivoDiscrepancia> MotivoDiscrepancias { get; set; }
         public DbSet<StockFisico> StockFisicos { get; set; }
         public DbSet<StockFisicoDetalle> StockFisicoDetalles { get; set; }
+        public DbSet<ProductPhoto> ProductPhotos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -32,7 +33,10 @@ namespace Inventario.Infrastructure.Data
            .WithOne(d => d.StockFisico)
            .HasForeignKey(d => d.StockFisicoId);
 
+
             modelBuilder.Entity<StockFisicoDetalle>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<ProductPhoto>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         }
 
         public override int SaveChanges()

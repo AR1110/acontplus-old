@@ -1,8 +1,7 @@
-﻿using Azure.Core;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
+using Common.Infrastructure.Repository;
 using Compras.API.Interfaces;
-using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -75,7 +74,7 @@ namespace Compras.API.Controllers
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
-        { 
+        {
             try
             {
                 var parameters = new Dictionary<string, object>{

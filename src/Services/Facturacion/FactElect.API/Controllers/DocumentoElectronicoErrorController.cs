@@ -1,5 +1,4 @@
-﻿using Common.Core.Models;
-using DataAccess;
+﻿using FactElect.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -9,36 +8,37 @@ namespace FactElect.API.Controllers
     [ApiController]
     public class DocumentoElectronicoErrorController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly IDocumentoElectronicoErrorService _docElect;
         private readonly LogWriter _log;
-        public DocumentoElectronicoErrorController(IConfiguration configuration, LogWriter log)
+        public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService docElect, LogWriter log)
         {
 
-            _configuration = configuration;
+            _docElect = docElect;
             _log = log;
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var _response = new GenericResponse();
-            var _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("FactElect.Doc_Elect_Error_Get_Id");
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDataTableAsync();
+                var parameters = new Dictionary<string, object>{
+                    { "id", id}
+                };
+                var orders = await _docElect.GetAsync(parameters);
+
+                if (orders == null | string.IsNullOrEmpty(orders))
+                {
+                    return NotFound();
+                }
+
+                return Ok(orders);
             }
             catch (Exception ex)
             {
-                _response.Create(code: "0", message: "Error al obtener los errores");
-
-                _log.LogActivity("Error on get DocElectErrror: \n" + ex.ToString());
+                _log.LogActivity("Error on Get: \n" + ex.ToString());
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
     }
 }

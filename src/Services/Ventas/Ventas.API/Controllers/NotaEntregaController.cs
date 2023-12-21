@@ -1,6 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -53,7 +53,7 @@ namespace Ventas.API.Controllers
             }
         }
 
-        [HttpPost("Insert")]        
+        [HttpPost("Insert")]
         public async Task<IActionResult> Insert(ApiRequest data)
         {
             var _response = new GenericResponse();

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Order.rdl" />
     <None Remove="Reports\Cartera\CarteraCliente.rdlc" />
     <None Remove="Reports\Cartera\CarteraProveedor.rdlc" />
     <None Remove="Reports\Compras\CompraDetalle.rdl" />
@@ -25,6 +26,8 @@
     <None Remove="Reports\Contabilidad\GestionCaja.rdl" />
     <None Remove="Reports\FactElect\ComprobanteRetencion.rdl" />
     <None Remove="Reports\FactElect\Factura.rdl" />
+    <None Remove="Reports\FactElect\FacturaGeneral.rdl" />
+    <None Remove="Reports\FactElect\NotaCreditoRG.rdl" />
     <None Remove="Reports\Factura.rdlc" />
     <None Remove="Reports\FacturaAutomatica.rdlc" />
     <None Remove="Reports\GestionFinanciera\Anticipo.rdl" />
@@ -61,19 +64,21 @@
     <None Remove="Reports\OrdenCompra.rdlc" />
     <None Remove="Reports\Restaurant\ItemIngredient.rdl" />
     <None Remove="Reports\Retencion.rdlc" />
-    <None Remove="Reports\Test.rdlc" />
-    <None Remove="Reports\Ventas\AprobDocument.rdl" />
     <None Remove="Reports\Ventas\Clientes.rdl" />
     <None Remove="Reports\Ventas\CuentaPorCobrar.rdl" />
     <None Remove="Reports\Ventas\CuentaPorCobrarCuotas.rdl" />
     <None Remove="Reports\Ventas\NotaCreditoCliente.rdlc" />
     <None Remove="Reports\Ventas\NotaEntrega.rdlc" />
     <None Remove="Reports\Ventas\Proforma.rdlc" />
+    <None Remove="Reports\Vet\MedicalHistory.rdl" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Restaurant\Order.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Cartera\CarteraCliente.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -121,6 +126,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\FactElect\Factura.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FactElect\FacturaGeneral.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FactElect\NotaCreditoRG.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Factura.rdlc">
@@ -231,12 +242,6 @@
     <Content Include="Reports\Retencion.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\Test.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ventas\AprobDocument.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\Ventas\Clientes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -255,20 +260,27 @@
     <Content Include="Reports\Ventas\Proforma.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\Vet\MedicalHistory.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
     <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Common\Common.Reports\Common.Reports.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
-    <PackageReference Include="AutoMapper" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="ReportViewerCore.NETCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Reports\Ventas\FacturaGeneral.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

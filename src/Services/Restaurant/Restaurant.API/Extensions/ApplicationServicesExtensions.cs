@@ -1,11 +1,11 @@
 ﻿using Common.Application.Services;
 using Common.Core.Interfaces;
-using Common.Reports.Services;
+using Common.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Helpers;
 using Restaurant.Application.Services;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Services.Common.Logs;
 
 namespace Restaurant.API.Extensions
 {
@@ -15,9 +15,6 @@ namespace Restaurant.API.Extensions
         {
             services.AddDbContextPool<RestaurantContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-            //
-            services.AddScoped<IRdlcReportService, RdlcReportService>();
             services.AddScoped<IRecipe, RecipeService>();
             services.AddScoped<IAppTableService, AppTableService>();
             services.AddScoped<IMenuService, MenuService>();
@@ -33,7 +30,8 @@ namespace Restaurant.API.Extensions
             services.AddScoped<IConsumptionService, ConsumptionService>();
             services.AddScoped<IConsumptionCancelledService, ConsumptionCancelledService>();
 
-            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+            services.AddSingleton<LogWriter>();
+            services.AddSingleton<S3ObjectCustom>();
             return services;
         }
     }

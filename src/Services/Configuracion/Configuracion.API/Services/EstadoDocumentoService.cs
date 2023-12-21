@@ -2,7 +2,6 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using Configuracion.API.Interfaces;
-using Domain.Models;
 
 namespace Configuracion.API.Services
 {

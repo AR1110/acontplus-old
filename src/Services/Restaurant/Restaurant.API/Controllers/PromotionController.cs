@@ -13,14 +13,16 @@ namespace Restaurant.API.Controllers
     public class PromotionController : ControllerBase
     {
         private readonly IPromotionService _promotionService;
+        private readonly S3ObjectCustom _s3ObjectCustom;
         private readonly IS3StorageService _storageService;
         private readonly IConfiguration _configuration;
-
-
-        public PromotionController(IConfiguration configuration, IPromotionService promotionService, IS3StorageService storage)
+        public PromotionController(IConfiguration configuration, IPromotionService promotionService,
+            S3ObjectCustom s3ObjectCustom,
+            IS3StorageService storage)
         {
             _configuration = configuration;
             _promotionService = promotionService;
+            _s3ObjectCustom = s3ObjectCustom;
             _storageService = storage;
 
         }
@@ -47,23 +49,19 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
-            var s3file = new S3File();
+            
             try
             {
                 if (file != null)
                 {
-                    var fileExt = Path.GetExtension(file.FileName);
-                    s3file.BucketName = _configuration["S3Bucket:Name"];
-                    s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/articulos/{Guid.NewGuid()}{fileExt}";
-                    s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany}/promociones/", file);
                 }
 
                 var parameters = new Dictionary<string, object> {
                     {"userRoleId", User.GetUserRoleId() },
                     {"json", SqlStringParam.Sanitize(json) },
-                    {"s3ObjectUrl", s3file.S3ObjectUrl ?? "" },
-                    {"s3ObjectKey", s3file.S3ObjectKey ?? "" }
+                    {"s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" },
+                    {"s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "" }
                 };
 
                 int userRoleId = User.GetUserRoleId();
@@ -73,23 +71,8 @@ namespace Restaurant.API.Controllers
                 dynamic decode = JsonConvert.DeserializeObject(response);
 
                 if (decode.code == "1" && file != null)
-                {
-                    await using var memoryStream = new MemoryStream();
-
-                    await file.CopyToAsync(memoryStream);
-                    var s3 = new S3ObjectCustom()
-                    {
-                        Region = s3file.Region,
-                        BucketName = s3file.BucketName,
-                        InputStream = memoryStream,
-                        Name = s3file.S3ObjectKey
-                    };
-                    var credentials = new AwsCredentials()
-                    {
-                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
-                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
-                    };
-                    var s3Response = await _storageService.UploadAsync(s3, credentials);
+                { 
+                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                 }
                 return Ok(response);
             }
@@ -102,24 +85,20 @@ namespace Restaurant.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json, IFormFile file)
         {
-            var s3file = new S3File();
+            
             try
             {
                 if (file != null)
                 {
-                    var fileExt = Path.GetExtension(file.FileName);
-                    s3file.BucketName = _configuration["S3Bucket:Name"];
-                    s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/articulos/{Guid.NewGuid()}{fileExt}";
-                    s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany}/promociones/", file);
                 }
 
                 var parameters = new Dictionary<string, object> {
                     {"userRoleId", User.GetUserRoleId() },
                     {"id", id },
                     {"json", SqlStringParam.Sanitize(json) },
-                    {"s3ObjectUrl", s3file.S3ObjectUrl ?? "" },
-                    {"s3ObjectKey", s3file.S3ObjectKey ?? "" }
+                    {"s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" },
+                    {"s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "" }
                 };
 
                 var response = await _promotionService.PutAsync(parameters);
@@ -129,22 +108,7 @@ namespace Restaurant.API.Controllers
 
                 if (decode.code == "1" && file != null)
                 {
-                    await using var memoryStream = new MemoryStream();
-
-                    await file.CopyToAsync(memoryStream);
-                    var s3 = new S3ObjectCustom()
-                    {
-                        Region = s3file.Region,
-                        BucketName = s3file.BucketName,
-                        InputStream = memoryStream,
-                        Name = s3file.S3ObjectKey
-                    };
-                    var credentials = new AwsCredentials()
-                    {
-                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
-                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
-                    };
-                    var s3Response = await _storageService.UploadAsync(s3, credentials);
+                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                 }
                 return Ok(response);
             }

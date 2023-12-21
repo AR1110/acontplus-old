@@ -1,21 +1,35 @@
-import { Bank, City, PaymentSubType, PaymentType, RawBankData, RawCityData, RawPaymentSubType, RawPaymentType, Voucher, VoucherQuota } from "../models"; 
+import { Bank, City, PaymentSubType, PaymentType, RawBankData, RawCityData, RawPaymentSubType, RawPaymentType, Voucher, VoucherQuota } from "../models";
 
-function paymentTypeAdapter(paymentTypes: RawPaymentType[]): Array<PaymentType> { 
-    return paymentTypes.map(paymentType=>({
-        paymentTypeId: paymentType.idEntidadFinanciera,
-        code: paymentType.codigo,
-        description: paymentType.descripcion
-    }) )   
+function paymentTypeAdapter(paymentTypes: RawPaymentType[], paymentSubTypes: RawPaymentSubType[]): Array<PaymentType> {
+    const resultado = paymentTypes.map(paymentType => {
+        const idEntidadFinanciera = paymentType.idEntidadFinanciera;
+        const mapperPaymentSubTypes = paymentSubTypes.filter(paymentSubType => paymentSubType.idEntidadFinanciera === idEntidadFinanciera);
+
+        const obj = {
+            paymentTypeId: paymentType.idEntidadFinanciera,
+            code: paymentType.codigo,
+            description: paymentType.descripcion,
+            paymentSubTypes: paymentSubTypeAdapter(mapperPaymentSubTypes)
+
+        }
+        return obj;
+    });
+    return resultado;
+    // return paymentTypes.map(paymentType=>({
+    //     paymentTypeId: paymentType.idEntidadFinanciera,
+    //     code: paymentType.codigo,
+    //     description: paymentType.descripcion
+    // }) )   
 }
 
-function paymentSubTypeAdapter(paymentSubTypes: RawPaymentSubType[]): Array<PaymentSubType> {  
-    return paymentSubTypes.map(paymentSubType=>({
-        paymentSubtypeId: paymentSubType.idSubEntidadFinanciera,
+function paymentSubTypeAdapter(paymentSubTypes: RawPaymentSubType[]): Array<PaymentSubType> {
+    return paymentSubTypes.map(paymentSubType => ({
+        paymentSubTypeId: paymentSubType.idSubEntidadFinanciera,
         paymentTypeId: paymentSubType.idEntidadFinanciera,
         code: paymentSubType.codigo,
         description: paymentSubType.descripcion,
         isControlBox: paymentSubType.controlCaja
-    }) )   
+    }))
 }
 
 function bankAdapter(banks: RawBankData[]): Array<Bank> {
@@ -36,25 +50,30 @@ function cityAdapter(cities: RawCityData[]): Array<City> {
 }
 
 function voucherQuotaAdapter(voucherQuotas: any): Array<VoucherQuota> {
-    return voucherQuotas.map((voucherItem: any) => ({
-        ...voucherItem,
-        cuotas: JSON.parse(voucherItem.cuotas),
-    }))
+    return voucherQuotas.map((voucherItem: any) => {
+        const cuotas = JSON.parse(voucherItem.cuotas);
+        return {
+            ...voucherItem,
+            cuotas: structuredClone(cuotas),
+            cloneCuotas: structuredClone(cuotas)
+        }
+    })
 }
 
 
 function comprobanteAdpater(comprobante: any): Voucher {
-    return  {
+    return {
         customerCompanyId: comprobante.idCliente,
         customerIdentification: comprobante.numeroIdentificacion,
         customerName: comprobante.nombreFiscal,
         payingAmount: comprobante.importeTotal,
-        receivedAmount: comprobante.importeTotal,
+        receivedAmount: comprobante.saldo,
         changeReturn: 0,
         totalBalance: comprobante.saldo,
         codEstab: comprobante.codEstab,
         creationDate: comprobante.fechaEmision,
-        nroDoc: comprobante.serieComprobante
+        nroDoc: comprobante.serieComprobante,
+        totalValorAbono: 0
     }
 }
 
@@ -62,7 +81,6 @@ function comprobanteAdpater(comprobante: any): Voucher {
 
 export {
     paymentTypeAdapter,
-    paymentSubTypeAdapter,
     bankAdapter,
     cityAdapter,
     voucherQuotaAdapter,

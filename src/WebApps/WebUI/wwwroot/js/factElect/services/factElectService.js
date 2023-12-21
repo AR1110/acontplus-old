@@ -14,7 +14,33 @@
         let URL_RETENCION_ATS = 'FactElect/RetencionAts/'
         let mS = $injector.get('mainService');
         let FileSaver = $injector.get('FileSaver');
+        let fS = $injector.get('formulario');
         let service = {}
+
+
+        service.getDataFilter = function () {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload)
+
+                    let tempEstabsAndPtosEmision = mainData[0];
+                    let tiposDoc = mainData[1];
+                    let estadosDoc = mainData[2];
+
+                    const estabs = fS.groupingEstab({ estabs: tempEstabsAndPtosEmision });
+                    return {
+                        estabs,
+                        tiposDoc,
+                        estadosDoc
+                    }
+
+                }
+            })
+        }
 
         /**
          * tipo 1: get listado general 
@@ -35,44 +61,6 @@
                     let mainData = JSON.parse(response.payload)
                     if (params.tipo === 1) {
                         return mainData[0];
-                    }
-
-                    if (params.tipo === 2) {
-                        let tempEstabsAndPtosEmision = mainData[0];
-                        let tiposDoc = mainData[1];
-                        let estadosDoc = mainData[2];
-
-                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                            if (!existingItem) {
-                                acc.push({
-                                    idEstablecimiento: item.idEstablecimiento,
-                                    nombreComercial: item.nombreComercial,
-                                    codEstab: item.codEstab,
-                                    defaultEstab: item.defaultEstab,
-                                    puntosEmision: [{
-                                        idPuntoEmision: item.idPuntoEmision,
-                                        ptoEmi: item.ptoEmi,
-                                        defaultPtoEmi: item.defaultPtoEmi
-                                    }]
-                                });
-                            } else {
-                                existingItem.puntosEmision.push({
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                });
-                            }
-                            return acc;
-                        }, []);
-
-
-                        return {
-                            estabs,
-                            tiposDoc,
-                            estadosDoc
-                        }
                     }
                 }
             })
@@ -171,9 +159,6 @@
                     let tempEstabsAndPtosEmision = mainData[9];
                     let tempBodegas = mainData[10];
 
-                    // Extrae la tarifa actual para el impuesto
-                    let tarifaImpuestoVigente = mainData[11][0];
-
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
                     let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
 
@@ -218,7 +203,6 @@
                     // Devuelve los datos finales estructurados
                     return {
                         estabs,
-                        tarifaImpuestoVigente,
                         tarifasImpuesto,
                         tiemposCredito,
                         tarifas,
@@ -355,8 +339,6 @@
                 throw ''
             }
             query.tipo = 2;
-            query.paraNotaCredito = true;
-            query.checkBoxCliente = true;
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
@@ -367,9 +349,8 @@
                     let facturasRepository = mainData[0];
                     let facturas = facturasRepository.map(item => {
                         return {
-                            idDocumento: item.idDocumento,
-                            nroFactura: item.nroFactura,
-                            serieComprobante: item.nroFactura,
+                            idDocumento: item.idFactura,
+                            serieComprobante: item.serieComprobante,
                         }
                     })
                     return {
@@ -392,9 +373,12 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
+
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
                     let items = mainDataApi[2];
+                    let infoAdicionalDocumento = mainDataApi[3];
+                    let tarifasImpuesto = mainDataApi[4];
                     let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -408,7 +392,8 @@
                         data,
                         cliente,
                         items,
-                        infoAdicionalDocumento: []
+                        infoAdicionalDocumento: infoAdicionalDocumento || [],
+                        tarifasImpuesto
                     }
 
                 }
@@ -443,99 +428,25 @@
                         infoAdicionalDocumento,
                         datosAdicionalesArticuloTemp
                     ] = mainDataApi;
-
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
 
-                    let items = itemsApi.map(itemPrincipal => {
+
+                    let items = itemsApi.map((itemPrincipal, index) => {
 
                         const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
 
-                        // Medidas del artículo fraccionado del principal
-                        let medidasFraccionadoTemp = JSON.parse(fraccionado) || [];
-
-                        // Medida principal con las tarifas
-                        let medidasPrincipalTemp = JSON.parse(principal) || [];
-
-                        // 
-                        let consolidacionesFecha = JSON.parse(consolidacion) || [];
-
-                        const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
-                            ...medidaPrincipal,
-                            tipo: 'PRINCIPAL'
-                        }))
-                        const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado => ({
-                            ...medidaFraccionado,
-                            tipo: 'FRACCIONADO'
-                        }))
-
-                        /**
-                         * Combinar los dos arrays de medidas en uno solo
-                         *
-                         * Parámetros:
-                         *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
-                         */
-                        // Combinar los dos arrays de medidas en uno solo
-                        
-                        const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal]; 
-
-                        /**
-                         * Ordenar el array de medidas en función de la propiedad "orden" y
-                         * establecer la propiedad "defaultMedida" en falso para todos los elementos
-                         *
-                         * Parámetros:
-                         *  - orderMedidaArray: El array de medidas ordenado
-                         */
-                        let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
-                            ...medida,
-                            defaultMedida: false
-                        }));
-
-                        // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
-                        orderMedidaArray[0].defaultMedida = true;
-
-
-                        /**
-                         * Obtener los datos de la medida
-                         *
-                         * Parámetros:
-                         *  - orderMedidaArray: El array de medidas ordenado
-                         *  - restItem: El artículo
-                         *
-                         * Devuelve:
-                         *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
-                         */
-                        let dataMedida = orderMedidaArray.find(m => m.idMedida === restItem.idMedida) || {};
-
-                        // Crear un nuevo array de medidas con un formato específico
-                        let medidas = orderMedidaArray.map(item => ({
-                            idMedida: item.idMedida,
-                            conversion: item.conversion,
-                            descripcion: item.descripcion,
-                            defaultMedida: item.defaultMedida,
-                            tipo: item.tipo,
-                            tarifas: item.tarifas
-                        }))
-
-                        // Asignar los datos de la medida al artículo
-                        restItem.medidas = medidas;
-                        restItem.conversion = dataMedida.conversion;
-                        // Asignar los datos de las tarifas obtenidos de data medida 
-                        restItem.articuloTarifas = dataMedida.tarifas || [];
-
-                        restItem.consolidacionesFecha = consolidacionesFecha.map((data) => ({
+                        let consolidacionesFechaTemp = consolidacion && JSON.parse(consolidacion) || [];
+                        let consolidacionesFecha = consolidacionesFechaTemp.map((data) => ({
                             ...data,
                             fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
                         }))
 
 
-                        let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
-                        let totalDescuento = restItem.cantidad * restItem.valorDescuento || 0;
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
-                        restItem.subTotal = subTotal || 0;
-                        restItem.totalDescuento = totalDescuento || 0;
-                        //Para validacion del cantidad stock
-                        restItem.cantidadOriginal = restItem.cantidad;
+                        let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
+
 
                         if ('infoDatosAdicionales' in itemPrincipal) {
                             let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
@@ -549,7 +460,40 @@
                             }))
                         }
 
-                        return restItem;
+                        let obj = {
+                            n: index + 1,
+                            idFacturaDetalle: restItem.idFacturaDetalle,
+                            cantidad: restItem.cantidad,
+                            cantidadOriginal: restItem.cantidad,
+                            codigo: restItem.codigo,
+                            codigoPorcentaje: restItem.codigoPorcentaje, //✅
+                            descripcion: restItem.descripcion,
+                            ice: restItem.ice || 0,
+                            idArticulo: restItem.idArticulo,
+                            idBodega: restItem.idBodega,
+                            idImpuesto: restItem.idImpuesto,
+                            idMedida: restItem.idMedida,
+                            idTarifa: restItem.idTarifa,
+                            idTipoIva: restItem.idTipoIva,
+                            llevaInventario: restItem.llevaInventario,
+                            nota: restItem.nota,
+                            porcentajeDescuento: restItem.porcentajeDescuento,
+                            precioSinSubsidio: restItem.precioSinSubsidio || 0,
+                            precioCosto: restItem.precioCosto,
+                            precioUnitario: restItem.precioUnitario,
+                            tarifa: restItem.tarifa,//✅
+                            valorDescuento: restItem.valorDescuento,
+                            valorImpuesto: restItem.valorImpuesto,//✅
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            articuloTarifas: dataMedida.tarifas,
+                            consolidacionesFecha,
+                            estado: 1,
+                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            datosAdicionales: restItem.datosAdicionales
+                        }
+
+                        return obj;
                     });
 
                     let comprobante = {
@@ -558,7 +502,8 @@
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
-                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                        irbpnr: comprobanteTemp.irbpnr || 0
                     }
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
@@ -583,10 +528,99 @@
             })
         }
 
-        service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true).then(response => {
+        service.getDetalleDoc = function (id) {
+            let spParams = {
+                tipo: 9,
+                id
+            }
+            return mS.getData('get', `${url}Get?json=${JSON.stringify(spParams)}`, null, true).then(response => {
                 if (response.code === "0") {
-                    service.data = {}
+                    console.log("Get Data Info", response)
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let [itemsApi] = JSON.parse(response.payload);
+
+                    let items = itemsApi.map((itemPrincipal, index) => {
+
+                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
+
+                        let consolidacionesFechaTemp = consolidacion && JSON.parse(consolidacion) || [];
+                        let consolidacionesFecha = consolidacionesFechaTemp.map((data) => ({
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
+
+
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                        let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
+
+
+                        if ('infoDatosAdicionales' in itemPrincipal) {
+                            let infoAdicionalArrayTemp = JSON.parse(itemPrincipal.infoDatosAdicionales);
+                            restItem.datosAdicionalesArticulo = infoAdicionalArrayTemp.map(dataAdicional => ({
+                                idArticulo: dataAdicional.idArticulo,
+                                idEtiqueta: dataAdicional.idEtiqueta,
+                                idInfoAdicional: dataAdicional.idInfoAdicional,
+                                jsonAdicional: JSON.parse(dataAdicional.jsonAdicional),
+                                uniqueId: dataAdicional.uniqueId,
+                                estado: dataAdicional.estado
+                            }))
+                        }
+
+                        let precioConIva = itemPrincipal.precioUnitario + itemPrincipal.valorImpuesto;
+                        let precioTotalSinImpuesto = ((itemPrincipal.precioUnitario * itemPrincipal.cantidad)) - itemPrincipal.valorDescuento;
+                        let total = precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
+
+                        let obj = {
+                            n: index + 1,
+                            idFacturaDetalle: itemPrincipal.idFacturaDetalle,
+                            cantidad: itemPrincipal.cantidad,
+                            cantidadOriginal: itemPrincipal.cantidad,
+                            codigo: itemPrincipal.codigo,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje, //✅
+                            descripcion: itemPrincipal.descripcion,
+                            ice: itemPrincipal.ice || 0,
+                            idArticulo: itemPrincipal.idArticulo,
+                            idBodega: itemPrincipal.idBodega,
+                            idImpuesto: itemPrincipal.idImpuesto,
+                            idMedida: itemPrincipal.idMedida,
+                            idTarifa: itemPrincipal.idTarifa,
+                            idTipoIva: itemPrincipal.idTipoIva,
+                            llevaInventario: itemPrincipal.llevaInventario,
+                            nota: itemPrincipal.nota,
+                            porcentajeDescuento: itemPrincipal.porcentajeDescuento,
+                            precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
+                            precioCosto: itemPrincipal.precioCosto,
+                            precioUnitario: itemPrincipal.precioUnitario,
+                            tarifa: itemPrincipal.tarifa,//✅
+                            valorDescuento: itemPrincipal.valorDescuento,
+                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            articuloTarifas: dataMedida.tarifas,
+                            consolidacionesFecha,
+                            estado: 1,
+                            datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
+                            precioConIva: fS.roundNumber(precioConIva, 3),
+                            precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 3),
+                            total: fS.roundNumber(total, 3)
+                        }
+
+                        return obj;
+                    });
+                    return {
+                        items
+                    }
+                }
+            })
+        }
+
+        service.save = function (data) {
+            return mS.getData('post', url + 'Insert', { data }, true).then(response => {
+                if (response.code === "0") {
+                    service.data = {};
                     return response;
                 }
                 if (response.code === "1") {
@@ -609,7 +643,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true).then(response => {
+            return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
                 if (response.code === "0") {
                     service.data = {}
                     return response;
@@ -631,14 +665,14 @@
         }
 
         service.queryMapper = function (params) {
-            const { 
-                data, 
-                cliente, 
-                detalles, 
-                itemsDeleted, 
-                infoAdicionalDocumento, 
-                historyDatosAdicionales,  
-                fromAprobacion=false
+            const {
+                data,
+                cliente,
+                detalles,
+                itemsDeleted,
+                infoAdicionalDocumento,
+                historyDatosAdicionales,
+                fromAprobacion = false
             } = params;
 
             //data que se usara dentro de la función "getCantidadStock"
@@ -663,66 +697,60 @@
 
             const itemsMainMapper = service.detalleMapperTo(detalles, fromAprobacion);
             const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted, fromAprobacion)
-
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
             const mergeItems = [
                 ...itemsMainMapper,
                 ...itemsDeletedMapper
             ]
 
             return {
-                factura: JSON.stringify(factura),
-                detalle: JSON.stringify(mergeItems),
-                adicional: JSON.stringify(infoAdicionalDocumento || []),
-                infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
+                infoFactura: service.infoComprobanteMapperTo(factura),
+                detalles: mergeItems,
+                impuestos: impuestos,
+                infoAdicional: infoAdicionalDocumento || [],
+                infoAdicionalArticulo: historyDatosAdicionales
             }
         }
 
+        service.infoComprobanteMapperTo = function (data) {
+            const result = {
+                uniqueId: data.uniqueId, //se envia cuando el documento proviebe desde el modulo de aprobacion
+                idCliente: data.idCliente,
+                idTiempoCredito: data.idTiempoCredito,
+                idPuntoEmision: data.idPuntoEmision,
+                idUsuario: data.idUsuario,
+                fechaEmision: data.fechaEmision,
+                fechaVencimiento: data.fechaVencimiento,
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                totalDescuento: data.totalDescuento || 0,
+                porcentajeDescuento: data.porcentajeDescuento || 0,
+                irbpnr: data.irbpnr || 0,
+                propina: data.propina || 0,
+                recargo: data.recargo || 0,
+                transporte: data.transporte || 0,
+                total: data.total,
+                observacion: data.observacion,
+                placa: data.placa,
+                identificacionComprador: data.identificacionComprador,
+                razonSocialComprador: data.razonSocialComprador,
+                direccionComprador: data.direccionComprador,
+                email: data.email,
+                telefono: data.telefono,
+            }
+            return result;
+        }
+
         /**
-         * 
+         * Detalle Mapper Factura
          * @param {*} detalles 
          * @param {*} fromAprobacion si es verdadero el origen del detalle es desde aprobacion del documento 
          * @returns 
          */
-        service.detalleMapperTo = function (detalles, fromAprobacion=false) {
+        service.detalleMapperTo = function (detalles, fromAprobacion = false) {
             let tempDetails = [];
             let orderIndex = 1;
 
             for (let item of detalles) {
-
-                // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
-                let cantidadStock = 0, action = 0, cantidadTransaccion = 0;
-
-                if (!fromAprobacion) {
-                    let dataValidationStock = service.getCantidadStock(item);
-
-                    cantidadStock = dataValidationStock.cantidadStock;
-                    action = dataValidationStock.action;
-
-                    cantidadTransaccion = item.cantidad * item.conversion;
-
-                    if (action === 0) {
-                        // Comprobar si el elemento tiene un 'idFacturaDetalle' positivo y está en estado 'activo'
-                        if (item.idFacturaDetalle > 0 && item.estado) {
-                            //cantidadAnulada = cantidadTransaccion;
-                            // Verificar si 'cantidad' es igual a 'cantidadOriginal'
-                            if (item.cantidad === item.cantidadOriginal) {
-                                cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
-
-                            } else {
-                                // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
-                                if (item.cantidad > item.cantidadOriginal) {
-                                    cantidadStock = item.cantidadOriginal - item.cantidad;
-                                } else {
-                                    cantidadStock = item.cantidadOriginal - item.cantidad;
-                                }
-                            }
-                        }
-                        if (item.idFacturaDetalle > 0 && item.estado === 0) {
-                            cantidadStock = Math.abs(cantidadStock)
-                            //  cantidadAnulada = item.cantidad;
-                        }
-                    } 
-                }
 
                 tempDetails.push({
                     orderIndex: orderIndex++,
@@ -732,144 +760,31 @@
                     idBodega: item.idBodega,
                     idMedida: item.idMedida,
                     idTipoIva: item.idTipoIva,
-                    tarifa: item.tarifa,
-                    codigoPorcentaje: item.codigoPorcentaje,
+                    tarifa: item.tarifa, //✅
+                    codigoPorcentaje: item.codigoPorcentaje,//✅
                     ice: item.ice,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
                     precioSinSubsidio: item.precioSinSubsidio || 0,
                     precioCostoNeto: item.precioCostoNeto,
                     precioUnitario: item.precioUnitario,
-                    precioVenta: item.precioUnitario,
                     precioConIva: item.precioConIva,
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
                     porcentajeDescuento: item.porcentajeDescuento,
                     total: item.total,
                     nota: item.nota,
-
-                    cantidadStock: fromAprobacion ? item.cantidadStock : cantidadStock, //✅
-                    llevaInventario: item.llevaInventario,//✅
-                    precioCosto: item.precioCosto,  //✅
-                    cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : cantidadTransaccion, //✅
-                    // cantidadAnulada,
-                    estado: item.estado //✅     
+                    cantidadStock: 0,
+                    llevaInventario: item.llevaInventario,
+                    precioCosto: item.precioCosto,
+                    cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
+                    estado: item.estado,
+                    valorImpuesto: item.valorImpuesto //✅
                 })
             }
             return tempDetails;
         }
 
-        /**
-        * 
-        * @param {*} rowEntity 
-        * @param {*} fechaEmision unicamente se envia desde el controlador de FacturaCtrl
-        * @returns 
-        */
-        service.getCantidadStock = function (rowEntity, fechaEmision) {
-            let fechaEmisionValidate = null;
-            let cantidadStock = 0;
-            let action = 0;
-            let fechaEmisionDocCreado = null;
-
-            if (fechaEmision) {
-                fechaEmisionValidate = fechaEmision;
-            } else {
-                fechaEmisionValidate = service.data.fechaEmision;
-            }
-
-            if (typeof service.data === 'object' && service.data.idFactura > 0) {
-                fechaEmisionDocCreado = service.data.fechaEmisionDocCreado;
-            }
-
-            if (!fechaEmisionValidate) {
-                console.warn('Para validacion del cantidad stock la fecha emision del comprobante es nula')
-            }
-
-            let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
-                cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
-            )
-
-            if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (rowEntity.idFacturaDetalle > 0 && rowEntity.estado && fS.getDate(fechaEmisionDocCreado) !== fS.getDate(fechaEmisionValidate)) {
-
-                    //si fecha documento creado es anterior a fecha consolidacion articulo
-                    if (fechaEmisionDocCreado >= dataConsolidacionFecha.fechaConsolidacion) {
-                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
-                        if (fechaEmisionValidate <= dataConsolidacionFecha.fechaConsolidacion) {
-                            return {
-                                cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                                action: 2
-                            }
-                        } else if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
-                            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-
-                            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-                            return {
-                                cantidadStock: resultCantStock,
-                                action: 2
-                            };
-                        }
-                    }
-
-                    //si fecha documento creado es anterior a fecha consolidacion articulo
-                    if (fechaEmisionDocCreado <= dataConsolidacionFecha.fechaConsolidacion) {
-                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
-                        if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
-                            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-
-                            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-
-                            return {
-                                cantidadStock: resultCantStock,
-                                action: 2
-                            };
-                        }
-                    }
-
-                    // if (fechaEmisionDocCreado > dataConsolidacionFecha.fechaConsolidacion &&
-                    //     fS.getDate(dataConsolidacionFecha.fechaConsolidacion) >= fS.getDate(fechaEmisionValidate)
-                    // ) {
-                    //     return {
-                    //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                    //         action: 2
-                    //     }
-
-                    // }
-                }
-
-
-
-                // if (
-                //     rowEntity.idNotaEntregaDetalle > 0 &&
-                //     fechaEmisionDocCreado !== fechaEmisionValidate &&
-                //     rowEntity.estado &&
-                //     dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate
-                // ) {
-                //     return {
-                //         cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
-                //         action: 2
-                //     }
-                // }
-
-                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
-                    cantidadStock = 0;
-                    action = 1;
-                    return {
-                        cantidadStock,
-                        action
-                    };
-                }
-            }
-
-            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-
-            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-
-            return {
-                cantidadStock: resultCantStock,
-                action
-            };
-        }
 
         return service;
 
@@ -907,6 +822,7 @@
 
     app.factory('notaCreditoService', function ($injector) {
         const mS = $injector.get('mainService');
+        const fS = $injector.get('formulario');
         const URL = 'FactElect/NotaCredito/'
         const service = {};
 
@@ -915,6 +831,46 @@
          * tipo 5: get data for formulario   
          * @returns 
          */
+
+        service.getDataForm = () => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let tempEstabsAndPtosEmision = mainData[0];
+                    let tempBodegas = mainData[1];
+                    let decimal = mainData[2][0];
+                    let tarifasImpuesto = mainData[3];
+                    let tarifas = mainData[4];
+                    let config = mainData[5][0];
+                    let vendedores = mainData[6];
+
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                        bodegas: tempBodegas, // Establecimientos con bodegas
+                        isGroupBodega: true
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
+                    // Obtiene el permiso de venta a partir de los datos del rol del usuario
+                    let { permisoVenta } = fS.getDataUserRol();
+
+                    return {
+                        estabs,
+                        decimal,
+                        tarifasImpuesto,
+                        tarifas,
+                        config,
+                        vendedores,
+                        permisoVenta
+                    }
+
+                }
+            })
+        }
+
         service.get = (params) => {
             return mS.getData('get', URL + '?json=' + JSON.stringify(params), null, true).then(response => {
                 if (response.code === "0") {
@@ -926,7 +882,14 @@
 
                     if (params.tipo === 1) {
                         let tempNotasCredito = mainData[0];
-                        return tempNotasCredito;
+                        const notasCredito = tempNotasCredito.map((item) => ({
+                            ...item,
+                            idDocumento: item.idNotaCredito,
+                            serieComprobante: item.nroDocumento,
+                            codEstado: item.codDoc,
+                            codDoc: '04'
+                        }))
+                        return notasCredito;
                     }
 
                     if (params.tipo === 3) {
@@ -938,54 +901,261 @@
                             estadosDoc
                         }
                     }
+                }
+            })
+        }
 
-                    if (params.tipo === 2) {
-                        let tempEstabsAndPtosEmision = mainData[0];
-                        let tempBodegas = mainData[1];
-                        let tarifaImpuestoVigente = mainData[2][0];
-                        let decimal = mainData[3][0];
-                        let tarifasImpuesto = mainData[4];
-                        let tarifas = mainData[5];
-                        let config = mainData[6][0];
-                        let vendedores = mainData[7];
-                        let tempEstabs = groupEstab(tempEstabsAndPtosEmision);
+        service.getAll = function (params) {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ ...params, tipo: 1 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
 
-                        let estabs = tempEstabs.map(estab => ({
-                            ...estab,
-                            bodegas: tempBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
-                                .map(bodega => ({
-                                    idBodega: bodega.idBodega,
-                                    bodega: bodega.bodega,
-                                    descripcion: bodega.bodega,
-                                    defaultBodega: bodega.defaultBodega,
-                                }))
-                        }))
-                        return {
-                            estabs,
-                            tarifaImpuestoVigente,
-                            decimal,
-                            tarifasImpuesto,
-                            tarifas,
-                            config,
-                            vendedores
-                        }
-                    }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let tempNotasCredito = mainData[0];
+                    const notasCredito = tempNotasCredito.map((item) => ({
+                        ...item,
+                        idDocumento: item.idNotaCredito,
+                        serieComprobante: item.nroDocumento,
+                        codEstado: item.codDoc,
+                        codDoc: '04'
+                    }))
+                    return notasCredito;
                 }
             })
         }
 
         service.post = function (data) {
-            return mS.getData('post', URL, data, true)
+            return mS.getData('post', URL, { data }, true)
         }
 
         service.put = function (id, data) {
-            return mS.getData('put', `${URL}${id}`, data, true)
+            return mS.getData('put', `${URL}${id}`, { data }, true)
         }
 
         service.delete = function (id) {
             return mS.getData('delete', `${URL}${id}`, null, true)
         }
 
+        service.generateSerieComprobante = function (query) {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(Object.assign(query, { tipo: 6 })), null, true).then(response => {
+                if (response.code === "0") {
+                    console.warn(response)
+                    throw null;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let data = mainData[0][0];
+                    return data.serieComprobante;
+                }
+            })
+        }
+
+        service.getIdForInfo = function (id) {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 5, id }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    const [mainData, mainDataFactura, mainDataCliente, mainDetalle, mainInfoAdicional] = JSON.parse(response.payload)
+
+                    let { fechaEmision, ...restData } = mainData[0];
+                    let comprobante = {
+                        ...restData,
+                        fechaEmision: fS.formatDate(fechaEmision),
+                        fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
+                    }
+
+                    return {
+                        data: comprobante,
+                        factura: mainDataFactura.length > 0 ? mainDataFactura[0] : {},
+                        cliente: mainDataCliente[0],
+                        items: mainDetalle,
+                        infoAdicionalDocumento: mainInfoAdicional
+                    }
+
+                }
+            })
+        }
+
+        service.getId = function (id) {
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 4, id }), null, true).then(response => {
+                if (response.code === "0") {
+                    console.log(response)
+                }
+                if (response.code === "1") {
+                    let mainDataApi = JSON.parse(response.payload);
+                    const [
+                        comprobanteApi,
+                        facturaApi,
+                        clienteTempApi,
+                        itemsApi,
+                        infoAdicionalDocumento,
+                    ] = mainDataApi;
+
+
+                    let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
+
+                    let factura = facturaApi.reduce((acc, previous) => {
+
+                        acc.idDocumento = previous.idFactura;
+                        acc.serieComprobante = previous.nroFactura;
+                        return acc;
+                    }, { idDocumento: '', serieComprobante: '' });
+
+                    let cliente = clienteTempApi && clienteTempApi[0] || {};
+
+                    let detalleDocumento = itemsApi.map((itemPrincipal, index) => {
+
+                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
+
+                        let consolidacionesFechaTemp = consolidacion && JSON.parse(consolidacion) || [];
+                        let consolidacionesFecha = consolidacionesFechaTemp.map((data) => ({
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
+
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                        let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
+
+
+                        let obj = {
+                            n: index + 1,
+                            idNotaCreditoDetalle: itemPrincipal.idNotaCreditoDetalle,
+                            cantidad: itemPrincipal.cantidad,
+                            cantidadOriginal: itemPrincipal.cantidad,
+                            codigo: itemPrincipal.codigo,
+                            codigoPorcentaje: itemPrincipal.codigoPorcentaje,//✅
+                            descripcion: itemPrincipal.descripcion,
+                            ice: itemPrincipal.ice,
+                            idArticulo: itemPrincipal.idArticulo,
+                            idBodega: itemPrincipal.idBodega,
+                            idImpuesto: itemPrincipal.idImpuesto,
+                            idMedida: itemPrincipal.idMedida,
+                            idTarifa: itemPrincipal.idTarifa,
+                            idTipoIva: itemPrincipal.idTipoIva,
+                            llevaInventario: itemPrincipal.llevaInventario,
+                            nota: itemPrincipal.nota,
+                            porcentajeDescuento: itemPrincipal.porcentajeDescuento,
+                            precioConIva: itemPrincipal.precioConIva,
+                            precioCosto: itemPrincipal.precioCosto,
+                            precioUnitario: itemPrincipal.precioUnitario,
+                            tarifa: itemPrincipal.tarifa,//✅
+                            valorDescuento: itemPrincipal.valorDescuento,
+                            valorImpuesto: itemPrincipal.valorImpuesto,//✅
+                            precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
+                            medidas,
+                            conversion: dataMedida.conversion,
+                            articuloTarifas: dataMedida.tarifas,
+                            consolidacionesFecha,
+                            estado: 1,
+                            datosAdicionales: restItem.datosAdicionales
+                        }
+
+                        return obj;
+                    });
+
+                    let infoComprobante = {
+                        ...comprobanteTemp,
+                        serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
+                        puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
+                        fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                        irbpnr: comprobanteTemp.irbpnr || 0
+                    }
+
+                    return {
+                        infoComprobante,
+                        factura,
+                        cliente,
+                        detalleDocumento,
+                        infoAdicionalDocumento,
+                    }
+                }
+            })
+        }
+
+
+        service.paramsMapperToApi = function (params) {
+            const { infoComprbante, detalles, detallesDeleted, infoAdicional } = params;
+
+            let resultInfoComprobante = service.infoComprobanteMapperTo(infoComprbante);
+            const resultDetalles = service.detalleMapperTo(detalles);
+            const resultDetallesDeleted = service.detalleMapperTo(detallesDeleted);
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+
+            const mergeDetalles = [
+                ...resultDetalles,
+                ...resultDetallesDeleted
+            ]
+            return {
+                infoNotaCredito: resultInfoComprobante,
+                detalles: mergeDetalles,
+                impuestos: impuestos,
+                infoAdicional: infoAdicional || []
+            }
+
+        }
+
+
+
+
+        service.infoComprobanteMapperTo = function (data) {
+            let comprobante = {
+                idCliente: data.idCliente,
+                idPuntoEmision: data.idPuntoEmision,
+                idUsuario: data.idUsuario,
+                idFactura: data.idFactura,
+                fechaEmision: data.fechaEmision,
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                totalDescuento: data.totalDescuento,
+                porcentajeDescuento: data.porcentajeDescuento,
+                irbpnr: data.irbpnr || 0,
+                propina: data.propina || 0,
+                recargo: data.recargo || 0,
+                transporte: data.transporte || 0,
+                total: data.total,
+                observacion: data.observacion
+            };
+            return comprobante;
+        }
+
+
+        service.detalleMapperTo = function (detalles) {
+            let resultMap = detalles.map((orderItem, index) => {
+                let cantidadTransaccion = orderItem.cantidad * orderItem.conversion;
+                let obj = {
+                    idNotaCreditoDetalle: orderItem.idNotaCreditoDetalle || 0,
+                    orderIndex: index,
+                    idArticulo: orderItem.idArticulo,
+                    idTarifa: orderItem.idTarifa,
+                    idBodega: orderItem.idBodega,
+                    idMedida: orderItem.idMedida,
+                    ice: orderItem.ice,
+                    cantidad: orderItem.cantidad,
+                    precioUnitario: orderItem.precioUnitario,
+                    codigoPorcentaje: orderItem.codigoPorcentaje,
+                    tarifa: orderItem.tarifa,
+                    precioConIva: orderItem.precioConIva,
+                    valorDescuento: orderItem.valorDescuento,
+                    precioTotalSinImpuesto: orderItem.precioTotalSinImpuesto,
+                    porcentajeDescuento: orderItem.porcentajeDescuento,
+                    total: orderItem.total,
+                    nota: orderItem.nota,
+                    descripcion: orderItem.descripcion,
+                    idTipoIva: orderItem.idTipoIva,
+                    llevaInventario: orderItem.llevaInventario,
+                    cantidadTransaccion: cantidadTransaccion,
+                    precioCosto: orderItem.precioCosto,
+                    valorImpuesto: orderItem.valorImpuesto,
+                    estado: orderItem.estado
+                };
+                return obj;
+            })
+            return resultMap;
+        }
 
         return service;
 

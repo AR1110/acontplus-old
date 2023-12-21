@@ -1,4 +1,4 @@
-﻿using DataAccess.RetencionIvaRenta;
+﻿using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.RetencionIvaRenta

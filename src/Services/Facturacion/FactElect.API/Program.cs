@@ -1,8 +1,9 @@
-﻿using Common.Core.Utils;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.Core.Utils;
 using FactElect.API.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
@@ -17,6 +18,8 @@ namespace FactElect.API
             // Add services to the container.
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
+
+            builder.Services.AddApplicationServices(builder.Configuration);
 
             builder.Services.AddControllers()
                                        .AddNewtonsoftJson(x =>
@@ -39,9 +42,7 @@ namespace FactElect.API
                                                                 new QueryStringApiVersionReader("api-version"),
                                                                 new HeaderApiVersionReader("x-api-version"),
                                                                 new MediaTypeApiVersionReader("x-api-version"));
-            });
-
-            builder.Services.AddVersionedApiExplorer(setup =>
+            }).AddApiExplorer(setup =>
             {
                 setup.GroupNameFormat = "'v'VVV";
                 setup.SubstituteApiVersionInUrl = true;
@@ -58,6 +59,9 @@ namespace FactElect.API
 
             builder.Services.AddSingleton<LogWriter>();
 
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
+
             var app = builder.Build();
 
             var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
@@ -71,8 +75,6 @@ namespace FactElect.API
                         description.GroupName.ToUpperInvariant());
                 }
             });
-
-            app.UseApiVersioning();
 
             app.UseHttpsRedirection();
 

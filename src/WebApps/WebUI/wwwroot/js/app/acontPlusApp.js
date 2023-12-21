@@ -224,7 +224,19 @@ mainService.$inject = [
 function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
     let service = {}
 
-    function _getData(method, url, data = null, forApi = false) {
+    function _getData(method, url, data = null, forApi = false, externalApi = false) {
+        if (externalApi) {
+            return fetch(url, {
+                method: method,
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }).then(response => {
+                return response.json()
+            })
+        }
         return $http({
             method: method,
             url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
@@ -537,7 +549,8 @@ app.filter('tipo', function ($sce) {
 });
 app.filter('ambienteSri', function ($sce) {
     return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>PRUEBAS</span>") : $sce.trustAsHtml("<span class='text-info'>PRODUCCIÓN</span>");
+        let sriEnvironment = text == "2" ? true : false
+        return sriEnvironment ? $sce.trustAsHtml("<span class='text-success'>PRODUCCIÓN</span>") : $sce.trustAsHtml("<span class='text-warning'>PRUEBAS</span>");
     }
 })
 app.filter('tipoEmisionSri', function ($sce) {
@@ -623,7 +636,7 @@ app.filter('mapBodega', () => {
             [curr.idBodega]: curr.descripcion
         }), {
             0: 'Seleccionar bodega'
-        }); 
+        });
         return !idBodega ? result[0] : result[idBodega];
     };
 });

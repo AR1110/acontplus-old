@@ -1,11 +1,11 @@
 ﻿using Common.Core.Models;
+using Common.Core.Models.Logistica;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.Models.Logistica;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace ApiLogistica.Controllers
+namespace FactElect.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -29,11 +29,11 @@ namespace ApiLogistica.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            GenericResponse _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Logistica.Vehiculo_Get");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -55,11 +55,11 @@ namespace ApiLogistica.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] Vehiculo data)
         {
-            GenericResponse _response = new GenericResponse();
-            DbAccess _db = new DbAccess(_configuration);
+            var _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Logistica.Vehiculo_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("placa", data.placa);
@@ -84,11 +84,11 @@ namespace ApiLogistica.Controllers
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Vehiculo data)
         {
-            GenericResponse _response = new GenericResponse();
-            DbAccess _db = new DbAccess(_configuration);
+            var _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Logistica.Vehiculo_Update");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
@@ -114,11 +114,11 @@ namespace ApiLogistica.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
-            DbAccess _db = new DbAccess(_configuration);
+            var _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Logistica.Vehiculo_Delete");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
@@ -141,11 +141,11 @@ namespace ApiLogistica.Controllers
         [HttpGet("Search")]
         public async Task<IActionResult> Search(string json)
         {
-            GenericResponse _response = new GenericResponse();
-            DbAccess _db = new DbAccess(_configuration);
+            var _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Logistica.Vehiculo_Search");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));

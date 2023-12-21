@@ -1,9 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
-using Domain.ViewModels.Ventas;
+using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Services.Common.Logs;
 
 namespace FactElect.API.Controllers
@@ -48,7 +46,7 @@ namespace FactElect.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] NotaCreditoViewModel data)
+        public async Task<IActionResult> Post(ApiRequest data)
         {
 
             var _response = new GenericResponse();
@@ -56,16 +54,14 @@ namespace FactElect.API.Controllers
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.NotaCredito_Insert", true);
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonNotaCredito", JsonConvert.SerializeObject(data.nota));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional));
+                _db.AddDynamicParam("userRoleId", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error al crear el Doc. Nota Credito: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al crear el Dic");
+                _response.Create(code: "0", message: "Error al crear el Doc. Nota Credito");
             }
             finally
             {
@@ -75,17 +71,16 @@ namespace FactElect.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] NotaCreditoViewModel data)
+        public async Task<IActionResult> Put(int id, ApiRequest parameters)
         {
             var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.NotaCredito_Update", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("userRoleId", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("jsonNotaCredito", JsonConvert.SerializeObject(data.nota));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
