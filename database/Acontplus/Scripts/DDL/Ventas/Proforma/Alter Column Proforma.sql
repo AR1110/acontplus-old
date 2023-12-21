@@ -30,7 +30,6 @@ go
 
 --alter table ProformaDetalle drop column idPresentacion
 --alter table ProformaDetalle drop column precioConIva
-
 --ALTER TABLE ProformaDetalle ADD codigoPorcentaje VARCHAR(5)
 --ALTER TABLE ProformaDetalle ADD tarifa NUMERIC(18,5)
 --ALTER TABLE ProformaDetalle ADD valorImpuesto NUMERIC(18,5)
