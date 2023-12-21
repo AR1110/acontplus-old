@@ -30,7 +30,7 @@
 
             try {
                 $scope.reports = [];
-                mS.getData('get', 'Reporte/Get/' + JSON.stringify({ typeList: 1 }), null, true).then(response => {
+                mS.getData('get', 'Config/Reporte/Get/' + JSON.stringify({ typeList: 1 }), null, true).then(response => {
                     console.log(response)
                     if (response.code === "0") {
                         $scope.reports = [];
@@ -106,10 +106,10 @@
             var urlMethod = '';
             if ($scope.operation == 1) {
                 method = 'Post';
-                urlMethod = 'Reporte/Post';
+                urlMethod = 'Config/Reporte/Post';
             } else {
                 method = 'Put';
-                urlMethod = 'Reporte/Put/' + $scope.reporte.idReporte;
+                urlMethod = 'Config/Reporte/Put/' + $scope.reporte.idReporte;
             };
 
             mS.getData(method, urlMethod, $scope.reporte, true).then(function (response) {
@@ -147,15 +147,15 @@
 
 
         $scope.delete = function (item) {
-            mS.getData('Delete', 'Reporte/' + item.idReporte).then(function (response) {
+            mS.getData('Delete', 'Config/Reporte/' + item.idReporte, null, true).then(function (response) {
                 if (response.code == 0) {
                     tS.toastr('warning', response.message);
                     return;
-                };
+                }
                 if (response.code == 1) {
                     tS.toastr('success', response.message);
                     $scope.initialLoad();
-                };
+                }
             }, function (error) {
                 console.log(error);
             });
@@ -195,7 +195,7 @@
                 }),
                 dataParams: JSON.stringify({ testProp: 'param for get Data' })
             };
-            mS.getFile('Post', '/Reporte/Download', parameters).then(function (response) {
+            mS.getFile('Post', 'Config/Reporte/Download', parameters).then(function (response) {
                 if (item == 1) {
                     var fileBlob = new Blob([response.data], {
                         type: response.data.type
@@ -228,7 +228,7 @@
                     //    anchor.remove();
                     //};
                     return;
-                };
+                }
             }, function (error) {
                 console.log(error);
                 return;
@@ -271,10 +271,10 @@
             if ($scope.operationDs === 1) {
                 $scope.dataSource.idReporte = $scope.tempDataSource.idReporte
                 methodDs = 'post'
-                urlDs = 'ReporteDataSource/'
+                urlDs = 'Config/ReporteDataSource/'
             } else {
                 methodDs = 'put'
-                urlDs = 'ReporteDataSource/' + $scope.dataSource.idReporteDataSource
+                urlDs = 'Config/ReporteDataSource/' + $scope.dataSource.idReporteDataSource
             }
 
             $scope.dataSource.typeRegister = $scope.operationDs;
@@ -287,7 +287,7 @@
                 if (response.code == "1") {
                     $("#dataSourceModal").modal('hide');
                     $scope.dataSource = {}
-                    mS.getData('get', 'ReporteDataSource/?json=' + JSON.stringify({ idReporte: $scope.tempDataSource.idReporte }), null, true).then(response => {
+                    mS.getData('get', 'Config/ReporteDataSource/?json=' + JSON.stringify({ idReporte: $scope.tempDataSource.idReporte }), null, true).then(response => {
 
                         if (response.code === "0") {
                             $scope.tempDataSource.dataSources = []
@@ -319,7 +319,7 @@
                     cancelButtonText: 'No, cancelar!',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        mS.getData('delete', 'ReporteDataSource/' + dataDs.idReporteDataSource, null, true).then(response => {
+                        mS.getData('delete', 'Config/ReporteDataSource/' + dataDs.idReporteDataSource, null, true).then(response => {
                             console.log(response)
                             if (response.code == "0") {
                                 tS.toastr('warning', response.message)

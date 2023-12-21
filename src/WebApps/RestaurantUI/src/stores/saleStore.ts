@@ -316,7 +316,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             })
         )
     },
-    async setItemChangeQty(index, qty) {
+    setItemChangeQty(index, qty) {
         const { order, items, dataForm, setTotalItems, caculateTotals, getItemQty } = get();
         const decimal = dataForm.decimal;
 
