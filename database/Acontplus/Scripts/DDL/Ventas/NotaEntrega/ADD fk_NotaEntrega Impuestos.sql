@@ -39,7 +39,7 @@ go
 --       ,ti.idImpuesto
 --       ,ti.idTipoIva
 --       ,ti.porcentaje as [Percent] 
---       ,preciototalSinimpuesto as TaxBase
+--       ,preciototalSinImpuesto as TaxBase
 --       ,valorImpuesto as TaxValue
 --       ,nd.valorDescuento as Discount
 --FROM NotaEntregaDetalle nd WITH (NOLOCK)

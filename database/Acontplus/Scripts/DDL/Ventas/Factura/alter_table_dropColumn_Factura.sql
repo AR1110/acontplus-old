@@ -49,9 +49,7 @@ GO
 
 
 --ALTER TABLE FacturaDetalle ALTER COLUMN valorImpuesto NUMERIC(18,5) NOT NULL
-
 --ALTER TABLE FacturaDetalle ALTER COLUMN cantidad NUMERIC(18,5) NOT NULL
-
 --ALTER TABLE FacturaDetalle ALTER COLUMN descripcion VARCHAR(300) NOT NULL
 
 
