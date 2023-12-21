@@ -28,7 +28,6 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,de.codigoAutorizacion
           ,de.fechaAutorizacion
           ,de.claveAcceso
-          ,de.numeroIdentificacion identClienteProv
           ,telefono = (CASE 
 					        WHEN de.codDoc = '01' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM dbo.Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
 					        WHEN de.codDoc = '03' THEN (SELECT TOP 1 LTRIM(RTRIM(p.telefono)) FROM dbo.Proveedor p WITH(NOLOCK) WHERE p.idProveedor = de.idContribuyente)

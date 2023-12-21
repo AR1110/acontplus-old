@@ -4,4 +4,7 @@
     ViewData["Title"] = "Servicio Técnico";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div id="technical-support"></div>
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+@section Scripts {
+    <script src="~/js/controllers/iframeAngularCtrl.js" asp-append-version="true"></script>
+}
