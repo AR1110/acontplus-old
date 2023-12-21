@@ -112,7 +112,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contabilidad.API", "Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactElect.Infrastructure", "Services\Facturacion\FactElect.Infrastructure\FactElect.Infrastructure.csproj", "{8EFF02A6-D1F4-47F4-A7F5-0845B7A585ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.API", "Services\Common\Common.API\Common.API.csproj", "{170D4055-C0B9-40F7-A697-B245C86C727F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.API", "Services\Common\Common.API\Common.API.csproj", "{170D4055-C0B9-40F7-A697-B245C86C727F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

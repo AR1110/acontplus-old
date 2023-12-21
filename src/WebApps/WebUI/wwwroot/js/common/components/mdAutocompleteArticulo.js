@@ -186,8 +186,10 @@ class BaseSearchArticulo {
         try {
 
             showLoader();
-            this.dataArticulo.idBodega = this.idBodega;
-            this.articuloSvc.findForPurchase(this.dataArticulo).then(response => {
+            let spParams = {
+                idArticulo: this.dataArticulo.idArticulo
+            }
+            this.articuloSvc.getForPurchase(spParams).then(response => {
                 hideLoader();
                 this.setItemArticuloEnDetalle({
                     item: response
