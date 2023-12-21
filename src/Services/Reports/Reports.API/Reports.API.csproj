@@ -132,7 +132,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\FactElect\NotaCreditoRG.rdl">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Factura.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -275,6 +275,12 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="ReportViewerCore.NETCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Reports\Ventas\FacturaGeneral.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
