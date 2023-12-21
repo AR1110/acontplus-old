@@ -375,7 +375,7 @@ BEGIN
          END
 
         ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
-        ,(sti.codigo)
+        ,(SELECT TOP 1 codigoPorcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
         ,(SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
 
         ,(CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.porcentaje FROM Restaurant.Menu m
@@ -456,7 +456,7 @@ BEGIN
             ,i.description
             ,0                         AS precioCosto
             ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS VARCHAR(1)) = sti.codigo) AS idTipoIva
-            ,sti.porcentaje
+            ,(SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS VARCHAR(1)) = sti.codigo) AS idTipoIva
             ,i.taxValue                AS iva
             ,i.uuid
             ,i.envioSri
@@ -502,8 +502,8 @@ BEGIN
                         ,i.discount
                         ,0
                         ,i.total
-                        ,sti.codImpuesto
-                        ,sti.porcentaje
+                        ,(SELECT TOP 1 codigoPorcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(5)) = sti.codigo) 
+                        ,(SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(5)) = sti.codigo) 
                         ,i.taxValue
                         ,i.obs
                         ,dbo.ufnGetDateEcuador()
@@ -514,9 +514,9 @@ BEGIN
 
                     INSERT INTO Ventas.NotaEntregaImpuesto(NotaEntregaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId,Discount)                    
                     SELECT @documentoId
-                          ,(SELECT TOP 1 iv.idImpuesto FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
-                          ,(SELECT TOP 1 iv.idTipoIva FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
-                          ,ti.porcentaje
+                          ,(SELECT TOP 1 iv.idImpuesto FROM TipoIva iv WITH (NOLOCK) WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
+                          ,(SELECT TOP 1 iv.idTipoIva  FROM TipoIva iv WITH (NOLOCK) WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
+                          ,(SELECT TOP 1 iv.porcentaje FROM TipoIva iv WITH (NOLOCK) WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
                           ,t.taxBase
                           ,t.taxValue
                           ,@userId
@@ -548,9 +548,9 @@ BEGIN
                       
             INSERT INTO Ventas.FacturaImpuesto(FacturaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId,Discount)                    
                     SELECT @documentoId 
-                        ,(SELECT TOP 1 iv.idImpuesto FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
-                        ,(SELECT TOP 1 iv.idTipoIva FROM TipoIva iv WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
-                        , ti.porcentaje
+                        ,(SELECT TOP 1 iv.idImpuesto FROM TipoIva iv WITH (NOLOCK) WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
+                        ,(SELECT TOP 1 iv.idTipoIva  FROM TipoIva iv WITH (NOLOCK) WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo) 
+                        ,(SELECT TOP 1 iv.porcentaje FROM TipoIva iv WITH (NOLOCK) WHERE CAST(iv.codigoPorcentaje AS varchar(5)) = ti.codigo)
                         , t.taxBase
                         , t.taxValue
                         , @userId

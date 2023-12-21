@@ -33,7 +33,7 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
           ,pe.codEstab
 		  ,pe.ptoEmi
           ,us.nombreUsuario
-          ,(SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumentoElectronico = fa.idFactura AND de.codDoc = '01') as codEstado
+          ,(SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = fa.idFactura AND de.codDoc = '01') as codEstado
 	FROM dbo.Factura                        fa WITH (NOLOCK)
 	INNER JOIN dbo.PuntoEmision             pe WITH (NOLOCK) ON pe.idPuntoEmision = fa.idPuntoEmision
 	INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab       = pe.codEstab 
