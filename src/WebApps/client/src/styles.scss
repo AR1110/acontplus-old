@@ -1,0 +1,108 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.main-body {
+  padding-top: 20px;
+  max-width: 1248px;
+  margin: 0 auto;
+}
+
+table {
+  width: 100%;
+}
+
+.section-container-table {
+  height: 400px;
+  overflow: auto;
+}
+
+
+/*Loader */
+.loading {
+  display: inline-block;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.positionLoading {
+  position: fixed;
+  right: 0rem;
+  top: 0rem;
+  left: 0rem;
+  bottom: 0rem;
+  z-index: 2147483647;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.spinner,
+.spinner:after {
+  width: 150px;
+  height: 150px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -75px;
+  margin-left: -75px;
+  /*margin: 100%;*/
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.spinner {
+  background-color: transparent;
+  border-top: 10px solid #d61672;
+  border-right: 10px solid #d61672;
+  border-bottom: 10px solid #d61672;
+  border-left: 10px solid rgba(255, 255, 255, 1);
+  transform: translateZ(0);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 0.8s;
+  animation-name: spinner-loading;
+}
+
+@keyframes spinner-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+//autocomplete search inside boostrap modal
+.cdk-overlay-container {
+  z-index: 999999 !important;
+}
+
+/* Importing Bootstrap SCSS file. */
+//@import 'bootstrap/scss/bootstrap';
+@import 'assets/template/css/style.min.css';
+@import 'tabulator-tables/dist/css/tabulator.css';
+@import 'assets/forms.css';
+@import "ngx-toastr/toastr";
+@import "perfect-scrollbar";
+
+//remove z index to material table headers
+.mat-mdc-header-cell {
+  z-index: unset !important;
+}
