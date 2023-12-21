@@ -195,35 +195,10 @@
         </div>
     </div>
     @await Html.PartialAsync("Shared/_ComprobantesErroneos.cshtml")
-</div>
-
-<div id="iframeHome"></div>
+</div> 
 
 @section Scripts {
     <script src="~/js/controllers/homeCtrl.js" asp-append-version="true"></script>
-    <script type="text/javascript">
-        async function getSrc() {
-            let params = localStorage.getItem('userData')
-            let { token } = JSON.parse(params);
-            if (!token) { return; }
-            // Create a new iframe element
-            var iframe = document.createElement('iframe');
-
-            iframe.style.width = '100%';
-            iframe.style.height = '500px';
-            iframe.style.border = 'none';
-            iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms' 
-            // Set the src attribute of the iframe
-            iframe.src = `http://localhost:4200?token=${token}&route=home`;
-
-            // Get the div element
-            var div = document.getElementById('iframeHome');
-
-            // Append the iframe to the div
-            div.appendChild(iframe);
-        }
-        getSrc();
-    </script>
 }
 
 
