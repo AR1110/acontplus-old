@@ -22,6 +22,7 @@
     <Compile Remove="Areas\Pet\**" />
     <Compile Remove="Areas\TipoEntidad\**" />
     <Compile Remove="Controllers\Asignacion\**" />
+    <Compile Remove="Pages\ReporteCompra\**" />
     <Compile Remove="Pages\Shared\**" />
     <Compile Remove="Views\ComprobanteImportacion\**" />
     <Compile Remove="wwwroot\js\controllers\almacen\**" />
@@ -34,6 +35,7 @@
     <Content Remove="Areas\Pet\**" />
     <Content Remove="Areas\TipoEntidad\**" />
     <Content Remove="Controllers\Asignacion\**" />
+    <Content Remove="Pages\ReporteCompra\**" />
     <Content Remove="Pages\Shared\**" />
     <Content Remove="Views\ComprobanteImportacion\**" />
     <Content Remove="wwwroot\js\controllers\almacen\**" />
@@ -46,6 +48,7 @@
     <EmbeddedResource Remove="Areas\Pet\**" />
     <EmbeddedResource Remove="Areas\TipoEntidad\**" />
     <EmbeddedResource Remove="Controllers\Asignacion\**" />
+    <EmbeddedResource Remove="Pages\ReporteCompra\**" />
     <EmbeddedResource Remove="Pages\Shared\**" />
     <EmbeddedResource Remove="Views\ComprobanteImportacion\**" />
     <EmbeddedResource Remove="wwwroot\js\controllers\almacen\**" />
@@ -58,6 +61,7 @@
     <None Remove="Areas\Pet\**" />
     <None Remove="Areas\TipoEntidad\**" />
     <None Remove="Controllers\Asignacion\**" />
+    <None Remove="Pages\ReporteCompra\**" />
     <None Remove="Pages\Shared\**" />
     <None Remove="Views\ComprobanteImportacion\**" />
     <None Remove="wwwroot\js\controllers\almacen\**" />
