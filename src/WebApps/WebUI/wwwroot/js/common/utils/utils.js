@@ -654,18 +654,32 @@
          */
 
         formSvc.processAndSortMeasures = function (medidasPrincipal, medidasFraccionado) {
-            // Medidas del artículo fraccionado del principal
-            let medidasFraccionadoTemp = JSON.parse(medidasFraccionado) || [];
+            let medidasPrincipalTemp = [];
+            let medidasFraccionadoTemp = [];
 
             // Medida principal con las tarifas
-            let medidasPrincipalTemp = JSON.parse(medidasPrincipal) || [];
+            if (!Array.isArray(medidasPrincipal)) {
+                medidasPrincipalTemp = JSON.parse(medidasPrincipal) || [];
+            } else {
+                medidasPrincipalTemp = medidasPrincipal;
+            }
+
+            // Medidas del artículo fraccionado del principal
+            if (!Array.isArray(medidasFraccionado)) {
+                medidasFraccionadoTemp = JSON.parse(medidasFraccionado) || [];
+            } else {
+                medidasFraccionadoTemp = medidasFraccionado;
+            }
+
 
             const medidasPrincipalMapper = medidasPrincipalTemp.map(medidaPrincipal => ({
                 ...medidaPrincipal,
+                precioCosto: medidaPrincipal.precioCosto || 0,
                 tipo: 'PRINCIPAL'
             }))
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
+                precioCosto: medidaFraccionado.precioCostoFraccionado || 0,
                 tipo: 'FRACCIONADO'
             }))
 
@@ -698,10 +712,11 @@
             // Crear un nuevo array de medidas con un formato específico
             let medidas = orderMedidaArray.map(item => ({
                 idMedida: item.idMedida,
-                conversion: item.conversion,
-                descripcion: item.descripcion,
+                conversion: item.conversion || 1,
+                descripcion: item.descripcion || item.medida,
                 defaultMedida: item.defaultMedida,
                 tipo: item.tipo,
+                precioCosto: item.precioCosto,
                 tarifas: item.tarifas || []
             }))
 

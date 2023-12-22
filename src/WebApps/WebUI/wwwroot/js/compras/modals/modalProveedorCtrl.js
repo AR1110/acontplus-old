@@ -361,10 +361,9 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                 let results = JSON.parse(response.payload);
                 idProveedor = results.idProveedor;
             }
-            $uibModalInstance.close({
-                idProveedor,
-                idTiempoCredito: $scope.data.idTiempoCredito
-            });
+            let dataProveedor = proveedorSvc.getId(idProveedor);
+
+            $uibModalInstance.close(dataProveedor);
         }
     }
 

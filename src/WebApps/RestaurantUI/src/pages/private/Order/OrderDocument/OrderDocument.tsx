@@ -199,6 +199,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
                                 <TableRow>
                                     <TableCell align='center'>Op.</TableCell>
                                     <TableCell>N°.</TableCell>
+                                    <TableCell>Tipo Doc.</TableCell>
                                     <TableCell>Nro. Doc.</TableCell>
                                     <TableCell>Fecha Emisión</TableCell>
                                     <TableCell>Cliente</TableCell>
@@ -220,6 +221,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
                                         <TableCell>
                                             {index + 1}
                                         </TableCell>
+                                        <TableCell>{row.docType}</TableCell>
                                         <TableCell>{row.serie}</TableCell>
                                         <TableCell>{row.createAt}</TableCell>
                                         <TableCell>{row.customerName}</TableCell>
