@@ -2557,8 +2557,8 @@
                   </TablixMembers>
                 </TablixRowHierarchy>
                 <DataSetName>infoAdicionalDs</DataSetName>
-                <Top>2.85861cm</Top>
-                <Left>0.31751cm</Left>
+                <Top>3.54101cm</Top>
+                <Left>0.31752cm</Left>
                 <Height>0.6cm</Height>
                 <Width>10.15117cm</Width>
                 <ZIndex>7</ZIndex>
@@ -2568,11 +2568,82 @@
                   </Border>
                 </Style>
               </Tablix>
+              <Textbox Name="Textbox100">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Observación:</Value>
+                        <Style>
+                          <FontSize>7pt</FontSize>
+                          <FontWeight>Bold</FontWeight>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox68</rd:DefaultName>
+                <Top>2.83518cm</Top>
+                <Left>0.31753cm</Left>
+                <Height>0.6cm</Height>
+                <Width>1.7475cm</Width>
+                <ZIndex>8</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox101">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!observacion.Value, "headerDs")</Value>
+                        <Style>
+                          <FontSize>7pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox69</rd:DefaultName>
+                <Top>2.83518cm</Top>
+                <Left>2.17085cm</Left>
+                <Height>0.6cm</Height>
+                <Width>8.29784cm</Width>
+                <ZIndex>9</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>13.77602cm</Top>
             <Left>0.25431cm</Left>
-            <Height>3.70583cm</Height>
+            <Height>4.21157cm</Height>
             <Width>11.42605cm</Width>
             <ZIndex>11</ZIndex>
             <Style>
@@ -3704,7 +3775,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>7.32728in</Height>
+        <Height>8.48353in</Height>
         <Style>
           <Border>
             <Style>None</Style>

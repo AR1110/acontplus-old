@@ -13,11 +13,15 @@ namespace Inventario.API.Controllers
     public class SubFamiliaController : BaseApiController
     {
         private readonly IConfiguration _configuration;
+        private readonly S3ObjectCustom _s3ObjectCustom;
         private readonly IS3StorageService _storageService;
         private readonly LogWriter _log;
-        public SubFamiliaController(IConfiguration configuration, IS3StorageService storageService, LogWriter log)
+        public SubFamiliaController(IConfiguration configuration,
+            S3ObjectCustom s3ObjectCustom,
+            IS3StorageService storageService, LogWriter log)
         {
             _configuration = configuration;
+            _s3ObjectCustom = s3ObjectCustom;
             _storageService = storageService;
             _log = log;
         }
@@ -49,50 +53,27 @@ namespace Inventario.API.Controllers
 
         [HttpPost("Post")]
         public async Task<IActionResult> Post(string json, IFormFile file)
-        {
-            var data = JsonConvert.DeserializeObject<SubFamilia>(json);
+        { 
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
-            var s3file = new S3File();
+            
             try
             {
                 if (file != null)
-                {
-                    var fileExt = Path.GetExtension(file.FileName);
-                    s3file.BucketName = _configuration["S3Bucket:Name"];
-                    s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
-                    s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                { 
+                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/subfamilias/", file);
                 }
+                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Inventario.Subfamilia_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("siglas", data.siglas);
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
-                _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
-                _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
+                _db.AddDynamicParam("userRoleId", userRoleId);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                _db.AddDynamicParam("s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "");
+                _db.AddDynamicParam("s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "");
 
                 _response = _db.GetDefault();
                 if (_response.code == "1" && file != null)
-                {
-
-                    await using var memoryStream = new MemoryStream();
-
-                    await file.CopyToAsync(memoryStream);
-                    var s3 = new S3ObjectCustom()
-                    {
-                        Region = s3file.Region,
-                        BucketName = s3file.BucketName,
-                        InputStream = memoryStream,
-                        Name = s3file.S3ObjectKey
-                    };
-                    var credentials = new AwsCredentials()
-                    {
-                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
-                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
-                    };
-                    var s3Response = await _storageService.UploadAsync(s3, credentials);
+                { 
+                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                 }
             }
             catch (Exception ex)
@@ -114,71 +95,45 @@ namespace Inventario.API.Controllers
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<SubFamilia>(json);
-
-            var s3file = new S3File();
             bool nofile = true;
             try
             {
                 if (file != null)
                 {
-                    var fileExt = Path.GetExtension(file.FileName);
-                    s3file.BucketName = _configuration["S3Bucket:Name"];
-                    s3file.Region = _configuration["S3Bucket:Region"];
                     if (string.IsNullOrEmpty(data.S3ObjectKey))
                     {
-                        s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
-                        s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
-                        data.S3ObjectKey = s3file.S3ObjectKey;
-                        data.S3ObjectUrl = s3file.S3ObjectUrl;
+                        await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/subfamilias/", file);
+                        data.S3ObjectKey = _s3ObjectCustom.S3ObjectKey;
+                        data.S3ObjectUrl = _s3ObjectCustom.S3ObjectUrl;
                     }
                     else
                     {
                         nofile = false;
+                        await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/subfamilias/", file, data.S3ObjectKey, data.S3ObjectUrl);
                     }
-
                 }
+                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Inventario.Subfamilia_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("userRoleId", userRoleId);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
-                _db.AddDynamicParam("estado", data.estado);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _db.AddDynamicParam("s3ObjectKey", data.S3ObjectKey ?? "");
                 _db.AddDynamicParam("s3ObjectUrl", data.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
                 if (_response.code == "1" && file != null)
-                {
-
-                    await using var memoryStream = new MemoryStream();
-
-                    await file.CopyToAsync(memoryStream);
-                    var s3 = new S3ObjectCustom()
-                    {
-                        Region = s3file.Region,
-                        BucketName = s3file.BucketName,
-                        InputStream = memoryStream,
-                        Name = s3file.S3ObjectKey
-                    };
-                    var credentials = new AwsCredentials()
-                    {
-                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
-                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
-                    };
+                { 
                     if (nofile)
                     {
-                        var s3Response = await _storageService.UploadAsync(s3, credentials);
+                        var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                     }
                     else
                     {
-                        s3.Name = data.S3ObjectKey;
-                        var s3Response = await _storageService.UpdateAsync(s3, credentials);
+                        var s3Response = await _storageService.UpdateAsync(_s3ObjectCustom);
                     }
                 }
             }
             catch (Exception ex)
             {
-
                 _log.LogActivity("Error al actualizar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar subfamilia");
             }

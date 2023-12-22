@@ -13,6 +13,10 @@ CREATE VIEW v_CuentaPorPagar AS (
 		  ,cp.idUsuario
 		  ,cp.idEntidad
 		  ,cp.idDocumento
+          ,CASE WHEN cp.codDoc = '03' THEN (SELECT TOP 1 lc.idPuntoEmision 
+                                            FROM dbo.LiquidacionCompra lc WITH (NOLOCK) 
+                                            WHERE lc.idLiquidacionCompra = cp.idDocumento)
+           END as idPuntoEmision
 		  ,es.codEstab
 		  ,cp.codDoc
 		  ,cp.uniqueId

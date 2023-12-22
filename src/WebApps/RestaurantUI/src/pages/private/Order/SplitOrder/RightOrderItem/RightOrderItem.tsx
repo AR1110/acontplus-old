@@ -176,7 +176,7 @@ const RightOrderItem = () => {
                         <StyledAccordionDetails>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
-                                    <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName={leftOrder.customerName} onChangeCustomer={(data) => {
+                                    <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName={rightOrder.customerName} onChangeCustomer={(data) => {
                                         if (data) {
                                             setRightOrderData({
                                                 ...rightOrder,

@@ -94,8 +94,8 @@
           <DataField>telefonoEstablecimiento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ciudad">
-          <DataField>ciudad</DataField>
+        <Field Name="ciudadComprador">
+          <DataField>ciudadComprador</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="emailComprador">
@@ -936,7 +936,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ciudad.Value, "headerDs")</Value>
+                        <Value>=First(Fields!ciudadComprador.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>

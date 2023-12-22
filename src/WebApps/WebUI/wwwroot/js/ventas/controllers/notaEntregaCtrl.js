@@ -147,9 +147,10 @@
 
         $scope.getNotaEntregas = async () => {
             try {
-                $scope.dataSearch.checkBoxFecha = true;
+
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
+                        $scope.dataSearch.checkBoxFecha = true;
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
                     }
@@ -221,6 +222,8 @@
                     $scope.dataSearch.codEstab = dataEstab.codEstab;
                     $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
                     $scope.getNotaEntregas();
+                } else {
+                    tS.toastr('warning', 'No tienes asignado Establecimiento!')
                 }
             }).catch(() => {
                 hideLoader();
@@ -1932,7 +1935,7 @@
                 idBodega: 0,
                 subTotal: 0,
                 total: 0,
-                nota: "S/N",
+                nota: null,
                 llevaInventario: false,
                 datosAdicionales: false,
                 estado: 1

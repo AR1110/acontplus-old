@@ -133,11 +133,10 @@ BEGIN
 					inner JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.codigoSri            = '07'
 					LEFT JOIN dbo.Proveedor         prov WITH (NOLOCK) ON prov.idProveedor        = rc.idProveedor
 					LEFT JOIN dbo.TipoIdentificacion  ti WITH (NOLOCK) ON ti.idTipoIdentificacion = prov.idTipoIdentificacion		
-					LEFT JOIN dbo.DocumentoElectronico d WITH (NOLOCK) ON s.codEstab              = d.codEstab
-					AND d.codDoc = '07' 
+					LEFT JOIN dbo.DocumentoElectronico d WITH (NOLOCK) ON d.codDoc = '07' 
 					AND rc.idRetencionAts = d.idDocumento
 					AND d.versionComp = '2.0.0'
-					LEFT JOIN Entidad e WITH(NOLOCK) ON e.ruc = d.ruc 								
+					LEFT JOIN Entidad e WITH(NOLOCK) ON e.ruc = s.ruc 								
  					WHERE rc.idRetencionAts =  @id
 
                     SELECT 

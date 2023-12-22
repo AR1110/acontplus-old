@@ -73,7 +73,7 @@ BEGIN
 								  INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab 
 								  WHERE ad.idEntidad = @idEntidad AND es.codEstab = @codEstab '
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+	SELECT @idEntidad = idEntidad ,@byUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
@@ -116,7 +116,7 @@ BEGIN
 
 			IF @codEstado IS NOT NULL
 				BEGIN
-						SET @sql = @sql + 'AND ad.codEstado = @codEstado '
+				    SET @sql = @sql + 'AND ad.codEstado = @codEstado '
 				END
 
 			IF @byUsuario > 0
@@ -148,59 +148,67 @@ BEGIN
     --> DataForm
     IF @tipo = 2
         BEGIN
-                SELECT nroPrecio
-	                  ,nroCantidad
-	                  ,nroIva
-	                  ,nroDescuentoDetalle
-	                  ,nroTotalDetalle
-	                  ,nroTotalSubTotal
-	                  ,nroDescuento
-	                  ,nroIce
-	                  ,importeTotal
-	            FROM Config.v_Sistema_Decimal WITH (NOLOCK)
-                WHERE codTrasaccion = 'V' AND idEntidad = @idEntidad
+            SELECT nroPrecio
+	              ,nroCantidad
+	              ,nroIva
+	              ,nroDescuentoDetalle
+	              ,nroTotalDetalle
+	              ,nroTotalSubTotal
+	              ,nroDescuento
+	              ,nroIce
+	              ,importeTotal
+	        FROM Config.v_Sistema_Decimal WITH (NOLOCK)
+            WHERE codTrasaccion = 'V' AND idEntidad = @idEntidad
 
-	            SELECT idTipoIva
-                      ,idImpuesto
-	                  ,descripcion
-	                  ,tarifa = porcentaje
-	                  ,codigoPorcentaje = CAST(codigoPorcentaje as varchar)
-	            FROM dbo.TipoIva WITH (NOLOCK) 
-	            WHERE estado = 1
+	        SELECT idTipoIva
+                  ,idImpuesto
+	              ,descripcion
+	              ,tarifa = porcentaje
+	              ,codigoPorcentaje = CAST(codigoPorcentaje as varchar)
+	        FROM dbo.TipoIva WITH (NOLOCK) 
+	        WHERE estado = 1
 
-	            SELECT idTarifa
-	                 ,descripcion
-	                 ,predeterminada
-	                 ,codigo 
-	            FROM Tarifa WITH (NOLOCK) 
-	            WHERE idEntidad = @idEntidad AND estado = 1
+	        SELECT idTarifa
+	              ,descripcion
+	              ,predeterminada
+	              ,codigo 
+	        FROM Tarifa WITH (NOLOCK) 
+	        WHERE idEntidad = @idEntidad AND estado = 1
 
-	            SELECT idTiempoCredito
-	                  ,descripcion
-	                  ,diasCredito
-	                  ,numeroCuota 
-	            FROM TiempoCredito WITH (NOLOCK) 
-	            WHERE idEntidad = @idEntidad AND gestion = 1 AND estado = 1
+	        SELECT idTiempoCredito
+	              ,descripcion
+	              ,diasCredito
+	              ,numeroCuota 
+	        FROM TiempoCredito WITH (NOLOCK) 
+	        WHERE idEntidad = @idEntidad AND gestion = 1 AND estado = 1
 
-                SELECT idEstablecimiento
-                      ,nombreComercial
-                      ,codEstab
-                      ,idPuntoEmision
-                      ,ptoEmi + '-' + estab as ptoEmi
-                      ,defaultEstab
-                      ,defaultPtoEmi 
-                FROM v_PtoEmi_Asign WITH(NOLOCK) 
-                WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
 
-                SELECT idEstablecimiento
-                      ,nombreComercial
-                      ,codEstab
-                      ,idBodega
-                      ,bodega
-                      ,defaultEstab
-                      ,defaultBodega 
-                FROM v_Bodega_Asign WITH(NOLOCK) 
-                WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idBodega
+                  ,bodega
+                  ,defaultEstab
+                  ,defaultBodega 
+            FROM v_Bodega_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+            SELECT u.idUsuario 
+                  ,u.nombreUsuario
+                  ,u.nombreCompleto
+                  ,CAST(IIF(u.idUsuario = @byUsuario, 1, 0) AS bit) as predeterminado
+	        FROM Usuario               u WITH(NOLOCK)
+	        INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON u.idUsuario = ur.idUsuario
+	        WHERE ur.idEntidad = @idEntidad
 
             RETURN
         END 
@@ -241,9 +249,9 @@ BEGIN
 	              ,totalDescuento
 	              ,propina
 	              ,importeTotal	   
-             FROM Ventas.Aprob_Document d WITH (NOLOCK)
-             INNER JOIN dbo.PuntoEmision pe WITH(NOLOCK) ON pe.idPuntoEmision = d.idPuntoEmision 
-             INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON e.codEstab = pe.codEstab
+             FROM Ventas.Aprob_Document     d WITH (NOLOCK)
+             INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON pe.idPuntoEmision = d.idPuntoEmision 
+             INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON e.codEstab = pe.codEstab
              WHERE d.idAprob_Document = @id
 
              SELECT cl.idCliente

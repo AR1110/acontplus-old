@@ -34,7 +34,7 @@ BEGIN
     ,@bodegaId INT
     ,@payload NVARCHAR(MAX)
     ,@TaxPercentId INT
-       
+
     SELECT @uuid                = uuid
         ,@itemsJson             = items
         ,@establecimientoId     = establecimientoId
