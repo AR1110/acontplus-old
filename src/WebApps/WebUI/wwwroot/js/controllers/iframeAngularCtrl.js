@@ -28,12 +28,13 @@
             var iframe = document.createElement('iframe');
 
             iframe.style.width = '100%';
-            iframe.style.height = '500px';
+            iframe.style.height = '600px';
             iframe.style.border = 'none';
             iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms'
-            
+            //let url = 'http://localhost:4200'
+            let url = 'http://localhost:5173'
             // Set the src attribute of the iframe
-            iframe.src = `http://localhost:4200?token=${token}&route=${route}`;
+            iframe.src = `${url}?token=${token}&route=${route}`;
 
             // Get the div element
             var div = document.getElementById('iframeApp');
