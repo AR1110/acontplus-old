@@ -4,6 +4,10 @@
     ViewData["Title"] = "Pet";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div id="pet"></div>
+@* <div id="pet"></div> *@
+
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+@section Scripts {
+    <script src="~/js/controllers/iframeAngularCtrl.min.js" asp-append-version="true"></script>
+}
