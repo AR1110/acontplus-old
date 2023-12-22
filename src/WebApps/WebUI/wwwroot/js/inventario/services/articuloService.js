@@ -73,7 +73,6 @@
             })
         }
 
-        //eliminar mas adelante 
         service.getAll = function (query) {
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
@@ -461,6 +460,59 @@
             })
         }
 
+
+        /**
+         * Para Compras 
+         * ✅
+         */
+        service.getForPurchase = function (query) {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 14 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let [articuloApi, medidaPrincipal, medidaFraccionado, etiquetas] = JSON.parse(response.payload);
+                    let dataArticulo = articuloApi[0];
+
+                    let articulo = {
+                        codImpuesto: dataArticulo.codigo, //Codigo Impuesto 
+                        codigoArticulo: dataArticulo.codigoArticulo,
+                        codigoPorcentaje: dataArticulo.codigoPorcentaje,
+                        datosAdicionales: dataArticulo.datosAdicionales,
+                        descripcion: dataArticulo.descripcion,
+                        idArticulo: dataArticulo.idArticulo,
+                        idTipoIva: dataArticulo.idTipoIva,
+                        llevaInventario: dataArticulo.llevaInventario,
+                        productoFraccionable: dataArticulo.productoFraccionable,
+                        stock: dataArticulo.stock,
+                        tarifa: dataArticulo.tarifa,
+                        valorIce: dataArticulo.valorIce,
+                    }
+
+                    let medidas = fS.processAndSortMeasures(medidaPrincipal, medidaFraccionado);
+
+                    let etiquetasMapper = etiquetas.map(item => ({
+                        idEtiqueta: item.idEtiqueta,
+                        descripcion: item.descripcion,
+                        etiquetas: item.etiquetas.split(';'),
+                    }))
+
+                    return {
+                        articulo,
+                        medidas,
+                        etiquetas: etiquetasMapper
+                    }
+                }
+
+            })
+        }
+
+        /**
+         * Eliminar mas adelante
+         * 📛☺☺❌❓
+         * @param {} query 
+         * @returns 
+         */
         service.findForPurchase = function (query) {
             return mS.getData('get', url + 'FindForPurchase?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
@@ -626,7 +678,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload); 
+                    let mainData = JSON.parse(response.payload);
                     let articulo = mainData[0][0];
                     let infoAdicionalTemp = [];
                     let datosAdicionalesArticulo = [];
@@ -638,11 +690,11 @@
                     let medidasPrincipalTemp = mainData[2];
 
                     // Combinar los dos arrays de medidas en uno solo
-                    const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal=>({
+                    const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
                         ...medidaPrincipal,
                         tipo: 'PRINCIPAL'
                     }))
-                    const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado=>({
+                    const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado => ({
                         ...medidaFraccionado,
                         tipo: 'FRACCIONADO'
                     }))
@@ -670,7 +722,7 @@
                     }))
 
                     let consolidacionesFecha = mainData[3] || [];
-                    
+
                     if (mainData[4]) {
                         infoAdicionalTemp = mainData[4] || []
                     }
@@ -756,13 +808,13 @@
 
 
         //Reports 
-        service.getDataFormReport = function(){            
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({tipo: 13}), null, true).then(
-                response=>{
-                    if(response.code==="0"){
+        service.getDataFormReport = function () {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 13 }), null, true).then(
+                response => {
+                    if (response.code === "0") {
                         throw response
                     }
-                    if(response.code==="1"){
+                    if (response.code === "1") {
                         let [estabsTemp, subFamilias] = JSON.parse(response.payload);
                         console.log(estabsTemp)
                         const estabs = fS.groupEstabBodega(estabsTemp)
