@@ -4,4 +4,8 @@
     ViewData["Title"] = "Stock Fisico";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div id="stockFisico"></div>
+<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+@section Scripts {
+    <script src="~/js/controllers/iframeAngularCtrl.js" asp-append-version="true"></script>
+}

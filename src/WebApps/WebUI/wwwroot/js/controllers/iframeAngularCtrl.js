@@ -8,7 +8,8 @@
     iframeAngularCtrl.$inject = ['$scope', '$location'];
 
     function iframeAngularCtrl($scope, $location) {
-
+        let frontend = document.getElementById('frontend').value
+        console.log(frontend)
         let div = document.querySelector('.container-fluid'); // Select the div by class
         div.classList.remove('container-fluid'); // Remove the div
         // Get the current URL
@@ -30,11 +31,11 @@
             iframe.style.width = '100%';
             iframe.style.height = '600px';
             iframe.style.border = 'none';
-            iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms'
+            iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-popups-to-escape-sandbox'
             //let url = 'http://localhost:4200'
             let url = 'http://localhost:5173'
             // Set the src attribute of the iframe
-            iframe.src = `${url}?token=${token}&route=${route}`;
+            iframe.src = `${frontend}?token=${token}&route=${route}`;
 
             // Get the div element
             var div = document.getElementById('iframeApp');

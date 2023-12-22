@@ -1,11 +1,4 @@
-﻿import Pet from "./routes/Pet/Pet.svelte";
-import PetMedicalHistory from "./routes/PetMedicalHistory/PetMedicalHistory.svelte";
-import PetBreed from "./routes/Petbreed/PetBreed.svelte";
-import ConfigEmail from "./routes/ConfigEmail/ConfigEmail.svelte";
-import MotivoDiscrepancia from "./routes/StockFisico/MotivoDiscrepancia.svelte";
-import Stock from "./routes/StockFisico/index.svelte";
-import Subcategoria from "./routes/Contabilidad/Subcategoria/index.svelte";
-import Infrastructure from "@/routes/restaurant/Infrastructure/page.svelte";
+﻿import Infrastructure from "@/routes/restaurant/Infrastructure/page.svelte";
 import Product from "@/routes/restaurant/Product/page.svelte";
 import Reports from "@/routes/restaurant/Reports/page.svelte";
 import Vehicle from "@/routes/mechanical/Vehicle/page.svelte";
@@ -15,43 +8,8 @@ import TechnicalSupport from "@/routes/TechnicalSupport/page.svelte";
 
 //Contabilidad report 
 import VentasReports from "@/routes/ventas/report/page.svelte";
-
-let target = document.querySelector("#pet");
-if (target) {
-  new Pet({ target });
-}
-
-target = document.querySelector("#pet-breed");
-if (target) {
-  new PetBreed({ target });
-}
-
-target = document.querySelector("#petMH");
-if (target) {
-  new PetMedicalHistory({ target });
-}
-
-target = document.querySelector("#configEmail");
-if (target) {
-  new ConfigEmail({ target });
-}
-
-target = document.querySelector("#motivoDiscrepancia");
-if (target) {
-  new MotivoDiscrepancia({ target });
-}
-
-target = document.querySelector("#stockFisico");
-if (target) {
-  new Stock({ target });
-}
-
-target = document.querySelector("#subcategoria");
-if (target) {
-  new Subcategoria({ target });
-}
-
-target = document.querySelector("#restaurant-infrastructure");
+ 
+let target = document.querySelector("#restaurant-infrastructure");
 if (target) {
   new Infrastructure({ target });
 }
