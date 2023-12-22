@@ -11,7 +11,7 @@ namespace WebUI.Pages.MedicalHistory
         }
         public void OnGet()
         {
-            var url = _configuration["UrlApps:Vet"];
+            var url = _configuration["UrlApps:SveltekitApp"];
             ViewData["FrontEnd"] = url;
         }
     }

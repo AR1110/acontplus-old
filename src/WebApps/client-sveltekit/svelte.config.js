@@ -20,8 +20,12 @@ const config = {
         alias: {
             $components: "src/lib/components",
             $constants: "src/lib/constants",
+            $interfaces: "src/lib/interfaces",
+            $services: "src/lib/services",
             $utils: "src/lib/utils",
-            $modules: "src/modules"
+            $modules: "src/modules",
+            $inventario: "src/modules/inventario",
+            $contabilidad: "src/modules/contabilidad"
         }
     }
 };
