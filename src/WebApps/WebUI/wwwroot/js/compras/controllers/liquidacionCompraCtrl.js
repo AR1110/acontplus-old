@@ -26,6 +26,7 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         const CODE_REPORT = $injector.get('CODE_REPORT');
+        const nombreModalCompra = $injector.get('nombreModalCompra');
 
         tipoDoc = {
             codigo: 'LC'
@@ -52,22 +53,21 @@
         //primero tu me fallaste cuando hiciste esa cosa, de ahi juu ya no baje a shimpim
         $scope.sumTotalColumna = function () {
             let total = 0;
-            //let totalAbono = 0, totalSaldo = 0;
+            let totalAbono = 0, totalSaldo = 0;
             for (let item of $scope.liquidacionesCompra) {
                 total += item.total;
-                // totalAbono += item.abono;
-                // totalSaldo += item.saldo;
+                totalAbono += item.abono;
+                totalSaldo += item.saldo;
             }
 
             $scope.total = fS.roundNumber(total, 5);
-            // $scope.totalAbono = fS.roundNumber(totalAbono, 5);
-            // $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
+            $scope.totalAbono = fS.roundNumber(totalAbono, 5);
+            $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
         }
 
 
         $scope.getLiquidacionesCompra = function () {
             try {
-
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
@@ -101,8 +101,6 @@
                     $scope.sumTotalColumna();
 
                     $scope.dataSearch.totalRecords = $scope.liquidacionesCompra.length > 0 ? $scope.liquidacionesCompra[0].totalRecords : 0;
-
-
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
                     console.log(error);
@@ -231,37 +229,24 @@
             }
         }
 
-        $scope.openModalDetalle = async (item) => {
-            try {
-                showLoader();
-                let {
-                    MODAL_FILE_CTRL,
-                    MODAL_DETALLE
-                } = _nombreModalConst.liquidacion_compra;
-                let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-                let template = MODAL_DETALLE['template'];
-
-                let response = await _commonSvc.getDataTipoDocCompra({
-                    id: item.idLiquidacionCompra,
-                    codigoDocumento: TIPO_DOC.codigo
-                })
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DETALLE',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params
+        $scope.openModalDetalle = async (params) => {
+            try { 
+                let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
+                let ctrl = (await import(fileCtrl))[controller];
+                let template = templates['LC'];
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template: template,
+                    size: 'xl',
+                    params: {
+                        codDoc: params.codDoc,
+                        id: params.idLiquidacionCompra
+                    },
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
                 })
             } catch (error) {
                 console.log(error)
-            } finally {
-                hideLoader();
             }
         }
 
@@ -271,7 +256,19 @@
                 showLoader();
                 liquidacionCompraSvc.getId(item.idLiquidacionCompra).then(
                     response => {
-                        console.log(response)
+                        modalSvc.openModalCustom({
+                            controller: 'modalLiquicionCompraCtrl',
+                            template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                            size: 'xl',
+                            params: response,
+                            windowClass: 'uibModalFullScreen',
+                            isRenderRazorPartial: true
+                        }).result.then(result => {
+
+                            if (typeof result == 'object') {
+                                $scope.getLiquidacionesCompra();
+                            }
+                        }) 
                     }
                 ).catch(error => {
                     console.log(error)
@@ -279,111 +276,67 @@
             } catch (error) {
                 console.log / (error)
             }
-            // try {
-            //     showLoader();
-            //     let {
-            //         MODAL_FILE_CTRL,
-            //         MODAL_EDITAR
-            //     } = _nombreModalConst.liquidacion_compra;
-            //     let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
-            //     let template = MODAL_EDITAR['template'];
-
-            //     let response = await _commonSvc.getDataTipoDocCompra({
-            //         id: item.idLiquidacionCompra,
-            //         codigoDocumento: TIPO_DOC.codigo
-            //     })
-
-            //     if (!response.isComplete) return
-
-            //     let params = {
-            //         TIPO_REGISTRO: 'EDITAR',
-            //         data: response
-            //     }
-
-            //     $scope.openModalParam({
-            //         controller,
-            //         template,
-            //         params
-            //     })
-            // } catch (error) {
-            //     console.log(error)
-            // } finally {
-            //     hideLoader();
-            // }
         }
-
-        $scope.openModalParam = async ({
-            controller,
-            template,
-            size = 'xl',
-            params
-        }) => {
-            _modalSvc.openModalCustom({
-                controller,
-                template,
-                size,
-                params,
-                windowClass: 'uibModalFullScreen'
-            }).result.then(result => {
-                if (typeof result === 'object') {
-                    $scope.getLiquidacionesCompra()
-                }
-            })
-        }
-
 
 
         $scope.askToDelete = async (item) => {
+            try {
+                let {
+                    isConfirmed
+                } = await Swal.fire({
+                    title: 'Anular el Documento?',
+                    html: `<small>Esta Ud. seguro de anular este Documento</b> N° ${item.serieComprobante}</small>?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, anular!',
+                    cancelButtonText: 'No, cancelar'
+                })
 
-            let {
-                isConfirmed
-            } = await Swal.fire({
-                title: 'Eliminar Documento?',
-                html: `<small>Esta Ud. seguro de eliminar este Factura</b> N° ${item.nroDocumento}</small>?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, eliminar!',
-                cancelButtonText: 'No, cancelar'
-            })
+                if (isConfirmed) {
+                    showLoader();
+                    liquidacionCompraSvc.anular(item.idLiquidacionCompra).then(response => {
+                        if (response.code === "0") {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            $scope.getLiquidacionesCompra();
+                        }
+                    }).finally(() => hideLoader())
+                }
 
-            if (isConfirmed) {
-                showLoader();
-                _mS.getData('delete', '/FacturaCompra/Delete?id=' + item.idFacturaCompra).then(response => {
-                    if (response.code === "0") {
-                        fS.sweetAlert('warning', response.message, response.titleSms);
-                    }
-                    if (response.code === "1") {
-                        fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                        $scope.getFacturaCompras();
-                    }
-                }).finally(() => hideLoader())
+            } catch (error) {
+                console.log(error)
             }
+
         }
-
-
 
         //Reporte 
         $scope.getReport = function (item) {
-            let format = 'pdf';
-            const parameters = {
-                dataParams: JSON.stringify({
-                    id: item.idLiquidacionCompra,
-                    normalMethod: true,
-                }),
-                reportParams: JSON.stringify({
-                    codEstab: item.codEstab,
-                    codigo: 'RLC',
-                    format,
-                }),
-                hasService: true,
+            try {
+                let format = 'pdf';
+                const parameters = {
+                    dataParams: JSON.stringify({
+                        id: item.idLiquidacionCompra,
+                        normalMethod: true,
+                    }),
+                    reportParams: JSON.stringify({
+                        codEstab: item.codEstab,
+                        codigo: CODE_REPORT.RLC,
+                        format,
+                    }),
+                    hasService: true,
+                }
+                showLoader();
+                commonSvc.getReport({
+                    parameters,
+                    format
+                })
+            } catch (error) {
+                hideLoader();
             }
-            showLoader();
-            _commonSvc.getReport({
-                parameters,
-                format
-            })
         }
     }
 
@@ -402,7 +355,7 @@
 
         let $timeout = $injector.get('$timeout');
         let gridOptionsSvc = $injector.get('gridOptionsCompraService')
-        console.log('init form')
+      
         //Tipo Doc
         $scope.tipoDoc = tipoDoc;
 
@@ -428,7 +381,7 @@
 
 
 
-        const itemsDeleted = [];
+        const detallesDeleted = [];
         $scope.gridOptions = {
             enableColumnMenus: false,
             enableColumnReordering: true,
@@ -473,6 +426,17 @@
             })
         }
 
+        function calculateTotalItems(items) {
+            return items.map(item => {
+                let total = item.precioTotalSinImpuesto + item.valorImpuesto;
+                return {
+                    ...item,
+                    total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
+                }
+
+            })
+        }
+
         initiload();
         function initiload() {
             try {
@@ -491,7 +455,8 @@
                 $scope.tarifasImpuesto = tarifasImpuesto;
                 $scope.tiemposCredito = tiemposCredito;
 
-                if ((!params.idLiquidacionCompra > 0)) {
+
+                if (!("comprobante" in params && params.comprobante.idLiquidacionCompra > 0)) {
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find((estab) => estab.defaultEstab);
                         if (dataEstab) {
@@ -521,11 +486,35 @@
                     }
 
                     getFechaVencimiento();
-                    console.log($scope.tiemposCredito)
                 }
 
-                if (params.idLiquidacionCompra > 0) {
+                if (("comprobante" in params && params.comprobante.idLiquidacionCompra > 0)) {
+                    const {
+                        comprobante,
+                        proveedor,
+                        detalles,
+                        infoAdicionalDocumento
+                    } = params;
 
+                    $scope.data = comprobante;
+                    $scope.dataClone.codEstab = $scope.data.codEstab;
+                    $scope.dataClone.idPuntoEmision = $scope.data.idPuntoEmision;
+
+                    $scope.proveedor = proveedor;
+                    $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
+                    $scope.gridOptions.data = calculateTotalItems(detalles);
+                    $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+
+                    let dataEstab = $scope.establecimientos.find(estab => estab.codEstab === $scope.data.codEstab);
+                    if (dataEstab) {
+                        $scope.puntosEmision = dataEstab.puntosEmision;
+                        $scope.bodegas = dataEstab.bodegas;
+                        let dataBodega = $scope.bodegas.find(bodega => bodega.defaultBodega);
+                        if (dataBodega) {
+                            $scope.data.idBodega = dataBodega.idBodega;
+                            $scope.dataClone.idBodega = $scope.data.idBodega;
+                        }
+                    }
                 }
 
                 setColumnDefs();
@@ -543,7 +532,9 @@
                 enableCellEdit: false,
                 width: '5%',
                 minWidth: '100',
-                //cellTemplate: self.CELL_TEMPLATE_OPTION
+                cellTemplate: `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
+                           <a  ng-click="grid.appScope.openModalArticle(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a>
+                        `
             },
             {
                 name: 'N°',
@@ -746,9 +737,40 @@
         }
 
 
+        /**
+     * 
+     * @param {*} entity Datos del Articulo 
+     */
+        $scope.deleteRow = async function (rowEntity) {
+
+            let isConfirmed = await gridOptionsSvc.askToDeleteItem(rowEntity);
+
+            if (isConfirmed) {
+                let index = $scope.gridOptions.data.indexOf(rowEntity);
+                $scope.gridOptions.data.splice(index, 1);
+
+                if (rowEntity.idLiquidacionCompraDatalle > 0) {
+                    detallesDeleted.push({
+                        ...rowEntity,
+                        estado: 0
+                    });
+                }
+
+                //Recalculamos los totales 
+                setCalculoTotales("cantidad", rowEntity, 0);
+                counterGridOptions();
+                $scope.$apply();
+            }
+
+            // if (isConfirmed && rowEntity.datosAdicionales) {
+            //     $scope.datosAdicionalesArticulo = $scope.datosAdicionalesArticulo.filter(val => val.idArticulo !== rowEntity.idArticulo);
+            //     $scope.historyDatosAdicionales = $scope.historyDatosAdicionales.filter(val => val.idArticulo !== rowEntity.idArticulo);
+            // }
+
+        }
+
         // * Add by Ignacio Manchu.
         function drawTotalsTarifaImpuesto() {
-            console.log($scope.gridOptions.data)
             try {
                 let {
                     subTotalSinImpuestos,
@@ -804,7 +826,7 @@
                                 </table>`;
 
                 const element = document.getElementById('drawImpuestoTotales');
-                console.log(element)
+
                 if (element) {
                     element.innerHTML = template;
                 }
@@ -823,6 +845,12 @@
 
         $scope.onChangeEstablecimiento = async function () {
             try {
+
+                if ($scope.data.idLiquidacionCompra > 0) {
+                    tS.toastr('warning', 'El Establecimiento no puede ser editada');
+                    $scope.data.codEstab = $scope.dataClone.codEstab;
+                    return
+                }
 
                 const isConfirmed = await gridOptionsSvc.askToChangeEstablecimiento();
 
@@ -879,13 +907,26 @@
                 nombreFiscal: item.nombreFiscal,
                 nombreProveedor: item.nombreFiscal
             }
-            console.log($scope.proveedor)
-            console.log(item)
         }
 
 
         $scope.onChangeTiempoCredito = function () {
             getFechaVencimiento();
+        }
+
+        $scope.refreshTiempoCredito = function () {
+            if ($scope.data.idLiquidacionCompra > 0) return
+            liquidacionCompraSvc.getDataForm().then(response => {
+                $scope.tiemposCredito = response.tiemposCredito;
+            })
+        }
+
+        $scope.onChangePuntoEmision = function () {
+            if ($scope.data.idLiquidacionCompra > 0) {
+                tS.toastr('warning', 'Punto de Emisión no puede ser editada');
+                $scope.data.idPuntoEmision = $scope.dataClone.idPuntoEmision;
+                return
+            }
         }
 
         function getFechaVencimiento() {
@@ -924,8 +965,8 @@
                         } else {
                             $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
                         }
-                        $scope.$apply();
                         getFechaVencimiento();
+                        $scope.$apply();
                     })
                 } else {
                     getFechaVencimiento();
@@ -966,6 +1007,7 @@
         function addRow() {
             const obj = {
                 n: 1,
+                idLiquidacionCompraDetalle: 0,
                 idArticulo: 0,
                 codigo: "",
                 descripcion: "",
@@ -995,7 +1037,7 @@
                 } = $scope.mainDataArticulo;
 
                 let index = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
-                console.log(index)
+
                 let entity = {};
                 if (index === -1) {
                     addRow();
@@ -1010,7 +1052,7 @@
                 let dataMedida = medidas.find(medida => medida.defaultMedida);
                 let dataTarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
-                console.log(dataMedida)
+
                 let precioCosto = dataMedida.precioCosto;
 
                 entity.idArticulo = articulo.idArticulo;
@@ -1063,6 +1105,17 @@
             })
         }
 
+        $scope.openModalArticle = function (item) {
+            $scope.gridApi.cellNav.scrollToFocus(
+                $scope.gridOptions.data[0],
+                $scope.gridOptions.columnDefs[2]
+            )
+
+            $scope.indexRow = $scope.gridOptions.data.indexOf(item);
+            $scope.$broadcast("editArticulo", item)
+        }
+
+
         /**
        * 
        * @param {*} colField nombre de la columnas 
@@ -1091,6 +1144,57 @@
          */
         function recalculateTotalsSimple() {
             drawTotalsTarifaImpuesto();
+        }
+
+        $scope.calcularPorcentajeDescuento = function () {
+            if ($scope.gridOptions.data.length === 0) {
+                return
+            }
+
+            if (isNaN($scope.data.porcentajeDescuento)) {
+                tS.toastr('warning', 'Ingrese un Número Válido');
+                return
+            }
+
+            if ($scope.data.porcentajeDescuento <= 100) {
+
+                gridOptionsSvc.setPorcentajeDescuentoAll(
+                    $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
+                )
+                //redondeo del numero porcentaje 
+                $scope.data.porcentajeDescuento = fS.roundNumber($scope.data.porcentajeDescuento, $scope.decimal.nroTotalSubTotal)
+                recalculateTotalsSimple();
+            } else {
+                tS.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
+            }
+        }
+
+        //Calcular Porcentaje  Descuento 
+        $scope.calcularDescuento = function () {
+            try {
+                if ($scope.gridOptions.data.length === 0) {
+                    return
+                }
+                if (isNaN($scope.data.totalDescuento)) {
+                    tS.toastr('warning', 'Ingrese un númeto válido', 'Valor Descuento');
+                    return
+                }
+
+                const { subTotalSinImpuestos } = gridOptionsSvc.getSubTotalSinImpuesto($scope.gridOptions.data);
+                if ($scope.data.totalDescuento <= subTotalSinImpuestos) {
+                    let porcentajeDescuento = ($scope.data.totalDescuento * 100) / subTotalSinImpuestos;
+                    $scope.data.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, $scope.decimal.nroDescuentoDetalle);
+                    //setPorcentajeDescuentoAll($scope.data.porcentajeDescuento)
+                    gridOptionsSvc.setPorcentajeDescuentoAll(
+                        $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
+                    )
+                    recalculateTotalsSimple();
+                } else {
+                    tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
+                }
+            } catch (error) {
+                console.log("CALCULO DE TOTAL DESCUENTO", error)
+            }
         }
 
 
@@ -1190,6 +1294,9 @@
                     )
                         .finally(() => hideLoader())
                 }
+                if (isUpdate()) {
+                    nroSecuencial = '-'
+                }
                 if (!nroSecuencial) return
 
                 let textAccion = isUpdate() ? 'Actualizar' : 'Guardar';
@@ -1212,8 +1319,8 @@
 
                         const params = liquidacionCompraSvc.queryMapper({
                             comprobante: $scope.data,
-                            items: $scope.gridOptions.data,
-                            itemsDeleted: itemsDeleted,
+                            detalles: $scope.gridOptions.data,
+                            detallesDeleted,
                             infoAdicionalDocumento: $scope.infoAdicionalDocumento
                         })
 
@@ -1234,7 +1341,18 @@
                         }
 
                         if (isUpdate()) {
-
+                            showLoader();
+                            liquidacionCompraSvc.put($scope.data.idLiquidacionCompra, params).then(response => {
+                                if (response.code === '0') {
+                                    fS.sweetAlert('warning', response.message, response.titleSms);
+                                }
+                                if (response.code === "1") {
+                                    fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                    $uibModalInstance.close(response)
+                                }
+                            }).catch(error => {
+                                console.error(error);
+                            }).finally(() => hideLoader())
 
                         }
 
@@ -1253,6 +1371,9 @@
 
 
 
+        $scope.closeModal = function () {
+            $uibModalInstance.close();
+        }
 
 
 

@@ -82,8 +82,8 @@ namespace Compras.API.Controllers
             }
         }
 
-        [HttpPost("Update/{id}")]
-        public async Task<IActionResult> Update(int id, ApiRequest request)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, ApiRequest request)
         {
             request.UserRoleId = User.GetUserRoleId();
             try
@@ -93,7 +93,7 @@ namespace Compras.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al crear liquidacion compra: " + ex.ToString());
+                _log.LogActivity("Error al actualizar liquidacion compra: " + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }

@@ -319,12 +319,17 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
             }
 
             $scope.data.telefono = this.telefonos.join(';')
-            $scope.data.correo = this.correos.join(';')
+            $scope.data.correo = this.correos.join(';');
+            let idTiempoCredito = $scope.data.idTiempoCredito;
+            let spParams = {
+                ...$scope.data,
+                idTiempoCredito: [0, null, undefined].includes(idTiempoCredito) ? null : idTiempoCredito
+            }
 
             if (!($scope.data.idProveedor > 0)) {
                 showLoader();
                 proveedorSvc
-                    .post($scope.data)
+                    .post(spParams)
                     .then(successResponse)
                     .catch((error) => {
                         console.log(error);
@@ -335,7 +340,7 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
             if ($scope.data.idProveedor > 0) {
                 showLoader();
                 proveedorSvc
-                    .put($scope.data.idProveedor, $scope.data)
+                    .put($scope.data.idProveedor, spParams)
                     .then(successResponse)
                     .catch((error) => {
                         console.log(error);
