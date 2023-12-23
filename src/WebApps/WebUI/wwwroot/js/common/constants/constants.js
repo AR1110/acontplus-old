@@ -855,8 +855,8 @@ app.constant('DOC_TYPE', {
     NC: 'NC',
     NC_SRI: '04',
     APROB_DOC: '',
-    LC: 'LC'
-
+    LC: 'LC',
+    FC: 'FC'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",
@@ -877,5 +877,6 @@ app.constant('CODE_REPORT', {
     PRE_F: 'RAC', //Aprobacion-Factura
     P_NE: 'P-NE', //Aprobacion - Nota Entrega
     RLC: 'RLC', //Reporte Liquidacion Compra
-    RCD: 'RCD' //Reporte Compra detalle
+    RCD: 'RCD', //Reporte Compra detalle
+    FC: 'FC'
 })

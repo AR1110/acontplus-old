@@ -41,7 +41,7 @@
                 <tr md-row md-select="item" md-on-select="selectedCustomer" md-auto-select="true"  ng-repeat="item in proveedores">                                                       
                     <td md-cell>{{$index+1}}</td>
                     <td md-cell>{{item.numeroIdentificacion}}</td>
-                    <td md-cell>{{item.nombreFiscal}}</td>
+                    <td md-cell>{{item.razonSocial}}</td>
                     <td md-cell>{{item.direccion}}</td>
                     <td md-cell>{{item.telefono}}</td>
                     <td md-cell ng-bind-html="item.estado|estadoPrimario"></td>                               

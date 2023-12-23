@@ -26,10 +26,11 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         const CODE_REPORT = $injector.get('CODE_REPORT');
+        let DOC_TYPE = $injector.get('DOC_TYPE');
         const nombreModalCompra = $injector.get('nombreModalCompra');
 
         tipoDoc = {
-            codigo: 'LC'
+            codigo: DOC_TYPE["LC"]
         }
 
         $scope.proveedor = {
@@ -47,6 +48,7 @@
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 25,
+            maxSize: 5,
             checkBoxFecha: true
         }
 
@@ -230,7 +232,7 @@
         }
 
         $scope.openModalDetalle = async (params) => {
-            try { 
+            try {
                 let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
                 let ctrl = (await import(fileCtrl))[controller];
                 let template = templates['LC'];
@@ -268,7 +270,7 @@
                             if (typeof result == 'object') {
                                 $scope.getLiquidacionesCompra();
                             }
-                        }) 
+                        })
                     }
                 ).catch(error => {
                     console.log(error)
@@ -355,7 +357,7 @@
 
         let $timeout = $injector.get('$timeout');
         let gridOptionsSvc = $injector.get('gridOptionsCompraService')
-      
+
         //Tipo Doc
         $scope.tipoDoc = tipoDoc;
 

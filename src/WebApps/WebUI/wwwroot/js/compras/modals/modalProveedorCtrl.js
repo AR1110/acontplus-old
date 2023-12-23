@@ -449,7 +449,8 @@ function modalProveedorListaCtrl(
     };
 
     $scope.selectedCustomer = (item) => {
-        $uibModalInstance.close(item);
+        let dataProveedor = proveedorSvc.getId(item.idProveedor);
+        $uibModalInstance.close(dataProveedor);
     };
 
     $scope.closeModal = function () {

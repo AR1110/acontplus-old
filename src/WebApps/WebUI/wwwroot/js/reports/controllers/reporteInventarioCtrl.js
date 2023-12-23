@@ -14,7 +14,9 @@
         let tS = $injector.get('toastService');
         let articuloSvc = $injector.get('articuloService');
 
-        $scope.dataSearch = {};
+        $scope.dataSearch = {
+            bySubFamilia: 0
+        };
         $scope.dataSearch.byOrderCampo = 'ar.descripcion';
         $scope.dataSearch.byOrder = 'ASC';
         $scope.dataSearch.byTipoReporte = 0 //Consumo Diario
@@ -220,17 +222,17 @@
                 }
 
                 if ($scope.dataSearch.byTipoReporte === 1) {
-                    if (!($scope.dataSearch.bySubFamilia > 0)) {
-                        tS.toastr('warning', 'Seleccione la Subfamilia!');
-                        return
-                    }
+                    // if (!($scope.dataSearch.bySubFamilia > 0)) {
+                    //     tS.toastr('warning', 'Seleccione la Subfamilia!');
+                    //     return
+                    // }
                     getReportArticuloStock();
                 }
                 if ($scope.dataSearch.byTipoReporte === 2) {
-                    if (!($scope.dataSearch.bySubFamilia > 0)) {
-                        tS.toastr('warning', 'Seleccione la Subfamilia!');
-                        return
-                    }
+                    // if (!($scope.dataSearch.bySubFamilia > 0)) {
+                    //     tS.toastr('warning', 'Seleccione la Subfamilia!');
+                    //     return
+                    // }
                     getReportArticuloPVP();
                 }
                 if ($scope.dataSearch.byTipoReporte === 3) {

@@ -268,7 +268,7 @@
                                     <label for="subFamilia">SubFamilia: <span class="text-danger">*</span></label>
                                     <select id="subFamilia" name="subFamilia" class="form-control border-select"
                                         ng-model="dataSearch.bySubFamilia">
-                                        @* <option value="0">Todos</option> *@
+                                        <option value="0">Todos</option> 
                                         <optgroup ng-repeat="group in subFamilias" label="{{ group.familia }}">
                                             <option ng-repeat="sf in group.subFamilias" ng-value="sf.idSubFamilia">
                                                 {{ sf.subFamilia }}
