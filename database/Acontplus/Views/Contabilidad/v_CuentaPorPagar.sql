@@ -1,11 +1,7 @@
-
 USE AcontPlus
+GO
 
-IF OBJECT_ID(N'v_CuentaPorPagar', N'V')IS NOT NULL
-	DROP VIEW v_CuentaPorPagar
-GO 
-
-CREATE VIEW v_CuentaPorPagar AS (
+CREATE OR ALTER VIEW v_CuentaPorPagar AS (
 	SELECT cp.idCuentaPorPagar
 	      ,cp.idProveedor
 		  ,cp.idTiempoCredito
@@ -34,9 +30,11 @@ CREATE VIEW v_CuentaPorPagar AS (
 		  ,estadoSri               = CASE WHEN cp.codDoc = '03' THEN (SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = cp.idDocumento AND de.codDoc = '03') 
 		                                                         ELSE 0 END 
 		  ,usuario = us.nombreUsuario
+          ,tc.descripcion as tiempoCredito
 	FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
 	INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = cp.idEstablecimiento 
 	INNER JOIN Proveedor             pr WITH (NOLOCK) ON pr.idProveedor       = cp.idProveedor
 	INNER JOIN EstadoPago            ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
 	INNER JOIN Usuario               us WITH (NOLOCK) ON us.idUsuario         = cp.idUsuario
+     LEFT JOIN TiempoCredito         tc WITH (NOLOCK) ON tc.idTiempoCredito   = cp.idTiempoCredito
 )
