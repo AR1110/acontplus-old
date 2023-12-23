@@ -1,10 +1,12 @@
-﻿
-
+﻿@page
+@model WebUI.Pages.Familia.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Index";
+    ViewData["title"] = "Familia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div ng-controller="familiaCtrl">
-    <div ng-if="accion.leer">    
+    <div ng-if="accion.leer">
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
                 <h4>Gestión de Familias</h4>
@@ -12,16 +14,16 @@
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
                     @*<ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
-                            <li class="breadcrumb-item active">Familias</li>
-                        </ol>*@
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                    <li class="breadcrumb-item active">Familias</li>
+                    </ol>*@
                     <button type="button" ng-if="accion.crear" btn-add-update-familia results="resultModal(item)" class="btn btn-info m-l-15">
                         <i class="ti-plus"></i> Nuevo
-                    </button>                  
+                    </button>
                 </div>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
@@ -45,28 +47,28 @@
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
-                                    <tr>                            
-                                        <th ng-if="accion.editar || accion.eliminar">Op</th>                           
-                                        <th>N°</th>                            
+                                    <tr>
+                                        <th ng-if="accion.editar || accion.eliminar">Op</th>
+                                        <th>N°</th>
                                         <th>Código</th>
-                                        <th>Descripción</th>                                        
-                                        <th>Estado</th> 
+                                        <th>Descripción</th>
+                                        <th>Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="item in familias">                           
+                                    <tr ng-repeat="item in familias">
                                         <td ng-if="accion.editar || accion.eliminar">
-                                            <button type="button" class="btn btn-info btn-xs"  ng-if="accion.editar" btn-add-update-familia results="resultModal(item)" params="item">
+                                            <button type="button" class="btn btn-info btn-xs" ng-if="accion.editar" btn-add-update-familia results="resultModal(item)" params="item">
                                                 <i class="ti-pencil"></i>
                                             </button>
                                             <button type="button" class="btn btn-danger btn-xs" ng-if="accion.eliminar" ng-click="delete(item)">
                                                 <i class="ti-trash"></i>
-                                            </button>                                                                                
+                                            </button>
                                         </td>
-                                        <td>{{$index+1}}</td>                            
+                                        <td>{{$index+1}}</td>
                                         <td>{{item.siglas}}</td>
-                                        <td>{{item.descripcion}}</td>                                        
-                                        <td ng-bind-html="item.estado|estadoPrimario"></td>    
+                                        <td>{{item.descripcion}}</td>
+                                        <td ng-bind-html="item.estado|estadoPrimario"></td>
                                     </tr>
                                     <tr class="text-center" ng-if="familias.length===0">
                                         <td colspan="5">No hay regsitros en esta tabla</td>
@@ -87,9 +89,9 @@
                 </div>
             </div>
         </div>
-               
-    </div>    
+
+    </div>
 </div>
-@section Scripts{
-    <script src="~/js/inventario/controllers/familiaCtrl.min.js" asp-append-version="true"></script>    
+@section Scripts {
+    <script src="~/js/inventario/controllers/familiaCtrl.min.js" asp-append-version="true"></script>
 }

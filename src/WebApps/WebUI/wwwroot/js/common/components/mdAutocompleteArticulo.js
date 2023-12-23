@@ -451,7 +451,7 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo {
 
 
 app.component('mdAutocompleteArticuloComponent', {
-    templateUrl: '/Articulo/MdAutocomplete',
+    templateUrl: `/Index?name=~/Pages/Articulo/MdAutocomplete.cshtml`,
     //controllerAs: '$ctrl',
     bindings: {
         tipoDoc: '=',

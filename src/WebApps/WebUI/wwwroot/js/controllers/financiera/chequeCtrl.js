@@ -47,7 +47,7 @@
                     $scope.cloneCheques = JSON.parse(JSON.stringify($scope.cheques))                                                    
                     $scope.getSumColumnaValor(); 
                     hideLoader();            
-                })
+                }).finally(()=>hideLoader())
             } catch (error) {
                 console.log(error)
             }

@@ -15,4 +15,9 @@
     <PackageReference Include="ZXing.Net" />
     <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\CuotaDocumento\" />
+    <Folder Include="ViewModels\CuotaDocumento\" />
+  </ItemGroup>
 </Project>

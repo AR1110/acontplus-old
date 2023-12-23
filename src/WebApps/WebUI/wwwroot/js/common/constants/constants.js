@@ -48,12 +48,12 @@ app.constant('nombreModalInventario', {
         }
     },
     FAMILIA: {
-        fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalFamiliaCtrl',
-        template: 'Familia/_ModalFamilia.cshtml'
+        template: '~/Pages/Familia/_ModalFamilia.cshtml'
     },
     SUBFAMILIA: {
-        fileCtrl: '/js/inventario/modals/modalSubFamiliaCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalSubFamiliaCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalSubFamiliaCtrl',
         template: '~/Pages/Subfamilia/Shared/_ModalSubFamilia.cshtml'
     },
@@ -151,8 +151,8 @@ app.constant('nombreModalVenta', {
             ML: 'ModalClienteListaCtrl'
         },
         templates: {
-            M: '~/Areas/Cliente/Pages/Shared/_ModalAddUpdate.cshtml',
-            ML: '~/Areas/Cliente/Pages/Shared/_ModalClienteLista.cshtml'
+            M: '~/Pages/Cliente/_ModalAddUpdate.cshtml',
+            ML: '~/Pages/Cliente/_ModalClienteLista.cshtml'
         }
     },
     EMPRESA: {

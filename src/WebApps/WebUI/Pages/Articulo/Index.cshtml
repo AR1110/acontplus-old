@@ -1,24 +1,29 @@
-﻿@{
+﻿@page
+@model WebUI.Pages.Articulo.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
     ViewData["title"] = "Articulo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+ 
 <style>
     .thumbnail {
         width: 100px;
         height: auto;
     }
 
-    .thumbnail:hover {
-        top: -50px;
-        left: -35px;
-        width: 500px;
-        height: auto;
-        display: block;
-        z-index: 999;
-        cursor: pointer;
-        -webkit-transition-property: all;
-        -webkit-transition-duration: 0.3s;
-        -webkit-transition-timing-function: ease;
-    }
+        .thumbnail:hover {
+            top: -50px;
+            left: -35px;
+            width: 500px;
+            height: auto;
+            display: block;
+            z-index: 999;
+            cursor: pointer;
+            -webkit-transition-property: all;
+            -webkit-transition-duration: 0.3s;
+            -webkit-transition-timing-function: ease;
+        }
 </style>
 <div id="example-table"></div>
 <div ng-controller="articuloCtrl">
@@ -44,7 +49,7 @@
                     <div class="form-group">
                         <span>SubFamilia</span>
                         <select name="subFamilia" id="subFamilia" class="form form-control border-select"
-                            ng-model="dataSearch.idSubFamilia" ng-change="searchArticulo()">
+                                ng-model="dataSearch.idSubFamilia" ng-change="searchArticulo()">
                             <option value="">Todos</option>
                             <option ng-value="item.idSubFamilia" ng-repeat="item in subFamilias">
                                 {{item.descripcion}}
@@ -56,7 +61,7 @@
                     <div class="form-group">
                         <span>Medida</span>
                         <select name="medida" id="medida" class="form form-control border-select"
-                            ng-model="dataSearch.idMedida" ng-change="searchArticulo()">
+                                ng-model="dataSearch.idMedida" ng-change="searchArticulo()">
                             <option value="">Todos</option>
                             <option ng-value="item.idMedida" ng-repeat="item in medidas">
                                 {{item.descripcion}}
@@ -68,7 +73,7 @@
                     <div class="form-group">
                         <span>Marca</span>
                         <select name="marca" id="marca" class="form form-control border-select"
-                            ng-model="dataSearch.idMarca" ng-change="searchArticulo()">
+                                ng-model="dataSearch.idMarca" ng-change="searchArticulo()">
                             <option value="">Todos</option>
                             <option ng-value="item.idMarca" ng-repeat="item in marcas">
                                 {{item.descripcion}}
@@ -80,7 +85,7 @@
                     <div class="form-group">
                         <span>Modelos</span>
                         <select name="modelo" id="modelo" class="form form-control border-select"
-                            ng-model="dataSearch.idModelo" ng-change="searchArticulo()">
+                                ng-model="dataSearch.idModelo" ng-change="searchArticulo()">
                             <option value="">Todos</option>
                             <option ng-value="item.idModelo" ng-repeat="item in modelos">
                                 {{item.descripcion}}
@@ -94,7 +99,7 @@
                     <div class="form-group">
                         <span>Tipo Iva</span>
                         <select name="tipoIva" id="tipoIva" class="form form-control border-select"
-                            ng-model="dataSearch.idTipoIva" ng-change="searchArticulo()">
+                                ng-model="dataSearch.idTipoIva" ng-change="searchArticulo()">
                             <option value="">Todos</option>
                             <option ng-value="item.idTipoIva" ng-repeat="item in tiposIva">
                                 {{item.descripcion}}
@@ -106,7 +111,7 @@
                     <div class="form-group">
                         <spna>Stock</spna>
                         <select class="form-control border-select" ng-model="dataSearch.byStock"
-                            ng-change="searchArticulo()">
+                                ng-change="searchArticulo()">
                             <option value="">Todos</option>
                             <option ng-value="1">Con Stock</option>
                             <option ng-value="2">Sin Stock</option>
@@ -117,7 +122,7 @@
                     <div class="form-group">
                         <span>Estado</span>
                         <select name="" id="" class="form-control border-select" ng-model="dataSearch.status"
-                            ng-change="searchArticulo()">
+                                ng-change="searchArticulo()">
                             <option value="">Todos</option>
                             <option ng-value="1">Activo</option>
                             <option ng-value="0">Inactivo</option>
@@ -128,7 +133,7 @@
                     <div class="form-group">
                         <span>Fraccionado</span>
                         <md-switch ng-model="dataSearch.checkBoxFraccionado" aria-label="Inventario"
-                            ng-change="searchArticulo()">
+                                   ng-change="searchArticulo()">
                             {{ dataSearch.checkBoxFraccionado?'SI':'NO' }}
                         </md-switch>
                     </div>
@@ -137,7 +142,7 @@
                     <div class="form-group">
                         <span>Inventario</span>
                         <md-switch ng-model="dataSearch.checkBoxInventario" ng-change="searchArticulo()"
-                            aria-label="Switch 1">
+                                   aria-label="Switch 1">
                             {{dataSearch.checkBoxInventario?'SI':'NO'}}
                         </md-switch>
                     </div>
@@ -154,7 +159,7 @@
                 <div class="col-lg-9 col-md-9 col-sm-1">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
-                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
                 </div>
@@ -162,7 +167,7 @@
                     <form class="form-material">
                         <div class="input-group">
                             <input type="text" class="form-control" ng-model="dataSearch.bySearch"
-                                ng-change="searchArticulo()" placeholder="Buscar Articulo" />
+                                   ng-change="searchArticulo()" placeholder="Buscar Articulo" />
                             <div class="input-group-append">
                                 <button class="btn btn-secondary btn-sm" ng-click="searchArticulo()">
                                     <i class="fas fa-redo"></i>
@@ -204,12 +209,12 @@
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
-                                        ng-click="$mdMenu.open($event)">
+                                               ng-click="$mdMenu.open($event)">
                                         <icon class="mdi mdi-menu"></icon>
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item ng-if="accion.editar">
-                                            <md-button btn-article-add-update result-modal="resultModal(result)" params="a" >
+                                            <md-button btn-article-add-update result-modal="resultModal(result)" params="a">
                                                 <span md-menu-align-target>
                                                     <i class="ti-pencil"></i>
                                                     Editar
@@ -255,7 +260,7 @@
 
                                         <!--Historial Compras-->
                                         <md-menu-item>
-                                            <md-button btn-articulo-historial-compra  params = "a"   title="Historial Compras">
+                                            <md-button btn-articulo-historial-compra params="a" title="Historial Compras">
                                                 <span md-menu-align-target>
                                                     <icon class="mdi mdi-history"></icon> Hist. Compras
                                                 </span>
@@ -265,19 +270,19 @@
                                     </md-menu-content>
                                 </md-menu>
                                 <button type="button" class="btn btn-outline-success btn-xs" ng-show="a.imagen"
-                                    ng-click="openModalImagen(a)">
+                                        ng-click="openModalImagen(a)">
                                     <i class="fas fa-file-image"></i>
                                 </button>
                             </td>
                             <td md-cell>{{$index+1}}</td>
                             <td md-cell style="vertical-align: middle">
                                 <img class="img-fluid img-thumbnail" ng-class="{thumbnail: a.s3ObjectUrl.length > 0}"
-                                    width="50" src="{{a.s3ObjectUrl}}" />
+                                     width="50" src="{{a.s3ObjectUrl}}" />
                             </td>
                             <td md-cell>{{a.codigo}}</td>
                             <td md-cell>
                                 <span tooltip uib-tooltip="{{a.observaciones}}" tooltip-trigger="'mouseenter'"
-                                    tooltip-placement="{{a.observaciones?'top':''}}">{{a.descripcion}}</span>
+                                      tooltip-placement="{{a.observaciones?'top':''}}">{{a.descripcion}}</span>
                             </td>
                             <td md-cell>{{a.medida}}</td>
                             <td md-cell>{{a.subFamilia}}</td>
@@ -292,7 +297,135 @@
                         </tr>
                         <tr md-row ng-if="a.expanded" ng-repeat-end="">
                             <td md-cell colspan="10">
-                                @await Html.PartialAsync("~/Views/Articulo/_GestionArticuloDetalle.cshtml")
+                                <ul class="nav nav-tabs mt-2" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#home{{$index}}" role="tab" aria-selected="false">
+                                            <span class="hidden-sm-up"><icon class="ti-home"></icon></span>
+                                            <span class="hidden-xs-down">General</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#profile{{$index}}" role="tab" aria-selected="true">
+                                            <span class="hidden-sm-up"><icon class=" fas fa-hand-holding-usd"></icon></span>
+                                            <span class="hidden-xs-down">Tarifa</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tabcontent-border mb-2">
+                                    <div class="tab-pane" id="home{{$index}}" role="tabpanel">
+                                        <div class="p-20">
+                                            <div class="row">
+                                                <div class="col-md-3 col-xs-6 b-r">
+                                                    <strong>Articulo</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.descripcion}}</p>
+                                                </div>
+                                                <div class="col-md-2 col-xs-6 b-r">
+                                                    <strong>Código</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.codigo}}</p>
+                                                </div>
+                                                <div class="col-md-2 col-xs-6 b-r">
+                                                    <strong>Cod. Auxiliar</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.codigoAuxiliar}}</p>
+                                                </div>
+                                                <div class="col-md-2 col-xs-6">
+                                                    <strong>T. IVA</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.nombreTipoIva}}</p>
+                                                </div>
+                                                <div class="col-md-3 col-xs-6">
+                                                    <strong>Observación</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.observaciones}}</p>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="col-md-3 col-xs-6 b-r">
+                                                    <strong>Fraccionable</strong>
+                                                    <br>
+                                                    <p class="text-muted">
+                                                        <span ng-bind-html="a.view.productoFraccionable|sino"></span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-2 col-xs-6 b-r">
+                                                    <strong>Inventario</strong>
+                                                    <br>
+                                                    <p class="text-muted">
+                                                        <span ng-bind-html="a.view.llevaInventario|sino"></span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-2 col-xs-6 b-r">
+                                                    <strong>Lote</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.lote}}</p>
+                                                </div>
+                                                <div class="col-md-2 col-xs-6">
+                                                    <strong>F. Creación</strong>
+                                                    <br>
+                                                    <p class="text-muted">
+                                                        {{a.view.fechaCreacion}}
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-3 col-xs-6">
+                                                    <strong>F. Caducidad</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.fechaCaducidad}}</p>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="col-md-3 col-xs-6 b-r">
+                                                    <strong>Stock Máximo</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.stockMaximo}}</p>
+                                                </div>
+                                                <div class="col-md-2 col-xs-6 b-r">
+                                                    <strong>Stock Minimo</strong>
+                                                    <br>
+                                                    <p class="text-muted">{{a.view.stockMinimo}}</p>
+                                                </div>
+                                                <div class="col-md-2 col-xs-6 b-r">
+                                                    <strong>P. Costo</strong>
+                                                    <br>
+                                                    <p class="text-muted">
+                                                        <h5>{{a.view.precioCosto|currency:'$'}}</h5>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane active p-20" id="profile{{$index}}" role="tabpanel">
+                                        <div class="table-responsive m-t-5">
+                                            <table class="table table-bordered table-striped table-sm">
+                                                <caption></caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th>N°</th>
+                                                        <th>Tarifa</th>
+                                                        <th>P. Venta</th>
+                                                        <th>P. IVA</th>
+                                                        <th>%. Utilidad</th>
+                                                        <th>Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="pvp in a.tarifas">
+                                                        <td>{{$index+1}}</td>
+                                                        <td>{{pvp.tarifa}}</td>
+                                                        <td>{{pvp.precioVenta}}</td>
+                                                        <td>{{pvp.precioConIva}}</td>
+                                                        <td>{{pvp.porcentajeUtilidad}}</td>
+                                                        <td>{{pvp.precioPredeterminado?'Predeterminada':''}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane p-20" id="messages" role="tabpanel">3</div>
+                                </div>
                             </td>
                         </tr>
                         <tr ng-show="articulos.length===0" class="text-center">
@@ -315,5 +448,5 @@
 
 @section Scripts {
     <script src="~/js/inventario/controllers/articuloCtrl.min.js" asp-append-version="true"></script>
-    
+
 }
