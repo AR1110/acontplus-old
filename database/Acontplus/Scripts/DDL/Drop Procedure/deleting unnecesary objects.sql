@@ -821,3 +821,13 @@ go
 
 DROP PROCEDURE IF EXISTS ReporteVentas.Proforma
 go
+
+-->Ramirez Alexis 12/21/2021
+DROP PROCEDURE IF EXISTS Almacen.Articulo_Get_Id_By_Purchase
+GO
+
+DROP PROCEDURE IF EXISTS ReporteCompras.Liquidacion
+GO
+
+DROP PROCEDURE IF EXISTS aspLiquidacionCompraReporteGeneral
+GO
