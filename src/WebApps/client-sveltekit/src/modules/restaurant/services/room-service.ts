@@ -1,5 +1,5 @@
 import { client } from "$utils/axiosClient";
-let url = "Restaurant/Rooms/";
+const url = "Restaurant/Rooms/";
 
 
 async function get() {
@@ -7,6 +7,7 @@ async function get() {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
+        console.log(err)
         return null;
     });
 }
@@ -16,6 +17,7 @@ async function getByCode(CodEstab: string) {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
+        console.log(err)
         return null;
     });
 }

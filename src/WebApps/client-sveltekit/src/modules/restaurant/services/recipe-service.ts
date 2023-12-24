@@ -1,5 +1,5 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Restaurant/Recipe/";
+const url = "Restaurant/Recipe/";
 
 
 async function get(params: any) {
@@ -22,6 +22,7 @@ async function getByItem(id: number) {
 
         return response.data;
     }).catch((error) => {
+        console.log(error)
         return null;
     })
 }

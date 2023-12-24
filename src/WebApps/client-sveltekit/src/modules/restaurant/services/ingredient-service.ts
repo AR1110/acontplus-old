@@ -1,10 +1,11 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Restaurant/Ingredient/";
+const url = "Restaurant/Ingredient/";
 async function get(params: any) {
     return await client.get(`${url}?json=${params}`).then((response: any) => {
         if (response.status != 200) return null;
         return response.data;
     }).catch((error) => {
+        console.log(error)
         return null;
     })
 }

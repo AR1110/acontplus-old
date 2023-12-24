@@ -1,5 +1,5 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Config/EstabAsig/";
+const url = "Config/EstabAsig/";
 async function get(params: any) {
     return await client.get(`${url}?json=${JSON.stringify(params)}`).then((response: any) => {
         if (response.status === 200) {

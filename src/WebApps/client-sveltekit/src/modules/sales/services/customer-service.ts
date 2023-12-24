@@ -1,5 +1,5 @@
 import { client } from "$utils/axiosClient";
-let url = "Venta/Cliente/";
+const url = "Venta/Cliente/";
 
 
 function getAll(params) {

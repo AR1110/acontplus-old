@@ -1,11 +1,12 @@
 import { client } from "$utils/axiosClient";
-let url = "Restaurant/ProductionAreas/";
+const url = "Restaurant/ProductionAreas/";
 
 async function get() {
     return await client.get(url).then((response) => {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
+        console.log(err)
         return null;
     });
 }

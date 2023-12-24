@@ -1,11 +1,12 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Mechanical/Inspection/";
+const url = "Mechanical/Inspection/";
 
 async function get(params) {
     return await client.get(`${url}?json=${params}`).then((response) => {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
+        console.log(err)
         return null;
     })
 }

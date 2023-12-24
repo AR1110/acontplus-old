@@ -1,5 +1,5 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Restaurant/Item/";
+const url = "Restaurant/Item/";
 
 async function get(json: string, cancelToken?: any) {
   // .get(url + "?json=" + json, { cancelToken: cancelToken })
@@ -9,6 +9,7 @@ async function get(json: string, cancelToken?: any) {
       return res.data;
     },
     (err) => {
+      console.log(err)
       return null;
     }
   );

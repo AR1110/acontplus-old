@@ -1,11 +1,12 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Mechanical/Vehicle/";
+const url = "Mechanical/Vehicle/";
 
 async function get(params) {
     return await client.get(`${url}?json=${params}`).then((response) => {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
+        console.log(err)
         return null;
     })
 }
@@ -32,8 +33,8 @@ async function remove(id) {
     return await client.delete(url + id).then((response) => {
         if (response.status == 200)
             return {
-                code: response.data = true ? "1" : "0",
-                message: response.data = true ? "Eliminado Correctamente" : "No se pudo Eliminar"
+                code: response.data ? "1" : "0",
+                message: response.data ? "Eliminado Correctamente" : "No se pudo Eliminar"
             };
         else return { code: 0, message: response.data }
     }, (err) => {
@@ -45,8 +46,8 @@ async function putState(id, state) {
     return await client.put(url + "PutState/" + id + "/" + state).then((response) => {
         if (response.status == 200)
             return {
-                code: response.data = true ? "1" : "0",
-                message: response.data = true ? "Actualizado Correctamente" : "No se pudo Actualizar"
+                code: response.data ? "1" : "0",
+                message: response.data ? "Actualizado Correctamente" : "No se pudo Actualizar"
             };
         else return { code: 0, message: response.data }
     }, (err) => {

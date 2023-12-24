@@ -1,5 +1,5 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Contabilidad/Subcategoria/";
+const url = "Contabilidad/Subcategoria/";
 
 async function get(params: any) {
     return await client.get(`${url}?json=${params}`).then((response: any) => {

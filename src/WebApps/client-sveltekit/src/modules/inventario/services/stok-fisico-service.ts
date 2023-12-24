@@ -1,5 +1,5 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Inventario/StockFisico/";
+const url = "Inventario/StockFisico/";
 async function get(params: any) {
     return await client.get(`${url}?json=${params}`).then((response: any) => {
         if (response.status === 200) {

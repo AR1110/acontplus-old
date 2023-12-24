@@ -1,5 +1,5 @@
 import { client, uploadFile } from "$utils/axiosClient.js";
-let url = "Restaurant/Promotion/";
+const url = "Restaurant/Promotion/";
 
 async function get(params) {
     return await client
@@ -9,6 +9,7 @@ async function get(params) {
             return response.data;
         })
         .catch((error) => {
+            console.log(error)
             return null;
         });
 }

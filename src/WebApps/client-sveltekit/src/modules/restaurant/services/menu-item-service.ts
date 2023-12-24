@@ -1,5 +1,5 @@
 import { client } from "$utils/axiosClient.js";
-let url = "Restaurant/MenuItem/";
+const url = "Restaurant/MenuItem/";
 
 async function getById(id: number, data: object) {
   return await client
@@ -9,6 +9,7 @@ async function getById(id: number, data: object) {
       return response.data;
     })
     .catch((error) => {
+      console.log(error)
       return null;
     });
 }

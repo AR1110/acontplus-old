@@ -1,11 +1,12 @@
 import { client } from '$utils/axiosClient';
-let url = 'Restaurant/Floors/';
+const url = 'Restaurant/Floors/';
 
 async function get() {
     return await client.get(url + "Get").then((response) => {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
+        console.log(err)
         return null;
     });
 }
@@ -15,6 +16,7 @@ async function getByCode(codEstab: string) {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
+        console.log(err)
         return null;
     });
 }
