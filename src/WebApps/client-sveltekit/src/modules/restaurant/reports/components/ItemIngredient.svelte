@@ -2,7 +2,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import type { Establecimiento } from '$restaurant/interfaces/establecimiento';
 	import { estabAsignService } from '$modules/restaurant/services/estab-asign-service';
-	import { sharedService } from '$services/shared.service';
+	import { sharedService } from '$services/shared-service';
 	import { ArticleService } from '$inventario/services/article-service';
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 	import axios from 'axios';

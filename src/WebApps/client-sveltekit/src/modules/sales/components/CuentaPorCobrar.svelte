@@ -3,10 +3,10 @@
 	import flatpickr from 'flatpickr';
 	import axios from 'axios';
 	import 'flatpickr/dist/flatpickr.min.css';
-	import { cuentaPorCobrarService as cuentaPorCobrarSvc } from '$sales/services/cuenta-por-cobrar.service';
+	import { cuentaPorCobrarService as cuentaPorCobrarSvc } from '$modules/sales/services/cuenta-por-cobrar-service';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
 	import { getFirstDayOfMonth, getLastDayOfMonth } from '$utils/utils';
-	import { sharedService as sharedSvc } from '$services/shared.service';
+	import { sharedService as sharedSvc } from '$services/shared-service';
 	import toast from '$utils/toast';
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 

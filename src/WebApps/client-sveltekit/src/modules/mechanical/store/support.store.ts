@@ -1,5 +1,5 @@
 import { hideLoader, showLoader } from "$utils/loading-spinner";
-import { sharedService } from "$services/shared.service";
+import { sharedService } from "$services/shared-service";
 import { SupportDetailService } from "$modules/mechanical/services/support-detail-service";
 import { SupportService } from "$modules/mechanical/services/support-service";
 import { writable } from "svelte/store";

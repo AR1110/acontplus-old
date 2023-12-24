@@ -12,7 +12,7 @@
 	import Modal from '$components/Modal.svelte';
 	import toast from '$utils/toast';
 	import { SupportDetailService } from '$mechanical/services/support-detail-service';
-	import { sharedService } from '$services/shared.service';
+	import { sharedService } from '$services/shared-service';
 	import Swal from 'sweetalert2';
 
 	let support;

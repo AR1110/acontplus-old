@@ -1,5 +1,5 @@
 import { ArticleService } from "$inventario/services/article-service";
-import { sharedService as sS } from "$services/shared.service";
+import { sharedService as sS } from "$services/shared-service";
 import { calculoTarifa as cT } from "./calculo-tarifa";
 import { showLoader, hideLoader } from "$utils/loading-spinner";
 import Swal from "sweetalert2";

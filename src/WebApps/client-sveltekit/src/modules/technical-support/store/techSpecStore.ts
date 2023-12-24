@@ -1,10 +1,10 @@
 import { writable, get } from "svelte/store";
 import { hideLoader } from '$utils/loading-spinner';
-import { categoryService } from "../services/category.service";
+import { categoryService } from "../services/category-service";
 import { showLoader } from "$utils/loading-spinner";
 import tS from "$utils/toast";
-import { deviceService } from "../services/device.service";
-import { orderService } from "$technicalsupport/services/order.service";
+import { deviceService } from "../services/device-service";
+import { orderService } from "$modules/technical-support/services/order-service";
 
 type PtoEmi = {
     idPuntoEmision: number

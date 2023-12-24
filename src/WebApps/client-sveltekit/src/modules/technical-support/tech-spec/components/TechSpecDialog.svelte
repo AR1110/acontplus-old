@@ -16,7 +16,7 @@
     resetFormDevice,
     resetFormMain,
   } from "./../../store/techSpecStore";
-  import CustomerListDialog from "$components/Customer/CustomerListDialog.svelte";
+  import CustomerListDialog from "$modules/sales/customer/components/CustomerListDialog.svelte";
   import CustomerFormFast from "./CustomerFormFast.svelte";
   import CustomerSearch from "./CustomerSearch.svelte";
 
