@@ -1,4 +1,4 @@
-import { client } from "@/lib/utils/axiosClient";
+import { client } from "$utils/axiosClient";
 let url = "Venta/Cliente/";
 
 
@@ -45,9 +45,9 @@ function getDataForm() {
     })
 }
 
-function checkClientByIdentification(params){
+function checkClientByIdentification(params) {
     return client.get(`${url}Get?json=${JSON.stringify({ ...params, tipo: 3 })}`).then((responseAxios) => {
-        const response = responseAxios.data; 
+        const response = responseAxios.data;
         return JSON.parse(response.payload);
     })
 }

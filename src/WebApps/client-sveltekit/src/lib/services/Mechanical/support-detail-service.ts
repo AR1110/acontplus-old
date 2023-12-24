@@ -1,4 +1,4 @@
-import { client } from "@/lib/utils/axiosClient.js";
+import { client } from "$utils/axiosClient.js";
 const url = "Mechanical/SupportDetail/";
 
 async function get(params) {

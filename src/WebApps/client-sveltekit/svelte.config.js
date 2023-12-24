@@ -25,7 +25,8 @@ const config = {
             $utils: "src/lib/utils",
             $modules: "src/modules",
             $inventario: "src/modules/inventario",
-            $contabilidad: "src/modules/contabilidad"
+            $contabilidad: "src/modules/contabilidad",
+            $mechanical: "src/modules/mechanical",
         }
     }
 };

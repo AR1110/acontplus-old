@@ -1,4 +1,4 @@
-import { client } from "@/lib/utils/axiosClient.js";
+import { client } from "$utils/axiosClient.js";
 const url = "Venta/NotaEntrega/";
 
 async function get(params) {

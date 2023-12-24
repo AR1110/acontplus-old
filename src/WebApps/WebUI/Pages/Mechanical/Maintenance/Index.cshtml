@@ -1,8 +1,11 @@
 @page
-@model WebUI.Pages.Mechanical.Maintenance.Index
+@model WebUI.Pages.Mechanical.Maintenance.IndexModel
 @{
     ViewData["Title"] = "Mantenimiento";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<div id="mechanical-maintenance"></div>
+<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+@section Scripts {
+    <script src="~/js/controllers/iframeAngularCtrl.js" asp-append-version="true"></script>
+}

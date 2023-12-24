@@ -37,6 +37,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@theui/sveltekit-components": "^0.32.0",
+    "@tiptap/pm": "^2.1.13",
     "axios": "^1.6.2",
     "bootstrap": "^5.3.2",
     "chart.js": "^4.4.1",

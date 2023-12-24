@@ -1,7 +1,7 @@
-import { hideLoader } from '@/lib/utils/loading-spinner';
-import { showLoader } from '@/lib/utils/loading-spinner';
+import { hideLoader } from '$utils/loading-spinner';
+import { showLoader } from '$utils/loading-spinner';
 import FileSaver from "file-saver";
-import { clientFile } from "@/lib/utils/axiosClient";
+import { clientFile } from "$utils/axiosClient";
 
 class Shared {
     download(parameters: object, isReturnData?: boolean) {
