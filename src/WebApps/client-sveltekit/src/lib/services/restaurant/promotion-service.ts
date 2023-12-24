@@ -1,4 +1,4 @@
-import { client, uploadFile } from "@/lib/utils/axiosClient.js";
+import { client, uploadFile } from "$utils/axiosClient.js";
 let url = "Restaurant/Promotion/";
 
 async function get(params) {

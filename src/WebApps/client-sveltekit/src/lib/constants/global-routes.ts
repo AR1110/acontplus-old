@@ -7,5 +7,8 @@ export enum GlobalRoutes {
     MechanicalMaintenance = '/mechanical/maintenance',
     MechanicalSupport = '/mechanical/support',
     MechanicalVehicle = '/mechanical/vehicle',
-    VentasReport = '/sales/report'
+    VentasReport = '/sales/report',
+    RestaurantInfrastructure = '/restaurant/infrastructure',
+    RestaurantProducts = '/restaurant/products',
+    RestaurantReports = '/restaurant/reports'
 }

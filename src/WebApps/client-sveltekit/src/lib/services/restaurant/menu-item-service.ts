@@ -1,4 +1,4 @@
-import { client } from "@/lib/utils/axiosClient.js";
+import { client } from "$utils/axiosClient.js";
 let url = "Restaurant/MenuItem/";
 
 async function getById(id: number, data: object) {

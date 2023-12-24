@@ -29,6 +29,7 @@ const config = {
             $mechanical: "src/modules/mechanical",
             $technicalsupport: "src/modules/technical-support",
             $sales: "src/modules/sales",
+            $restaurant: "src/modules/restaurant",
         }
     }
 };

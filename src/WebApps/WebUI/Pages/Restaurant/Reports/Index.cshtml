@@ -1,0 +1,11 @@
+﻿@page
+@model WebUI.Pages.Restaurant.Reports.IndexModel
+@{
+    ViewData["Title"] = "Reportes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+@section Scripts {
+    <script src="~/js/controllers/iframeAngularCtrl.js" asp-append-version="true"></script>
+}

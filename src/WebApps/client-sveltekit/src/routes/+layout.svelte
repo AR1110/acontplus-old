@@ -7,6 +7,7 @@
 	import Sidebar from './layout/Sidebar.svelte';
 	import '../assets/css/style.css';
 	import 'toastr/build/toastr.min.css';
+    import 'tabulator-tables/dist/css/tabulator.min.css'
 	import './loader.css';
 	import 'jquery';
 	// import 'perfect-scrollbar';
@@ -27,8 +28,9 @@
 
 		if (token) {
 			if (localStorage.getItem('token') === '') {
-				localStorage.setItem('token', token);
+				localStorage.removeItem('token');
 			}
+			localStorage.setItem('token', token);
 			url = getEnumValueByKey(GlobalRoutes, route);
 			goto(url);
 		}

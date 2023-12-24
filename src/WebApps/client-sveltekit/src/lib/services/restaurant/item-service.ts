@@ -1,4 +1,4 @@
-import { client } from "@/lib/utils/axiosClient.js";
+import { client } from "$utils/axiosClient.js";
 let url = "Restaurant/Item/";
 
 async function get(json: string, cancelToken?: any) {
