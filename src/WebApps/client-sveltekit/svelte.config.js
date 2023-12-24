@@ -27,6 +27,7 @@ const config = {
             $inventario: "src/modules/inventario",
             $contabilidad: "src/modules/contabilidad",
             $mechanical: "src/modules/mechanical",
+            $technicalsupport: "src/modules/technical-support",
         }
     }
 };

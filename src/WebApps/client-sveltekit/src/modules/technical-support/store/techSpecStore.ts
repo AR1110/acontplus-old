@@ -1,10 +1,10 @@
 import { writable, get } from "svelte/store";
-import { hideLoader } from '@/lib/utils/loading-spinner';
+import { hideLoader } from '$utils/loading-spinner';
 import { categoryService } from "../services/category.service";
-import { showLoader } from "@/lib/utils/loading-spinner";
-import tS from "@/lib/utils/toast";
+import { showLoader } from "$utils/loading-spinner";
+import tS from "$utils/toast";
 import { deviceService } from "../services/device.service";
-import { orderService } from "../services";
+import { orderService } from "$technicalsupport/services/order.service";
 
 type PtoEmi = {
     idPuntoEmision: number
@@ -117,12 +117,12 @@ export const initiload = async () => {
             })
         })
         showLoader();
-        orderService.get({ tipo: 1 }).then((response) => { 
+        orderService.get({ tipo: 1 }).then((response) => {
             const estabs: Array<Estab> = response.estabs;
 
             //Establecimiento predeterminada.
             const datastab = estabs.find(estab => (estab.defaultEstab))
-            const puntosEmision: Array<PtoEmi> = datastab.puntosEmision;            
+            const puntosEmision: Array<PtoEmi> = datastab.puntosEmision;
             //Punto Emision predeterminada
             const dataPuntoEmision = puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi));
 
@@ -134,7 +134,7 @@ export const initiload = async () => {
                 state.data.puntoEmisionId = dataPuntoEmision.idPuntoEmision;
                 return state;
             })
-        }).finally(()=>hideLoader());
+        }).finally(() => hideLoader());
     } catch (error) {
         console.log(error)
     }

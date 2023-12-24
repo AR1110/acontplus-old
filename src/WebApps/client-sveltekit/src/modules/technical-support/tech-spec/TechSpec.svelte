@@ -1,0 +1,32 @@
+<script lang="ts">
+	import List from '$technicalsupport/tech-spec/components/List.svelte';
+	import TechSpecDialog from '$technicalsupport/tech-spec/components/TechSpecDialog.svelte';
+
+	let showPopup = false;
+
+	const onShowPopup = (ev) => {
+		showPopup = true;
+	};
+
+	const onPopupClose = (data) => {
+		showPopup = false;
+
+		console.log(data);
+	};
+</script>
+
+<div class="d-flex justify-content-end mb-3">
+	<div class="p-2">
+		<input type="text" class="form-control border-select" />
+	</div>
+	<div class="p-2">
+		<button type="button" class="btn btn-info" on:click={onShowPopup}>
+			<i class="ti-plus" /> Nuevo
+		</button>
+	</div>
+</div>
+<List />
+
+{#if showPopup}
+	<TechSpecDialog open={showPopup} onClosed={(data) => onPopupClose(data)} />
+{/if}

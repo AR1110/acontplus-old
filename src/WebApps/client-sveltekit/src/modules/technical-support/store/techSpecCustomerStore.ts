@@ -1,8 +1,8 @@
 
 import { writable, get } from "svelte/store";
-import { CustomerService as customerSvc } from "@/lib/services/Customer/customer-service";
-import tS from "@/lib/utils/toast";
-import { showLoader, hideLoader } from "@/lib/utils/loading-spinner";
+import { CustomerService as customerSvc } from "$services/Customer/customer-service";
+import tS from "$utils/toast";
+import { showLoader, hideLoader } from "$utils/loading-spinner";
 
 type TipoIdentificacion = {
     codigoSri: "04" | "05" | "06",
