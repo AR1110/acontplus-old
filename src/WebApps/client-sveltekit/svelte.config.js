@@ -21,6 +21,7 @@ const config = {
             $components: "src/lib/components",
             $constants: "src/lib/constants",
             $contabilidad: "src/modules/contabilidad",
+            $home: "src/modules/home",
             $interfaces: "src/lib/interfaces",
             $inventario: "src/modules/inventario",
             $modules: "src/modules",
