@@ -1,6 +1,6 @@
-import { isApiResponse } from '@/lib/interfaces/structure-response';
-import { client } from '@/lib/utils/axiosClient';
-import { groupEstabAndCreatePtoEmisionNodes } from '@/lib/utils/utils'
+import { isApiResponse } from '$interfaces/structure-response';
+import { client } from '$utils/axiosClient';
+import { groupEstabAndCreatePtoEmisionNodes } from '$utils/utils'
 const URL = 'Contabilidad/CuentaPorCobrar/'
 
 export const cuentaPorCobrarService = {

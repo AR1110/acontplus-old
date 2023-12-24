@@ -28,6 +28,7 @@ const config = {
             $contabilidad: "src/modules/contabilidad",
             $mechanical: "src/modules/mechanical",
             $technicalsupport: "src/modules/technical-support",
+            $sales: "src/modules/sales",
         }
     }
 };

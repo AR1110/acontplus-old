@@ -6,5 +6,6 @@ export enum GlobalRoutes {
     MotivoDiscrepancia = '/inventario/motivo-discrepancia',
     MechanicalMaintenance = '/mechanical/maintenance',
     MechanicalSupport = '/mechanical/support',
-    MechanicalVehicle = '/mechanical/vehicle'
+    MechanicalVehicle = '/mechanical/vehicle',
+    VentasReport = '/sales/report'
 }
