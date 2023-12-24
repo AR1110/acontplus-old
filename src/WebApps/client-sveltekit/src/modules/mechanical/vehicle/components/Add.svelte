@@ -3,10 +3,10 @@
 	import Modal from '$components/Modal.svelte';
 	import toast from '$utils/toast';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
-	import type { Vehicle } from '$interfaces/mechanical/vehicle';
-	import type { Customer } from '$interfaces/customer/customer';
-	import { VehicleService } from '$services/mechanical/vehicle-service';
-	import { CustomerService } from '$services/customer/customer-service';
+	import type { Vehicle } from '$mechanical/interfaces/vehicle';
+	import type { Customer } from '$modules/sales/interfaces/customer';
+	import { VehicleService } from '$mechanical/services/vehicle-service';
+	import { CustomerService } from '$sales/services/customer-service';
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 	import { vehicleStore } from '$mechanical/store/vehicle.store';
 

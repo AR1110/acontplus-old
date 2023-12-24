@@ -1,6 +1,6 @@
 
 import { writable, get } from "svelte/store";
-import { CustomerService as customerSvc } from "$services/Customer/customer-service";
+import { CustomerService as customerSvc } from "$modules/sales/services/customer-service";
 import tS from "$utils/toast";
 import { showLoader, hideLoader } from "$utils/loading-spinner";
 

@@ -3,13 +3,13 @@
 	import MaskInput from 'svelte-input-mask/MaskInput.svelte';
 	import Modal from '$components/Modal.svelte';
 	import type { StockFisico, StockFisicoDetalle } from '$interfaces/stock-fisico';
-	import { Estabs } from '$services/establecimiento-service';
-	import { StockFisicoService } from '$services/stok-fisico-service';
-	import { ArticleService } from '$services/inventory/article-service';
+	import { Estabs } from '$modules/config/services/establecimiento-service';
+	import { StockFisicoService } from '$inventario/services/stok-fisico-service';
+	import { ArticleService } from '$inventario/services/article-service';
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 	import Grid from '$components/Grid.svelte';
-	import type { MotivoDiscrepancia } from '$interfaces/motivo-discrepancia';
-	import { Discrepancias } from '$services/motivos-discrepancia-service';
+	import type { MotivoDiscrepancia } from '$inventario/interfaces/motivo-discrepancia';
+	import { Discrepancias } from '$inventario/services/motivos-discrepancia-service';
 	import toast from '$utils/toast';
 
 	export let showModal = false;

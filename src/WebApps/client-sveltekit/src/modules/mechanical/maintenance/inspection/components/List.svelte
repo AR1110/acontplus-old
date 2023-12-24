@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { InspectionStore } from '$mechanical/store/inspection.store';
-	import { InspectionService } from '$services/mechanical/inspection-service';
+	import { InspectionService } from '$mechanical/services/inspection-service';
 	import { hideLoader, showLoader } from '$utils/loading-spinner';
 	import Add from '$mechanical/maintenance/inspection/components/Add.svelte';
 

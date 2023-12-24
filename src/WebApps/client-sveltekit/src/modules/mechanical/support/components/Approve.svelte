@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { ArticleService } from '$services/inventory/article-service';
+	import { ArticleService } from '$inventario/services/article-service';
 	import { Calculations } from '../helpers/calculations';
 	import { customSelect } from '../helpers/custom-select';
-	import { FacturaService } from '$services/mechanical/factura-service';
-	import { NotaEntregaService } from '$services/mechanical/nota-entrega-service';
+	import { FacturaService } from '$modules/mechanical/services/factura-service';
+	import { NotaEntregaService } from '$mechanical/services/nota-entrega-service';
 	import { hideLoader, showLoader } from '$utils/loading-spinner';
 	import { MapperToAction } from '../helpers/mapper-to-action';
 	import { supportStore } from '$mechanical/store/support.store';
@@ -11,7 +11,7 @@
 	import GridForItem from '$components/GridForItem.svelte';
 	import Modal from '$components/Modal.svelte';
 	import toast from '$utils/toast';
-	import { SupportDetailService } from '$services/mechanical/support-detail-service';
+	import { SupportDetailService } from '$mechanical/services/support-detail-service';
 	import { sharedService } from '$services/shared.service';
 	import Swal from 'sweetalert2';
 

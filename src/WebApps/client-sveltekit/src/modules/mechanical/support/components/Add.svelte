@@ -4,11 +4,11 @@
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
 	import toast from '$utils/toast';
-	import type { Vehicle } from '$interfaces/mechanical/vehicle';
-	import type { Customer } from '$interfaces/customer/customer';
-	import { SupportService } from '$services/mechanical/support-service';
-	import { VehicleService } from '$services/mechanical/vehicle-service';
-	import { CustomerService } from '$services/customer/customer-service';
+	import type { Vehicle } from '$mechanical/interfaces/vehicle';
+	import type { Customer } from '$modules/sales/interfaces/customer';
+	import { SupportService } from '$mechanical/services/support-service';
+	import { VehicleService } from '$mechanical/services/vehicle-service';
+	import { CustomerService } from '$sales/services/customer-service';
 	import { supportStore } from '$mechanical/store/support.store';
 
 	let support;

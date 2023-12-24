@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { hideLoader, showLoader } from '$utils/loading-spinner';
 	import { supportStore } from '$mechanical/store/support.store';
-	import { SupportService } from '$services/mechanical/support-service';
+	import { SupportService } from '$mechanical/services/support-service';
 	import toast from '$utils/toast';
 	import Swal from 'sweetalert2';
 	import Pagination from '$components/Pagination.svelte';

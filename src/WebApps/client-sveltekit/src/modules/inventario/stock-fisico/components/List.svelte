@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { StockFisicoService } from '$services/stok-fisico-service';
+	import { StockFisicoService } from '$inventario/services/stok-fisico-service';
 	let stocksFisicos = [];
 	onMount(() => {
 		StockFisicoService.get(JSON.stringify({ tipo: 2 })).then((response) => {

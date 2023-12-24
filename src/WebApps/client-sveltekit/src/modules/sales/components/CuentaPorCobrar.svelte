@@ -10,7 +10,7 @@
 	import toast from '$utils/toast';
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 
-	import { CustomerService as customerSvc } from '$services/Customer/customer-service';
+	import { CustomerService as customerSvc } from '$sales/services/customer-service';
 
 	type PtoEmi = {
 		idPuntoEmision: number;

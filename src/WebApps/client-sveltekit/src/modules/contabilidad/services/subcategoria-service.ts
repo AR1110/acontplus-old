@@ -1,4 +1,4 @@
-import { client } from "../../lib/utils/axiosClient.js";
+import { client } from "$utils/axiosClient.js";
 let url = "Contabilidad/Subcategoria/";
 
 async function get(params: any) {

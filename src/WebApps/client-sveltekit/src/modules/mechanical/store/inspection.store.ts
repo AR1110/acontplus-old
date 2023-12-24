@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import { hideLoader, showLoader } from "$utils/loading-spinner";
-import { InspectionService } from "$services/mechanical/inspection-service";
-import type { Inspection } from "$interfaces/mechanical/inspection";
+import { InspectionService } from "$modules/mechanical/services/inspection-service";
+import type { Inspection } from "$modules/mechanical/interfaces/inspection";
 import { sharedService } from "$services/shared.service";
 
 type StateModal = {

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { MaintenanceStore } from '$mechanical/store/maintenance.store';
-	import { ArticleService } from '$services/inventory/article-service';
+	import { ArticleService } from '$inventario/services/article-service';
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
 	import GridForItem from '$components/GridForItem.svelte';
 	import Modal from '$components/Modal.svelte';
 	import toast from '$utils/toast';
-	import { SupportDetailService } from '$services/mechanical/support-detail-service';
+	import { SupportDetailService } from '$mechanical/services/support-detail-service';
 
 	let support;
 	let paramValidation = [undefined, null, '', 0];

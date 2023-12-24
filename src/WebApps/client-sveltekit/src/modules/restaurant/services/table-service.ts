@@ -1,4 +1,4 @@
-import { client } from "../../../lib/utils/axiosClient";
+import { client } from "$utils/axiosClient";
 let url = "Restaurant/Tables/";
 
 async function get(codEstab) {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { InspectionStore } from '$mechanical/store/inspection.store';
-	import { InspectionService } from '$services/mechanical/inspection-service';
+	import { InspectionService } from '$mechanical/services/inspection-service';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
 	import Modal from '$components/Modal.svelte';
 	import toast from '$utils/toast';

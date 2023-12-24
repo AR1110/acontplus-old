@@ -1,4 +1,4 @@
-import { client } from "../../lib/utils/axiosClient.js";
+import { client } from "$utils/axiosClient.js";
 let url = "Config/EstabAsig/";
 async function get(params: any) {
     return await client.get(`${url}?json=${JSON.stringify(params)}`).then((response: any) => {

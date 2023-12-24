@@ -2,7 +2,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { onMount } from 'svelte';
-	import { CustomerService } from '$services/Customer/customer-service';
+	import { CustomerService } from '$sales/services/customer-service';
 	import { hideLoader, showLoader } from '$utils/loading-spinner';
 	import { TabulatorFull as Tabulator } from 'tabulator-tables';
 

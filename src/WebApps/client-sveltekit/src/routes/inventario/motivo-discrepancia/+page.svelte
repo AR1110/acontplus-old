@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { MotivoDiscrepancia } from '$interfaces/motivo-discrepancia';
+	import type { MotivoDiscrepancia } from '$inventario/interfaces/motivo-discrepancia';
 	import { onMount } from 'svelte';
 	import { client } from '$utils/axiosClient';
 	import toast from '$utils/toast';

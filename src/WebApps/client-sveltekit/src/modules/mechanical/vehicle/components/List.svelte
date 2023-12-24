@@ -3,9 +3,9 @@
 	import toast from '$utils/toast';
 	import Swal from 'sweetalert2';
 	import Search from '$components/Search.svelte';
-	import type { Vehicle } from '$interfaces/mechanical/vehicle';
-	import type { Customer } from '$interfaces/customer/customer';
-	import { VehicleService } from '$services/mechanical/vehicle-service';
+	import type { Vehicle } from '$mechanical/interfaces/vehicle';
+	import type { Customer } from '$modules/sales/interfaces/customer';
+	import { VehicleService } from '$mechanical/services/vehicle-service';
 	import Add from '$mechanical/vehicle/components/Add.svelte';
 	import { vehicleStore } from '$mechanical/store/vehicle.store';
 	import { onMount } from 'svelte';

@@ -2,7 +2,7 @@
   import { onDestroy } from "svelte";
   import AdvancedSearch from "$components/AdvancedSearch.svelte";
   import axios from "axios";
-  import { CustomerService as customerSvc } from "$services/Customer/customer-service";
+  import { CustomerService as customerSvc } from "$sales/services/customer-service";
   import tS from "$utils/toast";
   import { hideLoader, showLoader } from "$utils/loading-spinner";
   export let resultCustomerSelected; //()=>void
