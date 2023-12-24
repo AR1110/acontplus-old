@@ -10,4 +10,4 @@
 	<title>Home</title>
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
-<h5>Welcome to Acontplus</h5>
+<small>Cargando ...</small>

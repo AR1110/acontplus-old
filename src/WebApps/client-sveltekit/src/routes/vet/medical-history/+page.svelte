@@ -4,7 +4,7 @@
     import Swal from "sweetalert2";
     import toast from "$utils/toast";
     import FileSaver from "file-saver";
-    import Add from "$modules/medical-history/components/Add.svelte"
+    import Add from "$modules/vet/medical-history/components/Add.svelte"
     import { showLoader, hideLoader } from "$utils/loading-spinner";
     import Pagination from "$components/Pagination.svelte";
     let newRecord = false;
