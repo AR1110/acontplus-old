@@ -2,19 +2,6 @@
 //for more see https://dev.to/mihaiandrei97/jwt-authentication-using-axios-interceptors-55be
 import axios from "axios";
 
-
-const processQueue = (error) => {
-    failedQueue.forEach((prom) => {
-        if (error) {
-            prom.reject(error);
-        } else {
-            prom.resolve();
-        }
-    });
-
-    failedQueue = [];
-};
-
 export function createAxiosClient({
     options,
     getCurrentAccessToken,
@@ -24,7 +11,6 @@ export function createAxiosClient({
     setRefreshedTokens,
 }) {
     const client = axios.create(options);
-
     client.interceptors.request.use(
         (config) => {
             if (config.authorization !== false) {
@@ -56,7 +42,6 @@ export function createAxiosClient({
 
             // If error, process all the requests in the queue and logout the user.
             const handleError = (error) => {
-                processQueue(error);
                 logout();
                 return Promise.reject(error);
             };
@@ -69,10 +54,11 @@ export function createAxiosClient({
                 originalRequest?.url !== refreshTokenUrl &&
                 originalRequest?._retry !== true
             ) {
-
+                let isRefreshing
                 if (isRefreshing) {
                     return new Promise(function (resolve, reject) {
-                        failedQueue.push({ resolve, reject });
+                        console.log(resolve)
+                        console.log(reject)
                     })
                         .then(() => {
                             return client(originalRequest);
@@ -93,8 +79,6 @@ export function createAxiosClient({
                             refreshToken: res.data?.refreshToken,
                         };
                         setRefreshedTokens(tokens);
-                        processQueue(null);
-
                         return client(originalRequest);
                     }, handleError)
                     .finally(() => {
@@ -107,9 +91,9 @@ export function createAxiosClient({
                 error.response?.status === 401 &&
                 error.response?.data?.message === "TokenExpiredError"
             ) {
+                console.log(error)
                 return handleError(error);
             }
-
             // Any status codes that falls outside the range of 2xx cause this function to trigger
             // Do something with response error
             return Promise.reject(error);

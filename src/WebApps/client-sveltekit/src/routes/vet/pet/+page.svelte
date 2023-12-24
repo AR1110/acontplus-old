@@ -1,7 +1,7 @@
 <!-- svelte-ignore tag-option-deprecated -->
 <script type="js">
 	import { onMount } from 'svelte';
-	import { client } from '$lib/utils/axiosClient';
+	import { client } from '$utils/axiosClient';
 	import toast from '$lib/utils/toast';
 	import Swal from 'sweetalert2';
 	import AdvancedSearch from '$lib/components/AdvancedSearch.svelte';

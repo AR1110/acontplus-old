@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
-    import { client } from "$lib/utils/axiosClient";
+    import { client } from "$utils/axiosClient";
     import toast from "$lib/utils/toast";
     import Swal from "sweetalert2";
     import Search from "$lib/components/Search.svelte";
