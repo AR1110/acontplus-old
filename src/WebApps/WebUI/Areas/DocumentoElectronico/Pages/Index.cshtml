@@ -233,7 +233,8 @@
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row md-auto-select="false" md-select="item" ng-disabled="!(item.codEstado===2)"
+                            <tr md-row md-auto-select="false" md-select="item"
+                                ng-disabled="!(item.codEstado===0 || item.codEstado===2 || item.codEstado===5)"
                                 md-on-select="onSelectComprobante"
                                 ng-repeat="item in comprobantes | orderBy: dataSearch.order | filter: textSearch "
                                 ng-class="item.style">
@@ -360,8 +361,8 @@
         </div>
         <div class="card-footer">
             <strong>
-                Total: {{comprobantes.length}}
-                {{comprobantes.length>1?'Comprobantes':'Comprobante'}}
+                Total: {{dataSearch.totalRecords}}
+                {{dataSearch.totalRecords>1?'Comprobantes':'Comprobante'}}
             </strong>
         </div>
     </div>

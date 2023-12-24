@@ -1,0 +1,75 @@
+﻿@page
+@model WebUI.Pages.ConsultarPrecio.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["title"] = "Factura";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="consultarPrecioCtrl">
+    <div>
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h4 class="text-themecolor">Consultar Precio</h4>
+            </div>
+
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row justify-content-between">
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                        <span class="form-group pull-left page-size form-inline">
+                            <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                                    ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            </select>
+                        </span>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label for="inputTextSearch">Buscar Artículo</label>
+                                    <input type="text" id="inputTextSearch" class="form-control border-select"
+                                           ng-model="dataSearch.bySearch" ng-keyup="consultarPrecioSearchText()"
+                                           ng-keypress="consultarPrecioEnter($event)"
+                                           placeholder="Ingrese la Descripcion o Código del Articulo" />
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label for="">Buscar por:</label>
+                                    <select class="form-control border-select" ng-model="dataSearch.byColumn"
+                                            ng-change="querySearchArticulo()">
+                                        <option ng-value="item.codigo" ng-repeat="item in tipoBusquedas">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label for="opcion">Opción</label>
+                                    <select class="form-control border-select" ng-model="dataSearch.byStock"
+                                            ng-change="querySearchArticulo()">
+                                        <option ng-value="">Todos</option>
+                                        <option ng-value="1">Con Stock</option>
+                                        <option ng-value="2">Sin Stock</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @await Html.PartialAsync("~/Pages/ConsultarPrecio/_ListaArticulos.cshtml")
+            </div>
+        </div>
+
+    </div>
+
+</div>
+@section Scripts {
+    <script src="~/js/ventas/controllers/consultarPrecioCtrl.min.js" asp-append-version="true"></script>
+}
