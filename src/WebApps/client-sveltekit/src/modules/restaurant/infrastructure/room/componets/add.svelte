@@ -1,8 +1,8 @@
 ﻿<script lang="ts">
   import Modal from "$components/Modal.svelte";
-  import type { Floor } from "$interfaces/restaurant/floor";
-  import type { Room } from "$interfaces/restaurant/room";
-  import { roomService } from "$services/restaurant/room-service";
+  import type { Floor } from "$restaurant/interfaces/floor";
+  import type { Room } from "$restaurant/interfaces/room";
+  import { roomService } from "$restaurant/services/room-service";
   import { hideLoader, showLoader } from "$utils/loading-spinner";
   import toast from "$utils/toast";
 

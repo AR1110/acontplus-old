@@ -1,9 +1,9 @@
 ﻿<script lang="ts">
-	import { floorService } from "$services/restaurant/floor-service";
+	import { floorService } from "$restaurant/services/floor-service";
 	import toast from "$utils/toast";
 	import Swal from "sweetalert2";
 	import Add from "./add.svelte";
-	import type { Floor } from "$interfaces/restaurant/floor";
+	import type { Floor } from "$restaurant/interfaces/floor";
 
 	export let floors = [] as Floor[];
 	export let reloadList;

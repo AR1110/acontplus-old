@@ -3,12 +3,12 @@
 	import { onMount } from 'svelte';
 	import Add from './components/add.svelte';
 	import List from './components/list.svelte';
-	import { estabAsignService } from '$services/restaurant/estab-asign-service';
-	import { tableService } from '$services/restaurant/table-service';
+	import { estabAsignService } from '$modules/restaurant/services/estab-asign-service';
+	import { tableService } from '$restaurant/services/table-service';
 	import SelectEstablecimiento from '../Components/SelectEstablecimiento.svelte';
 	import { hideLoader, showLoader } from '$utils/loading-spinner';
-	import type { Room } from '$interfaces/restaurant/room';
-	import { roomService } from '$services/restaurant/room-service';
+	import type { Room } from '$restaurant/interfaces/room';
+	import { roomService } from '$restaurant/services/room-service';
 	let title = 'Mesas';
 
 	// Modal management

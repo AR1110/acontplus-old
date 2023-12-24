@@ -1,16 +1,16 @@
 <script lang="ts">
   import { hideLoader } from "$utils/loading-spinner.js";
-  import { itemService } from "$services/restaurant/item-service";
+  import { itemService } from "$restaurant/services/item-service";
   import { showLoader } from "$utils/loading-spinner";
   import { useItemStore } from "$restaurant/store/itemStore.js";
   import GridForItem from "$components/GridForItem.svelte";
   import Modal from "$components/Modal.svelte";
   import Search from "./search.svelte";
   import toast from "$utils/toast";
-  import type { Ingredient } from "$interfaces/restaurant/ingredient";
-  import type { Item } from "$interfaces/restaurant/item";
-  import type { Recipe } from "$interfaces/restaurant/recipe.js";
-  import { IngredientService } from "$services/restaurant/ingredient-service.js";
+  import type { Ingredient } from "$restaurant/interfaces/ingredient";
+  import type { Item } from "$restaurant/interfaces/item";
+  import type { Recipe } from "$restaurant/interfaces/recipe.js";
+  import { IngredientService } from "$restaurant/services/ingredient-service.js";
 
   let data;
   let recipes = [] as Recipe[];

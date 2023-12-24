@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { productionAreaService } from '$services/restaurant/production-area-service';
+	import { productionAreaService } from '$restaurant/services/production-area-service';
 	import toast from '$utils/toast';
 	import Swal from 'sweetalert2';
 	import { onMount } from 'svelte';
-	import type { ProductionArea } from '$interfaces/restaurant/production-area';
+	import type { ProductionArea } from '$restaurant/interfaces/production-area';
 	import Add from './add.svelte';
 	import { hideLoader, showLoader } from '$utils/loading-spinner';
 

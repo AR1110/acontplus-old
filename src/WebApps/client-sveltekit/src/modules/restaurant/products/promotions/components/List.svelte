@@ -2,8 +2,8 @@
 	import { usePromotionStore } from '$restaurant/store/promotionStore';
 	import { onDestroy, onMount } from 'svelte';
 	import Add from '../../Menus/Components/Add.svelte';
-	import type { Promotion } from '$interfaces/restaurant/promotion';
-	import type { Establecimiento } from '$interfaces/restaurant/establecimiento';
+	import type { Promotion } from '$restaurant/interfaces/promotion';
+	import type { Establecimiento } from '$restaurant/interfaces/establecimiento';
 	let promotions = [] as Promotion[];
 	let establecimientos = [] as Establecimiento[];
 	let codEstab = '';

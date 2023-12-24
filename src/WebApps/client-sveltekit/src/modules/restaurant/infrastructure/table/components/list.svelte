@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { tableService } from "$services/restaurant/table-service";
-  import type { Table } from "$interfaces/restaurant/table";
+  import { tableService } from "$restaurant/services/table-service";
+  import type { Table } from "$restaurant/interfaces/table";
   import Swal from "sweetalert2";
   import toast from "$utils/toast";
   import Add from "./add.svelte";
-  import type { Room } from "$interfaces/restaurant/room";
+  import type { Room } from "$restaurant/interfaces/room";
 
   export let reloadList;
   export let tables = [] as Table[];

@@ -1,5 +1,5 @@
 <script>
-  import { IngredientService } from "$services/restaurant/ingredient-service";
+  import { IngredientService } from "$restaurant/services/ingredient-service";
   import ItemsList from "./items-list.svelte";
   import toast from "$utils/toast";
 

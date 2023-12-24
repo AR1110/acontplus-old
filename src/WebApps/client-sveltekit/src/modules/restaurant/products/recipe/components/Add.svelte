@@ -2,8 +2,8 @@
 	import { onMount } from 'svelte';
 	import Modal from '$components/Modal.svelte';
 	import toast from '$utils/toast';
-	import type { Recipe } from '$interfaces/restaurant/recipe';
-	import { IngredientService } from '$services/restaurant/ingredient-service';
+	import type { Recipe } from '$restaurant/interfaces/recipe';
+	import { IngredientService } from '$restaurant/services/ingredient-service';
 	import Grid from '$components/Grid.svelte';
 	export let openNew;
 	export let modalClosed;

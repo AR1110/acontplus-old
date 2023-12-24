@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { RecipeService } from "$services/restaurant/recipe-service";
+    import { RecipeService } from "$restaurant/services/recipe-service";
     let recipes = [];
     onMount(() => {
         RecipeService.get(JSON.stringify({ tipo: 1 })).then((response) => {

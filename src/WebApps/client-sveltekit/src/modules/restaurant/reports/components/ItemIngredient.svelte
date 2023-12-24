@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import type { Establecimiento } from '$interfaces/restaurant/establecimiento';
-	import { estabAsignService } from '$services/restaurant/estab-asign-service';
+	import type { Establecimiento } from '$restaurant/interfaces/establecimiento';
+	import { estabAsignService } from '$modules/restaurant/services/estab-asign-service';
 	import { sharedService } from '$services/shared.service';
 	import { ArticleService } from '$services/inventory/article-service';
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 	import axios from 'axios';
-	import { itemService } from '$services/restaurant/item-service';
+	import { itemService } from '$restaurant/services/item-service';
 	import { hideLoader, showLoader } from '$utils/loading-spinner';
 
 	type Subfamilia = {

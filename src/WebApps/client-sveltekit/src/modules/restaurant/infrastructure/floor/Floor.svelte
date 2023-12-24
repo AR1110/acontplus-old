@@ -4,9 +4,9 @@
 	import { onMount } from 'svelte';
 	import Add from './components/add.svelte';
 	import List from './components/list.svelte';
-	import { estabAsignService } from '$services/restaurant/estab-asign-service';
+	import { estabAsignService } from '$modules/restaurant/services/estab-asign-service';
 	import toast from '$utils/toast';
-	import { floorService } from '$services/restaurant/floor-service';
+	import { floorService } from '$restaurant/services/floor-service';
 	import SelectEstablecimiento from '../Components/SelectEstablecimiento.svelte';
 
 	let establecimientos = [];

@@ -1,8 +1,8 @@
-import { estabAsignService } from "$services/restaurant/estab-asign-service";
+import { estabAsignService } from "$modules/restaurant/services/estab-asign-service";
 import { hideLoader, showLoader } from "$utils/loading-spinner";
-import { PromotionService } from "$services/restaurant/promotion-service";
+import { PromotionService } from "$modules/restaurant/services/promotion-service";
 import { writable } from "svelte/store";
-import type { Promotion } from "$interfaces/restaurant/promotion";
+import type { Promotion } from "$modules/restaurant/interfaces/promotion";
 
 type StateModal = {
   isOpen: boolean;

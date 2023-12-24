@@ -1,8 +1,8 @@
 import { writable } from "svelte/store";
 import { hideLoader, showLoader } from "$utils/loading-spinner";
-import { IngredientService } from "$services/restaurant/ingredient-service";
-import { itemService } from "$services/restaurant/item-service";
-import type { Ingredient } from "$interfaces/restaurant/ingredient";
+import { IngredientService } from "$modules/restaurant/services/ingredient-service";
+import { itemService } from "$modules/restaurant/services/item-service";
+import type { Ingredient } from "$modules/restaurant/interfaces/ingredient";
 
 type StateModal = {
     isOpen: boolean;

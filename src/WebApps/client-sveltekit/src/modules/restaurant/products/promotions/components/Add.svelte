@@ -1,16 +1,16 @@
 <script lang="ts">
-  import type { Establecimiento } from "$interfaces/restaurant/establecimiento";
-  import type { PromotionMenu } from "$interfaces/restaurant/promotion-menu";
+  import type { Establecimiento } from "$restaurant/interfaces/establecimiento";
+  import type { PromotionMenu } from "$restaurant/interfaces/promotion-menu";
   import Modal from "$components/Modal.svelte";
-  import type { Promotion } from "$interfaces/restaurant/promotion";
+  import type { Promotion } from "$restaurant/interfaces/promotion";
   import { usePromotionStore } from "$restaurant/store/promotionStore";
   import AdvancedSearch from "$components/AdvancedSearch.svelte";
-  import { MenuService } from "$services/restaurant/menu-service";
+  import { MenuService } from "$restaurant/services/menu-service";
   import toast from "$utils/toast";
   import GridForItem from "$components/GridForItem.svelte";
   import { hideLoader, showLoader } from "$utils/loading-spinner";
-  import { PromotionService } from "$services/restaurant/promotion-service";
-  import { PromotionMenuService } from "$services/restaurant/promotion-menu-service";
+  import { PromotionService } from "$restaurant/services/promotion-service";
+  import { PromotionMenuService } from "$restaurant/services/promotion-menu-service";
 
   // Variables.
   let dataUpdate: Promotion = {
