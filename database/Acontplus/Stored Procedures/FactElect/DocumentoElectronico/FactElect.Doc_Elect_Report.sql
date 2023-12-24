@@ -15,8 +15,9 @@ BEGIN
     -->Filter
     DECLARE @codEstab VARCHAR(100) ,@idPuntoEmision INT ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@codEstado INT ,@ckDevolucion BIT ,@ckRetencion BIT
            ,@identificacion VARCHAR(20) ,@idUsuario INT
+    
     --> Recuperar Datos
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT )
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
     SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
@@ -386,6 +387,21 @@ BEGIN
             RETURN 
         END
     
+    --> Liquidacion
+    IF @tipo = 4
+        BEGIN
+            SET @params = '@idEntidad       INT
+                          ,@codEstab        VARCHAR(100)
+                          ,@idPuntoEmision  INT
+                          ,@fechaInicio     DATETIME2
+                          ,@fechaFin        DATETIME2
+                          ,@codEstado       INT
+                          ,@identificacion  VARCHAR(20)
+                          ,@idUsuario       INT'
+
+
+            RETURN 
+        END 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
     RETURN 
 END 
