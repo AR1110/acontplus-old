@@ -133,6 +133,7 @@
                         if (!$scope.isMobile) {
                             document.getElementById('menu_toggle').click();
                         }
+                     
                         $scope.comprobantes = response;
                         $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
                     })
@@ -284,7 +285,7 @@
         }
 
         $scope.onSelectComprobante = (item) => {
-            console.log(item)
+        
         }
         //=====================================================END FILTER===============================================
         const REPORT_CODES = Object.freeze({

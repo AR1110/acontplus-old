@@ -48,12 +48,12 @@ app.constant('nombreModalInventario', {
         }
     },
     FAMILIA: {
-        fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalFamiliaCtrl',
-        template: 'Familia/_ModalFamilia.cshtml'
+        template: '~/Pages/Familia/_ModalFamilia.cshtml'
     },
     SUBFAMILIA: {
-        fileCtrl: '/js/inventario/modals/modalSubFamiliaCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalSubFamiliaCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalSubFamiliaCtrl',
         template: '~/Pages/Subfamilia/Shared/_ModalSubFamilia.cshtml'
     },
@@ -134,7 +134,7 @@ app.constant('nombreModalFactElect', {
 
 app.constant('nombreModalVenta', {
     DOC_VENTA_DETALLE: {
-        fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'modalDocVentaDetalleCtrl',
         templates: {
             NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
@@ -151,8 +151,8 @@ app.constant('nombreModalVenta', {
             ML: 'ModalClienteListaCtrl'
         },
         templates: {
-            M: '~/Areas/Cliente/Pages/Shared/_ModalAddUpdate.cshtml',
-            ML: '~/Areas/Cliente/Pages/Shared/_ModalClienteLista.cshtml'
+            M: '~/Pages/Cliente/_ModalAddUpdate.cshtml',
+            ML: '~/Pages/Cliente/_ModalClienteLista.cshtml'
         }
     },
     EMPRESA: {
@@ -216,6 +216,15 @@ app.constant('nombreModalVenta', {
 
 //Compras
 app.constant('nombreModalCompra', {
+    DOC_COMPRA_DETALLE: {
+        fileCtrl: '/js/common/modals/modalDocCompraDetalleCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalDocCompraDetalleCtrl',
+        templates: {
+            LC: '~/Pages/LiquidacionCompra/_ModalDetalle.cshtml',
+             
+        }
+
+    },
     FACTURA_FISICA: {
         fileCtrl: '/js/modal/compras/modalFacturaCtrl.js' + CHANGE_VERSION(),
         controllers: {
@@ -845,8 +854,9 @@ app.constant('DOC_TYPE', {
     PR: 'PR',
     NC: 'NC',
     NC_SRI: '04',
-    APROB_DOC: ''
-
+    APROB_DOC: '',
+    LC: 'LC',
+    FC: 'FC'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",
@@ -865,5 +875,8 @@ app.constant('CODE_REPORT', {
     NCRG: 'NCRG', //Reporte Nota Credito General
     PR: 'PR', //Reporte Proforma,
     PRE_F: 'RAC', //Aprobacion-Factura
-    P_NE: 'P-NE' //Aprobacion - Nota Entrega
+    P_NE: 'P-NE', //Aprobacion - Nota Entrega
+    RLC: 'RLC', //Reporte Liquidacion Compra
+    RCD: 'RCD', //Reporte Compra detalle
+    FC: 'FC'
 })

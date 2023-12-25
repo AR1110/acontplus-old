@@ -1,4 +1,5 @@
-﻿using Common.Core.Models;
+﻿using Azure.Core;
+using Common.Core.Models;
 using Common.Core.Models.Almacen;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
@@ -45,16 +46,16 @@ namespace Inventario.API.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] Familia data)
+        public async Task<IActionResult> Insert(ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
+                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Almacen.Familia_Insert");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("siglas", data.siglas);
+                _db.AddDynamicParam("userRoleId", userRoleId); 
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -71,17 +72,17 @@ namespace Inventario.API.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Familia data)
+        public async Task<IActionResult> Update(int id, ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
+                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Almacen.Familia_Update");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("userRoleId", userRoleId);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("estado", data.estado);
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

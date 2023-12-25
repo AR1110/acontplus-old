@@ -84,7 +84,7 @@ class MdAutocompleteClienteComponent{
 
 
 app.component("mdAutocompleteClienteComponent",{
-    templateUrl:'/Cliente/MdAutocomplete',
+    templateUrl: `/Index?name=~/Pages/Cliente/MdAutocomplete.cshtml`,
     bindings:{
         selectedItemCliente:'&',
         editData:"<",

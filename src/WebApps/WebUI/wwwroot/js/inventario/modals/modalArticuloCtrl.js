@@ -458,6 +458,7 @@ function modalArticuloCtrl(
                     }
                 }
             });
+            return
         }
         //if (params && params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra) return;
 
