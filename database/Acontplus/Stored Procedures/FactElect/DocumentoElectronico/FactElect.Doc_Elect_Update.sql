@@ -14,7 +14,6 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
 	DECLARE @idEntidad INT	
-	DECLARE @codEstado INT
 	DECLARE @message VARCHAR(100) = 'No actualizado'
 	DECLARE @codeResponse VARCHAR(1) = '0'
     DECLARE @fechaCaducidad DATE ,@firma INT
@@ -23,11 +22,9 @@ BEGIN
 	BEGIN TRY	
         SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
 
-	    SELECT TOP 1 @codEstado = codEstado FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id
-
         SELECT TOP 1 @fechaCaducidad = fechaCaducidad ,@firma = idFirmaElectronica FROM dbo.FirmaElectronica WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-	    IF @codEstado = 4 
+	    IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 4) 
 		    BEGIN
 			    SELECT '0'code,'El comprobante ya se encuentra autorizado' as 'message'
 			    RETURN 
@@ -48,14 +45,22 @@ BEGIN
         
 
 		BEGIN TRAN 
-			IF @codEstado = 2
+
+			IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 2 AND isAutomatic = 0) 
 				BEGIN 
 					UPDATE DocumentoElectronico SET isAutomatic = 1 WHERE idDocumentoElectronico = @id
 					SET @codeResponse = '1'
 					SET @message = 'Enviado a autorizar en el SRI'
 				END
 
-			IF (@codEstado IN (0,5))
+            IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado = 2 AND isAutomatic = 1) 
+				BEGIN 
+					UPDATE DocumentoElectronico SET codEstado = 1 WHERE idDocumentoElectronico = @id
+					SET @codeResponse = '1'
+					SET @message = 'Enviado a autorizar en el SRI'
+				END
+
+			IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado IN (0,5))
 				BEGIN
 					UPDATE DocumentoElectronico SET codEstado = 1 WHERE idDocumentoElectronico = @id
 					SET @codeResponse = '1'

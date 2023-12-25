@@ -10,7 +10,7 @@ GO
 -- Create date: 2023-08-05
 -- Description:	SP Para leer los datos de los tipos de reportes relacionado con artiuculos
 -- =============================================
---Almacen.Articulo_Get 28, '{"tipo":10,"idArticulo":5}'
+--Inventario.Articulo_Report 28, '{"tipo":10,"idArticulo":5}'
 CREATE OR ALTER PROCEDURE Inventario.Articulo_Report @idRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
