@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { SubcategoriaService } from "$services/subcategoria-service";
-    import type { Subcategoria } from "$interfaces/subcategoria";
+    import { SubcategoriaService } from "$contabilidad/services/subcategoria-service";
+    import type { Subcategoria } from "$contabilidad/interfaces/subcategoria";
     import Modal from "$components/Modal.svelte";
     import toast from "$utils/toast.js";
   

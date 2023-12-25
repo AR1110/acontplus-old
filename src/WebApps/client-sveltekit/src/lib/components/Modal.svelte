@@ -19,7 +19,7 @@
 
 <div
 	id="modalNew"
-	class="modal {fullScreen ? 'uibModalFullScreen' : ''}"
+	class="modal"
 	tabindex="-1"
 	role="dialog"
 	aria-labelledby="sampleModalLabel"
@@ -28,7 +28,9 @@
 	out:fade={{ duration: 300, easing: quintOut }}
 >
 	<div
-		class="modal-dialog modal-dialog-centered {size ? size : ''}"
+		class="modal-dialog {fullScreen ? 'modal-fullscreen' : ''} modal-dialog-centered {size
+			? size
+			: ''}"
 		role="document"
 		in:fly={{ y: -50, duration: 300 }}
 		out:fly={{ y: -50, duration: 300, easing: quintOut }}
@@ -43,12 +45,11 @@
 				</h5>
 				<button
 					type="button"
-					class="close"
+					class="btn-close"
 					data-dismiss="modal"
 					aria-label="Close"
 					on:click={() => modalClose()}
 				>
-					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<slot />

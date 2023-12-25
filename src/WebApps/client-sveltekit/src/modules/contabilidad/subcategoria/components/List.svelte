@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { SubcategoriaService } from "$services/subcategoria-service";
+    import { SubcategoriaService } from "$contabilidad/services/subcategoria-service";
     let subcategorias = [];
     onMount(() => {
       SubcategoriaService.get(JSON.stringify({ tipo: 1 })).then((response) => {

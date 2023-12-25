@@ -1,16 +1,12 @@
 
 import axios from "axios";
 import { createAxiosClient } from "./createAxiosClient";
-
 import jwt_decode from "jwt-decode";
-
-
 
 function getCurrentAccessToken() {
     // const cat = localStorage.getItem("token");
     // const objToken = JSON.parse(cat);
-    // return objToken.token;
-    // this is how you access the zustand store outside of React.
+    // return objToken.token; 
     //return useAuthStore.getState().accessToken;
     if (typeof window !== 'undefined') {
         return localStorage.getItem("token");
@@ -28,14 +24,19 @@ function setRefreshedTokens(tokens) {
 
 async function logout() {
     console.log("logout...");
+    if (typeof window !== 'undefined') {
+        return localStorage.removeItem("token");
+    }
 }
-//console.log(getCurrentAccessToken());
-var decodedJwt = jwt_decode(getCurrentAccessToken());
-//console.log(decodedJwt);
+function getGateway() {
+    let decodedToken = Object.assign(jwt_decode(getCurrentAccessToken()));
+    let { urlGateway } = decodedToken
+    return urlGateway;
+}
 
 export const client = createAxiosClient({
     options: {
-        baseURL: `${decodedJwt.urlGateway}/gateway/`,
+        baseURL: `${getGateway()}/gateway/`,
         timeout: 300000,
         headers: {
             "Content-Type": "application/json",
@@ -50,7 +51,7 @@ export const client = createAxiosClient({
 
 export const clientFile = (url, parameters) => {
     return axios({
-        url: `${decodedJwt.urlGateway}/gateway/` + url,
+        url: `${getGateway()}/gateway/` + url,
         method: 'POST',
         responseType: 'blob',
         data: parameters,
@@ -60,7 +61,7 @@ export const clientFile = (url, parameters) => {
 
 export const uploadFile = createAxiosClient({
     options: {
-        baseURL: `${decodedJwt.urlGateway}/gateway/`,
+        baseURL: `${getGateway()}/gateway/`,
         timeout: 300000,
         headers: {
             "Content-Type": "multipart/form-data",

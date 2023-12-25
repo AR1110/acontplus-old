@@ -20,12 +20,18 @@ const config = {
         alias: {
             $components: "src/lib/components",
             $constants: "src/lib/constants",
+            $contabilidad: "src/modules/contabilidad",
+            $home: "src/modules/home",
             $interfaces: "src/lib/interfaces",
-            $services: "src/lib/services",
-            $utils: "src/lib/utils",
-            $modules: "src/modules",
             $inventario: "src/modules/inventario",
-            $contabilidad: "src/modules/contabilidad"
+            $modules: "src/modules",
+            $mechanical: "src/modules/mechanical",
+            $restaurant: "src/modules/restaurant",
+            $sales: "src/modules/sales",
+            $services: "src/lib/services",
+            $technicalsupport: "src/modules/technical-support",
+            $utils: "src/lib/utils",
+            $vet: "src/modules/vet",
         }
     }
 };

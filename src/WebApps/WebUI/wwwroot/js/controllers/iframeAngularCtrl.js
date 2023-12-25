@@ -5,23 +5,30 @@
         .module('acontPlusApp')
         .controller('iframeAngularCtrl', iframeAngularCtrl);
 
-    iframeAngularCtrl.$inject = ['$scope', '$location'];
+    iframeAngularCtrl.$inject = ['$scope', '$location', '$injector'];
 
-    function iframeAngularCtrl($scope, $location) {
+    function iframeAngularCtrl($scope, $location, $injector) {
+        const mS = $injector.get('mainService')
+        mS.detectDevice();
+
         let frontend = document.getElementById('frontend').value
-        console.log(frontend)
         let div = document.querySelector('.container-fluid'); // Select the div by class
         div.classList.remove('container-fluid'); // Remove the div
         // Get the current URL
         let url = $location.absUrl();
-
         // Create a URL object with the current URL
-        let urlObj = new URL(url); 
+        let urlObj = new URL(url);
         let { pathname } = urlObj
-      /*  console.log(pathname);*/
-        let route = pathname.split('/')[1]
-        //console.log(route);
+        /*  console.log(pathname);*/
+        let totalRoutes = pathname.split('/');
+        let route;
+        if (totalRoutes.length === 4) {
+            route = totalRoutes[1] + totalRoutes[2]
+        } else {
+            route = pathname.split('/')[1]
+        }
         async function getSrc() {
+            if (!frontend) { return; }
             let params = localStorage.getItem('userData')
             let { token } = JSON.parse(params);
             if (!token) { return; }
@@ -32,10 +39,23 @@
             iframe.style.height = '600px';
             iframe.style.border = 'none';
             iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-popups-to-escape-sandbox'
-            //let url = 'http://localhost:4200'
-            let url = 'http://localhost:5173'
             // Set the src attribute of the iframe
-            iframe.src = `${frontend}?token=${token}&route=${route}`;
+            let urlClient = `${frontend}?token=${token}&route=${route}`
+            //// Ajuste horizontal
+            //let x = parseInt((screen.width - 1200) / 2);
+            //// Ajustae vertical
+            //let y = parseInt((screen.height - 650) / 4);
+            //window.open(
+            //    urlClient,
+            //    "_blank",
+            //    `resizable=yes
+            //        width=1200
+            //        height=650
+            //        screenY=${y}
+            //        screenX=${x}`
+            //)
+            //return;
+            iframe.src = urlClient;
 
             // Get the div element
             var div = document.getElementById('iframeApp');

@@ -9,10 +9,6 @@
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
-  <Target Name="Rollup" BeforeTargets="Build">
-    <Exec Command="npm run build" />
-  </Target>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
   </ItemGroup>
@@ -24,6 +20,7 @@
     <Compile Remove="Controllers\Asignacion\**" />
     <Compile Remove="Pages\ReporteCompra\**" />
     <Compile Remove="Pages\Shared\**" />
+    <Compile Remove="src\**" />
     <Compile Remove="Views\ComprobanteImportacion\**" />
     <Compile Remove="wwwroot\js\controllers\almacen\**" />
     <Compile Remove="wwwroot\js\controllers\config\**" />
@@ -37,6 +34,7 @@
     <Content Remove="Controllers\Asignacion\**" />
     <Content Remove="Pages\ReporteCompra\**" />
     <Content Remove="Pages\Shared\**" />
+    <Content Remove="src\**" />
     <Content Remove="Views\ComprobanteImportacion\**" />
     <Content Remove="wwwroot\js\controllers\almacen\**" />
     <Content Remove="wwwroot\js\controllers\config\**" />
@@ -50,6 +48,7 @@
     <EmbeddedResource Remove="Controllers\Asignacion\**" />
     <EmbeddedResource Remove="Pages\ReporteCompra\**" />
     <EmbeddedResource Remove="Pages\Shared\**" />
+    <EmbeddedResource Remove="src\**" />
     <EmbeddedResource Remove="Views\ComprobanteImportacion\**" />
     <EmbeddedResource Remove="wwwroot\js\controllers\almacen\**" />
     <EmbeddedResource Remove="wwwroot\js\controllers\config\**" />
@@ -63,6 +62,7 @@
     <None Remove="Controllers\Asignacion\**" />
     <None Remove="Pages\ReporteCompra\**" />
     <None Remove="Pages\Shared\**" />
+    <None Remove="src\**" />
     <None Remove="Views\ComprobanteImportacion\**" />
     <None Remove="wwwroot\js\controllers\almacen\**" />
     <None Remove="wwwroot\js\controllers\config\**" />
@@ -3628,7 +3628,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="src\" />
     <Folder Include="wwwroot\lib\angular-daterangepicker\" />
   </ItemGroup>
 

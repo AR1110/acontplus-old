@@ -1,0 +1,63 @@
+import { client } from "$utils/axiosClient.js";
+const url = "Mechanical/Vehicle/";
+
+async function get(params) {
+    return await client.get(`${url}?json=${params}`).then((response) => {
+        if (response.status != 200) return null;
+        return response.data;
+    }, (err) => {
+        console.log(err)
+        return null;
+    })
+}
+
+async function post(data) {
+    return await client.post(url, data).then((responseAxios) => {
+        if (responseAxios.status == 200) return { code: responseAxios.data.code, message: responseAxios.data.message };
+        else return { code: 0, message: responseAxios.status }
+    }, (err) => {
+        return { code: 0, message: err.status }
+    })
+}
+
+async function put(id, data) {
+    return await client.put(url + id, data).then((responseAxios) => {
+        if (responseAxios.status == 200) return { code: responseAxios.data.code, message: responseAxios.data.message };
+        else return { code: 0, message: responseAxios.status }
+    }, (err) => {
+        return { code: 0, message: err.status }
+    })
+}
+
+async function remove(id) {
+    return await client.delete(url + id).then((response) => {
+        if (response.status == 200)
+            return {
+                code: response.data ? "1" : "0",
+                message: response.data ? "Eliminado Correctamente" : "No se pudo Eliminar"
+            };
+        else return { code: 0, message: response.data }
+    }, (err) => {
+        return { code: 0, message: err.status }
+    })
+}
+
+async function putState(id, state) {
+    return await client.put(url + "PutState/" + id + "/" + state).then((response) => {
+        if (response.status == 200)
+            return {
+                code: response.data ? "1" : "0",
+                message: response.data ? "Actualizado Correctamente" : "No se pudo Actualizar"
+            };
+        else return { code: 0, message: response.data }
+    }, (err) => {
+        return { code: 0, message: err.status }
+    })
+}
+export const VehicleService = {
+    get,
+    post,
+    put,
+    remove,
+    putState
+}
