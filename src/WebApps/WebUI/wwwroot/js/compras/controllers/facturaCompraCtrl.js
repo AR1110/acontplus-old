@@ -2,9 +2,9 @@
 
     "use strict"
 
-    const TEMPLATE_URL = "~/Pages/FacturaCompra/";
+    const TEMPLATE_URL = "~/Pages/Compras/FacturaCompra/";
     const NAME_KEY_DETALLE_STORAGE = 'facturaCompraDetalle';
-    let tipoDoc = {};
+   
     let mainDataForm = {};
     let facturaCompraSvc = {};
     let fS = {};
@@ -32,12 +32,7 @@
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
 
-        const commonSvc = $injector.get('commonService');
-        tipoDoc = {
-            codigo: DOC_TYPE["FC"]
-        }
-
-
+        const commonSvc = $injector.get('commonService'); 
         $scope.proveedor = {
             nombreProveedor: "",
         };
@@ -189,20 +184,6 @@
             } catch (error) {
                 console.log(error)
             }
-            //   let controller = (await import("./../../" + MODAL_FILE_CTRL))[
-            //     MODAL_NUEVO["controller"]
-            //   ];
-            //   let template = MODAL_NUEVO["template"];
-
-            //   let params = {
-            //     TIPO_REGISTRO: "NUEVO",
-            //   };
-
-            //   $scope.openModalParam({
-            //     controller,
-            //     template,
-            //     params,
-            //   });
         };
 
         $scope.openModalDetalle = async (item) => {
@@ -313,10 +294,10 @@
                     facturaCompraSvc
                         .anular(item.id)
                         .then((response) => {
-                            if (response.code === "0") { 
+                            if (response.code === "0") {
                                 fS.sweetAlert("warning", response.message, response.titleSms);
                             }
-                            if (response.code === "1") { 
+                            if (response.code === "1") {
                                 fS.sweetAlert(
                                     "success",
                                     response.message,
@@ -326,9 +307,9 @@
                                 $scope.getFacturas();
                             }
                         })
-                        .catch((error) => { 
+                        .catch((error) => {
                             console.log(error);
-                        }).finally(()=>hideLoader())
+                        }).finally(() => hideLoader())
                 }
             } catch (error) {
                 hideLoader();
@@ -386,7 +367,9 @@
         let storageSvc = $injector.get('storageService');
 
         //Tipo Doc
-        $scope.tipoDoc = tipoDoc;
+        $scope.tipoDoc = {
+            codigo: 'C'
+        };
 
         console.log($scope.tipoDoc)
         $scope.establecimientos = [];
@@ -828,6 +811,7 @@
                 let index = $scope.gridOptions.data.indexOf(rowEntity);
                 $scope.gridOptions.data.splice(index, 1);
 
+                console.log(rowEntity)
                 if (rowEntity.idFacturaCompraDatalle > 0) {
                     detallesDeleted.push({
                         ...rowEntity,
@@ -1332,6 +1316,13 @@
                 return;
             }
 
+            let patronPuntoEmision = /^\d{3}-\d{3}$/;
+
+            if (!patronPuntoEmision.test($scope.data.puntoEmision)) {
+                tS.toastr("warning", "Ingrese un Punto de Emisión válido en el formato xxx-xxx!");
+                return 
+            }  
+
             if (!fS.isValidField($scope.data.nroDocumento)) {
                 tS.toastr("warning", "Ingrese el Nro. Documento!");
                 return;
@@ -1340,6 +1331,11 @@
             if (!fS.isValidField($scope.data.nroAutorizacion)) {
                 tS.toastr("warning", "Ingrese el Nro. de Autorización!");
                 return;
+            }
+
+            if ($scope.data.nroAutorizacion.length > 10) {
+                tS.toastr('warning', 'Número de Autorización tiene que tener 10 dígitos')
+                return
             }
 
             if (!fS.isValidField($scope.data.idTiempoCredito)) {
@@ -1443,7 +1439,7 @@
 
                         if (isRegister()) {
                             showLoader();
-                            facturaCompraSvc.save(query).then(response => {
+                            facturaCompraSvc.post(query).then(response => {
                                 if (response.code === '0') {
                                     fS.sweetAlert('warning', response.message, response.titleSms);
                                 }
@@ -1460,7 +1456,7 @@
                         }
 
                         if (isUpdate()) {
-                            facturaCompraSvc.update($scope.data.idFacturaCompra, query).then(response => {
+                            facturaCompraSvc.put($scope.data.idFacturaCompra, query).then(response => {
                                 if (response.code === '0') {
                                     fS.sweetAlert('warning', response.message, response.titleSms);
                                 }
@@ -1478,6 +1474,7 @@
                     }
                 });
             } catch (error) {
+                hideLoader();
                 console.log(error);
             }
         };

@@ -1,5 +1,5 @@
 @page
-@model WebUI.Pages.FacturaCompra.IndexModel
+@model IndexModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
@@ -251,10 +251,7 @@
 </div>
 
 
-@section Scripts {
-    @* <script src="~/js/services/storageService.min.js" asp-append-version="true"></script> *@
-    @* <script src="~/js/compras/services/facturaCompraService.js" asp-append-version="true"></script> *@
-    @* <script src="~/js/common/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script> *@
+@section Scripts {   
     <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
     <script src="~/js/compras/controllers/facturaCompraCtrl.min.js" asp-append-version="true"></script>
 }

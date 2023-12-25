@@ -5,16 +5,16 @@ using Compras.API.Interfaces;
 
 namespace Compras.API.Services
 {
-    public class NotaCreditoProveedorService: INotaCreditoProveedorService
+    public class CompraNoHabitualService : ICompraNoHabitualService
     {
         private readonly IADORepository _repository;
-        public NotaCreditoProveedorService(IADORepository repository)
+        public CompraNoHabitualService(IADORepository repository)
         {
             _repository = repository;
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("Compra.NotaCredito_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("Compra.Documento_Ingreso_Get", parameters);
             if (ds.Tables[0].Rows.Count == 0) { return null; }
             return DataConverters.DataSetToJSON(ds);
         }
@@ -25,16 +25,16 @@ namespace Compras.API.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Compra.NotaCredito_Insert", parameters);
+            return await _repository.SPExecuteAsync("Recepcion.CompraHabitual_Insert", parameters);
 
         }
 
-        public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Compra.NotaCredito_GetId", parameters, true);
-            if (ds.Tables[0].Rows.Count == 0) { return null; }
-            return DataConverters.DataSetToJSON(ds, true);
-        }
+        //public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
+        //{
+        //    var ds = await _repository.GetDataSetAsync("Compra.Liquidacion_Get_Id", parameters, true);
+        //    if (ds.Tables[0].Rows.Count == 0) { return null; }
+        //    return DataConverters.DataSetToJSON(ds, true);
+        //}
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
         {
@@ -43,13 +43,13 @@ namespace Compras.API.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Compra.NotaCredito_Update", parameters);
+            return await _repository.SPExecuteAsync("Recepcion.CompraHabitual_Update", parameters);
 
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Compra.NotaCredito_Delete", parameters);
+            return await _repository.SPExecuteAsync("Recepcion.CompraHabitual_Delete", parameters);
 
         }
     }

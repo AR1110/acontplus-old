@@ -10,13 +10,13 @@ namespace Compras.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotaCreditoProveedorController : ControllerBase
+    public class NotaCreditoController : ControllerBase
     {
         private IConfiguration _configuration;
-        private INotaCreditoProveedorService _ncpSvc;
+        private INotaCreditoService _ncpSvc;
         private LogWriter _log;
 
-        public NotaCreditoProveedorController(IConfiguration configuration, INotaCreditoProveedorService ncpSvc, LogWriter log)
+        public NotaCreditoController(IConfiguration configuration, INotaCreditoService ncpSvc, LogWriter log)
         {
             _configuration = configuration;
             _ncpSvc = ncpSvc;

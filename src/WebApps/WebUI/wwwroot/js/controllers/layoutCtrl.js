@@ -85,7 +85,7 @@ function layoutCtrl($scope, $rootScope, $window) {
         if (pathname.indexOf('/Home') == -1) {
             let lengthPath = pathname.split('/').splice(1).length;
 
-            if ([1, 2].includes(lengthPath)) {
+            if ([1, 2, 3].includes(lengthPath)) {
                 let dataMenu = $scope.subMenus.find(item => item.url === pathname);
                 if (dataMenu) {
                     $rootScope.usuarioPermiso = {
