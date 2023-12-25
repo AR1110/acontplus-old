@@ -127,7 +127,7 @@
       "destination": "wwwroot/lib/ngStorage/"
     },
     {
-      "library": "microsoft-signalr@7.0.14",
+      "library": "microsoft-signalr@8.0.0",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
