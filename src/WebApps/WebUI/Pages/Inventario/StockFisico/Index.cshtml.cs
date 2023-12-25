@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.StockFisico
+namespace WebUI.Pages.Inventario.StockFisico
 {
     public class IndexModel : PageModel
     {
