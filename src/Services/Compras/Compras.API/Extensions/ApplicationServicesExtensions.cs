@@ -18,7 +18,7 @@ namespace Compras.API.Extensions
             services.AddScoped<ILiquidacionCompraService, LiquidacionCompraService>();
             services.AddScoped<IFacturaCompraService, FacturaCompraService>();
             services.AddScoped<IOrdenCompraService, OrdenCompraService>();
-            services.AddScoped<INotaCreditoProveedorService, NotaCreditoProveedorService>();
+            services.AddScoped<INotaCreditoService, NotaCreditoService>();
 
             services.AddSingleton<LogWriter>();
             return services;

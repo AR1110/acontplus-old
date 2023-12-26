@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.FacturaCompra
+namespace WebUI.Pages.Compras.FacturaCompra
 {
     public class IndexModel : PageModel
     {

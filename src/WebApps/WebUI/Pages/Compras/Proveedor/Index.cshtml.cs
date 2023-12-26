@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.Proveedor
+namespace WebUI.Pages.Compras.Proveedor
 {
     public class IndexModel : PageModel
     {

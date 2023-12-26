@@ -1,6 +1,7 @@
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.Subfamilia
+namespace WebUI.Pages.Compras.CompraNoHabitual
 {
     public class IndexModel : PageModel
     {
