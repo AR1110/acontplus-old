@@ -222,8 +222,8 @@ app.constant('nombreModalCompra', {
         fileCtrl: '/js/common/modals/modalDocCompraDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'modalDocCompraDetalleCtrl',
         templates: {
-            LC: `~/Pages/${PATH_API_COMPRA}/LiquidacionCompra/_ModalDetalle.cshtml`,
-
+            LC: `~/Pages/${PATH_API_COMPRA}LiquidacionCompra/_ModalDetalle.cshtml`,
+            FC: `~/Pages/${PATH_API_COMPRA}FacturaCompra/_ModalDetalle.cshtml`,
         }
 
     },
@@ -233,7 +233,7 @@ app.constant('nombreModalCompra', {
             D: 'ModalFacturaDetalleCtrl',
         },
         templates: {
-            D: `~/Pages/${PATH_API_COMPRA}/FacturaCompra/_ModalDetalle.cshtml`
+            D: `~/Pages/${PATH_API_COMPRA}FacturaCompra/_ModalDetalle.cshtml`
         }
     },
     PROVEEDOR: {
@@ -244,14 +244,14 @@ app.constant('nombreModalCompra', {
             L: 'modalProveedorListaCtrl'
         },
         templates: {
-            M: `~/Pages/${PATH_API_COMPRA}/Proveedor/_ModalAddUpdate.cshtml`,
-            L: `~/Pages/${PATH_API_COMPRA}/Proveedor/_ModalLista.cshtml`
+            M: `~/Pages/${PATH_API_COMPRA}Proveedor/_ModalAddUpdate.cshtml`,
+            L: `~/Pages/${PATH_API_COMPRA}Proveedor/_ModalLista.cshtml`
         }
     },
     CATEGORIA_COMPRA: {
         fileCtrl: '/js/compras/modals/modalCategoriaCompraCtrl.js' + CHANGE_VERSION(),
         controller: 'modalCategoriaCompraCtrl',
-        template: `~/Pages/${PATH_API_COMPRA}/CategoriaCompra/_ModalAddUpdate.cshtml`,
+        template: `~/Pages/${PATH_API_COMPRA}CategoriaCompra/_ModalAddUpdate.cshtml`,
     },
     COMPRA_NO_HABITUAL: {
         fileCtrl: '/js/modal/compras/modalCompraNoHabitualCtrl.min.js' + CHANGE_VERSION(),
@@ -880,5 +880,6 @@ app.constant('CODE_REPORT', {
     P_NE: 'P-NE', //Aprobacion - Nota Entrega
     RLC: 'RLC', //Reporte Liquidacion Compra
     RCD: 'RCD', //Reporte Compra detalle
-    FC: 'FC'
+    RFC: 'RFC', //Reporte Factura Compra
+
 })

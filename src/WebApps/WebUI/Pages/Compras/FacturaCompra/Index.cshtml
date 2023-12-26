@@ -165,8 +165,7 @@
                                 <th md-column>Proveedor</th>
                                 <th md-column>Total</th>
                                 <th md-column>Abono</th>
-                                <th md-column>Saldo</th>
-                                <th md-column>N°. Ret.</th>
+                                <th md-column>Saldo</th> 
                                 <th md-column>Estado</th>
                                 <th md-column>Usuario</th>
                             </tr>
@@ -197,7 +196,7 @@
                                             <md-menu-item ng-if="accion.eliminar">
                                                 <md-button ng-click="askToDelete(f)">
                                                     <span md-menu-align-target><i class="ti-trash"></i>
-                                                        Eliminar</span>
+                                                        Anular</span>
                                                 </md-button>
                                             </md-menu-item>
 
@@ -211,15 +210,14 @@
                                         </md-menu-content>
                                     </md-menu>
                                 </td>
-                                <td md-cell>{{f.nroDocumento}}</td>
+                                <td md-cell>{{f.serieComprobante}}</td>
                                 <td md-cell>{{f.fechaEmision}}</td>
                                 <td md-cell>{{f.fechaVencimiento}}</td>
-                                <td md-cell>{{f.proveedor}}</td>
-                                <td md-cell>${{f.total}}</td>
+                                <td md-cell>{{f.razonSocialProveedor}}</td>
+                                <td md-cell>${{f.importeTotal}}</td>
                                 <td md-cell>${{f.abono}}</td>
-                                <td md-cell>${{f.saldo}}</td>
-                                <td md-cell>{{f.nroRetencion}}</td>
-                                <td md-cell>{{f.estadoFinanciero}}</td>
+                                <td md-cell>${{f.saldo}}</td> 
+                                <td md-cell>{{f.estado}}</td>
                                 <td md-cell>{{f.usuario}}</td>
                             </tr>
                             <tr ng-show="facturas.length ==0" class="text-center">
