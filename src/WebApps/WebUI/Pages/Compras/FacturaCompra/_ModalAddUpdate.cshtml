@@ -16,7 +16,7 @@
                 <div class="form-group">
                     <label for="categoria">Estab.: <span class="text-danger">*</span></label>
                     <select class="form-control border-select" ng-model="data.codEstab"
-                        ng-change="onChangeEstablecimiento()">
+                        ng-change="onChangeEstablecimiento()" ng-disabled="data.idFacturaCompra>0">
                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                             {{item.nombreComercial}}
                         </option>
@@ -146,7 +146,7 @@
                             <label>Tiempo Credito: </label>
                             <div class="input-group">
                                 <select class="form-control border-select" ng-model="data.idTiempoCredito"
-                                    ng-change="onChangeTiempoCredito()">
+                                    ng-change="onChangeTiempoCredito()" data.idFacturaCompra>0>
                                     <option ng-value="item.idTiempoCredito" ng-repeat="item in tiemposCredito">
                                         {{item.descripcion}}</option>
                                 </select>
@@ -210,8 +210,8 @@
                     <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <button type="submit" class="btn btn-block btn-lg btn-success mt-4"
                             id="btnSaveAndUpdateDocument">
-                            <i class="{{data.idLiquidacionCompra>0?'ti-pencil': 'ti-save'}}"></i>
-                            {{data.idLiquidacionCompra>0?'Actualizar': 'Guardar'}}
+                            <i class="{{data.idFacturaCompra>0?'ti-pencil': 'ti-save'}}"></i>
+                            {{data.idFacturaCompra>0?'Actualizar': 'Guardar'}}
                         </button>
                     </div>
                 </div>
@@ -296,14 +296,14 @@
                     <div id="drawImpuestoTotales"></div>
 
                 </div>
-                <div class="mt-2">
+                @* <div class="mt-2">
                     <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
                         open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento"
                         get-data-additional-document="resultModalDatoAdicional(result)"
                         ng-click="openModalInfoAdicional(false)">
                         <i class="fas fa-info-circle text-info"></i> Dato Adicional
                     </button>
-                </div>
+                </div> *@
             </div>
         </div>
 
