@@ -1201,19 +1201,27 @@ export class CommonService {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
-            }).then(function (response) {
-                if (response.ok) {
-                    toastr.success('Impresion correcta!', '', {
-                        positionClass: 'toast-bottom-right',
-                        progressBar: true
-                    })
-                } else {
-                    toastr.warning('Error!', '', {
-                        positionClass: 'toast-bottom-right',
-                        progressBar: true
-                    })
-                }
-            }).catch(function (error) {
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code == "0") {
+                        toastr.warning(data.message, '', {
+                            positionClass: 'toast-bottom-right',
+                            closeButton: true,
+                            preventDuplicates: true,
+                            progressBar: true
+                        })
+                    }
+                    if (data.code == "1") {
+                        toastr.success(data.message, '', {
+                            positionClass: 'toast-bottom-right',
+                            closeButton: true,
+                            preventDuplicates: true,
+                            progressBar: true
+                        })
+                    }
+                })
+                .catch(function (error) {
                 console.log('Hubo un problema al imprimir:' + error.message);
             })
         } catch (error) {
