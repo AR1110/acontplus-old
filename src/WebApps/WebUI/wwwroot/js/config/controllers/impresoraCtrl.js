@@ -61,7 +61,7 @@
         initialLoad();
 
         async function getLocalPrinters() {
-            mS.getData('get', `https://acontplusprint.com:9200/GetPrinters`, null, true, true).then(
+            mS.getData('get', `https://acontplusprint.com/GetPrinters`, null, true, true).then(
                 response => {
                     if (response.code == "1" && $scope.tipoRegistro == 1) {
                         $scope.localPrinters = JSON.parse(response.payload)
@@ -80,7 +80,7 @@
             if ($scope.printers.every(item => !item.isDefault)) {
                 $scope.data.isDefault = true;
             }
-            $scope.printers.length > 0 ? $scope.data.ipAddress = $scope.printers[0].ipAddress : $scope.data.ipAddress = '127.0.0.1:9200'
+            $scope.printers.length > 0 ? $scope.data.ipAddress = $scope.printers[0].ipAddress : $scope.data.ipAddress = 'acontplusprint.com'
             await getLocalPrinters();
             $('#addUpdatePrinter').modal('show')
         }
