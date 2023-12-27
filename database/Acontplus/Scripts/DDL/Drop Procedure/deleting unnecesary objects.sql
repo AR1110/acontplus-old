@@ -831,3 +831,9 @@ GO
 
 DROP PROCEDURE IF EXISTS aspLiquidacionCompraReporteGeneral
 GO
+
+DROP PROCEDURE IF EXISTS Compra.Factura_FindByProveedor
+GO
+
+DROP PROCEDURE IF EXISTS Compra.Factura_Get_Data_Form
+GO
