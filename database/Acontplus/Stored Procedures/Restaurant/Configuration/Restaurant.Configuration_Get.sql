@@ -35,7 +35,7 @@ BEGIN
     FROM Restaurant.v_Table rt
 	INNER JOIN Restaurant.v_Room rr ON rr.id = rt.roomId
 	INNER JOIN Restaurant.v_Floor rf ON rf.id = rr.floorId
-	WHERE rf.codEstab = @codEstab
+	WHERE rf.codEstab = @codEstab AND rt.Enabled = 1 
 	ORDER BY rt.numberTable ASC
 
     SELECT

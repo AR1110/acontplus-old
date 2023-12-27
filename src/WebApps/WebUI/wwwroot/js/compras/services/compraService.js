@@ -1363,4 +1363,373 @@
 
     })
 
+
+
+
+
+
+    /**
+     * 
+     * ORDEN COMPRA 
+     * 
+     */
+
+
+    app.factory('ordenCompraService', function ($injector) {
+
+        let url = 'Compra/OrdenCompra/'
+        let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario');
+
+        return {
+            getDataForm,
+            getDataFilter,
+            getAll,
+            generateSerieComprobante,
+            queryMapper,
+            post,
+            getId,
+            put,
+            anular,
+            getIdForInfo
+        }
+
+        function getDataForm() {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
+                if (response.code === '0') {
+                    throw response;
+                }
+                if (response.code === '1') {
+                    let results = JSON.parse(response.payload) || [];
+                    console.log(results)
+
+                    const { configDecimales, bodegas, impuestos, ptoEmi, tiempoCredito } = results;
+
+
+                    let dataToGroup = {
+                        estabs: ptoEmi, //Establecimientos con puntos de emision
+                        bodegas: bodegas, // Establecimientos con bodegas
+                        isGroupBodega: true
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
+                    let decimal = configDecimales[0];
+                    let tarifasImpuesto = impuestos;
+
+                    return {
+                        estabs,
+                        decimal,
+                        tarifasImpuesto,
+                        tiemposCredito: tiempoCredito
+                    }
+                }
+            })
+        }
+
+        function getDataFilter() {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
+
+                if (response.code === '0') {
+                    throw response;
+                }
+                if (response.code === '1') {
+                    let results = JSON.parse(response.payload) || [];
+                    const { ptoEmision, estadoDocumento } = results;
+
+                    let dataToGroup = {
+                        estabs: ptoEmision, //Establecimientos con puntos de emision 
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
+
+                    return {
+                        estabs,
+                        estadosDoc: estadoDocumento
+                    }
+
+                }
+            })
+        }
+
+        function getAll(query) {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
+
+                if (typeof response === 'object') {
+                    const { comprobante } = JSON.parse(response.payload);
+                    console.log(JSON.parse(response.payload))
+                    return comprobante.map(item => ({
+                        codEstab: item.codEstab,
+                        idOrdenCompra: item.idOrdenCompra,
+                        fechaEmision: item.fechaEmision,
+                        total: item.total,
+                        serieComprobante: item.serieComprobante,
+                        razonSocialProveedor: item.razonSocialProveedor,
+                        usuario: item.usuario,
+                    }))
+                }
+                return [];
+            })
+        }
+
+        function generateSerieComprobante(query) {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, typeList: 3 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let { serieComprobante } = JSON.parse(response.payload);
+                    let data = serieComprobante[0];
+                    return data.serieComprobante;
+                }
+            })
+        }
+
+        function queryMapper(obj) {
+            const { comprobante, detalles, detallesDeleted } = obj;
+
+            const comprobanteMapper = infoComprobanteMapperTo(comprobante);
+            const itemsMainMapper = detalleMapperTo(detalles);
+            const itemsDeletedMapper = detalleMapperTo(detallesDeleted)
+
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+
+            const mergeItems = [
+                ...itemsMainMapper,
+                ...itemsDeletedMapper
+            ]
+            return {
+                comprobante: comprobanteMapper,
+                detalles: mergeItems,
+                impuestos, 
+            }
+        }
+
+
+        function infoComprobanteMapperTo(data) {
+            const result = {
+                idProveedor: data.idProveedor,
+                idPuntoEmision: data.idPuntoEmision,
+                fechaEmision: fS.formatDateTimeZone(data.fechaEmision),
+                subTotalSinImpuestos: data.subTotalSinImpuestos,
+                porcentajeDescuento: data.porcentajeDescuento,
+                totalDescuento: data.totalDescuento,
+                total: data.total,
+                propina: data.propina || 0,
+                recargo: data.recargo || 0,
+                transporte: data.transporte || 0,
+                observacion: data.observacion || null,
+            }
+            return result;
+        }
+
+        function detalleMapperTo(items) {
+            let tempDetail = [];
+            let orderIndex = 0;
+            for (let item of items) {
+                let cantidadTransaccion = item.cantidad * (item.conversion || 1)
+                const obj = {
+                    idOrdenCompraDetalle: item.idOrdenCompraDetalle,
+                    orderIndex: orderIndex + 1,
+                    idArticulo: item.idArticulo,
+                    idBodega: item.idBodega,
+                    idMedida: item.idMedida,
+                    idTipoIva: item.idTipoIva,
+                    ice: item.ice,
+                    cantidad: item.cantidad,
+                    precioUnitario: item.precioUnitario,
+                    valorDescuento: item.valorDescuento,
+                    porcentajeDescuento: item.porcentajeDescuento,
+                    codigoPorcentaje: item.codigoPorcentaje,
+                    tarifa: item.tarifa,
+                    valorImpuesto: item.valorImpuesto,
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto,
+                    nota: item.nota,
+                    descripcion: item.descripcion,
+                    llevaInventario: item.llevaInventario,
+                    cantidadTransaccion: cantidadTransaccion,
+                    estado: item.estado
+                }
+
+                tempDetail.push(obj);
+            }
+            return tempDetail;
+        }
+
+
+        function post(data) {
+            return mS.getData('post', `${url}Insert`, { data }, true)
+        }
+        function getId(id) {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ typeList: 4, id })}`, null, true).then(
+                response => {
+                    if (response.code == "0") {
+                        throw response
+                    }
+                    if (response.code === "1") {
+                        const mainData = JSON.parse(response.payload);
+
+                        let { comprobante, proveedor, detalles, infoAdicional } = mainData;
+                        comprobante = comprobante[0];
+                        proveedor = proveedor[0];
+
+
+                        comprobante = {
+                            idDocumentoIngreso: comprobante.idDocumentoIngreso,
+                            idEstablecimiento: comprobante.idEstablecimiento,
+                            idPuntoEmision: comprobante.idPuntoEmision,
+                            codEstab: comprobante.codEstab,
+                            ptoEmi: comprobante.ptoEmi,
+                            nombreComercial: comprobante.nombreComercial,
+                            secuencial: comprobante.secuencial,
+                            fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                            subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
+                            totalDescuento: comprobante.descuento,
+                            porcentajeDescuento: comprobante.porcentajeDescuento || 0,
+                            total: comprobante.total,
+                            observacion: comprobante.observacion,
+                        }
+
+
+
+                        detalles = detalles.map((item, index) => {
+                            const { fraccionado, principal, etiqueta, ...restItem } = item;
+
+                            const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                            let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
+
+                            let etiquetasTemp = JSON.parse(etiqueta) || [];
+
+                            let etiquetasMapper = etiquetasTemp.map(item => ({
+                                idEtiqueta: item.idEtiqueta,
+                                descripcion: item.descripcion,
+                                etiquetas: item.etiquetas.split(';'),
+                            }))
+
+                            let porcentaje = restItem.descuento / restItem.precioUnitario;
+                            let porcentajeDescuento = porcentaje * 100;
+                            return {
+                                n: index + 1,
+                                idDetalle: restItem.idDetalle,
+                                idDocumentoIngresoDetail: restItem.idDocumentoIngresoDetail,
+                                idArticulo: restItem.idArticulo,
+                                idMedida: restItem.idMedida,
+                                idBodega: restItem.idBodega,
+                                idImpuesto: restItem.idImpuesto,
+                                idTipoIva: restItem.idTipoIva,
+                                codigo: restItem.codigo,
+                                descripcion: restItem.descripcion,
+                                cantidad: restItem.cantidad,
+                                precioUnitario: restItem.precioUnitario,
+                                valorDescuento: restItem.descuento,
+                                precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
+                                codigoPorcentaje: restItem.codigoPorcentaje,
+                                porcentajeDescuento: porcentajeDescuento || 0,
+                                tarifa: restItem.tarifa,
+                                valorImpuesto: restItem.valorImpuesto,
+                                datosAdicionales: restItem.datosAdicionales,
+                                llevaInventario: restItem.llevaInventario,
+                                estado: restItem.estado,
+                                ice: restItem.ice || 0,
+                                medidas,
+                                conversion: dataMedida.conversion | 1,
+                                etiquetas: etiquetasMapper,
+                            }
+
+                        })
+
+                        return {
+                            comprobante,
+                            proveedor,
+                            detalles,
+                            infoAdicionalDocumento: infoAdicional
+                        }
+
+                    }
+                }
+            )
+        }
+
+        function put(id, data) {
+            return mS.getData('put', `${url}${id}`, { data }, true)
+        }
+
+        function anular(id) {
+            return mS.getData('delete', `${url}${id}`, null, true)
+        }
+
+        function getIdForInfo(id) {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, typeList: 6 })}`, null, true).then(
+                response => {
+                    let mainData = JSON.parse(response.payload);
+
+                    let { comprobante, proveedor, detalles, impuestos } = mainData;
+                    comprobante = comprobante[0];
+                    proveedor = proveedor[0]
+
+                    proveedor = {
+                        ...proveedor,
+                        nombreProveedor: proveedor.nombreFiscal
+                    }
+
+                    comprobante = {
+                        idDocumentoIngreso: comprobante.idDocumentoIngreso,
+                        nombreComercial: comprobante.nombreComercial,
+                        fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                        totalSinImpuestos: comprobante.totalSinImpuestos,
+                        establecimiento: comprobante.nombreComercial,
+                        estab: comprobante.estab,
+                        ptoEmi: comprobante.ptoEmi,
+                        secuencial: comprobante.secuencial,
+                        descuento: comprobante.descuento,
+                        porcentajeDescuento: comprobante.porcentajeDescuento,
+                        importeTotal: comprobante.importeTotal,
+                        observacion: comprobante.observacion,
+                    }
+
+                    detalles = detalles.map((item, index) => {
+                        let porcentaje = item.descuento / item.precioUnitario;
+                        let porcentajeDescuento = porcentaje * 100;
+                        return {
+                            n: index + 1,
+                            idDocumentoIngresoDetail: item.idDocumentoIngresoDetail,
+                            codigo: item.codigo,
+                            descripcion: item.descripcion,
+                            cantidad: item.cantidad,
+                            precioUnitario: item.precioUnitario,
+                            valorDescuento: item.descuento,
+                            precioTotalSinImpuesto: item.precioTotalSinImpuesto,
+                            codigoPorcentaje: item.codigoPorcentaje,
+                            tarifa: item.tarifa,
+                            valorImpuesto: item.valorImpuesto,
+                            bodega: item.bodega,
+                            tipoIva: item.tipoIva,
+                            medida: item.medida,
+                            porcentajeDescuento: porcentajeDescuento,
+                            ice: item.valorIce || 0
+                        }
+                    })
+                    return {
+                        comprobante,
+                        proveedor,
+                        detalles,
+                        tarifasImpuesto: impuestos
+                    }
+                }
+            )
+        }
+
+        function dataAdicionalMapTo(datosAdicionales) {
+
+            return datosAdicionales.map(item => {
+                return {
+                    idArticulo: item.idArticulo,
+                    idEtiqueta: item.idEtiqueta,
+                    idInfoAdicional: item.idInfoAdicional || 0,
+                    jsonAdicional: JSON.stringify(item.adicionales)
+                }
+            });
+        }
+
+
+    })
+
 })(window.angular);
