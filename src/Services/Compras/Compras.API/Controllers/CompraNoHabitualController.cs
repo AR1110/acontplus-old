@@ -1,134 +1,122 @@
-﻿using Common.Core.Models;
+﻿using Azure.Core;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
-using Compras.API.Dtos;
+using Compras.API.Interfaces;
+using Compras.API.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Compras.API.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class CompraNoHabitualController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly DbAccess _db;
-        private readonly LogWriter _log;
-        public CompraNoHabitualController(IConfiguration configuration, LogWriter log)
+        private IConfiguration _configuration;
+        private ICompraNoHabitualService _compraNoHabSvc;
+        private LogWriter _log;
+
+        public CompraNoHabitualController(IConfiguration configuration, ICompraNoHabitualService compraNoHabSvc, LogWriter log)
         {
             _configuration = configuration;
-            _db = new DbAccess(_configuration);
+            _compraNoHabSvc = compraNoHabSvc;
             _log = log;
+
         }
-        // GET: api/<CompraNoHabitualController>
-        [HttpGet("{json}")]
+
+        [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-
-            GenericResponse _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Compra.Documento_Ingreso_Get");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
+                var response = await _compraNoHabSvc.GetAsync(new Dictionary<string, object> {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(json) }
+                });
+                if (response == null) { return NoContent(); };
+                return Ok(new { code = "1", payload = response });
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al obtener datos de Compra No Habitual: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener datos de Compra No Habitual");
+
+                _log.LogActivity("Error al listar Compra No Habitual: \n" + ex.ToString());
+                return BadRequest("Error on get: " + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ComprobanteDto data)
+        [HttpPost("Insert")]
+        public async Task<IActionResult> Insert(ApiRequest request)
         {
-
-            GenericResponse _response = new GenericResponse();
+            request.UserRoleId = User.GetUserRoleId();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Compra.Documento_Ingreso_Insert");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("comprobante", SqlStringParam.Sanitize(data.comprobante));
-                _db.AddDynamicParam("detalles", SqlStringParam.Sanitize(data.detalles));
-                _db.AddDynamicParam("impuestos", SqlStringParam.Sanitize(data.impuestos));
-                _db.AddDynamicParam("artInfoAdicionales", SqlStringParam.Sanitize(data.artInfoAdicionales));
-                _response = _db.GetDefault();
+                var response = await _compraNoHabSvc.AddAsync(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al guardar datos de Compra No Habitual: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al guardar los datos de Compra No Habitual");
+                _log.LogActivity("Error al crear compra no habitual: " + ex.ToString());
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
+
+        //[HttpGet("GetId/{id}")]
+        //public async Task<IActionResult> GetId(int id)
+        //{
+        //    try
+        //    {
+        //        var response = await _compraNoHabSvc.GetByIdAsync(new Dictionary<string, object> {
+        //            { "userRoleId", User.GetUserRoleId() },
+        //            { "id", id }
+        //        });
+        //        if (response == null) { return NoContent(); };
+        //        return Ok(new { code = "1", payload = response });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _log.LogActivity("Error al obtener datos de Compra No Habitual: \n" + ex.ToString());
+        //        return BadRequest("Error on get by id: " + ex.Message);
+        //    }
+        //}
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ComprobanteDto data)
+        public async Task<IActionResult> Put(int id, ApiRequest request)
         {
-
-            GenericResponse _response = new GenericResponse();
+            request.UserRoleId = User.GetUserRoleId();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Compra.Documento_Ingreso_Update");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("idDocumentoIngreso", id);
-                _db.AddDynamicParam("Comprobante", SqlStringParam.Sanitize(data.comprobante));
-                _db.AddDynamicParam("detalles", SqlStringParam.Sanitize(data.detalles));
-                _db.AddDynamicParam("impuestos", SqlStringParam.Sanitize(data.impuestos));
-                _db.AddDynamicParam("artInfoAdicionales", SqlStringParam.Sanitize(data.artInfoAdicionales));
-                _response = _db.GetDefault();
+                var response = await _compraNoHabSvc.UpdateAsync(id, request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al editar datos de Compra No Habitual: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al editar los datos de Compra No Habitual");
+                _log.LogActivity("Error al actualizar compra no habitual: " + ex.ToString());
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
-        [HttpPut("Cancel/{id}")]
-        public async Task<IActionResult> Cancel(int id)
-        {
 
-            GenericResponse _response = new GenericResponse();
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Compra.Documento_Ingreso_Update_Cancel");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("idDocumentoIngreso", id);
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>{
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id}
+                };
+                var response = await _compraNoHabSvc.DeleteAsync(parameters);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al anular datos de Compra No Habitual: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al anular los datos de Compra No Habitual");
+                _log.LogActivity("Error al eliminar doc. compra no habitual: " + ex.ToString());
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
+
     }
 }
