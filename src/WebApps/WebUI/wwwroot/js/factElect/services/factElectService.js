@@ -1165,4 +1165,65 @@
 
 
 
+    /**
+     * Retencion ATS version 2.0.0
+     */
+
+    app.factory('retencionAtsService', function ($injector) {
+        let url = 'FactElect/RetencionAts/';
+        let mS = $injector.get('mainService');
+        return {
+            getDataForm
+        }
+
+        function getDataForm() {
+            return mS.getData('get', `${url}${JSON.stringify({ tipo: 1 })}`, null, true).then(
+                response => {
+                    if (response.code === "0") {
+                        throw response;
+                    }
+                    if (response.code === "1") {
+                        let tempArray = JSON.parse(response.payload);
+                        const [
+                            tiposIdentificacion,
+                            tiposSujRetenido,
+                            documentos,
+                            sustentos,
+                            tiposPago,
+                            tiposRegimenFE,
+                            paises,
+                            paraisosFiscales,
+                            impuestos,
+                            tarifasImpuesto,
+                            impuestosRet,
+                            porcentajesRetIva,
+                            codigosRetencion,
+                            formasPago,
+                            establecimientos,
+                            puntosEmisionTemp
+                        ] = tempArray;
+                        return {
+                            tiposIdentificacion,
+                            tiposSujRetenido,
+                            documentos,
+                            sustentos,
+                            tiposPago,
+                            tiposRegimenFE,
+                            paises,
+                            paraisosFiscales,
+                            impuestos,
+                            tarifasImpuesto,
+                            impuestosRet,
+                            porcentajesRetIva,
+                            codigosRetencion,
+                            formasPago,
+                            establecimientos,
+                            puntosEmisionTemp
+                        }
+                    }
+                }
+            )
+        }
+    })
+
 })(window.angular);

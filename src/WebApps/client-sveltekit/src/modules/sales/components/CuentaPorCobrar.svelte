@@ -5,45 +5,27 @@
 	import 'flatpickr/dist/flatpickr.min.css';
 	import { cuentaPorCobrarService as cuentaPorCobrarSvc } from '$modules/sales/services/cuenta-por-cobrar-service';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
-	import { getFirstDayOfMonth, getLastDayOfMonth } from '$utils/utils';
+	import { getFirstDayOfMonth, getLastDayOfMonth, isValidField } from '$utils/utils';
 	import { sharedService as sharedSvc } from '$services/shared-service';
 	import toast from '$utils/toast';
 	import AdvancedSearch from '$components/AdvancedSearch.svelte';
 
 	import { CustomerService as customerSvc } from '$sales/services/customer-service';
-
-	type PtoEmi = {
-		idPuntoEmision: number;
-		ptoEmi: string;
-		defaultPtoEmi: boolean;
-	};
-	type Estab = {
-		idEstablecimiento: number;
-		nombreComercial: string;
-		codEstab: string;
-		defaultEstab: boolean;
-		puntosEmision: Array<PtoEmi>;
-	};
+	import type { Customer } from '$interfaces/customer';
+	import type { Establecimiento } from '$interfaces/establecimiento';
+	import type { PuntoEmision } from '$interfaces/punto-emision';
+	import type { TipoDocumento } from '$interfaces/tipo-documento';   
+	import { DOC_TYPE } from "$constants/constants"
+	
 	type EstadoDoc = {
 		idEstadoPago: number;
 		descripcion: string;
 		codigo: string;
 	};
-
-	type Customer = {
-		idCliente: number;
-		idTipoIdentificacion: number;
-		nombreFiscal: string;
-		nombreComercial: string;
-		numeroIdentificacion: string;
-		tipoIdentificacion: string;
-		codigoSri: string;
-		customerId: number;
-	};
-
-	let estabs: Array<Estab> = [];
-	let puntosEmision: Array<PtoEmi> = [];
+	let estabs: Array<Establecimiento> = [];
+	let puntosEmision: Array<PuntoEmision> = [];
 	let estadosDoc: Array<EstadoDoc> = [];
+	let tiposDoc: Array<TipoDocumento> = []
 
 	let dataSearch = {
 		codEstab: '',
@@ -52,7 +34,9 @@
 		fechaInicio: getFirstDayOfMonth(),
 		fechaFin: getLastDayOfMonth(),
 		idCliente: 0,
-		codEstado: '',
+		codEstado: '', 
+		codDoc: '',
+		ckCuotas: false,
 		ckCxcVencida: false
 	};
 
@@ -71,13 +55,13 @@
 			.then((response) => {
 				estabs = response.estabs;
 				estadosDoc = response.estadosDoc;
-				console.log(estadosDoc);
+				tiposDoc = response.tiposDoc; 
 				let dataEstab = estabs.find((estab) => estab.defaultEstab);
 				puntosEmision = dataEstab.puntosEmision;
 				let dataPuntoEmision = puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi);
 				dataSearch.codEstab = dataEstab.codEstab;
 				dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
-				console.log(puntosEmision);
+
 				if (estadosDoc.length > 0) {
 					dataSearch.codEstado = estadosDoc.find((estado) => estado.codigo === 'NCBR').codigo;
 				}
@@ -100,7 +84,6 @@
 				if (fechaFin) {
 					dataSearch.fechaFin = fechaFin;
 				}
-				console.log(dataSearch);
 			}
 		});
 		initiload();
@@ -182,29 +165,37 @@
 		dataSearch.idCliente = data.idCliente;
 		showCustomersFounded = false;
 	};
+
+	const getTipoDoc = ()=>{ 
+		if(dataSearch.codDoc===DOC_TYPE.FV){
+			return DOC_TYPE.FV_SRI;
+		}
+		return dataSearch.codDoc
+	}
 	const getReport = (format: 'excel' | 'pdf') => {
 		let dataParams = {
 			tipo: 1,
 			ckFecha: dataSearch.ckFecha,
 			codEstab: dataSearch.codEstab,
-			idCliente: dataSearch.idCliente,
-			codEstado: dataSearch.codEstado || null,
+			idCliente: isValidField(dataSearch.idCliente),
+			codEstado: isValidField(dataSearch.codEstado),
 			fechaInicio: flatpickr.formatDate(dataSearch.fechaInicio, 'Y-m-d h:i K'),
 			fechaFin: flatpickr.formatDate(dataSearch.fechaFin, 'Y-m-d h:i K'),
-			ckCxcVencida: dataSearch.ckCxcVencida
+			ckCxcVencida: dataSearch.ckCxcVencida,
+			ckCuotas: dataSearch.ckCuotas,
+			codDoc: isValidField(getTipoDoc())
 		};
-		console.log(dataParams);
+
 		const parameters = {
 			hasIdUsuarioRol: true,
 			reportParams: JSON.stringify({
 				hasParams: false,
-				codigo: dataSearch.ckCxcVencida ? 'CCCR' : 'CCR',
+				codigo: dataSearch.ckCuotas ? 'CCCR' : 'CCR',
 				format: format,
 				aditionalParams: []
 			}),
 			dataParams: JSON.stringify(dataParams)
 		};
-		console.log(parameters);
 		sharedSvc.download(parameters);
 	};
 </script>
@@ -269,7 +260,23 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-lg-6 col-md-6 col-sm-12 col-12">
+			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
+				<div class="form-group">
+					<label for="tipoDoc">Tipo Doc.</label>
+					<select
+						name="tipoDoc"
+						id="tipoDoc"
+						bind:value={dataSearch.codDoc}
+						class="form-control border-select"
+					>
+						<option value={''}>Todos</option>
+						{#each tiposDoc as tipoDoc}
+							<option value={tipoDoc.codigo}> {tipoDoc.descripcion}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
 				<div class="form-group" id="contentCustomerSearch">
 					<label for="customer-search"
 						>Cliente:
@@ -307,38 +314,21 @@
 					{/if}
 				</div>
 			</div>
-			<div class="col-lg-6 col-md-6 col-sm-12 col-12">
-				<!-- {#if dataSearch.idCliente > 0} -->
-				<div class="custom-control custom-switch">
-					<input
-						type="checkbox"
-						class="custom-control-input"
-						id="ckCxcVencida"
-						bind:checked={dataSearch.ckCxcVencida}
-					/>
-					<label class="custom-control-label" for="ckCxcVencida">Movimientos</label>
-				</div>
-				<!-- <div class="input-group">
-              <div class="input-group-prepend">
-                <div class="input-group-text">
-                  <div class="custom-control custom-checkbox mr-sm-2">
-                    <input
-                      type="checkbox"
-                      class="custom-control-input"
-                      id="ckCxcVencida"
-                      bind:checked={dataSearch.ckCxcVencida}
-                    />
-                    <label class="custom-control-label" for="ckCxcVencida" />
-                  </div>
-                </div>
-              </div>
-              <input
-                type="text"
-                class="form-control"
-                aria-label="Text input with checkbox"
-              />
-            </div> -->
-				<!-- {/if} -->
+			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
+				<div class="form-group mt-4">
+					<div class="form-check mr-sm-2">
+						<input type="checkbox" class="form-check-input" id="ckCuotas" bind:checked={dataSearch.ckCuotas}>
+						<label class="form-check-label" for="ckCuotas">Cuotas</label>
+					</div>
+				</div>  
+			</div>
+			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
+				<div class="form-group mt-4 flex-center">
+					<div class="form-check mr-sm-2">
+						<input type="checkbox" class="form-check-input" id="ckCxcVencida" bind:checked={dataSearch.ckCxcVencida}>
+						<label class="form-check-label" for="ckCxcVencida">Vencidas</label>
+					</div>
+				</div>  
 			</div>
 		</div>
 	</div>

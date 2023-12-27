@@ -58,3 +58,11 @@ export function groupEstabAndCreatePtoEmisionNodes(estabs) {
 export function reloadPage(thisPage) { 
   goto('/').then(() => goto(thisPage));
 }
+
+export const isValidField = function (field) {
+            let invalid = ["", null, undefined, 0].includes(field)
+            if (invalid) {
+                return null;
+            }
+            return field;
+        }

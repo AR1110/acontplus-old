@@ -35,15 +35,25 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="">Rango de Fechas</span>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <span for="date-range-filter">Rango Fechas: </span>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                    <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
+                                        class="custom-control-input" id="checkBoxFecha">
+                                    <label class="custom-control-label" for="checkBoxFecha"></label>
+                                </div>
+                            </div>
+                        </div>
+
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                                           end-date="dataSearch.fechaFin"
-                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
                     </div>
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="proveedorFiltro">Proveedor:</span>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
@@ -81,6 +91,17 @@
                 </div>
             </div>
             <div class="row" ng-if="moreSearchOptions">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                    <div class="form-gorup">
+                        <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
+                        <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
+                            class="form-control  border-select" ng-change="getComprasNoHabitual()">
+                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                {{item.ptoEmi}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
                 @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                 <span for="usuarioFiltro">Usuario</span>
@@ -96,18 +117,18 @@
                 </script>
                 </div>
                 </div> *@
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
-                        <select class="form-control" ng-model="dataSearch.estado" ng-change="getComprasNoHabitual()">
+                        <select class="form-control border-select" ng-model="dataSearch.codEstado" ng-change="getComprasNoHabitual()">
                             <option value="">Todos</option>
-                            <option ng-value="item.estado" ng-repeat="item in estadoDocs">
+                            <option ng-value="item.codigo" ng-repeat="item in estadoDocs">
                                 {{item.descripcion}}
                             </option>
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Nro. Documento</span>
                         <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial" placeholder="Ej: 23">
@@ -118,32 +139,23 @@
     </div>
 
     <div class="card">
-        <div class="card-body">
-            @* <md-toolbar class="md-table-toolbar md-default">
-            <div class="md-toolbar-tools">
+        <div class="card-body"> 
+            <div class="row">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color border-select" ng-model="dataSearch.pageSize"
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
 
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-            <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
-            class=" fas fa-filter"></i> Filtrar</button>
-            </div>
-            <div class="col-lg-6 col"></div>
-            <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-            <form class="form-material">
-            <div class="input-group">
-            <input type="text" class="form-control" ng-keyup="filterLocalLCompras()"
-            ng-model="txtFilter" placeholder="Buscar">
-            <div class="input-group-append">
-            <button type="button" class="btn btn-outline-secondary btn-xs"
-            ng-click="getComprasNoHabitual()">
-            <i class="fas fa-redo fa-xs"></i>
-            </button>
-            </div>
-            </div>
-            </form>
-            </div>
-            </div>
-            </md-toolbar> *@
-
+                <div class="col-6 d-flex justify-content-end">
+                    @* <form class="form-material">
+                        <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter"
+                            placeholder="Buscar">
+                    </form> *@
+                </div>
+            </div> 
             <md-table-container style="max-height: 400px;">
                 <table resize md-table>
                     <thead fix-head md-head>
@@ -176,7 +188,7 @@
                                         </md-menu-item>
 
                                         <md-menu-item>
-                                            <md-button ng-click="openModalEditar(item)">
+                                            <md-button ng-disabled="!(accion.editar && item.isUpdate)" ng-click="openModalEditar(item)">
                                                 <span md-menu-align-target>
                                                     <i class="ti-pencil"></i>
                                                     Editar
@@ -185,7 +197,7 @@
                                         </md-menu-item>
 
                                         <md-menu-item>
-                                            <md-button ng-click="askToDelete(item)">
+                                            <md-button ng-disabled="!(accion.anular && item.isDelete)" ng-click="askToDelete(item)">
                                                 <span md-menu-align-target>
                                                     <icon class="ti-na"></icon> Anular
                                                 </span>
@@ -197,7 +209,7 @@
                             </td>
                             <td md-cell>{{item.serieComprobante}}</td>
                             <td md-cell>{{item.fechaEmision}}</td>
-                            <td md-cell>{{item.nombreFiscal}}</td>
+                            <td md-cell>{{item.razonSocialProveedor}}</td>
                             <td md-cell>${{item.importeTotal}}</td>
                             <td md-cell>{{item.estado}}</td>
                             <td md-cell>{{item.usuario}}</td>
@@ -216,6 +228,11 @@
                     </tfoot>
                 </table>
             </md-table-container>
+        </div>
+        <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
 

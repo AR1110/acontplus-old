@@ -5,7 +5,7 @@
         <input type="checkbox" ng-model="showHeader" id="showHeader" class="form-control">
         <label for="showHeader">Datos del Proveedor</label>
         </div> *@
-        <span class="h5"><strong>Total: </strong>${{getImporteTotal()}}</span>
+        <span class="h5"><strong>Total: </strong>${{data.total}}</span>
     </div>
     <div class="modal-body">
         <div class="row">
@@ -15,7 +15,7 @@
 
                     <!--Nuevo-->
                     <select class="form-control border-select" ng-model="data.codEstab"
-                        ng-change="changeEstablecimiento()" ng-disabled="data.idDocumentoIngreso>0">
+                        ng-change="onChangeEstablecimiento()" ng-disabled="data.idDocumentoIngreso>0">
                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                             {{item.nombreComercial}}
                         </option>
@@ -27,8 +27,7 @@
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    <label for="puntoEmision">Punto Emision <span class="text-danger">*</span></label>
-
+                    <label for="puntoEmision">Punto Emision <span class="text-danger">*</span></label> 
                     <!--Nuevo-->
                     <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
                         ng-model="data.idPuntoEmision" ng-if="!(data.idDocumentoIngreso>0)">
@@ -138,8 +137,8 @@
                     <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <button type="submit" class="btn btn-block btn-lg btn-success mt-4"
                             id="btnSaveAndUpdateDocument">
-                            <i class="{{data.idLiquidacionCompra>0?'ti-pencil': 'ti-save'}}"></i>
-                            {{data.idLiquidacionCompra>0?'Actualizar': 'Guardar'}}
+                            <i class="{{data.idDocumentoIngreso>0?'ti-pencil': 'ti-save'}}"></i>
+                            {{data.idDocumentoIngreso>0?'Actualizar': 'Guardar'}}
                         </button>
                     </div>
                 </div>
