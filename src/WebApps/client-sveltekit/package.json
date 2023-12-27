@@ -11,8 +11,6 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@fontsource/fira-mono": "^4.5.10",
-    "@neoconfetti/svelte": "^1.0.0",
     "@sveltejs/adapter-auto": "^3.0.1",
     "@sveltejs/adapter-static": "^3.0.1",
     "@sveltejs/kit": "^2.0.6",
@@ -22,8 +20,8 @@
     "@types/jquery": "^3.5.29",
     "@types/tabulator-tables": "^5.32.1",
     "@types/toastr": "^2.1.43",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
+    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "@typescript-eslint/parser": "^6.16.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.35.1",
@@ -37,7 +35,7 @@
   },
   "type": "module",
   "dependencies": {
-    "axios": "^1.6.2",
+    "axios": "^1.6.3",
     "bootstrap": "^5.3.2",
     "chart.js": "^4.4.1",
     "file-saver": "^2.0.5",
