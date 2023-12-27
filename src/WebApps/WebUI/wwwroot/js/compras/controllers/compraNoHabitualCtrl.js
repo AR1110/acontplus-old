@@ -199,19 +199,7 @@
                     ckFecha: $scope.dataSearch.checkBoxFecha,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
-                }
-                // let query = {
-                //     typeList: 1,
-                //     codEstab: $scope.dataSearch.codEstab,
-                //     dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                //     dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                //     checkBoxProveedor: $scope.dataSearch.idProveedor > 0,
-                //     idProveedor: $scope.dataSearch.idProveedor,
-                //     checkBoxEstado: $scope.dataSearch.estado ? true : false,
-                //     estado: $scope.dataSearch.estado,
-                //     isSearchNroDoc: $scope.dataSearch.nroSecuencial ? true : false,
-                //     nroSecuencial: $scope.dataSearch.nroSecuencial
-                // };
+                } 
                 $scope.documentoIngreso = [];
                 sumImporteTotal();
                 showLoader();
@@ -268,23 +256,31 @@
         //Formulario Editar
         $scope.openModalEditar = async (item) => {
             try {
-                // let controller = (await import(fileCtrl))[controllers['MU']];
-                // let template = templates['MU'];
-
-                // let modalParams = {
-                //     controller,
-                //     template,
-                //     isRenderRazorPartial: true
-                // }
-                // showLoader();
-                // compraNoHabSvc.findById(item.idDocumentoIngreso).then(response => {
-                //     hideLoader();
-                //     modalParams.params = response;
-                //     $scope.openModal(modalParams)
-                // }).catch(error => {
-                //     hideLoader();
-                //     console.log(error);
-                // })
+                try {
+                    showLoader();
+                    compraNoHabSvc.getId(item.id).then(
+                        response => {
+                            modalSvc.openModalCustom({
+                                controller: 'modalCompraNoHabitualCtrl',
+                                template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                                size: 'xl',
+                                params: response,
+                                windowClass: 'uibModalFullScreen',
+                                isRenderRazorPartial: true
+                            }).result.then(result => {
+                                if (typeof result == 'object') {
+                                    $scope.getComprasNoHabitual();
+                                }
+                            })
+                        }
+                    )
+                    .catch(error=>{
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
+                } catch (error) {
+                    console.log(error);
+                }
             } catch (error) {
                 hideLoader();
                 console.log(error)

@@ -155,8 +155,7 @@
                             placeholder="Buscar">
                     </form> *@
                 </div>
-            </div>
-
+            </div> 
             <md-table-container style="max-height: 400px;">
                 <table resize md-table>
                     <thead fix-head md-head>
@@ -189,7 +188,7 @@
                                         </md-menu-item>
 
                                         <md-menu-item>
-                                            <md-button ng-click="openModalEditar(item)">
+                                            <md-button ng-disabled="!(accion.editar && item.isUpdate)" ng-click="openModalEditar(item)">
                                                 <span md-menu-align-target>
                                                     <i class="ti-pencil"></i>
                                                     Editar
@@ -210,7 +209,7 @@
                             </td>
                             <td md-cell>{{item.serieComprobante}}</td>
                             <td md-cell>{{item.fechaEmision}}</td>
-                            <td md-cell>{{item.nombreFiscal}}</td>
+                            <td md-cell>{{item.razonSocialProveedor}}</td>
                             <td md-cell>${{item.importeTotal}}</td>
                             <td md-cell>{{item.estado}}</td>
                             <td md-cell>{{item.usuario}}</td>

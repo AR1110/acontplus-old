@@ -131,6 +131,11 @@ app.constant('nombreModalFactElect', {
         fileCtrl: '/js/factElect/modals/modalNotaCreditoDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'modalNotaCreditoDetalleCtrl',
         template: '~/Pages/NotaCredito/_ModalDetalle.cshtml'
+    },
+    RETENCION_ATS: {
+        fileCtrl: '/js/factElect/modals/modalRetencionAtsCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalRetencionAtsCtrl',
+        template: '~/Pages/FactElect/_ModalAddUpdate.cshtml'
     }
 })
 

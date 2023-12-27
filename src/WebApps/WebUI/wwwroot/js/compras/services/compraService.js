@@ -1078,25 +1078,22 @@
 
         function getAll(query) {
             return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, typeList: 1 })}`, null, true).then(response => {
-                console.log(response)
+
                 if (typeof response === 'object') {
-                    const { liquidaciones } = JSON.parse(response.payload);
-                    return liquidaciones.map(item => ({
-                        codEstab: item.codEstab,
-                        idLiquidacionCompra: item.idLiquidacionCompra,
+                    const { documentos } = JSON.parse(response.payload);
+                    console.log(documentos)
+                    return documentos.map(item => ({
+                        id: item.id,
+                        serieComprobante: item.serieComprobante,
                         fechaEmision: item.fechaEmision,
-                        total: item.total,
-                        saldo: item.saldo,
-                        abono: item.abono,
-                        nroDocumento: item.nroDocumento,
-                        serieComprobante: item.nroDocumento,
-                        nombreFiscal: item.nombreFiscal,
-                        estadoFinanciero: item.estadoFinanciero,
-                        style: item.style,
+                        razonSocialProveedor: item.razonSocialProveedor,
+                        importeTotal: item.importeTotal,
+                        estado: item.estado,
                         usuario: item.usuario,
-                        codDoc: "LC",
+                        colorRow: item.colorRow,
                         codEstado: item.codEstado,
-                        totalRecords: item.totalRecords || 0
+                        isUpdate: item.codEstado === 'PE',
+                        isDelete: item.codEstado === 'PE'
                     }))
                 }
                 return [];
@@ -1190,50 +1187,44 @@
             return mS.getData('post', `${url}Insert`, { data }, true)
         }
         function getId(id) {
-            return mS.getData('get', `${url}GetId/${id}`, null, true).then(
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ typeList: 4, id })}`, null, true).then(
                 response => {
                     if (response.code == "0") {
                         throw response
                     }
                     if (response.code === "1") {
                         const mainData = JSON.parse(response.payload);
-                        const [comprobanteApi, proveedorApi, detalleApi, infoAdicionalDocumento, cuentaPorPagarApi] = mainData;
-                        let comprobante = comprobanteApi[0];
-                        const proveedor = proveedorApi[0];
-                        const cuentaPorPagar = cuentaPorPagarApi[0];
+                        console.log(mainData)
+                        let { comprobante, proveedor, detalles, infoAdicional } = mainData;
+                        comprobante = comprobante[0];
+                        proveedor = proveedor[0];
+
 
                         comprobante = {
-                            idLiquidacionCompra: comprobante.idLiquidacionCompra,
-                            codEstab: comprobante.codEstab,
+                            idDocumentoIngreso: comprobante.idDocumentoIngreso,
+                            idEstablecimiento: comprobante.idEstablecimiento,
                             idPuntoEmision: comprobante.idPuntoEmision,
-                            idTiempoCredito: cuentaPorPagar.idTiempoCredito,
-                            fechaEmision: fS.formatDate(comprobante.fechaEmision),
-                            fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
-                            fechaVencimiento: fS.formatDate(cuentaPorPagar.fechaVencimiento),
-                            subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
-                            estab: comprobante.estab,
+                            codEstab: comprobante.codEstab,
                             ptoEmi: comprobante.ptoEmi,
-                            nroDocumento: comprobante.nroDocumento,
-                            totalDescuento: comprobante.totalDescuento,
-                            porcentajeDescuento: comprobante.porcentajeDescuento,
-                            propina: comprobante.propina,
-                            recargo: comprobante.recargo,
-                            transporte: comprobante.transporte,
+                            nombreComercial: comprobante.nombreComercial,
+                            secuencial: comprobante.secuencial,
+                            fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                            subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
+                            descuento: comprobante.descuento,
                             total: comprobante.total,
                             observacion: comprobante.observacion,
-                            irbpnr: comprobante.irbpnr,
                         }
 
 
 
-                        const detalles = detalleApi.map((item, index) => {
-                            const { fraccionado, principal, etiquetas, ...restItem } = item;
+                        detalles = detalles.map((item, index) => {
+                            const { fraccionado, principal, etiqueta, ...restItem } = item;
 
                             const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
                             let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
-                            let etiquetasTemp = etiquetas || [];
+                            let etiquetasTemp = etiqueta || [];
                             let etiquetasMapper = etiquetasTemp.map(item => ({
                                 idEtiqueta: item.idEtiqueta,
                                 descripcion: item.descripcion,
@@ -1241,31 +1232,28 @@
                             }))
 
                             return {
-                                n: index + 1,
-                                idLiquidacionCompraDetalle: item.idLiquidacionCompraDetalle,
-                                idBodega: item.idBodega,
-                                idArticulo: item.idArticulo,
-                                idMedida: item.idMedida,
-                                idTipoIva: item.idTipoIva,
-                                idImpuesto: item.idImpuesto,
-                                codigo: item.codigo,
-                                descripcion: item.descripcion,
-                                cantidad: item.cantidad,
-                                precioUnitario: item.precioUnitario,
-                                porcentajeDescuento: item.porcentajeDescuento,
-                                valorDescuento: item.valorDescuento,
-                                precioTotalSinImpuesto: item.precioTotalSinImpuesto,
-                                codigoPorcentaje: item.codigoPorcentaje,
-                                tarifa: item.tarifa,
-                                valorImpuesto: item.valorImpuesto,
-                                nota: item.nota,
-                                llevaInventario: item.llevaInventario,
-                                datosAdicionales: item.datosAdicionales,
+                                idDetalle: restItem.idDetalle,
+                                idDocumentoIngresoDetail: restItem.idDocumentoIngresoDetail,
+                                idArticulo: restItem.idArticulo,
+                                idMedida: restItem.idMedida,
+                                idBodega: restItem.idBodega,
+                                idTipoIva: restItem.idTipoIva,
+                                codigo: restItem.codigo,
+                                descripcion: restItem.descripcion,
+                                cantidad: restItem.cantidad,
+                                precioUnitario: restItem.precioUnitario,
+                                descuento: restItem.descuento,
+                                precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
+                                codigoPorcentaje: restItem.codigoPorcentaje,
+                                tarifa: restItem.tarifa,
+                                valorImpuesto: restItem.valorImpuesto,
+                                datosAdicionales: restItem.datosAdicionales,
+                                llevaInventario: restItem.llevaInventario,
+                                estado: restItem.estado,
+
                                 medidas,
-                                conversion: dataMedida.conversion,
-                                ice: item.ice,
-                                estado: item.estado,
-                                etiquetas: etiquetasMapper
+                                conversion: dataMedida.conversion | 1,
+                                etiquetas: etiquetasMapper,
                             }
 
                         })
@@ -1274,7 +1262,7 @@
                             comprobante,
                             proveedor,
                             detalles,
-                            infoAdicionalDocumento
+                            infoAdicionalDocumento: infoAdicional
                         }
 
                     }
