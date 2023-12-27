@@ -110,6 +110,10 @@
           <DataField>importeTotal</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="isDocPurchase">
+          <DataField>report</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesElectronicosVentas</rd:DataSetName>
@@ -2228,6 +2232,9 @@
             <Height>2.7798cm</Height>
             <Width>12.04398cm</Width>
             <ZIndex>7</ZIndex>
+            <Visibility>
+              <Hidden>=IIF( First(Fields!isDocPurchase.Value, "headerDs") = True, True, False)</Hidden>
+            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>

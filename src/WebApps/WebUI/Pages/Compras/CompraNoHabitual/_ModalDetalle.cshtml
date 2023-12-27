@@ -9,24 +9,15 @@
         <div class="row" ng-show="showHeader">
             <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
                 <div class="form-group" >
-                    <label for="categoria">Estab.: <span class="text-danger">*</span></label>
-
-                    <!--Nuevo-->
-                    <select class="form-control border-select" ng-model="data.codEstab" disabled>
-                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                            {{item.nombreComercial}}
-                        </option>
-                    </select>
-
+                    <label for="categoria">Estab.: <span class="text-danger">*</span></label> 
+                    <input type="text" ng-value="data.establecimiento" class="form-control border-select" disabled />
 
                 </div>
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    <label for="puntoEmision">Punto Emision <span class="text-danger">*</span></label>
-
-                    <!--Editar-->
+                    <label for="puntoEmision">Punto Emision <span class="text-danger">*</span></label>  
                     <input type="text" ng-value="data.ptoEmi"  class="form-control border-select" disabled />
                 </div>
             </div>
@@ -108,25 +99,9 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
 
-                            <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label>Transporte</label>
-                                    <input type="text" decimal ng-model="data.transporte" disabled
-                                        class="form-control border-select" placeholder="0.00" />
-                                </div>
-                            </div>
-
-                            <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <label>Rercargo</label>
-                                    <input type="text" decimal ng-model="data.recargo" disabled
-                                        class="form-control border-select" placeholder="0.00" />
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label>Observacion</label>
                                     <textarea class="form-control border-select" ng-model="data.observacion" touppercase
@@ -143,13 +118,7 @@
 
                     <div id="drawImpuestoTotalesDetalle"></div>
 
-                </div>
-                <div class="mt-2">
-                    <button type="button" is-view="true" class="btn btn-secondary btn-sm btn-lg btn-block"
-                        open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento">
-                        <i class="fas fa-info-circle text-info"></i> Dato Adicional
-                    </button>
-                </div>
+                </div> 
             </div>
         </div>
 

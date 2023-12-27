@@ -15,6 +15,7 @@ function modalDocCompraDetalleCtrl($scope, $uibModalInstance, $injector, $timeou
     const CODE_REPORT = $injector.get('CODE_REPORT');
     const liquidacionCompraSvc = $injector.get('liquidacionCompraService');
     const fcaturaCompraSvc = $injector.get('facturaCompraService')
+    const compraNoHabSvc = $injector.get('compraNoHabitualService')
     let gridOptionsSvc = $injector.get('gridOptionsCompraService');
     const fS = $injector.get('formulario');
     const commonSvc = $injector.get('commonService');
@@ -77,12 +78,39 @@ function modalDocCompraDetalleCtrl($scope, $uibModalInstance, $injector, $timeou
         }
     }
 
-    //Factura Compra
-    console.log(codDoc)
+    //Factura Compra 
     if (codDoc === DOC_TYPE['FC']) {
         try {
             showLoader();
             fcaturaCompraSvc.getIdForInfo(id).then(response => {
+                const {
+                    comprobante,
+                    proveedor,
+                    detalles,
+                    tarifasImpuesto
+                } = response;
+                $scope.data = comprobante;
+                $scope.proveedor = proveedor;
+                $scope.gridOptions.data = calculateTotalItems(detalles)
+                $scope.tarifasImpuesto = tarifasImpuesto;
+                renderedModal();
+            }).catch(error => {
+                console.warn(error)
+            }).finally(() => {
+                hideLoader();
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
+
+    //Compra No Habitual
+    if (codDoc === DOC_TYPE['CNH']) {
+        try {
+            showLoader();
+            compraNoHabSvc.getIdForInfo(id).then(response => {
                 const {
                     comprobante,
                     proveedor,
@@ -298,6 +326,10 @@ function modalDocCompraDetalleCtrl($scope, $uibModalInstance, $injector, $timeou
             },
             [DOC_TYPE.FC]: {
                 codDoc: DOC_TYPE.FC,
+                codigo: CODE_REPORT.RCD
+            },
+            [DOC_TYPE.CNH]: {
+                codDoc: DOC_TYPE.CNH,
                 codigo: CODE_REPORT.RCD
             }
         }

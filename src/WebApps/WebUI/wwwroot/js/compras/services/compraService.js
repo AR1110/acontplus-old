@@ -659,7 +659,7 @@
             return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 1 }), null, true).then(response => {
                 if (typeof response === 'object') {
                     let { facturas } = JSON.parse(response.payload);
-                    console.log(facturas)
+                    
                     return facturas.map(item => (
                         {
                             codDoc: 'FC',
@@ -1029,7 +1029,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    console.log(results)
+                    
                     const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito } = results;
 
 
@@ -1081,7 +1081,7 @@
 
                 if (typeof response === 'object') {
                     const { documentos } = JSON.parse(response.payload);
-                    console.log(documentos)
+                    
                     return documentos.map(item => ({
                         codDoc: 'CNH',
                         id: item.id,
@@ -1196,7 +1196,7 @@
                     }
                     if (response.code === "1") {
                         const mainData = JSON.parse(response.payload);
-                        console.log(mainData)
+                        
                         let { comprobante, proveedor, detalles, infoAdicional } = mainData;
                         comprobante = comprobante[0];
                         proveedor = proveedor[0];
@@ -1228,7 +1228,7 @@
                             let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
                             let etiquetasTemp = JSON.parse(etiqueta) || [];
-                            console.log(etiquetasTemp)
+                            
                             let etiquetasMapper = etiquetasTemp.map(item => ({
                                 idEtiqueta: item.idEtiqueta,
                                 descripcion: item.descripcion,
@@ -1288,73 +1288,60 @@
         }
 
         function getIdForInfo(id) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, tipo: 5 })}`, null, true).then(
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, typeList: 6 })}`, null, true).then(
                 response => {
                     let mainData = JSON.parse(response.payload);
-                    let { liquidacion, contabilidad, proveedor, detalles, infoAdicional, impuestos } = mainData;
-                    let comprobante = liquidacion[0];
-                    contabilidad = contabilidad[0];
+                    
+                    let { comprobante, proveedor, detalles, impuestos } = mainData;
+                    comprobante = comprobante[0];
                     proveedor = proveedor[0]
 
                     proveedor = {
                         ...proveedor,
                         nombreProveedor: proveedor.nombreFiscal
-                    }
-
-                    let { fechaEmision, fechaVencimiento } = comprobante;
-                    fechaEmision = fS.formatDate(comprobante.fechaEmision);
-                    fechaVencimiento = fS.formatDate(contabilidad.fechaVencimiento);
+                    } 
 
                     comprobante = {
-                        idLiquidacionCompra: comprobante.idLiquidacionCompra,
-                        codEstab: comprobante.codEstab,
-                        idPuntoEmision: comprobante.idPuntoEmision,
-                        tiempoCredito: contabilidad.tiempoCredito,
-                        establecimiento: comprobante.nombreComercial,
+                        idDocumentoIngreso: comprobante.idDocumentoIngreso,
+                        nombreComercial: comprobante.nombreComercial,
                         fechaEmision: fS.formatDate(comprobante.fechaEmision),
-                        fechaVencimiento: fS.formatDate(contabilidad.fechaVencimiento),
-                        subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
+                        totalSinImpuestos: comprobante.totalSinImpuestos,
+                        establecimiento: comprobante.nombreComercial,
                         estab: comprobante.estab,
                         ptoEmi: comprobante.ptoEmi,
-                        nroDocumento: comprobante.nroDocumento,
-                        totalDescuento: comprobante.totalDescuento,
+                        secuencial: comprobante.secuencial,
+                        descuento: comprobante.descuento,
                         porcentajeDescuento: comprobante.porcentajeDescuento,
-                        propina: comprobante.propina,
-                        recargo: comprobante.recargo,
-                        transporte: comprobante.transporte,
-                        total: comprobante.total,
+                        importeTotal: comprobante.importeTotal,
                         observacion: comprobante.observacion,
-                        irbpnr: comprobante.irbpnr,
-                        fechaEmisionEscrita: fS.getFechaEscrita(fechaEmision),
-                        fechaVencimientoEscrita: fS.getFechaEscrita(fechaVencimiento),
                     }
 
                     detalles = detalles.map((item, index) => {
+                        let porcentaje = item.descuento / item.precioUnitario;
+                        let porcentajeDescuento = porcentaje * 100;
                         return {
                             n: index + 1,
-                            idLiquidacionCompraDetalle: item.idLiquidacionCompraDetalle,
+                            idDocumentoIngresoDetail: item.idDocumentoIngresoDetail,
                             codigo: item.codigo,
                             descripcion: item.descripcion,
                             cantidad: item.cantidad,
                             precioUnitario: item.precioUnitario,
-                            porcentajeDescuento: item.porcentajeDescuento,
-                            valorDescuento: item.valorDescuento,
-                            ice: item.ice,
+                            valorDescuento: item.descuento,
                             precioTotalSinImpuesto: item.precioTotalSinImpuesto,
                             codigoPorcentaje: item.codigoPorcentaje,
                             tarifa: item.tarifa,
                             valorImpuesto: item.valorImpuesto,
-                            nota: item.nota,
                             bodega: item.bodega,
                             tipoIva: item.tipoIva,
                             medida: item.medida,
+                            porcentajeDescuento: porcentajeDescuento,
+                            ice: item.valorIce || 0
                         }
                     })
                     return {
                         comprobante,
                         proveedor,
                         detalles,
-                        infoAdicionalDocumento: infoAdicional,
                         tarifasImpuesto: impuestos
                     }
                 }

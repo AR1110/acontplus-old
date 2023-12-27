@@ -28,7 +28,7 @@
                     <div class="form-gorup">
                         <span for="establecimiento">Establecimiento</span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                                class="form-control  border-select" ng-change="getComprasNoHabitual()">
+                            class="form-control  border-select" ng-change="estabFilter()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -131,7 +131,8 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Nro. Documento</span>
-                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial" placeholder="Ej: 23">
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.secuencial"
+                            placeholder="Ej: 23">
                     </div>
                 </div>
             </div>
@@ -201,6 +202,12 @@
                                                 <span md-menu-align-target>
                                                     <icon class="ti-na"></icon> Anular
                                                 </span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.reporte">
+                                            <md-button ng-click="getReport(item)">
+                                                <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
                                             </md-button>
                                         </md-menu-item>
 

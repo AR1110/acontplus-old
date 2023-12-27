@@ -875,5 +875,5 @@ app.constant('CODE_REPORT', {
     RLC: 'RLC', //Reporte Liquidacion Compra
     RCD: 'RCD', //Reporte Compra detalle
     RFC: 'RFC', //Reporte Factura Compra
-
+    RCNH: 'RCNH' //PDF compra no habitual
 })

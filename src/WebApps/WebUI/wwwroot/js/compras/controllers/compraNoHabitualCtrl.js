@@ -24,11 +24,12 @@
 
 
     function compraNoHabitualCtrl($scope, $injector, nombreModalCompra) {
+        const CODE_REPORT = $injector.get('CODE_REPORT');
         compraNoHabSvc = $injector.get('compraNoHabitualService');
         commonSvc = $injector.get('commonService');
         modalSvc = $injector.get('modalService');
         tS = $injector.get('toastService');
-        fS = $injector.get('formulario'); 
+        fS = $injector.get('formulario');
 
         $scope.establecimientos = [];
         $scope.puntosEmision = [];
@@ -124,16 +125,16 @@
             if (dataPuntoEmision) {
                 $scope.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
             }
-            $scope.getComprasNoHabitua();
+            $scope.getComprasNoHabitual();
         }
 
         $scope.pagechanged = function () {
-            $scope.getComprasNoHabitua();
+            $scope.getComprasNoHabitual();
         };
 
         $scope.changePageSize = function () {
             $scope.dataSearch.pageIndex = 1;
-            $scope.getComprasNoHabitua();
+            $scope.getComprasNoHabitual();
         };
 
 
@@ -185,6 +186,17 @@
             try {
                 showLoader();
 
+                if ($scope.dataSearch.secuencial) {
+                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.secuencial)) {
+                        $scope.dataSearch.checkBoxFecha = true;
+                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        return
+                    }
+                    if (!($scope.dataSearch.idProveedor > 0)) {
+                        $scope.dataSearch.checkBoxFecha = false;
+                    }
+                }
+
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: fS.isValidField($scope.dataSearch.idPuntoEmision),
@@ -192,7 +204,7 @@
                     dateStart: $scope.dataSearch.fechaInicio,
                     dateEnd: $scope.dataSearch.fechaFin,
                     codEstado: fS.isValidField($scope.dataSearch.codEstado),
-                    secuencial: fS.isValidField($scope.dataSearch.secuencial),
+                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.secuencial),
                     ckFecha: $scope.dataSearch.checkBoxFecha,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
@@ -242,7 +254,6 @@
                 })
 
                 compraNoHabSvc.getDataForm().then(response => {
-                    console.log(response)
                     mainDataForm = response;
                 })
             } catch (error) {
@@ -344,6 +355,43 @@
             }
 
         }
+
+        $scope.getReport = function (item) {
+            try {
+                let format = 'pdf';
+                let dataParms = {
+                    id: item.id,
+                    tipo: 1
+                }
+
+                const parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo: CODE_REPORT.RCNH,
+                        codEstab: item.codEstab,
+                        format,
+                        aditionalParams: [
+
+                        ]
+                    }),
+                    dataParams: JSON.stringify(dataParms)
+                }
+
+                showLoader();
+                commonSvc.getReport({
+                    parameters,
+                    formatType: format
+                }).finally(() => hideLoader())
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+
+
+
+
 
     }
 
