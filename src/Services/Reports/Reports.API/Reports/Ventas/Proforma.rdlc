@@ -211,7 +211,7 @@
                   <Width>1.83286cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>9.48734cm</Width>
+                  <Width>9.19106cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.58177cm</Width>
@@ -226,7 +226,7 @@
                   <Width>1.61813cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.6975cm</Width>
+                  <Width>1.41476cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -788,7 +788,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -821,7 +820,7 @@
             <Top>7.25717cm</Top>
             <Left>0.18208cm</Left>
             <Height>1.2cm</Height>
-            <Width>20.59749cm</Width>
+            <Width>20.01846cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -931,7 +930,7 @@
                 <Top>1.55327cm</Top>
                 <Left>3.4462cm</Left>
                 <Height>0.6cm</Height>
-                <Width>5.1099cm</Width>
+                <Width>5.18928cm</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -965,7 +964,7 @@
                 <Top>2.2591cm</Top>
                 <Left>3.45847cm</Left>
                 <Height>0.6cm</Height>
-                <Width>5.09763cm</Width>
+                <Width>5.17701cm</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
@@ -1000,7 +999,7 @@
                 <Top>3.00021cm</Top>
                 <Left>3.42319cm</Left>
                 <Height>0.6cm</Height>
-                <Width>5.13291cm</Width>
+                <Width>5.21228cm</Width>
                 <ZIndex>2</ZIndex>
                 <Style>
                   <Border>
@@ -1071,7 +1070,7 @@
                 <Top>3.70604cm</Top>
                 <Left>3.42319cm</Left>
                 <Height>0.6cm</Height>
-                <Width>5.13291cm</Width>
+                <Width>5.21228cm</Width>
                 <ZIndex>4</ZIndex>
                 <Style>
                   <Border>
@@ -1215,7 +1214,7 @@
                 <Top>0.1416cm</Top>
                 <Left>0.3411cm</Left>
                 <Height>0.6cm</Height>
-                <Width>8.215cm</Width>
+                <Width>8.29438cm</Width>
                 <ZIndex>8</ZIndex>
                 <Style>
                   <Border>
@@ -1286,7 +1285,7 @@
                 <Top>0.81216cm</Top>
                 <Left>3.43546cm</Left>
                 <Height>0.6cm</Height>
-                <Width>5.12064cm</Width>
+                <Width>5.20002cm</Width>
                 <ZIndex>10</ZIndex>
                 <Style>
                   <Border>
@@ -1302,7 +1301,7 @@
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>0.22566cm</Top>
-            <Left>11.89663cm</Left>
+            <Left>11.3176cm</Left>
             <Height>4.83548cm</Height>
             <Width>8.88294cm</Width>
             <ZIndex>2</ZIndex>
@@ -1729,7 +1728,7 @@
             <Top>2.06202in</Top>
             <Left>0.07169in</Left>
             <Height>0.73958in</Height>
-            <Width>8.10924in</Width>
+            <Width>7.88128in</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -2274,7 +2273,7 @@
             </TablixRowHierarchy>
             <DataSetName>impuestoTotalDs</DataSetName>
             <Top>8.59829cm</Top>
-            <Left>14.41947cm</Left>
+            <Left>13.84044cm</Left>
             <Height>2.4cm</Height>
             <Width>6.36015cm</Width>
             <ZIndex>8</ZIndex>
@@ -2790,7 +2789,7 @@
             </TablixRowHierarchy>
             <DataSetName>impuestoIvaTotalDs</DataSetName>
             <Top>10.99829cm</Top>
-            <Left>14.41947cm</Left>
+            <Left>13.84044cm</Left>
             <Height>2.4cm</Height>
             <Width>6.3601cm</Width>
             <ZIndex>9</ZIndex>
@@ -2824,10 +2823,10 @@
         <Height>5.27492in</Height>
         <Style />
       </Body>
-      <Width>8.18095in</Width>
+      <Width>7.95299in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
-        <PageWidth>21.5cm</PageWidth>
+        <PageWidth>21cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
         <TopMargin>0.25cm</TopMargin>
