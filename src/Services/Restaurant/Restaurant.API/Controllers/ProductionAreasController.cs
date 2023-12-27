@@ -20,7 +20,7 @@ namespace Restaurant.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductionArea>>> GetProductionAreas()
         {
-            return await _context.ProductionAreas.ToListAsync();
+            return await _context.ProductionAreas.Where(x => x.Deleted == null).ToListAsync();
         }
 
         // POST: api/ProductionAreas
@@ -81,8 +81,7 @@ namespace Restaurant.API.Controllers
                 productionArea.Deleted = true;
                 productionArea.Enabled = false;
                 productionArea.UpdatedAt = DateTime.Now;
-
-                _context.Entry(productionArea).State = EntityState.Modified;
+                _context.Update(productionArea);
                 await _context.SaveChangesAsync();
                 return Ok("Eliminado exitosamente");
             }

@@ -55,7 +55,7 @@ BEGIN
 
 	SET @establecimientoId = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
     
-	IF NOT EXISTS (SELECT 1 FROM Config.Printer WITH (NOLOCK) WHERE EstablecimientoId = @establecimientoId)
+	IF NOT EXISTS (SELECT 1 FROM Config.Printer WITH (NOLOCK) WHERE EstablecimientoId = @establecimientoId AND [Enabled] = 1)
 		BEGIN
 			SELECT Common.ufnSpResponse ('0','No tienes ninguna impresora configurada', DEFAULT)
 			RETURN 
@@ -63,7 +63,7 @@ BEGIN
 
 	SELECT TOP 1 @urlPrinter = IpAddress
 	FROM Config.PrinterDocument     cd WITH (NOLOCK)
-	INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId
+	INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
 	INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId
 	WHERE cd.codDoc  = @codDoc
 	  AND i.EstablecimientoId = @establecimientoId 
