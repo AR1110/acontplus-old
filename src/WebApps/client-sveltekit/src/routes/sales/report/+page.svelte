@@ -3,5 +3,5 @@
 	import Tab from '$sales/components/Tabs.svelte';
 </script>
 
-<Breadcrumbs title="Reporte Ventas" action="" openNew={null} />
+<Breadcrumbs title="Reporte Contabilidad" action="" openNew={null} />
 <Tab />

@@ -1,3 +1,3 @@
-export function getEnumValueByKey(myEnum: any, key: string): string {
-    return myEnum[key as keyof typeof myEnum];
+export function getEnumValueByKey<T>(myEnum: T, key: keyof T) {
+    return myEnum[key];
 }
