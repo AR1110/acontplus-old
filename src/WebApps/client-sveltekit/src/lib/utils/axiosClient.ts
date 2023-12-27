@@ -20,6 +20,7 @@ function getCurrentRefreshToken() {
 
 function setRefreshedTokens(tokens) {
     console.log("set tokens...");
+    console.log(tokens)
 }
 
 async function logout() {
@@ -29,8 +30,8 @@ async function logout() {
     }
 }
 function getGateway() {
-    let decodedToken = Object.assign(jwt_decode(getCurrentAccessToken()));
-    let { urlGateway } = decodedToken
+    const decodedToken = Object.assign(jwt_decode(getCurrentAccessToken()));
+    const { urlGateway } = decodedToken
     return urlGateway;
 }
 
