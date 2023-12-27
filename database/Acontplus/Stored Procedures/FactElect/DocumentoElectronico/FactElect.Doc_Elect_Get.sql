@@ -144,8 +144,16 @@ BEGIN
 		        END
 	
 	        IF @codEstado >= 0
-		        BEGIN	
-			        SET @sql = @sql + 'AND de.codEstado = @codEstado '
+		        BEGIN
+                    
+                    IF @codEstado = 8 
+                        BEGIN
+                            SET @sql = @sql +  'AND codEstado NOT IN (4,6) '
+                        END 
+                    ELSE 
+                        BEGIN
+                            SET @sql = @sql + 'AND de.codEstado = @codEstado '
+                        END 
 		        END 
 		
 	        IF @idUsuario > 0
@@ -185,7 +193,7 @@ BEGIN
 
             SELECT idTipoDocumento,descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','03','04','06','07') ORDER BY codigoSri
 
-            SELECT idEstadoServicio, codigo as codEstado , descripcion FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE estado = 1 AND codigo IN (4,6)
+            SELECT idEstadoServicio, codigo as codEstado , descripcion FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE estado = 1 AND codigo IN (4,6,8)
 
             RETURN 
         END 

@@ -464,27 +464,9 @@ BEGIN
             RETURN 
         END 
 
-    --> Filter for report Cartera
+    --> Filter report 
     IF @tipo = 6
         BEGIN
-            SELECT idEstablecimiento
-                  ,nombreComercial
-                  ,codEstab
-                  ,idPuntoEmision
-                  ,ptoEmi + '-' + estab as ptoEmi
-                  ,defaultEstab
-                  ,defaultPtoEmi 
-            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
-
-            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NCBR','CBR')
-
-            RETURN 
-        END
-
-    -->Filter Reporte General
-    IF @tipo = 7
-        BEGIN
-
             SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
@@ -499,6 +481,7 @@ BEGIN
             SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
 
             RETURN 
-        END 
+        END
+
 END
 GO

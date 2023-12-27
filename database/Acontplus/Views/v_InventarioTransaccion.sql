@@ -64,8 +64,10 @@ SELECT t.idTransaccion
 						)
 			WHEN tt.codigo = 'E' AND td.codigo = 'IV'
 				   THEN(
-						SELECT TOP 1 estab + '-' + ptoEmi + '-' + RIGHT('000000000' + CONVERT(VARCHAR, secuencial), 9)
+						SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + RIGHT('000000000' + CONVERT(VARCHAR, secuencial), 9)
 						FROM Compra.Documento_Ingreso di  WITH (NOLOCK)
+                        INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON di.idPuntoEmision = pe.idPuntoEmision
+						INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON pe.codEstab = e.codEstab
 						WHERE di.idDocumentoIngreso = t.idDocumento
 						)
 			WHEN tt.codigo = 'S' AND td.codigo = 'FE'
