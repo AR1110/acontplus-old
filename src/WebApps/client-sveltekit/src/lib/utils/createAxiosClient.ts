@@ -2,6 +2,13 @@
 //for more see https://dev.to/mihaiandrei97/jwt-authentication-using-axios-interceptors-55be
 import axios from "axios";
 
+//fix error config
+declare module "axios" {
+    export interface AxiosRequestConfig {
+        authorization?: boolean;
+    }
+}
+
 export function createAxiosClient({
     options,
     getCurrentAccessToken,
