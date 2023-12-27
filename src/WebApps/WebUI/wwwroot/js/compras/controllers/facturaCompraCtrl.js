@@ -26,8 +26,7 @@
 
         const modalSvc = $injector.get('modalService');
         const CODE_REPORT = $injector.get('CODE_REPORT');
-        const nombreModalCompra = $injector.get('nombreModalCompra');
-        let DOC_TYPE = $injector.get('DOC_TYPE');
+        const nombreModalCompra = $injector.get('nombreModalCompra'); 
         facturaCompraSvc = $injector.get("facturaCompraService");
 
         fS = $injector.get('formulario');
@@ -930,6 +929,7 @@
                 diasCredito: item.diasCredito,
                 nombreFiscal: item.nombreFiscal,
                 nombreProveedor: item.nombreFiscal,
+                numeroIdentificacion: item.numeroIdentificacion
             };
         };
 

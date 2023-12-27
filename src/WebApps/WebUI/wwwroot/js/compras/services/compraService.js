@@ -19,7 +19,7 @@
                     }
                     if (response.code === "1") {
                         let { proveedores } = JSON.parse(response.payload);
-                        
+
                         return proveedores.map(proveedor => (
                             {
                                 idProveedor: proveedor.idProveedor,
@@ -123,7 +123,7 @@
                 tipo: 4,
                 identificacion: ruc
             };
-            return mS.getData("get", `${URL}?json=${JSON.stringify(params)}`, null, true).then(response => {             
+            return mS.getData("get", `${URL}?json=${JSON.stringify(params)}`, null, true).then(response => {
                 if (response.code === "0") {
                     return {
                         idProveedor: 0,
@@ -724,7 +724,7 @@
                     }
                     if (response.code === "1") {
                         let [comprobanteApi, proveedorApi, detallesApi, datosAdicionalesArticuloApi, cuentaPorPagar] = JSON.parse(response.payload);
-                
+
                         let comprobante = comprobanteApi[0];
                         let proveedor = proveedorApi[0];
                         cuentaPorPagar = cuentaPorPagar[0];
@@ -753,10 +753,18 @@
                         }
 
                         const detalles = detallesApi.map((item, index) => {
-                            const { principal, fraccionado, ...restItem } = item;
+                            const { principal, fraccionado, etiquetas, ...restItem } = item;
                             let medidas = fS.processAndSortMeasures(principal, fraccionado);
 
                             let dataMedida = medidas.find(medida => medida.idMedida === restItem.idMedida);
+
+
+                            let etiquetasTemp = etiquetas || [];
+                            let etiquetasMapper = etiquetasTemp.map(item => ({
+                                idEtiqueta: item.idEtiqueta,
+                                descripcion: item.descripcion,
+                                etiquetas: item.etiquetas.split(';'),
+                            }))
 
                             return {
                                 n: index + 1,
@@ -783,7 +791,8 @@
                                 estado: restItem.estado,
                                 conversion: dataMedida.conversion,
                                 precioCosto: dataMedida.precioCosto,
-                                medidas
+                                medidas,
+                                etiquetas: etiquetasMapper
                             }
 
 
@@ -998,212 +1007,364 @@
 
         let url = 'Compra/CompraNoHabitual/'
         let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario');
 
-        let service = {};
+        return {
+            getDataForm,
+            getDataFilter,
+            getAll,
+            generateSerieComprobante,
+            queryMapper,
+            post,
+            getId,
+            put,
+            anular,
+            getIdForInfo
+        }
 
-        /**
-         * 
-         * @param {*} params 
-         * - tipo 1: listado general 
-         * - tipo 2: datos para el formulario (create, update)
-         * - tipo 4: datos para actualizar 
-         * @returns 
-         */
-        service.get = (params) => {
-            return mS.getData('get', `${url}${JSON.stringify(params)}`, null, true).then(response => {
+        function getDataForm() {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ typeList: 2 })}`, null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
                 if (response.code === '1') {
-                    let mainData = JSON.parse(response.payload) || [];
+                    let results = JSON.parse(response.payload) || [];
+                    console.log(results)
+                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito } = results;
 
-                    if (params.typeList === 1) {
-                        let results = mainData[0];
-                        return results.map(item => ({
-                            colorRow: item.colorRow,
-                            estado: item.estado,
-                            fechaEmision: item.fechaEmision,
-                            idDocumentoIngreso: item.idDocumentoIngreso,
-                            importeTotal: item.importeTotal,
-                            nombreFiscal: item.nombreFiscal,
-                            serieComprobante: item.serieComprobante,
-                            usuario: item.usuario
-                        }))
+
+                    let dataToGroup = {
+                        estabs: ptoEmi, //Establecimientos con puntos de emision
+                        bodegas: estab, // Establecimientos con bodegas
+                        isGroupBodega: true
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
+                    let decimal = configDecimales[0];
+                    let tarifasImpuesto = impuestos;
+
+                    return {
+                        estabs,
+                        decimal,
+                        tarifasImpuesto,
+                        tiemposCredito: tiempoCredito
+                    }
+                }
+            })
+        }
+
+        function getDataFilter() {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ typeList: 5 })}`, null, true).then(response => {
+
+                if (response.code === '0') {
+                    throw response;
+                }
+                if (response.code === '1') {
+                    let results = JSON.parse(response.payload) || [];
+                    const { ptoEmision, estadoDocumento } = results;
+
+                    let dataToGroup = {
+                        estabs: ptoEmision, //Establecimientos con puntos de emision 
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
+
+                    return {
+                        estabs,
+                        estadosDoc: estadoDocumento
                     }
 
-                    if (params.typeList === 2) {
-                        let estabs = mainData[0];
-                        let puntosEmision = mainData[1];
-                        let bodegas = mainData[2];
-                        let decimal = mainData[3][0];
-                        let tarifasImpuesto = mainData[4]
-                        let tarifasImpuestoVigente = mainData[5];
-                        let config = mainData[6][0];
-                        return {
-                            estabs,
-                            puntosEmision,
-                            bodegas,
-                            decimal,
-                            tarifasImpuesto,
-                            tarifasImpuestoVigente,
-                            config,
+                }
+            })
+        }
+
+        function getAll(query) {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, typeList: 1 })}`, null, true).then(response => {
+                console.log(response)
+                if (typeof response === 'object') {
+                    const { liquidaciones } = JSON.parse(response.payload);
+                    return liquidaciones.map(item => ({
+                        codEstab: item.codEstab,
+                        idLiquidacionCompra: item.idLiquidacionCompra,
+                        fechaEmision: item.fechaEmision,
+                        total: item.total,
+                        saldo: item.saldo,
+                        abono: item.abono,
+                        nroDocumento: item.nroDocumento,
+                        serieComprobante: item.nroDocumento,
+                        nombreFiscal: item.nombreFiscal,
+                        estadoFinanciero: item.estadoFinanciero,
+                        style: item.style,
+                        usuario: item.usuario,
+                        codDoc: "LC",
+                        codEstado: item.codEstado,
+                        totalRecords: item.totalRecords || 0
+                    }))
+                }
+                return [];
+            })
+        }
+
+        function generateSerieComprobante(query) {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, typeList: 3 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let { serieComprobante } = JSON.parse(response.payload);
+                    let data = serieComprobante[0];
+                    return data.serieComprobante;
+                }
+            })
+        }
+
+        function queryMapper(obj) {
+            const { comprobante, detalles, detallesDeleted, datosAdicionalesArticulo } = obj;
+
+            const comprobanteMapper = infoComprobanteMapperTo(comprobante);
+            const itemsMainMapper = detalleMapperTo(detalles);
+            const itemsDeletedMapper = detalleMapperTo(detallesDeleted)
+
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+
+            const mergeItems = [
+                ...itemsMainMapper,
+                ...itemsDeletedMapper
+            ]
+            return {
+                comprobante: comprobanteMapper,
+                detalles: mergeItems,
+                impuestos,
+                artInfoAdicionales: datosAdicionalesArticulo
+            }
+        }
+
+
+        function infoComprobanteMapperTo(data) {
+            const result = {
+                idProveedor: data.idProveedor,
+                idPuntoEmision: data.idPuntoEmision,
+                fechaEmision: fS.formatDateTimeZone(data.fechaEmision),
+                totalSinImpuestos: data.subTotalSinImpuestos,
+                porcentajeDescuento: data.porcentajeDescuento,
+                descuento: data.totalDescuento,
+                importeTotal: data.total,
+                observacion: data.observacion || null,
+            }
+            return result;
+        }
+
+        function detalleMapperTo(items) {
+            let tempDetail = [];
+            let orderIndex = 0;
+            for (let item of items) {
+                let cantidadTransaccion = item.cantidad * (item.conversion || 1)
+                const obj = {
+                    idLiquidacionCompraDetalle: item.idLiquidacionCompraDetalle,
+                    orderIndex: orderIndex + 1,
+                    idArticulo: item.idArticulo,
+                    idBodega: item.idBodega,
+                    idMedida: item.idMedida,
+                    idTipoIva: item.idTipoIva,
+                    ice: item.ice,
+                    cantidad: item.cantidad,
+                    precioUnitario: item.precioUnitario,
+                    descuento: item.valorDescuento,
+                    porcentajeDescuento: item.porcentajeDescuento,
+                    codigoPorcentaje: item.codigoPorcentaje,
+                    tarifa: item.tarifa,
+                    valorImpuesto: item.valorImpuesto,
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto,
+                    nota: item.nota,
+                    descripcion: item.descripcion,
+                    llevaInventario: item.llevaInventario,
+                    cantidadTransaccion: cantidadTransaccion,
+                    estado: item.estado
+                }
+
+                tempDetail.push(obj);
+            }
+            return tempDetail;
+        }
+
+
+        function post(data) {
+            return mS.getData('post', `${url}Insert`, { data }, true)
+        }
+        function getId(id) {
+            return mS.getData('get', `${url}GetId/${id}`, null, true).then(
+                response => {
+                    if (response.code == "0") {
+                        throw response
+                    }
+                    if (response.code === "1") {
+                        const mainData = JSON.parse(response.payload);
+                        const [comprobanteApi, proveedorApi, detalleApi, infoAdicionalDocumento, cuentaPorPagarApi] = mainData;
+                        let comprobante = comprobanteApi[0];
+                        const proveedor = proveedorApi[0];
+                        const cuentaPorPagar = cuentaPorPagarApi[0];
+
+                        comprobante = {
+                            idLiquidacionCompra: comprobante.idLiquidacionCompra,
+                            codEstab: comprobante.codEstab,
+                            idPuntoEmision: comprobante.idPuntoEmision,
+                            idTiempoCredito: cuentaPorPagar.idTiempoCredito,
+                            fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                            fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
+                            fechaVencimiento: fS.formatDate(cuentaPorPagar.fechaVencimiento),
+                            subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
+                            estab: comprobante.estab,
+                            ptoEmi: comprobante.ptoEmi,
+                            nroDocumento: comprobante.nroDocumento,
+                            totalDescuento: comprobante.totalDescuento,
+                            porcentajeDescuento: comprobante.porcentajeDescuento,
+                            propina: comprobante.propina,
+                            recargo: comprobante.recargo,
+                            transporte: comprobante.transporte,
+                            total: comprobante.total,
+                            observacion: comprobante.observacion,
+                            irbpnr: comprobante.irbpnr,
                         }
-                    }
-                    if (params.typeList === 4) {
-                        return mainData;
-                    }
-                }
-            })
-        }
 
-        service.create = function (query) {
-            return mS.getData('post', url, query, true).then(response => {
-                return response
-            })
-        }
 
-        service.update = function (id, query) {
-            return mS.getData('put', url + id, query, true).then(response => {
-                return response;
-            })
-        }
 
-        service.updateStatus = (id) => {
-            return mS.getData('put', `${url}Cancel/${id}`, null, true).then(response => {
-                return response;
-            })
-        }
+                        const detalles = detalleApi.map((item, index) => {
+                            const { fraccionado, principal, etiquetas, ...restItem } = item;
 
-        service.findById = function (id) {
-            let query = JSON.stringify({
-                idDocumentoIngreso: id,
-                typeList: 4
-            })
-            return mS.getData('get', url + query, null, true).then(response => {
-                if (response.code === '0') {
-                    throw response;
-                }
-                if (response.code === '1') {
-                    let dataRepository = JSON.parse(response.payload);
+                            const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
-                    let comprobante = dataRepository[0][0];
-                    let proveedor = dataRepository[1][0];
-                    let detalles = dataRepository[2];
-                    let taxes = dataRepository[3];
-                    let bodegas = dataRepository[4];
-                    let decimal = dataRepository[5][0];
-                    let tipoIvas = dataRepository[6];
-                    let inventario = dataRepository[7][0];
-                    let datosAdicionales = dataRepository[8].map(item => {
+                            let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
+
+                            let etiquetasTemp = etiquetas || [];
+                            let etiquetasMapper = etiquetasTemp.map(item => ({
+                                idEtiqueta: item.idEtiqueta,
+                                descripcion: item.descripcion,
+                                etiquetas: item.etiquetas.split(';'),
+                            }))
+
+                            return {
+                                n: index + 1,
+                                idLiquidacionCompraDetalle: item.idLiquidacionCompraDetalle,
+                                idBodega: item.idBodega,
+                                idArticulo: item.idArticulo,
+                                idMedida: item.idMedida,
+                                idTipoIva: item.idTipoIva,
+                                idImpuesto: item.idImpuesto,
+                                codigo: item.codigo,
+                                descripcion: item.descripcion,
+                                cantidad: item.cantidad,
+                                precioUnitario: item.precioUnitario,
+                                porcentajeDescuento: item.porcentajeDescuento,
+                                valorDescuento: item.valorDescuento,
+                                precioTotalSinImpuesto: item.precioTotalSinImpuesto,
+                                codigoPorcentaje: item.codigoPorcentaje,
+                                tarifa: item.tarifa,
+                                valorImpuesto: item.valorImpuesto,
+                                nota: item.nota,
+                                llevaInventario: item.llevaInventario,
+                                datosAdicionales: item.datosAdicionales,
+                                medidas,
+                                conversion: dataMedida.conversion,
+                                ice: item.ice,
+                                estado: item.estado,
+                                etiquetas: etiquetasMapper
+                            }
+
+                        })
+
                         return {
-                            idArticulo: item.idArticulo,
-                            idEtiqueta: item.idEtiqueta,
-                            idInfoAdicional: item.idInfoAdicional,
-                            adicionales: JSON.parse(item.jsonAdicional),
-                            estado: item.estado,
+                            comprobante,
+                            proveedor,
+                            detalles,
+                            infoAdicionalDocumento
+                        }
+
+                    }
+                }
+            )
+        }
+
+        function put(id, data) {
+            return mS.getData('put', `${url}${id}`, { data }, true)
+        }
+
+        function anular(id) {
+            return mS.getData('delete', `${url}${id}`, null, true)
+        }
+
+        function getIdForInfo(id) {
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, tipo: 5 })}`, null, true).then(
+                response => {
+                    let mainData = JSON.parse(response.payload);
+                    let { liquidacion, contabilidad, proveedor, detalles, infoAdicional, impuestos } = mainData;
+                    let comprobante = liquidacion[0];
+                    contabilidad = contabilidad[0];
+                    proveedor = proveedor[0]
+
+                    proveedor = {
+                        ...proveedor,
+                        nombreProveedor: proveedor.nombreFiscal
+                    }
+
+                    let { fechaEmision, fechaVencimiento } = comprobante;
+                    fechaEmision = fS.formatDate(comprobante.fechaEmision);
+                    fechaVencimiento = fS.formatDate(contabilidad.fechaVencimiento);
+
+                    comprobante = {
+                        idLiquidacionCompra: comprobante.idLiquidacionCompra,
+                        codEstab: comprobante.codEstab,
+                        idPuntoEmision: comprobante.idPuntoEmision,
+                        tiempoCredito: contabilidad.tiempoCredito,
+                        establecimiento: comprobante.nombreComercial,
+                        fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                        fechaVencimiento: fS.formatDate(contabilidad.fechaVencimiento),
+                        subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
+                        estab: comprobante.estab,
+                        ptoEmi: comprobante.ptoEmi,
+                        nroDocumento: comprobante.nroDocumento,
+                        totalDescuento: comprobante.totalDescuento,
+                        porcentajeDescuento: comprobante.porcentajeDescuento,
+                        propina: comprobante.propina,
+                        recargo: comprobante.recargo,
+                        transporte: comprobante.transporte,
+                        total: comprobante.total,
+                        observacion: comprobante.observacion,
+                        irbpnr: comprobante.irbpnr,
+                        fechaEmisionEscrita: fS.getFechaEscrita(fechaEmision),
+                        fechaVencimientoEscrita: fS.getFechaEscrita(fechaVencimiento),
+                    }
+
+                    detalles = detalles.map((item, index) => {
+                        return {
+                            n: index + 1,
+                            idLiquidacionCompraDetalle: item.idLiquidacionCompraDetalle,
+                            codigo: item.codigo,
+                            descripcion: item.descripcion,
+                            cantidad: item.cantidad,
+                            precioUnitario: item.precioUnitario,
+                            porcentajeDescuento: item.porcentajeDescuento,
+                            valorDescuento: item.valorDescuento,
+                            ice: item.ice,
+                            precioTotalSinImpuesto: item.precioTotalSinImpuesto,
+                            codigoPorcentaje: item.codigoPorcentaje,
+                            tarifa: item.tarifa,
+                            valorImpuesto: item.valorImpuesto,
+                            nota: item.nota,
+                            bodega: item.bodega,
+                            tipoIva: item.tipoIva,
+                            medida: item.medida,
                         }
                     })
-
-                    // let datosAdicionales = dataRepository[8].map(item=>{
-                    //     if(typeof item.info=='string'){
-                    //         item.info = JSON.parse(item.info).map(item=>{
-                    //             let adicionales = JSON.parse(item.adicionales)
-                    //             return {
-                    //                 ...item,
-                    //                 adicionales
-                    //             }
-                    //         })
-                    //     }
-                    //     return item;
-                    // }) 
                     return {
                         comprobante,
                         proveedor,
                         detalles,
-                        taxes,
-                        bodegas,
-                        decimal,
-                        tipoIvas,
-                        inventario,
-                        datosAdicionales
+                        infoAdicionalDocumento: infoAdicional,
+                        tarifasImpuesto: impuestos
                     }
                 }
-            })
+            )
         }
 
-        /**
-         * 
-         * @param {*} param0 object
-         * @returns object
-         */
-        service.queryMapper = function ({ data, details, proveedor, idEstablecimiento, estab, ptoEmi, datosAdicionalesArticulo }) {
-            let comprobante = {
-                idEstablecimiento,
-                idPuntoEmision: data.idPuntoEmision,
-                idProveedor: proveedor.idProveedor,
-                estab,
-                ptoEmi,
-                fechaEmision: moment(data.fechaEmision).format('YYYY-MM-DD HH:mm:ss A'),
-                totalSinImpuestos: data.subTotalSinImpuestos,
-                importeTotal: data.total,
-                inventory: data.inventory,
-                tarifa: data.tarifa,
-                observacion: data.observacion
-            };
-
-            let query = {
-                comprobante: JSON.stringify(comprobante),
-                detalles: JSON.stringify(service.detalleMapTo(details)),
-                impuestos: JSON.stringify(service.taxesMapTo(details)),
-                artInfoAdicionales: JSON.stringify(service.dataAdicionalMapTo(datosAdicionalesArticulo))
-            }
-
-            return JSON.stringify(query)
-        }
-
-        service.detalleMapTo = function (detalles) {
-            let index = 0;
-
-            return detalles.map(item => {
-                let obj = {
-                    index: index++,
-                    idDocumentoIngresoDetail: item.idDocumentoIngresoDetail || 0,
-                    idArticulo: item.idArticulo,
-                    idMedida: item.idMedida,
-                    idBodega: item.idBodega,
-                    codigoPrincipal: item.codigoPrincipal,
-                    codigoAuxiliar: item.codigoAuxiliar,
-                    descripcion: item.descripcion,
-                    cantidad: item.cantidad,
-                    precioUnitario: item.precioUnitario,
-                    costoNeto: item.costoNeto,
-                    descuento: item.valorDescuento,
-                    precioTotalSinImpuesto: item.total,
-                    codigoPorcentaje: item.codigoPorcentaje,
-                    adicionales: item.adicionales
-                }
-                return obj;
-            })
-        }
-
-        service.taxesMapTo = function (detalles) {
-            let index = 1
-            return detalles.map(item => {
-                let obj = {
-                    index: index++,
-                    idArticulo: item.idArticulo,
-                    codigo: "2",
-                    codigoPorcentaje: item.codigoPorcentaje,
-                    tarifa: item.tarifa,
-                    baseImponible: item.total,
-                    valor: (item.tarifa / 100) * item.total,
-                }
-                return obj;
-            })
-
-        }
-
-        service.dataAdicionalMapTo = function (datosAdicionales) {
+        function dataAdicionalMapTo(datosAdicionales) {
             // let results = []
             // for(let item of datosAdicionales){
             //     for(let dataAdd of item.adicionales){
@@ -1226,21 +1387,7 @@
             });
         }
 
-        service.generateNroSecuencial = function (idPuntoEmision) {
-            let query = JSON.stringify({
-                idPuntoEmision,
-                typeList: 3
-            })
-            return mS.getData('get', `${url}${query}`, null, true).then(response => {
-                if (response.code === "0") {
-                    throw response;
-                }
-                if (response.code === "1") {
-                    return JSON.parse(response.payload)[0][0].serieComprobante
-                }
-            })
-        }
-        return service;
+
     })
 
 })(window.angular);

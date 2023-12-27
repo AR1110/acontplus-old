@@ -25,7 +25,7 @@ namespace Compras.API.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Recepcion.CompraHabitual_Insert", parameters);
+            return await _repository.SPExecuteAsync("Compra.Documento_Ingreso_Insert", parameters);
 
         }
 
@@ -43,13 +43,13 @@ namespace Compras.API.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Recepcion.CompraHabitual_Update", parameters);
+            return await _repository.SPExecuteAsync("Compra.Documento_Ingreso_Update", parameters);
 
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Recepcion.CompraHabitual_Delete", parameters);
+            return await _repository.SPExecuteAsync("Compra.Documento_Ingreso_Delete", parameters);
 
         }
     }
