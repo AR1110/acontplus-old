@@ -837,3 +837,7 @@ GO
 
 DROP PROCEDURE IF EXISTS Compra.Factura_Get_Data_Form
 GO
+
+
+DROP PROCEDURE IF EXISTS Compra.Documento_Ingreso_Update_Cancel
+go
