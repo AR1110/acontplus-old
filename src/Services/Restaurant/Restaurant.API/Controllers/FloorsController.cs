@@ -21,14 +21,14 @@ namespace Restaurant.API.Controllers
         [Route("Get")]
         public async Task<ActionResult<IEnumerable<Floor>>> Get()
         {
-            return await _context.Floors.ToListAsync();
+            return await _context.Floors.Where(x => x.Deleted == null).ToListAsync();
         }
 
         // GET: api/Floors
         [HttpGet("GetByCode/{codEstab}")]
         public async Task<ActionResult<IEnumerable<Floor>>> GetByCode(string codEstab)
         {
-            var floors = await _context.Floors.Where(x => x.CodEstab == codEstab).ToListAsync();
+            var floors = await _context.Floors.Where(x => x.CodEstab == codEstab && x.Deleted == null).ToListAsync();
             return floors;
         }
 
@@ -90,12 +90,10 @@ namespace Restaurant.API.Controllers
 
             floor.Deleted = true;
             floor.Enabled = false;
-            floor.UserId = User.GetUserId();
-
-            _context.Entry(floor).State = EntityState.Modified;
-
+            floor.UserId = User.GetUserId(); 
             try
             {
+                _context.Update(floor);
                 await _context.SaveChangesAsync();
                 return Ok();
             }

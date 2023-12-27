@@ -1,4 +1,4 @@
-import { client, uploadFile } from "$utils/axiosClient.js";
+import { client } from "$utils/axiosClient.js";
 const url = "Restaurant/Promotion/";
 
 async function get(params) {
@@ -16,8 +16,8 @@ async function get(params) {
 
 // Client for post method file
 async function post(data, file) {
-    return await uploadFile
-        .post(`${url}?json=${data}`, { file: file })
+    return await client
+        .post(`${url}?json=${data}`, { file: file }, { headers: { "Content-Type": "multipart/form-data" } })
         .then((response) => {
             let { status, data } = response;
             return { status, data };
@@ -29,8 +29,8 @@ async function post(data, file) {
 }
 
 async function put(id, data, file) {
-    return await uploadFile
-        .put(`${url + id}/?json=${data}`, { file: file })
+    return await client
+        .put(`${url + id}/?json=${data}`, { file: file }, { headers: { "Content-Type": "multipart/form-data" } })
         .then((response) => {
             let { status, data } = response;
             return { status, data };

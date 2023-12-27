@@ -1,5 +1,3 @@
-
-import axios from "axios";
 import { createAxiosClient } from "./createAxiosClient";
 import jwt_decode from "jwt-decode";
 
@@ -20,6 +18,7 @@ function getCurrentRefreshToken() {
 
 function setRefreshedTokens(tokens) {
     console.log("set tokens...");
+    console.log(tokens)
 }
 
 async function logout() {
@@ -29,8 +28,8 @@ async function logout() {
     }
 }
 function getGateway() {
-    let decodedToken = Object.assign(jwt_decode(getCurrentAccessToken()));
-    let { urlGateway } = decodedToken
+    const decodedToken = Object.assign(jwt_decode(getCurrentAccessToken()));
+    const { urlGateway } = decodedToken
     return urlGateway;
 }
 
@@ -45,31 +44,6 @@ export const client = createAxiosClient({
     getCurrentAccessToken,
     getCurrentRefreshToken,
     refreshTokenUrl: null,//refreshTokenUrl: REFRESH_TOKEN_URL,
-    logout,
-    setRefreshedTokens,
-});
-
-export const clientFile = (url, parameters) => {
-    return axios({
-        url: `${getGateway()}/gateway/` + url,
-        method: 'POST',
-        responseType: 'blob',
-        data: parameters,
-        headers: { 'Authorization': 'Bearer ' + getCurrentAccessToken() }
-    })
-};
-
-export const uploadFile = createAxiosClient({
-    options: {
-        baseURL: `${getGateway()}/gateway/`,
-        timeout: 300000,
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    },
-    getCurrentAccessToken,
-    getCurrentRefreshToken,
-    refreshTokenUrl: null,
     logout,
     setRefreshedTokens,
 });
