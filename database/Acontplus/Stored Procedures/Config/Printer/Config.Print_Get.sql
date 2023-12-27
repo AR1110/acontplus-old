@@ -127,12 +127,11 @@ BEGIN
 												    ELSE @codDoc
 									   END 
  						FROM Config.PrinterDocument     cd WITH (NOLOCK)
-						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId
+						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
 						INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId
 						WHERE cd.codDoc    = @codDoc
 						    AND i.EstablecimientoId = @establecimientoId 
 						    AND cd.[enabled]  = 1
-                            AND i.[Enabled] = 1
                             AND (i.Machine IS NOT NULL AND LEN(LTRIM(RTRIM(i.Machine))) > 0)
                             FOR JSON PATH
 					 )
@@ -140,7 +139,7 @@ BEGIN
 	SELECT  @dataSources = dataSources FROM Config.Documento_To_Print(@idDocument,@codDoc)
 
 	SELECT Common.ufnSpResponse ('1', 'Successful',
-    (SELECT IIF(@urlPrinter = '127.0.0.1:9100','http://' + @urlPrinter  ,'https://acontplusprint.com:9200') as urlPrinter 
+    (SELECT IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') as urlPrinter 
         ,@rdlcProps rdlcProps
         ,@dataSources dataSources
         ,@rdlcParams rdlcParams 

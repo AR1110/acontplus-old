@@ -5,6 +5,7 @@
 	import toast from '$utils/toast';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
 	import { goto } from '$app/navigation';
+    import { base } from "$app/paths";
 	import { reloadPage } from '$utils/utils';
 	export let newRecord;
 	export let editStatus;
@@ -305,7 +306,7 @@
 				});
 				newRecord = false;
 				setTimeout(() => {
-					reloadPage(window.location.pathname);
+					reloadPage(base + window.location.pathname);
 				}, 500);
 			})
 			.catch((error) => {
@@ -356,7 +357,7 @@
 				});
 				newRecord = false;
 				setTimeout(() => {
-					reloadPage(window.location.pathname);
+					reloadPage(base + window.location.pathname);
 				}, 500);
 			})
 			.catch((error) => {

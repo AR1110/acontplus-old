@@ -2,14 +2,13 @@
 
     'use strict';
 
-    const TEMPLATE_URL = '~/Pages/LiquidacionCompra/';
+    const TEMPLATE_URL = '~/Pages/Compras/LiquidacionCompra/';
     let mainDataForm = {};
     let liquidacionCompraSvc = {};
     let commonSvc = {};
     let tS = {};
     let fS = {};
-    let modalSvc = {};
-    let tipoDoc = {};
+    let modalSvc = {}; 
 
     app.controller('liquidacionCompraCtrl', liquidacionCompraCtrl);
 
@@ -25,14 +24,8 @@
         tS = $injector.get('toastService');
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
-        const CODE_REPORT = $injector.get('CODE_REPORT');
-        let DOC_TYPE = $injector.get('DOC_TYPE');
-        const nombreModalCompra = $injector.get('nombreModalCompra');
-
-        tipoDoc = {
-            codigo: DOC_TYPE["LC"]
-        }
-
+        const CODE_REPORT = $injector.get('CODE_REPORT'); 
+        const nombreModalCompra = $injector.get('nombreModalCompra'); 
         $scope.proveedor = {
             nombreProveedor: ''
         }
@@ -359,7 +352,9 @@
         let gridOptionsSvc = $injector.get('gridOptionsCompraService')
 
         //Tipo Doc
-        $scope.tipoDoc = tipoDoc;
+        $scope.tipoDoc = {
+            codigo: 'C'
+        };
 
 
 

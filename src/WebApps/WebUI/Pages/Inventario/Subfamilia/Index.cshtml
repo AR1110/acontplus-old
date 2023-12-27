@@ -1,0 +1,127 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .thumbnail {
+        width: 100px;
+        height: auto;
+    }
+
+        .thumbnail:hover {
+            top: -50px;
+            left: -35px;
+            width: 500px;
+            height: auto;
+            display: block;
+            z-index: 999;
+            cursor: pointer;
+            -webkit-transition-property: all;
+            -webkit-transition-duration: 0.3s;
+            -webkit-transition-timing-function: ease;
+        }
+</style>
+<div ng-controller="subFamiliaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de SubFamilias</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button type="button" ng-if="accion.crear" btn-add-update-sub-familia results="resultModal(item)" class="btn btn-info m-l-15">
+                    <i class="ti-plus"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div class="d-flex justify-content-start">
+                                <span class="form-group pull-left page-size form-inline">
+                                    <select class="form-control control-color"
+                                            ng-model="dataSearch.pageSize"
+                                            ng-change="changePageSize()"
+                                            ng-options="ra for ra in recordsQuantity">
+                                    </select>
+                                </span>
+
+                                <span class="form-group pull-left page-size form-inline">
+                                    <button type="button" class="btn btn-success m-l-5" ng-click="exportTableToExcel()">
+                                        <i class="far fa-file-excel"></i> Exportar
+                                    </button>
+                                </span>
+
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div class="d-flex justify-content-end">
+                                <form class="form-material">
+                                    <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Sub Familia" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="table-responsive">
+                        <table class="table table-no-bordered ">
+                            <thead>
+                                <tr>
+                                    <th ng-if="accion.editar || accion.eliminar">Op</th>
+                                    <th>Imagen</th>
+                                    <th>N°</th>
+                                    <th>Familia</th>
+                                    <th>SubFamilia</th>
+                                    <th>codigo</th>
+                                    <th>Monto Objetivo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="sf in subFamilias | filter:buscar">
+                                    <td ng-if="accion.editar || accion.eliminar" style="vertical-align: middle">
+                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" btn-add-update-sub-familia results="resultModal(item)" params="sf"><i class="ti-pencil"></i></button>
+                                        <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs" ng-click="delete(sf)"><i class="ti-trash"></i></button>
+                                    </td>
+                                    <td style="vertical-align: middle">
+                                        <img class="img-fluid img-thumbnail" ng-class="{thumbnail: sf.s3ObjectUrl.length > 0}" width="50" src="{{sf.s3ObjectUrl}}" />
+                                    </td>
+                                    <td style="vertical-align: middle">{{$index+1}}</td>
+                                    <td style="vertical-align: middle">{{sf.nombreFamilia}}</td>
+                                    <td style="vertical-align: middle">{{sf.descripcion}}</td>
+                                    <td style="vertical-align: middle">{{sf.codigo}}</td>
+                                    <td style="vertical-align: middle">{{sf.montoObjetivo|currency:'$'}}</td>
+                                    <td style="vertical-align: middle" ng-bind-html="sf.estado|estadoPrimario"></td>
+                                </tr>
+                                <tr ng-if="subFamilias.length===0" class="text-center">
+                                    <td colspan="8">No hay registros en esta tabla</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td align="center" colspan="9">
+                                        <div class="pull-left">
+                                            <ul uib-pagination total-items="totalRecords" items-Per-Page="dataSearch.pageSize" ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize" class="pagination" boundary-links="true" rotate="false"></ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts{
+    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/controllers/subFamiliaCtrl.min.js" asp-append-version="true"></script>
+}

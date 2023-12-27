@@ -30,9 +30,10 @@ export class AppComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       let { token, route } = params
       if (token) {
-        if (this.authService.isLoggedIn != true) {
-          localStorage.setItem('access_token', token);
+        if (this.authService.isLoggedIn == true) {
+          localStorage.removeItem('access_token');
         }
+        localStorage.setItem('access_token', token);
         self.router.navigate(['/', getEnumValueByKey(GlobalRoutes, route)]);
       }
     });

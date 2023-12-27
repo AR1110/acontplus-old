@@ -12,10 +12,11 @@ modalDocCompraDetalleCtrl.$inject = [
 
 function modalDocCompraDetalleCtrl($scope, $uibModalInstance, $injector, $timeout, params) {
     const DOC_TYPE = $injector.get('DOC_TYPE');
+    const CODE_REPORT = $injector.get('CODE_REPORT');
     const liquidacionCompraSvc = $injector.get('liquidacionCompraService');
+    const fcaturaCompraSvc = $injector.get('facturaCompraService')
     let gridOptionsSvc = $injector.get('gridOptionsCompraService');
     const fS = $injector.get('formulario');
-    const CODE_REPORT = $injector.get('CODE_REPORT');
     const commonSvc = $injector.get('commonService');
 
     let { id, codDoc } = params;
@@ -63,6 +64,34 @@ function modalDocCompraDetalleCtrl($scope, $uibModalInstance, $injector, $timeou
                 $scope.proveedor = proveedor;
                 $scope.gridOptions.data = calculateTotalItems(detalles)
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                $scope.tarifasImpuesto = tarifasImpuesto;
+                renderedModal();
+            }).catch(error => {
+                console.warn(error)
+            }).finally(() => {
+                hideLoader();
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
+    //Factura Compra
+    console.log(codDoc)
+    if (codDoc === DOC_TYPE['FC']) {
+        try {
+            showLoader();
+            fcaturaCompraSvc.getIdForInfo(id).then(response => {
+                const {
+                    comprobante,
+                    proveedor,
+                    detalles,
+                    tarifasImpuesto
+                } = response;
+                $scope.data = comprobante;
+                $scope.proveedor = proveedor;
+                $scope.gridOptions.data = calculateTotalItems(detalles)
                 $scope.tarifasImpuesto = tarifasImpuesto;
                 renderedModal();
             }).catch(error => {
@@ -265,6 +294,10 @@ function modalDocCompraDetalleCtrl($scope, $uibModalInstance, $injector, $timeou
         const dataReport = {
             [DOC_TYPE.LC]: {
                 codDoc: DOC_TYPE.LC,
+                codigo: CODE_REPORT.RCD
+            },
+            [DOC_TYPE.FC]: {
+                codDoc: DOC_TYPE.FC,
                 codigo: CODE_REPORT.RCD
             }
         }

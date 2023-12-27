@@ -85,15 +85,25 @@ class BaseSearchArticulo {
 
     validarGetDataArticulo() {
         if (['FV', 'NE', 'PR', 'NC'].includes(this.tipoDoc.codigo)) {
-            this.getDataArticuloParaVenta()
+            this.getDataArticuloParaVenta();
+            return
+        }
+
+        if (['CIV'].includes(this.tipoDoc.codigo)) {
+            this.getId()
+            return
+        }
+
+
+        if (["C"].includes(this.tipoDoc.codigo)) {
+            this.getDataArticuloParaCompra();
+            return
         }
 
         if (['FC', 'IB', 'LC', 'NCP', 'OC', 'TRA', 'GR'].includes(this.tipoDoc.codigo)) {
             this.getDataArticuloParaCompra();
         }
-        if (['CIV'].includes(this.tipoDoc.codigo)) {
-            this.getId()
-        }
+
     }
 
 

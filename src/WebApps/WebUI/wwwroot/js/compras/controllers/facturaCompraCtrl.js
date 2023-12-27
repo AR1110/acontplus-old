@@ -2,9 +2,9 @@
 
     "use strict"
 
-    const TEMPLATE_URL = "~/Pages/FacturaCompra/";
+    const TEMPLATE_URL = "~/Pages/Compras/FacturaCompra/";
     const NAME_KEY_DETALLE_STORAGE = 'facturaCompraDetalle';
-    let tipoDoc = {};
+
     let mainDataForm = {};
     let facturaCompraSvc = {};
     let fS = {};
@@ -26,18 +26,13 @@
 
         const modalSvc = $injector.get('modalService');
         const CODE_REPORT = $injector.get('CODE_REPORT');
-
-        let DOC_TYPE = $injector.get('DOC_TYPE');
+        const nombreModalCompra = $injector.get('nombreModalCompra'); 
         facturaCompraSvc = $injector.get("facturaCompraService");
+
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
 
         const commonSvc = $injector.get('commonService');
-        tipoDoc = {
-            codigo: DOC_TYPE["FC"]
-        }
-
-
         $scope.proveedor = {
             nombreProveedor: "",
         };
@@ -68,7 +63,7 @@
                 abono = 0,
                 saldo = 0;
             for (let val of $scope.facturas) {
-                total += val.total;
+                total += val.importeTotal;
                 abono += val.abono;
                 saldo += val.saldo;
             }
@@ -189,123 +184,64 @@
             } catch (error) {
                 console.log(error)
             }
-            //   let controller = (await import("./../../" + MODAL_FILE_CTRL))[
-            //     MODAL_NUEVO["controller"]
-            //   ];
-            //   let template = MODAL_NUEVO["template"];
-
-            //   let params = {
-            //     TIPO_REGISTRO: "NUEVO",
-            //   };
-
-            //   $scope.openModalParam({
-            //     controller,
-            //     template,
-            //     params,
-            //   });
         };
 
-        $scope.openModalDetalle = async (item) => {
+        $scope.openModalDetalle = async (params) => {
             try {
-                showLoader();
-                let { MODAL_FILE_CTRL, MODAL_DETALLE } =
-                    _nombreModalConst.factura_compra;
-                let controller = (await import("./../../" + MODAL_FILE_CTRL))[
-                    MODAL_DETALLE["controller"]
-                ];
-                let template = MODAL_DETALLE["template"];
-
-                let response = await commonSvc.getDataTipoDocCompra({
-                    id: item.idFacturaCompra,
-                    codigoDocumento: TIPO_DOC.codigo,
-                });
-
-                if (!response.isComplete) return;
-
-                let params = {
-                    TIPO_REGISTRO: "DETALLE",
-                    data: response,
-                };
-
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params,
-                });
+                let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
+                let ctrl = (await import(fileCtrl))[controller];
+                let template = templates['FC'];
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template: template,
+                    size: 'xl',
+                    params: {
+                        codDoc: params.codDoc,
+                        id: params.id
+                    },
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                })
             } catch (error) {
                 console.log(error);
-            } finally {
-                hideLoader();
             }
-        };
+        }
 
         $scope.openModalEditar = async (item) => {
             try {
                 showLoader();
-                let { MODAL_FILE_CTRL, MODAL_EDITAR } =
-                    _nombreModalConst.factura_compra;
-                let controller = (await import("./../../" + MODAL_FILE_CTRL))[
-                    MODAL_EDITAR["controller"]
-                ];
-                let template = MODAL_EDITAR["template"];
-
-                let response = await commonSvc.getDataTipoDocCompra({
-                    id: item.idFacturaCompra,
-                    codigoDocumento: TIPO_DOC.codigo,
-                });
-
-                if (!response.isComplete) return;
-
-                let params = {
-                    TIPO_REGISTRO: "EDITAR",
-                    data: response,
-                };
-
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params,
-                });
+                facturaCompraSvc.getId(item.id).then(
+                    response => {
+                        modalSvc.openModalCustom({
+                            controller: 'modalFacturaCompraCtrl',
+                            template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                            size: 'xl',
+                            params: response,
+                            windowClass: 'uibModalFullScreen',
+                            isRenderRazorPartial: true
+                        }).result.then(result => {
+                            if (typeof result == 'object') {
+                                $scope.getFacturas();
+                            }
+                        })
+                    }
+                ).finally(() => hideLoader())
             } catch (error) {
                 console.log(error);
-            } finally {
-                hideLoader();
             }
-        };
-
-        $scope.openModalParam = async ({
-            controller,
-            template,
-            size = "xl",
-            params,
-        }) => {
-            _modalSvc
-                .openModalCustom({
-                    controller,
-                    template,
-                    size,
-                    params,
-                    windowClass: "uibModalFullScreen",
-                    isRenderRazorPartial: true,
-                })
-                .result.then((result) => {
-                    if (typeof result === "object") {
-                        $scope.getFacturas();
-                    }
-                });
-        };
+        }
 
         $scope.askToDelete = async (item) => {
             try {
                 let { isConfirmed } = await Swal.fire({
-                    title: "Eliminar Documento?",
-                    html: `<small>Esta Ud. seguro de eliminar este Factura</b> N° ${item.serieComprobante}</small>?`,
+                    title: "Anular Documento?",
+                    html: `<small>Esta Ud. seguro de anular el documento Nro. ${item.serieComprobante}</small>?`,
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    confirmButtonText: "Si, eliminar!",
-                    cancelButtonText: "No, cancelar",
+                    confirmButtonText: "Si!",
+                    cancelButtonText: "No",
                 });
 
                 if (isConfirmed) {
@@ -313,10 +249,10 @@
                     facturaCompraSvc
                         .anular(item.id)
                         .then((response) => {
-                            if (response.code === "0") { 
+                            if (response.code === "0") {
                                 fS.sweetAlert("warning", response.message, response.titleSms);
                             }
-                            if (response.code === "1") { 
+                            if (response.code === "1") {
                                 fS.sweetAlert(
                                     "success",
                                     response.message,
@@ -326,9 +262,9 @@
                                 $scope.getFacturas();
                             }
                         })
-                        .catch((error) => { 
+                        .catch((error) => {
                             console.log(error);
-                        }).finally(()=>hideLoader())
+                        }).finally(() => hideLoader())
                 }
             } catch (error) {
                 hideLoader();
@@ -338,27 +274,31 @@
 
         //Reporte
         $scope.getReport = function (item) {
-            let dataParms = {
-                codEstab: item.codEstab,
-                id: item.idFacturaCompra,
-                isReportImported: false,
-            };
+            try {
+                let dataParms = {
+                    id: item.id,
+                    isReportImported: false,
+                };
 
-            let parameters = {
-                hasService: true,
-                reportParams: JSON.stringify({
-                    codigo: "RFC",
-                    codEstab: item.codEstab,
-                    format: "pdf",
-                    aditionalParams: [],
-                }),
-                dataParams: JSON.stringify(dataParms),
-            };
+                let parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        codigo: CODE_REPORT.RFC,
+                        codEstab: item.codEstab,
+                        format: "pdf",
+                        aditionalParams: [],
+                    }),
+                    dataParams: JSON.stringify(dataParms),
+                };
 
-            commonSvc.getReport({
-                parameters,
-                formatType: "pdf",
-            });
+                showLoader();
+                commonSvc.getReport({
+                    parameters,
+                    formatType: "pdf",
+                }).finally(() => hideLoader())
+            } catch (error) {
+                hideLoader();
+            }
         };
     }
 
@@ -386,9 +326,11 @@
         let storageSvc = $injector.get('storageService');
 
         //Tipo Doc
-        $scope.tipoDoc = tipoDoc;
+        $scope.tipoDoc = {
+            codigo: 'C'
+        };
 
-        console.log($scope.tipoDoc)
+
         $scope.establecimientos = [];
         $scope.bodegas = [];
         $scope.tiemposCredito = [];
@@ -551,10 +493,14 @@
 
                 if (
                     "comprobante" in params &&
-                    params.comprobante.idLiquidacionCompra > 0
+                    params.comprobante.idFacturaCompra > 0
                 ) {
-                    const { comprobante, proveedor, detalles, infoAdicionalDocumento } =
-                        params;
+                    const {
+                        comprobante,
+                        proveedor,
+                        detalles,
+                        datosAdicionalesArticulo
+                    } = params;
 
                     $scope.data = comprobante;
                     $scope.dataClone.codEstab = $scope.data.codEstab;
@@ -562,7 +508,7 @@
                     $scope.proveedor = proveedor;
                     $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
                     $scope.gridOptions.data = calculateTotalItems(detalles);
-                    $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                    $scope.datosAdicionalesArticulo = datosAdicionalesArticulo;
 
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.codEstab === $scope.data.codEstab
@@ -828,7 +774,7 @@
                 let index = $scope.gridOptions.data.indexOf(rowEntity);
                 $scope.gridOptions.data.splice(index, 1);
 
-                if (rowEntity.idFacturaCompraDatalle > 0) {
+                if (rowEntity.idFacturaCompraDetalle > 0) {
                     detallesDeleted.push({
                         ...rowEntity,
                         estado: 0,
@@ -926,7 +872,7 @@
 
         $scope.onChangeEstablecimiento = async function () {
             try {
-                if ($scope.data.idLiquidacionCompra > 0) {
+                if ($scope.data.idFacturaCompra > 0) {
                     tS.toastr("warning", "El Establecimiento no puede ser editada");
                     $scope.data.codEstab = $scope.dataClone.codEstab;
                     return;
@@ -983,10 +929,16 @@
                 diasCredito: item.diasCredito,
                 nombreFiscal: item.nombreFiscal,
                 nombreProveedor: item.nombreFiscal,
+                numeroIdentificacion: item.numeroIdentificacion
             };
         };
 
         $scope.onChangeTiempoCredito = function () {
+            if ($scope.data.idFacturaCompra > 0) {
+                tS.toastr("warning", "El tiempo crédito no puede ser editada");
+                $scope.data.fechaEmision = $scope.data.fechaEmisionDocCreado;
+                return;
+            }
             getFechaVencimiento();
         };
 
@@ -1332,6 +1284,13 @@
                 return;
             }
 
+            let patronPuntoEmision = /^\d{3}-\d{3}$/;
+
+            if (!patronPuntoEmision.test($scope.data.puntoEmision)) {
+                tS.toastr("warning", "Ingrese un Punto de Emisión válido en el formato xxx-xxx!");
+                return
+            }
+
             if (!fS.isValidField($scope.data.nroDocumento)) {
                 tS.toastr("warning", "Ingrese el Nro. Documento!");
                 return;
@@ -1340,6 +1299,11 @@
             if (!fS.isValidField($scope.data.nroAutorizacion)) {
                 tS.toastr("warning", "Ingrese el Nro. de Autorización!");
                 return;
+            }
+
+            if ($scope.data.nroAutorizacion.length > 10) {
+                tS.toastr('warning', 'Número de Autorización tiene que tener 10 dígitos')
+                return
             }
 
             if (!fS.isValidField($scope.data.idTiempoCredito)) {
@@ -1437,13 +1401,13 @@
                             data: $scope.data,
                             proveedor: $scope.proveedor,
                             detalles: $scope.gridOptions.data,
-                            detallesDeleted,
+                            detallesDeleted: detallesDeleted,
                             datosAdicionalesArticulo: $scope.datosAdicionalesArticulo
                         })
 
                         if (isRegister()) {
                             showLoader();
-                            facturaCompraSvc.save(query).then(response => {
+                            facturaCompraSvc.post(query).then(response => {
                                 if (response.code === '0') {
                                     fS.sweetAlert('warning', response.message, response.titleSms);
                                 }
@@ -1460,7 +1424,8 @@
                         }
 
                         if (isUpdate()) {
-                            facturaCompraSvc.update($scope.data.idFacturaCompra, query).then(response => {
+                            showLoader();
+                            facturaCompraSvc.put($scope.data.idFacturaCompra, query).then(response => {
                                 if (response.code === '0') {
                                     fS.sweetAlert('warning', response.message, response.titleSms);
                                 }
@@ -1478,6 +1443,7 @@
                     }
                 });
             } catch (error) {
+                hideLoader();
                 console.log(error);
             }
         };

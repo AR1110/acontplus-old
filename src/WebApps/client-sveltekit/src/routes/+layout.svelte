@@ -3,10 +3,11 @@
 	import { GlobalRoutes } from '$constants/global-routes';
 	import { getEnumValueByKey } from '$utils/constant-value';
 	import { onMount } from 'svelte';
-	// import Header from './layout/Header.svelte';
-	// import Sidebar from './layout/Sidebar.svelte';
-	// import RightSidebar from './layout/RightSidebar.svelte';
-	// import Footer from './layout/Footer.svelte';
+    import { base } from "$app/paths";
+	// import Header from '$modules/home/layout/Header.svelte';
+	// import Sidebar from '$modules/home/layout/Sidebar.svelte';
+	// import RightSidebar from '$modules/home/layout/RightSidebar.svelte';
+	// import Footer from '$modules/home/layout/Footer.svelte';
 	import '../assets/css/style.css';
 	import 'toastr/build/toastr.min.css';
 	import 'tabulator-tables/dist/css/tabulator.min.css';
@@ -32,7 +33,8 @@
 				localStorage.removeItem('token');
 			}
 			localStorage.setItem('token', token);
-			goto(getEnumValueByKey(GlobalRoutes, route));
+            let moduleRoute = `${base}${getEnumValueByKey(GlobalRoutes, route)}` 
+			goto(moduleRoute);
 		}
 	});
 </script>
