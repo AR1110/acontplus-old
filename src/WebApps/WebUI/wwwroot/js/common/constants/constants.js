@@ -229,6 +229,7 @@ app.constant('nombreModalCompra', {
         templates: {
             LC: `~/Pages/${PATH_API_COMPRA}LiquidacionCompra/_ModalDetalle.cshtml`,
             FC: `~/Pages/${PATH_API_COMPRA}FacturaCompra/_ModalDetalle.cshtml`,
+            CNH: `~/Pages/${PATH_API_COMPRA}CompraNoHabitual/_ModalDetalle.cshtml`,
         }
 
     },
@@ -257,20 +258,7 @@ app.constant('nombreModalCompra', {
         fileCtrl: '/js/compras/modals/modalCategoriaCompraCtrl.js' + CHANGE_VERSION(),
         controller: 'modalCategoriaCompraCtrl',
         template: `~/Pages/${PATH_API_COMPRA}CategoriaCompra/_ModalAddUpdate.cshtml`,
-    },
-    COMPRA_NO_HABITUAL: {
-        fileCtrl: '/js/modal/compras/modalCompraNoHabitualCtrl.min.js' + CHANGE_VERSION(),
-        controllers: {
-            MN: 'ModalAddCtrl',
-            MU: 'ModalUpdateCtrl',
-            MD: 'ModalDetalleCtrl'
-        },
-        templates: {
-            MN: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml',
-            MU: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml',
-            MD: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalDetalle.cshtml'
-        }
-    },
+    }, 
     DOCUMENTO_RECIBIDO: {
         fileCtrl: '/js/compras/modals/docRecibidoPreviewCtrl.js' + CHANGE_VERSION(),
         controller: 'docRecibidoPreviewCtrl',
@@ -863,7 +851,8 @@ app.constant('DOC_TYPE', {
     NC_SRI: '04',
     APROB_DOC: '',
     LC: 'LC',
-    FC: 'FC'
+    FC: 'FC',
+    CNH: 'CNH'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",

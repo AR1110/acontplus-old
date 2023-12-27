@@ -197,7 +197,7 @@
                                         </md-menu-item>
 
                                         <md-menu-item>
-                                            <md-button ng-click="askToDelete(item)">
+                                            <md-button ng-disabled="!(accion.anular && item.isDelete)" ng-click="askToDelete(item)">
                                                 <span md-menu-align-target>
                                                     <icon class="ti-na"></icon> Anular
                                                 </span>

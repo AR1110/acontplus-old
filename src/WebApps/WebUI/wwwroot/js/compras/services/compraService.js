@@ -1083,6 +1083,7 @@
                     const { documentos } = JSON.parse(response.payload);
                     console.log(documentos)
                     return documentos.map(item => ({
+                        codDoc: 'CNH',
                         id: item.id,
                         serieComprobante: item.serieComprobante,
                         fechaEmision: item.fechaEmision,
@@ -1093,7 +1094,8 @@
                         colorRow: item.colorRow,
                         codEstado: item.codEstado,
                         isUpdate: item.codEstado === 'PE',
-                        isDelete: item.codEstado === 'PE'
+                        isDelete: item.codEstado === 'PE',
+                        totalRecords: item.totalRecords
                     }))
                 }
                 return [];
@@ -1130,7 +1132,7 @@
                 comprobante: comprobanteMapper,
                 detalles: mergeItems,
                 impuestos,
-                artInfoAdicionales: datosAdicionalesArticulo
+                artInfoAdicionales: dataAdicionalMapTo(datosAdicionalesArticulo)
             }
         }
 
@@ -1155,7 +1157,7 @@
             for (let item of items) {
                 let cantidadTransaccion = item.cantidad * (item.conversion || 1)
                 const obj = {
-                    idLiquidacionCompraDetalle: item.idLiquidacionCompraDetalle,
+                    idDocumentoIngresoDetail: item.idDocumentoIngresoDetail,
                     orderIndex: orderIndex + 1,
                     idArticulo: item.idArticulo,
                     idBodega: item.idBodega,
@@ -1210,7 +1212,8 @@
                             secuencial: comprobante.secuencial,
                             fechaEmision: fS.formatDate(comprobante.fechaEmision),
                             subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
-                            descuento: comprobante.descuento,
+                            totalDescuento: comprobante.descuento,
+                            porcentajeDescuento: comprobante.porcentajeDescuento || 0,
                             total: comprobante.total,
                             observacion: comprobante.observacion,
                         }
@@ -1224,33 +1227,39 @@
 
                             let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
-                            let etiquetasTemp = etiqueta || [];
+                            let etiquetasTemp = JSON.parse(etiqueta) || [];
+                            console.log(etiquetasTemp)
                             let etiquetasMapper = etiquetasTemp.map(item => ({
                                 idEtiqueta: item.idEtiqueta,
                                 descripcion: item.descripcion,
                                 etiquetas: item.etiquetas.split(';'),
                             }))
 
+                            let porcentaje = restItem.descuento / restItem.precioUnitario;
+                            let porcentajeDescuento = porcentaje * 100;
                             return {
+                                n: index + 1,
                                 idDetalle: restItem.idDetalle,
                                 idDocumentoIngresoDetail: restItem.idDocumentoIngresoDetail,
                                 idArticulo: restItem.idArticulo,
                                 idMedida: restItem.idMedida,
                                 idBodega: restItem.idBodega,
+                                idImpuesto: restItem.idImpuesto,
                                 idTipoIva: restItem.idTipoIva,
                                 codigo: restItem.codigo,
                                 descripcion: restItem.descripcion,
                                 cantidad: restItem.cantidad,
                                 precioUnitario: restItem.precioUnitario,
-                                descuento: restItem.descuento,
+                                valorDescuento: restItem.descuento,
                                 precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
                                 codigoPorcentaje: restItem.codigoPorcentaje,
+                                porcentajeDescuento: porcentajeDescuento || 0,
                                 tarifa: restItem.tarifa,
                                 valorImpuesto: restItem.valorImpuesto,
                                 datosAdicionales: restItem.datosAdicionales,
                                 llevaInventario: restItem.llevaInventario,
                                 estado: restItem.estado,
-
+                                ice: restItem.ice || 0,
                                 medidas,
                                 conversion: dataMedida.conversion | 1,
                                 etiquetas: etiquetasMapper,
@@ -1353,24 +1362,13 @@
         }
 
         function dataAdicionalMapTo(datosAdicionales) {
-            // let results = []
-            // for(let item of datosAdicionales){
-            //     for(let dataAdd of item.adicionales){
-            //         results.push({
-            //             idArticulo: item.idArticulo,
-            //             idEtiqueta: item.idEtiqueta,
-            //             idInfoAdicional: item.idInfoAdicional || 0,
-            //             jsonAdicional: angular.copy(dataAdd)
-            //         })
-            //     }
-            // }
 
             return datosAdicionales.map(item => {
                 return {
                     idArticulo: item.idArticulo,
                     idEtiqueta: item.idEtiqueta,
                     idInfoAdicional: item.idInfoAdicional || 0,
-                    jsonAdicional: item.adicionales
+                    jsonAdicional: JSON.stringify(item.adicionales)
                 }
             });
         }

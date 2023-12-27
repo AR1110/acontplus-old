@@ -1102,7 +1102,7 @@
 
                 entity.ice = articulo.valorIce;
                 entity.idBodega =
-                    entity.idLiquidacionCompraDatalle > 0
+                    entity.idFacturaCompraDatalle > 0
                         ? entity.idBodega
                         : $scope.data.idBodega;
                 entity.llevaInventario = articulo.llevaInventario;
