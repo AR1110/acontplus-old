@@ -1,5 +1,3 @@
-
-import axios from "axios";
 import { createAxiosClient } from "./createAxiosClient";
 import jwt_decode from "jwt-decode";
 
@@ -46,31 +44,6 @@ export const client = createAxiosClient({
     getCurrentAccessToken,
     getCurrentRefreshToken,
     refreshTokenUrl: null,//refreshTokenUrl: REFRESH_TOKEN_URL,
-    logout,
-    setRefreshedTokens,
-});
-
-export const clientFile = (url, parameters) => {
-    return axios({
-        url: `${getGateway()}/gateway/` + url,
-        method: 'POST',
-        responseType: 'blob',
-        data: parameters,
-        headers: { 'Authorization': 'Bearer ' + getCurrentAccessToken() }
-    })
-};
-
-export const uploadFile = createAxiosClient({
-    options: {
-        baseURL: `${getGateway()}/gateway/`,
-        timeout: 300000,
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    },
-    getCurrentAccessToken,
-    getCurrentRefreshToken,
-    refreshTokenUrl: null,
     logout,
     setRefreshedTokens,
 });

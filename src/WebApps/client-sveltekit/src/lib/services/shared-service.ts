@@ -1,13 +1,12 @@
 import { hideLoader } from '$utils/loading-spinner';
 import { showLoader } from '$utils/loading-spinner';
 import FileSaver from "file-saver";
-import { clientFile } from "$utils/axiosClient";
+import { client } from "$utils/axiosClient";
 
 class Shared {
-    download(parameters: object, isReturnData?: boolean) {
-        console.log(isReturnData)
+  download(parameters: object, isReturnData?: boolean) {
     showLoader();
-    clientFile("Reporte/Download", parameters).then((response) => {
+    client.post("Reporte/Download", parameters, { responseType: "blob" }).then((response) => {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
       const ie = navigator.userAgent.match(/.NET/g); // IE 11+
       const oldIE = navigator.userAgent.match(/MSIE/g);
@@ -25,7 +24,7 @@ class Shared {
         const fileURL = URL.createObjectURL(blob);
         window.open(fileURL, fileName);
       }
-    }).finally(()=>hideLoader())
+    }).finally(() => hideLoader())
   }
 
   roundNumber(number, max = 1) {
