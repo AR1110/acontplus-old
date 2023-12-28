@@ -1,22 +1,30 @@
-﻿
+﻿@page
+@model WebUI.Pages.Compras.RetencionCompra.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Retención Compra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
 @{
     ViewData["Title"] = "Retención de Compra";
 }
 <style>
     [uib-typeahead-popup].dropdown-menu {
-        z-index:999999!important; 
+        z-index: 999999 !important;
         max-height: 250px;
-        overflow-y: auto;   
-        width: 50%;     
-    }    
-    
+        overflow-y: auto;
+        width: 50%;
+    }
+
     .table-success-1 {
         background-color: #def5dc;
     }
 
-    .table-success-1:hover {
-        background-color: white;
-    }
+        .table-success-1:hover {
+            background-color: white;
+        }
 </style>
 
 <div ng-controller="retencionCompraCtrl">
@@ -27,10 +35,10 @@
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
                 <ol class="breadcrumb">
-                   @* <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                    @* <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
                     <li class="breadcrumb-item active">Retención Compra</li>*@
                 </ol>
-                 <button type="button" ng-if="accion.leer && accion.crear" ng-click="openModalNew()" class="btn btn-info m-l-15">
+                <button type="button" ng-if="accion.leer && accion.crear" ng-click="openModalNew()" class="btn btn-info m-l-15">
                     <i class="fa fa-plus-circle"></i> Nuevo
                 </button>
             </div>
@@ -38,12 +46,12 @@
     </div>
 
 
-    <partial name="_ModalFiltro"/>    
+    <partial name="_ModalFiltro" />
 
     <!--Tabla Retencion Compra -->
     <div class="row">
         <div class="col-lg-12">
-            <div class="card">                    
+            <div class="card">
                 <md-toolbar class="md-table-toolbar md-default">
                     <div class="md-toolbar-tools">
                         <div class="col-lg-9 col-md-9 col-sm-9">
@@ -58,7 +66,7 @@
                     </div>
                 </md-toolbar>
                 <md-divider></md-divider>
-                
+
                 <!-- Tabla Retenciones  -->
                 <md-table-container style="max-height: 400px;">
                     <table md-table resize>
@@ -142,10 +150,10 @@
         </div>
     </div>
 </div>
-@section Scripts{
+@section Scripts {
     <script src="~/js/common/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>
     <script src="~/js/compras/services/facturaCompraService.min.js" asp-append-version="true"></script>
-    <script src="~/js/compras/controllers/retencionCompraCtrl.min.js" asp-append-version="true"></script>    
-    
-    
+    <script src="~/js/compras/controllers/retencionCompraCtrl.min.js" asp-append-version="true"></script>
+
+
 }

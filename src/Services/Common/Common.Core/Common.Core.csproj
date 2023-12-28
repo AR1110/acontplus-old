@@ -17,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\Compras\" />
     <Folder Include="Models\CuotaDocumento\" />
+    <Folder Include="ViewModels\Compras\" />
     <Folder Include="ViewModels\CuotaDocumento\" />
   </ItemGroup>
 </Project>
