@@ -24,7 +24,7 @@ BEGIN
     
     IF @data IS NULL
         BEGIN
-            SELECT Common.ufnSpResponse('0', 'La transacción no devolvio respuesta', '')
+            SELECT Common.ufnSpResponse('0', 'La transacciÃ³n no devolvio respuesta', '')
             RETURN
         END
 
