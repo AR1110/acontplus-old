@@ -29,7 +29,7 @@ namespace Common.Infrastructure.Repository
                     using (var cmd = new SqlCommand("ASPTipoIceCreate", con))
                     {
                         cmd.Parameters.AddWithValue("idRol", idRol);
-                        cmd.Parameters.AddWithValue("idActividadEmpresa", data.actividadEmpresa.idActividadEmpresa);
+                   //     cmd.Parameters.AddWithValue("idActividadEmpresa", data.actividadEmpresa.idActividadEmpresa);
                         cmd.Parameters.AddWithValue("codigo", data.codigo);
                         cmd.Parameters.AddWithValue("descripcion", data.descripcion);
                         cmd.Parameters.AddWithValue("porcentaje", data.porcentaje);
@@ -92,7 +92,7 @@ namespace Common.Infrastructure.Repository
                                         estado = reader.GetBoolean(9),
                                         totalRecords = reader.GetInt32(10)
                                     };
-                                    ti.actividadEmpresa = new ActividadEmpresa()
+                                  //  ti.actividadEmpresa = new ActividadEmpresa()
                                     {
                                         idActividadEmpresa = reader.GetInt32(11),
                                         descripcion = reader.GetString(12)
@@ -124,7 +124,7 @@ namespace Common.Infrastructure.Repository
                     {
                         cmd.Parameters.AddWithValue("idRol", idRol);
                         cmd.Parameters.AddWithValue("idTipoIce", data.idTipoIce);
-                        cmd.Parameters.AddWithValue("idActividadEmpresa", data.actividadEmpresa.idActividadEmpresa);
+                        cmd.Parameters.AddWithValue("idActividadEmpresa",0);
                         cmd.Parameters.AddWithValue("codigo", data.codigo);
                         cmd.Parameters.AddWithValue("descripcion", data.descripcion);
                         cmd.Parameters.AddWithValue("porcentaje", data.porcentaje);
