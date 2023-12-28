@@ -7,8 +7,8 @@
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
 	{#each items as item}
-		<li class="nav-item" data-sveltekit-preload-data="false">
-			<span
+		<li class="nav-item">
+			<button
 				class="nav-link {activeTabValue === item.value ? 'active' : ''}"
 				id="{item.value}-tab"
 				data-toggle="tab"
@@ -21,7 +21,7 @@
 						<i class={item.icon} />
 					{/if}</span
 				>
-				<span class="hidden-xs-down">{item.label}</span></span
+				<span class="hidden-xs-down">{item.label}</span></button
 			>
 		</li>
 	{/each}
@@ -39,9 +39,3 @@
 		</div>
 	{/if}
 {/each}
-
-<style>
-	span {
-		cursor: pointer;
-	}
-</style>
