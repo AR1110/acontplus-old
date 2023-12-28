@@ -93,10 +93,10 @@ namespace Common.Infrastructure.Repository
                                         totalRecords = reader.GetInt32(10)
                                     };
                                   //  ti.actividadEmpresa = new ActividadEmpresa()
-                                    {
-                                        idActividadEmpresa = reader.GetInt32(11),
-                                        descripcion = reader.GetString(12)
-                                    };
+                                    //{
+                                    //    idActividadEmpresa = reader.GetInt32(11),
+                                    //    descripcion = reader.GetString(12)
+                                    //};
                                     listar.Add(ti);
                                 }
                             }
