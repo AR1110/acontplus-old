@@ -53,23 +53,23 @@
             if (dataPuntoEmision) {
                 $scope.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
             }
-            $scope.getLiquidacionesCompra();
+            $scope.getOrdenCompras();
         }
 
         $scope.pagechanged = function () {
-            $scope.getLiquidacionesCompra();
+            $scope.getOrdenCompras();
         };
 
         $scope.changePageSize = function () {
             $scope.dataSearch.pageIndex = 1;
-            $scope.getLiquidacionesCompra();
+            $scope.getOrdenCompras();
         };
 
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
                 $scope.dataSearch.fechaFin = item.endDate
-            $scope.getLiquidacionesCompra();
+            $scope.getOrdenCompras();
         }
 
         //====================Cliente===========
@@ -80,7 +80,7 @@
         }
         $scope.onSelectProveedor = function (item) {
             $scope.dataSearch.idProveedor = item.idProveedor;
-            $scope.getLiquidacionesCompra();
+            $scope.getOrdenCompras();
         }
 
         $scope.onKeyupUser = function () {
@@ -90,7 +90,7 @@
         }
         $scope.onSelectUser = function (item) {
             $scope.dataSearch.idUsuario = item.idUsuario;
-            $scope.getLiquidacionesCompra();
+            $scope.getOrdenCompras();
         }
 
         $scope.onClickBtnMore = function () {
@@ -101,34 +101,28 @@
 
         $scope.getOrdenCompras = async () => {
             try {
-                showLoader();
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: fS.isValidField($scope.dataSearch.idPuntoEmision),
                     idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
-                    dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     codEstado: fS.isValidField($scope.dataSearch.codEstado),
-                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.secuencial),
-                    ckFecha: $scope.dataSearch.checkBoxFecha,
+                    idUsuario: fS.validAndFormatedRangeSequential($scope.dataSearch.idUsuario), 
+                    checkBoxFecha: $scope.dataSearch.checkBoxFecha, 
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
-                }
+                } 
 
+                showLoader();
                 ordenCompraSvc.getAll(dataSearch).then(response => {
-                    console.log(response)
+                    $scope.ordenCompras = response || [];
+                    $scope.dataSearch.totalRecords = $scope.ordenCompras.length > 0 ? $scope.ordenCompras[0].totalRecords : 0;
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => {
                     hideLoader()
                 })
-                // await _mS.getData('get', '/OrdenCompra/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
-                //     if (response.code === "0") {
-                //         console.warn(response)
-                //     }
-                //     console.log(JSON.parse(response.data))
-                //     $scope.ordenCompras = JSON.parse(response.data) || [];
-                // })
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -139,6 +133,7 @@
         initiload();
         function initiload() {
             try {
+                showLoader();
                 ordenCompraSvc.getDataFilter().then(
                     response => {
                         const { estabs, estadosDoc } = response;
@@ -160,7 +155,7 @@
                     }
                 ).catch(error => {
                     console.log(error)
-                })
+                }).finally(() => hideLoader())
 
                 ordenCompraSvc.getDataForm().then(response => {
                     mainDataForm = response;
@@ -191,118 +186,86 @@
             }
         }
 
-        $scope.openModalDetalle = async (item) => {
+        $scope.openModalDetalle = async (params) => {
             try {
-                showLoader();
-                let { MODAL_FILE_CTRL, MODAL_DETALLE } = _nombreModalConst.orden_compra;
-                let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-                let template = MODAL_DETALLE['template'];
-
-                let response = await _commonSvc.getDataTipoDocCompra({
-                    id: item.idOrdenCompra,
-                    codigoDocumento: TIPO_DOC.codigo
-                })
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DETALLE',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params
+                let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
+                let ctrl = (await import(fileCtrl))[controller];
+                let template = templates['OC'];
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template: template,
+                    size: 'xl',
+                    params: {
+                        codDoc: params.codDoc,
+                        id: params.idOrdenCompra
+                    },
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
                 })
             } catch (error) {
-                console.log(error)
-            } finally {
-                hideLoader();
+                console.log(error);
             }
         }
 
         $scope.openModalEditar = async (item) => {
             try {
                 showLoader();
-                let { MODAL_FILE_CTRL, MODAL_EDITAR } = _nombreModalConst.orden_compra;
-                let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
-                let template = MODAL_EDITAR['template'];
-
-                let response = await _commonSvc.getDataTipoDocCompra({
-                    id: item.idOrdenCompra,
-                    codigoDocumento: TIPO_DOC.codigo
-                })
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'EDITAR',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params
-                })
+                ordenCompraSvc.getId(item.idOrdenCompra).then(
+                    response => {
+                        modalSvc.openModalCustom({
+                            controller: 'modalOrdenCompraCtrl',
+                            template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                            size: 'xl',
+                            params: response,
+                            windowClass: 'uibModalFullScreen',
+                            isRenderRazorPartial: true
+                        }).result.then(result => {
+                            if (typeof result == 'object') {
+                                $scope.getOrdenCompras();
+                            }
+                        })
+                    }
+                )
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
             } catch (error) {
-                console.log(error)
-            } finally {
-                hideLoader();
+                console.log(error);
             }
         }
-
-        $scope.openModalParam = async ({ controller, template, size = 'xl', params }) => {
-            _modalSvc.openModalCustom({
-                controller,
-                template,
-                size,
-                params,
-                windowClass: 'uibModalFullScreen'
-            }).result.then(result => {
-                if (typeof result === 'object') {
-                    $scope.getOrdenCompras()
-                }
-            })
-        }
-
-
 
         $scope.askToDelete = async (item) => {
 
             try {
                 let { isConfirmed } = await Swal.fire({
-                    title: '<small>Eliminar Documento?</small>',
-                    html: `<small>Esta Ud. seguro de eliminar este Documento <b> N° ${item.nroDoc}</b></small>?`,
+                    title: '<small>Anular Documento?</small>',
+                    html: `<small>Esta Ud. seguro de anular este Documento <b> N° ${item.serieComprobante}</b></small>?`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, eliminar!',
-                    cancelButtonText: 'No, cancelar'
+                    confirmButtonText: 'Si!',
+                    cancelButtonText: 'No!'
                 })
 
                 if (isConfirmed) {
-                    Swal.fire({
-                        title: `<small>Espere</small>`,
-                        html: 'Anulando...',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                            _mS.getData('delete', '/OrdenCompra/Delete?id=' + item.idOrdenCompra).then(response => {
 
-                                if (response.code === "0") {
-                                    _form.sweetAlert('warning', response.message, response.titleSms);
-                                }
-                                if (response.code === "1") {
-                                    _form.sweetAlert('success', response.message, response.titleSms, 1000);
-                                    $scope.getOrdenCompras();
-                                }
-                            })
-                        }
-                    })
+                    try {
+                        showLoader();
+                        ordenCompraSvc.anular(item.idOrdenCompra).then(response => {
+                            if (response.code === "0") {
+                                fS.sweetAlert('warning', response.message, response.titleSms);
+                            }
+                            if (response.code === "1") {
+                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                $scope.getOrdenCompras();
+                            }
+                        }).finally(() => hideLoader())
+                    } catch (error) {
+                        hideLoader();
+                        console.log(error)
+                    }
                 }
             } catch (error) {
                 Swal.fire();
@@ -319,22 +282,24 @@
             let format = 'pdf';
             let dataParms = {
                 codEstab: item.codEstab,
-                idOrdenCompra: item.idOrdenCompra
-            }
+                id: item.idOrdenCompra
+            } 
 
             const parameters = {
+                hasService: true,
                 reportParams: JSON.stringify({
-                    codigo: 'ROC',
+                    hasParams: true,
+                    codigo: CODE_REPORT.ROC,
                     codEstab: item.codEstab,
                     format,
                     aditionalParams: [
+
                     ]
                 }),
-                dataParams: JSON.stringify(dataParms),
-                sendEmail: false
+                dataParams: JSON.stringify(dataParms)
             }
 
-            _commonSvc.getReport({
+            commonSvc.getReport({
                 parameters,
                 formatType: 'pdf'
             })
@@ -534,7 +499,7 @@
                     "comprobante" in params &&
                     params.comprobante.idOrdenCompra > 0
                 ) {
-                    const { comprobante, proveedor, detalles, infoAdicionalDocumento } = params;
+                    const { comprobante, proveedor, detalles } = params;
 
                     $scope.data = comprobante;
                     $scope.dataClone.codEstab = $scope.data.codEstab;
@@ -542,7 +507,6 @@
                     $scope.proveedor = proveedor;
                     $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
                     $scope.gridOptions.data = calculateTotalItems(detalles);
-                    $scope.infoAdicionalDocumento = infoAdicionalDocumento;
 
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.codEstab === $scope.data.codEstab
@@ -1357,45 +1321,56 @@
                             {
                                 comprobante: $scope.data,
                                 detalles: $scope.gridOptions.data,
-                                detallesDeleted, 
+                                detallesDeleted,
                             }
                         )
 
                         if (isRegister()) {
-                            showLoader();
-                            ordenCompraSvc.post(params).then(response => {
-                                if (response.code === '0') {
-                                    fS.sweetAlert('warning', response.message, response.titleSms);
-                                }
+                            try {
+                                showLoader();
+                                ordenCompraSvc.post(params).then(response => {
+                                    if (response.code === '0') {
+                                        fS.sweetAlert('warning', response.message, response.titleSms);
+                                    }
 
-                                if (response.code === "1") {
-                                    fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                                    $uibModalInstance.close(response)
-                                }
-                            }).catch(error => {
-                                hideLoader();
+                                    if (response.code === "1") {
+                                        fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                        $uibModalInstance.close(response)
+                                    }
+                                }).catch(error => {
+                                    hideLoader();
+                                    console.log(error)
+                                }).finally(() => hideLoader())
+                            } catch (error) {
                                 console.log(error)
-                            }).finally(() => hideLoader())
+                                console.log(error)
+                            }
 
                         }
 
                         if (isUpdate()) {
                             showLoader();
-                            compraNoHabSvc.put($scope.data.idOrdenCompra, params).then(response => {
-                                if (response.code === '0') {
-                                    fS.sweetAlert('warning', response.message, response.titleSms);
-                                }
+                            try {
+                                ordenCompraSvc.put($scope.data.idOrdenCompra, params).then(response => {
+                                    if (response.code === '0') {
+                                        fS.sweetAlert('warning', response.message, response.titleSms);
+                                    }
 
-                                if (response.code == "1") {
-                                    fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                                    $uibModalInstance.close(response)
-                                }
-                            }).catch(error => {
+                                    if (response.code == "1") {
+                                        fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                        $uibModalInstance.close(response)
+                                    }
+                                }).catch(error => {
+                                    console.log(error)
+                                    hideLoader()
+                                }).finally(() => {
+                                    hideLoader();
+                                })
+                            } catch (error) {
                                 console.log(error)
-                            }).finally(() => hideLoader())
+                                hideLoader();
+                            }
                         }
-
-
                     }
                 });
             } catch (error) {

@@ -266,34 +266,29 @@
         //Formulario Editar
         $scope.openModalEditar = async (item) => {
             try {
-                try {
-                    showLoader();
-                    compraNoHabSvc.getId(item.id).then(
-                        response => {
-                            modalSvc.openModalCustom({
-                                controller: 'modalCompraNoHabitualCtrl',
-                                template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
-                                size: 'xl',
-                                params: response,
-                                windowClass: 'uibModalFullScreen',
-                                isRenderRazorPartial: true
-                            }).result.then(result => {
-                                if (typeof result == 'object') {
-                                    $scope.getComprasNoHabitual();
-                                }
-                            })
-                        }
-                    )
-                        .catch(error => {
-                            console.log(error)
+                showLoader();
+                compraNoHabSvc.getId(item.id).then(
+                    response => {
+                        modalSvc.openModalCustom({
+                            controller: 'modalCompraNoHabitualCtrl',
+                            template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                            size: 'xl',
+                            params: response,
+                            windowClass: 'uibModalFullScreen',
+                            isRenderRazorPartial: true
+                        }).result.then(result => {
+                            if (typeof result == 'object') {
+                                $scope.getComprasNoHabitual();
+                            }
                         })
-                        .finally(() => hideLoader())
-                } catch (error) {
-                    console.log(error);
-                }
+                    }
+                )
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
             } catch (error) {
-                hideLoader();
-                console.log(error)
+                console.log(error);
             }
         }
 

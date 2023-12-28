@@ -31,9 +31,9 @@ namespace Compras.API.Services
 
         public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("Compra.Orden_GetId", parameters, true);
+            var ds = await _repository.GetDataSetAsync("Compra.Orden_Get_Id", parameters);
             if (ds.Tables[0].Rows.Count == 0) { return null; }
-            return DataConverters.DataSetToJSON(ds, true);
+            return DataConverters.DataSetToJSON(ds);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
