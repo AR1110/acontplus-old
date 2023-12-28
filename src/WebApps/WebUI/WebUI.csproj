@@ -23,4 +23,8 @@
     <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\Compras\" />
+  </ItemGroup>
+
 </Project>
