@@ -22,6 +22,8 @@
         const proveedorSvc = $injector.get('proveedorService')
         const nombreModalCompra = $injector.get('nombreModalCompra');
         const retencionAtsSvc = $injector.get('retencionAtsService');
+        const modalSvc = $injector.get('modalService');
+        const nombreModalFactElect = $injector.get('nombreModalFactElect');
         const PATH_FACT_ELECT = 'FactElect/'
         const url = 'RetencionAts/'
 
@@ -75,6 +77,27 @@
         const idDocumentoElectronico = params.get("id")
 
         $scope.retencionesTemp = []
+
+        $scope.openModal = async function () {
+            try {
+                let { fileCtrl, controller, template } = nombreModalFactElect.RETENCION_ATS;
+                let ctrl = (await import(fileCtrl))[controller];
+
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template,
+                    size: 'xl',
+                    params: {},
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                }).result.then(result => {
+
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
 
         $scope.initialLoad = () => {
             try {

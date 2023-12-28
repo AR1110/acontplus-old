@@ -26,6 +26,7 @@
         modalSvc = $injector.get('modalService');
         const CODE_REPORT = $injector.get('CODE_REPORT'); 
         const nombreModalCompra = $injector.get('nombreModalCompra'); 
+        
         $scope.proveedor = {
             nombreProveedor: ''
         }

@@ -1007,16 +1007,33 @@ export class CommonService {
             await this.mS.getFile(method, url, parameters, true).then(response => {
 
                 if (formatType === "pdf") {
+                    let fileName = '';
+                    let contentDispositionHeader = response.headers()['content-disposition']; 
+                    // Attempt to extract filename from Content-Disposition header
+                    let matches = contentDispositionHeader.match(/filename\*?=['"]?([^'";]+)/);
+
+                    if (matches && matches[1]) {
+                        // Decode the URI-encoded filename
+                        fileName = decodeURIComponent(matches[1]);
+                    } 
                     let fileBlob = new Blob([response.data], {
                         type: response.data.type,
                     })
+                 
                     let objectUrl = window.URL || window.webkitURL;
-                    let urlFile = objectUrl.createObjectURL(fileBlob);
+                    let urlFile = objectUrl.createObjectURL(fileBlob);             
                     // Ajuste horizontal
                     let x = parseInt((screen.width - 1200) / 2);
                     // Ajustae vertical
-                    let y = parseInt((screen.height - 650) / 4);
-                    window.open(
+                    let y = parseInt((screen.height - 650) / 4); 
+                    // var link = document.createElement('a');
+                    // link.href = window.URL.createObjectURL(fileBlob);
+                    // link.setAttribute('download', fileName);
+                    // document.body.appendChild(link);
+                    // link.click();
+                    // document.body.removeChild(link);    
+
+                    let newWindow = window.open(
                         urlFile,
                         "_blank",
                         `resizable=yes
@@ -1026,6 +1043,9 @@ export class CommonService {
                     screenX=${x}`
                     )
 
+                    setTimeout(function () { newWindow.document.title = fileName; }, 1000);
+
+                    //newWindow.document.title = "YOUR PDF NAME HERE!";
                 } else {
                     let serverData = new Blob([response.data], {
                         type: response.headers()["content-type"],
