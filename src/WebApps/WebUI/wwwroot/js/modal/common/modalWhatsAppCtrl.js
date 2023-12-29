@@ -407,7 +407,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
             totalMensajes: totalMessages,
             params: JSON.stringify(params)
         }
-        mS.getData('post', 'WhatsappMessage/Post', { data: data }, true).then(response => {
+        mS.getData('post', 'Config/WhatsappMessage/Post', { data: data }, true).then(response => {
             if (response.code == '1') {
                 tS.toastr("info", response.message)
             } else {
