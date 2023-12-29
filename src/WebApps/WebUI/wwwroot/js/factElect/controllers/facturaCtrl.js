@@ -1096,6 +1096,9 @@
             $scope.decimal = decimal;
             $scope.config = config;
 
+            console.log(tarifasImpuesto)
+            console.log($scope.tarifasImpuesto)
+
             if ($scope.bodegas.length > 0) {
                 let dataBodega = $scope.bodegas.find(bodega => (bodega.defaultBodega));
                 $scope.data.idBodega = dataBodega.idBodega;
