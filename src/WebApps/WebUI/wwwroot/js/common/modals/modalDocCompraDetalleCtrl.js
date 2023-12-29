@@ -16,6 +16,7 @@ function modalDocCompraDetalleCtrl($scope, $uibModalInstance, $injector, $timeou
     const liquidacionCompraSvc = $injector.get('liquidacionCompraService');
     const fcaturaCompraSvc = $injector.get('facturaCompraService')
     const compraNoHabSvc = $injector.get('compraNoHabitualService')
+    const ordenCompraSvc = $injector.get('ordenCompraService')
     let gridOptionsSvc = $injector.get('gridOptionsCompraService');
     const fS = $injector.get('formulario');
     const commonSvc = $injector.get('commonService');
@@ -111,6 +112,34 @@ function modalDocCompraDetalleCtrl($scope, $uibModalInstance, $injector, $timeou
         try {
             showLoader();
             compraNoHabSvc.getIdForInfo(id).then(response => {
+                const {
+                    comprobante,
+                    proveedor,
+                    detalles,
+                    tarifasImpuesto
+                } = response;
+                $scope.data = comprobante;
+                $scope.proveedor = proveedor;
+                $scope.gridOptions.data = calculateTotalItems(detalles)
+                $scope.tarifasImpuesto = tarifasImpuesto;
+                renderedModal();
+            }).catch(error => {
+                console.warn(error)
+            }).finally(() => {
+                hideLoader();
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
+    //Orden Compra 
+    //Compra No Habitual
+    if (codDoc === DOC_TYPE['OC']) {
+        try {
+            showLoader();
+            ordenCompraSvc.getIdForInfo(id).then(response => {
                 const {
                     comprobante,
                     proveedor,

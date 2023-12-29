@@ -230,6 +230,7 @@ app.constant('nombreModalCompra', {
             LC: `~/Pages/${PATH_API_COMPRA}LiquidacionCompra/_ModalDetalle.cshtml`,
             FC: `~/Pages/${PATH_API_COMPRA}FacturaCompra/_ModalDetalle.cshtml`,
             CNH: `~/Pages/${PATH_API_COMPRA}CompraNoHabitual/_ModalDetalle.cshtml`,
+            OC: `~/Pages/${PATH_API_COMPRA}OrdenCompra/_ModalDetalle.cshtml`,
         }
 
     },
@@ -258,7 +259,7 @@ app.constant('nombreModalCompra', {
         fileCtrl: '/js/compras/modals/modalCategoriaCompraCtrl.js' + CHANGE_VERSION(),
         controller: 'modalCategoriaCompraCtrl',
         template: `~/Pages/${PATH_API_COMPRA}CategoriaCompra/_ModalAddUpdate.cshtml`,
-    }, 
+    },
     DOCUMENTO_RECIBIDO: {
         fileCtrl: '/js/compras/modals/docRecibidoPreviewCtrl.js' + CHANGE_VERSION(),
         controller: 'docRecibidoPreviewCtrl',
@@ -852,7 +853,8 @@ app.constant('DOC_TYPE', {
     APROB_DOC: '',
     LC: 'LC',
     FC: 'FC',
-    CNH: 'CNH'
+    CNH: 'CNH',
+    OC: 'OC'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",
@@ -875,5 +877,6 @@ app.constant('CODE_REPORT', {
     RLC: 'RLC', //Reporte Liquidacion Compra
     RCD: 'RCD', //Reporte Compra detalle
     RFC: 'RFC', //Reporte Factura Compra
-    RCNH: 'RCNH' //PDF compra no habitual
+    RCNH: 'RCNH', //PDF compra no habitual
+    ROC: 'ROC' //Orden Compra 
 })

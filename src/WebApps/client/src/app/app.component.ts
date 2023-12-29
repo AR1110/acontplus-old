@@ -33,8 +33,10 @@ export class AppComponent implements OnInit {
         if (this.authService.isLoggedIn == true) {
           localStorage.removeItem('access_token');
         }
+        let route_page =  getEnumValueByKey(GlobalRoutes, route);
+        console.log(route_page)
         localStorage.setItem('access_token', token);
-        self.router.navigate(['/', getEnumValueByKey(GlobalRoutes, route)]);
+        self.router.navigate(['/', ...route_page.split('/')]);
       }
     });
   }

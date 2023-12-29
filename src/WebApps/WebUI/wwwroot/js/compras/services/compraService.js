@@ -659,7 +659,7 @@
             return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 1 }), null, true).then(response => {
                 if (typeof response === 'object') {
                     let { facturas } = JSON.parse(response.payload);
-                    
+
                     return facturas.map(item => (
                         {
                             codDoc: 'FC',
@@ -1029,7 +1029,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    
+
                     const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito } = results;
 
 
@@ -1081,7 +1081,7 @@
 
                 if (typeof response === 'object') {
                     const { documentos } = JSON.parse(response.payload);
-                    
+
                     return documentos.map(item => ({
                         codDoc: 'CNH',
                         id: item.id,
@@ -1196,7 +1196,7 @@
                     }
                     if (response.code === "1") {
                         const mainData = JSON.parse(response.payload);
-                        
+
                         let { comprobante, proveedor, detalles, infoAdicional } = mainData;
                         comprobante = comprobante[0];
                         proveedor = proveedor[0];
@@ -1211,6 +1211,7 @@
                             nombreComercial: comprobante.nombreComercial,
                             secuencial: comprobante.secuencial,
                             fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                            fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
                             subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
                             totalDescuento: comprobante.descuento,
                             porcentajeDescuento: comprobante.porcentajeDescuento || 0,
@@ -1228,7 +1229,7 @@
                             let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
                             let etiquetasTemp = JSON.parse(etiqueta) || [];
-                            
+
                             let etiquetasMapper = etiquetasTemp.map(item => ({
                                 idEtiqueta: item.idEtiqueta,
                                 descripcion: item.descripcion,
@@ -1291,7 +1292,7 @@
             return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, typeList: 6 })}`, null, true).then(
                 response => {
                     let mainData = JSON.parse(response.payload);
-                    
+
                     let { comprobante, proveedor, detalles, impuestos } = mainData;
                     comprobante = comprobante[0];
                     proveedor = proveedor[0]
@@ -1299,7 +1300,7 @@
                     proveedor = {
                         ...proveedor,
                         nombreProveedor: proveedor.nombreFiscal
-                    } 
+                    }
 
                     comprobante = {
                         idDocumentoIngreso: comprobante.idDocumentoIngreso,
@@ -1401,7 +1402,6 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    console.log(results)
 
                     const { configDecimales, bodegas, impuestos, ptoEmi, tiempoCredito } = results;
 
@@ -1432,7 +1432,7 @@
                     throw response;
                 }
                 if (response.code === '1') {
-                    let results = JSON.parse(response.payload) || [];
+                    let results = JSON.parse(response.payload) || []; 
                     const { ptoEmision, estadoDocumento } = results;
 
                     let dataToGroup = {
@@ -1453,9 +1453,9 @@
             return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
 
                 if (typeof response === 'object') {
-                    const { comprobante } = JSON.parse(response.payload);
-                    console.log(JSON.parse(response.payload))
+                    const { comprobante } = JSON.parse(response.payload); 
                     return comprobante.map(item => ({
+                        codDoc: 'OC',
                         codEstab: item.codEstab,
                         idOrdenCompra: item.idOrdenCompra,
                         fechaEmision: item.fechaEmision,
@@ -1463,6 +1463,8 @@
                         serieComprobante: item.serieComprobante,
                         razonSocialProveedor: item.razonSocialProveedor,
                         usuario: item.usuario,
+                        colorRow: item.colorRow,
+                        totalRecords: item.totalRecords
                     }))
                 }
                 return [];
@@ -1498,7 +1500,7 @@
             return {
                 comprobante: comprobanteMapper,
                 detalles: mergeItems,
-                impuestos, 
+                impuestos,
             }
         }
 
@@ -1558,58 +1560,46 @@
             return mS.getData('post', `${url}Insert`, { data }, true)
         }
         function getId(id) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ typeList: 4, id })}`, null, true).then(
+            return mS.getData('get', `${url}GetId/${id}`, null, true).then(
                 response => {
                     if (response.code == "0") {
                         throw response
                     }
                     if (response.code === "1") {
-                        const mainData = JSON.parse(response.payload);
+                        let { orden, proveedor, detalles } = JSON.parse(response.payload);
 
-                        let { comprobante, proveedor, detalles, infoAdicional } = mainData;
-                        comprobante = comprobante[0];
+                        let comprobante = orden[0];
                         proveedor = proveedor[0];
 
-
                         comprobante = {
-                            idDocumentoIngreso: comprobante.idDocumentoIngreso,
-                            idEstablecimiento: comprobante.idEstablecimiento,
+                            idOrdenCompra: comprobante.idOrdenCompra,
                             idPuntoEmision: comprobante.idPuntoEmision,
                             codEstab: comprobante.codEstab,
-                            ptoEmi: comprobante.ptoEmi,
-                            nombreComercial: comprobante.nombreComercial,
-                            secuencial: comprobante.secuencial,
+                            nroDocumento: comprobante.nroDocumento,
                             fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                            fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
                             subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
-                            totalDescuento: comprobante.descuento,
-                            porcentajeDescuento: comprobante.porcentajeDescuento || 0,
+                            totalDescuento: comprobante.totalDescuento,
+                            porcentajeDescuento: comprobante.porcentajeDescuento,
+                            propina: comprobante.propina,
+                            recargo: comprobante.recargo,
+                            transporte: comprobante.transporte,
                             total: comprobante.total,
                             observacion: comprobante.observacion,
                         }
 
-
-
                         detalles = detalles.map((item, index) => {
-                            const { fraccionado, principal, etiqueta, ...restItem } = item;
+                            const { fraccionado, principal, ...restItem } = item;
 
                             const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
                             let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
-                            let etiquetasTemp = JSON.parse(etiqueta) || [];
-
-                            let etiquetasMapper = etiquetasTemp.map(item => ({
-                                idEtiqueta: item.idEtiqueta,
-                                descripcion: item.descripcion,
-                                etiquetas: item.etiquetas.split(';'),
-                            }))
-
                             let porcentaje = restItem.descuento / restItem.precioUnitario;
                             let porcentajeDescuento = porcentaje * 100;
                             return {
                                 n: index + 1,
-                                idDetalle: restItem.idDetalle,
-                                idDocumentoIngresoDetail: restItem.idDocumentoIngresoDetail,
+                                idOrdenCompraDetalle: restItem.idOrdenCompraDetalle,
                                 idArticulo: restItem.idArticulo,
                                 idMedida: restItem.idMedida,
                                 idBodega: restItem.idBodega,
@@ -1619,7 +1609,7 @@
                                 descripcion: restItem.descripcion,
                                 cantidad: restItem.cantidad,
                                 precioUnitario: restItem.precioUnitario,
-                                valorDescuento: restItem.descuento,
+                                valorDescuento: restItem.valorDescuento,
                                 precioTotalSinImpuesto: restItem.precioTotalSinImpuesto,
                                 codigoPorcentaje: restItem.codigoPorcentaje,
                                 porcentajeDescuento: porcentajeDescuento || 0,
@@ -1631,7 +1621,6 @@
                                 ice: restItem.ice || 0,
                                 medidas,
                                 conversion: dataMedida.conversion | 1,
-                                etiquetas: etiquetasMapper,
                             }
 
                         })
@@ -1640,7 +1629,6 @@
                             comprobante,
                             proveedor,
                             detalles,
-                            infoAdicionalDocumento: infoAdicional
                         }
 
                     }
@@ -1657,12 +1645,12 @@
         }
 
         function getIdForInfo(id) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, typeList: 6 })}`, null, true).then(
+            return mS.getData('get', `${url}Get?json=${JSON.stringify({ id, tipo: 5 })}`, null, true).then(
                 response => {
                     let mainData = JSON.parse(response.payload);
 
-                    let { comprobante, proveedor, detalles, impuestos } = mainData;
-                    comprobante = comprobante[0];
+                    let { orden, proveedor, detalles, impuestos } = mainData;
+                    let comprobante = orden[0];
                     proveedor = proveedor[0]
 
                     proveedor = {
@@ -1671,40 +1659,43 @@
                     }
 
                     comprobante = {
-                        idDocumentoIngreso: comprobante.idDocumentoIngreso,
-                        nombreComercial: comprobante.nombreComercial,
-                        fechaEmision: fS.formatDate(comprobante.fechaEmision),
-                        totalSinImpuestos: comprobante.totalSinImpuestos,
+                        idOrdenCompra: comprobante.idOrdenCompra,
                         establecimiento: comprobante.nombreComercial,
+                        fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                        subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
                         estab: comprobante.estab,
                         ptoEmi: comprobante.ptoEmi,
-                        secuencial: comprobante.secuencial,
-                        descuento: comprobante.descuento,
+                        nroDocumento: comprobante.nroDocumento,
+                        totalDescuento: comprobante.totalDescuento,
                         porcentajeDescuento: comprobante.porcentajeDescuento,
-                        importeTotal: comprobante.importeTotal,
+                        propina: comprobante.propina,
+                        recargo: comprobante.recargo,
+                        transporte: comprobante.transporte,
+                        total: comprobante.total,
                         observacion: comprobante.observacion,
                     }
 
                     detalles = detalles.map((item, index) => {
-                        let porcentaje = item.descuento / item.precioUnitario;
-                        let porcentajeDescuento = porcentaje * 100;
+                        //     let porcentaje = item.descuento / item.precioUnitario;
+                        //     let porcentajeDescuento = porcentaje * 100;
                         return {
                             n: index + 1,
-                            idDocumentoIngresoDetail: item.idDocumentoIngresoDetail,
+                            idOrdenCompraDetalle: item.idOrdenCompraDetalle,
                             codigo: item.codigo,
                             descripcion: item.descripcion,
                             cantidad: item.cantidad,
                             precioUnitario: item.precioUnitario,
-                            valorDescuento: item.descuento,
+                            porcentajeDescuento: item.porcentajeDescuento,
+                            valorDescuento: item.valorDescuento,
+                            ice: item.ice,
                             precioTotalSinImpuesto: item.precioTotalSinImpuesto,
                             codigoPorcentaje: item.codigoPorcentaje,
                             tarifa: item.tarifa,
                             valorImpuesto: item.valorImpuesto,
+                            nota: item.nota,
                             bodega: item.bodega,
                             tipoIva: item.tipoIva,
                             medida: item.medida,
-                            porcentajeDescuento: porcentajeDescuento,
-                            ice: item.valorIce || 0
                         }
                     })
                     return {

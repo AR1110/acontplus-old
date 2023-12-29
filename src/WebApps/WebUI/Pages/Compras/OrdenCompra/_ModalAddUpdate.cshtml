@@ -1,7 +1,7 @@
 <form autocomplete="off" ng-submit="
 onSave()">
     <div class="modal-header">
-        <h5 class="modal-title">{{data.idDocumentoIngreso>0?'Editar':'Nuevo'}} Orden Compra</h5>
+        <h5 class="modal-title">{{data.idOrdenCompra>0?'Editar':'Nuevo'}} Orden Compra</h5>
         @* <div class="icheck-primary icheck-inline">
         <input type="checkbox" ng-model="showHeader" id="showHeader" class="form-control">
         <label for="showHeader">Datos del Proveedor</label>
@@ -137,8 +137,8 @@ onSave()">
                     <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <button type="submit" class="btn btn-block btn-lg btn-success mt-4"
                             id="btnSaveAndUpdateDocument">
-                            <i class="{{data.idDocumentoIngreso>0?'ti-pencil': 'ti-save'}}"></i>
-                            {{data.idDocumentoIngreso>0?'Actualizar': 'Guardar'}}
+                            <i class="{{data.idOrdenCompra>0?'ti-pencil': 'ti-save'}}"></i>
+                            {{data.idOrdenCompra>0?'Actualizar': 'Guardar'}}
                         </button>
                     </div>
                 </div>
