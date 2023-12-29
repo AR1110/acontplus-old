@@ -281,7 +281,7 @@ app.constant('nombreModalLogistica', {
             M: 'ModalTransportistaCtrl'
         },
         templates: {
-            M: '~/Areas/Transportista/Pages/Shared/_ModalAddUpdate.cshtml'
+            M: '~/Pages/FactElect/Transportista/Shared/_ModalAddUpdate.cshtml'
         }
     },
     VEHICULO: {
@@ -290,7 +290,7 @@ app.constant('nombreModalLogistica', {
             M: 'ModalVehiculoCtrl'
         },
         templates: {
-            M: '~/Areas/Vehiculo/Pages/Shared/_ModalAddUpdate.cshtml'
+            M: '~/Pages/FactElect/Vehiculo/Shared/_ModalAddUpdate.cshtml'
         }
     }
 })
