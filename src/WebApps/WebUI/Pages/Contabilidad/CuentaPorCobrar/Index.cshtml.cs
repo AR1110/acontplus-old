@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.CuentaPorPagar.Pages
+namespace WebUI.Pages.Contabilidad.CuentaPorCobrar
 {
     public class IndexModel : PageModel
     {
         public void OnGet()
         {
-
         }
     }
 }
