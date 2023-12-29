@@ -339,7 +339,7 @@ app.constant('nombreModal', {
         MODAL_COMPROBANTE_ERROR_CSHTML: 'Common/_ModalComprobanteError.cshtml',
 
         MODAL_SEND_MAIL_CTRL: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
-        MODAL_STATUS_MAIL_CSHTML: '~/Areas/DocumentoElectronico/Pages/Shared/_ModalStatusEmail.cshtml',
+        MODAL_STATUS_MAIL_CSHTML: '~/Pages/FactElect/DocumentoElectronico/Shared/_ModalStatusEmail.cshtml',
 
         MODAL_SEND_WHATSAPP_CTRL: '/js/modal/common/ModalWhatsAppCtrl.js' + CHANGE_VERSION(),
         MODAL_SEND_WHATSAPP_CSHTML: '~/Pages/Common/WhatsApp/Shared/_ModalWhatsApp.cshtml',

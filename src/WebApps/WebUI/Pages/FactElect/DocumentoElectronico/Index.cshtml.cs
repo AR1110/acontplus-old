@@ -1,7 +1,7 @@
-
+﻿
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.DocumentoElectronico.Pages
+namespace WebUI.Pages.FactElect.DocumentoElectronico
 {
     public class IndexModel : PageModel
     {
