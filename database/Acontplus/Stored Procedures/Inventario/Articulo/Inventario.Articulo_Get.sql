@@ -10,6 +10,7 @@ GO
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
 -- =============================================
+--- Inventario.Articulo_Get 28 '{"idArticulo":76408,"idBodega":2,"tipo":6}'
 CREATE OR ALTER PROCEDURE Inventario.Articulo_Get @idRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
@@ -655,21 +656,14 @@ BEGIN
 				  ,precioCosto          = a.precioCosto
 				  ,precioSinSubsidio    = ISNULL(a.precioSinSubsidio,0)
 				  ,nombreTipoIva        = ti.descripcion
-				  ,porcentajeTipoIva    = ti.porcentaje
-                  ,codigoTipoIva        = ti.codigo
+				  ,tarifa               = ti.porcentaje
 				  ,codigoPorcentaje     = CAST(ti.codigoPorcentaje as varchar)
 				  ,codigoArticulo       = IIF(ti.porcentaje > 0,'*','')+a.codigo
 				  ,stock                = a.stock
 				  ,cantMinimaVentaPorMayor
                   ,medidas              = ( SELECT
 				                                m.idMedida
-			                                   ,tarifas		 = (SELECT ap.idTarifa
-                                                                        , ap.precioVenta
-                                                                        , ap.precioConIva
-                                                                        , tarifa = UPPER(ta.descripcion)
-                                                                        , porcentaje = ISNULL(ap.porcentajeUtilidad, 0)
-                                                                        , ta.ventaPorMayor 
-                                                                        , predeterminada = ISNULL(ta.predeterminada, 0)
+			                                   ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, ta.predeterminada 
 								                                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 								                                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 								                                WHERE ap.idArticulo = a.idArticulo
@@ -685,13 +679,8 @@ BEGIN
 		    LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = a.idMedida
 			WHERE a.idArticulo = @idArticulo
                             
-            --- Fechas consolidaciones
-            SELECT idArticulo
-                  ,idBodega
-                  ,fechaConsolidacion
-            FROM Inventario.Stock
-            WHERE idArticulo = @idArticulo
-			
+            SELECT idArticulo, idBodega, fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo
+            SELECT * FROM Compra.InfoAdicional WITH (NOLOCK) WHERE idArticulo = @idArticulo AND estado = 1			
             RETURN 
 		END
     
