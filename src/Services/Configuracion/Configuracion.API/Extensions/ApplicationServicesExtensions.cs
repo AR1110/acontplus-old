@@ -20,6 +20,8 @@ namespace Configuracion.API.Extensions
             services.AddScoped<IEstablecimientoLogoService, EstablecimientoLogoService>();
 
             services.AddSingleton<LogWriter>();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             return services;
         }
     }

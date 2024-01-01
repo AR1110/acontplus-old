@@ -14,5 +14,6 @@ namespace Configuracion.API.Entities
         public string ContentType { get; set; }
         [MaxLength(300)]
         public string FileName { get; set; }
+        public bool? IsCompressed { get; set; }
     }
 }

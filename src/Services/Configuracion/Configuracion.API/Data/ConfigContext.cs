@@ -45,6 +45,10 @@ namespace Configuracion.API.Data
                 }
             }
 
+            builder.Entity<EstablecimientoLogo>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<EstablecimientoLogo>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<EstablecimientoLogo>().HasIndex(x => x.EstablecimientoId).HasDatabaseName("UI_EstabLogo_EstablecimientoId").IsUnique();
+
             builder.Entity<Printer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Printer>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Printer>().HasMany(i => i.Documents).WithOne(d => d.Printer).HasForeignKey(d => d.PrinterId);

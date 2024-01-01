@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Common.Core.Models;
-using Common.Core.Utils;
 using Configuracion.API.Entities;
 using Configuracion.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Configuracion.API.Controllers
@@ -21,22 +21,22 @@ namespace Configuracion.API.Controllers
             _mapper = mapper;
             _log = logWriter;
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("{establecimientoId}")]
+        public async Task<IActionResult> Get(int establecimientoId)
         {
             try
             {
-                var response = await _establecimientoLogoService.GetAsync(id);
-                if (response == null) { return BadRequest($"Error on get {id}"); }
+                var response = await _establecimientoLogoService.GetAsync(establecimientoId);
+                if (response == null) { return BadRequest($"No logo found: {establecimientoId}"); }
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on Get: \n {ex} \n id: {id}");
+                _log.LogActivity($"Error on Get: \n {ex} \n id: {establecimientoId}");
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost]
+        [HttpPost("{establecimientoId}")]
         public async Task<IActionResult> Post(int establecimientoId, IFormFile file)
         {
             try
@@ -44,8 +44,10 @@ namespace Configuracion.API.Controllers
                 var logo = new FileModel();
                 logo.CreateBytesCompressed(file);
                 var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
+                estabLogo.EstablecimientoId = establecimientoId;
+                estabLogo.UserId = User.GetUserId();
                 var response = await _establecimientoLogoService.AddAsync(estabLogo);
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest($"No response: {establecimientoId}"); }
+                if (response == null) { return BadRequest($"No response: {establecimientoId}"); }
                 return Ok(response);
             }
             catch (Exception ex)
@@ -54,15 +56,17 @@ namespace Configuracion.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("{id}")]
+        [HttpPost("Put/{id}")]
         public async Task<IActionResult> Put(int id, IFormFile file)
         {
             try
             {
-                var logo = FileExtensions.GetBytes(file);
+                var logo = new FileModel();
+                logo.CreateBytesCompressed(file);
                 var estabLogo = _mapper.Map<EstablecimientoLogo>(logo);
+                estabLogo.UserId = User.GetUserId();
                 var response = await _establecimientoLogoService.UpdateAsync(id, estabLogo);
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest($"No response {id}"); }
+                if (response == null) { return BadRequest($"No response {id}"); }
                 return Ok(response);
             }
             catch (Exception ex)
@@ -77,7 +81,7 @@ namespace Configuracion.API.Controllers
             try
             {
                 var response = await _establecimientoLogoService.DeleteAsync(id);
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest($"No response {id}"); }
+                if (response == null) { return BadRequest($"No response {id}"); }
                 return Ok(response);
             }
             catch (Exception ex)

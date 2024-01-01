@@ -387,7 +387,7 @@
         }
 
         service.save = function (file, data) {
-            return mS.uploadFile("POST", url + "Post/?json=" + encodeURIComponent(JSON.stringify({ data })), file, null, true);
+            return mS.uploadFile({ url: url + "Post/?json=" + encodeURIComponent(JSON.stringify({ data })), file, forApi: true });
             //    return mainService.getData('post', url + 'Post', { data: data }, true)
         }
 
@@ -397,7 +397,7 @@
                 file = null;
             }
             //return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
-            return mS.uploadFile("post", url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
+            return mS.uploadFile({ url: url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, forApi: true });
         }
 
         /**

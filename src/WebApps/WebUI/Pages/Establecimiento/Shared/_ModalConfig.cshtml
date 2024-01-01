@@ -13,6 +13,14 @@
     .dragover {
         border: 5px dashed blue;
     }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    img {
+        cursor: pointer;
+    }
 </style>
 
 <div class="modal-header">
@@ -28,14 +36,20 @@
 
                 <div class="card-body shadow">
                     <center class="m-t-30">
-                        <img ngf-src="$ctrl.file" ng-if="$ctrl.file" ngf-no-object-url="false" class="img-fluid">
+                        <input type="file" ngf-select="$ctrl.onSave()"
+                               ng-model="$ctrl.file"
+                               class="drop-box"
+                               ngf-drag-over-class="'dragover'"
+                               ngf-accept="'image/*'"
+                               ngf-validate="{size: {min: '50KB', max: '1MB'}" />
+                        <img ngf-src="$ctrl.file" ng-if="$ctrl.file" ngf-no-object-url="false" class="img-fluid" ng-click="$ctrl.update()" title="Haga click para actualizar el logo">
                         <div type="file" ng-if="!$ctrl.file"
                              ngf-select="$ctrl.onSave()"
                              ng-model="$ctrl.file"
                              class="drop-box"
                              ngf-drag-over-class="'dragover'"
                              ngf-accept="'image/*'"
-                             ngf-validate="{size: {min: 10, max: '20MB'}, width: {min: 100, max:10000}, height: {min: 100, max: 300} ratio: '2x1', duration: {min: '10s', max: '5m'}">
+                             ngf-validate="{size: {min: '50KB', max: '1MB'}, width: {min: 100, max:10000}, height: {min: 100, max: 300} ratio: '2x1', duration: {min: '10s', max: '5m'}">
                             Haga clic para cargar imagen.
                         </div>
                         <div class="text-center justify-content-md-center mt-2" ng-if="$ctrl.file">

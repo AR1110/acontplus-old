@@ -61,14 +61,6 @@ BEGIN
 
 	IF @typeList = 1
 		BEGIN 
-			SELECT 
-			     idEstab_Logo
-				,imagen
-				,mimeType
-				,nombreImagen
-			FROM Config.Estab_Logo
-			WHERE codEstab = @codEstab
-
 			SELECT idPuntoEmision
 					,pe.ambiente
 					,pe.ptoEmi 
@@ -78,6 +70,5 @@ BEGIN
 			INNER JOIN Sri.Ambiente a ON a.codigo = pe.ambiente
 			WHERE pe.codEstab = @codEstab
 		END 
-	
 END
 GO
