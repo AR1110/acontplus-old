@@ -1,18 +1,17 @@
-﻿using System.Data;
-using System.Text;
-using System.Web;
+﻿using Asp.Versioning;
+using System.Data;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using Reports.API.Dtos;
 using Reports.API.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
 
-namespace Reports.API.Controllers
+namespace Reports.API.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("api/reporte/[action]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class ReporteController : ControllerBase
     {
         private readonly IReportService _reportService;
@@ -25,26 +24,25 @@ namespace Reports.API.Controllers
             _log = log;
         }
         //method for backend request to db
-        [HttpPost("Download")]
+        [HttpPost]
         public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
             //Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
             //string jsonWebToken = headerValues.FirstOrDefault();
             try
             {
-                string storedProcedure = "", filename = "", mimeType = "";
+                string storedProcedure = "";
                 var userRoleId = User.GetUserRoleId();
 
-                DataSet dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
+                var dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
 
-                if (dsParams.Tables[0].Rows.Count == 0)
+                if (dsParams.Tables["ReportProps"].Rows.Count == 0)
                 {
-                    _log.LogActivity($"Can't get report params \nReportParams: {data.reportParams}");
+                    _log.LogActivity($"Can't get report params \n ReportProps: {data.reportParams}");
                     return BadRequest("Can't get report params");
                 }
 
-                storedProcedure = dsParams.Tables[0].Rows[0].Field<string>("storedProcedure");
-                filename = dsParams.Tables[0].Rows[0].Field<string>("fileName");
+                storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure");
 
                 var dataParams = new Dictionary<string, object>();
                 if (!data.hasService)
@@ -61,79 +59,28 @@ namespace Reports.API.Controllers
 
                 dataParams["json"] = SqlStringParam.Sanitize(data.dataParams);
 
-                DataSet ds = await _reportService.GetDataAsync(storedProcedure, dataParams);
+                var ds = await _reportService.GetDataAsync(storedProcedure, dataParams);
 
                 if (ds.Tables[0].Rows.Count == 0)
                 {
-                    _log.LogActivity($"Can't get report data \nReportParams: {data.reportParams}");
+                    _log.LogActivity($"Can't get report data \n ReportProps: {data.reportParams}");
                     return BadRequest("Can't get report data");
                 }
-
-                var bytes = _rdlcreport.GetCustomReport(dsParams, ds);
-                if (bytes == null || bytes.Length == 0)
+                var response = _rdlcreport.GetReport(dsParams, ds);
+                if (response == null)
                 {
-                    _log.LogActivity($"Error in rdlc generation \nReportParams: {data.reportParams}");
+                    _log.LogActivity($"Error in rdlc generation \n ReportProps: {data.reportParams}");
                     return BadRequest($"Error in rdlc generation");
                 }
-                var provider = new FileExtensionContentTypeProvider();
-                if (!provider.TryGetContentType(filename, out mimeType))
-                {
-                    mimeType = "application/octet-stream";
-                }
-
-                return File(bytes, mimeType, HttpUtility.UrlEncode(filename, Encoding.UTF8));
+                return File(response.FileContents, response.ContentType, response.FileDownloadName);
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error in Download: \n {ex} \nReportParams: {data.reportParams}");
+                _log.LogActivity($"Error in Download: \n {ex} \n ReportProps: {data.reportParams}");
                 return BadRequest($"Error in Download: {ex.Message}");
             }
         }
-        [HttpPost("Dynamic")]
-        public async Task<IActionResult> GetReport(ApiReportParamsDto data)
-        {
-            try
-            {
-                string storedProcedure = "", filename = "";
-                var userRoleId = User.GetUserRoleId();
-
-                DataSet dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
-
-                if (dsParams.Tables[0].Rows.Count == 0)
-                {
-                    _log.LogActivity($"Can't get report params \nReportParams: {data.reportParams}");
-                    return BadRequest("Can't get report params");
-                }
-
-                storedProcedure = dsParams.Tables[0].Rows[0].Field<string>("storedProcedure");
-                filename = dsParams.Tables[0].Rows[0].Field<string>("fileName");
-
-                var dataParams = new Dictionary<string, object>();
-                if (!data.hasService)
-                {
-                    dataParams["userRoleId"] = userRoleId;
-                }
-
-                dataParams["json"] = SqlStringParam.Sanitize(data.dataParams);
-
-                DataSet ds = await _reportService.GetDataAsync(storedProcedure, dataParams, false);
-
-                if (ds.Tables[0].Rows.Count == 0)
-                {
-                    _log.LogActivity($"Can't get report data \nReportParams: {data.reportParams}");
-                    return BadRequest("Can't get report data");
-                }
-
-                var response = _rdlcreport.GetDynamicReport(ds);
-                return File(response.FileContents, response.ContentType, HttpUtility.UrlEncode(response.FileDownloadName, Encoding.UTF8));
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error in Download: \n {ex} \nReportParams: {data.reportParams}");
-                return BadRequest($"Error in Download: {ex.Message}");
-            }
-        }
-        //[HttpPost("ExportExcel")]
+        //[HttpPost]
         //public async Task<IActionResult> ExportExcel(ApiReportParamsDto data)
         //{
         //    

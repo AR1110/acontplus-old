@@ -60,75 +60,7 @@ class Shared {
             }
             return
         }
-
         return resultAxios
-
-    }
-
-
-    async downloadDynamic(parameters: object, returnData = false) {
-
-        const resultAxios = await Http({
-            method: 'post',
-            url: `${PATHS.REPORT}Dynamic`,
-            data: JSON.stringify(parameters),
-            responseType: 'blob'
-        })
-
-        if (!returnData) {
-
-            const ieEDGE = navigator.userAgent.match(/Edge/g);
-            const ie = navigator.userAgent.match(/.NET/g); // IE 11+
-            const oldIE = navigator.userAgent.match(/MSIE/g);
-            const blob = new window.Blob([resultAxios.data], {
-                type: resultAxios.headers["content-type"],
-            });
-            let fileName = resultAxios.headers["content-disposition"]
-                .split(";")[1]
-                .split("=")[1]
-                .replace('"', "");
-            fileName = fileName.replace('"', "");
-            if (ie || oldIE || ieEDGE) {
-                FileSaver.saveAs(blob, fileName);
-            } else {
-                const fileURL = URL.createObjectURL(blob);
-                window.open(fileURL, fileName);
-            }
-            return
-        }
-        return resultAxios;
-
-    }
-
-
-    async downloadReport(id: number, returnData = false) {
-        const resultAxios = await Http({
-            method: 'post',
-            url: `${PATHS.PRIVATE}Order/Report/${id}`,
-            responseType: 'blob'
-        })
-
-        if (!returnData) {
-            const ieEDGE = navigator.userAgent.match(/Edge/g);
-            const ie = navigator.userAgent.match(/.NET/g); // IE 11+
-            const oldIE = navigator.userAgent.match(/MSIE/g);
-            const blob = new window.Blob([resultAxios.data], {
-                type: resultAxios.headers["content-type"],
-            });
-            let fileName = resultAxios.headers["content-disposition"]
-                .split(";")[1]
-                .split("=")[1]
-                .replace('"', "");
-            fileName = fileName.replace('"', "");
-            if (ie || oldIE || ieEDGE) {
-                FileSaver.saveAs(blob, fileName);
-            } else {
-                const fileURL = URL.createObjectURL(blob);
-                window.open(fileURL, fileName);
-            }
-            return
-        }
-        return resultAxios;
     }
 
     async askToPrint(obj: ParamsPrint) {

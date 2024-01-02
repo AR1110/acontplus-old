@@ -13,8 +13,8 @@ namespace Reports.API.Services
         }
         public async Task<DataSet> GetParamsAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("Reporte.Report_Get", parameters, true);
-            if (ds.Tables[0].Rows.Count == 0)
+            var ds = await _repository.GetDataSetAsync("Reporte.Report_Get", parameters);
+            if (ds.Tables[0].Rows.Count == 0 || ds == null)
             {
                 return null;
             }

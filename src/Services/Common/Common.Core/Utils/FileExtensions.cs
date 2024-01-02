@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Drawing;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 
 namespace Common.Core.Utils
@@ -25,5 +26,21 @@ namespace Common.Core.Utils
             }
             return fileBytes;
         }
+        public static bool IsValidImage(byte[] bytes)
+        {
+            try
+            {
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    Image.FromStream(ms);
+                }
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            return true;
+        }
+
     }
 }

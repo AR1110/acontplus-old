@@ -17,8 +17,8 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow, 
-} from '@mui/material'; 
+    TableRow,
+} from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import { PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components/IconsMaterial';
 import { SharedService, orderService } from '@/core/services';
@@ -29,7 +29,7 @@ import WhatsApp from '@/core/components/WhatsApp/WhatsApp';
 import { DOC_TYPE } from '@/core/constants';
 import { hideLoader, showLoader } from '@/spinner';
 
-  
+
 const Transition = forwardRef(function Transition(
     props: TransitionProps & {
         children: React.ReactElement<any, any>;
@@ -46,9 +46,9 @@ type OrderDocumentProps = {
 }
 
 
-const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => { 
+const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
     const [loadingPDF, setLoadingPDF] = useState(false);
-    const [orderDocuments, setOrderDocuments] = useState<Array<IOrderDocument & {index: number}>>([]);
+    const [orderDocuments, setOrderDocuments] = useState<Array<IOrderDocument & { index: number }>>([]);
     const [openDialogWhatsApp, setDialogWhatsApp] = useState(false);
     const id = data.orderId;
 
@@ -59,7 +59,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
     }
 
     const getOrderDocuments = async () => {
-        try { 
+        try {
             showLoader();
             const dataFetch = orderService.getId(id, 3);
 
@@ -69,10 +69,10 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
 
             const response = resultAxios.data;
             setOrderDocuments(response.orderDocuments)
-            
+
             hideLoader();
         } catch (error) {
-            console.log(error) 
+            console.log(error)
             hideLoader()
         }
     }
@@ -107,14 +107,15 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
             setLoadingPDF(true)
             const parameters = {
                 dataParams: JSON.stringify({
-                  id: id
+                    id: id
                 }),
                 reportParams: JSON.stringify({
-                  codigo: "RRO",
-                  format: "pdf",
+                    codEstab: data.codEstab,
+                    codigo: "RRO",
+                    format: "pdf",
                 }),
-              };
-            SharedService.downloadDynamic(parameters)
+            };
+            SharedService.downloadExternal(parameters)
                 .finally(() => setLoadingPDF(false));
         } catch (error) {
             setLoadingPDF(false)
@@ -216,7 +217,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
-                                            <ButtonAction data={row} getOrderDocuments={getOrderDocuments }/>
+                                            <ButtonAction data={row} getOrderDocuments={getOrderDocuments} />
                                         </TableCell>
                                         <TableCell>
                                             {index + 1}

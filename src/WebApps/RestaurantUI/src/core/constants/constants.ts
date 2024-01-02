@@ -11,7 +11,7 @@ export const enum PATHS {
     ACCOUNTING = `${GATEWAY}Contabilidad/`,
     CONFIG = `${GATEWAY}Config/`,
     CONSULTA = `${GATEWAY}Consultas/`,
-    REPORT = `${GATEWAY}Reporte/`
+    REPORT = `${GATEWAY}Reports/v2/Reporte/`
 }
 
 export const enum PERSIS_USER {

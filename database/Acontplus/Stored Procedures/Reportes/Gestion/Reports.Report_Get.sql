@@ -1,37 +1,24 @@
-
-
-
 USE [AcontPlus]
 GO
 /****** Object:  StoredProcedure [dbo].[ASPReporteParametroGetByCode]    Script Date: 27/1/2023 15:19:15 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
-GO
-
-IF OBJECT_ID('Reporte.Report_Get') IS NOT NULL
-BEGIN 
-	DROP PROCEDURE Reporte.Report_Get
-END 
-GO
+GO 
 -- =============================================
 -- Author:		Emilio Senguana
 -- Create date: 09-03-2023
 -- Description:	SP PARA OBTENER LOS DATOS DEL ARCHIVO RDLC
 -- =============================================
---Reporte.Report_Get '{"codigo":"KRG","format":"pdf","codEstab":"ESTAB-000000048","aditionalParams":[]}'
-CREATE PROCEDURE Reporte.Report_Get @json NVARCHAR(MAX)
+--Reporte.Report_Get '{"codigo":"RRO","format":"pdf"}', ''
+CREATE OR ALTER PROCEDURE Reporte.Report_Get @json NVARCHAR(MAX)
+,@tableNames VARCHAR(500) OUT
 AS
 BEGIN 
 	SET NOCOUNT ON;
-	DECLARE @codEstab VARCHAR(50)
-	,@fileName VARCHAR(200)
-	--,@contentType NVARCHAR(25)
+	DECLARE @codEstab VARCHAR(50) 
 	,@codigo NVARCHAR(50)
-	,@format VARCHAR(60)
-	,@imagen VARBINARY(MAX)
-	,@mimeType NVARCHAR(30) 
-	,@aditionalParams NVARCHAR(MAX)
+	,@format VARCHAR(60) 
 	,@idUsuarioRol INT
 	,@hasParams BIT = 0
 
@@ -40,25 +27,18 @@ BEGIN
         ,@hasParams = hasParams
         ,@codigo = codigo
         ,@format = formato
-        ,@aditionalParams = aditionalParams
     FROM OPENJSON(@json) WITH (
                                 codEstab VARCHAR(50) '$.codEstab',
                                 idUsuarioRol INT '$.idUsuarioRol',
                                 hasParams BIT '$.hasParams',
                                 formato NVARCHAR(15) '$.format',
-		                        codigo NVARCHAR(25) '$.codigo',
-		                        aditionalParams  NVARCHAR(MAX) '$.aditionalParams' AS JSON
+		                        codigo NVARCHAR(25) '$.codigo'
                                 )
 	
-	print @codestab
 	IF(@codEstab IS NULL OR LEN(LTRIM(RTRIM(@codEstab))) = 0)
 		BEGIN
-		print 'yes'
-			SET @codEstab = (selecT TOP 1 codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol and predeterminado = 1) 
+			SET @codEstab = (SELECT TOP 1 codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol and predeterminado = 1) 
 		END
-			print @codestab
-
-	SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WITH (NOLOCK) WHERE codEstab = @codEstab AND estado = 1
 	
 	IF NOT EXISTS (SELECT 1 FROM Config.Reporte WITH (NOLOCK) WHERE codigo = @codigo)
 		BEGIN
@@ -66,65 +46,67 @@ BEGIN
 			RETURN
 		END
 
-    SET @fileName = (SELECT nombreReporte FROM Config.Reporte  WITH (NOLOCK) WHERE codigo = @codigo)
-	IF @format = 'pdf'
-		BEGIN
-			SET @fileName = @fileName + '.pdf' 
-			--SET @contentType = 'application/pdf';
-		END
-	IF @format = 'excel'
-		BEGIN
-			SET @format = 'EXCEL'
-			SET @fileName = @fileName+ '.xls'
-			--SET @contentType = 'application/vnd.ms-excel';
-		END
-	IF @format = 'word'
-		BEGIN
-			SET @fileName = @fileName + '.doc'
-			--SET @contentType = 'application/msword';
-		END
+    SET @tableNames = 'ReportProps'
 
 	--REPORT DATA RDLC
-	SELECT '1',''
-	--,'AcontPlus/' + reportPath  reportPath
-	,reportPath
-	,ISNULL(@format, '') as 'format'
-	,storedProcedure 
-	,LTRIM(RTRIM(@fileName)) as 'fileName'
+	SELECT ReportPath
+	,ISNULL(@format, '') ReportFormat
+	,StoredProcedure 
+	,nombreReporte ReportName
 	,ISNULL(@hasParams, 1) hasParams
 	FROM Config.Reporte r WITH (NOLOCK)
 	WHERE codigo = @codigo
 
 	--DATASOURCES
-	SELECT rd.position
-	,rd.dataSource
-	FROM Config.ReporteDataSource rd WITH (NOLOCK)
-	INNER JOIN Config.Reporte r WITH (NOLOCK) ON r.idReporte = rd.idReporte
-	WHERE codigo = @codigo
-	
-	DECLARE @totalParams INT = 2 --DEFAULT PARAMS
+    IF EXISTS (select 1 	FROM Config.ReporteDataSource rd WITH (NOLOCK)
+	        INNER JOIN Config.Reporte r WITH (NOLOCK) ON r.idReporte = rd.idReporte
+	        WHERE codigo = @codigo)
+        BEGIN 
+            SET @tableNames = @tableNames + ',DataSources'
+            SELECT rd.position
+	           ,rd.dataSource
+	           FROM Config.ReporteDataSource rd WITH (NOLOCK)
+	           INNER JOIN Config.Reporte r WITH (NOLOCK) ON r.idReporte = rd.idReporte
+	           WHERE codigo = @codigo
+        END
 
-	CREATE TABLE #Params(position INT, paramName NVARCHAR(100), isByte BIT, paramValue NVARCHAR(MAX), paramByte VARBINARY(MAX))
-	INSERT INTO #Params(position, paramName, isByte, paramValue, paramByte)
-	EXEC Reporte.Report_Params @aditionalParams
+    
+    IF EXISTS (SELECT 1  FROM Config.EstablecimientoLogo el WITH (NOLOCK)
+                            INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON el.EstablecimientoId = e.idEstablecimiento
+                        WHERE codEstab = @codEstab
+                            AND estado = 1 )
+        BEGIN
+            SET @tableNames = @tableNames + ',ReportParams'
 
-	IF (SELECT ISNULL(COUNT(1),0) FROM  #Params) > 0
-		BEGIN
-			SELECT @totalParams = @totalParams + ISNULL(COUNT(1),0) FROM #Params
-		END
-		 
+            DECLARE @content VARBINARY (MAX)
+                ,@contentType VARCHAR(100)
+                ,@isCompressed BIT
+            
+            SELECT @content = el.Content
+                ,@contentType = el.ContentType
+                ,@isCompressed = CAST(ISNULL(el.IsCompressed,0) AS bit)
+            FROM Config.EstablecimientoLogo el WITH (NOLOCK)
+                INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON el.EstablecimientoId = e.idEstablecimiento
+            WHERE codEstab = @codEstab 
+                AND estado = 1 
 
-	SELECT 0 position, 'logo' paramName, CAST(1 AS BIT) isByte, 'not' paramValue, ISNULL(@imagen, CAST(NEWID()AS VARBINARY(MAX))) paramByte,  @totalParams totalParams
+            --DEFAULT PARAMS
 
-	UNION ALL 
+            DECLARE @tblParams AS TABLE (
+                                    paramName VARCHAR(100),
+                                    paramValue VARBINARY(MAX),
+                                    isPicture BIT NOT NULL DEFAULT 0,
+                                    isCompressed BIT NOT NULL DEFAULT 0)
 
-	SELECT 1 position, 'mimeType' paramName,CAST(0 AS BIT) isByte, ISNULL(@mimeType, 'image/png') paramValue,CAST(NEWID() AS VARBINARY(MAX))  paramByte, @totalParams totalParams
-	
-	UNION ALL 
+            INSERT INTO @tblParams(paramName, paramValue, isPicture, isCompressed)
+            VALUES('logo', @content, 1, @isCompressed)
+            
+            INSERT INTO @tblParams(paramName, paramValue)
+            VALUES ('mimeType', CONVERT(VARBINARY, @contentType))
 
-	SELECT position, paramName,isByte, paramValue, paramByte, @totalParams totalParams FROM #Params
+            SELECT * FROM @tblParams 
+    END
 
-	DROP TABLE dbo.#Params
 END
 
 

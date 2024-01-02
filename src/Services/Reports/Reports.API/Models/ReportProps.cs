@@ -1,6 +1,6 @@
 ﻿namespace Reports.API.Models
 {
-    public class RdlcProps
+    public class ReportProps
     {
         public string ReportPath { get; set; }
         public string ReportName { get; set; }

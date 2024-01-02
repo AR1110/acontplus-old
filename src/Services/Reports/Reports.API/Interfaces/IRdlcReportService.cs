@@ -5,8 +5,7 @@ namespace Reports.API.Interfaces
 {
     public interface IRdlcReportService
     {
-        public byte[] GetCustomReport(DataSet dsParams, DataSet ds);
-        public ReportResponse GetDynamicReport(DataSet dataSet);
+        public ReportResponse GetReport(DataSet dsParams, DataSet ds);
         public Task<ReportResponse> GetErrorAsync();
     }
 }

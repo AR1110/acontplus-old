@@ -7,6 +7,7 @@
 	import Add from '$modules/vet/medical-history/components/Add.svelte';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
 	import Pagination from '$components/Pagination.svelte';
+	import { PATHS } from '$constants/constants';
 	let newRecord = false;
 	let codEstab = '0';
 
@@ -108,6 +109,7 @@
 	};
 
 	const getReport = async (item) => {
+        console.log(item)
 		//Add authentication headers as params
 		// var params = {
 		//     access_token: "An access_token",
@@ -131,7 +133,7 @@
 			})
 		};
 		await client
-			.post(`Reporte/Dynamic`, parameters, { responseType: 'blob' })
+			.post(`${PATHS.Reports}Download`, parameters, { responseType: 'blob' })
 			.then((response) => {
 				var ieEDGE = navigator.userAgent.match(/Edge/g);
 				var ie = navigator.userAgent.match(/.NET/g); // IE 11+
