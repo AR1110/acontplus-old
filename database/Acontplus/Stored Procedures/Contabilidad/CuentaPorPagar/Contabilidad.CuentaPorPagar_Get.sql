@@ -20,13 +20,9 @@ GO
 -- Create date: 03/14/2023
 -- Description:	SP para lisatar las cuentas por pagar.
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuentaPorPagar_Get', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuentaPorPagar_Get
-GO
 
 --  Contabilidad.CuentaPorPagar_Get 44, '{"tipo":1}'
-
-CREATE PROCEDURE Contabilidad.CuentaPorPagar_Get @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorPagar_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -43,6 +39,7 @@ BEGIN
 
 	SELECT @tipo = tipo, @idCuentaPorPagar = idCuentaPorPagar FROM OPENJSON(@json) WITH (tipo INT '$.tipo', idCuentaPorPagar INT '$.idCuentaPorPagar')
 
+    --> Get
 	IF @tipo = 1
 		BEGIN
 			DECLARE @checkboxFecha BIT 
@@ -271,7 +268,7 @@ BEGIN
 				  AND de.versionComp = '2.0.0'
 				  AND de.codEstado = 4
 				  AND de.idEntidad = @idEntidad
-				  AND de.numeroIdentificacion = @rucEmisor
+				  AND de.idContribuyente = @rucEmisor
 				  AND de.idDocumentoElectronico NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '07')
 
 
@@ -339,6 +336,24 @@ BEGIN
 	        WHERE idEntidad = @idEntidad 
               AND gestion = 0
               AND estado = 1
+            RETURN 
+        END 
+
+    --> Filters
+    IF @tipo = 6
+        BEGIN
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NPA','PA')
+
+            SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('LC','FV','DH','FC')
             RETURN 
         END 
 END
