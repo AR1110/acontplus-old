@@ -1,4 +1,4 @@
-﻿namespace Reports.API.Models
+﻿namespace Reports.Core.Models
 {
     public class ReportProps
     {

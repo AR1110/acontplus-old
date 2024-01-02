@@ -2,37 +2,50 @@
 using System.Text;
 using System.Web;
 using Common.Core.Utils;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
-using Reports.API.Enums;
-using Reports.API.Interfaces;
-using Reports.API.Models;
+using Reports.Core.Enums;
+using Reports.Core.Interfaces;
+using Reports.Core.Models;
 
-namespace Reports.API.Services
+namespace Reports.Application.Services
 {
     public class RdlcReportService : IRdlcReportService
     {
-        public ReportResponse GetReport(DataSet dsParams, DataSet ds)
+        private readonly IConfiguration _configuration;
+        public RdlcReportService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        public ReportResponse GetReport(DataSet dsParams, DataSet ds, bool offline)
         {
             var reportProps = new ReportProps();
             reportProps = DataTableMapper.BindData<ReportProps>(dsParams.Tables["ReportProps"]);
             using (var lr = new LocalReport())
             {
-                var mainPath = Directory.GetCurrentDirectory() + "\\Reports\\";
 
-                var paths = reportProps.ReportPath.Split("/");
-                paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
-
-                switch (paths.Length)
+                if (offline)
                 {
-                    case 1:
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
-                        break;
-                    case 2:
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
-                        break;
-                    default:
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(mainPath + reportProps.ReportPath));
-                        break;
+                    lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString()));
+                }
+                else
+                {
+                    var mainPath = Directory.GetCurrentDirectory() + "\\Reports\\";
+                    var paths = reportProps.ReportPath.Split("/");
+                    paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+
+                    switch (paths.Length)
+                    {
+                        case 1:
+                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
+                            break;
+                        case 2:
+                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
+                            break;
+                        default:
+                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(mainPath + reportProps.ReportPath));
+                            break;
+                    }
                 }
                 if (dsParams.Tables.Contains("DataSources"))
                 {
@@ -65,7 +78,7 @@ namespace Reports.API.Services
                     var rdlcParams = dsParams.Tables["ReportParams"];
                     //Recorremos los parametros del reporte como logos, textos, etc
                     if (rdlcParams.Rows.Count > 0)
-                    { 
+                    {
                         //ReportParameterInfoCollection parameters = lr.GetParameters(); 
                         foreach (DataRow item in rdlcParams.Rows)
                         {

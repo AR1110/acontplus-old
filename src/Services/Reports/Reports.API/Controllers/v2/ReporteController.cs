@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Reports.API.Dtos;
 using Services.Common;
-using Reports.API.Interfaces;
 using Services.Common.Logs;
 using System.Data;
 using Asp.Versioning;
+using Reports.Core.Interfaces;
 
 namespace Reports.API.Controllers.v2
 {

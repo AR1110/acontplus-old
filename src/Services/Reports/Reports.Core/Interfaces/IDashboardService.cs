@@ -1,4 +1,4 @@
-﻿namespace Reports.API.Interfaces
+﻿namespace Reports.Core.Interfaces
 {
     public interface IDashboardService
     {

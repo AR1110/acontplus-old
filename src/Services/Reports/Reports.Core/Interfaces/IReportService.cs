@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Reports.API.Interfaces
+namespace Reports.Core.Interfaces
 {
     public interface IReportService
     {

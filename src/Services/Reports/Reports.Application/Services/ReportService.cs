@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using Common.Core.Interfaces;
-using Reports.API.Interfaces;
+using Reports.Core.Interfaces;
 
-namespace Reports.API.Services
+namespace Reports.Application.Services
 {
     public class ReportService : IReportService
     {
