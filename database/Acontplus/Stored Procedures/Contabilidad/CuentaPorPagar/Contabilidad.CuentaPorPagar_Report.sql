@@ -79,11 +79,11 @@ BEGIN
 							   END as tipoDoc
                               ,razonSocialProveedor
                               ,serieComprobante
-                              ,fechaEmision
-                              ,fechaVencimiento
-                              ,CAST(importeTotal as numeric(18,2)) as importeTotal
-                              ,CAST(abono as numeric(18,2))        as abono
-                              ,CAST(saldo as numeric(18,2))        as saldo
+                              ,FORMAT(fechaEmision,''dd/MM/yyyy'')     as fechaEmision
+                              ,FORMAT(fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
+                              ,CAST(importeTotal as numeric(18,2))     as importeTotal
+                              ,CAST(abono as numeric(18,2))            as abono
+                              ,CAST(saldo as numeric(18,2))            as saldo
                               ,estado 
                         FROM v_CuentaPorPagar cp WITH (NOLOCK)
                         WHERE idEntidad = @idEntidad '
@@ -124,6 +124,9 @@ BEGIN
                             SET @sql = @sql + 'AND cp.codEstado = @codEstado '
                         END 
                 END 
+
+
+            SET @sql = @sql + 'ORDER BY cp.idProveedor,cp.codDoc,cp.fechaEmision,cp.secuencial ASC '
 
             SELECT entidad                                                                       as razonSocial
                   ,nombreComercial
