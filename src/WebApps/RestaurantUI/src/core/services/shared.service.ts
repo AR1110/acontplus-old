@@ -5,10 +5,10 @@ import { ApiResponse, CustomerCedulaSRI, CustomerRucSRI } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
 import FileSaver from "file-saver"
 
-type ParamsPrint = {id: number, documentoId:number, tipo: 1 | 2 | 3 | 4}
+type ParamsPrint = { id: number, documentoId: number, tipo: 1 | 2 | 3 | 4 }
 
 
-class Shared { 
+class Shared {
     async checkClientSRIByRUC(identificacion: string): Promise<CustomerRucSRI> {
         const resultAxios = await Http({
             method: 'get',
@@ -85,7 +85,7 @@ class Shared {
             url: `${PATHS.PRIVATE}Order/Print/${JSON.stringify(obj)}`,
         })
 
-        const response: ApiResponse = resultAxios.data; 
+        const response: ApiResponse = resultAxios.data;
         if (response.code === "0") {
             SnackbarUtility.warning(response.message)
         }
@@ -93,55 +93,23 @@ class Shared {
             this.print(JSON.parse(response.payload));
         }
     }
-
-
     async print(params: any) {
-
-        // await fetch(params[0].urlPrinter + "/GetPrinters")
-        //     .then(response => response.json())
-        //     .then(data => { console.log(data); })
-        //     .catch(function (error) {
-        //         SnackbarUtility.error('Hubo un problema al obtener las impresoras:' + error.message);
-        //     })
-
         for (const param of params) {
-            //console.log(param)
-            //const urlPrint = `${param.urlPrinter}?rdlcProps=${param.rdlcProps}&dataSources=${encodeURIComponent(param.dataSources)}&rdlcParams=${param.rdlcParams}`
-            // console.log(urlPrint)
-            await fetch(param.urlPrinter, {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
-                //mode: "no-cors", // no-cors, *cors, same-origin
-                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: "same-origin", // include, *same-origin, omit
-                headers: {
-                    "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                //redirect: "follow", // manual, *follow, error
-                //referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(param), // body data type must match "Content-Type" header
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.code == "1") {
-                        SnackbarUtility.success(data.message)
-                    } else {
-                        SnackbarUtility.warning(data.message)
-                    }
-                }).catch(function (error) {
-                    console.log(error)
-                    SnackbarUtility.error('Hubo un problema al imprimir:' + error.message);
-                })
+            const resultAxios = await Http({
+                method: 'post',
+                url: param.urlPrinter,
+                data: JSON.stringify(param)
+            });
+            const response: ApiResponse = resultAxios.data;
+            if (response.code === "0") {
+                SnackbarUtility.warning(response.message)
+            }
+            if (response.code === "1") {
+                SnackbarUtility.success(response.message)
+            }
         }
-
-        // console.log(params)
-
     }
-
 }
-
-
-
 export const SharedService = new Shared()
 
 
