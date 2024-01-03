@@ -1,14 +1,11 @@
 
 USE [AcontPlus]
-
+GO
 
 -- exec ReporteFact.ComprobanteRetencion '{"rdlcParams":"[{\"reportPath\":\"\\\/FactElect\\\/ComprobanteRetencion.rdl\",\"format\":\"pdf\",\"contentType\":\"application\\\/pdf\",\"fileName\":\"ComprobanteRetencion.pdf\"}]","id":333}'
 -- exec ReporteFact.ComprobanteRetencion '[{"id": 323, "codigo":"RCR","format":"pdf"}]'
 
-IF OBJECT_ID('ReporteFact.ComprobanteRetencion ')IS NOT NULL
-	DROP PROCEDURE ReporteFact.ComprobanteRetencion
-GO
-
+ 
 -- =============================================
 -- Author:		Emilio Senguana
 -- Create date: 28-02-2023
@@ -17,7 +14,7 @@ GO
 
 
 
-CREATE PROCEDURE ReporteFact.ComprobanteRetencion @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE ReporteFact.ComprobanteRetencion @json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT  ON;
@@ -35,12 +32,6 @@ BEGIN
 	--DataMail
 	 DECLARE @cc VARCHAR(100)
 	 DECLARE @nameDoc VARCHAR(150)
-
-
-	----------------Data Reports ----------
-	--Parameters
-	DECLARE @imagen VARBINARY(MAX)
-	DECLARE @mimeType VARCHAR(150)
     
 	--DataSets
 	DECLARE @headerDs VARCHAR(MAX)
@@ -81,11 +72,8 @@ BEGIN
 		@versionComp       = dr.versionComp,
 		@codDoc            = dr.codDoc,
 		@fechaAutorizacion = fechaAutorizacion,
-		@imagen            = el.imagen,
-		@mimeType          = el.mimeType,
 		@serieComprobante  = dr.serieComprobante
 	FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK) 
-	INNER JOIN Config.Estab_Logo el WITH (NOLOCK) ON el.codEstab = dr.codEstab
 	WHERE dr.idDocumento = @id 
 
 

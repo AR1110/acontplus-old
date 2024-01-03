@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Reports.API.Interfaces;
+using Reports.Core.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
 

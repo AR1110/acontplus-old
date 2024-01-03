@@ -269,12 +269,15 @@
     <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
     <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
+    <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
+    <ProjectReference Include="..\Reports.Core\Reports.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
-    <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
 
   <ItemGroup>

@@ -113,7 +113,7 @@ namespace FactElect.API.Controllers
                     var xmlSri = string.Empty;
                     xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
                     var byteXml = Encoding.UTF8.GetBytes(xmlSri);
-                    _response.Create(byteXml, "text/xml", dt.Rows[0].Field<string>("filename") + ".xml");
+                    _response.CreateBase64(byteXml, "text/xml", dt.Rows[0].Field<string>("filename") + ".xml");
                     //var sms = "";
                     //await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
                     return File(_response.Content, _response.ContentType, _response.FileName);

@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Drawing;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
 
 namespace Common.Core.Utils
 {
@@ -14,5 +16,31 @@ namespace Common.Core.Utils
             var base64String = Convert.ToBase64String(valueByte, 0, valueByte.Length);
             return base64String;
         }
+        public static byte[] GetBytes(IFormFile file)
+        {
+            byte[] fileBytes = null;
+            using (var ms = new MemoryStream())
+            {
+                file.CopyTo(ms);
+                fileBytes = ms.ToArray();
+            }
+            return fileBytes;
+        }
+        public static bool IsValidImage(byte[] bytes)
+        {
+            try
+            {
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    Image.FromStream(ms);
+                }
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            return true;
+        }
+
     }
 }

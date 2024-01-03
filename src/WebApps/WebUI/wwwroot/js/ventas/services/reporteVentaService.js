@@ -11,7 +11,7 @@
 
         service.getDataForm = function () {
             return mS.getData('get', `${URL}?json=${JSON.stringify({
-                tipo: 7
+                tipo: 6
             })}`, null, true).then(response => {
                 if (response.code === "0") {
                     throw response;

@@ -995,12 +995,11 @@ export class CommonService {
         }
     }
 
-
     //--------------------------------------------------REPORTE----------------------------------
     async getReport(params) {
         try {
-            let method = params.method || 'post';
-            let url = params.url || 'Reporte/Download';
+            let method = params.method || 'POST';
+            let url = params.v2 ? 'Reports/v2/Reporte/Download' : params.url || 'Reports/Reporte/Download';
             let parameters = params.parameters;
             let formatType = params.formatType || "pdf";
             showLoader();
@@ -1093,63 +1092,6 @@ export class CommonService {
             hideLoader();
         }
     }
-
-    /**
-     * 
-     * @param {object} param {parameters, format}
-     */
-
-    getReportDynamic({
-        parameters,
-        format
-    }) {
-        try {
-            showLoader();
-
-            this.mS.getFile('post', 'Reporte/DynamicReport', JSON.stringify(parameters), true).then(response => {
-                hideLoader();
-
-                if (format === "pdf") {
-                    let fileBlob = new Blob([response.data], {
-                        type: response.data.type,
-                    })
-
-                    let objectUrl = window.URL || window.webkitURL;
-                    let urlFile = objectUrl.createObjectURL(fileBlob);
-
-                    // Ajuste horizontal
-                    let x = parseInt((screen.width - 1200) / 2);
-                    // Ajustae vertical
-                    let y = parseInt((screen.height - 650) / 4);
-
-                    window.open(
-                        urlFile,
-                        "_blank",
-                        `resizable=yes
-                        width=1200
-                        height=650
-                        screenY=${y}
-                        screenX=${x}`
-                    )
-                } else {
-                    let serverData = new Blob([response.data], {
-                        type: response.headers()["content-type"],
-                    })
-
-                    let fileName = response.headers()["content-disposition"].split(";")[1].split("=")[1];
-                    this.FileSaver.saveAs(serverData, fileName);
-                }
-            }).catch(error => {
-                hideLoader();
-                console.log(error)
-            })
-        } catch (error) {
-            hideLoader();
-            console.log(error)
-        }
-    }
-
-
     /**
      * 
      * 

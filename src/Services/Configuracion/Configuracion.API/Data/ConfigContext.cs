@@ -14,6 +14,7 @@ namespace Configuracion.API.Data
         public DbSet<Printer> Printers { get; set; }
         public DbSet<PrinterDocument> PrinterDocuments { get; set; }
         public DbSet<PrinterType> PrinterTypes { get; set; }
+        public DbSet<EstablecimientoLogo> EstablecimientoLogos {  get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -43,6 +44,10 @@ namespace Configuracion.API.Data
                     property.SetIsUnicode(false);
                 }
             }
+
+            builder.Entity<EstablecimientoLogo>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<EstablecimientoLogo>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<EstablecimientoLogo>().HasIndex(x => x.EstablecimientoId).HasDatabaseName("UI_EstabLogo_EstablecimientoId").IsUnique();
 
             builder.Entity<Printer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Printer>().Property(x => x.Enabled).HasDefaultValue(true);

@@ -6,7 +6,7 @@ import { client } from "$utils/axiosClient";
 class Shared {
   download(parameters: object, isReturnData?: boolean) {
     showLoader();
-    client.post("Reporte/Download", parameters, { responseType: "blob" }).then((response) => {
+    client.post("Reports/Reporte/Download", parameters, { responseType: "blob" }).then((response) => {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
       const ie = navigator.userAgent.match(/.NET/g); // IE 11+
       const oldIE = navigator.userAgent.match(/MSIE/g);
