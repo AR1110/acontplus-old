@@ -1161,35 +1161,6 @@ export class CommonService {
                 }).catch(function (error) {
                     console.log('Hubo un problema al imprimir:' + error.message);
                 })
-            //fetch(urlPrinter, {
-            //    method: 'POST',
-            //    cache: 'no-cache',
-            //    credentials: 'same-origin',
-            //    headers: {
-            //        'Content-Type': 'application/x-www-form-urlencoded',
-            //    }
-            //})
-            //    .then(response => response.json())
-            //    .then(data => {
-            //        if (data.code == "0") {
-            //            toastr.warning(data.message, '', {
-            //                positionClass: 'toast-bottom-right',
-            //                closeButton: true,
-            //                preventDuplicates: true,
-            //                progressBar: true
-            //            })
-            //        }
-            //        if (data.code == "1") {
-            //            toastr.success(data.message, '', {
-            //                positionClass: 'toast-bottom-right',
-            //                closeButton: true,
-            //                preventDuplicates: true,
-            //                progressBar: true
-            //            })
-            //        }
-            //    }).catch(function (error) {
-            //    console.log('Hubo un problema al imprimir:' + error.message);
-            //})
         } catch (error) {
             hideLoader()
             console.log(error)
