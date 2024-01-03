@@ -9,11 +9,12 @@ CREATE OR ALTER VIEW v_CuentaPorPagar AS (
 		  ,cp.idUsuario
 		  ,cp.idEntidad
 		  ,cp.idDocumento
-          ,CASE WHEN cp.codDoc = '03' THEN (SELECT TOP 1 lc.idPuntoEmision 
-                                            FROM dbo.LiquidacionCompra lc WITH (NOLOCK) 
-                                            WHERE lc.idLiquidacionCompra = cp.idDocumento)
+          ,CASE WHEN cp.codDoc = '03' THEN (SELECT TOP 1 lc.idPuntoEmision FROM dbo.LiquidacionCompra lc WITH (NOLOCK) WHERE lc.idLiquidacionCompra = cp.idDocumento)
+                WHEN cp.codDoc = 'DH' THEN (SELECT TOP 1 di.idPuntoEmision FROM Compra.Documento_Ingreso di WITH (NOLOCK) WHERE di.idDocumentoIngreso = cp.idDocumento)
            END as idPuntoEmision
-		  ,es.codEstab
+		  ,es.idEstablecimiento
+          ,es.nombreComercial
+          ,es.codEstab
 		  ,cp.codDoc
 		  ,cp.uniqueId
 		  ,razonSocialProveedor = pr.nombreFiscal

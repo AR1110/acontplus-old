@@ -37,7 +37,7 @@ BEGIN
 	DECLARE @idPuntoEmision INT ,@id INT ,@pageIndex INT ,@pageSize INT
 
     --> Filter
-    DECLARE @codEstab VARCHAR(20) ,@idProveedor INT ,@codEstado VARCHAR(10) ,@dateStart DATETIME2 ,@dateEnd DATETIME2  ,@ckFecha BIT ,@secuencial INT
+    DECLARE @codEstab VARCHAR(20) ,@idProveedor INT ,@codEstado VARCHAR(10) ,@dateStart DATETIME2 ,@dateEnd DATETIME2  ,@ckFecha BIT ,@secuencial VARCHAR(100)
 	
 	SELECT @typeList = typeList FROM OPENJSON(@json) WITH(typeList INT)
 
@@ -51,47 +51,51 @@ BEGIN
 
 			SET @sql  = 'SELECT idDocumento as id
 		                       ,serieComprobante
-		                       ,FORMAT(fechaEmision, ''dd/MM/yyyy HH:mm'') as fechaEmision
+		                       ,FORMAT(fechaEmision, ''dd/MM/yyyy HH:mm'')     as fechaEmision
 		                       ,razonSocialProveedor
 		                       ,importeTotal
 		                       ,estado
 		                       ,usuario
 		                       ,IIF(codEstado = ''A'', ''table-danger'','''')  as colorRow 
                                ,codEstado
+                               ,COUNT(*) OVER()                                as totalRecods
 	                     FROM v_CuentaPorPagar 
 	                     WHERE codDoc = ''DH''
                           AND idEntidad = @idEntidad '
 
-			SET @params = '@idEntidad   INT
-						  ,@codEstab    VARCHAR(100)
-						  ,@dateStart   DATETIME2
-						  ,@dateEnd     DATETIME2
-						  ,@idProveedor INT
-						  ,@codEstado   VARCHAR(10)
-						  ,@secuencial  VARCHAR(13)
-                          ,@pageIndex   INT 
-                          ,@pageSize    INT'
+			SET @params = '@idEntidad      INT
+						  ,@codEstab       VARCHAR(100)
+                          ,@idPuntoEmision INT
+						  ,@dateStart      DATETIME2
+						  ,@dateEnd        DATETIME2
+						  ,@idProveedor    INT
+						  ,@codEstado      VARCHAR(10)
+						  ,@secuencial     VARCHAR(100)
+                          ,@pageIndex      INT 
+                          ,@pageSize       INT'
 
-			SELECT @codEstab    = codEstab
-				  ,@idProveedor = idProveedor
-				  ,@dateStart   = dateStart
-				  ,@dateEnd     = dateEnd
-				  ,@codEstado   = codEstado
-				  ,@secuencial  = LTRIM(TRIM(secuencial))
-                  ,@ckFecha     = ckFecha
-                  ,@pageIndex   = pageIndex
-                  ,@pageSize    = pageSize
+			SELECT @codEstab       = codEstab
+                  ,@idPuntoEmision = idPuntoEmision
+				  ,@idProveedor    = idProveedor
+				  ,@dateStart      = dateStart
+				  ,@dateEnd        = dateEnd
+				  ,@codEstado      = codEstado
+				  ,@secuencial     = LTRIM(TRIM(secuencial))
+                  ,@ckFecha        = ckFecha
+                  ,@pageIndex      = pageIndex
+                  ,@pageSize       = pageSize
 			FROM OPENJSON(@json) WITH 
             (
-                 codEstab    VARCHAR(20) 
-			    ,idProveedor INT 
-			    ,dateStart   DATETIME2 
-			    ,dateEnd     DATETIME2 
-			    ,codEstado	 VARCHAR(5) 
-			    ,secuencial  VARCHAR(13)
-                ,ckFecha     BIT
-                ,pageIndex   INT
-                ,pageSize    INT
+                 codEstab       VARCHAR(20) 
+			    ,idProveedor    INT 
+			    ,dateStart      DATETIME2 
+			    ,dateEnd        DATETIME2 
+			    ,codEstado	    VARCHAR(5)
+                ,idPuntoEmision INT
+			    ,secuencial     VARCHAR(100)
+                ,ckFecha        BIT
+                ,pageIndex      INT
+                ,pageSize       INT
 
 			) as dt
  
@@ -103,8 +107,13 @@ BEGIN
 
             IF @codEstab IS NOT NULL
                 BEGIN
-                    SET @sql =  @sql + 'AND codEstab = @codEstab '
+                    SET @sql = @sql + 'AND codEstab = @codEstab '
                 END 
+
+            IF @idPuntoEmision > 0
+                BEGIN
+                    SET @sql = @sql + 'AND idPuntoEmision = @idPuntoEmision '
+                END
 
 			IF @secuencial IS NOT NULL
 				BEGIN 
@@ -125,15 +134,16 @@ BEGIN
 
 			EXEC sp_executesql @sql
 			                  ,@params 
-			                  ,@idEntidad   = @idEntidad
-				              ,@codEstab    = @codEstab
-				              ,@dateStart   = @dateStart
-				              ,@dateEnd     = @dateEnd
-				              ,@idProveedor = @idProveedor
-				              ,@codEstado   = @codEstado
-				              ,@secuencial  = @secuencial
-                              ,@pageIndex   = @pageIndex
-                              ,@pageSize    = @pageSize
+			                  ,@idEntidad      = @idEntidad
+				              ,@codEstab       = @codEstab
+                              ,@idPuntoEmision = @idPuntoEmision
+				              ,@dateStart      = @dateStart
+				              ,@dateEnd        = @dateEnd
+				              ,@idProveedor    = @idProveedor
+				              ,@codEstado      = @codEstado
+				              ,@secuencial     = @secuencial
+                              ,@pageIndex      = @pageIndex
+                              ,@pageSize       = @pageSize
             RETURN 
 		END 
 
@@ -244,7 +254,8 @@ BEGIN
 				  ,dt.idMedida
 				  ,dt.idBodega
                   ,dt.idTipoIva
-				  ,ar.codigo 
+				  ,ti.idImpuesto
+                  ,ar.codigo 
                   ,dt.descripcion
 				  ,dt.cantidad
 				  ,dt.precioUnitario
@@ -277,6 +288,14 @@ BEGIN
                         WHERE a.idArticulo = dt.idArticulo FOR JSON PATH
 
                    ) as principal
+                   ,ISNULL
+                   ((
+                        SELECT et.idEtiqueta ,et.descripcion, et.etiquetas
+                        FROM Inventario.Etiqueta et WITH (NOLOCK)
+                        INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idEtiqueta = et.idEtiqueta
+                        WHERE ar.idArticulo = dt.idArticulo FOR JSON PATH
+
+                   ),'[]') as etiqueta
 			FROM Compra.Documento_Ingreso_Detail dt WITH (NOLOCK)
 			INNER JOIN dbo.TipoIva               ti WITH (NOLOCK) ON ti.idTipoIva  = dt.idTipoIva
 			INNER JOIN dbo.Articulo              ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
@@ -312,7 +331,7 @@ BEGIN
     IF @typeList = 6 
         BEGIN
             
-            SET @tableNames = 'comprobante,proveedor,detalles,infoAdicional,contabilidad,impuestos'
+            SET @tableNames = 'comprobante,proveedor,detalles,impuestos'
 
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
@@ -361,8 +380,6 @@ BEGIN
             INNER JOIN dbo.Bodega                bo WITH (NOLOCK) ON bo.idBodega   = dd.idBodega
             WHERE dd.idDocumentoIngreso = @id
             ORDER BY dd.idDocumentoIngresoDetail ASC
-
-            SELECT tiempoCredito,fechaVencimiento FROM v_CuentaPorPagar WITH (NOLOCK) WHERE idDocumento = @id AND codDoc = 'DH'
 
             SELECT idTipoIva
                   ,idImpuesto

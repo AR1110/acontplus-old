@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Config.Estab_Asig_Update', N'P') IS NOT NULL
-DROP PROCEDURE Config.Estab_Asig_Update
-GO
-CREATE PROCEDURE Config.Estab_Asig_Update @userRoleId INT,@id INT 
+CREATE OR ALTER PROCEDURE Config.Estab_Asig_Update @userRoleId INT,@id INT 
 	
 AS
 BEGIN
@@ -38,6 +35,7 @@ BEGIN
 
 		BEGIN TRAN 
 			UPDATE Config.Estab_Asig SET predeterminado = 0 WHERE idUsuarioRol = @idUsuarioRol
+
 			UPDATE Config.Estab_Asig SET predeterminado = 1 WHERE idEstab_Asig = @id
 		COMMIT TRAN 
 		SELECT Common.ufnSpResponse('1','Actualizado Correctamente',NULL)

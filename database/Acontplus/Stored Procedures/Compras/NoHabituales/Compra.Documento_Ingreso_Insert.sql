@@ -172,9 +172,9 @@ BEGIN
 		SELECT idArticulo, idEtiqueta, jsonAdicional
 		FROM OPENJSON(@artInfoAdicionales) WITH 
         (
-		  idArticulo INT,
-		  idEtiqueta INT,
-		  jsonAdicional NVARCHAR(max) '$.jsonAdicional' AS JSON		
+		   idArticulo INT
+		  ,idEtiqueta INT
+		  ,jsonAdicional NVARCHAR(max) '$.jsonAdicional' AS JSON		
 		) 
 		
 		
@@ -226,13 +226,6 @@ BEGIN
 				RETURN 
 			END 
 
-        IF CAST(@fechaEmision AS DATE) > dbo.ufnGetDateEcuador()
-			BEGIN 
-				SELECT [Common].[ufnSpResponse]('0','La fecha de emisión del documento no puede ser posterior a la fecha actual.',DEFAULT)
-				RETURN 
-			END
-
-
 		BEGIN TRAN 
 			--> Comprobante
             INSERT INTO Compra.Documento_Ingreso
@@ -247,13 +240,14 @@ BEGIN
 			       (idDocumentoIngreso,idArticulo,idMedida,idBodega,idTipoIva,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto)
 			SELECT @idDocumentoIngreso,idArticulo,idMedida,idBodega,idTipoIva,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto
 			FROM @tblDetails
+            ORDER BY orderIndex ASC
 			
-			 --> Impuestos
+			--> Impuestos
             INSERT INTO Compra.DocumentoIngresoImpuesto
                    (DocumentoIngresoId,TaxId,TaxPercentId,TaxBase,[Percent],TaxValue,Discount)
             SELECT @idDocumentoIngreso,TaxId,TaxPercentId,TaxBase,[Percent],TaxValue,Discount FROM @tbTaxes
 
-			---Datos Adicionales de articulo (etiquetas)
+			--> Datos Adicionales de articulo (etiquetas)
 			IF EXISTS (SELECT 1 FROM @artInfoAdicional WHERE JSON_QUERY(jsonAdicional, '$') IS NOT NULL)
 				BEGIN
 					INSERT INTO Compra.InfoAdicional(uniqueId, idArticulo, idEtiqueta, jsonAdicional, fechaRegistro)
@@ -276,7 +270,7 @@ BEGIN
 			                 SELECT @idTipoTransaccion,idArticulo,idBodega,@idTipoDocumentoIv,@idDocumentoIngreso,idMedida,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto,@fechaEmision,@idUsuario 
                              FROM @tblDetails WHERE llevaInventario = 1
 
-                             EXEC dbo.Transaccion_Handler_Init 'E', 'LC', @idDocumentoIngreso, DEFAULT
+                             EXEC dbo.Transaccion_Handler_Init 'E', 'IV', @idDocumentoIngreso, DEFAULT
                         END
 				END
 
