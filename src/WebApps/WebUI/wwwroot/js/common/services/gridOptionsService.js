@@ -282,7 +282,6 @@
                     // if (dataTarifaImpuesto.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX) {
                     //     ivaDiferenciado += pricingUtils.calculateTaxValue(precioTotalSinImpuesto, prev.tarifa);
                     // }
-
                     return acc;
                 }, {
                     totalNetoIva: 0

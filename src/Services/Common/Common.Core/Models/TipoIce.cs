@@ -10,6 +10,6 @@
         public bool estado { get; set; }
         public string fechaRegistro { get; set; }
         public int totalRecords { get; set; }
-        public ActividadEmpresa actividadEmpresa { get; set; }
+     //   public ActividadEmpresa actividadEmpresa { get; set; }
     }
 }

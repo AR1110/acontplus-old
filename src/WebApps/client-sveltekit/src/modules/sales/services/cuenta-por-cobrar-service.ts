@@ -1,6 +1,6 @@
 import { isApiResponse } from '$interfaces/structure-response';
 import { client } from '$utils/axiosClient';
-import { groupEstabAndCreatePtoEmisionNodes } from '$utils/utils'
+import { groupEstabAndCreatePtoEmisionNodes } from '$utils/utils.js'
 const URL = 'Contabilidad/CuentaPorCobrar/'
 
 export const cuentaPorCobrarService = {
@@ -10,13 +10,16 @@ export const cuentaPorCobrarService = {
             if (isApiResponse(response)) {
                 if (response.code === "1") {
                     const mainData = JSON.parse(response.payload)
+                    
                     if (params.tipo === 6) {
                         const tempEstabs = mainData[0];
                         const estadosDoc = mainData[1];
+                        const tiposDoc = mainData[2]
                         const estabs = groupEstabAndCreatePtoEmisionNodes(tempEstabs)
                         return {
                             estabs,
-                            estadosDoc
+                            estadosDoc,
+                            tiposDoc
                         }
                     }
                 } else {

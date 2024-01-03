@@ -97,7 +97,7 @@ function layoutCtrl($scope, $rootScope, $window) {
                     $rootScope.articlePermission = $scope.accions[0];
                     $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
                 } else {
-                    location.href = '/Home/Index'
+                   location.href = '/Home/Index'
                 }
             }
         }
