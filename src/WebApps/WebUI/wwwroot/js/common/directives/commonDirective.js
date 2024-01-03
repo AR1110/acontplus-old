@@ -1149,7 +1149,7 @@
                     }
                     //===================================
 
-                    mainService.getData('GET', 'WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 }), null, true).then(
+                    mainService.getData('GET', 'Config/WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 }), null, true).then(
                         async response => {
                             if (response.code == '0') {
                                 toastService.toastr('warning', response.message)

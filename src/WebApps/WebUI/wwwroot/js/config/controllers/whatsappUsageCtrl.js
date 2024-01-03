@@ -6,15 +6,16 @@
     whatsappUsageCtrl.$inject = ['$scope', 'mainService', 'toastService']
 
     function whatsappUsageCtrl($scope, _mS, _tS) {
-        
+
         _mS.detectDevice()
 
         $scope.usages = []
         $scope.usage = {}
+        const route = 'Config/'
 
         $scope.initialLoad = () => {
             showLoader()
-            _mS.getData('GET', 'WhatsappUsage/?json=' + JSON.stringify({ tipo: 1, idEntidad: 0 }), null, true).then(
+            _mS.getData('GET', route + 'WhatsappUsage/?json=' + JSON.stringify({ tipo: 1, idEntidad: 0 }), null, true).then(
                 response => {
                     if (response.code == '0') {
                         _tS.toastr('warning', response.message)
@@ -41,14 +42,14 @@
                     return
                 }
                 method = "POST"
-                url = "WhatsappUsage/"
+                url = route + "WhatsappUsage/"
             } else {
                 if (item.limite < 1 && !item.ilimitado) {
                     _tS.toastr('warning', 'El limite debe ser mayor a 1')
                     return
                 }
                 method = "PUT"
-                url = 'WhatsappUsage/?id=' + item.idWhatsappUsage
+                url = route + 'WhatsappUsage/?id=' + item.idWhatsappUsage
             }
             _mS.getData(method, url, { data: item }, true).then(
                 response => {
@@ -67,7 +68,7 @@
         }
         $scope.delete = () => {
             showLoader()
-            _mS.getData('DELETE', 'WhatsappUsage/?id=' + $scope.usage.idWhatsappUsage, null, true).then(
+            _mS.getData('DELETE', route + 'WhatsappUsage/?id=' + $scope.usage.idWhatsappUsage, null, true).then(
                 response => {
                     if (response.code == '0') {
                         _tS.toastr('warning', response.message)
