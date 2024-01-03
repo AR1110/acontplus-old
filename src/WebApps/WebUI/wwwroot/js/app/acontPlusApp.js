@@ -261,9 +261,8 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
         })
     }
 
-    function _uploadFile(method, url, file, data = null, forApi = false) {
+    function _uploadFile({ url, file, data = null, forApi = false }) {
         return Upload.upload({
-            method: method,
             url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
             headers: {
                 'Authorization': authToken.get({ decoded: false })

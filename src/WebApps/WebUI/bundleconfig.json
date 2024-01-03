@@ -628,5 +628,11 @@
     "inputFiles": [
       "wwwroot/js/controllers/iframeAngularCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/services/reporteVentaService.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/services/reporteVentaService.js"
+    ]
   }
 ]

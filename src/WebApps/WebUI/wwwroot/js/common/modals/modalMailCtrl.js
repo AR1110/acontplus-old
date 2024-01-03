@@ -78,7 +78,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
                     console.log(error)
                 })
             } else if(typeSend==='SRI') {
-                url = 'NotificacionTributaria/'
+                url = 'FactElect/NotificacionTributaria/'
                 data = {
                     codDoc: $scope.data.codDoc,
                     codEstado: $scope.data.codEstado,
@@ -135,7 +135,7 @@ function StatusEmail($scope, $uibModalInstance, mS, commonSvc, tS, fS, params) {
             $scope.estadoCorreos = $scope.data.comprobantes.map(item => {
                 item.statusEmail = [];
                 item.isStatusMail = true;
-                mS.getData('get', 'NotificacionTributaria/' + item.idDocumentoElectronico, null, true).then(
+                mS.getData('get', 'FactElect/NotificacionTributaria/' + item.idDocumentoElectronico, null, true).then(
                     response => {
                         const tempEmails = JSON.parse(response.payload) || [];
                         item.statusEmail = tempEmails.map(item => {
@@ -152,7 +152,7 @@ function StatusEmail($scope, $uibModalInstance, mS, commonSvc, tS, fS, params) {
         }
 
         $scope.showStatusMailByComp = true;
-        mS.getData('get', 'NotificacionTributaria/' + $scope.data.idDocumentoElectronico, null, true).then(
+        mS.getData('get', 'FactElect/NotificacionTributaria/' + $scope.data.idDocumentoElectronico, null, true).then(
             response => {
                 if (response.code === '0') {
                     tS.toastr('warning', response.message)

@@ -84,12 +84,12 @@
           "Port": 7146
         }
       ],
-      "DownstreamPathTemplate": "/api/Reporte{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/gateway/Reporte{everything}"
+      "UpstreamPathTemplate": "/gateway/Reports{everything}"
     },
     {
       "DownstreamHostAndPorts": [

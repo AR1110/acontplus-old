@@ -1,4 +1,6 @@
-﻿using Autofac;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Reports.API.Extensions;
@@ -24,6 +26,23 @@ namespace Reports.API
 
             builder.Services.AddSwaggerDocumentation();
 
+            builder.Services.AddApiVersioning(opt =>
+            {
+                opt.DefaultApiVersion = new ApiVersion(1, 0);
+                opt.AssumeDefaultVersionWhenUnspecified = true;
+                opt.ReportApiVersions = true;
+                opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+                                                                new QueryStringApiVersionReader("api-version"),
+                                                                new HeaderApiVersionReader("x-api-version"),
+                                                                new MediaTypeApiVersionReader("x-api-version"));
+            }).AddApiExplorer(setup =>
+            {
+                setup.GroupNameFormat = "'v'VVV";
+                setup.SubstituteApiVersionInUrl = true;
+            });
+
+            builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
             builder.Services.AddSingleton<LogWriter>();
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -31,7 +50,17 @@ namespace Reports.API
 
             var app = builder.Build();
 
-            app.UseSwaggerDocumentation();
+            var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+                }
+            });
 
             app.UseRouting();
 
@@ -43,7 +72,7 @@ namespace Reports.API
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", context =>
+                _ = endpoints.MapGet("/", context =>
                 {
                     context.Response.Redirect("swagger");
                     return Task.CompletedTask;

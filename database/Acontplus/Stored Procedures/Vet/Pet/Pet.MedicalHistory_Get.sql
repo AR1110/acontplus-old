@@ -58,6 +58,7 @@ BEGIN
         ,p.Color
 		,c.businessName customer
 		,[mh].[Date]
+        ,mh.codEstab
         ,totalRecords = COUNT(*) over()
 	FROM Pet.MedicalHistory mh WITH(NOLOCK)
 		INNER JOIN Pet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id

@@ -7,7 +7,7 @@
   "ConnectionStrings": {
 
     //Local Dev
-    //"DefaultConnection": "Server=DESKTOP-CSL8FKP;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=1844;Trusted_Connection=False;TrustServerCertificate=True;",
+    //"DefaultConnection": "Server=.;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=1844;Trusted_Connection=False;TrustServerCertificate=True;",
 
     //AWS Dev
     "DefaultConnection": "Server=52.14.110.123;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
