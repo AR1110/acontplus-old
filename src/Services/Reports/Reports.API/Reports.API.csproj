@@ -74,9 +74,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+
     <Content Include="Reports\Restaurant\Order.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
