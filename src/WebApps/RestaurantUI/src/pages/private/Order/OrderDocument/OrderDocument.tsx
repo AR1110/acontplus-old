@@ -273,7 +273,8 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
                     docType: DOC_TYPE.OR,
                     codEstab: data.codEstab,
                     telefonoEstablecimiento: data.telefonoEstablecimiento,
-                    nombreComercial: data.nombreComercialEstab
+                    nombreComercial: data.nombreComercialEstab,
+                    id: data.orderId
                 }} open={openDialogWhatsApp} setOpen={closeDialogWhatsApp} />
             }
         </>

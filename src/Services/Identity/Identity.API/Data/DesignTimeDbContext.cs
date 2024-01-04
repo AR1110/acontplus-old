@@ -13,7 +13,7 @@ namespace Identity.API.Data
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings")) //old ../Restaurant.API
+                                .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Restaurant.API
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
                 .Build();
 

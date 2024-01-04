@@ -12,7 +12,7 @@ namespace FactElect.Infrastructure.Data
         public FactElectContext CreateDbContext(string[] args)
         {
             IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings")) //old ../Restaurant.API
+                                .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Restaurant.API
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
                 .Build();
 

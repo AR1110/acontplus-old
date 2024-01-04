@@ -56,5 +56,6 @@ export enum ITEM_TYPE_CODE {
 
 export enum DOC_TYPE_REPORT {
     FV = 'RF',
-    NE = 'RNE'
+    NE = 'RNE',
+    OR = 'RRO'
 }
