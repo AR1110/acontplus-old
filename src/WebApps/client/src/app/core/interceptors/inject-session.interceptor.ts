@@ -15,8 +15,13 @@ export class InjectSessionInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const authToken = this.authService.getToken();
+    const parseJwt = this.authService.parseJwt();
     console.log(authToken)
+    const baseUrl = parseJwt.urlGateway;
+    console.log(baseUrl)
+    console.log(request.url)
     request = request.clone({
+      url: `${baseUrl}/gateway/${request.url}`, 
       setHeaders: {
         Authorization: "Bearer " + authToken
       }
