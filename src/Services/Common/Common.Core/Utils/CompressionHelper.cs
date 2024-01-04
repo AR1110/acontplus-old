@@ -20,8 +20,7 @@ namespace Common.Core.Utils
             }
             catch (Exception ex)
             {
-                _ = ex.Message;
-                return null;
+                throw;
             }
             return compressArray;
         }
@@ -40,8 +39,7 @@ namespace Common.Core.Utils
             }
             catch (Exception ex)
             {
-                _ = ex.Message;
-                return null;
+                throw;
             }
 
             return decompressedArray;

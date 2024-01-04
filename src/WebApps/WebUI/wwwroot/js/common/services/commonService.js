@@ -1140,32 +1140,8 @@ export class CommonService {
 
     async print(params) {
         try {
-
-
-            // console.log('init get name computer')           
-            // console.log('end get name computer')
-
-            // let response = await fetch(`${params[0].urlPrinter}?getMachine=true`);
-            // if (!response.ok) {
-            //   throw new Error('Network response was not ok');
-            // }
-            // const data = await response.json();
-            // console.log(data);
-
-
-
             let urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
-
-            fetch(urlPrinter, {
-                method: 'POST',
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
+            this.mS.getData('POST', urlPrinter).then(data => {
                     if (data.code == "0") {
                         toastr.warning(data.message, '', {
                             positionClass: 'toast-bottom-right',
@@ -1182,10 +1158,9 @@ export class CommonService {
                             progressBar: true
                         })
                     }
+                }).catch(function (error) {
+                    console.log('Hubo un problema al imprimir:' + error.message);
                 })
-                .catch(function (error) {
-                console.log('Hubo un problema al imprimir:' + error.message);
-            })
         } catch (error) {
             hideLoader()
             console.log(error)

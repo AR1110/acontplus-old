@@ -29,9 +29,22 @@ namespace Configuracion.API.Services
             
         }
 
-        public Task<object> DeleteAsync(int id)
+        public async Task<object> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var logo = await _context.EstablecimientoLogos.FindAsync(id);
+                if (logo == null) { return null; };
+                logo.Enabled = false;
+                logo.Deleted = false;
+                _context.Update(logo);
+                await _context.SaveChangesAsync();
+                return new { code = "1", message = "Eliminado Exitosamente" };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<EstablecimientoLogo> GetAsync(int establecimientoId)
@@ -45,9 +58,23 @@ namespace Configuracion.API.Services
             return logo;
         }
 
-        public Task<object> UpdateAsync(int id, EstablecimientoLogo data)
+        public async Task<object> UpdateAsync(int id, EstablecimientoLogo data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var logo = await _context.EstablecimientoLogos.FindAsync(id);
+                if (logo == null) { return null; };
+                logo.Content = data.Content;
+                logo.ContentType = data.ContentType;
+                logo.IsCompressed = true;
+                _context.Update(logo);
+                await _context.SaveChangesAsync();
+                return new { code = "1", message = "Actualizado Exitosamente" };
+            }
+            catch (Exception)
+            {
+                throw;
+            }  
         }
     }
 }

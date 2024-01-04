@@ -80,10 +80,13 @@ BEGIN
 
 	IF (@totalThermalPrinters = 0 AND @totalInyectionPrinters > 0)
 		BEGIN 
-			IF EXISTS (SELECT 1 FROM Config.Estab_Logo WHERE codEstab = @codEstab)		
+			IF EXISTS (SELECT 1 FROM Config.EstablecimientoLogo el
+                        INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab)		
 				BEGIN
 					SET @hasParams = 1
-					SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+					SET @rdlcParams = (SELECT logo = [FileName], contentType mimeType FROM Config.EstablecimientoLogo el
+                        INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento
+                    WHERE codEstab = @codEstab FOR JSON PATH)
 				END
 			ELSE
 				BEGIN
@@ -93,10 +96,10 @@ BEGIN
 
 	IF (@totalThermalPrinters > 0 AND @totalInyectionPrinters > 0)
 		BEGIN 
-			IF EXISTS (SELECT 1 FROM Config.Estab_Logo WHERE codEstab = @codEstab)		
+			IF EXISTS (SELECT 1 FROM Config.EstablecimientoLogo el INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab)		
 				BEGIN
 					SET @hasParams = 1
-					SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+					SET @rdlcParams = (SELECT logo = [filename], ContentType mimeType FROM Config.EstablecimientoLogo el INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab FOR JSON PATH)
 				END
 			ELSE
 				BEGIN
@@ -126,6 +129,8 @@ BEGIN
 												    WHEN 'A'  THEN 'A'
 												    ELSE @codDoc
 									   END 
+                            ,@establecimientoId establecimientoId
+                            ,@codEstab codEstab
  						FROM Config.PrinterDocument     cd WITH (NOLOCK)
 						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
 						INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId

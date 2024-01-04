@@ -55,6 +55,17 @@ export class AuthService {
     return localStorage.getItem('access_token');
   }
 
+  parseJwt() {
+    try {
+      let token = this.getToken();
+      if (token) {
+        return JSON.parse(atob(token.split('.')[1]));
+      }
+    } catch (e) {
+      return null;
+    }
+  };
+
   get isLoggedIn(): boolean {
     let authToken = localStorage.getItem('access_token');
     return authToken !== null ? true : false;
