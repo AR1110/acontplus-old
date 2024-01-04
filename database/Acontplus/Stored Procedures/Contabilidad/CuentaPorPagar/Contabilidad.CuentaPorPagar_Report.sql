@@ -19,7 +19,10 @@ GO
 -- Author:		Alexis Ramirez
 -- Create date: 03/14/2023
 -- Description:	SP para lisatar las cuentas por pagar.
-CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorPagar_Report @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorPagar_Report 
+     @userRoleId INT
+    ,@json VARCHAR(MAX)
+	,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -38,12 +41,14 @@ BEGIN
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-    SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+    SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
     
     --> Reporte De compras
     IF @tipo = 1
         BEGIN
             
+            SET @tableNames = 'dataEntidad,compras'
+
             SELECT @idProveedor  = idProveedor  
                   ,@ckFecha      = ckFecha
                   ,@fechaInicio  = fechaInicio
@@ -136,7 +141,7 @@ BEGIN
                   ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
                   ,'Reporte de Compras'                                                          as nombreReporte
             FROM v_usuario WITH (NOLOCK)
-            WHERE idUsuarioRol = @idUsuarioRol
+            WHERE idUsuarioRol = @userRoleId
 
             EXEC sp_executesql @sql
 						      ,@params 
