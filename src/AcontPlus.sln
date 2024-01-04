@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.API", "Services\Id
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedSettings", "SharedSettings", "{6373124D-C7D5-4AC8-88BE-683DE77E17C6}"
 	ProjectSection(SolutionItems) = preProject
-		SharedSettings\sharedsettings.Development.json = SharedSettings\sharedsettings.Development.json
+		..\..\..\..\..\..\Acontplus\Shared\sharedsettings.Development.json = ..\..\..\..\..\..\Acontplus\Shared\sharedsettings.Development.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatewayAcontplus.API", "ApiGateways\GatewayAcontplus.API\GatewayAcontplus.API.csproj", "{B03D81D4-1429-4589-8F69-11BC891C56AC}"
@@ -114,9 +114,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactElect.Infrastructure", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.API", "Services\Common\Common.API\Common.API.csproj", "{170D4055-C0B9-40F7-A697-B245C86C727F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reports.Core", "Services\Reports\Reports.Core\Reports.Core.csproj", "{F45557EA-4393-4F4F-8BDC-A9748C3F078B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reports.Core", "Services\Reports\Reports.Core\Reports.Core.csproj", "{F45557EA-4393-4F4F-8BDC-A9748C3F078B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reports.Application", "Services\Reports\Reports.Application\Reports.Application.csproj", "{4A7E9E3D-FAF3-4A8C-982A-E019B0B7F6D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reports.Application", "Services\Reports\Reports.Application\Reports.Application.csproj", "{4A7E9E3D-FAF3-4A8C-982A-E019B0B7F6D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
