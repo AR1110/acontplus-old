@@ -58,29 +58,6 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7001
-        }
-      ],
-      "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/gateway/IngresoFacturaCompra{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
           "Port": 7146
         }
       ],
@@ -104,29 +81,6 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/gateway/Consultas/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7089
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v2/Cliente{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/app-mobile/Cliente{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -301,8 +255,7 @@
         "Get",
         "Post",
         "Put",
-        "Delete",
-        "Options"
+        "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/Mechanical{everything}"
     },
@@ -324,8 +277,7 @@
         "Get",
         "Post",
         "Put",
-        "Delete",
-        "Options"
+        "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/TechnicalSupport{everything}"
     },
@@ -393,8 +345,7 @@
         "Get",
         "Post",
         "Put",
-        "Delete",
-        "Options"
+        "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/Common{everything}"
     }
