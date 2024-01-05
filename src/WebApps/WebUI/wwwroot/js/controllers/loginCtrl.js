@@ -54,7 +54,7 @@
             //    idCardCompany
             //}
             item.userAgent = JSON.stringify({ userAgent: JSON.stringify(parserResults), ipAddress: customerIp });
-            $http.post(`${urlService}account/createToken`, item).then(
+            $http.post(`${urlService}seguridad/account/createToken`, item).then(
                 response => {
                     if (response.data.code == "0") {
                         hideLoader();
@@ -87,7 +87,7 @@
                 if ($scope.data.returnUrl == undefined || $scope.data.returnUrl === "" || $scope.data.returnUrl == null) {
                     $scope.data.returnUrl = '/';
                 }
-                $http.post(`${urlService}account/login`, $scope.data).then(response => {
+                $http.post(`${urlService}seguridad/account/login`, $scope.data).then(response => {
                     if (response.data.code === "0") {
                         hideLoader();
                         toastr.warning(response.data.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
