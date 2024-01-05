@@ -6,10 +6,24 @@
     loginCtrl.$inject = ['$scope', '$http', '$localStorage'];
 
     function loginCtrl($scope, $http, $localStorage) {
-
         let urlBase = document.getElementById('urlGateway').value
         let urlService = `${urlBase}/gateway/`
+        // Ditect user info
+        let Url = "https://" + "cloudflare.com/cdn-cgi/trace";
+        let customerIp = "";
+        let AjaxUrl = new XMLHttpRequest();
+        AjaxUrl.open("get", Url);
+        AjaxUrl.send();
 
+        AjaxUrl.onreadystatechange = function () {
+            if (AjaxUrl.readyState === 4 && AjaxUrl.status === 200) {
+                let resultUrl = AjaxUrl.responseText;
+                let mapUrlStart = resultUrl.indexOf("ip") + 3;
+                let mapUrlEnd = resultUrl.indexOf("ts");
+                let IpResult = resultUrl.slice(mapUrlStart, mapUrlEnd);
+                customerIp = IpResult.replace(/[\n\r]/g, "")
+            }
+        };
         $scope.loader = false;
         $scope.ver = false;
         $scope.data = {};
@@ -39,7 +53,7 @@
             //    idCardUser: item.idCardUser,
             //    idCardCompany
             //}
-            item.userAgent = JSON.stringify(parserResults);
+            item.userAgent = JSON.stringify({ userAgent: JSON.stringify(parserResults), ipAddress: customerIp });
             $http.post(`${urlService}account/createToken`, item).then(
                 response => {
                     if (response.data.code == "0") {
@@ -68,7 +82,7 @@
         $scope.login = function () {
             try {
                 showLoader();
-                $scope.data.userAgent = JSON.stringify(parserResults);
+                $scope.data.userAgent = JSON.stringify({ userAgent: JSON.stringify(parserResults), ipAddress: customerIp });
                 $scope.data.returnUrl = $('#returnUrl').val();
                 if ($scope.data.returnUrl == undefined || $scope.data.returnUrl === "" || $scope.data.returnUrl == null) {
                     $scope.data.returnUrl = '/';
