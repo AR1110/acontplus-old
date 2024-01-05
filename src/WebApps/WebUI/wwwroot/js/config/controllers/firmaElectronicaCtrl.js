@@ -12,7 +12,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     //     $scope.accion = accion[0];
     // }
 
-    let url = 'FirmaElectronica/';
+    let url = 'Config/FirmaElectronica/';
 
     $scope.firma = {};
     $scope.fileSign = null;

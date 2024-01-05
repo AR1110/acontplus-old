@@ -634,5 +634,11 @@
     "inputFiles": [
       "wwwroot/js/ventas/services/reporteVentaService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/controllers/firmaElectronicaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/controllers/firmaElectronicaCtrl.js"
+    ]
   }
 ]
