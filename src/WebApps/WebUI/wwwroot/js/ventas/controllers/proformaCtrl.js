@@ -1256,6 +1256,12 @@
 
 
         $scope.receiveDataCustomerSRI = function (result) {
+            if ($scope.data.idProforma > 0) {
+                $scope.cliente = {};
+                $scope.newCustomer = false;
+                tS.toastr('warning', 'Registro rápido del cliente no disponible en actualizar');
+                return
+            }
             $scope.newCustomer = result.idCliente === 0 ? true : false
             $scope.cliente = result;
         }

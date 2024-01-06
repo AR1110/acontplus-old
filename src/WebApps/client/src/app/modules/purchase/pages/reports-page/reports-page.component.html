@@ -1,55 +1,63 @@
 <app-breadcrumb />
 
 <div class="card">
-    <div class="card-body">
-        <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                    <label>Establecimiento: </label>
-                    <select class="form-control border-select">
-
-                    </select>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="tipoDoc">Tipo Doc.:</label>
+          <select name="tipoDoc" id="tipoDoc" class="form-control form-control-border" [(ngModel)]="dataSearch.codDoc">
+            @for (item of tiposDoc; track $index) {
+            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+            }
+          </select>
         </div>
-    </div>
-</div>
+      </div>
 
-
-<div class="card">
-    <div class="card-body">
-        kldjlk
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
-        <p>ddd</p>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label>Establecimiento: </label>
+          <select
+            class="form-control form-control-border"
+            [(ngModel)]="dataSearch.codEstab"
+          >
+            @for(estab of establecimientos; track $index ){
+            <option [ngValue]="estab.codEstab">
+              {{ estab.nombreComercial }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label>Punto emisión: </label>
+          <select
+            class="form-control form-control-border"
+            [(ngModel)]="dataSearch.idPuntoEmision"
+          >
+            @for(ptoEmi of puntosEmision; track $index ){
+            <option [ngValue]="ptoEmi.idPuntoEmision">
+              {{ ptoEmi.ptoEmi }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+         <div class="form-group">
+          <label for="estado">Estado.:</label>
+          <select name="estado" id="estado" class="form-control form-control-border" [(ngModel)]="dataSearch.codDoc">
+            @for (item of tiposDoc; track $index) {
+            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-info m-r-5" (click)="getReport()">PDF</button>
+    <button class="btn btn-success">EXCEL</button>
+  </div>
 </div>
