@@ -2,11 +2,11 @@ import { IBodegaEstablecimiento } from "@core/models/bodega.model";
 import { GroupedEstab } from "@core/models/estab.model";
 import { IPuntoEmisionEstablecimiento } from "@core/models/punto-emision.model";
 
- 
+
 export const groupEstabUtil = function (obj: {
     estabs: IPuntoEmisionEstablecimiento[];
-    bodegas: IBodegaEstablecimiento[];
-    isGroupBodega: boolean;
+    bodegas?: IBodegaEstablecimiento[];
+    isGroupBodega?: boolean;
 }): GroupedEstab[] {
     const { estabs, bodegas, isGroupBodega } = obj;
 
@@ -42,7 +42,7 @@ export const groupEstabUtil = function (obj: {
     if (isGroupBodega) {
         const estabsWithBodegas = tempEstabs.map((estab) => ({
             ...estab,
-            bodegas: bodegas
+          bodegas: bodegas && bodegas
                 .filter((bodega) => bodega.idEstablecimiento === estab.idEstablecimiento)
                 .map((bodega) => ({
                     idBodega: bodega.idBodega,

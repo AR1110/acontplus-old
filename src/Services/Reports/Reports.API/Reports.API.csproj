@@ -19,6 +19,7 @@
     <None Remove="Reports\Compras\LiquidacionCompra.rdlc" />
     <None Remove="Reports\Compras\NotaCreditoProveedor.rdlc" />
     <None Remove="Reports\Compras\OrdenCompra.rdlc" />
+    <None Remove="Reports\Compras\ReporteCompras.rdl" />
     <None Remove="Reports\Compras\RetencionCompra.rdlc" />
     <None Remove="Reports\ConsumoEmpresaTpv.rdl" />
     <None Remove="Reports\ConsumoGeneralTpv.rdl" />
@@ -75,6 +76,9 @@
 
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+    <Content Include="Reports\Compras\ReporteCompras.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
 
     <Content Include="Reports\Restaurant\Order.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

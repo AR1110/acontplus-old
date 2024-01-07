@@ -63,7 +63,7 @@
 
                             case 'CS':
                                 $scope.entidadNotificaciones = JSON.parse(response.payload)[0];
-                                console.log($scope.entidadNotificaciones)
+                                
                                 break;
                             default:
                                 break;
@@ -137,7 +137,7 @@
             try {
                 let jsonConfig = {}
                 let data = {}
-                console.log($scope.gestionSistema)
+                
                 //---------------------------------Configuracion de Ventas---------------------------
                 if ($scope.codConfig === $scope.codigo.CV) {
 
@@ -196,7 +196,7 @@
                         }
                 }
 
-                console.log($scope.codConfig)
+                
                 //---------------------------------Configuracion de Inventario---------------------------
                 if ($scope.codConfig === $scope.codigo.CI) {
                     if ($scope.gestionInventario.llevaInventario) {
@@ -244,7 +244,7 @@
 
 
                 showLoader()
-                mS.getData('put', 'Sistema/Put?json= ' + JSON.stringify(data), null, true).then(response => {
+                mS.getData('put', 'Config/Sistema/Put?json= ' + JSON.stringify(data), null, true).then(response => {
                     if (response.code === '0') {
                         hideLoader();
                         tS.toastr('warning', response.message)

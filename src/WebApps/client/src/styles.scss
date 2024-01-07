@@ -106,3 +106,9 @@ table {
 .mat-mdc-header-cell {
   z-index: unset !important;
 }
+
+
+
+.form-control-border:focus {
+    border-color: blue !important;
+}
