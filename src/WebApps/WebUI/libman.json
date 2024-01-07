@@ -91,7 +91,7 @@
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
-      "library": "limonte-sweetalert2@11.10.1",
+      "library": "limonte-sweetalert2@11.10.2",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -107,7 +107,7 @@
       "destination": "wwwroot/lib/moment-timezone/"
     },
     {
-      "library": "moment.js@2.29.4",
+      "library": "moment.js@2.30.1",
       "destination": "wwwroot/lib/moment.js/"
     },
     {
@@ -143,7 +143,7 @@
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "library": "axios@1.6.2",
+      "library": "axios@1.6.5",
       "destination": "wwwroot/lib/axios/"
     },
     {
