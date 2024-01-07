@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Compras\**" />
+    <Compile Remove="Models\CuotaDocumento\**" />
+    <Compile Remove="ViewModels\Compras\**" />
+    <Compile Remove="ViewModels\CuotaDocumento\**" />
+    <EmbeddedResource Remove="Models\Compras\**" />
+    <EmbeddedResource Remove="Models\CuotaDocumento\**" />
+    <EmbeddedResource Remove="ViewModels\Compras\**" />
+    <EmbeddedResource Remove="ViewModels\CuotaDocumento\**" />
+    <None Remove="Models\Compras\**" />
+    <None Remove="Models\CuotaDocumento\**" />
+    <None Remove="ViewModels\Compras\**" />
+    <None Remove="ViewModels\CuotaDocumento\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
@@ -17,9 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Compras\" />
-    <Folder Include="Models\CuotaDocumento\" />
-    <Folder Include="ViewModels\Compras\" />
-    <Folder Include="ViewModels\CuotaDocumento\" />
+    <Folder Include="ViewModels\InfoAdicional\" />
   </ItemGroup>
 </Project>
