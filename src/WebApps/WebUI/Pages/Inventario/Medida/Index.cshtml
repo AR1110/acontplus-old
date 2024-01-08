@@ -1,9 +1,11 @@
-﻿
+﻿@page
+@model WebUI.Pages.Inventario.Medida.IndexModel
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div ng-controller="medidaCtrl" ng-cloak>
-    
+
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
             <h4 class="text-themecolor">Gestión de Medidas</h4>
@@ -11,9 +13,9 @@
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
                 @*<ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
-                    <li class="breadcrumb-item active">Medida</li>
-                </ol>*@
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                        <li class="breadcrumb-item active">Medida</li>
+                    </ol>*@
                 <button type="button" ng-if="accion.crear" btn-add-update-medida results="resultModal(item)" class="btn btn-info d-sm-block m-l-15">
                     <i class="ti-plus"></i> Nuevo
                 </button>
@@ -34,26 +36,26 @@
                                             ng-change="changePageSize()"
                                             ng-options="ra for ra in recordsQuantity">
                                     </select>
-                                </span>                                
-                               
-                               <span class="form-group pull-left page-size form-inline">
+                                </span>
+
+                                <span class="form-group pull-left page-size form-inline">
                                     <button type="button" class="btn btn-success m-l-5" ng-click="exportTableToExcel()">
                                         <i class="far fa-file-excel"></i> Exportar
-                                    </button> 
-                               </span>
-                                
+                                    </button>
+                                </span>
+
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                             <div class="d-flex justify-content-end">
                                 <form class="form-material">
                                     <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Medida" />
-                                </form> 
+                                </form>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
-                    
-                    
+
+
                     <div class="table-responsive">
                         <table class="table  table-no-bordered">
                             <thead>
@@ -68,7 +70,7 @@
                             <tbody>
                                 <tr ng-repeat="t in medidas | filter:buscar track by $index">
                                     <td ng-if="accion.editar || accion.eliminar">
-                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs"  btn-add-update-medida results="resultModal(item)" params="t"><i class="ti-pencil"></i></button>
+                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" btn-add-update-medida results="resultModal(item)" params="t"><i class="ti-pencil"></i></button>
 
                                         <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs" tooltip data-toggle="toggle" title="Eliminar" ng-click="delete(t)"><i class="ti-trash"></i></button>
                                     </td>
@@ -98,11 +100,11 @@
             </div>
         </div>
     </div>
-   
-   
+
+
 </div>
 @section Scripts{
-    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>     
+    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
     <script src="~/js/inventario/controllers/medidaCtrl.min.js" asp-append-version="true"></script>
 
 }

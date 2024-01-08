@@ -1,6 +1,8 @@
-﻿
+﻿@page
+@model WebUI.Pages.Contabilidad.AnioFiscal.IndexModel
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div ng-controller="anioFiscalCtrl">
@@ -54,10 +56,10 @@
                                 <tr ng-repeat="a in anios|filter:buscar">
                                     <td>{{$index+1}}</td>
                                     <td>{{a.descripcion}}</td>
-                                    <td ng-bind-html="a.estado | estadoPrimario"></td>                            
+                                    <td ng-bind-html="a.estado | estadoPrimario"></td>
                                     <td ng-if="accion.editar || accion.eliminar">
-                                        <button type="button" ng-if="accion.editar" ng-click="abrirModal(a,2)" class="btn btn-info btn-xs"><i class="ti-pencil"></i></button>   
-                                        <button type="button" ng-if="accion.eliminar" ng-click="delete(a)" class="btn btn-danger btn-xs"><i class="ti-trash"></i></button>                                   
+                                        <button type="button" ng-if="accion.editar" ng-click="abrirModal(a,2)" class="btn btn-info btn-xs"><i class="ti-pencil"></i></button>
+                                        <button type="button" ng-if="accion.eliminar" ng-click="delete(a)" class="btn btn-danger btn-xs"><i class="ti-trash"></i></button>
                                     </td>
                                 </tr>
                                 <tr ng-show="anios.length==0">
@@ -65,11 +67,11 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>    
-                </div>  
-            </div>                                  
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>    
+    </div>
 
     <div class="modal fade" id="agregarAnioFiscal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-sm" role="document">
