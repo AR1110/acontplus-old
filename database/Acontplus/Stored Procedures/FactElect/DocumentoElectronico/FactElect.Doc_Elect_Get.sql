@@ -177,7 +177,7 @@ BEGIN
                                    ,@pageSize               = @pageSize
                                    ,@pageIndex              = @pageIndex
             RETURN 
-    END 
+        END 
 
     -- FILTERS 
     IF @tipo = 2

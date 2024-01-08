@@ -159,7 +159,7 @@ BEGIN
                         END 
                 END 
 
-            SET @sql = @sql + 'ORDER BY cc.idCliente,cc.codDoc,cc.fechaEmision,cc.secuencial ASC '
+            SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idCliente,cc.codDoc ASC '
 
             SELECT en.razonSocial
                   ,es.nombreComercial

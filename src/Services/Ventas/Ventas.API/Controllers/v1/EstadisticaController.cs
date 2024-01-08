@@ -4,15 +4,15 @@ using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace Ventas.API.Controllers
+namespace Ventas.API.Controllers.v1
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EstadisticasController : ControllerBase
+    public class EstadisticaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly LogWriter _log;
-        public EstadisticasController(IConfiguration configuration, LogWriter log)
+        public EstadisticaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _log = log;

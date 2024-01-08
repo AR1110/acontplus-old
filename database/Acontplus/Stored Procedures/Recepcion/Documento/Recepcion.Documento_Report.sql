@@ -46,8 +46,8 @@ BEGIN
 
     SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-    --> Reporte de Facturas
-    IF @tipo = 1
+    --> Factura
+    IF @tipo = 2
         BEGIN
             
             SET @tableNames = 'dataEntidad,comprobantes'
@@ -80,8 +80,11 @@ BEGIN
             SET @sql = 'SELECT * FROM 
                         (
                             
-                              SELECT es.idEstablecimiento
+                              SELECT dr.idDocumento
+                                    ,dr.idUsuario
+                                    ,es.idEstablecimiento
 									,es.nombreComercial
+                                    ,es.codEstab
 									,serieComprobante 
 									,claveAcceso 	
 									,FORMAT(CONVERT(DATE,dr.fechaEmision,103),''dd/MM/yyyy'') as fechaEmision
@@ -132,9 +135,36 @@ BEGIN
 							FROM Recepcion.f_Comprobante_01(@idEntidad) dc
 							INNER JOIN Recepcion.DocumentoRecibido      dr WITH (NOLOCK) ON dr.idDocumento  = dc.idDocumento
 							INNER JOIN Sri.Establecimiento              es WITH (NOLOCK) ON es.codEstab     = dr.codEstab	
-							INNER JOIN dbo.Usuario                      us WITH (NOLOCK) ON us.idUsiaro     = dr.idUsuario
+							INNER JOIN dbo.Usuario                      us WITH (NOLOCK) ON us.idUsuario    = dr.idUsuario
 
-                        ) as dt'
+                        ) as dt WHERE dt.idDocumento > 0 '
+
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dt.codEstab = @codEstab '
+                END 
+
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(dt.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END
+
+            IF @identificacion IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dt.rucEmisor = @identificacion '
+                END 
+
+            IF @idUsuario IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dt.idUsuario = @idUsuario '
+                END
+
+             IF @ckRetencion = 1
+                BEGIN
+                    SET @sql = @sql + 'AND dt.nroRetencion IS NOT NULL '
+                END 
+
+            SET @sql = @sql + 'ORDER BY dt.idDocumento DESC '
 
             SELECT entidad as razonSocial 
                   ,rucEmpresa as ruc
@@ -158,7 +188,13 @@ BEGIN
 
             RETURN 
         END 
-
+    
+    --> Nota Credito
+    IF @tipo = 3
+        BEGIN
+            
+            RETURN 
+        END 
 END
 GO
 
