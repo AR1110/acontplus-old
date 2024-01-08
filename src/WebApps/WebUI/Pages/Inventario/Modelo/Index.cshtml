@@ -1,6 +1,8 @@
-﻿
+﻿@page
+@model WebUI.Pages.Inventario.Modelo.IndexModel
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div ng-controller="modeloCtrl">
@@ -15,7 +17,7 @@
                         <li class="breadcrumb-item active">Modelos</li>
                     </ol>*@
                 <button type="button" ng-if="accion.crear" btn-add-update-modelo results="resultModal(item)" class="btn btn-info   m-l-15">
-                    <i class="ti-plus"></i> Nuevo 
+                    <i class="ti-plus"></i> Nuevo
                 </button>
             </div>
         </div>
@@ -32,26 +34,26 @@
                                     ng-change="changePageSize()"
                                     ng-options="ra for ra in recordsQuantity">
                             </select>
-                        </span>                                
-                        
+                        </span>
+
                         <span class="form-group pull-left page-size form-inline">
                             <button type="button" class="btn btn-success m-l-5" ng-click="exportTableToExcel()">
                                 <i class="far fa-file-excel"></i> Exportar
-                            </button> 
+                            </button>
                         </span>
-                        
+
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="d-flex justify-content-end">
                         <form class="form-material">
                             <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Modelo" />
-                        </form> 
+                        </form>
                     </div>
-                </div>                        
+                </div>
             </div>
 
-           
+
             <div class="table-responsive">
                 <table class="table table-no-bordered">
                     <thead>
@@ -96,9 +98,9 @@
             </div>
         </md-card-content>
     </md-card>
-       
+
 </div>
-@section Scripts{    
+@section Scripts{
     <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
     <script src="~/js/inventario/controllers/modeloCtrl.min.js" asp-append-version="true"></script>
 }

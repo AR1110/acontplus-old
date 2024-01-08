@@ -72,7 +72,7 @@ app.constant('nombreModalInventario', {
     MODELO: {
         fileCtrl: '/js/inventario/modals/modalModeloCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalModeloCtrl',
-        template: 'Modelo/_ModalModelo.cshtml'
+        template: '~/Pages/Inventario/Modelo/Shared/_ModalModelo.cshtml'
     },
     ARTICULO_FRACCIONADO: {
         fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
