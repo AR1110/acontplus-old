@@ -67,7 +67,7 @@ app.constant('nombreModalInventario', {
     MARCA: {
         fileCtrl: '/js/inventario/modals/modalMarcaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalMarcaCtrl',
-        template: 'Marca/_ModalMarca.cshtml'
+        template: '~/Pages/Inventario/Marca/Shared/_ModalMarca.cshtml'
     },
     MODELO: {
         fileCtrl: '/js/inventario/modals/modalModeloCtrl.js' + CHANGE_VERSION(),

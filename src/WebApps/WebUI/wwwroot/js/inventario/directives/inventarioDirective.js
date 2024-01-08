@@ -193,7 +193,8 @@
                         controller: ctrl,
                         template,
                         size: 'md',
-                        params: scope.params || {}
+                        params: scope.params || {},
+                        isRenderRazorPartial: true
                     })          
                           
                     modalDialogRef.result.then(result=>{
