@@ -1,0 +1,11 @@
+USE [AcontPlus]
+GO
+
+CREATE TABLE Catalogo.[Month]
+(
+	Id INT IDENTITY(1,1) PRIMARY KEY NOT NULL
+   ,Code INT NOT NULL
+   ,[Description] VARCHAR(100) NOT NULL
+   ,[CreatedAt] DATETIME2 DEFAULT GETDATE()
+   ,[Status] BIT DEFAULT 1 NOT NULL
+)

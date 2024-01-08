@@ -6,12 +6,12 @@ AS
 DECLARE @RecvReqDlgHandle UNIQUEIDENTIFIER;
 DECLARE @RecvReqMsg XML;
 DECLARE @RecvReqMsgName SYSNAME;
-DECLARE @idTipoTransaccion INT
-DECLARE @idTipoDocumento INT
-DECLARE @codTran VARCHAR(2)
-DECLARE @codDoc VARCHAR(2)
-DECLARE @documentoId INT 
-DECLARE @tipo INT = 1
+
+--> Data Global
+DECLARE @idEntidad INT ,@userRoleId INT = NULL ,@tipo INT = 1
+
+--> Inventario
+DECLARE @codTran VARCHAR(2) ,@codDoc VARCHAR(2) ,@documentoId INT ,@idTipoTransaccion INT ,@idTipoDocumento INT
 
 WHILE (1 = 1)
 BEGIN
@@ -34,10 +34,11 @@ BEGIN
 
 		--declare @targetpProcedure nvarchar(100);
 		--set @targetpProcedure = CAST(@RecvReqMsg AS nvarchar(100))
-		SELECT @codTran     = nref.value('(codTran)[1]', 'VARCHAR(5)')
+		SELECT @codTran     = nref.value('(codTran)[1]','VARCHAR(5)')
 			  ,@codDoc      = nref.value('(codDoc)[1]', 'VARCHAR(5)')
 			  ,@documentoId = nref.value('(documentoId)[1]', 'INT')
-			  ,@tipo        = nref.value('(tipo)[1]', 'INT')
+			  ,@tipo        = nref.value('(tipo)[1]','INT')
+			  ,@userRoleId  = nref.value('(userRoleId)[1]', 'INT')
 		FROM @RecvReqMsg.nodes('/msg') AS R(nref);
 
 		--IF LEN(@targetpProcedure) > 0
@@ -52,6 +53,14 @@ BEGIN
 
 			    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
                
+                SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+                --> Actualizacion de precio de costo
+                --IF @tipo = 2 AND @codDoc IN ('LC','FF','FE') AND @codTran = 'E'
+                --    BEGIN
+                        
+                --    END 
+
                 --> Actualizar Stock por Bodega 
 			    UPDATE st SET st.cantidad = Inventario.f_Stock(st.idArticulo,st.idBodega)
 			    FROM Inventario.Stock             st WITH (ROWLOCK)

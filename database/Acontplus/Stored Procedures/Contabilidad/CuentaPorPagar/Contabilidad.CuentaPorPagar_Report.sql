@@ -90,6 +90,7 @@ BEGIN
                               ,CAST(abono as numeric(18,2))            as abono
                               ,CAST(saldo as numeric(18,2))            as saldo
                               ,estado 
+                              ,usuario
                         FROM v_CuentaPorPagar cp WITH (NOLOCK)
                         WHERE idEntidad = @idEntidad '
 
