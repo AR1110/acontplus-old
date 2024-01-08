@@ -1,16 +1,18 @@
-﻿
+﻿@page
+@model WebUI.Pages.Inventario.Marca.IndexModel
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div ng-controller="marcaCtrl">
-    
+
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
             <h4 class="text-themecolor">Gestión de Marcas</h4>
         </div>
         <div class="col-md-7 align-self-center text-right">
-            <div class="d-flex justify-content-end align-items-center">                  
+            <div class="d-flex justify-content-end align-items-center">
                 <button type="button" ng-if="accion.crear" btn-add-update-marca results="resultModal(item)" class="btn btn-info   m-l-15">
                     <i class="ti-plus"></i> Nuevo
                 </button>
@@ -31,25 +33,25 @@
                                             ng-change="changePageSize()"
                                             ng-options="ra for ra in recordsQuantity">
                                     </select>
-                                </span>                               
-                               
-                               <span class="form-group pull-left page-size form-inline">
+                                </span>
+
+                                <span class="form-group pull-left page-size form-inline">
                                     <button type="button" class="btn btn-success m-l-5" ng-click="exportTableToExcel()">
                                         <i class="far fa-file-excel"></i> Exportar
-                                    </button> 
-                               </span>
-                                
+                                    </button>
+                                </span>
+
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                             <div class="d-flex justify-content-end">
                                 <form class="form-material">
                                     <input type="text" class="form-control" ng-keyup="onKeyupSearch()" ng-model="dataSearch.bySearch" placeholder="Buscar Marca" />
-                                </form> 
+                                </form>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
-                   
+
                     <div class="table-responsive">
                         <table class="table table-no-bordered">
                             <thead class="text-center">
@@ -93,9 +95,9 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 </div>
-@section Scripts{ 
-    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>   
-    <script src="~/js/inventario/controllers/marcaCtrl.min.js" asp-append-version="true"></script>    
+@section Scripts{
+    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/controllers/marcaCtrl.min.js" asp-append-version="true"></script>
 }
