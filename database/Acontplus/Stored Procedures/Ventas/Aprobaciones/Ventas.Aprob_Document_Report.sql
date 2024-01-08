@@ -2,7 +2,7 @@ USE AcontPlus
 GO 
  
 -- exec ReporteVentas.Aprob_Document '{"id":1164,"codEstab":"ESTAB-000000002","codDoc":"NE"}'
-CREATE OR ALTER PROCEDURE ReporteVentas.Aprob_Document @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Ventas.Aprob_Document_Report @json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;

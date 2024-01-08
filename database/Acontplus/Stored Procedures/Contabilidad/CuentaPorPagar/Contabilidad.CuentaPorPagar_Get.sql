@@ -28,6 +28,8 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+    SET LANGUAGE SPANISH 
+
 	DECLARE @idEntidad INT 
 	DECLARE @tipo INT 
 	
@@ -200,7 +202,7 @@ BEGIN
 				END 							 
 			END
 
-	--Forma Pago
+	--> Forma Pago
 	IF @tipo = 3
 			BEGIN
 				
@@ -354,7 +356,10 @@ BEGIN
             SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NPA','PA')
 
             SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('LC','FV','DH','FC')
+            
             RETURN 
         END 
+
+    
 END
 GO

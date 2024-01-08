@@ -35,7 +35,9 @@ BEGIN
 	 
 	SELECT t_cp.idTipoClienteProveedor, t_cp.descripcion, t_cp.codigo FROM TipoClienteProveedor t_cp WITH(NOLOCK) 
 	                                                               INNER JOIN TipoPersona tp WITH(NOLOCK) ON t_cp.idTipoPersona =tp.idTipoPersona 
-																   WHERE tp.codigo='CL';
+																   WHERE tp.codigo='CL'
+                                                                     AND t_cp.codigo IN ('01','02')
+
 
 	SELECT idEmpresa,ruc,nombreComercial,razonSocial,estado FROM Administrador.Empresa WITH(NOLOCK)
 	                                                        WHERE idEntidad = @idEntidad AND estado = 1
