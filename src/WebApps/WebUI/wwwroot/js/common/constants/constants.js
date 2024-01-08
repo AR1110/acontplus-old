@@ -62,7 +62,7 @@ app.constant('nombreModalInventario', {
     MEDIDA: {
         fileCtrl: '/js/inventario/modals/modalMedidaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalMedidaCtrl',
-        template: 'Medida/_ModalMedida.cshtml'
+        template: '~/Pages/Inventario/Medida/Shared/_ModalMedida.cshtml'
     },
     MARCA: {
         fileCtrl: '/js/inventario/modals/modalMarcaCtrl.js' + CHANGE_VERSION(),
