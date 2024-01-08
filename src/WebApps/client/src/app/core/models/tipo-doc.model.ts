@@ -1,4 +1,4 @@
-import { DOC_TYPE, DOC_TYPE_SRI } from "@core/constants/constants"
+import { DOC_TYPE, DOC_TYPE_SRI } from "@core/constants/global.constants"
 
 export interface ITipoDoc {
   idTipoDocumento: number
