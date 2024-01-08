@@ -1,7 +1,5 @@
 ﻿using Common.Core.Models;
-using Microsoft.AspNetCore.Mvc;
-
-namespace WebUI.Utils
+namespace Common.Core.Utils
 {
     public class ValidacionesExternas
 
@@ -11,9 +9,7 @@ namespace WebUI.Utils
         {
             _gr = new GenericResponse();
         }
-
-        [HttpPost]
-        internal GenericResponse VerificarDatos([FromBody] HelpersResponse data)
+        internal GenericResponse VerificarDatos(HelpersResponse data)
         {
             _ = new char[13];
             int provincia;
@@ -26,7 +22,7 @@ namespace WebUI.Utils
 
                         if (data.numeroIdentificacion.Length >= 10)
                         {
-                            char[] _valced = data.numeroIdentificacion.Trim().ToCharArray();
+                            var _valced = data.numeroIdentificacion.Trim().ToCharArray();
                             provincia = int.Parse(_valced[0].ToString() + _valced[1].ToString());
 
                             if (provincia > 0 && provincia < 25)
@@ -96,21 +92,21 @@ namespace WebUI.Utils
             try
             {
                 int aux = 0, par = 0, impar = 0, verifi;
-                for (int i = 0; i < 9; i += 2)
+                for (var i = 0; i < 9; i += 2)
                 {
                     aux = 2 * int.Parse(validarCedula[i].ToString());
                     if (aux > 9)
                         aux -= 9;
                     par += aux;
                 }
-                for (int i = 1; i < 9; i += 2)
+                for (var i = 1; i < 9; i += 2)
                 {
                     impar += int.Parse(validarCedula[i].ToString());
                 }
                 aux = par + impar;
                 if (aux % 10 != 0)
                 {
-                    verifi = 10 - (aux % 10);
+                    verifi = 10 - aux % 10;
                 }
                 else verifi = 0;
 
@@ -142,21 +138,21 @@ namespace WebUI.Utils
             try
             {
                 int aux = 0, par = 0, impar = 0, verifi;
-                for (int i = 0; i < 9; i += 2)
+                for (var i = 0; i < 9; i += 2)
                 {
                     aux = 2 * int.Parse(validarCedula[i].ToString());
                     if (aux > 9)
                         aux -= 9;
                     par += aux;
                 }
-                for (int i = 1; i < 9; i += 2)
+                for (var i = 1; i < 9; i += 2)
                 {
                     impar += int.Parse(validarCedula[i].ToString());
                 }
                 aux = par + impar;
                 if (aux % 10 != 0)
                 {
-                    verifi = 10 - (aux % 10);
+                    verifi = 10 - aux % 10;
                 }
                 else verifi = 0;
 
@@ -191,8 +187,8 @@ namespace WebUI.Utils
                 veri = int.Parse(validarCedula[10].ToString()) + int.Parse(validarCedula[11].ToString()) + int.Parse(validarCedula[12].ToString());
                 if (veri > 0)
                 {
-                    int[] coeficiente = new int[9] { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
-                    for (int i = 0; i < 9; i++)
+                    var coeficiente = new int[9] { 4, 3, 2, 7, 6, 5, 4, 3, 2 };
+                    for (var i = 0; i < 9; i++)
                     {
                         prod = int.Parse(validarCedula[i].ToString()) * coeficiente[i];
                         aux += prod;
@@ -248,8 +244,8 @@ namespace WebUI.Utils
                 veri = int.Parse(validarCedula[9].ToString()) + int.Parse(validarCedula[10].ToString()) + int.Parse(validarCedula[11].ToString()) + int.Parse(validarCedula[12].ToString());
                 if (veri > 0)
                 {
-                    int[] coeficiente = new int[8] { 3, 2, 7, 6, 5, 4, 3, 2 };
-                    for (int i = 0; i < 8; i++)
+                    var coeficiente = new int[8] { 3, 2, 7, 6, 5, 4, 3, 2 };
+                    for (var i = 0; i < 8; i++)
                     {
                         prod = int.Parse(validarCedula[i].ToString()) * coeficiente[i];
                         aux += prod;
