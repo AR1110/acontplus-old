@@ -29,6 +29,10 @@ namespace Inventario.Application.Services
         {
             try
             {
+                if (!_context.ProductPhotos.Any(x=>x.ProductId == productPhoto.ProductId))
+                {
+                    productPhoto.IsDefault = true;
+                }
                 _context.Add(productPhoto);
                 await _context.SaveChangesAsync();
                 return new APIResponse { code = "1", message = "Registrada exitosamente!" };
