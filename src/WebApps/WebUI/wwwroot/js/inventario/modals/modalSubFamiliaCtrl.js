@@ -2,9 +2,9 @@ export {
     ModalSubFamiliaCtrl
 }
 
-ModalSubFamiliaCtrl.$inject = ['$scope', '$uibModalInstance', 'articuloService', 'subFamiliaService', 'toastService', 'params']
+ModalSubFamiliaCtrl.$inject = ['$scope', '$uibModalInstance', 'articuloService', 'subFamiliaService', 'toastService', 'params', 'subcategoryPhotoService']
 
-function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaSvc, tS, params) {
+function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaSvc, tS, params, subcategoryPhotoService) {
 
     $scope.data = {};
     $scope.data.montoObjetivo = 0;
@@ -76,7 +76,7 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
 
             let file = $scope.selectedFile
             if ($scope.data.idSubFamilia > 0) {
-                subFamiliaSvc.update($scope.data.idSubFamilia, file, $scope.data).then($scope.successReponse)
+                subFamiliaSvc.update($scope.data.idSubFamilia, $scope.data).then($scope.successReponse)
                     .catch(err => {
                         hideLoader();
                         console.log(err);
@@ -93,6 +93,45 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
             console.log(error)
         }
     }
+
+    $scope.uploadFile = () => {
+        console.log($scope.data)
+        if ($scope.data.subcategoryPhotoId > 0 && $scope.image.selectedFile != null) {
+            showLoader();
+            subcategoryPhotoService.update({ id: $scope.data.subcategoryPhotoId, data: JSON.stringify({ id: $scope.data.subcategoryPhotoId, s3ObjectKey: $scope.data.s3ObjectKey, s3ObjectUrl: $scope.data.s3ObjectUrl }), file: $scope.selectedFile, }).then(response => {
+                if (response.code == "0") {
+                    tS.toastr("warning", response.message)
+                }
+                if (response.code == "1") {
+                    let src = URL.createObjectURL($scope.selectedFile)
+                    document.getElementById('productImage').src = src
+                    tS.toastr("success", response.message)
+                }
+                hideLoader()
+            }).catch(error => {
+                hideLoader()
+                console.log(error);
+            });
+        }
+        if ($scope.data.idSubFamilia > 0 && $scope.data.subcategoryPhotoId == 0 && $scope.selectedFile != null) {
+            showLoader();
+            subcategoryPhotoService.post({ subcategoryId: $scope.data.idSubFamilia, file: $scope.selectedFile, }).then(response => {
+                if (response.code == "0") {
+                    tS.toastr("warning", response.message)
+                }
+                if (response.code == "1") {
+                    let src = URL.createObjectURL($scope.selectedFile)
+                    document.getElementById('productImage').src = src
+                    tS.toastr("success", response.message)
+                }
+                hideLoader()
+            }).catch(error => {
+                hideLoader()
+                console.log(error);
+            });
+        }
+    }
+
 
     $scope.successReponse = function (response) {
         hideLoader();
