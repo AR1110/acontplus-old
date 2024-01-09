@@ -11,6 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBufferSize = 1048576;
+    serverOptions.Limits.MaxRequestLineSize = 1048576;
+});
+
 builder.Services.AddControllers()
                 .AddNewtonsoftJson(x =>
                 {

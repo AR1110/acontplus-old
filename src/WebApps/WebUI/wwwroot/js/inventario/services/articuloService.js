@@ -392,12 +392,8 @@
         }
 
 
-        service.update = function (id, file, data) {
-            if (!file) {
-                file = null;
-            }
-            //return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
-            return mS.uploadFile({ url: url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, forApi: true });
+        service.update = function (id, data) {
+            return mS.getData('PUT', url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, null, true);
         }
 
         /**
@@ -918,4 +914,30 @@
         return service;
 
     })
+
+    app.factory('productPhotoService', productPhotoService);
+
+    productPhotoService.$inject = ['mainService'];
+
+    function productPhotoService(mS) {
+        let service = {}
+        let url = 'Inventario/ProductPhoto/'
+        function _get() {
+
+        }
+        function _post({ productId, file }) {
+            return mS.uploadFile({ url: `${url}${productId}`, file, });
+        }
+        function _update({ id, data = null, file }) {
+            return mS.uploadFile({ url: `${url}Put/${id}?json=${data}`, file, });
+        }
+        function _delete(id) {
+
+        }
+        service.get = _get;
+        service.post = _post;
+        service.update = _update;
+        service.delete = _delete;
+        return service;
+    }
 })(window.angular)

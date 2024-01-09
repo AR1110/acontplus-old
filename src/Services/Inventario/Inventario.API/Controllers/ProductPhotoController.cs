@@ -52,20 +52,25 @@ namespace Inventario.API.Controllers
                 {
                     await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/articulos/", file);
                 }
+                data.ProductId = productId;
+                data.S3ObjectKey = _s3ObjectCustom.S3ObjectKey;
+                data.S3ObjectUrl = _s3ObjectCustom.S3ObjectUrl;
                 var response = await _productPhoto.AddAsync(data);
                 if (response.code == "1" && file != null)
                 {
                     var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
+                    _s3ObjectCustom.Dispose();
                 }
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 _log.LogActivity($"Error on Post: {productId} \n {ex}");
+                _s3ObjectCustom.Dispose();
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("{id}")]
+        [HttpPost("Put/{id}")]
         public async Task<IActionResult> Put(int id, string json, IFormFile file)
         {
             try
@@ -81,6 +86,7 @@ namespace Inventario.API.Controllers
                 if (response.code == "1" && file != null)
                 {
                     var s3Response = await _storageService.UpdateAsync(_s3ObjectCustom);
+                    _s3ObjectCustom.Dispose();
                 }
                 return Ok(response);
             }
