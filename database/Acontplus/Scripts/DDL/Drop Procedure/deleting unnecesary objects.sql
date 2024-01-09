@@ -916,3 +916,9 @@ GO
 
 DROP PROCEDURE IF EXISTS [Compra].[Retencion_Update]
 GO 
+
+DROP PROCEDURE IF EXISTS  dbo.ASPMovimientoCajaGet
+GO
+
+DROP PROCEDURE IF EXISTS  aspCajaGet
+GO

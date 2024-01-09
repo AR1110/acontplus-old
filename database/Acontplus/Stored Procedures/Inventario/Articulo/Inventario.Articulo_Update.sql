@@ -63,7 +63,7 @@ BEGIN
 			)
 
 	DECLARE @tbArticle AS TABLE (
-		idSubFamilia INT NOT NULL
+	    idSubFamilia INT NOT NULL
 	   ,idMarca INT NULL
 	   ,idModelo INT NULL
 	   ,idTipoIce INT NULL
@@ -105,7 +105,7 @@ BEGIN
 
 	IF(LEN(LTRIM(RTRIM(@s3ObjectKey))) = 0)
 		BEGIN
-			SELECT  @s3ObjectKey = s3ObjectKey, @s3ObjectUrl = s3ObjectUrl  FROM Articulo WHERE idArticulo = @id
+			SELECT TOP 1 @s3ObjectKey = s3ObjectKey, @s3ObjectUrl = s3ObjectUrl  FROM Articulo WITH (NOLOCK) WHERE idArticulo = @id
 		END
 
 	BEGIN TRY
