@@ -11,8 +11,7 @@ GO
 -- Description:	SP para buscar articulos en los documentos de compra y venta 
 -- Inventario.Articulo_Get_Id 77554
 -- =============================================
-CREATE OR ALTER PROC Inventario.Articulo_Get_Id
-@id INT
+CREATE OR ALTER PROC Inventario.Articulo_Get_Id @id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -88,6 +87,9 @@ BEGIN
 		,nombreMedida               = ISNULL(me.descripcion,'Ninguna') 
 		,codigoArticulo             = CASE WHEN ti.porcentaje > 0 THEN '* '+a.codigo ELSE a.codigo END
 		,cantMinimaVentaPorMayor    = ISNULL(cantMinimaVentaPorMayor, 0)
+        ,(SELECT TOP 1 s3ObjectKey FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1) s3ObjectKey
+		,(SELECT TOP 1 s3ObjectUrl FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1) s3ObjectUrl
+		,ISNULL((SELECT TOP 1 Id FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1),0) productPhotoId
 	FROM Articulo       a WITH (NOLOCK) 
 	INNER JOIN TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = a.idTipoIva
 	LEFT JOIN Medida   me WITH (NOLOCK) ON me.idMedida = a.idMedida
@@ -131,9 +133,8 @@ BEGIN
 	INNER JOIN Bodega       b WITH (NOLOCK) ON b.idBodega = au.idBodega
 	WHERE au.idArticulo = @id
 			
-	SELECT 
-		branchOffice    = s.nombreComercial 
-		,warehouses     = ISNULL((SELECT bodega,stock,ubicacion FROM @tableStock ts WHERE ts.codEstab = s.codEstab FOR JSON PATH),'[]')
+	SELECT branchOffice  = s.nombreComercial 
+		  ,warehouses    = ISNULL((SELECT bodega,stock,ubicacion FROM @tableStock ts WHERE ts.codEstab = s.codEstab FOR JSON PATH),'[]')
 	FROM Sri.Establecimiento s WITH (NOLOCK) 
 	WHERE s.ruc = @ruc
 

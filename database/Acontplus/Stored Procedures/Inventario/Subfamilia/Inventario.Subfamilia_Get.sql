@@ -27,21 +27,20 @@ BEGIN
 								    @idEntidad INT,
 									@totalRecords INT'
 	
-	DECLARE @sql NVARCHAR(MAX) = 'SELECT 
-									   idSubFamilia = sf.idSubFamilia
-									   ,idFamilia = ISNULL(sf.idFamilia,0)
-									   ,descripcion = sf.descripcion
-									   ,estado = sf.estado
-									   ,siglas = sf.siglas
-									   ,codigo = sf.codigo
-									   ,montoObjetivo = ISNULL(sf.montoObjetivo,0)
-									   ,nombreFamilia = ISNULL(f.descripcion, ''Ninguna'')
-									   ,ultimoSecuencial
-                                       ,s3ObjectKey
-									   ,s3ObjectUrl
-									   ,totalRecords = @totalRecords
-								   FROM SubFamilia  sf WITH (NOLOCK) 
-								   LEFT JOIN Familia f WITH (NOLOCK) ON f.idFamilia = sf.idFamilia
+	DECLARE @sql NVARCHAR(MAX) = 'SELECT idSubFamilia = sf.idSubFamilia
+									    ,idFamilia = ISNULL(sf.idFamilia,0)
+									    ,descripcion = sf.descripcion
+									    ,estado = sf.estado
+									    ,siglas = sf.siglas
+									    ,codigo = sf.codigo
+									    ,montoObjetivo = ISNULL(sf.montoObjetivo,0)
+									    ,nombreFamilia = ISNULL(sf.familia, ''Ninguna'')
+									    ,ultimoSecuencial
+                                        ,s3ObjectKey
+									    ,s3ObjectUrl
+                                        ,ISNULL(subcategoryPhotoId,0) AS subcategoryPhotoId
+									    ,COUNT(*) OVER() as totalRecords
+								   FROM Inventario.v_Subfamilia  sf WITH (NOLOCK) 
 								   WHERE sf.idEntidad = @idEntidad '
 	
 	SELECT TOP 1 @ByEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol 

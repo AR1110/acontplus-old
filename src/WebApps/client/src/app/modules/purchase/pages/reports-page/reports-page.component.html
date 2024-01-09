@@ -6,7 +6,12 @@
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="tipoDoc">Tipo Doc.:</label>
-          <select name="tipoDoc" id="tipoDoc" class="form-control form-control-border" [(ngModel)]="dataSearch.codDoc">
+          <select
+            name="tipoDoc"
+            id="tipoDoc"
+            class="form-control form-control-border"
+            [(ngModel)]="dataSearch.codDoc"
+          >
             @for (item of tiposDoc; track $index) {
             <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
             }
@@ -45,13 +50,54 @@
         </div>
       </div>
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-         <div class="form-group">
+        <div class="form-group">
           <label for="estado">Estado.:</label>
-          <select name="estado" id="estado" class="form-control form-control-border" [(ngModel)]="dataSearch.codDoc">
+          <select
+            name="estado"
+            id="estado"
+            class="form-control form-control-border"
+            [(ngModel)]="dataSearch.codDoc"
+          >
             @for (item of tiposDoc; track $index) {
             <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
             }
           </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="supplierFilter">Proveedor:</label>
+          <div class="input-group">
+            <div class="input-group-text">
+              <input
+                class="form-check-input mt-0"
+                type="checkbox"
+                value=""
+                aria-label="Checkbox for following text input"
+                [(ngModel)]="dataSearch.checkboxSupplier"
+              />
+            </div>
+            <input
+              id="typeahead-supplier"
+              type="text"
+              class="form-control form-control-border"
+              [(ngModel)]="supplierRazonSocial"
+              [ngbTypeahead]="searchSupplier"
+              [resultTemplate]="rt"
+              (selectItem)="onSelectSupplier($event)"
+              onclick="select();" 
+            /> 
+          </div>
+
+          <ng-template #rt let-r="result" let-t="term">
+            <ngb-highlight
+              [result]="r.numeroIdentificacion + ' - ' + r.razonSocial"
+              [term]="t"
+            />
+          </ng-template>
         </div>
       </div>
     </div>

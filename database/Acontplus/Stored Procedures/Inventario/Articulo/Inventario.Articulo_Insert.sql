@@ -10,10 +10,8 @@ GO
 -- Create date: 2021-06-25
 -- Description:	SP para registrar los aritculos 
 -- =============================================
-IF OBJECT_ID(N'Inventario.Articulo_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Articulo_Insert
-GO
-CREATE PROCEDURE Inventario.Articulo_Insert @userRoleId INT
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Insert 
+     @userRoleId INT
 	,@json NVARCHAR(MAX)
 	,@s3ObjectKey VARCHAR(500) NULL
 	,@s3ObjectUrl VARCHAR(800) NULL
@@ -23,10 +21,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @jsonArticulo NVARCHAR(MAX)
-	,@jsonPvp VARCHAR(MAX)
-	,@idBodega INT
-	,@ubicacion VARCHAR(90) 
+	DECLARE @jsonArticulo NVARCHAR(MAX) ,@jsonPvp VARCHAR(MAX) ,@idBodega INT ,@ubicacion VARCHAR(90) 
 
 	DECLARE @idArticulo INT
 	DECLARE @idEntidad INT 
@@ -52,9 +47,9 @@ BEGIN
 	FROM OPENJSON (@json) WITH
     (
 	    jsonArticulo VARCHAR(MAX) '$.jsonArticulo',
-	    jsonPvp VARCHAR(MAX) '$.jsonPvp',
-	    idBodega INT '$.idBodega',
-	    ubicacion VARCHAR(90) '$.ubicacion'
+	    jsonPvp      VARCHAR(MAX) '$.jsonPvp',
+	    idBodega     INT          '$.idBodega',
+	    ubicacion    VARCHAR(90)  '$.ubicacion'
     )
 
 	DECLARE @tbArticle AS TABLE (
@@ -273,12 +268,12 @@ BEGIN
 				(code_unique,idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida
 				,idEtiqueta,precioCosto,precioSinSubsidio,codigo,codigoAuxiliar,codigoBarra,valorIce,descripcion,llevaInventario
 				,datosAdicionales,productoFraccionable,datosLote,Lote,fechaCreacion,fechaCaducidadLote,stockMinimo
-				,stockMaximo,observaciones,caducidad,fechaCaducidad,idEntidad,idUsuario,fechaRegistro,cantMinimaVentaPorMayor, s3ObjectKey, s3ObjectUrl)
+				,stockMaximo,observaciones,caducidad,fechaCaducidad,idEntidad,idUsuario,fechaRegistro,cantMinimaVentaPorMayor)
 			SELECT 
 				 @code,idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida
 				,idEtiqueta,precioCosto,precioSinSubsidio,codigo,codigoAuxiliar,codigoBarra,valorIce,descripcion,llevaInventario
 				,datosAdicionales,productoFraccionable,datosLote,lote,fechaCreacion,fechaCaducidadlote,stockMinimo
-				,stockMaximo,observaciones,caducidad,fechaCaducidad,@idEntidad,@idUsuario,dbo.ufnGetDateEcuador(),cantMinimaVentaPorMayor, @s3ObjectKey, @s3ObjectUrl
+				,stockMaximo,observaciones,caducidad,fechaCaducidad,@idEntidad,@idUsuario,dbo.ufnGetDateEcuador(),cantMinimaVentaPorMayor
 			FROM @tbArticle
 
 			SET @idArticulo = @@IDENTITY
@@ -286,6 +281,10 @@ BEGIN
 			INSERT INTO ArticuloPvP (idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado)
 					         SELECT @idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
 					         FROM @tbPrices
+
+            --> Photo Product
+            INSERT INTO [Inventario].[ProductPhoto]( [ProductId], [S3ObjectKey], [S3ObjectUrl], [IsDefault], [UserId] ) 
+            SELECT @idArticulo,@s3ObjectKey,@s3ObjectUrl,1,@idUsuario
 			
 			--Registrmos la ubicacion del articulo en las bodegas 
 			INSERT INTO ArticuloUbicacion 

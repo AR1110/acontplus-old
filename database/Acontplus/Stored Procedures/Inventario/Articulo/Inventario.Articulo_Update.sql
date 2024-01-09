@@ -10,15 +10,10 @@ GO
 -- Create date: 2021-07-05
 -- Description:	SP para actualizar datos generales del articulo
 -- =============================================
-IF OBJECT_ID(N'Inventario.Articulo_Update', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Articulo_Update
-GO
-CREATE PROCEDURE Inventario.Articulo_Update
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Update
 	 @userRoleId INT 
 	,@id INT
-	,@json VARCHAR(max)
-	,@s3ObjectKey VARCHAR(500) NULL
-	,@s3ObjectUrl VARCHAR(800) NULL
+	,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -63,7 +58,7 @@ BEGIN
 			)
 
 	DECLARE @tbArticle AS TABLE (
-		idSubFamilia INT NOT NULL
+	    idSubFamilia INT NOT NULL
 	   ,idMarca INT NULL
 	   ,idModelo INT NULL
 	   ,idTipoIce INT NULL
@@ -101,12 +96,6 @@ BEGIN
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
-
-
-	IF(LEN(LTRIM(RTRIM(@s3ObjectKey))) = 0)
-		BEGIN
-			SELECT  @s3ObjectKey = s3ObjectKey, @s3ObjectUrl = s3ObjectUrl  FROM Articulo WHERE idArticulo = @id
-		END
 
 	BEGIN TRY
 		
@@ -309,39 +298,37 @@ BEGIN
 			END 
 
 		BEGIN TRAN 
-				UPDATE Ar SET 
-					 ar.descripcion          = arj.descripcion
-					,ar.idSubFamilia         = arj.idSubFamilia  
-					,ar.codigo               = arj.codigo
-					,ar.codigoBarra          = arj.codigoBarra
-					,ar.codigoAuxiliar       = arj.codigoAuxiliar
-					,ar.idTipoArticulo       = arj.idTipoArticulo
-					,ar.datosAdicionales     = arj.datosAdicionales
-					,ar.llevaInventario      = arj.llevaInventario
-					,ar.productoFraccionable = arj.productoFraccionable
-					,ar.idMarca              = arj.idMarca 
-					,ar.idModelo             = arj.idModelo  
-					,ar.idTipoIce            = arj.idTipoIce
-					,ar.idTipoIva            = arj.idTipoIva
-					,ar.idMedida             = arj.idMedida
-					,ar.valorIce             = arj.valorIce
-					,ar.stockMinimo          = arj.stockMinimo
-					,ar.stockMaximo          = arj.stockMaximo
-					,ar.Observaciones        = arj.observaciones
-					,ar.caducidad            = arj.caducidad
-					,ar.fechaCaducidad       = arj.fechaCaducidad
-					,ar.datosLote            = arj.datosLote
-					,ar.lote                 = arj.lote
-					,ar.fechaCreacion        = arj.fechaCreacion
-					,ar.fechaCaducidadLote   = arj.fechaCaducidadLote
-					,ar.estado               = arj.estado
-					,ar.fechaBaja            = CASE WHEN arj.estado = 0 THEN GETDATE() ELSE NULL END  
-					,ar.precioCosto          = arj.precioCosto	
-					,ar.precioSinSubsidio    = arj.precioSinSubsidio
+				UPDATE ar SET 
+					 ar.descripcion             = arj.descripcion
+					,ar.idSubFamilia            = arj.idSubFamilia  
+					,ar.codigo                  = arj.codigo
+					,ar.codigoBarra             = arj.codigoBarra
+					,ar.codigoAuxiliar          = arj.codigoAuxiliar
+					,ar.idTipoArticulo          = arj.idTipoArticulo
+					,ar.datosAdicionales        = arj.datosAdicionales
+					,ar.llevaInventario         = arj.llevaInventario
+					,ar.productoFraccionable    = arj.productoFraccionable
+					,ar.idMarca                 = arj.idMarca 
+					,ar.idModelo                = arj.idModelo  
+					,ar.idTipoIce               = arj.idTipoIce
+					,ar.idTipoIva               = arj.idTipoIva
+					,ar.idMedida                = arj.idMedida
+					,ar.valorIce                = arj.valorIce
+					,ar.stockMinimo             = arj.stockMinimo
+					,ar.stockMaximo             = arj.stockMaximo
+					,ar.Observaciones           = arj.observaciones
+					,ar.caducidad               = arj.caducidad
+					,ar.fechaCaducidad          = arj.fechaCaducidad
+					,ar.datosLote               = arj.datosLote
+					,ar.lote                    = arj.lote
+					,ar.fechaCreacion           = arj.fechaCreacion
+					,ar.fechaCaducidadLote      = arj.fechaCaducidadLote
+					,ar.estado                  = arj.estado
+					,ar.fechaBaja               = CASE WHEN arj.estado = 0 THEN GETDATE() ELSE NULL END  
+					,ar.precioCosto             = arj.precioCosto	
+					,ar.precioSinSubsidio       = arj.precioSinSubsidio
 					,ar.idEtiqueta              = arj.idEtiqueta
 					,ar.cantMinimaVentaPorMayor = arj.cantMinimaVentaPorMayor
-					,ar.s3ObjectKey = @s3ObjectKey
-					,ar.s3ObjectUrl = @s3ObjectUrl
 				FROM Articulo ar WITH (NOLOCK) JOIN @tbArticle arj ON ar.idArticulo = @id
 					
 				UPDATE arpvp SET 
