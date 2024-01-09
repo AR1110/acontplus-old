@@ -25,7 +25,9 @@
           <select
             class="form-control form-control-border"
             [(ngModel)]="dataSearch.codEstab"
+            (change)="onChangeEstab()"
           >
+            <option value="">Todos</option>
             @for(estab of establecimientos; track $index ){
             <option [ngValue]="estab.codEstab">
               {{ estab.nombreComercial }}
@@ -41,6 +43,7 @@
             class="form-control form-control-border"
             [(ngModel)]="dataSearch.idPuntoEmision"
           >
+            <option [ngValue]="0">Todos</option>
             @for(ptoEmi of puntosEmision; track $index ){
             <option [ngValue]="ptoEmi.idPuntoEmision">
               {{ ptoEmi.ptoEmi }}
@@ -56,9 +59,10 @@
             name="estado"
             id="estado"
             class="form-control form-control-border"
-            [(ngModel)]="dataSearch.codDoc"
+            [(ngModel)]="dataSearch.codEstado"
           >
-            @for (item of tiposDoc; track $index) {
+            <option value="">Todos</option>
+            @for (item of estadosDoc; track $index) {
             <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
             }
           </select>
@@ -67,7 +71,14 @@
     </div>
 
     <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="range-date-filter">Rango de Fechas</label>
+          <app-custom-date-range (onChangeDateRange)="onChangeDateRange($event)" />
+        </div>
+      </div>
+
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="supplierFilter">Proveedor:</label>
           <div class="input-group">
@@ -88,8 +99,8 @@
               [ngbTypeahead]="searchSupplier"
               [resultTemplate]="rt"
               (selectItem)="onSelectSupplier($event)"
-              onclick="select();" 
-            /> 
+              onclick="select();"
+            />
           </div>
 
           <ng-template #rt let-r="result" let-t="term">
@@ -103,7 +114,7 @@
     </div>
   </div>
   <div class="card-footer">
-    <button class="btn btn-info m-r-5" (click)="getReport()">PDF</button>
-    <button class="btn btn-success">EXCEL</button>
+    <button class="btn btn-info m-r-5" (click)="getReport('pdf')">PDF</button>
+    <button class="btn btn-success" (click)="getReport('excel')">EXCEL</button>
   </div>
 </div>

@@ -17,3 +17,28 @@ export const enum DOC_TYPE {
 export const enum DOC_TYPE_SRI {
   LC = '03'
 }
+
+
+
+export enum CODE_REPORT {
+  RF = 'RF',                  // Reporte Factura
+  FG = 'FG',                  // Ventas -> Factura General
+  CCR = 'CCR',                // Cuenta por cobrar
+  FEG = 'FEG',                // Facturacion Electronica -> Factura General
+  RNE = 'RNE',
+  RNC = 'RNCC',               // Reporte Nota Credito
+  NCRG = 'NCRG',              // Reporte Nota Credito General
+  PR = 'PR',                  // Reporte Proforma
+  PRE_F = 'RAC',              // Aprobacion-Factura
+  P_NE = 'P-NE',               // Aprobacion - Nota Entrega
+  RLC = 'RLC',                 // Reporte Liquidacion Compra
+  RCD = 'RCD',                 // Reporte Compra detalle
+  RFC = 'RFC',                 // Reporte Factura Compra
+  RCNH = 'RCNH',               // PDF compra no habitual
+  ROC = 'ROC',                  // Orden Compra
+  RCP ='RCP'                    //Reporte Compras 
+}
+
+// Example usage:
+// const reportType: CODE_REPORT = CODE_REPORT.RF;
+// console.log(reportType);  
