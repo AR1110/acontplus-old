@@ -26,6 +26,7 @@ function modalArticuloCtrl(
     let tS = $injector.get("toastService");
     let fS = $injector.get("formulario");
     let pricingUtils = $injector.get("pricingUtils");
+    let productPhotoService = $injector.get("productPhotoService");
 
     const CODIGO_IVA = "IVA12";
 
@@ -1002,10 +1003,9 @@ function modalArticuloCtrl(
                     console.log(error);
                 })
                 .finally(() => hideLoader());
-        } else if ($scope.data.idArticulo > 0) {
-            showLoader();
+        } else if ($scope.data.idArticulo > 0) { 
             articuloSvc
-                .update($scope.data.idArticulo, $scope.image.selectedFile, senData)
+                .update($scope.data.idArticulo, senData)
                 .then((response) => {
                     if (response.code == 0) {
                         tS.toastr("warning", response.message, response.titleSms);
@@ -1024,6 +1024,43 @@ function modalArticuloCtrl(
                 .finally(() => hideLoader());
         }
     };
+
+    $scope.uploadFile = () => {
+        if ($scope.data.productPhotoId > 0 && $scope.image.selectedFile != null) {
+            showLoader();
+            productPhotoService.update({ id: $scope.data.productPhotoId, data: JSON.stringify({ id: $scope.data.productPhotoId, s3ObjectKey: $scope.data.s3ObjectKey, s3ObjectUrl: $scope.data.s3ObjectUrl }), file: $scope.image.selectedFile, }).then(response => {
+                if (response.code == "0") {
+                    tS.toastr("warning", response.message)
+                }
+                if (response.code == "1") {
+                    let src = URL.createObjectURL($scope.image.selectedFile)
+                    document.getElementById('productImage').src = src
+                    tS.toastr("success", response.message)
+                }
+                hideLoader()
+            }).catch(error => {
+                hideLoader()
+                console.log(error);
+            });
+        }
+        if ($scope.data.idArticulo > 0 && $scope.data.productPhotoId == 0 && $scope.image.selectedFile != null) {
+            showLoader();
+            productPhotoService.post({ productId: $scope.data.idArticulo, file: $scope.image.selectedFile, }).then(response => {
+                if (response.code == "0") {
+                    tS.toastr("warning", response.message)
+                }
+                if (response.code == "1") {
+                    let src = URL.createObjectURL($scope.image.selectedFile)
+                    document.getElementById('productImage').src = src
+                    tS.toastr("success", response.message)
+                }
+                hideLoader()
+            }).catch(error => {
+                hideLoader()
+                console.log(error);
+            });
+        }
+    }
 
     $scope.closeModal = function () {
         if (

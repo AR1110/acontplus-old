@@ -73,11 +73,16 @@ namespace Restaurant.API.Controllers
                 if (decode.code == "1" && file != null)
                 { 
                     var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
+                    _s3ObjectCustom.Dispose();
                 }
                 return Ok(response);
             }
             catch (Exception ex)
             {
+                if (file != null)
+                {
+                    _s3ObjectCustom.Dispose();
+                }
                 return BadRequest("Error on put: " + ex.Message);
             }
         }
@@ -109,11 +114,16 @@ namespace Restaurant.API.Controllers
                 if (decode.code == "1" && file != null)
                 {
                     var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
+                    _s3ObjectCustom.Dispose();
                 }
                 return Ok(response);
             }
             catch (Exception ex)
             {
+                if (file != null)
+                {
+                    _s3ObjectCustom.Dispose();
+                }
                 return BadRequest(ex.Message);
             }
         }

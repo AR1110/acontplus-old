@@ -113,8 +113,6 @@ namespace Inventario.API.Controllers.v2
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _db.AddDynamicParam("s3ObjectKey", "");
-                _db.AddDynamicParam("s3ObjectUrl", "");
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
