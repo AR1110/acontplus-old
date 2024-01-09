@@ -205,7 +205,7 @@ BEGIN
                     SET @sql = @sql + 'AND dt.nroRetencion IS NOT NULL '
                 END 
 
-            SET @sql = @sql + 'ORDER BY dt.idFactura DESC '
+            SET @sql = @sql + 'ORDER BY dt.rucEmisor,dt.fechaEmision DESC '
 
             SELECT entidad as razonSocial 
                   ,rucEmpresa as ruc
@@ -390,6 +390,27 @@ BEGIN
     --> Liquidacion
     IF @tipo = 4
         BEGIN
+            
+            SELECT @codEstab       = codEstab
+                  ,@idPuntoEmision = idPuntoEmision
+                  ,@ckFecha        = ckFecha
+                  ,@fechaInicio    = fechaInicio
+                  ,@fechaFin       = fechaFin
+                  ,@codEstado      = codEstado
+                  ,@identificacion = identificacion
+                  ,@idUsuario      = idUsuario
+            FROM OPENJSON(@json) WITH 
+            (
+                codEstab       VARCHAR(100)
+               ,idPuntoEmision INT
+               ,ckFecha        BIT
+               ,fechaInicio    DATETIME2
+               ,fechaFin       DATETIME2
+               ,codEstado      INT
+               ,identificacion VARCHAR(20)
+               ,idUsuario      INT
+            )
+
             SET @params = '@idEntidad       INT
                           ,@codEstab        VARCHAR(100)
                           ,@idPuntoEmision  INT
@@ -399,9 +420,315 @@ BEGIN
                           ,@identificacion  VARCHAR(20)
                           ,@idUsuario       INT'
 
+            SET @sql = 'SELECT es.nombreComercial
+                              ,es.idEstablecimiento
+                              ,lc.claveAcceso
+                              ,dbo.AFTGenerarNroDocumento(es.estab+pt.ptoEmi,lc.secuencial) as serieComprobante										
+                              ,Format(lc.fechaEmision,''dd/MM/yyyy'')                       as fechaEmision									
+                              ,lc.identificacionProveedor
+                              ,lc.razonSocialProveedor										
+                              ,ISNULL((
+                                
+                                    SELECT CAST(SUM(li.TaxBase)as numeric(18,2)) 
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigoPorcentaje = ''7''
+
+                              ),0) as subTotalExento
+
+                              ,ISNULL((
+
+                                    SELECT CAST(SUM(li.TaxBase)as numeric(18,2)) 
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigoPorcentaje = ''6''
+
+                              ),0) as subTotalNoObjetoIva
+
+                              ,ISNULL((
+                                
+                                    SELECT CAST(SUM(li.TaxBase)as numeric(18,2)) 
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigoPorcentaje = ''0''
+
+                              ),0) as subTotalIvaCero
+
+                              ,ISNULL((
+
+                                    SELECT CAST(SUM(li.TaxBase)as numeric(18,2)) 
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigo = ''2'' AND li.[Percent] > 0
+
+                               ),0) as subTotalIva
+
+                               ,CAST(lc.subTotalSinImpuestos  as numeric(18,2))  as precioTotalSinImpuestos
+	                                          
+                               ,ISNULL((
+
+                                    SELECT CAST(SUM(li.TaxValue)as numeric(18,2)) 
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigo = ''2''
+
+                               ),0) as iva
+
+                               ,CAST(lc.totalDescuento as numeric(18,2))         as descuento
+                               ,CAST(lc.total as numeric(18,2))                  as total		
+                               ,us.nombreUsuario                                 as usuario
+                               ,CASE WHEN codEstado = 4 THEN ''Autorizada''
+                                     WHEN codEstado = 6 THEN ''Anulada''
+                                                        ELSE ''No Autorizada'' 
+                                END as estado
+                        FROM Compra.v_Liquidacion       lc WITH (NOLOCK)									
+                        INNER JOIN PuntoEmision         pt WITH (NOLOCK) ON pt.idPuntoEmision = lc.idPuntoEmision 
+                        INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.codEstab		  = pt.codEstab
+                        INNER JOIN Usuario              us WITH (NOLOCK) ON us.idUsuario	  = lc.idUsuario
+                        WHERE lc.idEntidad = @idEntidad '
+
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
+                END 
+
+            IF @idPuntoEmision > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND lc.idPuntoEmision = @idPuntoEmision '
+                END
+                
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(lc.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END 
+
+            IF @codEstado >= 0
+                BEGIN
+                    IF @codEstado IN (4,6)
+                        BEGIN
+                            SET @sql = @sql + 'AND lc.codEstado = @codEstado '
+                        END 
+                    ELSE 
+                        BEGIN
+                            SET @sql = @sql + 'AND lc.codEstado != 4'
+                        END 
+                END 
+
+            IF @identificacion IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND lc.identificacionProveedor = @identificacion '
+                END 
+
+            IF @idUsuario IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND lc.idUsuario = @idUsuario '
+                END 
+                
+            SET @sql = @sql + 'ORDER BY lc.fechaEmision DESC '
+
+            SELECT entidad as razonSocial 
+                  ,rucEmpresa as ruc
+                  ,telefono 
+                  ,nombreUsuario as usuario
+                  ,'Reporte Tributario - Liquidación ' as nombreReporte
+                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+            FROM v_usuario
+            WHERE idUsuarioRol = @idUsuarioRol
+
+            EXEC sp_executesql @sql
+							  ,@params 
+							  ,@idEntidad      = @idEntidad
+                              ,@codEstab       = @codEstab
+                              ,@idPuntoEmision = @idPuntoEmision
+                              ,@fechaInicio    = @fechaInicio
+                              ,@fechaFin       = @fechaFin
+                              ,@codEstado      = @codEstado
+                              ,@identificacion = @identificacion
+                              ,@idUsuario      = @idUsuario
 
             RETURN 
         END 
+    
+    --> Retencion
+    IF @tipo = 5
+        BEGIN
+            SELECT @codEstab       = codEstab
+                  ,@idPuntoEmision = idPuntoEmision
+                  ,@ckFecha        = ckFecha
+                  ,@fechaInicio    = fechaInicio
+                  ,@fechaFin       = fechaFin
+                  ,@codEstado      = codEstado
+                  ,@identificacion = identificacion
+                  ,@idUsuario      = idUsuario
+            FROM OPENJSON(@json) WITH 
+            (
+                codEstab       VARCHAR(100)
+               ,idPuntoEmision INT
+               ,ckFecha        BIT
+               ,fechaInicio    DATETIME2
+               ,fechaFin       DATETIME2
+               ,codEstado      INT
+               ,identificacion VARCHAR(20)
+               ,idUsuario      INT
+            )
+
+            SET @params = '@idEntidad       INT
+                          ,@codEstab        VARCHAR(100)
+                          ,@idPuntoEmision  INT
+                          ,@fechaInicio     DATETIME2
+                          ,@fechaFin        DATETIME2
+                          ,@codEstado       INT
+                          ,@identificacion  VARCHAR(20)
+                          ,@idUsuario       INT'
+
+            SET @sql = 'SELECT es.idEstablecimiento
+                              ,es.nombreComercial
+	                          ,es.estab + ''-'' + pt.ptoEmi + ''-'' + Helper.F_Auto_Sequential(de.nroDocumento) as serieComprobante
+	                          ,FORMAT(de.fechaEmision,''dd/MM/yyyy'') as fechaEmision
+	                          ,claveAcceso
+	                          ,(SELECT TOP 1 numeroIdentificacion FROM Proveedor pr WITH (NOLOCK) WHERE pr.idProveedor = de.idContribuyente) as identificacionSujetoRetenido
+	                          ,(SELECT TOP 1 nombreFiscal         FROM Proveedor pr WITH (NOLOCK) WHERE pr.idProveedor = de.idContribuyente) as razonSocialSujetoRetenido
+	  
+	                          ,ISNULL(CASE versionComp WHEN ''1.0.0'' THEN (
+													                            SELECT CAST(SUM(ri.valorRetenido) as numeric(18,2)) 
+													                            FROM RetencionCompraDetalle ri WITH (NOLOCK)
+													                            INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = ri.idImpuesto
+													                            WHERE im.codigo = ''1'' 
+													                              AND ri.idRetencionCompra = de.idDocumento 
+											                               )
+							                           WHEN ''2.0.0'' THEN (
+													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
+													                            FROM FactElect.RetencionAtsRet ra 
+													                            WHERE ra.codigo = ''1'' 
+													                              AND ra.idRetencionAts = de.idDocumento
+												                           )
+			                         END
+                              ,0) as retRenta
+
+	                          ,ISNULL(CASE versionComp WHEN ''1.0.0'' THEN (
+													                            SELECT CAST(SUM(ri.valorRetenido) as numeric(18,2)) 
+													                            FROM RetencionCompraDetalle ri WITH (NOLOCK)
+													                            INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = ri.idImpuesto
+													                            WHERE im.codigo = ''2'' 
+													                              AND ri.idRetencionCompra = de.idDocumento 
+											                               )
+							                           WHEN ''2.0.0'' THEN (
+													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
+													                            FROM FactElect.RetencionAtsRet ra 
+													                            WHERE ra.codigo = ''2'' 
+													                              AND ra.idRetencionAts = de.idDocumento
+												                           )
+			                          END
+                              ,0) as retIva
+	                          ,ISNULL(CASE versionComp WHEN ''1.0.0'' THEN (
+													                            SELECT CAST(SUM(ri.valorRetenido) as numeric(18,2)) 
+													                            FROM RetencionCompraDetalle ri WITH (NOLOCK)
+													                            INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = ri.idImpuesto
+													                            WHERE ri.idRetencionCompra = de.idDocumento 
+											                               )
+							                           WHEN ''2.0.0'' THEN (
+													                            SELECT CAST(SUM(ra.valorRetenido) as numeric(18,2)) 
+													                            FROM FactElect.RetencionAtsRet ra 
+													                            WHERE ra.idRetencionAts = de.idDocumento
+												                           )
+			                          END
+                              ,0) as totalRet
+	                          ,CASE versionComp WHEN ''1.0.0'' THEN (
+											                            SELECT TOP 1 fc.puntoEmision + ''-'' + Helper.F_Auto_Sequential(fc.nroDocumento) 
+											                            FROM RetencionCompra          rc WITH (NOLOCK)
+											                            INNER JOIN dbo.facturaCompra  fc WITH (NOLOCK) ON fc.idFacturaCompra = rc.idFacturaCompra
+											                            WHERE rc.idRetencionCompra = de.idDocumento
+										                            )
+						                        WHEN ''2.0.0'' THEN (
+											                            SELECT TOP 1 SUBSTRING(nd.numDocSustento,1,3) + ''-'' + SUBSTRING(nd.numDocSustento,4,3) + ''-'' + SUBSTRING(nd.numDocSustento,7,9) 
+											                            FROM FactElect.RetAtsDocSustento nd WITH (NOLOCK)
+											                            WHERE nd.idRetencionAts = de.idDocumento
+										                            )
+	                           END as numDocSustento
+
+	                          ,CASE versionComp WHEN ''1.0.0'' THEN (
+											                            SELECT TOP 1 FORMAT(fc.fechaEmision ,''dd/MM/yyyy'') 
+											                            FROM RetencionCompra          rc WITH (NOLOCK)
+											                            INNER JOIN dbo.facturaCompra  fc WITH (NOLOCK) ON fc.idFacturaCompra = rc.idFacturaCompra
+											                            WHERE rc.idRetencionCompra = de.idDocumento
+										                            )
+						                        WHEN ''2.0.0'' THEN (
+											                            SELECT TOP 1 FORMAT(nd.fechaEmisionDocSustento,''dd/MM/yyyy'') 
+											                            FROM FactElect.RetAtsDocSustento nd WITH (NOLOCK)
+											                            WHERE nd.idRetencionAts = de.idDocumento
+										                            )
+	                         END as fechaEmisionDocSustento
+
+	                        ,us.nombreUsuario as usuario
+	                        ,CASE WHEN de.codEstado = 4 THEN ''Autorizada''
+                                  WHEN de.codEstado = 6 THEN ''Anulada''
+                                                        ELSE ''No Autorizada'' 
+                             END as estado
+                            ,versionComp
+                    FROM dbo.DocumentoElectronico  de WITH (NOLOCK)
+                    INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = de.idPuntoEmision
+                    INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+                    INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario      = de.idUsuario
+                    WHERE codDoc = ''07'' 
+                        AND idEntidad = @idEntidad '
+
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND es.codEstab = @codEstab '
+                END 
+
+            IF @idPuntoEmision > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND de.idPuntoEmision = @idPuntoEmision '
+                END
+                
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(de.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END 
+
+            IF @codEstado >= 0
+                BEGIN
+                    IF @codEstado IN (4,6)
+                        BEGIN
+                            SET @sql = @sql + 'AND de.codEstado = @codEstado '
+                        END 
+                    ELSE 
+                        BEGIN
+                            SET @sql = @sql + 'AND de.codEstado != 4'
+                        END 
+                END 
+
+            IF @identificacion IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND de.identificacionSujetoRetenido = @identificacion '
+                END 
+
+            IF @idUsuario IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND de.idUsuario = @idUsuario '
+                END 
+                
+            SET @sql = @sql + 'ORDER BY es.idEstablecimiento,de.idContribuyente,de.fechaEmision DESC '
+
+            SELECT entidad as razonSocial 
+                  ,rucEmpresa as ruc
+                  ,telefono 
+                  ,nombreUsuario as usuario
+                  ,'Reporte Tributario - Comprobante de Retención ' as nombreReporte
+                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+            FROM v_usuario
+            WHERE idUsuarioRol = @idUsuarioRol
+
+            EXEC sp_executesql @sql
+							  ,@params 
+							  ,@idEntidad      = @idEntidad
+                              ,@codEstab       = @codEstab
+                              ,@idPuntoEmision = @idPuntoEmision
+                              ,@fechaInicio    = @fechaInicio
+                              ,@fechaFin       = @fechaFin
+                              ,@codEstado      = @codEstado
+                              ,@identificacion = @identificacion
+                              ,@idUsuario      = @idUsuario
+
+            RETURN
+        END 
+
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
     RETURN 
 END 

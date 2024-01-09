@@ -838,6 +838,81 @@ GO
 DROP PROCEDURE IF EXISTS Compra.Factura_Get_Data_Form
 GO
 
-
+--> New
 DROP PROCEDURE IF EXISTS Compra.Documento_Ingreso_Update_Cancel
 go
+
+DROP PROCEDURE IF EXISTS ReporteCompras.Factura
+go
+
+DROP PROCEDURE IF EXISTS ReporteCompras.NotaCredito
+go
+
+DROP PROCEDURE IF EXISTS ReporteCompras.OrdenCompra
+go
+
+DROP PROCEDURE IF EXISTS aspFacturaCompraReporteGeneral
+go
+
+DROP PROCEDURE IF EXISTS aspIngresoBodegaReporteGeneral
+go
+
+DROP PROCEDURE IF EXISTS aspNotaCreditoProveedorReporteGeneral
+GO
+
+DROP PROCEDURE IF EXISTS aspOrdenCompraReporteGeneral
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspRetencionCompraReporteGeneral] 
+GO 
+
+DROP PROCEDURE IF EXISTS [ReporteVentas].[Aprob_Document]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Delete]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Get]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Get_Id]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Insert]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Update]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Catalogo_Get]
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPEntidadLogoDelete]
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPEntidadLogoGet]
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPEntidadLogoInsert]
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPEntidadLogoUpdate]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Delete]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Get]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Get_Id]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Insert]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Send_Email]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Update]
+GO 
