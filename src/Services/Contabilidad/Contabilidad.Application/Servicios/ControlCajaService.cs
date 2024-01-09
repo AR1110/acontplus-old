@@ -15,7 +15,7 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("", parameters);
+            var ds = await _repository.GetDataSetAsync("Contabilidad.ControlCaja_Get", parameters);
             if (ds.Tables.Count == 0)
             {
                 return null;
