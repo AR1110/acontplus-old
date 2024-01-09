@@ -78,7 +78,8 @@ const WhatsApp = <T extends {
     docType: string,
     codEstab: string
     telefonoEstablecimiento?: string
-    nombreComercial?: string
+    nombreComercial?: string,
+    id: number,
 }>(props: OrderDocumentProps<T>) => {
 
     const { data, open, setOpen } = props;
@@ -214,7 +215,17 @@ const WhatsApp = <T extends {
             //Orden de pedido
             if (data.docType === DOC_TYPE.OR) {
                 setLoading(true)
-                const responseFile = await SharedService.downloadReport(data.documentoId, true)
+                const parameters = {
+                    reportParams: JSON.stringify({
+                        codigo: DOC_TYPE_REPORT.OR,
+                        codEstab: data.codEstab,
+                        format,
+                    }),
+                    dataParams: JSON.stringify({
+                        id: data.id
+                    })
+                }
+                const responseFile = await SharedService.downloadExternal(parameters, true)
                 if (responseFile) {
                     const { file, fileName } = contentFile(responseFile);
                     await sendMedia(fileName, file)

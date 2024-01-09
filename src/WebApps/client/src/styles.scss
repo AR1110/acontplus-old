@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import "ngx-toastr/toastr";
 
 html,
 body {
@@ -105,4 +106,10 @@ table {
 //remove z index to material table headers
 .mat-mdc-header-cell {
   z-index: unset !important;
+}
+
+
+
+.form-control-border:focus {
+    border-color: blue !important;
 }

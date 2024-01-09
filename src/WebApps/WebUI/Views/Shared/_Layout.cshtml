@@ -1,6 +1,6 @@
 ﻿@*{
-@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
-}*@
+    @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
+    }*@
 <!DOCTYPE html>
 <html lang="es">
 
@@ -8,20 +8,20 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="Herramienta Administrativa & Contable">
-    <meta name="keywords" content="Acontplus, Contabilidad, Sistema Contable" />
+    <meta name="keywords" content="Acontplus, Contabilidad, Sistema Contable">
     <meta name="author" content="Acontplus">
 
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="application-name" content="Acontplus" />
-    <meta name="apple-mobile-web-app-title" content="Acontplus" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="theme-color" content="#D61672" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Acontplus">
+    <meta name="apple-mobile-web-app-title" content="Acontplus">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#D61672">
 
     <title>@ViewData["Title"] - Acontplus</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="~/assets/images/icon/ios/180.png" asp-append-version="true">
-    <link rel="icon" type="image/png" sizes="32x32" href="~/assets/images/icon/ios/32.png" asp-append-version="true">
-    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/icon/ios/16.png" asp-append-version="true">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/assets/images/icon/ios/180.png" asp-append-version="true" />
+    <link rel="icon" type="image/png" sizes="32x32" href="~/assets/images/icon/ios/32.png" asp-append-version="true" />
+    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/icon/ios/16.png" asp-append-version="true" />
     <link href="~/favicon.ico" rel="shortcut icon icon" type="image/x-icon" asp-append-version="true" />
     <link href="~/favicon.ico" rel="icon" type="image/x-icon" asp-append-version="true" />
     <link rel="manifest" href="/manifest.json" asp-append-version="true">
@@ -30,14 +30,14 @@
     <link href="~/lib/limonte-sweetalert2/sweetalert2.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" />
     <link href="~/lib/jquery.perfect-scrollbar/css/perfect-scrollbar.min.css" rel="stylesheet"
-        asp-append-version="true" />
+          asp-append-version="true" />
     <link href="~/dist/css/style.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/dist/css/pages/tab-page.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/dist/css/pages/other-pages.css" rel="stylesheet" />
     <link href="~/lib/magnific-popup.js/magnific-popup.min.css" rel="stylesheet" asp-append-version="true">
 
     <!--Tooltip-->
-    <link href="~/dist/css/pages/user-card.min.css" rel="stylesheet">
+    <link href="~/dist/css/pages/user-card.min.css" rel="stylesheet" />
 
     <!--Toast-->
     <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" asp-append-version="true" />
@@ -54,13 +54,13 @@
 
     <!--angular material-->
     <link href="~/lib/angular-material/angular-material.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="~/lib/angular-material-data-table/md-data-table.min.css" rel="stylesheet" asp-append-version="true" />
 
     <!--custom css-->
     <link href="~/css/acontplus-style.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/spinners.min.css" rel="stylesheet" asp-append-version="true" />
-    <!--Estilos especiales de librerias de svelte--> 
+    <!--Estilos especiales de librerias de svelte-->
 </head>
 
 <body class="skin-custom fixed-layout" ng-class="miniSidebar" ng-cloak ng-app="acontPlusApp">
@@ -85,18 +85,18 @@
                         <b>
                             <!-- Dark Logo icon -->
                             <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage"
-                                class="dark-logo img-fluid">
+                                 class="dark-logo img-fluid">
                             <!-- Light Logo icon -->
                             <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage"
-                                class="light-logo img-fluid">
+                                 class="light-logo img-fluid">
                         </b>
 
                         <!-- dark Logo text -->
                         <span style="">
                             @* <!-- dark Logo text -->
-                            <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo">
-                            <!-- Light Logo text -->
-                            <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage"> *@
+                                <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo">
+                                <!-- Light Logo text -->
+                                <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage"> *@
                         </span>
                     </a>
                 </div>
@@ -114,14 +114,14 @@
                         <!-- This is  -->
                         <li class="nav-item">
                             <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark"
-                                href="javascript:void(0)">
+                               href="javascript:void(0)">
                                 <icon class="ti-menu"></icon>
                             </a>
                         </li>
                         <li class="nav-item" id="toggleButton">
                             <a id="menu_toggle"
-                                class="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark"
-                                href="javascript:void(0)">
+                               class="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark"
+                               href="javascript:void(0)">
                                 <icon class="icon-menu"></icon>
                             </a>
                         </li>
@@ -147,7 +147,7 @@
 
                         <li class="nav-item dropdown u-pro">
                             <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href=""
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img src="~/assets/images/user/user.png" alt="user" class="">
                                 <span class="hidden-md-down">
                                     Hola,
@@ -216,7 +216,7 @@
                                 <li><b>Claros</b></li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-default"
-                                        class="default-theme working">1</a>
+                                       class="default-theme working">1</a>
                                 </li>
                                 <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
                                 <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
@@ -226,26 +226,26 @@
                                 <li class="d-block m-t-30"><b>Oscuros</b></li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-default-dark"
-                                        class="default-dark-theme ">7</a>
+                                       class="default-dark-theme ">7</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-green-dark"
-                                        class="green-dark-theme">8</a>
+                                       class="green-dark-theme">8</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-blue-dark"
-                                        class="blue-dark-theme">10</a>
+                                       class="blue-dark-theme">10</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-purple-dark"
-                                        class="purple-dark-theme">11</a>
+                                       class="purple-dark-theme">11</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" data-skin="skin-megna-dark"
-                                        class="megna-dark-theme ">12</a>
+                                       class="megna-dark-theme ">12</a>
                                 </li>
                             </ul>
                         </div>
@@ -325,7 +325,7 @@
     <!--momment js-->
     <script src="~/lib/moment.js/moment.min.js" asp-append-version="true"></script>
     <script src="~/lib/moment-timezone/moment-timezone-with-data-10-year-range.min.js"
-        asp-append-version="true"></script>
+            asp-append-version="true"></script>
 
     <!--angular-file-upload by daniel farid-->
     <script src="~/lib/danialfarid-angular-file-upload/ng-file-upload-shim.min.js" asp-append-version="true"></script>

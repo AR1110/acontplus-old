@@ -62,17 +62,17 @@ app.constant('nombreModalInventario', {
     MEDIDA: {
         fileCtrl: '/js/inventario/modals/modalMedidaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalMedidaCtrl',
-        template: 'Medida/_ModalMedida.cshtml'
+        template: '~/Pages/Inventario/Medida/Shared/_ModalMedida.cshtml'
     },
     MARCA: {
         fileCtrl: '/js/inventario/modals/modalMarcaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalMarcaCtrl',
-        template: 'Marca/_ModalMarca.cshtml'
+        template: '~/Pages/Inventario/Marca/Shared/_ModalMarca.cshtml'
     },
     MODELO: {
         fileCtrl: '/js/inventario/modals/modalModeloCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalModeloCtrl',
-        template: 'Modelo/_ModalModelo.cshtml'
+        template: '~/Pages/Inventario/Modelo/Shared/_ModalModelo.cshtml'
     },
     ARTICULO_FRACCIONADO: {
         fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),

@@ -28,8 +28,10 @@ export interface Establecimiento {
     rucEmpresa: string
 }
  
+export interface GroupedEstabPuntoEmision extends Pick<IPuntoEmisionEstablecimiento, "idPuntoEmision" | "ptoEmi" | "defaultPtoEmi"> {}
+export interface GroupedEstabBodega extends Pick<IBodegaEstablecimiento, "idBodega"| "bodega" | "defaultBodega"> {}
 
 export interface GroupedEstab extends Pick<Establecimiento, "idEstablecimiento" | "codEstab" | "nombreComercial" | "defaultEstab"> {
-    puntosEmision: Array<Pick<IPuntoEmisionEstablecimiento, "idPuntoEmision" | "ptoEmi" | "defaultPtoEmi">>
-    bodegas?: Array<Pick<IBodegaEstablecimiento, "idBodega"| "bodega" | "defaultBodega">>
+    puntosEmision: Array<GroupedEstabPuntoEmision>
+    bodegas?: Array<GroupedEstabBodega>
 } 

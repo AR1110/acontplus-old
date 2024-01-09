@@ -23,12 +23,12 @@
           "Port": 7221
         }
       ],
-      "DownstreamPathTemplate": "/api/Account{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Post"
       ],
-      "UpstreamPathTemplate": "/gateway/Account{everything}"
+      "UpstreamPathTemplate": "/gateway/Seguridad{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -48,29 +48,6 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/gateway/Recepcion/Articulo{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7001
-        }
-      ],
-      "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/gateway/IngresoFacturaCompra{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -104,29 +81,6 @@
         "Get"
       ],
       "UpstreamPathTemplate": "/gateway/Consultas/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7089
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v2/Cliente{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/app-mobile/Cliente{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -261,34 +215,6 @@
       "UpstreamPathTemplate": "/gateway/Venta{everything}"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7221
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v3/Account{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/restaurant/Account{everything}"
-    },
-    {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7221
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v2/Account{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/app-mobile/Account{everything}"
-    },
-    {
       "AuthenticationOptions": {
         "AllowedScopes": [
         ],
@@ -329,8 +255,7 @@
         "Get",
         "Post",
         "Put",
-        "Delete",
-        "Options"
+        "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/Mechanical{everything}"
     },
@@ -352,8 +277,7 @@
         "Get",
         "Post",
         "Put",
-        "Delete",
-        "Options"
+        "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/TechnicalSupport{everything}"
     },
@@ -421,8 +345,7 @@
         "Get",
         "Post",
         "Put",
-        "Delete",
-        "Options"
+        "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/Common{everything}"
     }

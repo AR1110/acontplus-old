@@ -818,10 +818,10 @@
                     return
                 }
 
-                if (!$scope.data.estableDestino) {
-                    tS.toastr('warning', 'Ingrese Est. Destino');
-                    return
-                }
+                // if (!$scope.data.estableDestino) {
+                //     tS.toastr('warning', 'Ingrese Est. Destino');
+                //     return
+                // }
 
                 if (!$scope.data.ruta) {
                     tS.toastr('warning', 'Ingrese la Ruta');
@@ -884,7 +884,8 @@
                     guia.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision);
                     guia.fechaInicio = fS.formatDateTimeZone($scope.data.fechaInicio);
                     guia.fechaFin = fS.formatDateTimeZone($scope.data.fechaFin);
-
+                    guia.estableDestino = ["",null, undefined].includes($scope.data.estableDestino)? null: $scope.data.estableDestino;
+                    
                     let data = {
                         guia,
                         detalle: $scope.gridOptionsDetalle.data,

@@ -53,6 +53,7 @@
             ],
             "styles": [
               "node_modules/sweetalert2/src/sweetalert2.scss",
+              "node_modules/icheck-bootstrap/icheck-bootstrap.css",
               "src/styles.scss"
             ],
             "scripts": [
@@ -92,7 +93,12 @@
           },
           "defaultConfiguration": "production"
         },
-        "serve": { 
+        "serve": {
+          "options": {
+            "ssl": true,
+            "sslCert": "./ssl/server.crt",
+            "sslKey": "./ssl/server.key"
+          },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
