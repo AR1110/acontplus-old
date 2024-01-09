@@ -922,3 +922,18 @@ GO
 
 DROP PROCEDURE IF EXISTS  aspCajaGet
 GO
+
+DROP PROCEDURE IF EXISTS  [dbo].[aspCajaInsert]
+GO
+
+DROP PROCEDURE IF EXISTS  [dbo].[aspAsignacionCajaInsert]
+GO
+
+DROP PROCEDURE IF EXISTS  [dbo].[aspCajaUpdate] 
+go
+
+DROP PROCEDURE IF EXISTS [dbo].[aspCajaDelete]
+GO 
+
+DROP PROCEDURE IF EXISTS [Administrador].[ControlCaja_Get]
+GO 
