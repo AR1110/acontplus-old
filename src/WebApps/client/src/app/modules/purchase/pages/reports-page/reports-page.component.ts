@@ -3,7 +3,7 @@ import { AppModule } from 'src/app/app.module';
 import { PurchaseModule } from '@modules/purchase/purchase.module';
 
 import { HttpClient } from '@angular/common/http';
-import { DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
+import { CODE_REPORT, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@modules/accounting/constants/accounting_constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
@@ -11,7 +11,7 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { ITipoDoc } from '@core/models/tipo-doc.model';
 import { hideLoader, showLoader } from '@core/utils';
 import { SharedService } from '@core/services/shared.service';
-import { Observable, OperatorFunction, catchError, debounceTime, map, switchMap } from 'rxjs';
+import { Observable, OperatorFunction, catchError, debounceTime, map, retry, switchMap } from 'rxjs';
 import { SupplierService } from '@modules/purchase/services/supplier.service';
 import { SupplierSearch } from '@modules/purchase/models/supplier.model';
 import { isValidField } from '@core/utils/utils';
@@ -26,21 +26,25 @@ import { ToasterService } from '@core/services/toaster.service';
 })
 export class ReportsPageComponent {
   http = inject(HttpClient);
-  sharedSvc = inject(SharedService);
-  supplierSvc = inject(SupplierService)
+  private sharedSvc = inject(SharedService);
+  private supplierSvc = inject(SupplierService)
   private tS = inject(ToasterService)
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
 
   establecimientos: Array<GroupedEstab> = [];
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
   tiposDoc: Array<ITipoDoc> = [];
+  estadosDoc: Array<{ codigo: string, descripcion: string }> = [];
 
   dataSearch = {
     codEstab: '',
     idPuntoEmision: 0,
     codDoc: '',
     idProveedor: 0,
-    checkboxSupplier: false
+    checkboxSupplier: false,
+    codEstado: '',
+    fromDate: '',
+    toDate: ''
   }
 
   supplierRazonSocial = ''
@@ -95,9 +99,8 @@ export class ReportsPageComponent {
             this.tiposDoc = tiposDoc;
 
             this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codigo === DOC_TYPE.FC)?.codigo || '';
-            console.log(this.tiposDoc)
-
-
+            //console.log(this.tiposDoc)
+            this.estadosDoc = estadosDoc;
           }
         }
       },
@@ -107,6 +110,8 @@ export class ReportsPageComponent {
       },
     })
   }
+
+
   ngOnInit() {
     this.initialed()
   }
@@ -118,13 +123,47 @@ export class ReportsPageComponent {
     setTimeout(() => {
       this.supplierRazonSocial = supplier.razonSocial
     })
+  }
 
+  onChangeEstab() {
+    if (isValidField(this.dataSearch.codEstab)) {
+      let dataEstab = this.establecimientos.find(estab => estab.codEstab === this.dataSearch.codEstab);
+      if (dataEstab) {
+        this.puntosEmision = dataEstab.puntosEmision;
+
+        this.dataSearch.idPuntoEmision = this.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
+        return
+      }
+    }
+    this.dataSearch.idPuntoEmision = 0;
+  }
+
+
+  onChangeDateRange(data: { fromDate: any, toDate: any }) {
+    this.dataSearch.fromDate = data.fromDate;
+    this.dataSearch.toDate = data.toDate;
   }
 
 
 
 
-  getReport() {
+  getReport(format: 'pdf' | 'excel') {
+    
+    if (!isValidField(this.dataSearch.fromDate)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese fecha inicio'
+      })
+      return
+    }
+
+    if (!isValidField(this.dataSearch.toDate)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese fecha fin'
+      })
+      return
+    }
 
     if (this.dataSearch.checkboxSupplier) {
       if (!isValidField(this.dataSearch.idProveedor)) {
@@ -135,19 +174,26 @@ export class ReportsPageComponent {
         return
       }
     }
-    const format = 'pdf';
+
+
+
+
     const dataParms = {
       tipo: 1,
       format,
+      ckFecha: true,
       codEstab: this.dataSearch.codEstab,
       codDoc: this.dataSearch.codDoc,
-      idProveedor: this.dataSearch.checkboxSupplier && isValidField(this.dataSearch.idProveedor) || null
+      idProveedor: this.dataSearch.checkboxSupplier && isValidField(this.dataSearch.idProveedor) || null,
+      codEstado: isValidField(this.dataSearch.codEstado),
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate
     }
 
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: 'RCP',
+        codigo: CODE_REPORT.RCP,
         codEstab: this.dataSearch.codEstab,
         format,
         aditionalParams: []
@@ -157,8 +203,6 @@ export class ReportsPageComponent {
 
     showLoader();
     this.sharedSvc.getReport(parameters)
-
-
   }
 
 }
