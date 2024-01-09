@@ -1,5 +1,5 @@
-<form class="row row-cols-sm-auto">
-	<div class="col-12">
+<div class="row">
+	<div class="col-6">
 		<div class="dp-hidden position-absolute">
 			<div class="input-group">
 				<input
@@ -36,12 +36,15 @@
 				placeholder="yyyy-mm-dd"
 				name="dpFromDate"
 				[value]="formatter.format(fromDate)"
-				(input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+				(input)="fromDate = validateInput(fromDate, dpFromDate.value, 'fromDate')"
+         
 			/>
-			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button">
+         <i class="fas fa-calendar"></i>
+      </button>
 		</div>
 	</div>
-	<div class="col-12">
+	<div class="col-6">
 		<div class="input-group">
 			<input
 				#dpToDate
@@ -49,9 +52,11 @@
 				placeholder="yyyy-mm-dd"
 				name="dpToDate"
 				[value]="formatter.format(toDate)"
-				(input)="toDate = validateInput(toDate, dpToDate.value)"
+				(input)="toDate = validateInput(toDate, dpToDate.value, 'toDate')"
 			/>
-			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button">
+        <i class="fas fa-calendar"></i>
+      </button>
 		</div>
 	</div>
-</form>
+</div>

@@ -8,7 +8,6 @@ export const sessionGuard: CanActivateFn = (route, state) => {
   if (authSvc.isLoggedIn !== true) {
     console.log('no auth')
     //router.navigate(['/', 'auth'])
-  }
-  console.log('auth')
+  } 
   return true;
 };

@@ -25,10 +25,9 @@ export class SupplierService {
     return this.http.get(`${this.url}?json=${JSON.stringify(query)}`)
       .pipe(
         map(response => {
-          if (isApiResponse(response)) {
-            let { proveedores } = JSON.parse(response.payload as string);
-            console.log(proveedores)
-            return proveedores;
+          if (isApiResponse(response)) { 
+            let { proveedores } = response.payload && JSON.parse(response.payload as string) || [];
+            return proveedores || [];
           }
           return []
         })
