@@ -45,26 +45,7 @@ namespace Contabilidad.API.Controllers.v2
                 return BadRequest("Error en get " + ex.Message);
             }
         }
-
-        [HttpGet("GetAsigByUser")]
-        public async Task<IActionResult> GetAsigCajaUsuario()
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()}
-                };
-                var response = await _service.GetAsigCajaUsuarioAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en GetByUdser" + ex.Message);
-                return BadRequest("Error en get " + ex.Message);
-            }
-        }
+               
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
