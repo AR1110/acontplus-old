@@ -113,3 +113,13 @@ table {
 .form-control-border:focus {
     border-color: blue !important;
 }
+
+
+/*Modal*/
+.backdrop-custom-modal {
+    z-index: 1050 !important; 
+}
+
+.uibModalFullScreen .modal-dialog {
+    max-width: 1050px;
+}
