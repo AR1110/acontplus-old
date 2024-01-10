@@ -92,7 +92,7 @@ namespace Inventario.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Put/{id}")]
+        [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
             GenericResponse _response = new GenericResponse();

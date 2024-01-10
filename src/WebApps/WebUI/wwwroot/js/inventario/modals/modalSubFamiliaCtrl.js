@@ -95,7 +95,6 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
     }
 
     $scope.uploadFile = () => {
-        console.log($scope.data)
         if ($scope.data.subcategoryPhotoId > 0 && $scope.image.selectedFile != null) {
             showLoader();
             subcategoryPhotoService.update({ id: $scope.data.subcategoryPhotoId, data: JSON.stringify({ id: $scope.data.subcategoryPhotoId, s3ObjectKey: $scope.data.s3ObjectKey, s3ObjectUrl: $scope.data.s3ObjectUrl }), file: $scope.selectedFile, }).then(response => {
@@ -104,7 +103,7 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
                 }
                 if (response.code == "1") {
                     let src = URL.createObjectURL($scope.selectedFile)
-                    document.getElementById('productImage').src = src
+                    document.getElementById('subcategoryImage').src = src
                     tS.toastr("success", response.message)
                 }
                 hideLoader()
@@ -121,7 +120,7 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
                 }
                 if (response.code == "1") {
                     let src = URL.createObjectURL($scope.selectedFile)
-                    document.getElementById('productImage').src = src
+                    document.getElementById('subcategoryImage').src = src
                     tS.toastr("success", response.message)
                 }
                 hideLoader()
