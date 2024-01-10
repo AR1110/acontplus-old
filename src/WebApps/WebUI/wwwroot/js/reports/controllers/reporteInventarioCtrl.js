@@ -15,7 +15,8 @@
         let articuloSvc = $injector.get('articuloService');
 
         $scope.dataSearch = {
-            bySubFamilia: 0
+            bySubFamilia: 0,
+            idMarca: 0
         };
         $scope.dataSearch.byOrderCampo = 'ar.descripcion';
         $scope.dataSearch.byOrder = 'ASC';
@@ -37,7 +38,7 @@
         $scope.initiload = function () {
 
             articuloSvc.getDataFormReport().then(response => {
-                const { estabs, subFamilias } = response;
+                const { estabs, subFamilias, marcas} = response;
                 $scope.establecimientos = estabs;
                 let dataEstab = $scope.establecimientos.find(item => (item.defaultEstab))
                 console.log(dataEstab)
@@ -70,7 +71,7 @@
                     return acc;
                 }, []);
 
-                console.log($scope.subFamilias)
+                $scope.marcas = marcas;
 
             })
         }
@@ -306,6 +307,7 @@
                     numeroIdentificacion: isValidField($scope.dataSearch.numeroIdentificacion),
                     codEstab,
                     idBodega: isValidField($scope.dataSearch.idBodega),
+                    idMarca: isValidField($scope.dataSearch.idMarca),
                     filtroFecha: $scope.dataSearch.filtroFecha
                 }
 
