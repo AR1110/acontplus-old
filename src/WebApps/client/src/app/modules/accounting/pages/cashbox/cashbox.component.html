@@ -15,7 +15,7 @@
               <option [value]="item">{{ item }}</option>
               }
             </select>
-          </span> 
+          </span>
         </div>
       </div>
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    
+
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -67,9 +67,14 @@
                     <i class="fas fa-trash"></i>
                     Eliminar
                   </button>
-                  <button ngbDropdownItem>Move</button>
-                  <div class="dropdown-divider"></div>
-                  <button ngbDropdownItem>Delete</button>
+                  <button ngbDropdownItem (click)="openModalAperturar(item)">
+                    <i class="ti-briefcase"></i>
+                    Aperturar
+                  </button> 
+                  <button ngbDropdownItem (click)="openModalMovimiento(item)">
+                    <i class="ti-wallet"></i>
+                    Movimientos
+                  </button>
                 </div>
               </div>
             </td>

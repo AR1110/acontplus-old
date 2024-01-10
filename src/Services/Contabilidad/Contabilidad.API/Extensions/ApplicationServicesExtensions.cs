@@ -15,6 +15,7 @@ namespace Contabilidad.API.Extensions
 
             services.AddScoped<ISubCategoriaService, SubCategoriaService>();
             services.AddScoped<ICajaService, CajaService>();
+            services.AddScoped<IControlCajaService, ControlCajaService>();
 
             services.AddSingleton<LogWriter>();
             return services;

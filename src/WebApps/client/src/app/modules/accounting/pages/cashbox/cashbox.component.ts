@@ -5,10 +5,12 @@ import { AccountingModule } from '@modules/accounting/accounting.module';
 import { Cashbox } from '@modules/accounting/models/cashbox.model';
 import { CashboxService } from '@modules/accounting/services/cashbox.service';
 import { AppModule } from 'src/app/app.module';
-import { CashboxModalComponent } from './cashbox-modal/cashbox-modal.component';
 import Swal from 'sweetalert2';
+import { CashboxModalComponent } from './cashbox-modal/cashbox-modal.component';
+import { AperturaCajaModalComponent } from './apertura-caja-modal/apertura-caja-modal.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
+import { MovimientoCajaModalComponent } from './movimiento-caja-modal/movimiento-caja-modal.component';
 
 @Component({
   selector: 'app-cashbox',
@@ -62,6 +64,7 @@ export class CashboxComponent {
 
   ngOnInit() {
     console.log('init')
+    console.log(localStorage.getItem("userData"))
     this.getCashboxs()
   }
 
@@ -129,6 +132,28 @@ export class CashboxComponent {
       hideLoader();
       console.log(error)
     }
+  }
+
+  openModalAperturar(params: Cashbox) {
+    const modalRef = this.modalSvc.openModalCustom(AperturaCajaModalComponent);
+    modalRef.componentInstance.params = params || {};
+    modalRef.result.then(result => {
+      console.log(result)
+      if (typeof result === 'object') {
+        this.getCashboxs();
+      }
+    })
+  }
+
+  openModalMovimiento(params: Cashbox) {
+    const modalRef = this.modalSvc.openModalCustom(MovimientoCajaModalComponent, { size: 'xl', fullscreen: 'xxl', windowClass: 'uibModalFullScreen'});
+    modalRef.componentInstance.params = params || {};
+    modalRef.result.then(result => {
+      console.log(result)
+      if (typeof result === 'object') {
+        this.getCashboxs();
+      }
+    })
   }
 
 
