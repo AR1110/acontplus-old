@@ -25,7 +25,7 @@ export  class ControlCajaService {
   }
 
   getDataForm() {
-    console.log("test ")
+
     let paramsStr = JSON.stringify({ tipo: 2 })
     return this.http.get(`${this.url}?json=${paramsStr}`)
       .pipe(
@@ -33,6 +33,11 @@ export  class ControlCajaService {
           return response;
         })
       )
+  }
+
+
+  post<T>(data: T) {
+    return this.http.post(`${this.url}`, { data });
   }
 
 
