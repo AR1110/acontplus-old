@@ -1,9 +1,9 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
-using Common.Core.Utils;
 using Inventario.Core.Entities;
 using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventario.Application.Services
 {
@@ -16,20 +16,34 @@ namespace Inventario.Application.Services
             _context = context;
             _repository = repository;
         }
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<APIResponse> GetAsync(int productId)
         {
-            var ds = await _repository.GetDataSetAsync("Inventario.ProductPhoto_Get", parameters);
-            if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+            //var ds = await _repository.GetDataSetAsync("Inventario.ProductPhoto_Get", parameters);
+            //if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+            //{
+            //    return null;
+            //}
+            //return DataConverters.DataSetToJSON(ds);
+            try
             {
-                return null;
+                if (!_context.ProductPhotos.Any(x => x.ProductId == productId))
+                {
+                    return new APIResponse { code = "0", message = "No se encontraron imagenes!" };
+                }
+                var photos = await _context.ProductPhotos.Where(x => x.ProductId == productId).ToListAsync();
+                return new APIResponse { code = "1", payload = photos };
             }
-            return DataConverters.DataSetToJSON(ds);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
         public async Task<APIResponse> AddAsync(ProductPhoto productPhoto)
         {
             try
             {
-                if (!_context.ProductPhotos.Any(x=>x.ProductId == productPhoto.ProductId))
+                if (!_context.ProductPhotos.Any(x => x.ProductId == productPhoto.ProductId))
                 {
                     productPhoto.IsDefault = true;
                 }
@@ -63,18 +77,52 @@ namespace Inventario.Application.Services
                 throw;
             }
         }
-        public async Task<object> DeleteAsync(int id, int userId)
+        public async Task<APIResponse> SetDefaultAsync(int id, bool isDefault, int userId)
         {
             try
             {
                 var productFound = await _context.ProductPhotos.FindAsync(id);
-                if (productFound == null) { return new { code = "0", message = "No existe el registro!" }; };
-                productFound.Enabled = false;
-                productFound.Deleted = true;
+                if (productFound == null) { return new APIResponse { code = "0", message = "No existe el registro!" }; };
+                productFound.IsDefault = isDefault;
                 productFound.UserId = userId;
+                if (isDefault && _context.ProductPhotos.Any(x=>x.Id != id && x.ProductId == productFound.ProductId && x.IsDefault == true))
+                {
+                    var nonDefaults = await _context.ProductPhotos.Where(x => x.Id != id && x.ProductId == productFound.ProductId && x.IsDefault == true).ToListAsync();
+                    nonDefaults.ForEach(x => x.IsDefault = false);
+                    nonDefaults.ForEach(x => x.UserId = userId);
+                    _context.UpdateRange(nonDefaults);
+                    await _context.SaveChangesAsync();
+                }
                 _context.Update(productFound);
                 await _context.SaveChangesAsync();
-                return new { code = "1", message = "Eliminada exitosamente!" };
+                return new APIResponse { code = "1", message = "Actualizada exitosamente!" };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<APIResponse> DeleteAsync(int id, int userId)
+        {
+            try
+            {
+                var productFound = await _context.ProductPhotos.FindAsync(id);
+                //if (productFound == null) { return new { code = "0", message = "No existe el registro!" }; };
+                //productFound.Enabled = false;
+                //productFound.Deleted = true;
+                //productFound.UserId = userId;
+                if (productFound.IsDefault && _context.ProductPhotos.Any(x=>x.ProductId == productFound.ProductId))
+                {
+                    var nextDefault = await _context.ProductPhotos.FirstOrDefaultAsync(x => x.Id != id && x.ProductId == productFound.ProductId);
+                    nextDefault.UserId = userId;
+                    nextDefault.IsDefault = true;
+                    _context.Update(nextDefault);
+                    await _context.SaveChangesAsync();
+                }
+                _context.Remove(productFound);
+                await _context.SaveChangesAsync();
+                return new APIResponse { code = "1", message = "Eliminada exitosamente!", payload = productFound.S3ObjectKey };
             }
             catch (Exception)
             {

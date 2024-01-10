@@ -931,11 +931,18 @@
         function _update({ id, data = null, file }) {
             return mS.uploadFile({ url: `${url}Put/${id}?json=${data}`, file, });
         }
+        function _setDefault({ id, isDefault }) {
+            return mS.getData('PUT', `${url}SetDefault/${id}/${isDefault}`, null, true);
+        }
         function _delete(id) {
-
+            return mS.getData('DELETE', `${url}${id}`, null, true);
+        }
+        function _delete(id) {
+            return mS.getData('DELETE', `${url}${id}`, null, true);
         }
         service.get = _get;
         service.post = _post;
+        service.setDefault = _setDefault;
         service.update = _update;
         service.delete = _delete;
         return service;
