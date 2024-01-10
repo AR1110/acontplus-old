@@ -1,0 +1,108 @@
+<app-breadcrumb (clicked)="openModalAddUpdate()" />
+
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-start">
+          <span class="form-group pull-left page-size form-inline">
+            <select
+              class="form-control control-color"
+              [(ngModel)]="dataSearch.pageSize"
+              (change)="changePageSize()"
+            >
+              @for(item of recordsQuantity; track $index){
+              <option [value]="item">{{ item }}</option>
+              }
+            </select>
+          </span> 
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-end">
+          <!-- <form class="form-material">
+            <input
+              type="text"
+              class="form-control"
+              ng-model="buscar"
+              placeholder="..."
+            />
+          </form> -->
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>N°</th>
+            <th>Usuario</th>
+            <th>Caja</th>
+            <th>Turno</th>
+            <th>Actividad</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of cashboxs; track $index) {
+          <tr>
+            <td>
+              <div ngbDropdown container="body">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm"
+                  ngbDropdownToggle
+                >
+                  Acciones
+                </button>
+                <div ngbDropdownMenu>
+                  <button ngbDropdownItem (click)="openModalAddUpdate(item)">
+                    <i class="fas fa-edit"></i>
+                    Editar
+                  </button>
+                  <button ngbDropdownItem (click)="askToDelete(item.idCaja)">
+                    <i class="fas fa-trash"></i>
+                    Eliminar
+                  </button>
+                  <button ngbDropdownItem>Move</button>
+                  <div class="dropdown-divider"></div>
+                  <button ngbDropdownItem>Delete</button>
+                </div>
+              </div>
+            </td>
+            <td>{{ $index + 1 }}</td>
+
+            <td>{{ item.usuario }}</td>
+            <td>{{ item.descripcion }}</td>
+            <td>{{ item.turno }}</td>
+            <td>{{ item.actividad }}</td>
+            <td>
+              @if (item.estado) {
+                <span class="label label-success">Activo</span>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td align="center" colspan="6">
+              <ngb-pagination
+                [collectionSize]="totalRecords"
+                [(page)]="dataSearch.pageIndex"
+                [maxSize]="dataSearch.maxSize"
+                [pageSize]="dataSearch.pageSize"
+                [rotate]="true"
+                (pageChange)="pageChanged()"
+                [boundaryLinks]="true"
+              />
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
