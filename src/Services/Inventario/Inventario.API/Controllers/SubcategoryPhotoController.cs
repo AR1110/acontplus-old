@@ -65,11 +65,15 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
+                if (file != null)
+                {
+                    _s3ObjectCustom.Dispose();
+                }
                 _log.LogActivity($"Error on Post: {subcategoryId} \n {ex}");
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("{id}")]
+        [HttpPost("Put/{id}")]
         public async Task<IActionResult> Put(int id, string json, IFormFile file)
         {
             try
@@ -91,6 +95,10 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
+                if (file != null)
+                {
+                    _s3ObjectCustom.Dispose();
+                }
                 _log.LogActivity($"Error on Put: {json} \n {ex}");
                 return BadRequest(ex.Message);
             }

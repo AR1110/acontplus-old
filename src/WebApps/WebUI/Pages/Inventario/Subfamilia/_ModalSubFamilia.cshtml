@@ -15,13 +15,13 @@
                     </select>
                     <div class="input-group-append">
                         @* <button class="btn btn-outline-secondary btn-sm" btn-add-update-familia results="reloadFamilia()" tabindex="-1">
-                            <i class="fa fa-plus fa-xs"></i>
-                        </button> *@
+                                <i class="fa fa-plus fa-xs"></i>
+                            </button> *@
                     </div>
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
     <div class="row">
         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
             <label for="">Subfamilia: </label>
@@ -42,7 +42,7 @@
             <input type="text" ng-model="data.montoObjetivo" class="form-control border-select" valid-number maxlength="50" placeholder="0.00">
         </div>
     </div>
-     <div class="row" ng-if="data.idSubFamilia>0">
+    <div class="row" ng-if="data.idSubFamilia>0">
         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
             <label for="secuencial">Secuencial: </label>
             <input type="text" name="secuencial" ng-model="data.ultimoSecuencial" class="form-control border-select" valid-number placeholder="0">
@@ -57,8 +57,13 @@
                        ngf-select
                        ngf-pattern="'image/*'"
                        ngf-accept="'image/*'"
-                       ng-model="selectedFile" />
+                       ng-model="selectedFile" ng-change="uploadFile()" />
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <img id="subcategoryImage" class="img-fluid" width="50%" alt="Subfamilia Imagen" />
         </div>
     </div>
     <div ng-if="tipoRegistro==2">
