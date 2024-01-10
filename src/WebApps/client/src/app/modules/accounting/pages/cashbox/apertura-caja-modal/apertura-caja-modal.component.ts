@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
@@ -19,6 +20,10 @@ export class AperturaCajaModalComponent {
   private controlCajaSvc = inject(ControlCajaService)
   private tS = inject(ToasterService);
 
+  @Input() params = {
+    idCaja: 0,
+  }
+
   entidadesFinanciera: Array<EntidadFinanciera> = [];
 
   dataForm = new FormGroup({
@@ -29,7 +34,9 @@ export class AperturaCajaModalComponent {
   });
 
   ngOnInit() {
-    console.log("0000")
+    this.dataForm.get('idCaja')?.setValue(this.params.idCaja)
+
+    
     showLoader();
     this.controlCajaSvc.getDataForm().subscribe({
       next: (response) => {
@@ -44,8 +51,42 @@ export class AperturaCajaModalComponent {
     })
   }
 
-  save(){
-    
+  save() {
+    try {
+      let data = this.dataForm.value;
+
+      if (data.idCaja && data.idCaja > 0) {
+        showLoader();
+        this.controlCajaSvc.post(data).subscribe({
+          next: (response) => {
+            if (isApiResponse(response)) {
+              if (response.code === "0") {
+                this.tS.toastr({
+                  type: 'warning',
+                  message: response.message
+                })
+              }
+              if (response.code === "1") {
+                this.tS.toastr({
+                  type: 'success',
+                  message: response.message
+                })
+                this.activeModal.close(response)
+              }
+            }
+          }, error(err) {
+            hideLoader()
+            console.log(err)
+          },
+          complete() {
+            hideLoader();
+          },
+        })
+      }
+    } catch (error) {
+      console.log(error);
+      hideLoader();
+    }
   }
 
 

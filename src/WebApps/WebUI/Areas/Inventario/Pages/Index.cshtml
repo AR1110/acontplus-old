@@ -229,16 +229,29 @@
                                 </div>
                             </div>
 
-                            @* <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                            <div class="form-group">
-                            <label for="ordenar">Ordenar por:</label>
-                            <select class="form-control border-select" ng-model="dataSearch.byOrderCampo">
-                            <option value="ar.codigo">Codigo</option>
-                            <option value="ar.descripcion">Descripción</option>
-                            <option value="ar.idSubFamilia">SubFamilia</option>
-                            <option value="ar.stock">Stock</option>
-                            </select>
+
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label for="ordenar">Marcas:</label>
+                                    <select class="form-control border-select" ng-model="dataSearch.idMarca"> 
+                                        <option ng-value="0">Todos</option>
+                                        <option ng-value="item.idMarca" ng-repeat="item in marcas">
+                                            {{item.descripcion}}
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
+
+                            @* <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label for="ordenar">Ordenar por:</label>
+                                    <select class="form-control border-select" ng-model="dataSearch.byOrderCampo">
+                                    <option value="ar.codigo">Codigo</option>
+                                    <option value="ar.descripcion">Descripción</option>
+                                    <option value="ar.idSubFamilia">SubFamilia</option>
+                                    <option value="ar.stock">Stock</option>
+                                    </select>
+                                </div>
                             </div>
 
 

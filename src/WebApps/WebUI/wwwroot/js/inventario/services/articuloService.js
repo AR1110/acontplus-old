@@ -811,12 +811,13 @@
                         throw response
                     }
                     if (response.code === "1") {
-                        let [estabsTemp, subFamilias] = JSON.parse(response.payload);
-                        console.log(estabsTemp)
+                        let [estabsTemp, subFamilias, marcas] = JSON.parse(response.payload);
+                        
                         const estabs = fS.groupEstabBodega(estabsTemp)
                         return {
                             estabs,
-                            subFamilias
+                            subFamilias,
+                            marcas
                         }
                     }
                 }

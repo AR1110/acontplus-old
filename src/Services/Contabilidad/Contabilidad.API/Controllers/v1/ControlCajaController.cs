@@ -7,6 +7,7 @@ using Contabilidad.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 using Services.Common;
+using Common.Core.Models;
 
 namespace Contabilidad.API.Controllers.v1
 {
@@ -48,5 +49,29 @@ namespace Contabilidad.API.Controllers.v1
                 return BadRequest("Error en get " + ex.Message);
             }
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] ApiRequest data)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+                var response = await _service.AddAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en Post Control Caja " + ex.Message);
+                return BadRequest("Error en Post Control Caja " + ex.Message);
+            }
+        }
+
+
     }
 }
