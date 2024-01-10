@@ -36,6 +36,16 @@ export  class ControlCajaService {
   }
 
 
+  getDataFormCashboxClose(){
+    let paramsStr = JSON.stringify({ tipo: 3 })
+    return this.http.get(`${this.url}?json=${paramsStr}`)
+      .pipe(
+        map((response) => {
+          return response;
+        })
+      )
+  }
+
   post<T>(data: T) {
     return this.http.post(`${this.url}`, { data });
   }

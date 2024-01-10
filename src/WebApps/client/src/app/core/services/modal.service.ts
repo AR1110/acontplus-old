@@ -20,12 +20,13 @@ export class ModalService {
   ) { }
 
   openModalCustom(theComponent: any, { size, fullscreen, centered, scrollable, windowClass='' }: Partial<PropsModal> = {}) {
-    
+
     const modalRef = this.ngbModal.open(theComponent, {
+      backdrop: true,
       backdropClass: 'backdrop-custom-modal',
       windowClass,
       size,
-      fullscreen, 
+      fullscreen,
       centered,
       scrollable
     });
@@ -36,9 +37,9 @@ export class ModalService {
     //   this.removeModal(modalRef);
     // });
 
-    
+
     return modalRef;
-  } 
+  }
 
   private removeModal(modalRef: NgbModalRef): void {
     const index = this.openModals.indexOf(modalRef);

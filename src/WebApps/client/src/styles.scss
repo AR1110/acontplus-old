@@ -116,8 +116,11 @@ table {
 
 
 /*Modal*/
-.backdrop-custom-modal {
-    z-index: 1050 !important; 
+// .backdrop-custom-modal {
+//     z-index: 1050 !important;
+// }
+.modal {
+    background: rgba(0, 0, 0, .2);
 }
 
 .uibModalFullScreen .modal-dialog {

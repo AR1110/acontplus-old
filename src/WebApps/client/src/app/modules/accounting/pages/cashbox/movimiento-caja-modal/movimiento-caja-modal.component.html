@@ -8,9 +8,74 @@
       (click)="closeModal()"
     ></button>
   </div>
-  <div class="modal-body"> 
+  <div class="modal-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Op.</th>
+            <th>N°</th>
+            <th>F. Apertura</th>
+            <th>F. Cierre</th>
+            <th>Faltante</th>
+            <th>Sobrante</th>
+            <th>Total</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of movimientosCaja; track $index) {
+          <tr>
+            <td>
+              <div class="button-group">
+                <button type="button" class="btn btn-info btn-sm btn-circle text-white" ngbTooltip="Cerrar Caja" (click)="openModalCashboxClose(item)">
+                  <i class="fas fa-money-bill-alt"></i>
+                </button>
+              <button type="button" class="btn btn-primary btn-sm btn-circle text-white" ngbTooltip="Reporte PDF">
+                <i class="fa fa-file-pdf"></i>
+              </button>
+              <button type="button" class="btn btn-success btn-sm btn-circle text-white">
+                <i class="icons-Box-Full"></i>
+              </button>
+              </div>
+            </td>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ item.fechaApertura }}</td>
+            <td>{{ item.fechaCierre }}</td>
+            <td>{{ item.faltante }}</td>
+            <td>{{ item.sobrante }}</td>
+            <td>{{ item.totalArqueo }}</td>
+            <td>
+              @if (item.estado) {
+              <span class="label label-success">Activo</span>
+              } @else  {
+              <span class="label label-danger">Activo</span>
+
+              }
+            </td>
+          </tr>
+
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td align="center" colspan="8">
+              <ngb-pagination
+                [collectionSize]="totalRecords"
+                [(page)]="dataSearch.pageIndex"
+                [maxSize]="dataSearch.maxSize"
+                [pageSize]="dataSearch.pageSize"
+                [rotate]="true"
+                (pageChange)="pageChanged()"
+                [boundaryLinks]="true"
+              />
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
-  <div class="modal-footer"> 
+  <div class="modal-footer">
     <button type="button" class="btn btn-dark" (click)="closeModal()">
       &times; Cerrar
     </button>

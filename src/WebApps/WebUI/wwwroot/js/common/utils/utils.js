@@ -424,8 +424,10 @@
             let userData = JSON.parse(localStorage.getItem("userData"));
             let { permissions } = userData;
             let permisoVentaTemp = permissions.find(pp => pp.codModule === "V");
+            let permisoCajaTemp = permissions.find(pp => pp.codModule === "C");
             let objPermissionVenta = JSON.parse(permisoVentaTemp.permission);
 
+            console.log(permisoCajaTemp)
             let { comprobante, detail, additional } = objPermissionVenta;
             let permisoEditarDoc = {
                 requiereClave: additional && additional.requestAuthorizationKey.requestKey
@@ -449,9 +451,19 @@
                 }
             }
 
+
+            let permisoCajaParse = permisoCajaTemp && JSON.parse(permisoCajaTemp.permission) || {}
+         
+            let permisoCaja = {
+                cerrarCaja: permisoCajaParse && permisoCajaParse.cerrarCaja && permisoCajaParse.cerrarCaja.cerrar || false,
+                enterKey: permisoCajaParse && permisoCajaParse.enterKey && permisoCajaParse.enterKey.isRequerid || false,
+                reporteMovimientoCaja: permisoCajaParse && permisoCajaParse.reporteMovimientoCaja.view || false, 
+                verOtrasCajas: permisoCajaParse && permisoCajaParse.verOtrasCajas && permisoCajaParse.verOtrasCajas.view || false
+            }
             return {
                 permisoVenta,
-                permisoEditarDoc
+                permisoEditarDoc,
+                permisoCaja
             }
         }
 
