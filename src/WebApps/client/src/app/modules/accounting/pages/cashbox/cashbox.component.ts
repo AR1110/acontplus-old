@@ -146,7 +146,12 @@ export class CashboxComponent {
   }
 
   openModalMovimiento(params: Cashbox) {
-    const modalRef = this.modalSvc.openModalCustom(MovimientoCajaModalComponent, { size: 'xl', fullscreen: 'xxl', windowClass: 'uibModalFullScreen'});
+    const modalRef = this.modalSvc.openModalCustom(MovimientoCajaModalComponent, {
+      size: 'xl',
+      fullscreen: 'xxl',
+      windowClass: 'uibModalFullScreen',
+      centered: true
+    });
     modalRef.componentInstance.params = params || {};
     modalRef.result.then(result => {
       console.log(result)

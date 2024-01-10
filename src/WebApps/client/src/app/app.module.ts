@@ -2,7 +2,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { NgbDropdownModule, NgbPaginationModule, NgbTypeaheadModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbDropdownModule, NgbPaginationModule, NgbTooltipModule, NgbTypeaheadModule } from "@ng-bootstrap/ng-bootstrap";
 
 
 @NgModule({
@@ -13,7 +13,8 @@ import { NgbDropdownModule, NgbPaginationModule, NgbTypeaheadModule } from "@ng-
     FormsModule,
     NgbPaginationModule,
     NgbTypeaheadModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    NgbTooltipModule
   ],
   exports: [
     CommonModule,
@@ -21,7 +22,8 @@ import { NgbDropdownModule, NgbPaginationModule, NgbTypeaheadModule } from "@ng-
     FormsModule,
     NgbPaginationModule,
     NgbTypeaheadModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    NgbTooltipModule
   ]
 })
 

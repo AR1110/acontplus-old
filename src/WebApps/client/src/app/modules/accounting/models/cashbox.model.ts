@@ -10,3 +10,16 @@ export interface Cashbox {
   idUsuario: number
   totalRecords: number
 }
+
+
+
+export interface ControlCaja {
+  id: number
+  fechaApertura: string
+  fechaCierre: string | null
+  faltante: number
+  sobrante: number
+  totalArqueo: number
+  estado: boolean
+  totalRecords: number
+}
