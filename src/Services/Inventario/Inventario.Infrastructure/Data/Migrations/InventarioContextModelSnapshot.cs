@@ -81,7 +81,9 @@ namespace Inventario.Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
@@ -206,7 +208,9 @@ namespace Inventario.Infrastructure.Data.Migrations
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int?>("MotivoDiscrepanciaId")
                         .HasColumnType("int");
@@ -254,7 +258,9 @@ namespace Inventario.Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");

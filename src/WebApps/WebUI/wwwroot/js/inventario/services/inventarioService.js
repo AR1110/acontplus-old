@@ -67,6 +67,7 @@
                         estado: item.estado,
                         siglas: item.siglas,
                         codigo: item.codigo,
+                        subcategoryPhotoId: item.subcategoryPhotoId,
                         s3ObjectUrl: item.s3ObjectUrl,
                         s3ObjectKey: item.s3ObjectKey,
                         montoObjetivo: item.montoObjetivo,
@@ -88,17 +89,15 @@
             return mS.getDataFile(url + "Post/?json=" + JSON.stringify(spParams), file, null, true);
         }
 
-        service.update = function (id, file, data) {
+        service.update = function (id, data) {
             let spParams = {
                 idFamilia: data.idFamilia,
                 descripcion: data.descripcion,
                 montoObjetivo: data.montoObjetivo,
                 estado: data.estado,
-                secuencial: data.ultimoSecuencial || 0,
-                s3ObjectKey: data.s3ObjectKey,
-                s3ObjectUrl: data.s3ObjectUrl
+                secuencial: data.ultimoSecuencial || 0
             }
-            return mS.getDataFile(url + `Put/${id}/?json=${JSON.stringify(spParams)}`, file, null, true);
+            return mS.getData('PUT', url + `Put/${id}/?json=${JSON.stringify(spParams)}`, null, true);
         }
 
         service.delete = function (id) {
@@ -360,7 +359,31 @@
         return service;
     })
 
+    app.factory('subcategoryPhotoService', subcategoryPhotoService);
 
+    subcategoryPhotoService.$inject = ['mainService'];
+
+    function subcategoryPhotoService(mS) {
+        let service = {}
+        let url = 'Inventario/SubcategoryPhoto/'
+        function _get() {
+
+        }
+        function _post({ subcategoryId, file }) {
+            return mS.uploadFile({ url: `${url}${subcategoryId}`, file, });
+        }
+        function _update({ id, data = null, file }) {
+            return mS.uploadFile({ url: `${url}Put/${id}?json=${data}`, file, });
+        }
+        function _delete(id) {
+
+        }
+        service.get = _get;
+        service.post = _post;
+        service.update = _update;
+        service.delete = _delete;
+        return service;
+    }
 
 
 })(window.angular)

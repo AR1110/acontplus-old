@@ -106,7 +106,6 @@ namespace Inventario.API.Controllers.v1
                 if (_response.code == "1" && file != null)
                 {
                     var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-                    _s3ObjectCustom.Dispose();
                 }
             }
             catch (Exception ex)

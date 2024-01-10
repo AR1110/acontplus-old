@@ -640,5 +640,17 @@
     "inputFiles": [
       "wwwroot/js/config/controllers/firmaElectronicaCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/modals/modalSubFamiliaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/modals/modalSubFamiliaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/services/inventarioService.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/services/inventarioService.js"
+    ]
   }
 ]

@@ -74,7 +74,6 @@ namespace Inventario.API.Controllers
                 if (_response.code == "1" && file != null)
                 { 
                     var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-                    _s3ObjectCustom.Dispose();
                 }
             }
             catch (Exception ex)
@@ -93,7 +92,7 @@ namespace Inventario.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Put/{id}")]
+        [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
             GenericResponse _response = new GenericResponse();
