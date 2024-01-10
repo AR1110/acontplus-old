@@ -41,8 +41,9 @@ CREATE OR ALTER VIEW Inventario.v_Articulo WITH SCHEMABINDING AS (
 						 ELSE ''
 					END
 		,a.idUsuario
-		,a.s3ObjectKey
-		,a.s3ObjectUrl
+		,(SELECT TOP 1 s3ObjectKey FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1) s3ObjectKey
+		,(SELECT TOP 1 s3ObjectUrl FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1) s3ObjectUrl
+		,ISNULL((SELECT TOP 1 Id          FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1),0) productPhotoId
         ,ta.codigo as codTipoArticulo
         ,fa.siglas as siglaFamilia
 	FROM dbo.Articulo            a WITH(NOLOCK)

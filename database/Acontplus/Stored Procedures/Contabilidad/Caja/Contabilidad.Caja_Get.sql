@@ -59,16 +59,17 @@ BEGIN
 		                      ,ISNULL(UPPER(t.descripcion),'''')               as turno
 		                      ,ISNULL(t.idTurno,0)                             as idTurno
 		                      ,u.idUsuario
-                              ,COUNT(*) OVER()                                 as totalRecods
+                              ,COUNT(*) OVER()                                 as totalRecords
 	                    FROM Caja                 c WITH (NOLOCK)
 	                    LEFT JOIN AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja   = c.idCaja
 	                    LEFT JOIN Usuario         u WITH (NOLOCK) ON u.idUsuario = ac.idUsuario
 	                    LEFT JOIN Turno           t WITH (NOLOCK) ON t.idTurno   = ac.idTurno
-	                    WHERE c.idEntidad = @idEntidad '
+	                    WHERE c.idEntidad = @idEntidad 
+                          AND c.estado = 1 '
 
             IF @verOtrasCajas = 0
                 BEGIN
-                    SET @sql = @sql + 'u.idUsuario = @idUsuario '
+                    SET @sql = @sql + 'AND u.idUsuario = @idUsuario '
                 END 
 
             SET @sql = @sql + 'ORDER BY c.idCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
@@ -77,10 +78,22 @@ BEGIN
 			                  ,@params 
 				              ,@idEntidad = @idEntidad
                               ,@idUsuario = @idUsuario
-                              ,@pageIndex    = @pageIndex
-                              ,@pageSize     = @pageSize
+                              ,@pageIndex = @pageIndex
+                              ,@pageSize  = @pageSize
 
             RETURN 
         END 
+    
+    --> DataForm
+    IF @tipo = 2
+        BEGIN 
+            
+            SET @tableNames = 'usuarios,turnos'
 
+            SELECT idUsuario,nombreUsuario,nroIdentificacion FROM v_usuario WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+            SELECT idTurno,descripcion FROM dbo.Turno WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+            RETURN 
+        END
 END

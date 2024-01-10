@@ -14,8 +14,6 @@ CREATE OR ALTER PROCEDURE Inventario.Subfamilia_Update
     @userRoleId INT 
    ,@id INT 
    ,@json VARCHAR(MAX)
-   ,@s3ObjectKey VARCHAR(500) NULL
-   ,@s3ObjectUrl VARCHAR(800) NULL
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -39,12 +37,6 @@ BEGIN
            ,secuencial    INT
         )
 
-
-        IF(LEN(LTRIM(RTRIM(@s3ObjectKey))) = 0)
-			BEGIN 
-				SELECT  @s3ObjectKey = s3ObjectKey, @s3ObjectUrl = s3ObjectUrl  FROM SubFamilia WHERE idSubFamilia = @id
-			END
-
 		BEGIN TRAN 
 			UPDATE SubFamilia SET
 				 idFamilia        = CASE WHEN @idFamilia = 0 THEN NULL ELSE @idFamilia END  
@@ -52,8 +44,6 @@ BEGIN
 				,montoObjetivo    = @montoObjetivo
                 ,ultimoSecuencial = @secuencial
 				,estado           = @estado
-				,s3ObjectKey      = @s3ObjectKey
-				,s3ObjectUrl      = @s3ObjectUrl
 			WHERE idSubFamilia = @id
 
 			UPDATE a SET a.estado = @estado
