@@ -1,4 +1,4 @@
-<app-breadcrumb (clicked)="openModalAddUpdate()" />
+<app-breadcrumb [crear]="acciones.crear" (clicked)="openModalAddUpdate()" />
 
 <div class="card">
   <div class="card-body">
@@ -59,14 +59,18 @@
                   Acciones
                 </button>
                 <div ngbDropdownMenu>
-                  <button ngbDropdownItem (click)="openModalAddUpdate(item)">
-                    <i class="fas fa-edit"></i>
-                    Editar
-                  </button>
-                  <button ngbDropdownItem (click)="askToDelete(item.idCaja)">
-                    <i class="fas fa-trash"></i>
-                    Eliminar
-                  </button>
+                  @if (acciones.editar) {
+                    <button ngbDropdownItem (click)="openModalAddUpdate(item)">
+                      <i class="fas fa-edit"></i>
+                      Editar
+                    </button>
+                  }
+                  @if (acciones.eliminar) {
+                    <button ngbDropdownItem (click)="askToDelete(item.idCaja)">
+                      <i class="fas fa-trash"></i>
+                      Eliminar
+                    </button>
+                  }
                   <button ngbDropdownItem (click)="openModalAperturar(item)">
                     <i class="ti-briefcase"></i>
                     Aperturar

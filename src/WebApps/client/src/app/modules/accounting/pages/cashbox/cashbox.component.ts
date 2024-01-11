@@ -11,6 +11,7 @@ import { AperturaCajaModalComponent } from './apertura-caja-modal/apertura-caja-
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { MovimientoCajaModalComponent } from './movimiento-caja-modal/movimiento-caja-modal.component';
+import { getPermisosLocal } from '@core/utils/utils';
 
 @Component({
   selector: 'app-cashbox',
@@ -24,6 +25,8 @@ export class CashboxComponent {
   private modalSvc = inject(ModalService);
   private cashboxSvc = inject(CashboxService);
   private tS = inject(ToasterService);
+
+  acciones: any = {}
 
   cashboxs: Array<Cashbox> = [];
 
@@ -64,8 +67,16 @@ export class CashboxComponent {
 
   ngOnInit() {
     console.log('init')
-    console.log(localStorage.getItem("userData"))
+
+    console.log(localStorage.getItem("permisos"))
     this.getCashboxs()
+
+    let getDataPermiso: any = getPermisosLocal();
+    console.log(getDataPermiso)
+    if (getDataPermiso) {
+      this.acciones = getDataPermiso.acciones;
+      console.log(this.acciones)
+    }
   }
 
   openModalAddUpdate(params?: Cashbox) {
@@ -154,8 +165,8 @@ export class CashboxComponent {
     });
     modalRef.componentInstance.params = params || {};
     modalRef.result.then(result => {
-      console.log(result)
-      if (typeof result === 'object') {
+
+      if (result) {
         this.getCashboxs();
       }
     })

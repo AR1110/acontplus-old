@@ -11,7 +11,7 @@ import { map } from "rxjs";
 
 export class CashboxService {
 
-  url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CASHBOX}`
+  private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CASHBOX}`
 
   constructor(
     private http: HttpClient

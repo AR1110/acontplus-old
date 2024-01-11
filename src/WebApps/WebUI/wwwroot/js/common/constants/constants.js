@@ -33,18 +33,16 @@ app.constant('nombreModalInventario', {
             //'M': 'ModalArticuloCtrl',
             'M': 'modalArticuloCtrl', //depuracion crud articulo
             'AFI': 'ModalArticuloFraccionadoInfoCtrl',
-            'MAI': 'ModalArticuloImagenCtrl',
+            'MAI': 'modalProductPhotoCtrl',
             'MID': 'ModalArticuloImagenDetalleCtrl',
             'HC': 'modalHistorialCompraCtrl',
             'AF': 'modalArticuloFraccionadoCtrl'
         },
         templates: {
             'LG': '~/Pages/Articulo/_ModalArticuloGeneral.cshtml',
-            //'M': 'Articulo/_ModalNuevoArticulo.cshtml',
-            'M': '~/Pages/Articulo/_ModalAddUpdate.cshtml', //depuracion crud articulo
+            'M': '~/Pages/Articulo/_ModalAddUpdate.cshtml',
             'AFI': 'Articulo/_ArticuloFraccionadoInfo.cshtml',
-            'MAI': 'Articulo/_ModalArticuloImagen.cshtml',
-            'MID': 'Articulo/_ModalArticuloImagenDetalle.cshtml',
+            'MAI': '~/Pages/Articulo/Shared/_ModalProductPhoto.cshtml',
             'HC': '~/Pages/DocumentoRecibido/Shared/_HistoryCompras.cshtml',
             'AF': '~/Pages/ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
         }

@@ -7,6 +7,12 @@ import { AppModule } from 'src/app/app.module';
 import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ModalService } from '@core/services/modal.service';
 import { CashboxCloseModalComponent } from '../cashbox-close-modal/cashbox-close-modal.component';
+import { getPermisosLocal } from '@core/utils/utils';
+import Swal from 'sweetalert2';
+import { UserPermissionService } from '@modules/config/services/user-permission.service';
+import { isApiResponse } from '@core/models/api-response';
+import { SharedService } from '@core/services/shared.service';
+import { CODE_REPORT } from '@core/constants/global.constants';
 @Component({
   selector: 'app-movimiento-caja-modal',
   standalone: true,
@@ -16,12 +22,23 @@ import { CashboxCloseModalComponent } from '../cashbox-close-modal/cashbox-close
   encapsulation: ViewEncapsulation.None,
 })
 export class MovimientoCajaModalComponent {
-  @Input("paramds") params = {
+  @Input("params") params = {
     idCaja: 0
   }
   private activeModal = inject(NgbActiveModal);
   private controlCajaSvc = inject(ControlCajaService);
   private modalSvc = inject(ModalService)
+  private userPermissionSvc = inject(UserPermissionService);
+  private sharedSvc = inject(SharedService)
+
+  dataPermisosCaja = {
+    cerrarCaja: false,
+    verOtrasCajas: false,
+    reporteMovimientoCaja: false,
+    enterKey: false
+  }
+  isReloadCaja = false;
+
 
   dataSearch = {
     pageIndex: 1,
@@ -38,7 +55,7 @@ export class MovimientoCajaModalComponent {
   movimientosCaja: Array<ControlCaja> = [];
 
   getMovimientosCaja() {
-    console.log(this.params)
+
     let dataSearch = {
       idCaja: this.params.idCaja,
       pageIndex: this.dataSearch.pageIndex,
@@ -50,7 +67,7 @@ export class MovimientoCajaModalComponent {
         hideLoader();
 
         const { movimientos } = response as { movimientos: Array<ControlCaja> }
-        console.log(response)
+
         this.movimientosCaja = movimientos;
         this.totalRecords = this.movimientosCaja.length > 0 ? this.movimientosCaja[0].totalRecords : 0
       },
@@ -64,7 +81,11 @@ export class MovimientoCajaModalComponent {
   ngOnInit() {
 
     this.getMovimientosCaja();
+    let getDataPermiso: any = getPermisosLocal();
 
+    if (getDataPermiso) {
+      this.dataPermisosCaja = getDataPermiso.permisoCaja;
+    }
   }
 
   pageChanged(): void {
@@ -77,19 +98,166 @@ export class MovimientoCajaModalComponent {
   }
 
 
-  openModalCashboxClose(params: ControlCaja) {
-    const modalRef = this.modalSvc.openModalCustom(CashboxCloseModalComponent, { centered : true});
-    modalRef.componentInstance.params = params || {};
-    modalRef.result.then(result => {
-      console.log(result)
-      if (typeof result === 'object') {
-        this.getMovimientosCaja();
-      }
-    })
+  cerrarCaja(estado: boolean) {
+    return (estado && this.dataPermisosCaja.cerrarCaja);
+  }
+
+  verReporteMovimientoCaja(estado: boolean) {
+
+    if (this.dataPermisosCaja.verOtrasCajas) {
+      return true;
+    }
+
+    return (!estado && this.dataPermisosCaja.reporteMovimientoCaja);
   }
 
 
+  async openModalCashboxClose(params: ControlCaja) {
+    try {
+
+      let isOpenModal = false;
+      if (this.dataPermisosCaja.enterKey) {
+        await Swal.fire({
+          title: 'Ingrese su clave',
+          input: 'password',
+          inputAttributes: {
+            autocapitalize: 'off'
+          },
+          showDenyButton: true,
+          confirmButtonText: 'Continuar',
+          denyButtonText: 'Cancelar',
+          showLoaderOnConfirm: true,
+          allowEscapeKey: false,
+          backdrop: true,
+          preConfirm: async (clave) => {
+            try {
+              let obj = {
+                typeCheck: 1,
+                clave
+              };
+
+              const response = await this.userPermissionSvc.checkHasPermission(obj).toPromise();
+
+              if (isApiResponse(response)) {
+                if (response.code === "0") {
+                  Swal.showValidationMessage(
+                    `${response.message}`
+                  )
+                }
+                if (response.code === "1") {
+                  isOpenModal = true;
+                  return response.code;
+                }
+              }
+
+              return true;
+            } catch (err) {
+              console.log(err);
+              // Swal.showValidationMessage(
+              //   `${err}`
+              // )
+              return false
+            }
+          },
+          allowOutsideClick: () => Swal.isLoading(),
+        })
+      } else {
+        isOpenModal = true;
+      }
+
+      if (isOpenModal) {
+
+        const modalRef = this.modalSvc.openModalCustom(CashboxCloseModalComponent, { size: 'lg', centered: true });
+        modalRef.componentInstance.params = params || {};
+        modalRef.result.then(result => {
+          if (typeof result === 'object') {
+            this.isReloadCaja = true;
+            this.getMovimientosCaja();
+          }
+        })
+      }
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+
+  getReport(idControlCaja: number) {
+    try {
+      if (this.dataPermisosCaja.enterKey) {
+        Swal.fire({
+          title: 'Ingrese su clave',
+          input: 'password',
+          inputAttributes: {
+            autocapitalize: 'off'
+          },
+          showDenyButton: true,
+          confirmButtonText: 'Continuar',
+          denyButtonText: 'Cancelar',
+          showLoaderOnConfirm: true,
+          allowEscapeKey: false,
+          backdrop: true,
+          preConfirm: async (clave) => {
+            let obj = {
+              typeCheck: 1,
+              clave
+            };
+
+            const response = await this.userPermissionSvc.checkHasPermission(obj).toPromise();
+
+            if (isApiResponse(response)) {
+              if (response.code === "0") {
+                Swal.showValidationMessage(
+                  `${response.message}`
+                )
+              }
+              if (response.code === "1") {
+                return response.code;
+              }
+            }
+
+            return true;
+          },
+          allowOutsideClick: () => Swal.isLoading(),
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.generateReport(idControlCaja);
+          }
+        })
+      } else {
+        this.generateReport(idControlCaja)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+
+
+
+  generateReport(idControlCaja: number) {
+    let format = 'pdf'
+    let dataParms = {
+      id: idControlCaja,
+    }
+    const parameters = {
+      hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
+      reportParams: JSON.stringify({
+        codigo: CODE_REPORT.RCC,
+        format,
+        aditionalParams: []
+      }),
+      dataParams: JSON.stringify(dataParms)
+    }
+    this.sharedSvc.getReport(parameters, "pdf", true)
+
+  }
+
   closeModal() {
-    this.activeModal.close();
+    this.activeModal.close(this.isReloadCaja);
   }
 }

@@ -10,7 +10,7 @@ import { map } from "rxjs";
 })
 
 
-export  class ControlCajaService {
+export class ControlCajaService {
 
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CONTROL_CAJA}`
 
@@ -36,7 +36,7 @@ export  class ControlCajaService {
   }
 
 
-  getDataFormCashboxClose(){
+  getDataFormCashboxClose() {
     let paramsStr = JSON.stringify({ tipo: 3 })
     return this.http.get(`${this.url}?json=${paramsStr}`)
       .pipe(
@@ -48,6 +48,11 @@ export  class ControlCajaService {
 
   post<T>(data: T) {
     return this.http.post(`${this.url}`, { data });
+  }
+
+
+  put<T>(id: number, data: T) {
+    return this.http.put(`${this.url}${id}`, { data });
   }
 
 

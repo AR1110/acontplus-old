@@ -5,9 +5,10 @@ namespace Inventario.Core.Interfaces
 {
     public interface IProductPhotoService
     {
-        Task<object> GetAsync(Dictionary<string, object> parameters);
+        Task<APIResponse> GetAsync(int productId);
         Task<APIResponse> AddAsync(ProductPhoto productPhoto); 
         Task<APIResponse> UpdateAsync(int id, ProductPhoto productPhoto);
-        Task<object> DeleteAsync(int id, int userId);
+        Task<APIResponse> SetDefaultAsync(int id, bool isDefault, int userId);
+        Task<APIResponse> DeleteAsync(int id, int userId);
     }
 }

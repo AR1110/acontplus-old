@@ -3,3 +3,13 @@ export const isValidField = <T>(field: T): T | null => {
 
   return invalidValues.includes(field) ? null : field;
 };
+
+
+
+export const getPermisosLocal = () => {
+  let dataPermisos = localStorage.getItem("permisos");
+  if(dataPermisos){
+    dataPermisos = JSON.parse(dataPermisos)
+  } 
+  return dataPermisos;
+}
