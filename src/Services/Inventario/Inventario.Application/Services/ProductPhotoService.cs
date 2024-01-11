@@ -18,12 +18,6 @@ namespace Inventario.Application.Services
         }
         public async Task<APIResponse> GetAsync(int productId)
         {
-            //var ds = await _repository.GetDataSetAsync("Inventario.ProductPhoto_Get", parameters);
-            //if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            //{
-            //    return null;
-            //}
-            //return DataConverters.DataSetToJSON(ds);
             try
             {
                 if (!_context.ProductPhotos.Any(x => x.ProductId == productId))
@@ -43,6 +37,11 @@ namespace Inventario.Application.Services
         {
             try
             {
+                var total = _context.ProductPhotos.Where(x => x.ProductId == productPhoto.ProductId).Count();
+                if (total == 4)
+                {
+                    return new APIResponse { code = "0", message = "Solo puede subir hasta cuatro imagenes por producto!" };
+                }
                 if (!_context.ProductPhotos.Any(x => x.ProductId == productPhoto.ProductId))
                 {
                     productPhoto.IsDefault = true;
@@ -85,7 +84,7 @@ namespace Inventario.Application.Services
                 if (productFound == null) { return new APIResponse { code = "0", message = "No existe el registro!" }; };
                 productFound.IsDefault = isDefault;
                 productFound.UserId = userId;
-                if (isDefault && _context.ProductPhotos.Any(x=>x.Id != id && x.ProductId == productFound.ProductId && x.IsDefault == true))
+                if (isDefault && _context.ProductPhotos.Any(x => x.Id != id && x.ProductId == productFound.ProductId && x.IsDefault == true))
                 {
                     var nonDefaults = await _context.ProductPhotos.Where(x => x.Id != id && x.ProductId == productFound.ProductId && x.IsDefault == true).ToListAsync();
                     nonDefaults.ForEach(x => x.IsDefault = false);
@@ -108,11 +107,7 @@ namespace Inventario.Application.Services
             try
             {
                 var productFound = await _context.ProductPhotos.FindAsync(id);
-                //if (productFound == null) { return new { code = "0", message = "No existe el registro!" }; };
-                //productFound.Enabled = false;
-                //productFound.Deleted = true;
-                //productFound.UserId = userId;
-                if (productFound.IsDefault && _context.ProductPhotos.Any(x=>x.ProductId == productFound.ProductId))
+                if (productFound.IsDefault && _context.ProductPhotos.Any(x => x.ProductId == productFound.ProductId))
                 {
                     var nextDefault = await _context.ProductPhotos.FirstOrDefaultAsync(x => x.Id != id && x.ProductId == productFound.ProductId);
                     nextDefault.UserId = userId;
