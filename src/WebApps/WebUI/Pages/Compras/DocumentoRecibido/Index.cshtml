@@ -1,0 +1,227 @@
+﻿@page
+@model WebUI.Pages.Compras.DocumentoRecibido.IndexModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="documentoRecibidoCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Recepción de Comprobantes</h5>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+               
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="establecimiento">
+                            Estab: <span class="text-danger">*</span>
+                        </span>
+                        <select class="form-control border-select" 
+                        ng-model="dataSearch.codEstab" 
+                        ng-change="onChangeEstab()">
+                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                {{item.nombreComercial}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <span for="date-range-filter">Rango Fechas: </span>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                    <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
+                                        class="custom-control-input" id="checkBoxFecha">
+                                    <label class="custom-control-label" for="checkBoxFecha"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="tipoComprobante">
+                            Tipo Comprobante
+                        </span>
+                        <select class="form-control border-select" ng-model="dataSearch.codDoc" ng-change="getComprobantes()">
+                        <option ng-value="">Todos</option>
+                            <option ng-value="item.codDoc" ng-repeat="item in tipoComprobantes">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                                    <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
+                                </button>
+                                <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                                    ng-click="getComprobantes()">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div>
+
+            </div>
+
+            <div class="row" ng-if="moreOptionsFilter">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="proveedorFiltro">Proveedor:</span>
+                        <input type="text" id="providerInputSearch" class="form-control border-select"
+                               ng-model="proveedor.nombreProveedor" provider-search-drtv
+                               on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
+                               placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteProviderTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="claveAcceso">Clave Acceso</span>
+                        <input type="text" class="form-control border-select" ng-change="onChangeClaveAcceso()" valid-number ng-model="dataSearch.claveAcceso" />
+                        <span class="text-info" ng-if="claveAccesoLongitud">{{claveAccesoLongitud}} dígitos</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                 <div class="button-group ml-2">
+                    <button type="button" class="btn btn-info" ng-click="openModalImportacionAutomatica()">
+                        <i class="ti-cloud"></i> Importación Automatica
+                    </button>
+                    <button class="btn btn-danger" ng-click="openModalTestNew()">
+                        <i class="fa fa-keyboard"></i> Importación Manual
+                    </button>
+                    <button class="btn btn-success" ng-click="openMigrate()">
+                        <i class="fa-solid fa-file-export"></i> Migrar Comprobantes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color border-select" ng-model="dataSearch.pageSize"
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
+
+                <div class="col-6 d-flex justify-content-end">
+                    <form class="form-material">
+                        <input type="text" class="form-control" ng-keyup="filterLocal()" ng-model="dataSearch.textSearch"
+                            placeholder="Buscar">
+                    </form>
+                </div>
+            </div>
+            <!-- <div section layout="row" layout-wrap>
+
+
+                <md-input-container flex-gt-sm="30">
+                    <label for="search">Buscar:</label>
+                    <input type="text" ng-model="search" ng-keyup="onKeyupSearchFilter()">
+                </md-input-container>
+                <md-input-container>
+                    <md-button class="md-icon-button" ng-click="refresh()" aria-label="Stock"
+                                title="Actualizar">
+                        <md-icon md-font-set="md" class="text-info">sync</md-icon>
+                    </md-button>
+                </md-input-container>
+            </div>  -->
+            <!-- <div class="row" ng-if="establecimientos.length > 1">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    
+                </div>
+            </div> -->
+            <div class="table-responsive" style="max-height: 400px;">
+                <table md-table md-row-select ng-model="selected" md-progress="promise"> 
+                    <thead md-head md-order="query.sortBy" fix-head>
+                        <tr md-row>
+                            <th md-column>Doc.</th>
+                            <th md-column md-order-by="serieComprobante">Serie</th>
+                            <th md-column>Ruc Emisor</th>
+                            <th md-column md-order-by="razonSocialEmisior">
+                                <span>Razón Social Emisor</span>
+                            </th>
+                            <th md-column md-order-by="fechaEmision">Fecha Emisión</th>
+                            <th md-column>F. Aut.</th>
+                            <th md-column md-order-by="importeTotal">Total</th>
+                            <th md-column>No. Aut.</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row md-select="item" md-select-id="index" md-on-select="showOptions"
+                            md-auto-select="false" ng-repeat="item in comprobantes | orderBy: query.sortBy track by $index" style="{{item.colorRow}}"
+                            title="{{item.hoverText}}">
+                            <td md-cell style="{{item.colorCol}}">{{item.comprobante}}</td>
+                            <td md-cell style="{{item.colorCol}}">{{item.serieComprobante}}</td>
+                            <td md-cell style="{{item.colorCol}}">{{item.rucEmisor}}</td>
+                            <td class="text-left" style="{{item.colorCol}}" md-cell>
+                                {{item.razonSocialEmisior}}
+                            </td>
+                            <td md-cell style="{{item.colorCol}}">{{item.fechaEmision}}</td>
+                            <td md-cell style="{{item.colorCol}}">{{item.fechaAutorizacion}}</td>
+                            <td md-cell class="text-right" style="{{item.colorCol}}">
+                                {{item.importeTotal |
+                                currency }}
+                            </td>
+                            <td class="text-left" style="{{item.colorCol}}" md-cell>
+                                {{item.numeroAutorizacion}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                @*<md-table-pagination md-limit="query.limit" md-limit-options="pages" md-page="query.page"
+                md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
+                </md-table-pagination>*@
+            </div>
+
+        </div>
+         <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
+        </div>
+    </div>
+      
+    @* @await Html.PartialAsync("Shared/_NewImport.cshtml")
+    @await Html.PartialAsync("Shared/_CompFounded.cshtml")
+    @await Html.PartialAsync("Shared/_MigrateEstab.cshtml")
+    @await Html.PartialAsync("Shared/_Retencion.cshtml")
+    @await Html.PartialAsync("Shared/_NotaCredito.cshtml")
+    @await Html.PartialAsync("Shared/_Doc_Relacionado.cshtml")
+    @await Html.PartialAsync("Shared/_ModalNewManual.cshtml") *@
+
+</div>
+@section Scripts {
+    <script src="~/js/compras/services/docRecibidoService.js" asp-append-version="true"></script>
+    <script src="~/js/compras/controllers/documentoRecibidoCorreccion.js" asp-append-version="true"></script>
+}
