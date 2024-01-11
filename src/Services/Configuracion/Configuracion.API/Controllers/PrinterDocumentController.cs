@@ -43,7 +43,8 @@ namespace Configuracion.API.Controllers
                 var document = await _context.PrinterDocuments.FindAsync(id);
                 document.UserId = User.GetUserId();
                 document.Enabled = data.Enabled;
-                _context.PrinterDocuments.Update(document);
+                document.Copies = data.Copies;
+                _context.Update(document);
                 await _context.SaveChangesAsync();
                 return Ok(new { code = "1", message = "Actualizado exitosamente" });
             }

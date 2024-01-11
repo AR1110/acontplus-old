@@ -35,6 +35,18 @@ namespace Common.Core.Models
             };
         }
 
+        public void Add(string s3ObjectKey)
+        {
+            this.BucketName = _configuration["S3Bucket:Name"];
+            this.Region = _configuration["S3Bucket:Region"];
+            this.S3ObjectKey = s3ObjectKey; 
+            this.AwsCredentials = new AwsCredentials
+            {
+                Key = _configuration["AwsConfiguration:AWSAccessKey"],
+                Secret = _configuration["AwsConfiguration:AWSSecretKey"]
+            };
+        }
+
         public void Dispose()
         {
             Dispose(true);
