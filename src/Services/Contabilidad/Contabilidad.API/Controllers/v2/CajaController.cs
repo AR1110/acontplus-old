@@ -45,7 +45,7 @@ namespace Contabilidad.API.Controllers.v2
                 return BadRequest("Error en get " + ex.Message);
             }
         }
-  
+               
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
