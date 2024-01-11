@@ -202,7 +202,7 @@ export class ReportsPageComponent {
     }
 
     showLoader();
-    this.sharedSvc.getReport(parameters)
+    this.sharedSvc.getReport(parameters, format)
   }
 
 }

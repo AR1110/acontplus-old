@@ -28,15 +28,32 @@
           <tr>
             <td>
               <div class="button-group">
-                <button type="button" class="btn btn-info btn-sm btn-circle text-white" ngbTooltip="Cerrar Caja" (click)="openModalCashboxClose(item)">
+                @if (cerrarCaja(item.estado)) {
+                <button
+                  type="button"
+                  class="btn btn-info btn-sm btn-circle text-white"
+                  ngbTooltip="Cerrar Caja"
+                  (click)="openModalCashboxClose(item)"
+                >
                   <i class="fas fa-money-bill-alt"></i>
                 </button>
-              <button type="button" class="btn btn-primary btn-sm btn-circle text-white" ngbTooltip="Reporte PDF">
-                <i class="fa fa-file-pdf"></i>
-              </button>
-              <button type="button" class="btn btn-success btn-sm btn-circle text-white">
-                <i class="icons-Box-Full"></i>
-              </button>
+                } @if (verReporteMovimientoCaja(item.estado)) {
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm btn-circle text-white"
+                  ngbTooltip="Reporte PDF"
+                  (click)="getReport(item.id)"
+                >
+                  <i class="fa fa-file-pdf"></i>
+                </button>
+                }
+
+                <!-- <button
+                  type="button"
+                  class="btn btn-success btn-sm btn-circle text-white"
+                >
+                  <i class="icons-Box-Full"></i>
+                </button> -->
               </div>
             </td>
             <td>{{ $index + 1 }}</td>
@@ -47,10 +64,9 @@
             <td>{{ item.totalArqueo }}</td>
             <td>
               @if (item.estado) {
-              <span class="label label-success">Activo</span>
-              } @else  {
-              <span class="label label-danger">Activo</span>
-
+              <span class="label label-success">ABIERTO</span>
+              } @else {
+              <span class="label label-danger">CERRADO</span>
               }
             </td>
           </tr>

@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class BreadcrumbComponent implements OnInit {
   @Output() clicked = new EventEmitter<void>();
+  @Input() crear = false;
   parentData: any;
   childData: any;
 

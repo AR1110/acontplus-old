@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ViewModels\Administracion\" />
     <Folder Include="ViewModels\Almacen\" />
     <Folder Include="ViewModels\InfoAdicional\" />
   </ItemGroup>

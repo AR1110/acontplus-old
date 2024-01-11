@@ -10,7 +10,7 @@
           <li class="breadcrumb-item active">{{childData.breadcrumb}}</li>
         </ol>
       }
-      @if (childData.buttonAction) {
+      @if (childData.buttonAction && crear) {
         <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" (click)="onClick()"><i class="ti-plus"></i>
           {{childData.buttonAction}}</button>
       }
