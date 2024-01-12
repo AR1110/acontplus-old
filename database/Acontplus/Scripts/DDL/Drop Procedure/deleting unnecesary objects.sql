@@ -937,3 +937,18 @@ GO
 
 DROP PROCEDURE IF EXISTS [Administrador].[ControlCaja_Get]
 GO 
+
+DROP PROCEDURE IF EXISTS Administrador.ControlCaja_Insert 
+GO
+
+DROP PROCEDURE IF EXISTS Administrador.ControlCaja_Update
+GO
+
+DROP PROCEDURE IF EXISTS Administrador.DetalleArqueo_Get
+GO 
+
+DROP PROCEDURE IF EXISTS Contabilidad.ControlCaja_Report_Movement
+GO 
+
+DROP PROCEDURE IF EXISTS [ReporteGestionFinanc].[ControlCaja]
+go
