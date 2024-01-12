@@ -100,7 +100,7 @@ BEGIN
             RETURN 
         END 
     
-    --> DataForm
+    --> DataForm Open CashBox
     IF @tipo = 2
         BEGIN
             
@@ -110,6 +110,22 @@ BEGIN
 
             RETURN 
         END 
+
+    --> DataForm Close CashBox
+    IF @tipo = 3
+        BEGIN
+            SET @tableNames = 'monedas'
+
+            SELECT idMoneda 
+                  ,0                  as cantidad 
+                  ,UPPER(descripcion) as descripcion
+			      ,valor
+		    FROM dbo.Moneda WITH (NOLOCK)
+		    ORDER BY tipoMoneda DESC
+
+		    RETURN 
+        END 
+        
         ----Operacion para abrir caja de moneda fisica 
 		--IF @typeList = 1
 		--	BEGIN 	

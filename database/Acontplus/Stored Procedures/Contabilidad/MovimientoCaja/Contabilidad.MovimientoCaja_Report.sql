@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.ControlCaja_Report_Movement', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.ControlCaja_Report_Movement
-GO
-CREATE PROCEDURE Contabilidad.ControlCaja_Report_Movement @idRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.MovimientoCaja_Report @idRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

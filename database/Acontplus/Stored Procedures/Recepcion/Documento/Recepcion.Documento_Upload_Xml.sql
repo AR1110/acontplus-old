@@ -21,7 +21,7 @@ GO
 -- =============================================
 --Recepcion.Doc_Service_Get 50
 
-CREATE OR ALTER PROCEDURE Recepcion.Documento_UploadXml @idUsuarioRol INT
+CREATE OR ALTER PROCEDURE Recepcion.Documento_Upload_Xml @idUsuarioRol INT
 ,@json VARCHAR(1000)
 ,@codDoc VARCHAR(2)
 ,@claveAcceso AS VARCHAR(49)
