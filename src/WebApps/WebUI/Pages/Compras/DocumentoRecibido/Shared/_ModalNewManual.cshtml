@@ -1,0 +1,153 @@
+﻿<style>
+    .button {
+        -moz-appearance: button;
+        /* Firefox */
+        -webkit-appearance: button;
+        /* Safari and Chrome */
+        padding: 10px;
+        margin: 10px;
+        width: 70px;
+    }
+
+    .drop-box {
+        background: #F8F8F8;
+        border: 5px dashed #DDD;
+        width: 100% !important;
+        height: 65px;
+        text-align: center;
+        padding-top: 25px;
+        margin: 10px;
+    }
+
+    .dragover {
+        border: 5px dashed blue;
+    }
+</style>
+
+<form ng-submit="post()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"><i class="mdi mdi-list-box"></i> Importación Manual de Documentos</h5>
+            <button type="button" class="close" data-dismiss="modal" ng-click="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="estabToWorkManual">Establecimiento:</label>
+                        <h5 class="text-info">{{dataEstab.nombreComercial}}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label>Seleccione una opción para importar:</label>
+                        <md-radio-group ng-model="mainform.option">
+                            <md-radio-button ng-value="true" ng-style="{'display':'inline'}">
+                                Clave
+                                Acceso
+                            </md-radio-button>
+                            <md-radio-button ng-value="false"
+                                             ng-style="{'display':'inline'}">Xml</md-radio-button>
+                        </md-radio-group>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="mainform.option">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="claveAcceso">Clave Acceso:</label>
+                        <input type="text" class="form-control border-select" valid-number onclick="this.select()" min="49"
+                               maxlength="49" ng-model="mainform.claveAcceso">
+                        <span class="text-warning small" ng-if="mainform.claveAcceso.length > 0">
+                            <b>
+                                {{49 -
+                                mainform.claveAcceso.length}}
+                            </b> digitos faltantes
+                        </span>
+                    </div>
+                    <div class="form-group" ng-if="mainform.claveAcceso.length == 49">
+                        <button type="button" class="btn btn-info" ng-click="addClaveAcceso()">
+                            <i class="fa fa-plus-circle"></i> Añadir
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="!mainform.option">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div ngf-drop ngf-select ng-model="files" class="drop-box" ngf-drag-over-class="'dragover'"
+                         ngf-multiple="true" ngf-allow-dir="true" accept="text/xml" ngf-pattern="'text/xml'">
+                        Arrastre aqui los XML de los comprobantes electronicós descargados
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div ngf-no-file-drop>
+                        La funcion de arrastrar, no esta disponible en este navegador
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title"> Archivos subidos:</h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered" ng-if="files.length > 0">
+                                    <tbody>
+                                        <tr ng-repeat="f in files" style="font:smaller">
+                                            <td>
+                                                {{f.name}} {{f.$error}}
+                                                {{f.$errorParam}}
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                        ng-click="removeFile($index)">
+                                                    <i class="ti-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    @* Upload Log:
+                    <pre>{{log}}</pre> *@
+                </div>
+            </div>
+
+
+
+            <div class="table-responsive" ng-if="compToImport.length > 0">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Clave Acceso</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in compToImport">
+                            <td>{{item.claveAcceso}}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        ng-click="removeClaveAcceso($index)">
+                                    <i class="ti-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success" ng-show="mainform.option && compToImport.length > 0">
+                <i class="ti-save"></i>
+                Guardar
+            </button>
+            <button type="button" class="btn btn-dark" data-dismiss="modal" ng-click="closeModal()">&times; Cerrar</button>
+        </div>
+
+    </div>
+
+</form>

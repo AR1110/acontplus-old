@@ -21,4 +21,8 @@
     <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Compras\DocumentoRecibido\Shared\" />
+  </ItemGroup>
+
 </Project>
