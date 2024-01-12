@@ -161,10 +161,64 @@ BEGIN
             RETURN 
         END 
 
+	--> DataForm Detail
+	IF @tipo = 3
+	    BEGIN
+		    
+            SET @tableNames = 'SustentoTributario,CategoriaCompra,Bodega'
+
+		    SELECT * FROM SustentoTributario WITH (NOLOCK)
+
+		    SELECT * FROM CategoriaCompra WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+		    SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idBodega
+                  ,bodega
+                  ,defaultEstab
+                  ,defaultBodega 
+            FROM dbo.v_Bodega_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+
+		    RETURN
+	    END
+
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
-    RETURN
+    RETURN 
 
+	--Documento Relacionado 
+	IF @tipo = 3
+	BEGIN
+		IF @codDoc = '01'
+		BEGIN
+			SELECT comprobante = 'Retención'
+				,serieComprobante = rAts.estab + rAts.ptoEmi + Helper.F_Auto_Sequential(rAts.secuencial)
+				,rucEmisor = rAts.identificacionSujetoRetenido
+				,razonSocialEmisior = rAts.razonSocialSujetoRetenido
+				,fechaEmision = CONVERT(NVARCHAR, FORMAT(rAts.fechaEmision, 'dd/MM/yyyy HH:mm'))
+				,rAts.claveAcceso
+				,importeTotal = 0
+			FROM FactElect.RetAtsDocSustento retDoc
+			INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts = retDoc.idRetencionAts
+			WHERE retDoc.numAutDocSustento = @claveAcceso
+			AND rAts.anuladaSri = 0
+			RETURN
+		END
 
+		IF @codDoc = '07' OR @codDoc = '04'
+		BEGIN
+			SELECT comprobante = CASE dr.codDocSustento WHEN '01' THEN 'Factura' ELSE '' END  
+				  ,serieComprobante = dr.numDocSustento
+				  ,fechaEmision = dr.fechaEmisionDocSustento
+				  ,dr.claveAcceso
+				  ,importeTotal = dr.baseImponible 
+			FROM FactElect.DocRelacionado dr WITH (NOLOCK)
+			WHERE dr.idDocumentoRecibido = @idDocumento
+			RETURN
+		END
+	END
+	
 END
 GO
 

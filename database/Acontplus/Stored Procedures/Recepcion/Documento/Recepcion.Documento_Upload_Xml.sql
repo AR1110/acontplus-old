@@ -150,8 +150,7 @@ BEGIN
 																																WHERE codigoSri = '05')
 													WHEN LEN(@identificacionCliProv) = 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
 																																WHERE codigoSri = '04')
-													WHEN LEN(@identificacionCliProv) < 10 OR LEN(@identificacionCliProv) > 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
-																																WHERE codigoSri = '06')
+													WHEN LEN(@identificacionCliProv) < 10 OR LEN(@identificacionCliProv) > 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion WHERE codigoSri = '06')
 												END)
 
 
