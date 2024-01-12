@@ -88,7 +88,7 @@ namespace Identity.API.Controllers.v3
                 }
                 else
                 {
-                    _context.loginFaileds.Add(new LoginFailed { UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password });
+                    _context.LoginFaileds.Add(new LoginFailed { UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password });
                     await _context.SaveChangesAsync();
                 }
                 return Ok(_response);
