@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body shadow">
 
-                    <h4><span class="text-dark">Establecimiento: </span> {{dataEstab.nombreComercial}}</h4>
+                    <h4><span class="text-dark">Establecimiento: </span> <span class="text-info">{{dataEstab.nombreComercial}}</span></h4>
                     <hr>
                         <div class="row">
                             <div class="col-12">
@@ -43,7 +43,7 @@
         <div class="tab-pane fade show active" id="stepCompFounded" style="display: none;" role="tabpanel">
            <div class="card">
                 <div class="card-body shadow">
-                    <h4><span class="text-dark">Establecimiento: </span> {{dataEstab.nombreComercial}}</h4>
+                    <h4><span class="text-dark">Establecimiento: </span> <span class="text-info">{{dataEstab.nombreComercial}}</span></h4>
                     <hr>
 
                     <div class="row">
@@ -52,9 +52,8 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table md-table md-row-select multiple ng-model="compToImport" md-progress="promise">
-                            <caption>Lista de Importaciones</caption>
-                            <thead md-head md-order="query.sortBy" fix-head>
+                        <table md-table md-row-select multiple ng-model="compToImport" md-progress="promise"> 
+                            <thead md-head md-order="query.sortBy">
                                 <tr md-row>
                                     <th md-column>Doc.</th>
                                     <th md-column md-order-by="serieComprobante">Serie</th>

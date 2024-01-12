@@ -122,6 +122,156 @@ namespace Compras.API.Controllers
         }
 
 
+
+        [HttpPost("CheckExistenceXml")]
+        public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
+        {
+
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
+                WebServiceSri _sri = new WebServiceSri(_configuration);
+                var response = await _sri.CheckExistence(claveAcceso, "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl");
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error al verificar la clave acceso en el sri: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al verificar la clave acceso en el sri");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+
+
+        [HttpPost("Post")]
+        public async Task<IActionResult> Post(ApiRequest request)
+        {
+            request.UserRoleId = User.GetUserRoleId();
+            try
+            {
+                var response = await _docRecibidoSvc.AddAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            { 
+                _log.LogActivity("Error al importar el archivo: " + ex.ToString());
+                return BadRequest(ex.Message);
+            } 
+        }
+
+        [HttpPost("UploadXml")]
+        public async Task<IActionResult> UploadXml(string json, IFormFile file)
+        {
+
+            GenericResponse _response = new GenericResponse();
+
+            if (file.ContentType != "text/xml")
+            {
+                _response.Create("0", "Formato de archivo no soportado");
+                return BadRequest(_response);
+            }
+            try
+            {
+                XmlDocument xmlDocSri = new XmlDocument();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    xmlDocSri.LoadXml(Encoding.UTF8.GetString(ms.ToArray()));
+                }
+                XmlNode nodeAuth = xmlDocSri.GetElementsByTagName("autorizacion")[0];
+                XmlNode nodeComp = nodeAuth.SelectSingleNode("comprobante");
+                if (nodeComp != null)
+                {
+                    XmlDocument xmlComp = new XmlDocument();
+                    xmlComp.LoadXml(nodeComp.InnerText);
+
+                    var declarationsI = xmlComp.ChildNodes.OfType<XmlNode>()
+                                       .Where(x => x.NodeType == XmlNodeType.XmlDeclaration)
+                                       .ToList();
+                    declarationsI.ForEach(x => xmlComp.RemoveChild(x));
+
+
+
+
+                    XmlNode node = xmlComp.GetElementsByTagName("infoTributaria")[0];
+                    string versionComp = string.Empty, codDoc = string.Empty, claveAcceso = string.Empty, fechaEmision = string.Empty;
+                    claveAcceso = node.SelectSingleNode("claveAcceso").InnerText;
+                    codDoc = node.SelectSingleNode("codDoc").InnerText;
+                    switch (codDoc)
+                    {
+                        case "01":
+                            versionComp = xmlComp.GetElementsByTagName("factura")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoFactura")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "03":
+                            versionComp = xmlComp.GetElementsByTagName("liquidacionCompra")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoLiquidacionCompra")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "04":
+                            versionComp = xmlComp.GetElementsByTagName("notaCredito")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoNotaCredito")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "05":
+                            versionComp = xmlComp.GetElementsByTagName("notaDebito")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoNotaDebito")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "06":
+                            versionComp = xmlComp.GetElementsByTagName("guiaRemision")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoGuiaRemision")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        case "07":
+                            versionComp = xmlComp.GetElementsByTagName("comprobanteRetencion")[0].Attributes["version"].Value;
+                            fechaEmision = xmlComp.GetElementsByTagName("infoCompRetencion")[0].SelectSingleNode("fechaEmision").InnerText;
+                            break;
+                        default:
+                            break;
+                    }
+                    XmlDocument xmlTosave = new XmlDocument();
+                    xmlTosave.LoadXml(nodeAuth.OuterXml);
+
+
+
+                    var declarations = xmlTosave.ChildNodes.OfType<XmlNode>()
+                    .Where(x => x.NodeType == XmlNodeType.XmlDeclaration)
+                    .ToList();
+
+                    declarations.ForEach(x => xmlTosave.RemoveChild(x));
+
+                    var root = xmlTosave.GetElementsByTagName("autorizacion")[0];
+
+                    root.SelectSingleNode("comprobante").InnerText = xmlComp.OuterXml;
+
+
+                    await _db.SPExecute("Recepcion.Documento_UploadXml");
+                    _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                    _db.AddDynamicParam("codDoc", codDoc);
+                    _db.AddDynamicParam("claveAcceso", claveAcceso);
+                    _db.AddDynamicParam("versionComp", versionComp);
+                    _db.AddDynamicParam("fechaEmision", fechaEmision);
+                    _db.AddDynamicParam("XmlDoc", xmlTosave.OuterXml);
+                    _response = _db.GetDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error al importar el archivo: " + ex.ToString());
+                _response.Create(code: "0", message: "Error al importar el archivo");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
         //private readonly IConfiguration _configuration;
         //private readonly DbAccess _db;
         //private readonly FileTxt _txtComp;
@@ -318,163 +468,10 @@ namespace Compras.API.Controllers
         //    }
         //}
 
-        //[HttpPost("UploadXml")]
-        //public async Task<IActionResult> UploadXml(string json, IFormFile file)
-        //{
-
-        //    GenericResponse _response = new GenericResponse();
-
-        //    if (file.ContentType != "text/xml")
-        //    {
-        //        _response.Create("0", "Formato de archivo no soportado");
-        //        return BadRequest(_response);
-        //    }
-        //    try
-        //    {
-        //        XmlDocument xmlDocSri = new XmlDocument();
-        //        using (MemoryStream ms = new MemoryStream())
-        //        {
-        //            file.CopyTo(ms);
-        //            xmlDocSri.LoadXml(Encoding.UTF8.GetString(ms.ToArray()));
-        //        }
-        //        XmlNode nodeAuth = xmlDocSri.GetElementsByTagName("autorizacion")[0];
-        //        XmlNode nodeComp = nodeAuth.SelectSingleNode("comprobante");
-        //        if (nodeComp != null)
-        //        {
-        //            XmlDocument xmlComp = new XmlDocument();
-        //            xmlComp.LoadXml(nodeComp.InnerText);
-
-        //            var declarationsI = xmlComp.ChildNodes.OfType<XmlNode>()
-        //                               .Where(x => x.NodeType == XmlNodeType.XmlDeclaration)
-        //                               .ToList();
-        //            declarationsI.ForEach(x => xmlComp.RemoveChild(x));
 
 
 
 
-        //            XmlNode node = xmlComp.GetElementsByTagName("infoTributaria")[0];
-        //            string versionComp = string.Empty, codDoc = string.Empty, claveAcceso = string.Empty, fechaEmision = string.Empty;
-        //            claveAcceso = node.SelectSingleNode("claveAcceso").InnerText;
-        //            codDoc = node.SelectSingleNode("codDoc").InnerText;
-        //            switch (codDoc)
-        //            {
-        //                case "01":
-        //                    versionComp = xmlComp.GetElementsByTagName("factura")[0].Attributes["version"].Value;
-        //                    fechaEmision = xmlComp.GetElementsByTagName("infoFactura")[0].SelectSingleNode("fechaEmision").InnerText;
-        //                    break;
-        //                case "03":
-        //                    versionComp = xmlComp.GetElementsByTagName("liquidacionCompra")[0].Attributes["version"].Value;
-        //                    fechaEmision = xmlComp.GetElementsByTagName("infoLiquidacionCompra")[0].SelectSingleNode("fechaEmision").InnerText;
-        //                    break;
-        //                case "04":
-        //                    versionComp = xmlComp.GetElementsByTagName("notaCredito")[0].Attributes["version"].Value;
-        //                    fechaEmision = xmlComp.GetElementsByTagName("infoNotaCredito")[0].SelectSingleNode("fechaEmision").InnerText;
-        //                    break;
-        //                case "05":
-        //                    versionComp = xmlComp.GetElementsByTagName("notaDebito")[0].Attributes["version"].Value;
-        //                    fechaEmision = xmlComp.GetElementsByTagName("infoNotaDebito")[0].SelectSingleNode("fechaEmision").InnerText;
-        //                    break;
-        //                case "06":
-        //                    versionComp = xmlComp.GetElementsByTagName("guiaRemision")[0].Attributes["version"].Value;
-        //                    fechaEmision = xmlComp.GetElementsByTagName("infoGuiaRemision")[0].SelectSingleNode("fechaEmision").InnerText;
-        //                    break;
-        //                case "07":
-        //                    versionComp = xmlComp.GetElementsByTagName("comprobanteRetencion")[0].Attributes["version"].Value;
-        //                    fechaEmision = xmlComp.GetElementsByTagName("infoCompRetencion")[0].SelectSingleNode("fechaEmision").InnerText;
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //            XmlDocument xmlTosave = new XmlDocument();
-        //            xmlTosave.LoadXml(nodeAuth.OuterXml);
-
-
-
-        //            var declarations = xmlTosave.ChildNodes.OfType<XmlNode>()
-        //            .Where(x => x.NodeType == XmlNodeType.XmlDeclaration)
-        //            .ToList();
-
-        //            declarations.ForEach(x => xmlTosave.RemoveChild(x));
-
-        //            var root = xmlTosave.GetElementsByTagName("autorizacion")[0];
-
-        //            root.SelectSingleNode("comprobante").InnerText = xmlComp.OuterXml;
-
-
-        //            await _db.SPExecute("Recepcion.Documento_UploadXml");
-        //            _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-        //            _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-        //            _db.AddDynamicParam("codDoc", codDoc);
-        //            _db.AddDynamicParam("claveAcceso", claveAcceso);
-        //            _db.AddDynamicParam("versionComp", versionComp);
-        //            _db.AddDynamicParam("fechaEmision", fechaEmision);
-        //            _db.AddDynamicParam("XmlDoc", xmlTosave.OuterXml);
-        //            _response = _db.GetDefault();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _log.LogActivity("Error al importar el archivo: " + ex.ToString());
-        //        _response.Create(code: "0", message: "Error al importar el archivo");
-        //    }
-        //    finally
-        //    {
-        //        _db.Close();
-        //    }
-        //    return Ok(_response);
-        //}
-
-        //[HttpPost("Post")]
-        //public async Task<IActionResult> Post(Common.Core.Models.ApiRequest parameters)
-        //{
-
-        //    GenericResponse _response = new GenericResponse();
-        //    try
-        //    {
-        //        int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-        //        await _db.SPExecute("Recepcion.Documento_Insert", true);
-        //        _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-        //        //_db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
-        //        _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-        //        _response = _db.GetDefault();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _log.LogActivity("Error al importar el archivo: " + ex.ToString());
-        //        _response.Create(code: "0", message: "Error al importar el archivo");
-        //    }
-        //    finally
-        //    {
-        //        _db.Close();
-        //    }
-        //    return Ok(_response);
-        //}
-
-        //[HttpPost("CheckExistenceXml")]
-        //public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
-        //{
-
-        //    GenericResponse _response = new GenericResponse();
-        //    try
-        //    {
-        //        int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-        //        WebServiceSri _sri = new WebServiceSri(_configuration);
-        //        var response = await _sri.CheckExistence(claveAcceso, "https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl");
-        //        return Ok(response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _log.LogActivity("Error al verificar la clave acceso en el sri: " + ex.ToString());
-        //        _response.Create(code: "0", message: "Error al verificar la clave acceso en el sri");
-        //    }
-        //    finally
-        //    {
-        //        _db.Close();
-        //    }
-        //    return Ok(_response);
-        //}
         //[HttpPut("Migrate")]
         //public async Task<IActionResult> Migrate(ApiRequest parameters)
         //{

@@ -25,7 +25,8 @@
         }
 
         function getDataFilter() {
-            return mS.getData('get', `${URL}?json=${JSON.stringify({tipo: 2})}`, null, true).then(
+            let data = {tipo: 2}
+            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`, null, true).then(
                 response => {
                     if(response.code==="0"){
                         throw response;
@@ -43,7 +44,8 @@
         }
 
         function getAll(query){
-            return mS.getData('get', `${URL}?json=${JSON.stringify({...query, tipo: 1 })}`, null, true).then(
+            let data = {...query, tipo: 1}
+            return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`, null, true).then(
                 response=>{
                     if(!response) return [];
                     
@@ -86,6 +88,8 @@
             )
         }
 
+        
+
         function get(query) {
             return mS.getData('get', URL + 'Get/' + JSON.stringify(query), null, true).then(response => {
 
@@ -122,7 +126,7 @@
         }
 
         function post(data) {
-            return mS.getData('post', `${URL}Post`, { data: data }, true).then(response => {
+            return mS.getData('post', `${URL}Post`, { data }, true).then(response => {
                 return response
             })
         }
