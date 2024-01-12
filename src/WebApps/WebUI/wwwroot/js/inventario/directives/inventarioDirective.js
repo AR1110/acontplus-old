@@ -352,6 +352,7 @@
                     })
 
                     modalDialogRef.result.then(result => {
+                        console.log(result)
                         if (typeof result === "object") {
                             scope.resultModal({
                                 result

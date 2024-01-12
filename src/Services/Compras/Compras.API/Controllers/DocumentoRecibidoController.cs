@@ -59,6 +59,69 @@ namespace Compras.API.Controllers
             }
         }
 
+        [HttpGet("GetId/{id}")]
+        public async Task<IActionResult> GetId(int id)
+        {
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                ComprobanteElectronico ceXml = new ComprobanteElectronico();
+                string sms = string.Empty;
+                DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
+                XmlDocument xdoc = new XmlDocument();
+
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    await _db.SPExecute("Recepcion.Documento_Get_Id");
+                    _db.AddDynamicParam("idRol", idUsuarioRol);
+                    _db.AddDynamicParam("idDocumento", id);
+                    DataTable dt = _db.GetDataTable();
+                    if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+                    {
+                        _response.code = "1";
+                        string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+
+                        xdoc.LoadXml(xmlDoc);
+
+
+                    }
+                    else
+                    {
+                        _response.Create(code: "0", message: "No se encontro xml");
+                    }
+
+                }
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                    {
+                        _response.Create("0", sms);
+                    }
+                    else
+                    {
+                        if (ceXml.codDoc == "01" || ceXml.codDoc == "04")
+                        {
+                            await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert_All");
+                            _db.AddDynamicParam("idRol", idUsuarioRol);
+                            _db.AddDynamicParam("idDocumento", id);
+                            _db.AddDynamicParam("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
+                            _db.AddDynamicParam("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
+                            _db.OnlyExecute();
+                        }
+                        _response.payload = ceXml;
+                    }
+                }
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error getting data of doc: " + ex.ToString());
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [HttpPost("Read")]
         public async Task<IActionResult> Post(IFormFile file)
@@ -249,7 +312,7 @@ namespace Compras.API.Controllers
                     root.SelectSingleNode("comprobante").InnerText = xmlComp.OuterXml;
 
 
-                    await _db.SPExecute("Recepcion.Documento_UploadXml");
+                    await _db.SPExecute("Recepcion.Documento_Upload_Xml");
                     _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                     _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                     _db.AddDynamicParam("codDoc", codDoc);
@@ -310,68 +373,7 @@ namespace Compras.API.Controllers
         //    return Ok(_response);
         //}
 
-        //[HttpGet("GetId/{id}")]
-        //public async Task<IActionResult> GetId(int id)
-        //{
-        //    GenericResponse _response = new GenericResponse();
-        //    try
-        //    {
-        //        int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-        //        ComprobanteElectronico ceXml = new ComprobanteElectronico();
-        //        string sms = string.Empty;
-        //        DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
-        //        XmlDocument xdoc = new XmlDocument();
-
-        //        using (DbAccess _db = new DbAccess(_configuration))
-        //        {
-        //            Dictionary<string, object> parameters = new Dictionary<string, object>();
-        //            await _db.SPExecute("Recepcion.Documento_Get_Id");
-        //            _db.AddDynamicParam("idRol", idUsuarioRol);
-        //            _db.AddDynamicParam("idDocumento", id);
-        //            DataTable dt = _db.GetDataTable();
-        //            if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
-        //            {
-        //                _response.code = "1";
-        //                string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-
-        //                xdoc.LoadXml(xmlDoc);
-
-
-        //            }
-        //            else
-        //            {
-        //                _response.Create(code: "0", message: "No se encontro xml");
-        //            }
-
-        //        }
-        //        using (DbAccess _db = new DbAccess(_configuration))
-        //        {
-        //            if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
-        //            {
-        //                _response.Create("0", sms);
-        //            }
-        //            else
-        //            {
-        //                if (ceXml.codDoc == "01" || ceXml.codDoc == "04")
-        //                {
-        //                    await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert_All");
-        //                    _db.AddDynamicParam("idRol", idUsuarioRol);
-        //                    _db.AddDynamicParam("idDocumento", id);
-        //                    _db.AddDynamicParam("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
-        //                    _db.AddDynamicParam("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
-        //                    _db.OnlyExecute();
-        //                }
-        //                _response.payload = ceXml;
-        //            }
-        //        }
-        //        return Ok(_response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _log.LogActivity("Error getting data of doc: " + ex.ToString());
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        
         //[HttpGet("Preview/{id}")]
         //public async Task<IActionResult> Preview(int id)
         //{
