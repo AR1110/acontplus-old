@@ -14,14 +14,17 @@
         return {
             getDataFilter,
             getAll,
+            getDocRelacionado,
             getDataForm,
             getTempDetails,
             saveArticleTemp,
             searchArticle,
+            addStock,
+            deleteStock,
             saveCompraHabitual,
             saveDocumentoDetalle,
-            getDatoAdicionalArticulo,
-            get,
+            getDatoAdicionalArticulo, 
+            postDatoAdicionalArticulo,
             readFileTxt,
             uploadXml,
             checkExistenceXml,
@@ -65,7 +68,7 @@
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
                         let documentos = mainData.documentos || [];
-                        console.log(mainData)
+                        
 
                         return documentos.map(doc => {
                             return {
@@ -106,7 +109,7 @@
                     }
                     if (response.code === "1") {
                         let mainData = JSON.parse(response.payload);
-                        console.log(mainData)
+                        
                         // let estabs = fS.groupEstabBodega(mainData.bodega);
 
                         return {
@@ -192,10 +195,18 @@
 
                 }
             })
+        }  
+
+        function postDatoAdicionalArticulo(idDocumento, datosAdicionales){
+            let data = {
+                datosAdicionales
+            }
+            return mS.getData('post', `Compra/DatoAdicionalArticulo/Insert/${idDocumento}`, { data }, true) 
         }
 
-        function get(query) {
-            return mS.getData('get', URL + 'Get/' + JSON.stringify(query), null, true).then(response => {
+        function getDocRelacionado(query) {
+            let params = {...query, tipo: 4}
+            return mS.getData('get', `${URL}?json=${JSON.stringify(params)}`, null, true).then(response => {
 
                 if (response.code === '0') {
                     throw response;
@@ -204,17 +215,17 @@
 
                     let mainData = JSON.parse(response.payload);
 
-                    if (query.tipo && query.tipo === "1") {
-                        return mainData;
-                    }
-
-                    if (query.tipo && query.tipo === 3) {
-                        return mainData[0];
-                    }
-
-                    return mainData[0];
+                    console.log(mainData)
                 }
             })
+        }
+
+        function addStock(obj){
+            return mS.getData('post', 'Compra/DocumentoDetalle/' + obj.idDocumento + '/' + obj.idArticulo, null, true) 
+        }
+
+        function deleteStock(idDocumentoDetalle){
+            return mS.getData('delete', 'Compra/DocumentoDetalle/' + idDocumentoDetalle, null, true)
         }
 
         function readFileTxt(fileTxt) {
@@ -243,8 +254,8 @@
             return mS.getDataFile(`${URL}${idDocumento}/${claveAcceso}`, file, null, true)
         }
 
-        function deleteDoc(item) {
-            return mS.getData('delete', `${URL}${item}`, null, true)
+        function deleteDoc(idDocumento) {
+            return mS.getData('delete', `${URL}${idDocumento}`, null, true)
         }
 
         function getId(idDocumento) {
