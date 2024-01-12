@@ -48,7 +48,7 @@ BEGIN
 		,montoObjetivo  = ISNULL(sf.montoObjetivo,0)
 		,nombreFamilia  = ISNULL(f.descripcion, 'Ninguna')
         ,s3ObjectUrl    = ISNULL(sf.s3ObjectUrl, '')
-	FROM SubFamilia  sf
+	FROM Inventario.v_SubFamilia  sf
 	INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
 	WHERE sf.idEntidad = @idEntidad
 	--AND sf.applicationId IS NOT NULL

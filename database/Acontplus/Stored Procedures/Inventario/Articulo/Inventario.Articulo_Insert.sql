@@ -281,10 +281,13 @@ BEGIN
 			INSERT INTO ArticuloPvP (idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado)
 					         SELECT @idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
 					         FROM @tbPrices
-
-            --> Photo Product
-            INSERT INTO [Inventario].[ProductPhoto]( [ProductId], [S3ObjectKey], [S3ObjectUrl], [IsDefault], [UserId] ) 
-            SELECT @idArticulo,@s3ObjectKey,@s3ObjectUrl,1,@idUsuario
+            
+            IF @s3ObjectKey IS NOT NULL AND @s3ObjectUrl IS NOT NULL
+                BEGIN 
+                    --> Photo Product
+                    INSERT INTO [Inventario].[ProductPhoto]( [ProductId], [S3ObjectKey], [S3ObjectUrl], [IsDefault], [UserId] ) 
+                    SELECT @idArticulo,@s3ObjectKey,@s3ObjectUrl,1,@idUsuario
+                END 
 			
 			--Registrmos la ubicacion del articulo en las bodegas 
 			INSERT INTO ArticuloUbicacion 
@@ -356,7 +359,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-		SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as 'message'
+		SELECT '0'code,'Info: Error en el procedimiento ' as 'message'
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		VALUES(NEWID(),'/Articulo/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario)
 	END CATCH  
