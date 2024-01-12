@@ -1,12 +1,10 @@
 ﻿using Asp.Versioning;
 using Common.Core.Models;
 using Common.Core.Utils;
-using Contabilidad.Application.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 using Services.Common;
 using Contabilidad.Core.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Contabilidad.API.Controllers.v2
 {
@@ -45,7 +43,7 @@ namespace Contabilidad.API.Controllers.v2
                 return BadRequest("Error en get " + ex.Message);
             }
         }
-               
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
@@ -65,6 +63,50 @@ namespace Contabilidad.API.Controllers.v2
             {
                 _log.LogActivity("Error en Post " + ex.Message);
                 return BadRequest("Error en Post " + ex.Message);
+            }
+        }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id },
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+                var response = await _service.UpdateAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en Put " + ex.Message);
+                return BadRequest("Error en Put " + ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id },
+                };
+                var response = await _service.DeleteAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en Delete " + ex.Message);
+                return BadRequest("Error en Delete " + ex.Message);
             }
         }
     }
