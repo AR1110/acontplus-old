@@ -2020,6 +2020,8 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
         })
     }
 
+    let isRefresh = false;
+
     $scope.deleteCH = (item) => {
         try {
             showLoader();
@@ -2032,6 +2034,8 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
                     let index = $scope.historyComprasArticle.indexOf(item)
                     $scope.historyComprasArticle.splice(index, 1)
                     tS.toastr('success', response.message)
+                    isRefresh = true;
+                    $uibModalInstance.close({ isRefresh });
                 }
             }).finally(() => hideLoader())
         } catch (error) {
@@ -2040,7 +2044,7 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
     }
 
     $scope.closeModal = function () {
-        $uibModalInstance.close({ test: 1 });
+        $uibModalInstance.close({ isRefresh });
     }
 }
 

@@ -1,0 +1,98 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        <md-icon md-font-set="md" class="text-info">sync_alt</md-icon> Unir Articulo ->
+        <strong>{{articleSelected.descripcion}}</strong>
+    </h4>
+    <button type="button" class="close" ng-click="closeModal()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="table-responsive">
+        <table class="table">
+            <caption></caption>
+            <thead>
+                <tr>
+                    <th>C. Principal</th>
+                    <th>C. Auxiliar</th>
+                    <th>Descripción</th>
+                    <th>P. Unitario</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center">{{articleSelected.codigoPrincipal}}</td>
+                    <td class="text-center">{{articleSelected.codigoAuxiliar}}</td>
+                    <td>{{articleSelected.descripcion}}</td>
+                    <td class="text-right">{{articleSelected.precioUnitario | currency}}</td>
+                    <td>
+                        <button type="button" class="btn btn-info btn-sm" ng-click="addArticle()" title="Añadir Nuevo">
+                            <icon class="ti-plus"></icon> Registrar
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <div class="row" ng-show="articleNotFound">
+        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-12">
+            <div class="input-group">
+                <input type="text" id="articleMergeSearch" autocomplete="off" name="articleMergeSearch"
+                    class="form-control border-select" ng-model="articleMergeSearch.textSearch"
+                    placeholder="Buscar articulo" />
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-info btn-sm" ng-click="searchArticleMerge()"><i
+                            class="ti-search"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-6">
+            <div class="icheck-info">
+                <input type="radio" id="byCode" ng-model="articleMergeSearch.tipo" value="C" />
+                <label for="byCode">Por Codigo</label>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-6">
+            <div class="icheck-info">
+                <input type="radio" id="byDescription" ng-model="articleMergeSearch.tipo" value="D" />
+                <label for="byDescription">Por Descripción</label>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive" ng-show="articlesTemp.length > 0">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Proveedor</th>
+                    <th>C. Principal</th>
+                    <th>C. Auxiliar</th>
+                    <th>Descripción</th>
+                    <th>P. Unitario</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in articlesTemp">
+                    <td>{{item.razonSocial}}</td>
+                    <td class="text-center">{{item.codigoPrincipal}}</td>
+                    <td class="text-center">{{item.codigoAuxiliar}}</td>
+                    <td>{{item.descripcion}}</td>
+                    <td class="text-right">{{item.precioUnitario | currency}}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-info btn-sm" ng-click="askToSaveCH(item)"
+                            title="Unir con Articulo existente">
+                            <icon class="ti-exchange-vertical"></icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-dark" ng-click="closeModal()">
+        <icon class="ti-close"></icon> Cerrar
+    </button>
+</div>

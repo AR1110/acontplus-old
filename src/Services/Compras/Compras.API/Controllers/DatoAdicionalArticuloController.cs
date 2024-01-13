@@ -44,7 +44,7 @@ namespace Compras.API.Controllers
         }
 
         [HttpPost("Insert/{id}")]
-        public async Task<IActionResult> Insert(int id, string json)
+        public async Task<IActionResult> Insert(int id, ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -53,7 +53,7 @@ namespace Compras.API.Controllers
                 await _db.SPExecute("Recepcion.Dato_Adicional_Articulo_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("idDocumento", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

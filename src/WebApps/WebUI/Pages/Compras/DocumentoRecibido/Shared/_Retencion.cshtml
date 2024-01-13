@@ -1,0 +1,164 @@
+﻿ 
+<form ng-submit="saveRetencion()">
+    <div class="modal-header">
+        <h5 class="modal-title">Retencion {{retencion.versionRet}}</h5>
+        <button class="close" data-dismiss="modal"  ng-click="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                <div class="card border border-dark rounded">
+                    <div class="card-body">
+                        <img src="" alt="NO LOGO" height="150">
+                        <h5>{{infoTributaria.razonSocial}}</h5>
+                        <br>
+                        <h5>{{infoTributaria.nombreComercial}}</h5>
+                        <br>
+                        <h5><label for="">Dirección Matriz:</label> {{infoTributaria.dirMatriz}}</h5>
+                        <br>
+                        <h5><label for="">Dirección Sucursal: </label>
+                            {{infoCompRetencion.dirEstablecimiento}}
+                        </h5>
+                        <br>
+                        <h5 ng-show="">
+                            <label for="infoCompRetencion.contribuyenteEspecial.length > 0">
+                                Contribuyente
+                                Especial Nro.
+                            </label>
+                            {{infoCompRetencion.contribuyenteEspecial}}
+                        </h5>
+                        <h5>
+                            <label for="">OBLIGADO A LLEVAR CONTABILIDAD </label>
+                            {{infoCompRetencion.obligadoContabilidad}}
+                        </h5>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                <div class="card border border-dark rounded">
+                    <div class="card-body">
+                        <h5><label>RUC: </label> {{infoTributaria.ruc}}</h5>
+                        <h4>COMPROBANTE DE RETENCIÓN</h4>
+                        <h5>
+                            <label for="">No.</label>
+                            {{infoTributaria.estab}}-{{infoTributaria.ptoEmi}}-{{infoTributaria.secuencial}}
+                        </h5>
+                        <label for="">NÚMERO DE AUTORIZACIÓN</label>
+                        <small>
+                            {{infoTributaria.claveAcceso}}
+                        </small>
+                        <label for="">FECHA Y HORA DE AUTORIZACIÓN</label>
+                        <small>
+                            {{selected[0].fechaAutorizacion}}
+                        </small>
+                        <h5>
+                            <label for="">AMBIENTE:</label>
+                            <span ng-bind-html="infoTributaria.ambiente | ambienteSri"></span>
+                        </h5>
+                        <h5>
+                            <label for="">EMISIÓN:</label>
+                            <span ng-bind-html="infoTributaria.tipoEmision | tipoEmisionSri"></span>
+                        </h5>
+                        <label for="">CLAVE DE ACCESSO</label><br>
+                        <img id="barcodeImg" src="" alt="">
+                        <small> {{infoTributaria.claveAcceso}}</small>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card border border-dark rounded">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">
+                                <h5><label for="">Razón Social / Nombres y Apellidos: </label>
+                                    {{infoCompRetencion.razonSocialSujetoRetenido}}</h5>
+                                <br>
+                                <h5><label for="">Fecha Emisión: </label>
+                                    {{infoCompRetencion.fechaEmision}}</h5>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+                                <h5><label for="">Identificación: </label>
+                                    {{infoCompRetencion.identificacionSujetoRetenido}}</h5>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="small">
+                            <th>Comprobante</th>
+                            <th>Número</th>
+                            <th>Fecha Emisión</th>
+                            <th>Ejercicio Fiscal</th>
+                            <th>Base Imponible para la Retención</th>
+                            <th>IMPUESTO</th>
+                            <th>Porcentaje Retención</th>
+                            <th>Valor Retenido</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in fullComprobante.impuestosRetencion">
+                            <td>{{item.codDocSustento}}</td>
+                            <td>{{item.numDocSustento}}</td>
+                            <td>{{item.fechaEmisionDocSustento}}</td>
+                            <td>{{item.fechaEmisionDocSustento | date: 'dd/yyyy'}}</td>
+                            <td>{{item.baseImponible}}</td>
+                            <td>{{item.codigo}}</td>
+                            <td>{{item.porcentajeRetener}}</td>
+                            <td>{{item.valorRetenido}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                <div class="card border border-dark rounded">
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="test in infoAdicional">
+                                    <td>{{test.nombre}}</td>
+                                    <td>{{test.valor}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="obs">Observación:</label>
+                    <textarea name="obs" id="obs" class="form-control" ng-model="retencion.obs"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" ng-click="getReport()">
+            <i class="ti-download"></i> Descargar Ride
+        </button>
+        <button class="btn btn-dark" data-dismiss="modal" ng-click="closeModal()">&times; Cerrar</button>
+    </div>
+</form>
+         

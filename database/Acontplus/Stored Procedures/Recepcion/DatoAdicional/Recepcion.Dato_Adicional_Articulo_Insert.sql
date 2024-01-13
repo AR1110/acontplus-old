@@ -41,6 +41,9 @@ BEGIN
 	DECLARE @idEntidad AS INT 
 	DECLARE @claveAcceso VARCHAR(50) = (SELECT claveAcceso FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento)
 	DECLARE @idUsuario INT = (SELECT idUsuario FROM  App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+
+    DECLARE @datosAdicionalesArticulo VARCHAR(MAX)
+
 	DECLARE @artInfoAdicional AS TABLE (
 		idInfoAdicional INT NOT NULL
 		,idArticulo INT  NOT NULL		
@@ -48,14 +51,21 @@ BEGIN
 		,jsonAdicional NVARCHAR(MAX)  NULL
 		
 	)
+      
 	 
 	-- SELECT '0'code, 'message' = CAST(@json AS VARCHAR(MAX))
 	--Return
 	BEGIN TRY		
 		BEGIN TRAN
+               SELECT 
+            @datosAdicionalesArticulo = datosAdicionales
+        FROM OPENJSON(@json)
+        WITH(
+            datosAdicionales NVARCHAR(MAX) as json
+        )
 		INSERT INTO @artInfoAdicional  (idInfoAdicional, idArticulo, idEtiqueta, jsonAdicional)
 		SELECT idInfoAdicional, idArticulo, idEtiqueta, jsonAdicional
-		FROM OPENJSON(@json) WITH (
+		FROM OPENJSON(@datosAdicionalesArticulo) WITH (
 		  idInfoAdicional int,
 		  idArticulo int,
 		  idEtiqueta int,

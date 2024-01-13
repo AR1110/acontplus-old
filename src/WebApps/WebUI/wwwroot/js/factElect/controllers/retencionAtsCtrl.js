@@ -1,6 +1,8 @@
 ﻿(function () {
     'use strict';
 
+    const TEMPLATE_URL = '~/Pages/RetencionAts/Shared/'
+
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
     retencionAtsCtrl.$inject = [
@@ -11,10 +13,9 @@
         '$window',
         'FileSaver',
         'Blob',
-        'modalService'
     ]
 
-    function retencionAtsCtrl($scope, $injector, $element, $cookies, $window, FileSaver, Blob, modalSvc) {
+    function retencionAtsCtrl($scope, $injector, $element, $cookies, $window, FileSaver, Blob) {
         const mS = $injector.get('mainService')
         const commonSvc = $injector.get('commonService')
         const tS = $injector.get('toastService')
@@ -22,6 +23,7 @@
         const proveedorSvc = $injector.get('proveedorService')
         const nombreModalCompra = $injector.get('nombreModalCompra');
         const retencionAtsSvc = $injector.get('retencionAtsService');
+        const facturaCompraSvc = $injector.get('facturaCompraService');
         const modalSvc = $injector.get('modalService');
         const nombreModalFactElect = $injector.get('nombreModalFactElect');
         const PATH_FACT_ELECT = 'FactElect/'
@@ -288,8 +290,10 @@
                     if ($scope.proveedores.length == 1) {
                         $scope.selectSujetoRetenido($scope.proveedores[0], false)
                     }
-                    else {
+                    else if ($scope.proveedores.length > 1) {
                         $('#searchProvModal').modal('show')
+                    } else {
+                        tS.toastr('info', 'No se encontraron los resultados!')
                     }
                 }).finally(() => hideLoader())
 
@@ -304,26 +308,80 @@
         $scope.docsFounded = []
         $scope.searchDocs = () => {
             try {
-                showLoader()
                 let json = {
-                    tipo: '7',
                     textSearch: $scope.infoCompRet.identificacionSujetoRetenido
                 }
-                mS.getData('get', 'Compras/FacturaCompra/Get?json=' + JSON.stringify(json), null, true).then(
-                    response => {
-                        if (response.code == '0') {
-                            tS.toastr('warning', response.message)
-                        }
-                        if (response.code == '1') {
-                            $scope.docsFounded = JSON.parse(response.payload)[0]
-                            $('#docsModal').modal('show')
-                        }
-                        hideLoader()
-                    }, error => {
-                        hideLoader()
-                        console.log(error)
+
+                showLoader();
+                facturaCompraSvc.searchInvoiceBySupplier(json).then(response => {
+                    let { comprobantes } = response;
+                    if (comprobantes) {
+                        let modalRef = modalSvc.openModalCustom({
+                            controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
+                                let { comprobantes } = params;
+
+                                console.log(params)
+                                $scope.docsFounded = comprobantes;
+
+                                $scope.docPreview = async (item) => {
+                                    try {
+
+                                        if (!item.isAutomatic) {
+                                            let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
+                                            let ctrl = (await import(fileCtrl))[controller];
+                                            let template = templates['FC'];
+                                            modalSvc.openModalCustom({
+                                                controller: ctrl,
+                                                template: template,
+                                                size: 'xl',
+                                                params: {
+                                                    codDoc: "FC",
+                                                    id: item.idDocumento
+                                                },
+                                                windowClass: 'uibModalFullScreen',
+                                                isRenderRazorPartial: true
+                                            })
+                                            return
+                                        }
+                                        let { fileCtrl, controller, F } = nombreModalCompra.DOCUMENTO_RECIBIDO;
+                                        let ctrl = (await import(fileCtrl))[controller];
+                                        let template = F.template;
+                                        const params = {
+                                            idDocumento: item.idDocumento
+                                        }
+                                        modalSvc.openModalCustom({
+                                            controller: ctrl,
+                                            template,
+                                            size: 'xl',
+                                            params,
+                                            windowClass: 'uibModalFullScreen',
+                                            isRenderRazorPartial: true
+                                        })
+                                    } catch (error) {
+                                        console.log(error)
+                                    }
+                                }
+
+                                $scope.selectDoc = function (item) {
+                                    selectDoc(item);
+                                    $uibModalInstance.close();
+                                }
+
+                                $scope.closeModal = function () {
+                                    $uibModalInstance.close();
+                                }
+                            }],
+                            template: `${TEMPLATE_URL}_ModalDocs.cshtml`,
+                            size: 'lg',
+                            params: { comprobantes },
+                            isRenderRazorPartial: true
+                        })
+                    } else {
+                        tS.toastr('info', 'No se encontraron los resultados!')
                     }
-                )
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader());
             } catch (error) {
                 hideLoader()
                 console.log(error)
@@ -332,79 +390,47 @@
         $scope.tempTaxes = []
         $scope.paymentsTemp = []
         $scope.totalSinImpuestos = 0.00
-        $scope.selectDoc = (item) => {
+        function selectDoc(item) {
             try {
-                showLoader()
                 let json = {
-                    tipo: '3',
                     id: item.idDocumento,
                     isAutomatic: item.isAutomatic
                 }
-                mS.getData('get', 'Compra/FacturaCompra/Get?json=' + JSON.stringify(json), null, true).then(
-                    response => {
-                        if (response.code == '0') {
-                            tS.toastr('warning', response.message)
-                        }
-                        if (response.code == '1') {
-                            let temp = JSON.parse(response.payload)[0]
-                            if (temp) {
-                                $scope.docData = JSON.parse(temp[0].doc)[0]
-                                $scope.tempTaxes = JSON.parse(temp[0].taxes) || []
-                                $scope.paymentsTemp = JSON.parse(temp[0].payments) || []
-                                $scope.totalSinImpuestos = $scope.docData.totalSinImpuestos
-                                $scope.docSustento.idDocumento = item.idDocumento
-                                $scope.docSustento.isAutomatic = $scope.docData.isAutomatic
-                                $scope.docSustento.codDocSustento = $scope.docData.codDocSustento
-                                $scope.selectSutento($scope.docSustento.codDocSustento)
-                                $scope.docSustento.numDocSustento = $scope.docData.numDocSustento.split('-').join('')
-                                $scope.docSustento.fechaEmisionDocSustento = formatDate($scope.docData.fechaEmisionDocSustento)
-                                $scope.docSustento.numAutDocSustento = $scope.docData.numAutDocSustento
-                                $scope.docSustento.importeTotal = $scope.docData.importeTotal || 0.00
-                            } else {
-                                tS.toastr('warning', 'Impuestos no encontrados')
-                            }
-                            $('#docsModal').modal('hide')
-                        }
-                        hideLoader()
+                showLoader()
+                facturaCompraSvc.getDataFormRetencionAts(json).then(response => {
+                    const {
+                        docData, payments, taxes
+                    } = response;
+                    if (Object.keys(docData).length>0){ 
+                        $scope.docData = docData;
+                        $scope.tempTaxes = taxes;
+                        $scope.paymentsTemp = payments;
+
+                        $scope.totalSinImpuestos = $scope.docData.totalSinImpuestos;
+                        $scope.docSustento.idDocumento = item.idDocumento;
+                        $scope.docSustento.isAutomatic = $scope.docData.isAutomatic;
+                        $scope.docSustento.codDocSustento = $scope.docData.codDocSustento;
+                        $scope.selectSutento($scope.docSustento.codDocSustento);
+                        $scope.docSustento.numDocSustento = $scope.docData.numDocSustento.split('-').join('');
+                        $scope.docSustento.fechaEmisionDocSustento = formatDate($scope.docData.fechaEmisionDocSustento);
+                        $scope.docSustento.numAutDocSustento = $scope.docData.numAutDocSustento;
+                        $scope.docSustento.importeTotal = $scope.docData.importeTotal || 0.00;
+
+
+                    }else{
+                        tS.toastr('warning', 'Impuestos no encontrados')
                     }
-                ).catch(error => {
-                    hideLoader()
+                        console.log(response)
+                }).catch(error => {
                     console.log(error)
-                })
+                }).finally(() => hideLoader()); 
             } catch (error) {
                 hideLoader()
                 console.log(error)
             }
         }
 
-        $scope.docPreview = async (item) => {
-            try {
-                if (!item.isAutomatic) {
-                    commonSvc.viewDetailDocument({
-                        id: item.idDocumento,
-                        codigoDocumento: 'FC'
-                    })
-                    // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
-                    return
-                }
-                let { fileCtrl, controller, F } = nombreModalCompra.DOCUMENTO_RECIBIDO;
-                let ctrl = (await import(fileCtrl))[controller];
-                let template = F.template;
-                const params = {
-                    idDocumento: item.idDocumento
-                }
-                modalSvc.openModalCustom({
-                    controller: ctrl,
-                    template,
-                    size: 'xl',
-                    params,
-                    windowClass: 'uibModalFullScreen',
-                    isRenderRazorPartial: true
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
+
 
         /**Validations */
 
