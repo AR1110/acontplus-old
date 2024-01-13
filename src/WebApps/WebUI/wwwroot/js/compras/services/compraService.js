@@ -5,6 +5,7 @@
         const URL = "Compra/Proveedor/";
         const service = {};
         const mS = $injector.get("mainService");
+        const tS = $injector.get("toastService");
 
         service.get = function (params) {
             const query = {
@@ -105,6 +106,7 @@
 
                     if (response.code === "0") {
                         console.log(response)
+                       // tS.toastr('warning', response.message)
                         return [];
                     }
                     if (response.code === "1") {
@@ -569,14 +571,6 @@
     })
 
 
-
-
-
-
-
-
-
-
     /**
      * Factura Compra 
      */
@@ -586,11 +580,14 @@
         let url = 'Compra/FacturaCompra/'
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
+        let tS = $injector.get('toastService')
 
         return {
             getDataForm,
             getDataFilter,
             getAll,
+            searchInvoiceBySupplier,
+            getDataFormRetencionAts,
             post,
             put,
             anular,
@@ -681,6 +678,65 @@
                 } else {
                     throw response
                 }
+            })
+        }
+
+        /**
+         * *Se usa en retencion ATS 
+         * TODO: Busca facturas por identificacion del proveedor 
+         * 
+         * @returns facturas
+         */
+        function searchInvoiceBySupplier(obj) {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...obj, tipo: 6 }), null, true).then(response => {
+                if (!response) return {}
+                if (response.code === "0") {
+                    console.log(response)
+                    tS.toastr('warning', response.message)
+                    throw response;
+                }
+                if (response.code === "1") { 
+                    const mainData = JSON.parse(response.payload);
+                   
+                    let comprobantes = mainData.comprobantes || [];
+                    comprobantes = comprobantes.map(doc => {
+                        return {
+                            idDocumento: doc.idDocumento,
+                            documento: doc.documento,
+                            secuencial: doc.secuencial,
+                            fechaEmision: doc.fechaEmision,
+                            isAutomatic: doc.isAutomatic,
+                        }
+                    })
+                    return {
+                        comprobantes
+                    }
+                }
+
+            })
+        }
+        function getDataFormRetencionAts(obj){
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...obj, tipo: 7 }), null, true).then(response => {
+                if (!response) return {}
+                if (response.code === "0") {
+                    console.log(response)
+                    tS.toastr('warning', response.message)
+                    throw response;
+                }
+                if (response.code === "1") {
+                    const mainData = JSON.parse(response.payload);
+                    console.log(mainData)
+                    let tempData = mainData.data[0];
+                    const { doc, payments, taxes} = tempData;
+
+                    let docData = JSON.parse(doc)
+                    return {
+                        docData: docData && docData[0] || {}, 
+                        payments: JSON.parse(payments) || [], 
+                        taxes: JSON.parse(taxes) || []
+                    }
+                }
+
             })
         }
 
@@ -992,9 +1048,6 @@
             )
         }
     })
-
-
-
 
 
     /**
@@ -1432,7 +1485,7 @@
                     throw response;
                 }
                 if (response.code === '1') {
-                    let results = JSON.parse(response.payload) || []; 
+                    let results = JSON.parse(response.payload) || [];
                     const { ptoEmision, estadoDocumento } = results;
 
                     let dataToGroup = {
@@ -1453,7 +1506,7 @@
             return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
 
                 if (typeof response === 'object') {
-                    const { comprobante } = JSON.parse(response.payload); 
+                    const { comprobante } = JSON.parse(response.payload);
                     return comprobante.map(item => ({
                         codDoc: 'OC',
                         codEstab: item.codEstab,

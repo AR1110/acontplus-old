@@ -50,7 +50,7 @@
 
         $scope.onKeyupSearchFilter = () => {
             let comprobantes = JSON.parse(JSON.stringify($scope.cloneComprobantes))
-            $scope.comprobantes = $filter("filter")(comprobantes, $scope.search)
+            $scope.comprobantes = $filter("filter")(comprobantes, $scope.dataSearch.textSearch)
         }
 
         $scope.getComprobantes = function () {
@@ -519,7 +519,7 @@
                         $scope.mergedDocs = [];
                         $scope.showOptionsMergeDoc = false;
                         let data = {
-                            idDocumento: selected[0].idDocumento,
+                            id: selected[0].idDocumento,
                             codDoc: selected[0].codDoc,
                             claveAcceso: selected[0].claveAcceso
                         }
