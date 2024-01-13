@@ -69,17 +69,18 @@ namespace Contabilidad.API.Controllers.v2
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] ApiRequest data)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             try
             {
                 var parameters = new Dictionary<string, object>
                 {
                     {"userRoleId", User.GetUserRoleId()},
+                    {"id", id },
                     {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
-                var response = await _service.AddAsync(parameters);
+                var response = await _service.UpdateAsync(parameters);
                 if (response == null) { return NoContent(); };
                 return Ok(response);
             }

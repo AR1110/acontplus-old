@@ -4,6 +4,7 @@
     const TEMPLATE_URL = '~/Pages/Compras/DocumentoRecibido/Shared/'
     let docRecibidoSvc = {}
     let tS = {}
+    let fS = {};
     let modalSvc = {};
     let dataEstab = {}
 
@@ -23,7 +24,7 @@
         const nombreModalInventario = $injector.get('nombreModalInventario');
         const articuloSvc = $injector.get('articuloService');
         const proveedorSvc = $injector.get('proveedorService');
-        const fS = $injector.get('formulario');
+        fS = $injector.get('formulario');
 
         $scope.establecimientos = [];
         $scope.tipoComprobantes = [];
@@ -39,6 +40,7 @@
 
         $scope.comprobantes = [];
         $scope.cloneComprobantes = [];
+        $scope.selected = []
 
         $scope.proveedor = {};
         $scope.claveAccesoLongitud = null;
@@ -92,7 +94,7 @@
                     $scope.establecimientos = establecimientos;
                     $scope.tipoComprobantes = tipoComprobantes;
                     if ($scope.establecimientos.length > 0) {
-                        console.log($scope.establecimientos)
+
                         dataEstab = $scope.establecimientos[0];
                         if (dataEstab) {
                             $scope.dataSearch.codEstab = dataEstab.codEstab;
@@ -140,8 +142,7 @@
             }
         };
         $scope.onSelectProveedor = function (item) {
-            console.log(item)
-            $scope.dataSearch.rucProveedor = item.idProveedor;
+            $scope.dataSearch.rucProveedor = item.numeroIdentificacion;
             $scope.getComprobantes();
         };
 
@@ -189,9 +190,8 @@
                     params: {},
                     isRenderRazorPartial: true
                 }).result.then(result => {
-
                     if (typeof result == 'object') {
-                        $scope.getFacturas();
+                        $scope.getComprobantes();
                     }
                 })
 
@@ -201,19 +201,49 @@
         }
 
 
-        $scope.openModalImportacionManual = function () {
+        $scope.openModalImportacionManual = async function () {
             try {
+
+                if (!await alertEstabSelected()) return;
+
                 modalSvc.openModalCustom({
-                    controller: 'modalFacturaCompraCtrl',
-                    template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
-                    size: 'xl',
+                    controller: 'modalImportacionManualCtrl',
+                    template: `${TEMPLATE_URL}_ModalNewManual.cshtml`,
+                    size: 'lg',
                     params: {},
-                    windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 }).result.then(result => {
 
                     if (typeof result == 'object') {
-                        $scope.getFacturas();
+                        $scope.getComprobantes();
+                    }
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        $scope.openModalMigrate = function () {
+            try {
+
+                if ($scope.comprobantes.length == 0) {
+                    tS.toastr('warning', 'No se encontraron registros para migrar')
+                    return
+                }
+
+                modalSvc.openModalCustom({
+                    controller: 'modalMigrateCtrl',
+                    template: `${TEMPLATE_URL}_MigrateEstab.cshtml`,
+                    size: 'xl',
+                    params: {
+                        comprobantesFiltered: $scope.comprobantes.filter(item => !item.complete),
+                        establecimientosFiltered: $scope.establecimientos.filter(estab => estab.codEstab !== $scope.dataSearch.codEstab)
+                    },
+                    isRenderRazorPartial: true
+                }).result.then(result => {
+
+                    if (typeof result == 'object') {
+                        initialLoad();
                     }
                 })
             } catch (error) {
@@ -257,12 +287,14 @@
     function modalImportacionAutomaticaCtrl($scope, $uibModalInstance, params) {
 
         $scope.dataEstab = dataEstab;
-        console.log($scope)
+
         $scope.fileTxt = null;
         $scope.compFounded = [];
         $scope.compToImport = [];
 
-        //let paymentStep = null;
+
+        $scope.query = { sortBy: '' }
+
         let importarXMLRef = null;
         let stepCompFoundedRef = null;
 
@@ -327,12 +359,12 @@
                         $scope.fileTxt = null;
                         $scope.stepCompFoundedGoTo();
 
-                        // $('#newImportModal').modal('hide');
-                        // $("#compFounded").modal('show');  
-
                     }
                 }).catch(error => {
                     console.log(error)
+                    if (("data" in error) && error.data.code) {
+                        tS.toastr('error', error.data.message)
+                    }
                 }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
@@ -405,13 +437,231 @@
      * Importacion Manual 
      */
 
-    modalImportacionManualCtrl.$inject = ['$scope', '$uibModalInstance', 'params'];
-    function modalImportacionManualCtrl($scope, $uibModalInstance, params) {
+    app.controller('modalImportacionManualCtrl', modalImportacionManualCtrl);
+    modalImportacionManualCtrl.$inject = ['$scope', '$q', '$uibModalInstance', 'params'];
+    function modalImportacionManualCtrl($scope, $q, $uibModalInstance, params) {
 
+        $scope.dataEstab = dataEstab;
+        $scope.mainform = {}
+        $scope.mainform.option = false
+        $scope.files = [];
+        $scope.compToImport = [];
         console.log($scope)
+
+
+
+
+        $scope.$watch('files', function () {
+            $scope.uploadXml($scope.files);
+        });
+        $scope.$watch('file', function () {
+            if ($scope.file != null) {
+                $scope.files = [$scope.file];
+            }
+        });
+
+
+        $scope.claveAccesoIsValid = false
+        $scope.checkExistenceXml = async (item) => {
+            if (!item) {
+                tS.toastr('warning', 'Clave de acceso incorrecta')
+                return
+            }
+            if (item.length != 49) {
+                tS.toastr('warning', 'La Clave de acceso debe poseer 49 digitos')
+                return
+            }
+            $scope.claveAccesoIsValid = false
+            showLoader();
+            await docRecibidoSvc.checkExistenceXml(item).then(
+                response => {
+                    if (response.estado != "AUTORIZADO") {
+                        if (response.message) {
+                            tS.toastr('warning', response.message)
+                        } else {
+                            tS.toastr("warning", "Clave de acceso no existe en el SRI")
+                        }
+                    } else {
+                        $scope.claveAccesoIsValid = true
+                        hideLoader()
+                        tS.toastr('info', 'Validacion exitosa')
+                    }
+                    hideLoader()
+                }
+            ).catch(error => {
+                hideLoader();
+                console.log(error);
+            })
+            return $scope.claveAccesoIsValid
+        }
+
+
+        $scope.addClaveAcceso = async () => {
+            if (!$scope.mainform.claveAcceso) {
+                tS.toastr("warning", "La clave de acceso no es correcta")
+                return
+            }
+            if ($scope.mainform.claveAcceso.length != 49) {
+                tS.toastr("warning", "La clave de acceso debe poseer 49 digitos")
+                return
+            }
+            if ($scope.compToImport.some(x => x.claveAcceso == $scope.mainform.claveAcceso)) {
+                tS.toastr("warning", "La clave de acceso ya existe")
+                return
+            }
+            if (!await $scope.checkExistenceXml($scope.mainform.claveAcceso)) {
+                return
+            }
+            $scope.compToImport.push({ claveAcceso: $scope.mainform.claveAcceso })
+            $scope.mainform.claveAcceso = ''
+            $scope.$apply()
+        }
+        $scope.removeClaveAcceso = (item) => {
+            $scope.compToImport.splice(item, 1)
+        }
+        $scope.removeFile = (item) => {
+            $scope.files.splice(item, 1)
+        }
+        $scope.uploadXml = function (files) {
+            let uploadPromises = [];
+            angular.forEach(files, function (file) {
+
+                let uploadPromise = docRecibidoSvc.uploadXml({ codEstab: $scope.dataEstab.codEstab }, file).then(function (response) {
+                    // Maneja la respuesta del backend aquí
+                    if (response) {
+                        if (response.code == "0") {
+                            tS.toastr("warning", response.message)
+                        }
+                        if (response.code == "1") {
+                            tS.toastr("success", response.message)
+                        }
+                    }
+                    //console.log('Archivo cargado exitosamente:', response.data);
+                }, function (error) {
+                    // Maneja el error de carga aquí
+                    tS.toastr("error", "Error al cargar el archivo: " + error)
+                    //console.log('Error al cargar el archivo:', error);
+                });
+                uploadPromises.push(uploadPromise);
+            });
+
+            $q.all(uploadPromises)
+                .then(function (response) {
+                    console.log(response)
+                    // Todas las peticiones se han completado con éxito
+                    //tS.toastr("info", "Todas las peticiones se han completado")
+                    //console.log('Todas las peticiones se han completado');
+                })
+                .catch(function () {
+                    // Al menos una de las peticiones ha fallado
+                    tS.toastr("danger", "Al menos una de las peticiones ha fallado")
+                    //console.log('Al menos una de las peticiones ha fallado:', error);
+                });
+        }
+
+
+        //Guardar Documentos importados
+        $scope.post = function () {
+            let data = {
+                codEstab: $scope.dataEstab.codEstab,
+                comprobantes: $scope.compToImport
+            }
+            showLoader();
+            docRecibidoSvc.post(data).then(
+                response => {
+                    if (response.code == 0) {
+                        tS.toastr('warning', response.message);
+                    }
+                    if (response.code == 1) {
+                        tS.toastr('success', response.message)
+                        $uibModalInstance.close(response)
+                    }
+                }
+            ).catch(error => {
+                console.log(error);
+            }).finally(() => hideLoader())
+
+        }
+
+        $scope.closeModal = function () {
+            $uibModalInstance.close();
+        }
     }
 
 
+
+
+    app.controller('modalMigrateCtrl', modalMigrateCtrl);
+    modalMigrateCtrl.$inject = ['$scope', '$uibModalInstance', 'params'];
+
+    function modalMigrateCtrl($scope, $uibModalInstance, params) {
+
+        const {
+            comprobantesFiltered,
+            establecimientosFiltered
+        } = params;
+
+        $scope.dataEstab = dataEstab;
+        $scope.migrate = {};
+
+
+        $scope.comprobantesTempToMigrate = comprobantesFiltered;
+        $scope.establecimientosToMigrate = establecimientosFiltered;
+
+        $scope.comprobantesToMigrate = [];
+
+        $scope.askToMigrate = () => {
+
+            if (!fS.isValidField($scope.migrate.codEstab)) {
+                tS.toastr("warning", 'Por favor seleccione el establecimiento de destino')
+                return
+            }
+            if ($scope.comprobantesToMigrate.length===0){
+                tS.toastr('warning', 'Seleccione al menos un comprobante!')
+                return
+            }
+            
+            Swal.fire({
+                //title: 'Estab.: ' + $scope.estabToWork,
+                text: "Esta seguro de migrar de establecimiento a los siguientes comprobantes?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Proceder',
+                cancelButtonText: 'No, cancelar'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    migrate();
+                }
+            })
+        }
+
+        function migrate () {
+            try {
+                let data = { codEstab: $scope.migrate.codEstab, jsonData: $scope.comprobantesToMigrate };
+                showLoader();
+                docRecibidoSvc.migrate(data).then(response => {
+                    if (response.code == '0') {
+                        tS.toastr('warning', response.message)
+                    }
+                    if (response.code == "1") {                         
+                        tS.toastr("success", response.message)
+                        $uibModalInstance.close(response)
+                    }
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader())
+            } catch (error) {
+                hideLoader()
+                console.log(error)
+            }
+        }
+
+        $scope.closeModal = function () {
+            $uibModalInstance.close();
+        }
+    }
 
 
 

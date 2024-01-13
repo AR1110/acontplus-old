@@ -27,9 +27,9 @@ namespace Compras.API.Services
         {
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
-                {"json", DataConverters.SerializeDictionary(request.Data)}
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteAsync("Compra.Documento_Ingreso_Insert", parameters);
+            return await _repository.SPExecuteAsync("Recepcion.Documento_Insert", parameters);
 
         }
 
