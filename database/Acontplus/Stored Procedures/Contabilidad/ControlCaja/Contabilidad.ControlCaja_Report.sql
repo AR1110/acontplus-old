@@ -1,6 +1,16 @@
 USE [AcontPlus]
-GO
-/****** Object:  StoredProcedure [dbo].[ASPControlCajaReport]    Script Date: 12/8/2022 3:29:29 PM ******/
+GO 
+-- ================================================
+-- Template generated from Template Explorer using:
+-- Create Procedure (New Menu).SQL
+--
+-- Use the Specify Values for Template Parameters 
+-- command (Ctrl-Shift-M) to fill in the parameter 
+-- values below.
+--
+-- This block of comments will not be included in
+-- the definition of the procedure.
+-- ================================================
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9,17 +19,16 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
--- exec ReporteGestionFinanc.ControlCaja '{"id":3151,"idUsuarioRol":28}'
 -- =============================================
-IF OBJECT_ID(N'ReporteGestionFinanc.ControlCaja', N'P') IS NOT NULL
-DROP PROCEDURE ReporteGestionFinanc.ControlCaja
-GO
-CREATE PROCEDURE ReporteGestionFinanc.ControlCaja @json VARCHAR(max)
+CREATE OR ALTER PROCEDURE Contabilidad.ControlCaja_Report @json VARCHAR(MAX)
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
+	
+    -- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	SET LANGUAGE SPANISH;
+
 	DECLARE @idControlCaja INT 
 	DECLARE @color VARCHAR(200) = '#000000'
 	DECLARE @efectivoSistema DECIMAL(15,5)
@@ -63,18 +72,17 @@ BEGIN
 		  ,fechaEmision    = cc.fechaEmision
 		  ,agenteEconomico = cl.nombreFiscal
 		  ,total           = cc.importeTotal
-		  ,abono           = CASE WHEN co.cobro = 1 THEN cd.abono ELSE 0 END
-		  ,saldo           = cc.importeTotal - SUM(CASE WHEN co.cobro = 1 THEN cd.abono ELSE 0 END) OVER (PARTITION BY cc.idCuentaPorCobrar ORDER BY co.idCobro ROWS UNBOUNDED PRECEDING)    
+		  ,abono           = CASE WHEN co.cobro = 1 THEN IIF(co.abono >= cc.importeTotal,hc.abono,co.abono) ELSE 0 END
+		  ,saldo           = cc.importeTotal - SUM(CASE WHEN co.cobro = 1 THEN IIF(co.abono >= cc.importeTotal,hc.abono,co.abono) ELSE 0 END) OVER (PARTITION BY cc.idCuentaPorCobrar ORDER BY co.idCobro ROWS UNBOUNDED PRECEDING)    
 		  ,pay             = ISNULL(sf.descripcion,ef.descripcion) + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','')
 		  ,ef.idEntidadFinanciera
 		  ,co.cobro
 	FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 	INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab               = ci.codEstab
-	INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
-	INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCobro                = co.idCobro
-	INNER JOIN Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK) ON cx.idCuotaPorCobrar       = cd.idCuotaPorCobrar
-	INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = cx.idCuentaPorCobrar
+	INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso 
+	INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
 	INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente              = cc.idCliente
+	INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
 	INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera    = co.idEntidadFinanciera
 	 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
 	WHERE ci.idControlCaja = @idControlCaja AND ci.estado = 1
@@ -219,7 +227,7 @@ BEGIN
 	SELECT nroDoc,tipDoc,SUM(abono),total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,total,nroDoc
 
 	-- ================================ FORMAS DE PAGOS TOTALIZADAS ========================================
-	SELECT @chequesPosf     = SUM(td.total) FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
+	SELECT @chequesPosf     = SUM(td.total)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
 	
 	SELECT @efectivoSistema = SUM(td.abono)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 1 AND ef.codigo = 'EFE'
 	
@@ -324,6 +332,6 @@ BEGIN
 
 	 SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
 	       ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))
-	 
-	 
-END 
+
+END
+GO
