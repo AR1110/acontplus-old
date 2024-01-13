@@ -102,7 +102,7 @@ function carteraProveedorCtrl(_mS, $scope, proveedorSvc, $filter, commonSvc, _mo
     }
     //Proveedor filter        
     $scope.selectProveedorFiltro = (item)=> {
-        $scope.dataSearch.byProveedor = item.proveedor.idProveedor;            
+        $scope.dataSearch.byProveedor = item.idProveedor;            
     }
 
     $scope.onChangeFecha = ()=>{

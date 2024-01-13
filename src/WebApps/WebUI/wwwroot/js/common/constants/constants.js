@@ -43,7 +43,7 @@ app.constant('nombreModalInventario', {
             'M': '~/Pages/Articulo/_ModalAddUpdate.cshtml',
             'AFI': 'Articulo/_ArticuloFraccionadoInfo.cshtml',
             'MAI': '~/Pages/Articulo/Shared/_ModalProductPhoto.cshtml',
-            'HC': '~/Pages/DocumentoRecibido/Shared/_HistoryCompras.cshtml',
+            'HC': '~/Pages/Compras/DocumentoRecibido/Shared/_HistoryCompras.cshtml',
             'AF': '~/Pages/ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
         }
     },
@@ -262,7 +262,7 @@ app.constant('nombreModalCompra', {
         fileCtrl: '/js/compras/modals/docRecibidoPreviewCtrl.js' + CHANGE_VERSION(),
         controller: 'docRecibidoPreviewCtrl',
         F: {
-            template: '~/Pages/DocumentoRecibido/Shared/_InvoicePreview.cshtml'
+            template: '~/Pages/Compras/DocumentoRecibido/Shared/_InvoicePreview.cshtml'
         }
     },
 })
