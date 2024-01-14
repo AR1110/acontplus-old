@@ -387,6 +387,12 @@
                 console.log(error)
             }
         }
+
+
+        function docPreview(){
+            
+        }
+
         $scope.tempTaxes = []
         $scope.paymentsTemp = []
         $scope.totalSinImpuestos = 0.00

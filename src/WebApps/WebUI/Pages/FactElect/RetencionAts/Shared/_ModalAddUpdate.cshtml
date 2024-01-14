@@ -1,0 +1,418 @@
+<div class="modal-header">
+    <h5 class="modal-title">Retencion Ats</h5>
+    <button class="close" ng-click="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="card border border-info rounded">
+        <div class="card-body">
+            <h5 class="card-title">Info Comprobante Retención <i class="fas fa-eye fa-xs text-info" ng-click="onClickVisibleInfoComprobante()"></i></h5>
+            <div ng-if="isVisibleInfoComprobante">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
+                        <select name="establecimiento" id="establecimiento" class="form-control border-select"
+                                ng-model="infoCompRet.codEstab_Asig" ng-change="onChangeEstablecimiento()">
+                            <option ng-value="item.codEstab_Asig" ng-repeat="item in establecimientos">
+                                {{item.nombreComercial}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12" ng-if="infoCompRet.estab">
+                    <div class="form-group">
+                        <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
+                        <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
+                                ng-model="infoCompRet.ptoEmi">
+                            <option ng-value="item.ptoEmi" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="fechaEmision">Fecha Emision:</label>
+                        <input type="date" id="fechaEmision" class="form-control" ng-blur="getPeriod(this)"
+                               ng-model="infoCompRet.fechaEmision" required />
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="dirEstablecimiento">Dir. Estab:</label>
+                        <input type="text" id="dirEstablecimiento" class="form-control"
+                               ng-model="infoCompRet.dirEstablecimiento" maxlength="300" disabled />
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="contribuyenteEspecial">Contribuyente Especial:</label>
+                        <input type="text" id="contribuyenteEspecial" class="form-control"
+                               ng-model="infoCompRet.contribuyenteEspecial" min="3" maxlength="13" disabled />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                    <div class="form-group">
+                        <label for="obligadoContabilidad">Obligado Contabilidad:</label>
+                        <input type="text" id="obligadoContabilidad" class="form-control"
+                               ng-model="infoCompRet.obligadoContabilidad" disabled />
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                    <div class="form-group">
+                        <label for="tipoIdentificacionSujetoRetenido">Tipo Identificacion Sujeto Retenido:</label>
+                        <select id="tipoIdentificacionSujetoRetenido"
+                                class="form-control"
+                                ng-change="showTipoSujetoRetenido(infoCompRet.tipoIdentificacionSujetoRetenido)"
+                                ng-model="infoCompRet.tipoIdentificacionSujetoRetenido">
+                            <option ng-value="item.codigoSri" ng-repeat="item in tiposIdentificacion">
+                                {{item.codigoSri}} -
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                    <div class="form-group">
+                        <label for="tipoSujetoRetenido">Tipo Sujeto Retenido:</label>
+                        <select id="tipoSujetoRetenido" class="form-control"
+                                ng-model="infoCompRet.tipoSujetoRetenido" ng-disabled="isNotForeign">
+                            <option ng-value="item.codigo" ng-repeat="item in tiposSujRetenido">
+                                {{item.codigo}} -
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                    <div class="form-group">
+                        <label for="parteRel">Parte Relacionada:</label>
+                        <select id="parteRel" class="form-control" ng-model="infoCompRet.parteRel" required>
+                            <option ng-value="item.codigo" ng-repeat="item in genericAnswer">{{item.codigo}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="razonSocialSujetoRetenido">Razon Social Sujeto Retenido:</label>
+                        <div class="input-group mb-3">
+                            <input type="text" id="razonSocialSujetoRetenido" name="razonSocialSujetoRetenido"
+                                   class="form-control border-select" onclick="this.select()" ng-model="infoCompRet.razonSocialSujetoRetenido"
+                                   ng-enter="getProveedor()" maxlength="300">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-info" type="button" id="button-addon2"
+                                        ng-click="getProveedor(1)" title="Buscar Proveedor">
+                                    <i class="ti-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="identificacionSujetoRetenido">Identificación Sujeto Retenido:</label>
+                        <div class="input-group mb-3">
+                            <input type="text" id="identificacionSujetoRetenido" name="identificacionSujetoRetenido"
+                                   class="form-control border-select" onclick="this.select()" ng-model="infoCompRet.identificacionSujetoRetenido" required
+                                   maxlength="13">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-info" type="button" id="button-addon2"
+                                        ng-click="getProveedor(2)" title="Buscar Proveedor">
+                                    <i class="ti-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-12">
+                    <div class="form-group">
+                        <label for="periodoFiscal">Periodo Fiscal:</label>
+                        <input type="text" id="periodoFiscal" name="periodoFiscal" class="form-control"
+                               ng-model="infoCompRet.periodoFiscal" readonly disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="infoCompRet.identificacionSujetoRetenido.length > 0">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="">SubContribuyente:</label>
+                        <h5>{{subContribuyente}}</h5>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="card-footer" ng-if="infoCompRet.identificacionSujetoRetenido">
+            <button type="button" class="btn btn-info" ng-click="searchDocs()"
+                    title="Click para buscar los documentos a retener">
+                <i class="ti-search"></i> Buscar documentos
+            </button><br>
+            <i><small class="text-success">Disponibles en Acontplus: Facturas de Compra</small></i>
+        </div>
+    </div>
+
+    <div class="card border border-info rounded">
+        <div class="card-body ">
+            <h5 class="card-title">Documento Sustento</h5>
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="codDocSustento">Documento Sustento:</label>
+                        <select id="codDocSustento" class="form-control" ng-model="docSustento.codDocSustento"
+                                ng-change="selectSutento(docSustento.codDocSustento)">
+                            <option>::seleccione::</option>
+                            <option ng-value="item.codDocSustento" ng-repeat="item in documentos">
+                                {{item.codDocSustento}} -
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="codSustento">Sustento Tributario:</label>
+                        <select id="codSustento" class="form-control" ng-model="docSustento.codSustento"
+                                ng-disabled="sustentosFiltered.length==0">
+                            <option value="0">::seleccione::</option>
+                            <option ng-value="item.codSustento" ng-repeat="item in sustentosFiltered">
+                                {{item.codSustento}} - {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="numDocSustento">N° Doc. Sustento:</label>
+                        <input type="text" class="form-control" id="numDocSustento" onclick="this.select()"
+                               ng-model="docSustento.numDocSustento" maxlength="15">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="fechaEmisionDocSustento">Fecha Emisión Doc. Sustento:</label>
+                        <input type="date" id="fechaEmisionDocSustento" class="form-control"
+                               ng-model="docSustento.fechaEmisionDocSustento" />
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="fechaRegistroContable">Fecha Registro Contable:</label>
+                        <input type="date" id="fechaRegistroContable" class="form-control"
+                               ng-model="docSustento.fechaRegistroContable" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                    <div class="form-group">
+                        <label for="numAutDocSustento">N° Autorización:</label>
+                        <input type="text" name="numAutDocSustento" id="numAutDocSustento" class="form-control"
+                               onclick="this.select()" ng-model="docSustento.numAutDocSustento" maxlength="49" />
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
+                    <div class="form-group">
+                        <label for="pagoLocExt">Pago Local Exterior:</label>
+                        <select id="pagoLocExt" class="form-control" ng-model="docSustento.pagoLocExt"
+                                ng-change="enableControls(docSustento.pagoLocExt)" required>
+                            <option>::seleccione::</option>
+                            <option ng-value="item.pagoLocExt" ng-repeat="item in tiposPago">
+                                {{item.pagoLocExt}} -
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-6">
+                    <div class="form-group">
+                        <label for="tipoRegi">Regimen Fiscal:</label>
+                        <select id="tipoRegi" class="form-control" ng-model="docSustento.tipoRegi"
+                                ng-change="getCountries(docSustento.tipoRegi)" ng-disabled="isPagoResidente">
+                            <option>::seleccione::</option>
+                            <option ng-value="item.tipoRegi" ng-repeat="item in tiposRegimenFE">
+                                {{item.tipoRegi}} -
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                    <div class="form-group">
+                        <label for="paisEfecPago">Pais Efec. Pago:</label>
+                        <select id="paisEfecPago" class="form-control" ng-model="docSustento.paisEfecPago"
+                                ng-disabled="isPagoResidente">
+                            <option>::seleccione::</option>
+                            <option ng-value="item.codigo" ng-repeat="item in countries">
+                                {{item.codigo}} -
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                    <div class="form-group">
+                        <label for="aplicConvDobTrib">Convenio Doble Tributación:</label>
+                        <select id="aplicConvDobTrib" class="form-control" ng-model="docSustento.aplicConvDobTrib"
+                                ng-disabled="isPagoResidente">
+                            <option>::seleccione::</option>
+                            <option ng-value="item.codigo" ng-repeat="item in genericAnswer">{{item.codigo}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                    <div class="form-group">
+                        <label for="pagExtSujRetNorLeg">Pago al Exterior Sujeto a Retención:</label>
+                        <select id="pagExtSujRetNorLeg" class="form-control" ng-model="docSustento.pagExtSujRetNorLeg"
+                                ng-disabled="isPagoResidente || docSustento.aplicConvDobTrib=='SI'">
+                            <option>::seleccione::</option>
+                            <option ng-value="item.codigo" ng-repeat="item in genericAnswer">{{item.codigo}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                    <div class="form-group">
+                        <label for="pagoRegFis">Pago Regimen Fiscal:</label>
+                        <select id="pagoRegFis" class="form-control" ng-model="docSustento.pagoRegFis"
+                                ng-disabled="isPagoResidente">
+                            <option>::seleccione::</option>
+                            <option ng-value="item.codigo" ng-repeat="item in genericAnswer">{{item.codigo}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+                    <div class="table-responsive" ng-if="tempTaxes.length > 0">
+                        <table class="table">
+                            <caption>Impuestos del Documento</caption>
+                            <thead>
+                                <tr>
+                                    <th>Impuesto</th>
+                                    <th>Porcentaje</th>
+                                    <th>Base Imponible</th>
+                                    <th>Tarifa</th>
+                                    <th>Valor Impuesto</th>
+                                    <th>Opc.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="tax in tempTaxes">
+                                    <td>{{tax.impuesto}}</td>
+                                    <td>{{tax.porcentaje}}</td>
+                                    <td>{{tax.baseImponible | currency}}</td>
+                                    <td>{{tax.tarifa}}</td>
+                                    <td>{{tax.valorImpuesto | currency}}</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" ng-click="removeTaxTemp($index)">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table> 
+                    </div> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+                    <button type="button" id="btnAddDocSust" class="btn  btn-success btn-sm" ng-click="addDocSustento(true)"
+                            title="Click para agregar documento de sustento">
+                        <i class="ti-plus"></i> Agregar Doc. de
+                        Sustento
+                    </button>
+                    <button type="button" id="btnEditDocSust" class="btn  btn-success btn-sm" ng-click="updateDocSustento()"
+                            title="Click para guardar documento de sustento" style="display:none;">
+                        <i class="ti-save"></i>
+                        Guardar Doc. de
+                        Sustento
+                    </button>
+                </div>
+            </div>
+            <hr>
+
+            <div class="table-responsive" ng-if="docsAdded.length > 0">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>N° Doc.</th>
+                            <th>Documento</th>
+                            <th>Sustento</th>
+                            <th>Fecha Emisión</th>
+                            <th>Importe Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody dir-paginate="item in docsAdded|orderBy:sortKey:reverse|filter:''|itemsPerPage:10">
+                        <tr ng-class-even="'even'" ng-class-odd="'odd'">
+                            <td>
+                                <button type="button" ng-click="expanded = !expanded" class="btn btn-info btn-sm"
+                                        title="Mostrar detalles">
+                                    <span ng-bind="expanded ? '-' : '+'"></span>
+                                </button>
+                            </td>
+                            <td>{{item.numDocSustento}}</td>
+                            <td>{{item.docSustento}}</td>
+                            <td>{{item.sustento}}</td>
+                            <td>{{item.fechaEmisionDocSustento | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{item.importeTotal | currency}}</td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm"
+                                        ng-click="docPreview(item)" title="Ver Documento de Sustento">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)"
+                                        title="Editar datos">
+                                    <i class="ti-pencil"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" ng-click="deleteDocSust($index)"
+                                        ng-if="item.idRetAtsDocSustento == 0">
+                                    <i class="ti-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="sub" ng-show="expanded">
+                            <td>
+                            </td>
+                            <td colspan="5">
+                                @await Html.PartialAsync("~/Pages/FactElect/RetencionAts/Shared/_ImpuestosDocSustento.cshtml")
+
+                                @await Html.PartialAsync("~/Pages/FactElect/RetencionAts/Shared/_Retenciones.cshtml")
+
+                                @await Html.PartialAsync("~/Pages/FactElect/RetencionAts/Shared/_Pagos.cshtml") 
+
+                            </td> 
+                        </tr>
+                    </tbody>
+                </table>
+            </div>  
+        </div>
+    </div>
+
+    
+
+    <!--------------->
+    @await Html.PartialAsync("~/Pages/FactElect/RetencionAts/Shared/_InfoAdicional.cshtml") 
+
+    <!------> 
+    
+</div>
+<div class="modal-footer">
+    <button type="submit" class="btn btn-success" ng-click="save()">
+        <i class="ti-{{btnIcon}}"></i> 
+        {{btnText}}
+
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div>
