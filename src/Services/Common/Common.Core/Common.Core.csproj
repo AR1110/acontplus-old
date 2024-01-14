@@ -7,34 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Compras\**" />
-    <Compile Remove="Models\CuotaDocumento\**" />
-    <Compile Remove="ViewModels\Administracion\**" />
-    <Compile Remove="ViewModels\Compras\**" />
-    <Compile Remove="ViewModels\CuotaDocumento\**" />
-    <EmbeddedResource Remove="Models\Compras\**" />
-    <EmbeddedResource Remove="Models\CuotaDocumento\**" />
-    <EmbeddedResource Remove="ViewModels\Administracion\**" />
-    <EmbeddedResource Remove="ViewModels\Compras\**" />
-    <EmbeddedResource Remove="ViewModels\CuotaDocumento\**" />
-    <None Remove="Models\Compras\**" />
-    <None Remove="Models\CuotaDocumento\**" />
-    <None Remove="ViewModels\Administracion\**" />
-    <None Remove="ViewModels\Compras\**" />
-    <None Remove="ViewModels\CuotaDocumento\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Models\GenericResponse.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="BarcodeLib" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="System.Drawing.Common" />
-    <PackageReference Include="ZXing.Net" />
-    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" />
   </ItemGroup>
 </Project>
