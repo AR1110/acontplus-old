@@ -10,7 +10,7 @@ namespace Common.Core.Utils
             {
                 return null;
             }
-            var memoryStream = new MemoryStream();
+            using var memoryStream = new MemoryStream();
             var b = new Barcode();
             b.IncludeLabel = label;
             b.Encode(BarcodeStandard.Type.Code128, text, 1000, 100);
