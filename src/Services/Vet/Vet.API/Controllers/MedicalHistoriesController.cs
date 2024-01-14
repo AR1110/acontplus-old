@@ -20,7 +20,7 @@ namespace Vet.API.Controllers
 
         // GET: api/MedicalHistories
         [HttpGet]
-        public async Task<ActionResult<APIResponse>> GetMedicalHistories(string json)
+        public async Task<ActionResult<ApiResponse>> GetMedicalHistories(string json)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace Vet.API.Controllers
 
         // GET: api/MedicalHistories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<APIResponse>> GetMedicalHistory(int id)
+        public async Task<ActionResult<ApiResponse>> GetMedicalHistory(int id)
         {
             //var medicalHistory = await _context.MedicalHistories.FindAsync(id);
 

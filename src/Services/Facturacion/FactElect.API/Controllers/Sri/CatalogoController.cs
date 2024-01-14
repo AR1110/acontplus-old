@@ -13,7 +13,7 @@ namespace FactElect.API.Controllers.Sri
         [HttpGet("Get")]
         public async Task<IActionResult> Get()
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
 
             try
             {

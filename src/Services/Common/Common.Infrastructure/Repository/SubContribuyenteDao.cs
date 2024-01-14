@@ -8,17 +8,17 @@ namespace Common.Infrastructure.Repository
     public class SubContribuyenteDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public SubContribuyenteDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
-        public async Task<GenericResponse> CreateSubContribuyenteAsync(int idRol, SubContribuyenteOperaciones data)
+        public async Task<ApiResponse> CreateSubContribuyenteAsync(int idRol, SubContribuyenteOperaciones data)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public GenericResponse ReadSubContribuyente(int idRol, int idTipoContribuyente)
+        public ApiResponse ReadSubContribuyente(int idRol, int idTipoContribuyente)
         {
             var listar = new List<SubContribuyenteOperaciones>();
             try
@@ -109,7 +109,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateSubContribuyenteAsync(int idRol, SubContribuyenteOperaciones data)
+        public async Task<ApiResponse> UpdateSubContribuyenteAsync(int idRol, SubContribuyenteOperaciones data)
         {
             try
             {
@@ -147,7 +147,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteSubContribuyenteAsync(int idRol, int idSubContribuyente)
+        public async Task<ApiResponse> DeleteSubContribuyenteAsync(int idRol, int idSubContribuyente)
         {
             try
             {
@@ -182,7 +182,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
         //Operaciones Especiales
-        public async Task<GenericResponse> OptionSubContribuyenteAsync(int idRol)
+        public async Task<ApiResponse> OptionSubContribuyenteAsync(int idRol)
         {
             var listar = new List<SubContribuyenteOperaciones>();
             try

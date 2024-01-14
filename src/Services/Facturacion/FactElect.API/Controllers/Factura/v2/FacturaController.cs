@@ -26,7 +26,7 @@ namespace FactElect.API.Controllers.Factura.v2
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -50,7 +50,7 @@ namespace FactElect.API.Controllers.Factura.v2
         [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Ventas.Factura_Get_Id", true);
@@ -73,7 +73,7 @@ namespace FactElect.API.Controllers.Factura.v2
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] ApiRequest data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -97,7 +97,7 @@ namespace FactElect.API.Controllers.Factura.v2
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ApiRequest data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Ventas.Factura_Update", true);
@@ -122,7 +122,7 @@ namespace FactElect.API.Controllers.Factura.v2
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Ventas.Factura_Delete", true);

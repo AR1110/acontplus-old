@@ -8,7 +8,7 @@ namespace WebUI.Controllers.Admin
     {
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private HorarioDao _h;
 
         public HorarioController(IConfiguration config)

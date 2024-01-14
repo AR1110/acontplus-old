@@ -11,13 +11,13 @@ namespace Restaurant.Application.Services
     {
         private readonly IADORepository _repository;
         private readonly RestaurantContext _context;
-        private readonly APIResponse _response;
+        private readonly ApiResponse _response;
 
 
         public AppTableService(IADORepository repository)
         {
             _repository = repository;
-            _response = new APIResponse();
+            _response = new ApiResponse();
         }
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)

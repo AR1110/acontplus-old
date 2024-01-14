@@ -24,7 +24,7 @@ namespace Ventas.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -51,7 +51,7 @@ namespace Ventas.API.Controllers
         public async Task<IActionResult> Post(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -75,7 +75,7 @@ namespace Ventas.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Administrador.Empresa_Update", true);
@@ -100,7 +100,7 @@ namespace Ventas.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Administrador.Empresa_Delete", true);

@@ -9,7 +9,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
 {
     public class MovimientoCajaDao
     {
-        private GenericResponse _gr;
+        private ApiResponse _gr;
 
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
@@ -17,10 +17,10 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
 
-        public async Task<GenericResponse> GetAsync(int idRol, string json)
+        public async Task<ApiResponse> GetAsync(int idRol, string json)
         {
             var dt = new DataTable();
             try
@@ -53,7 +53,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
             }
             return _gr;
         }
-        public async Task<GenericResponse> InsertAsync(int idRol, MovimientoCaja data)
+        public async Task<ApiResponse> InsertAsync(int idRol, MovimientoCaja data)
         {
             try
             {

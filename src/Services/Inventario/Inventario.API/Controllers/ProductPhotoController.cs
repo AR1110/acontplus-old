@@ -116,7 +116,7 @@ namespace Inventario.API.Controllers
         {
             try
             {
-                APIResponse response = await _productPhoto.DeleteAsync(id, User.GetUserId());
+                ApiResponse response = await _productPhoto.DeleteAsync(id, User.GetUserId());
                 if (response.code == "1")
                 {
                     _s3ObjectCustom.Add(response.payload);

@@ -10,17 +10,17 @@ namespace Common.Infrastructure.Repository
     {
 
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public GenerarNroDoc(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
-        public async Task<GenericResponse> GenerarNroDcAsync(string puntoEmision, int idPuntoEmision, int nroDocumento, string codigoDocumento)
+        public async Task<ApiResponse> GenerarNroDcAsync(string puntoEmision, int idPuntoEmision, int nroDocumento, string codigoDocumento)
         {
 
             try
@@ -60,7 +60,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> GenerarNroDvAsync(string puntoEmision, int idPuntoEmision, int nroDocumento, string codigoDocumento)
+        public async Task<ApiResponse> GenerarNroDvAsync(string puntoEmision, int idPuntoEmision, int nroDocumento, string codigoDocumento)
         {
             try
             {

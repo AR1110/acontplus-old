@@ -20,7 +20,7 @@ namespace Configuracion.API.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -45,7 +45,7 @@ namespace Configuracion.API.Controllers
         [HttpPost("Post")]
         public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -70,7 +70,7 @@ namespace Configuracion.API.Controllers
         [HttpPut("Put")]
         public async Task<IActionResult> Put(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -95,7 +95,7 @@ namespace Configuracion.API.Controllers
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {

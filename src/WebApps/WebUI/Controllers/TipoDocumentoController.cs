@@ -8,7 +8,7 @@ namespace WebUI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private TipoDocumentoDao _td;
 
         public TipoDocumentoController(IConfiguration config)

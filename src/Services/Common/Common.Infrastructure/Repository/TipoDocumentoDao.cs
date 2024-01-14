@@ -10,17 +10,17 @@ namespace Common.Infrastructure.Repository
     public class TipoDocumentoDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _response;
+        protected ApiResponse _response;
         private readonly string _connectionStrings = string.Empty;
 
         public TipoDocumentoDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _response = new GenericResponse();
+            _response = new ApiResponse();
 
         }
-        public async Task<GenericResponse> GetAsync()
+        public async Task<ApiResponse> GetAsync()
         {
             var dt = new DataTable();
             try
@@ -45,7 +45,7 @@ namespace Common.Infrastructure.Repository
             }
             return _response;
         }
-        public async Task<GenericResponse> ReadTipoDocumentoAsync(HelpersResponse data)
+        public async Task<ApiResponse> ReadTipoDocumentoAsync(HelpersResponse data)
         {
             var listar = new List<TipoDocumento>();
             try
@@ -90,7 +90,7 @@ namespace Common.Infrastructure.Repository
             return _response;
         }
         //
-        public async Task<GenericResponse> GetConfigurationAsync(int idRol, int idPuntoEmision)
+        public async Task<ApiResponse> GetConfigurationAsync(int idRol, int idPuntoEmision)
         {
             var docs = new List<CDViewModel>();
             try
@@ -130,7 +130,7 @@ namespace Common.Infrastructure.Repository
             }
             return _response;
         }
-        public async Task<GenericResponse> SaveConfigAsync(int idRol, ConfiguracionDocumento data)
+        public async Task<ApiResponse> SaveConfigAsync(int idRol, ConfiguracionDocumento data)
         {
             var docs = new List<CDViewModel>();
             try
@@ -168,7 +168,7 @@ namespace Common.Infrastructure.Repository
             return _response;
         }
 
-        public async Task<GenericResponse> GetByTTAsync(string codTransaccion)
+        public async Task<ApiResponse> GetByTTAsync(string codTransaccion)
         {
             var documents = new List<TipoDocumento>();
             try
@@ -208,7 +208,7 @@ namespace Common.Infrastructure.Repository
             return _response;
         }
 
-        public async Task<GenericResponse> GetAllAsync()
+        public async Task<ApiResponse> GetAllAsync()
         {
             var list = new List<TipoDocumento>();
             try

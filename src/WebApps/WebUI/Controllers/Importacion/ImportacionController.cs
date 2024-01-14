@@ -13,7 +13,7 @@ namespace WebUI.Controllers.Importacion
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
 
 
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
 
         public ImportacionController(IConfiguration configuration)
         {
@@ -33,7 +33,7 @@ namespace WebUI.Controllers.Importacion
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -53,7 +53,7 @@ namespace WebUI.Controllers.Importacion
         [HttpPost]
         public async Task<IActionResult> GetValidation(string codImportacion, [FromBody] ImportacionParams data)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -75,7 +75,7 @@ namespace WebUI.Controllers.Importacion
         [HttpPost]
         public async Task<IActionResult> Post(string codImportacion, [FromBody] ImportacionParams data)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

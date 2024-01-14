@@ -8,19 +8,19 @@ namespace Common.Infrastructure.Repository
     public class TipoIceDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public TipoIceDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
 
         //Gestios de informacion 
-        public async Task<GenericResponse> CreateTipoIceAsync(int idRol, TipoIce data)
+        public async Task<ApiResponse> CreateTipoIceAsync(int idRol, TipoIce data)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> ReadTipoIceAsync(int idRol, int pageIndex, int pageSize)
+        public async Task<ApiResponse> ReadTipoIceAsync(int idRol, int pageIndex, int pageSize)
         {
             var listar = new List<TipoIce>();
             try
@@ -114,7 +114,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateTipoIceAsync(int idRol, TipoIce data)
+        public async Task<ApiResponse> UpdateTipoIceAsync(int idRol, TipoIce data)
         {
             try
             {
@@ -154,7 +154,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteTipoIceAsync(int idRol, int idTipoIce)
+        public async Task<ApiResponse> DeleteTipoIceAsync(int idRol, int idTipoIce)
         {
             try
             {
@@ -188,7 +188,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> OptionTipoIceAsync(int idRol)
+        public async Task<ApiResponse> OptionTipoIceAsync(int idRol)
         {
             var listar = new List<TipoIce>();
             try

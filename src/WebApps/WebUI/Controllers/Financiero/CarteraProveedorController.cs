@@ -6,7 +6,7 @@ namespace WebUI.Controllers.Financiero
 {
     public class CarteraProveedorController : Controller
     {
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private CarteraDao _c;
         private readonly IConfiguration _configuration;
         public CarteraProveedorController(IConfiguration configuration)

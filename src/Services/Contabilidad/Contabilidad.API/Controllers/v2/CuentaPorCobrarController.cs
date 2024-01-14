@@ -26,7 +26,7 @@ namespace Contabilidad.API.Controllers.v2
         {
             var _dbAccess = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -52,7 +52,7 @@ namespace Contabilidad.API.Controllers.v2
         {
             var _dbAccess = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -78,7 +78,7 @@ namespace Contabilidad.API.Controllers.v2
         {
             var _dbAccess = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

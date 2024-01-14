@@ -21,7 +21,7 @@ namespace Compras.API.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -46,7 +46,7 @@ namespace Compras.API.Controllers
         [HttpPost("Insert/{id}")]
         public async Task<IActionResult> Insert(int id, ApiRequest request)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -72,7 +72,7 @@ namespace Compras.API.Controllers
         [HttpDelete("Delete/{idInfoAdicional}")]
         public async Task<IActionResult> Delete(int idInfoAdicional)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

@@ -52,7 +52,7 @@ namespace Identity.API.Controllers.v1
                     return BadRequest("Contraseña no puede estar vacia");
                 }
                 var mainResponse = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
-                var _response = JsonConvert.DeserializeObject<APIResponse>(mainResponse);
+                var _response = JsonConvert.DeserializeObject<ApiResponse>(mainResponse);
                 //User founded
                 if (_response.code == "1")
                 {

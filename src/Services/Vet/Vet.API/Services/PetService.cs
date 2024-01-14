@@ -11,14 +11,14 @@ namespace Vet.API.Services
     {
         private readonly VetContext _context;
         private readonly IADORepository _repository;
-        private readonly APIResponse _response;
+        private readonly ApiResponse _response;
         public PetService(VetContext context, IADORepository repository)
         {
             _context = context;
             _repository = repository;
-            _response = new APIResponse();
+            _response = new ApiResponse();
         }
-        public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             var ds = await _repository.GetDataSetAsync("Pet.Pet_Get", parameters);
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
@@ -54,7 +54,7 @@ namespace Vet.API.Services
             _context.SaveChanges();
         }
 
-        public async Task<APIResponse> SearchAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
         {
             var ds = await _repository.GetDataSetAsync("Pet.Pet_Get", parameters);
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)

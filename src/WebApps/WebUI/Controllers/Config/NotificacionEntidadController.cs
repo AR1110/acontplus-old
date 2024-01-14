@@ -26,7 +26,7 @@ namespace WebUI.Controllers.Config
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("json", SqlStringParam.Sanitize(json));
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -47,7 +47,7 @@ namespace WebUI.Controllers.Config
         [HttpPut]
         public async Task<IActionResult> Update(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

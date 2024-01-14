@@ -26,7 +26,7 @@ namespace WebUI.Controllers.Config
         {
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.CantidadDecimal_Get");
@@ -49,7 +49,7 @@ namespace WebUI.Controllers.Config
         [HttpPut]
         public async Task<IActionResult> Update(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

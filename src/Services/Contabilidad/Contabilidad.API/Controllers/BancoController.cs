@@ -24,7 +24,7 @@ namespace Contabilidad.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -49,7 +49,7 @@ namespace Contabilidad.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Contabilidad.Banco_Insert");
@@ -72,7 +72,7 @@ namespace Contabilidad.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Contabilidad.Banco_Update");
@@ -96,7 +96,7 @@ namespace Contabilidad.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Contabilidad.Banco_Delete");

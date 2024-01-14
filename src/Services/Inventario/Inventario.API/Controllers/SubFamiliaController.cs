@@ -29,7 +29,7 @@ namespace Inventario.API.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -54,7 +54,7 @@ namespace Inventario.API.Controllers
         [HttpPost("Post")]
         public async Task<IActionResult> Post(string json, IFormFile file)
         { 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             
             try
@@ -95,9 +95,8 @@ namespace Inventario.API.Controllers
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            GenericResponse _response = new GenericResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            var data = JsonConvert.DeserializeObject<SubFamilia>(json); 
+            ApiResponse _response = new ApiResponse();
+            DbAccess _db = new DbAccess(_configuration); 
             try
             {
                 int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -122,7 +121,7 @@ namespace Inventario.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -147,7 +146,7 @@ namespace Inventario.API.Controllers
         [HttpGet("ListForSelect")]
         public async Task<IActionResult> ListForSelect(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

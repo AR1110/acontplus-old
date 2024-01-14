@@ -4,6 +4,6 @@ namespace Configuracion.API.Interfaces
 {
     public interface IEstadoDocumentoService
     {
-        Task<GenericResponse> GetAsync(string json);
+        Task<ApiResponse> GetAsync(string json);
     }
 }

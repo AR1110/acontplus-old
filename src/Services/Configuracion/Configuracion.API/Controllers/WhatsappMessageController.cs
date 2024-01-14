@@ -20,7 +20,7 @@ namespace Configuracion.API.Controllers
         [HttpPost("Post")]
         public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -48,7 +48,7 @@ namespace Configuracion.API.Controllers
         [HttpPost("PostApp")]
         public async Task<IActionResult> PostApp([FromBody] ApiRequest parameters)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {

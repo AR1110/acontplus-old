@@ -8,7 +8,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
 {
     public class PagoDao
     {
-        private GenericResponse _gr;
+        private ApiResponse _gr;
 
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
@@ -16,10 +16,10 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
 
-        public async Task<GenericResponse> GetByDocumentAsync(int idRol, int idComprobanteEgreso, int idTipoDocumento, int idComprobante)
+        public async Task<ApiResponse> GetByDocumentAsync(int idRol, int idComprobanteEgreso, int idTipoDocumento, int idComprobante)
         {
             var dt = new DataTable();
             try
@@ -55,7 +55,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
             return _gr;
         }
 
-        public async Task<GenericResponse> UpdateAsync(int idRol, int idPago, string observacion, bool pago, bool anular)
+        public async Task<ApiResponse> UpdateAsync(int idRol, int idPago, string observacion, bool pago, bool anular)
         {
             try
             {

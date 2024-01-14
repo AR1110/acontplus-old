@@ -25,7 +25,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -49,7 +49,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Put([FromBody] UsuarioPemisoDto data)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -75,7 +75,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> CheckHasPermission(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -102,7 +102,7 @@ namespace Configuracion.API.Controllers
         //public async Task<IActionResult> Post(UsuarioPemisoDto data)
         //{
         //    
-        //    var _response = new GenericResponse();
+        //    var _response = new ApiResponse();
         //    try
         //    {
         //        int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

@@ -178,10 +178,10 @@ namespace Common.Infrastructure.Repository
             }
             return dt;
         }
-        public GenericResponse GetDefault()
+        public ApiResponse GetDefault()
         {
             var dt = new DataTable();
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             if (_command != null)
             {
                 using (var dataAdapter = new SqlDataAdapter(_command))
@@ -193,16 +193,16 @@ namespace Common.Infrastructure.Repository
                     }
                     else
                     {
-                        _response = DataTableMapper.BindData<GenericResponse>(dt);
+                        _response = DataTableMapper.BindData<ApiResponse>(dt);
                     }
                 }
             }
             return _response;
         }
-        public GenericResponse GetDataTableAsync()
+        public ApiResponse GetDataTableAsync()
         {
             var dt = new DataTable();
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             if (_command != null)
             {
                 using (var dataAdapter = new SqlDataAdapter(_command))
@@ -220,10 +220,10 @@ namespace Common.Infrastructure.Repository
             }
             return _response;
         }
-        public GenericResponse GetDataSetAsync()
+        public ApiResponse GetDataSetAsync()
         {
             var ds = new DataSet();
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             if (_command != null)
             {
                 using (var dataAdapter = new SqlDataAdapter(_command))

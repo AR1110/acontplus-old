@@ -10,17 +10,17 @@ namespace Common.Infrastructure.Repository
     public class TurnoDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public TurnoDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
-        public async Task<GenericResponse> CreateTurnoAsync(int idRol, Turno data)
+        public async Task<ApiResponse> CreateTurnoAsync(int idRol, Turno data)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateTurnoAsync(int idRol, Turno data)
+        public async Task<ApiResponse> UpdateTurnoAsync(int idRol, Turno data)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
 
         }
-        public async Task<GenericResponse> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
+        public async Task<ApiResponse> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
         {
             var listar = new List<TurnoViewModel>();
             try
@@ -148,7 +148,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteTurnoAsync(int idRol, int idTurno)
+        public async Task<ApiResponse> DeleteTurnoAsync(int idRol, int idTurno)
         {
             try
             {
@@ -185,7 +185,7 @@ namespace Common.Infrastructure.Repository
 
         }
         //Operaciones Especiales 
-        public async Task<GenericResponse> ListTurnoAsync(int idRol)
+        public async Task<ApiResponse> ListTurnoAsync(int idRol)
         {
             var listar = new List<Turno>();
             try

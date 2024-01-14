@@ -8,18 +8,18 @@ namespace Common.Infrastructure.Repository
     public class TipoIvaDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public TipoIvaDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
         //Getios de informacion 
-        public async Task<GenericResponse> CreateTipoIvaAsync(TipoIva data)
+        public async Task<ApiResponse> CreateTipoIvaAsync(TipoIva data)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
 
-        public async Task<GenericResponse> ReadTipoIvaAsync(int pageIndex, int pageSize)
+        public async Task<ApiResponse> ReadTipoIvaAsync(int pageIndex, int pageSize)
         {
             var listar = new List<TipoIva>();
             try
@@ -99,7 +99,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
 
-        public async Task<GenericResponse> UpdateTipoIvaAsync(TipoIva data)
+        public async Task<ApiResponse> UpdateTipoIvaAsync(TipoIva data)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
 
-        public async Task<GenericResponse> DeleteTipoIvaAsync(int idTipoIva)
+        public async Task<ApiResponse> DeleteTipoIvaAsync(int idTipoIva)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
         //Operaciones Espaciales 
-        public async Task<GenericResponse> OptionTipoIvaAsync()
+        public async Task<ApiResponse> OptionTipoIvaAsync()
         {
             var listar = new List<TipoIva>();
             try

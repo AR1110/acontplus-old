@@ -4,7 +4,7 @@ namespace Vet.API.Interfaces
 {
     public interface IMedicalHistory
     {
-        public Task<APIResponse> GetAsync(Dictionary<string, object> parameters);
-        public Task<APIResponse> GetByIdAsync(int id);
+        public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+        public Task<ApiResponse> GetByIdAsync(int id);
     }
 }

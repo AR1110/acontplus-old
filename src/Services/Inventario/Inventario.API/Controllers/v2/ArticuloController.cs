@@ -25,7 +25,7 @@ namespace Inventario.API.Controllers.v2
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -54,7 +54,7 @@ namespace Inventario.API.Controllers.v2
         [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
 
             try
@@ -78,7 +78,7 @@ namespace Inventario.API.Controllers.v2
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
 
             try
@@ -105,7 +105,7 @@ namespace Inventario.API.Controllers.v2
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ApiRequest parameters)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -130,7 +130,7 @@ namespace Inventario.API.Controllers.v2
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

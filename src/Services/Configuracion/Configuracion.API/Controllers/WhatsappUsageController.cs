@@ -19,9 +19,9 @@ namespace Configuracion.API.Controllers
             _log = log;
         }
         [HttpGet]
-        public async Task<ActionResult<GenericResponse>> Get(string json)
+        public async Task<ActionResult<ApiResponse>> Get(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -43,9 +43,9 @@ namespace Configuracion.API.Controllers
             return _response;
         }
         [HttpPost]
-        public async Task<ActionResult<GenericResponse>> Post([FromBody] ApiRequest parameters)
+        public async Task<ActionResult<ApiResponse>> Post([FromBody] ApiRequest parameters)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -67,9 +67,9 @@ namespace Configuracion.API.Controllers
             return _response;
         }
         [HttpPut]
-        public async Task<ActionResult<GenericResponse>> Put(int id, [FromBody] ApiRequest parameters)
+        public async Task<ActionResult<ApiResponse>> Put(int id, [FromBody] ApiRequest parameters)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -92,9 +92,9 @@ namespace Configuracion.API.Controllers
             return _response;
         }
         [HttpDelete]
-        public async Task<ActionResult<GenericResponse>> Delete(int id)
+        public async Task<ActionResult<ApiResponse>> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {

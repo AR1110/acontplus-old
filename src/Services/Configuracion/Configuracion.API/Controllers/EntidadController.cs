@@ -25,7 +25,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -49,7 +49,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Create([FromBody] Entidad data)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -78,7 +78,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] Entidad data)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -109,7 +109,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

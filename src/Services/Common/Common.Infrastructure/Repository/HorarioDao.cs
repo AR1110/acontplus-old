@@ -9,17 +9,17 @@ namespace Common.Infrastructure.Repository
     public class HorarioDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public HorarioDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
-        public async Task<GenericResponse> ReadHorarioAsync(int idRol, int idTurno)
+        public async Task<ApiResponse> ReadHorarioAsync(int idRol, int idTurno)
         {
             var listar = new List<HorarioViewModel>();
             try
@@ -73,7 +73,7 @@ namespace Common.Infrastructure.Repository
 
             return _gr;
         }
-        public async Task<GenericResponse> ListDiaAsycn()
+        public async Task<ApiResponse> ListDiaAsycn()
         {
             var listar = new List<HorarioViewModel>();
             try

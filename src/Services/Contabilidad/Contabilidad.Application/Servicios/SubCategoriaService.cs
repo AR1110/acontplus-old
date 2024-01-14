@@ -12,12 +12,12 @@ namespace Contabilidad.Application.Servicios
     {
         private readonly IADORepository _repository;
         private readonly ContabilidadContext _context;
-        private readonly APIResponse _response;
+        private readonly ApiResponse _response;
         public SubCategoriaService(IADORepository repository, ContabilidadContext context)
         {
             _repository = repository;
             _context = context;
-            _response = new APIResponse();
+            _response = new ApiResponse();
         }
         public async Task<object?> GetAsync(Dictionary<string, object> parameters)
         {
@@ -37,7 +37,7 @@ namespace Contabilidad.Application.Servicios
             }
         }
 
-        public async Task<APIResponse> InsertAsync(SubCategoria data)
+        public async Task<ApiResponse> InsertAsync(SubCategoria data)
         {
             if (_context.Subcategorias.Any(x => x.Codigo == data.Codigo))
             {
