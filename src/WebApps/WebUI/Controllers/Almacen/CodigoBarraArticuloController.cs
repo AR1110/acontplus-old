@@ -13,7 +13,7 @@ namespace WebUI.Controllers.Almacen
         // GET: CodigoBarraArticulo 
 
         private ArticuloCodigoBarraDao _cba;
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         public CodigoBarraArticuloController(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -38,7 +38,7 @@ namespace WebUI.Controllers.Almacen
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ArticuloCodigoBarra data)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -63,7 +63,7 @@ namespace WebUI.Controllers.Almacen
         [HttpPost]
         public async Task<IActionResult> Put(int idArticuloCodigoBarra, [FromBody] ArticuloCodigoBarra data)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -88,7 +88,7 @@ namespace WebUI.Controllers.Almacen
 
         public async Task<IActionResult> Delete(int idArticuloCodigoBarra)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

@@ -51,7 +51,7 @@ namespace Identity.API.Controllers.v3
                 {
                     return BadRequest("Contraseña no puede estar vacia");
                 }
-                var _response = JsonConvert.DeserializeObject<APIResponse>(await _accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
+                var _response = JsonConvert.DeserializeObject<ApiResponse>(await _accountService.LoginRestaurantAsync(authRequest.Username, authRequest.Password));
 
                 if (_response.code == "1")
                 {

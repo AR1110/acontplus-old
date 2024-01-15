@@ -25,7 +25,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> GetId(int idDocumento)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -51,7 +51,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -76,7 +76,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Put([FromBody] ApiRequest parameters)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

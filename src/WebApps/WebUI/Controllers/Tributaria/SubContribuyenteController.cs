@@ -9,7 +9,7 @@ namespace WebUI.Controllers.Tributaria
         // GET: SubContribuyente
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private SubContribuyenteDao _sc;
 
         public SubContribuyenteController(IConfiguration config)

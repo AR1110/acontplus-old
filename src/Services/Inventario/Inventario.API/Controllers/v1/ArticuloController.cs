@@ -32,7 +32,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -61,7 +61,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -87,7 +87,7 @@ namespace Inventario.API.Controllers.v1
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<ApiRequest>(json); 
 
@@ -129,7 +129,7 @@ namespace Inventario.API.Controllers.v1
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<ApiRequest>(json);
             
@@ -157,7 +157,7 @@ namespace Inventario.API.Controllers.v1
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -182,7 +182,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> Search(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -211,7 +211,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> FindForPurchase(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -236,7 +236,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> FindForSale(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -261,7 +261,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetDataForm(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

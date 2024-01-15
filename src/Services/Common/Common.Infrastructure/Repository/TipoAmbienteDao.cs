@@ -8,17 +8,17 @@ namespace Common.Infrastructure.Repository
     public class TipoAmbienteDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public TipoAmbienteDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
-        public GenericResponse listTipoAmbiente()
+        public ApiResponse listTipoAmbiente()
         {
             var listar = new List<TipoAmbiente>();
             try

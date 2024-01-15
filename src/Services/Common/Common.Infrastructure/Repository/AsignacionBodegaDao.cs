@@ -9,7 +9,7 @@ namespace Common.Infrastructure.Repository
 {
     public class AsignacionBodegaDao
     {
-        public GenericResponse _response = new GenericResponse();
+        public ApiResponse _response = new ApiResponse();
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         public AsignacionBodegaDao(IConfiguration config)
@@ -17,7 +17,7 @@ namespace Common.Infrastructure.Repository
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
         }
-        public async Task<GenericResponse> GetAsync(string json)
+        public async Task<ApiResponse> GetAsync(string json)
         {
             var dt = new DataTable();
             try
@@ -51,7 +51,7 @@ namespace Common.Infrastructure.Repository
             }
             return _response;
         }
-        public async Task<GenericResponse> InsertAsync(int idRol, AsignacionBodega data)
+        public async Task<ApiResponse> InsertAsync(int idRol, AsignacionBodega data)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace Common.Infrastructure.Repository
             }
             return _response;
         }
-        public async Task<GenericResponse> UpdateAsync(int idRol, int id)
+        public async Task<ApiResponse> UpdateAsync(int idRol, int id)
         {
             try
             {

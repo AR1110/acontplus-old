@@ -1,0 +1,62 @@
+<hr>
+<h4>Pagos</h4>
+<div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-9 col-10">
+        <div class="form-group">
+            <select name="formaPago" id="formaPago" class="form-control" ng-model="payment.formaPago">
+                <option>-- Seleccione una forma de pago --</option>
+                <option ng-value="item.formaPago" ng-repeat="item in formasPago">{{item.formaPago}} -
+                    {{item.descripcion}}
+                </option>
+            </select>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
+        <div class="input-group">
+            <input type="text" decimal name="total" id="{{item.uniqueIdDoc}}-totalPago" class="form-control" onclick="this.select()" placeholder="0.00" ng-model="payment.total" step="any"
+                min="0" />
+            <div class="input-group-append">
+                <button class="btn btn-info  btn-sm" id="{{item.uniqueIdDoc}}-btnAddPaymentAdd" ng-click="addPayment(item.uniqueIdDoc, true)"><i
+                        class="ti-plus"></i> Añadir
+                    Forma de Pago</button>
+                <button class="btn btn-info  btn-sm" id="{{item.uniqueIdDoc}}-btnEditPaymentSave" ng-click="updatePayment(item.uniqueIdDoc)"
+                    style="display:none"><i class="ti-save"></i> Guardar
+                    Forma de Pago</button>
+            </div>
+        </div>
+    </div>
+    @* <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+    <button class="btn btn-info" id="btnAddPaymentAdd" ng-click="addPayment(item.uniqueIdDoc, true)"><i
+    class="ti-plus"></i> Añadir
+    Forma de Pago</button>
+    <button class="btn btn-info" id="btnEditPaymentSave" ng-click="updatePayment(item.uniqueIdDoc)"
+    style="display:none"><i class="ti-plus"></i> Guardar
+    Forma de Pago</button>
+    </div> *@
+</div>
+
+
+<div class="table-responsive" ng-if="paymentsAdded.length > 0">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Forma de Pago</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr dir-paginate="p in paymentsAdded|orderBy:sortKey:reverse|filter:item.uniqueIdDoc|itemsPerPage:10"
+                ng-class-even="'even'" ng-class-odd="'odd'">
+                <td>{{p.formaPago}} - {{p.descripcion}}</td>
+                <td>{{p.total | currency}}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" ng-click="editPayment($index, p, item)"><i
+                            class="ti-pencil"></i></button>
+                    <button class="btn btn-danger btn-sm" ng-click="askToRemovePayment($index, p, item)"><i
+                            class="ti-trash"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

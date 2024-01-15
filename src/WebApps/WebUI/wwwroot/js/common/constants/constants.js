@@ -133,7 +133,7 @@ app.constant('nombreModalFactElect', {
     RETENCION_ATS: {
         fileCtrl: '/js/factElect/modals/modalRetencionAtsCtrl.min.js' + CHANGE_VERSION(),
         controller: 'modalRetencionAtsCtrl',
-        template: '~/Pages/FactElect/_ModalAddUpdate.cshtml'
+        template: '~/Pages/FactElect/RetencionAts/Shared/_ModalAddUpdate.cshtml'
     }
 })
 

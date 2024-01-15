@@ -20,7 +20,7 @@ namespace FactElect.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -43,7 +43,7 @@ namespace FactElect.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {

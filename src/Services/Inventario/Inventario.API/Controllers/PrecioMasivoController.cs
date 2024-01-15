@@ -18,10 +18,10 @@ namespace Inventario.API.Controllers
             _log = log;
         }
         [HttpGet]
-        public async Task<ActionResult<GenericResponse>> Get(string json)
+        public async Task<ActionResult<ApiResponse>> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.PrecioMasivo_Get", true);
@@ -43,10 +43,10 @@ namespace Inventario.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GenericResponse>> Post(ApiRequest parameters)
+        public async Task<ActionResult<ApiResponse>> Post(ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.PrecioMasivo_Insert");
@@ -67,10 +67,10 @@ namespace Inventario.API.Controllers
             return _response;
         }
         [HttpPut]
-        public async Task<ActionResult<GenericResponse>> Put(ApiRequest parameters)
+        public async Task<ActionResult<ApiResponse>> Put(ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.PrecioMasivo_Update", true);

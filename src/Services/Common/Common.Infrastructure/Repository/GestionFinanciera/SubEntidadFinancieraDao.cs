@@ -9,16 +9,16 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
 {
     public class SubEntidadFinancieraDao
     {
-        private GenericResponse _gr;
+        private ApiResponse _gr;
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         public SubEntidadFinancieraDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
-        public async Task<GenericResponse> InsertAsync(int idRol, SubEntidadFinanciera data)
+        public async Task<ApiResponse> InsertAsync(int idRol, SubEntidadFinanciera data)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetAsync(int idRol, int pageIndex, int pageSize)
+        public async Task<ApiResponse> GetAsync(int idRol, int pageIndex, int pageSize)
         {
             var listar = new List<SubEntidadFinancieraViewModel>();
             try
@@ -110,7 +110,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateAsync(int idRol, int idSubEntidadFinanciera, SubEntidadFinanciera data)
+        public async Task<ApiResponse> UpdateAsync(int idRol, int idSubEntidadFinanciera, SubEntidadFinanciera data)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteAsync(int idRol, int idSubEntidadFinanciera)
+        public async Task<ApiResponse> DeleteAsync(int idRol, int idSubEntidadFinanciera)
         {
             try
             {
@@ -182,7 +182,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
             return _gr;
         }
 
-        public async Task<GenericResponse> GetByEnFinacieraAsync(int idRol, int idEntidadFinanciera)
+        public async Task<ApiResponse> GetByEnFinacieraAsync(int idRol, int idEntidadFinanciera)
         {
             var list = new List<SubEntidadFinanciera>();
             try

@@ -14,7 +14,7 @@ namespace WebUI.Controllers.Financiero
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
 
 
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
 
         public GestionFinancieraController(IConfiguration configuration)
         {
@@ -35,7 +35,7 @@ namespace WebUI.Controllers.Financiero
         [HttpGet]
         public async Task<IActionResult> GetDocumentsCharge(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

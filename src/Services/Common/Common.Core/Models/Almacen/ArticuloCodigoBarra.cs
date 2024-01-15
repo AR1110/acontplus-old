@@ -17,6 +17,5 @@
     {
         public ArticuloCodigoBarra articuloCodigoBarra { get; set; }
         public Medida medida { get; set; }
-        public Articulo articulo { get; set; }
     }
 }

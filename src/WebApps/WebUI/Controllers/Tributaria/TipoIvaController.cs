@@ -9,7 +9,7 @@ namespace WebUI.Controllers.Tributaria
         // GET: Iva
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private TipoIvaDao _ti;
 
         public TipoIvaController(IConfiguration config)

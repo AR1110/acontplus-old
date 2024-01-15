@@ -22,7 +22,7 @@ namespace Configuracion.API.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -45,10 +45,10 @@ namespace Configuracion.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<GenericResponse>> Put(int id, [FromBody] ApiRequest parameters)
+        public async Task<ActionResult<ApiResponse>> Put(int id, [FromBody] ApiRequest parameters)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.EmailConfig_Update");

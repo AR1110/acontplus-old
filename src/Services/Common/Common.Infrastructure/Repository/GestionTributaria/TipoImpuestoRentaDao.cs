@@ -9,18 +9,18 @@ namespace Common.Infrastructure.Repository.GestionTributaria
 {
     public class TipoImpuestoRentaDao
     {
-        private GenericResponse _gr;
+        private ApiResponse _gr;
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         public TipoImpuestoRentaDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
 
 
-        public async Task<GenericResponse> InsertAsync(TipoImpuestoRenta data)
+        public async Task<ApiResponse> InsertAsync(TipoImpuestoRenta data)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetAsync(int idRol, int pageIndex, int pageSize)
+        public async Task<ApiResponse> GetAsync(int idRol, int pageIndex, int pageSize)
         {
             var listar = new List<TipoImpuestoRentaViewModel>();
             try
@@ -104,7 +104,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateAsync(int idTipoImpuestoRenta, TipoImpuestoRenta data)
+        public async Task<ApiResponse> UpdateAsync(int idTipoImpuestoRenta, TipoImpuestoRenta data)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteAsync(int idTipoImpuestoRenta)
+        public async Task<ApiResponse> DeleteAsync(int idTipoImpuestoRenta)
         {
             try
             {
@@ -172,7 +172,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> OptionAsync(int idRol, int idConfiguracionContribuyente)
+        public async Task<ApiResponse> OptionAsync(int idRol, int idConfiguracionContribuyente)
         {
             var listar = new List<TipoImpuestoRenta>();
             try

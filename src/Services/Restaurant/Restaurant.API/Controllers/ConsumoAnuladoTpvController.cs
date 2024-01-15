@@ -35,7 +35,7 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var response = await _cancelledService.AddAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
@@ -51,7 +51,7 @@ namespace Restaurant.API.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var response = await _cancelledService.UpdateAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
@@ -67,7 +67,7 @@ namespace Restaurant.API.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var response = await _cancelledService.DeleteAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });

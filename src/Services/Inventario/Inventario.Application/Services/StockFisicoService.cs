@@ -9,11 +9,11 @@ namespace Inventario.Application.Services
     public class StockFisicoService : IStockFisicoService
     {
         private readonly IADORepository _repository;
-        private readonly APIResponse _response;
+        private readonly ApiResponse _response;
         public StockFisicoService(IADORepository repository)
         {
             _repository = repository;
-            _response = new APIResponse();
+            _response = new ApiResponse();
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
@@ -52,14 +52,14 @@ namespace Inventario.Application.Services
             };
             return await _repository.SPExecuteAsync("Inventario.StockFisico_Update", request.Data);
         }
-        public async Task<APIResponse> DeleteAsync(int id)
+        public async Task<ApiResponse> DeleteAsync(int id)
         {
             // _context.StockFisicos.Add(stockFisico);
             // await _context.SaveChangesAsync(); 
             var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
             if (!DataValidation.DataTableIsNull(dt))
             {
-                _response.Create(code: "1", payload: DataTableMapper.BindData<APIResponse>(dt));
+                _response.Create(code: "1", payload: DataTableMapper.BindData<ApiResponse>(dt));
             }
             else
             {

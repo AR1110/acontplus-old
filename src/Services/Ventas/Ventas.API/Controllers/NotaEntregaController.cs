@@ -56,7 +56,7 @@ namespace Ventas.API.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(ApiRequest data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -84,7 +84,7 @@ namespace Ventas.API.Controllers
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Ventas.NotaEntrega_Update", true);
@@ -110,7 +110,7 @@ namespace Ventas.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Ventas.NotaEntrega_Delete");

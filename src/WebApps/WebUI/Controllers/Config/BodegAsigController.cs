@@ -27,7 +27,7 @@ namespace WebUI.Controllers.Config
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -48,7 +48,7 @@ namespace WebUI.Controllers.Config
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] BodegAsig data)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -71,7 +71,7 @@ namespace WebUI.Controllers.Config
         [HttpPut]
         public async Task<IActionResult> Update(int id)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

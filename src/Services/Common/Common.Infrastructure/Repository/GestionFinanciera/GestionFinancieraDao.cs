@@ -8,7 +8,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
 {
     public class GestionFinancieraDao
     {
-        private GenericResponse _gr;
+        private ApiResponse _gr;
 
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
@@ -16,12 +16,12 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
 
 
         // Documentos para Cobros
-        public async Task<GenericResponse> GetDocumentsChargeAsync(int idRol, int idCliente)
+        public async Task<ApiResponse> GetDocumentsChargeAsync(int idRol, int idCliente)
         {
             var documents = new List<Documento>();
             try
@@ -74,7 +74,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
 
             return _gr;
         }
-        public async Task<GenericResponse> GetChargeForDocumentAsync(int idRol, string json)
+        public async Task<ApiResponse> GetChargeForDocumentAsync(int idRol, string json)
         {
             var documents = new List<Documento>();
             try
@@ -124,7 +124,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
         }
 
         //Documentos para pagos 
-        public async Task<GenericResponse> GetDocumentsPayAsync(int idRol, string json)
+        public async Task<ApiResponse> GetDocumentsPayAsync(int idRol, string json)
         {
             var documents = new List<Documento>();
             try
@@ -177,7 +177,7 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
 
             return _gr;
         }
-        public async Task<GenericResponse> GetPaymentForDocumentAsync(int idRol, int idProveedor)
+        public async Task<ApiResponse> GetPaymentForDocumentAsync(int idRol, int idProveedor)
         {
             var documents = new List<Documento>();
             try

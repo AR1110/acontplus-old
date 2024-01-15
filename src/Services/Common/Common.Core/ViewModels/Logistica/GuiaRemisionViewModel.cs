@@ -17,12 +17,4 @@ namespace Common.Core.ViewModels.Logistica
         public string style { get; set; }
 
     }
-
-    public class GuiaRemisionData
-    {
-        public GuiaRemisionViewModel guia { get; set; }
-        public List<GuiaRemisionDetalleViewModel> detalle { get; set; }
-        public List<InfoAdicionalDoc> infoAdicional { get; set; }
-
-    }
 }

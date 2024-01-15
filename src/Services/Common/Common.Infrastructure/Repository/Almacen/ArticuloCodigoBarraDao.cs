@@ -9,17 +9,17 @@ namespace Common.Infrastructure.Repository.Almacen
 {
     public class ArticuloCodigoBarraDao
     {
-        protected GenericResponse _response;
+        protected ApiResponse _response;
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         public ArticuloCodigoBarraDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _response = new GenericResponse();
+            _response = new ApiResponse();
         }
 
-        public async Task<GenericResponse> GetIdAsync(int id)
+        public async Task<ApiResponse> GetIdAsync(int id)
         {
             var listar = new List<ArticuloCodigoBarraOperaciones>();
             try

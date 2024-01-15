@@ -23,7 +23,7 @@ namespace Inventario.API.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -49,7 +49,7 @@ namespace Inventario.API.Controllers
         {
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.TransferenciaBodega_Get_Id");
@@ -70,7 +70,7 @@ namespace Inventario.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TransferenciaBodegaParams data)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -96,7 +96,7 @@ namespace Inventario.API.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] TransferenciaBodegaParams data)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -122,7 +122,7 @@ namespace Inventario.API.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

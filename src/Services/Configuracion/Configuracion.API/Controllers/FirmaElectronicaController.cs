@@ -24,7 +24,7 @@ namespace Configuracion.API.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -49,7 +49,7 @@ namespace Configuracion.API.Controllers
         [HttpPost("Post")]
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -99,7 +99,7 @@ namespace Configuracion.API.Controllers
         [HttpPost("UpdateSignature/{id}")]
         public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -147,7 +147,7 @@ namespace Configuracion.API.Controllers
         [HttpPut("Put")]
         public async Task<IActionResult> Put(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {

@@ -20,7 +20,7 @@ namespace Vet.API.Controllers
 
         // GET: api/Pet
         [HttpGet]
-        public async Task<ActionResult<APIResponse>> GetPets(string json)
+        public async Task<ActionResult<ApiResponse>> GetPets(string json)
         {
             int companyId = Convert.ToInt32(User.GetCompanyId());
             if (!_context.Pets.Any(x => x.CompanyId == companyId))
@@ -52,7 +52,7 @@ namespace Vet.API.Controllers
         }
         // GET: api/Pet
         [HttpGet("search")]
-        public async Task<ActionResult<APIResponse>> Search(string json)
+        public async Task<ActionResult<ApiResponse>> Search(string json)
         {
             int companyId = Convert.ToInt32(User.GetCompanyId());
             if (!_context.Pets.Any(x => x.CompanyId == companyId))

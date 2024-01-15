@@ -10,17 +10,17 @@ namespace Common.Infrastructure.Repository.GestionTributaria
 {
     public class ConfiguracionContribuyenteDao
     {
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         public ConfiguracionContribuyenteDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
 
-        public async Task<GenericResponse> InsertAsync(int idRol, ConfigContribuyenteViewModel data)
+        public async Task<ApiResponse> InsertAsync(int idRol, ConfigContribuyenteViewModel data)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetAsync(int idRol)
+        public async Task<ApiResponse> GetAsync(int idRol)
         {
             var listar = new List<ConfigContribuyenteViewModel>();
             try
@@ -108,7 +108,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetIdAsync(int idRol, int idConfiguracionContribuyente)
+        public async Task<ApiResponse> GetIdAsync(int idRol, int idConfiguracionContribuyente)
         {
             var config = new ConfigContribuyenteViewModel();
             var detalle = new List<ConfigContribuyenteDetalleViewModel>();
@@ -173,7 +173,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
 
             return _gr;
         }
-        public async Task<GenericResponse> PutAsycn(int idRol, int idConfiguracionContribuyente, ConfigContribuyenteViewModel data)
+        public async Task<ApiResponse> PutAsycn(int idRol, int idConfiguracionContribuyente, ConfigContribuyenteViewModel data)
         {
             try
             {
@@ -210,7 +210,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteAsync(int idRol, int idConfiguracionContribuyente)
+        public async Task<ApiResponse> DeleteAsync(int idRol, int idConfiguracionContribuyente)
         {
             try
             {

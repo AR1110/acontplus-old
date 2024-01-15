@@ -45,7 +45,7 @@ namespace Identity.API.Controllers.v2
                     return BadRequest("Contraseña no puede estar vacia");
                 }
                 var mainResponse = await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
-                var _response = JsonConvert.DeserializeObject<APIResponse>(mainResponse);
+                var _response = JsonConvert.DeserializeObject<ApiResponse>(mainResponse);
 
                 if (_response.code == "1")
                 {
@@ -100,7 +100,7 @@ namespace Identity.API.Controllers.v2
                     return BadRequest("Error al iniciar session");
                 }
                 userData.Token = jwtToken;
-                var _response = new APIResponse();
+                var _response = new ApiResponse();
                 _response.Create(code: "1", message: "Login Correcto", payload: userData);
                 return Ok(_response);
             }

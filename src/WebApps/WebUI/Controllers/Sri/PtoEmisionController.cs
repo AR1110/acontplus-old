@@ -30,7 +30,7 @@ namespace WebUI.Controllers.Sri
         {
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.PtoEmision_Insert");
@@ -57,7 +57,7 @@ namespace WebUI.Controllers.Sri
         {
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.PtoEmision_Update");
@@ -85,7 +85,7 @@ namespace WebUI.Controllers.Sri
         {
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.PtoEmision_Delete");

@@ -9,17 +9,17 @@ namespace Common.Infrastructure.Repository
     public class EntidadFinancieraDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public EntidadFinancieraDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
-        public async Task<GenericResponse> CreateEntidadFinancieraAsync(int idRol, EntidadFinanciera data)
+        public async Task<ApiResponse> CreateEntidadFinancieraAsync(int idRol, EntidadFinanciera data)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> ReadEntidadFinancieraAsync(int idRol, int pageIndex, int pageSize)
+        public async Task<ApiResponse> ReadEntidadFinancieraAsync(int idRol, int pageIndex, int pageSize)
         {
             var listar = new List<EntidadFinanciera>();
             try
@@ -104,7 +104,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateEntidadFinancieraAsync(int idRol, EntidadFinanciera data)
+        public async Task<ApiResponse> UpdateEntidadFinancieraAsync(int idRol, EntidadFinanciera data)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteEntidadFinancieraAsync(int idRol, int idEntidadFinanciera)
+        public async Task<ApiResponse> DeleteEntidadFinancieraAsync(int idRol, int idEntidadFinanciera)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace Common.Infrastructure.Repository
         }
 
         //Operaciones Especiales 
-        public async Task<GenericResponse> OptionEntidadFinancieraAsync(int idRol)
+        public async Task<ApiResponse> OptionEntidadFinancieraAsync(int idRol)
         {
             var listar = new List<EntidadFinanciera>();
             try
@@ -222,7 +222,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> ListEntidadFinancieraAsync(int idRol)
+        public async Task<ApiResponse> ListEntidadFinancieraAsync(int idRol)
         {
             var listar = new List<ContraPartidaEntidadFinancieraViewModel>();
             try

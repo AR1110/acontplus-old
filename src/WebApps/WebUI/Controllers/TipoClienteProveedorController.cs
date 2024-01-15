@@ -9,7 +9,7 @@ namespace WebUI.Controllers
         // GET: TipoClienteProveedor
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private TipoClienteProveedorDao _tp;
 
         public TipoClienteProveedorController(IConfiguration config)

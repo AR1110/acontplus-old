@@ -1,0 +1,39 @@
+ 
+<div class="modal-header">
+    <h5 class="modal-title"><i class="fa fa-users"></i> Proveedores Encontrados</h5>
+    <button class="close" data-dismiss="modal" title="Cerrar" ng-click="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Razón Social</th>
+                            <th>Identificación</th>
+                            <th>N° Identificación</th>
+                            <th>Correo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in proveedores" ng-click="selectSujetoRetenido(item)"
+                            title="Seleccionar Proveedor" style="cursor: pointer;">
+                            <td>{{item.razonSocial}}</td>
+                            <td>{{item.descTipoIdentificacion}}</td>
+                            <td>{{item.numeroIdentificacion}}</td>
+                            <td>{{item.correo}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar" ng-click="closeModal()">
+        &times;
+        Cerrar
+    </button>
+</div>
+             

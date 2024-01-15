@@ -57,7 +57,7 @@ namespace FactElect.API.Controllers.Sri
         {
             var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("ASPAtsGetData", true);

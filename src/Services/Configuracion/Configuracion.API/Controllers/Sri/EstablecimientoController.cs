@@ -20,7 +20,7 @@ namespace Configuracion.API.Controllers.Sri
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.Establecimiento_Get");
@@ -45,7 +45,7 @@ namespace Configuracion.API.Controllers.Sri
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.Establecimiento_Get_Id");
@@ -69,7 +69,7 @@ namespace Configuracion.API.Controllers.Sri
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.Establecimiento_Get_Data_Form");
@@ -92,7 +92,7 @@ namespace Configuracion.API.Controllers.Sri
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.Establecimiento_Insert");
@@ -117,7 +117,7 @@ namespace Configuracion.API.Controllers.Sri
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.Establecimiento_Update");
@@ -140,7 +140,7 @@ namespace Configuracion.API.Controllers.Sri
         [HttpPut("PutSriAuth/{id}/{autoSriAuth}")]
         public async Task<IActionResult> PutSriAuth(int id, bool autoSriAuth)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 using (var _db = new DbAccess(_configuration))
@@ -165,7 +165,7 @@ namespace Configuracion.API.Controllers.Sri
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Sri.Establecimiento_Delete");

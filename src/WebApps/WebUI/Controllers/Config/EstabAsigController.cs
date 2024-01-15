@@ -25,7 +25,7 @@ namespace WebUI.Controllers.Config
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -48,7 +48,7 @@ namespace WebUI.Controllers.Config
         {
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.Estab_Asig_Get_Data_Form");

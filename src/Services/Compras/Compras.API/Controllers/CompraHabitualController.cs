@@ -21,7 +21,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Recepcion.CompraHabitual_Get");
@@ -45,7 +45,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Recepcion.CompraHabitual_Insert");
@@ -69,7 +69,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Put(int id, string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Recepcion.CompraHabitual_Update");
@@ -94,7 +94,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Recepcion.CompraHabitual_Delete");

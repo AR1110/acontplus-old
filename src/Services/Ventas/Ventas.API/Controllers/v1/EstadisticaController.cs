@@ -22,7 +22,7 @@ namespace Ventas.API.Controllers.v1
         public async Task<IActionResult> Get(string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

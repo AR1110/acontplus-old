@@ -30,7 +30,7 @@ namespace FactElect.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -55,7 +55,7 @@ namespace FactElect.API.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] Transportista data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -83,7 +83,7 @@ namespace FactElect.API.Controllers
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Transportista data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -111,7 +111,7 @@ namespace FactElect.API.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {

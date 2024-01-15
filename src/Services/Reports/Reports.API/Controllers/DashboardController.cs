@@ -23,7 +23,7 @@ namespace Reports.API.Controllers
             {
                 var response = await _dashboard.GetAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json ?? "") } });
                 if (response == null || string.IsNullOrEmpty(response)) { return BadRequest(); }
-                return Ok(new APIResponse() { code = "1", payload = response });
+                return Ok(new ApiResponse() { code = "1", payload = response });
             }
             catch (Exception ex)
             {
