@@ -1,4 +1,6 @@
-﻿using Common.Core.Utils;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.Core.Utils;
 using Customer.API.Extensions;
 using Services.Common;
 using Services.Common.Logs;
@@ -17,6 +19,10 @@ builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerDocumentation();
 
 builder.Services.AddSingleton<LogWriter>();
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
+
 
 var app = builder.Build();
 

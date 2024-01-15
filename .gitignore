@@ -88,3 +88,4 @@ bin-release/
 /src/Services/Ventas/ApiVentas/ApiVentas.csproj.user
 /src/WebApps/RestaurantUI/dev-dist/sw.js
 /src/WebApps/RestaurantUI/dev-dist/workbox-5357ef54.js
+/src/Services/Customer/Customer.API/Customer.API.csproj.user

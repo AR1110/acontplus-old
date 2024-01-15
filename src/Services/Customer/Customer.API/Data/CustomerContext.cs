@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
+using Common.Infrastructure.Data;
 using Customer.API.Data.Config;
 using Customer.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Customer.API.Data
 {
-    public class CustomerContext : DbContext
+    public class CustomerContext : BaseContext
     {
         public CustomerContext(DbContextOptions<CustomerContext> options) : base(options)
         {

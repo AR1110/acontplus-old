@@ -1,4 +1,5 @@
 ﻿using Customer.API.Data;
+using Customer.API.Interfaces;
 using Customer.API.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,8 @@ namespace Customer.API.Extensions
         {
             services.AddDbContextPool<CustomerContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<ICompanyCustomerService, CompanyCustomerService>();
 
             services.AddScoped<RucService>();
             services.AddScoped<CedulaService>();
