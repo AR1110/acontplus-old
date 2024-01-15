@@ -77,7 +77,7 @@ BEGIN
 			RETURN
 		END
 
-		IF EXISTS(SELECT 1 FROM @params WHERE tipo = 2)
+	IF EXISTS(SELECT 1 FROM @params WHERE tipo = 2)
 		BEGIN
 			DECLARE @idRetencionATS INT
 			,@codEstab VARCHAR(50)
