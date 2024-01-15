@@ -7,7 +7,8 @@ type PropsModal = {
   fullscreen?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | boolean | string;
   centered?: boolean
   scrollable?: boolean,
-  windowClass?: string
+  windowClass?: string,
+  backdrop: boolean
 }
 
 @Injectable({
@@ -19,10 +20,10 @@ export class ModalService {
     private ngbModal: NgbModal,
   ) { }
 
-  openModalCustom(theComponent: any, { size, fullscreen, centered, scrollable, windowClass='' }: Partial<PropsModal> = {}) {
+  openModalCustom(theComponent: any, { size, fullscreen, centered, scrollable, windowClass = '', backdrop }: Partial<PropsModal> = {}) {
 
     const modalRef = this.ngbModal.open(theComponent, {
-      backdrop: true,
+      backdrop: backdrop ? backdrop : true,
       backdropClass: 'backdrop-custom-modal',
       windowClass,
       size,

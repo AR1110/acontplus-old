@@ -1,2 +1,14 @@
 <app-breadcrumb />
-<h5>Technical support</h5>
+<div class="card">
+  <div class="card-body">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <button ngbNavLink>Ficha Técnica</button>
+        <ng-template ngbNavContent>
+          <button type="button" class="btn btn-outline-info" (click)="openTechSpec()">Nueva</button>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+</div>
