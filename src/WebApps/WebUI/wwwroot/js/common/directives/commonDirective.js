@@ -1669,9 +1669,7 @@
             },
             link: function (scope, element) {
                 let tS = toastService;
-                element.on('click', async function () { 
-
-                    console.log(scope.params)
+                element.on('click', async function () {  
                     if ( typeof scope.params ==='object' && scope.params.versionComp !== '2.0.0') { 
                         tS.toastr('warning', 'No disponible');
                         return

@@ -251,7 +251,7 @@
             })
 
 
-            return _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true);
+            return _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true);
         }
 
 
@@ -310,7 +310,7 @@
 
 
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
+                _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
 
                     let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
 
@@ -428,7 +428,7 @@
 
 
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
+                _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
                     if (response.code === '0') {
                         hideLoader()
                         _form.sweetAlert('warning', response.message)
@@ -517,7 +517,7 @@
                         codPago: $scope.data.codPago
                     };
 
-                    mS.getData('post', 'CuentaPorPagar/' + JSON.stringify(data), null, true).then(response => {
+                    mS.getData('post', 'Contabilidad/CuentaPorPagar/' + JSON.stringify(data), null, true).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
@@ -766,7 +766,7 @@
                         let data = {
                             cuotas: JSON.stringify($scope.cuotas)
                         }
-                        mS.getData('put', 'CuentaPorPagar/' + $scope.data.id, data, true)
+                        mS.getData('put', 'Contabilidad/CuentaPorPagar/' + $scope.data.id, data, true)
                             .then(response => {
                                 if (response.code === "0") {
                                     hideLoader()
@@ -925,8 +925,7 @@
                             $scope.indexDatoPago = $scope.datosPago.length + 1;
                             $scope.esAbonoPosfechado = result.isPosfechado;
                             $scope.valorAbonoFormaPago = result.valorAbono;
-
-                            console.log($scope.valorAbonoFormaPago)
+ 
 
                             $scope.addFormaPago();
 
@@ -1350,7 +1349,7 @@
             try {
                 let spParams = JSON.stringify({ tipo: 3, idProveedor: $scope.proveedor.idProveedor })
 
-                mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
+                mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
 
                     if (response.code === "0") {
                         console.log(response)

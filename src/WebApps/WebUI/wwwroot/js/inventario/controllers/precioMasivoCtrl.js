@@ -315,7 +315,7 @@
             // )
             showLoader()
             $scope.mainForm.tipo = 1
-            _mS.getData('get', 'PrecioMasivo/?json=' + JSON.stringify($scope.mainForm), null, true).then(
+            _mS.getData('get', 'Inventario/PrecioMasivo/?json=' + JSON.stringify($scope.mainForm), null, true).then(
                 response => {
                     if (response.code == '1') {
                         let temp = JSON.parse(response.payload)
@@ -350,7 +350,7 @@
 
         $scope.proveedorSearch = (textSearch) => proveedorSvc.search(textSearch)
         $scope.selectProveedorFiltro = (item) => {
-            $scope.mainForm.rucProveedor = item.proveedor.numeroIdentificacion
+            $scope.mainForm.rucProveedor = item.numeroIdentificacion
             $scope.getArticles()
         }
 
@@ -385,7 +385,7 @@
             $scope.articles = []
             $scope.articlesBackup = []
             $scope.mainForm.tipo = 2
-            _mS.getData('get', 'PrecioMasivo/?json=' + JSON.stringify($scope.mainForm), null, true).then(
+            _mS.getData('get', 'Inventario/PrecioMasivo/?json=' + JSON.stringify($scope.mainForm), null, true).then(
                 response => {
                     if (response.code == '0') {
                         _tS.toastr('warning', response.message)
@@ -443,7 +443,7 @@
             if (item.idArticuloPvp == 0) {
                 method = "POST"
             }
-            _mS.getData(method, "PrecioMasivo/", { data: item }, true).then(
+            _mS.getData(method, "Inventario/PrecioMasivo/", { data: item }, true).then(
                 response => {
                     if (response.code == "0") {
                         _tS.toastr('warning', response.message)
@@ -503,7 +503,7 @@
                     tipo: 2,
                     articles: JSON.stringify($scope.articlesToSave)
                 }
-                _mS.getData('PUT', 'PrecioMasivo/', { data: data }, true).then(
+                _mS.getData('PUT', 'Inventario/PrecioMasivo/', { data: data }, true).then(
                     response => {
                         if (response.code == "0") {
                             _tS.toastr("warning", response.message)

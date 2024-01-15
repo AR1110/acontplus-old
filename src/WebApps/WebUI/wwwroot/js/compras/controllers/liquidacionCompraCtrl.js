@@ -136,8 +136,7 @@
                 hideLoader();
             })
 
-            liquidacionCompraSvc.getDataForm().then(response => {
-                console.log(response)
+            liquidacionCompraSvc.getDataForm().then(response => { 
                 mainDataForm = response;
             })
 
