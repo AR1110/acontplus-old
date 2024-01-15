@@ -35,17 +35,15 @@ BEGIN
     DECLARE @tipo INT ,@idEntidad INT ,@idUsuario INT
     
     --> Filter
-	DECLARE @codEstab VARCHAR(50) ,@codDoc VARCHAR(2) ,@startDate DATETIME ,@endDate DATETIME ,@claveAcceso VARCHAR(50) ,@rucProveedor VARCHAR(25)
-	       ,@idDocumento INT ,@ckBoxFecha BIT ,@xmlDoc XML
+	DECLARE @codEstab VARCHAR(50) ,@codDoc VARCHAR(2) ,@startDate DATETIME ,@endDate DATETIME ,@claveAcceso VARCHAR(50) ,@rucProveedor VARCHAR(25) ,@id INT ,@ckBoxFecha BIT 
 	
 	--> Sql
-	DECLARE @params nvarchar(MAX) ,@sql nvarchar(MAX) ,@pageIndex INT ,@pageSize INT
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
 
     --> Recuperando Datos
     SELECT TOP 1 @idEntidad  = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
-
 
     --> Get
     IF @tipo = 1
@@ -165,60 +163,69 @@ BEGIN
 	IF @tipo = 3
 	    BEGIN
 		    
-            SET @tableNames = 'SustentoTributario,CategoriaCompra,Bodega'
+            SET @tableNames = 'SustentoTributario,CategoriaCompra,Bodega,Medida'
 
-		    SELECT * FROM SustentoTributario WITH (NOLOCK)
+		    SELECT *
+		    FROM SustentoTributario WITH (NOLOCK)
 
-		    SELECT * FROM CategoriaCompra WITH (NOLOCK) WHERE idEntidad = @idEntidad
+		    SELECT *
+		    FROM CategoriaCompra WITH (NOLOCK)
+		    WHERE idEntidad = @idEntidad
 
-		    SELECT idEstablecimiento
-                  ,nombreComercial
-                  ,codEstab
-                  ,idBodega
-                  ,bodega
-                  ,defaultEstab
-                  ,defaultBodega 
-            FROM dbo.v_Bodega_Asign WITH(NOLOCK) 
-            WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+		    SELECT *
+		    FROM Bodega WITH (NOLOCK)
+		    WHERE estado = 1 AND codEstab IN (SELECT codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @userRoleId) 
+
+		    SELECT *
+		    FROM Medida WITH (NOLOCK)
+		    WHERE idEntidad = @idEntidad
 
 		    RETURN
+	    END
+
+    --> Documento Relacionado 
+	IF @tipo = 4
+	    BEGIN
+            
+            SET @tableNames = 'comprobante'
+
+            SELECT @id = id  , @codDoc = codDoc FROM OPENJSON(@json) WITH (codDoc VARCHAR(10),id INT)
+
+		    IF @codDoc = '01'
+		        BEGIN
+                    
+                    SELECT TOP 1 @claveAcceso = claveAcceso FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @id
+
+			        SELECT 'Retención'                                                           as comprobante
+				           ,rAts.estab + rAts.ptoEmi + Helper.F_Auto_Sequential(rAts.secuencial) as serieComprobante
+				           ,rAts.identificacionSujetoRetenido                                    as rucEmisor
+				           ,rAts.razonSocialSujetoRetenido                                       as razonSocialEmisior
+				           ,CONVERT(NVARCHAR, FORMAT(rAts.fechaEmision, 'dd/MM/yyyy HH:mm'))     as fechaEmision
+				           ,rAts.claveAcceso
+				           ,0                                                                    as importeTotal
+			        FROM FactElect.RetAtsDocSustento retDoc
+			        INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts = retDoc.idRetencionAts
+			        WHERE retDoc.numAutDocSustento = @claveAcceso
+			        AND rAts.anuladaSri = 0
+		        END
+
+		    IF @codDoc = '07' OR @codDoc = '04'
+		        BEGIN
+			        SELECT CASE dr.codDocSustento WHEN '01' THEN 'Factura' ELSE '' END  as comprobante
+				          ,dr.numDocSustento                                            as serieComprobante
+				          ,dr.fechaEmisionDocSustento                                   as fechaEmision
+				          ,dr.claveAcceso
+				          ,dr.baseImponible                                             as importeTotal
+			        FROM FactElect.DocRelacionado dr WITH (NOLOCK)
+			        WHERE dr.idDocumentoRecibido = @id
+		        END
+
+            RETURN 
 	    END
 
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
     RETURN 
 
-	--Documento Relacionado 
-	IF @tipo = 3
-	BEGIN
-		IF @codDoc = '01'
-		BEGIN
-			SELECT comprobante = 'Retención'
-				,serieComprobante = rAts.estab + rAts.ptoEmi + Helper.F_Auto_Sequential(rAts.secuencial)
-				,rucEmisor = rAts.identificacionSujetoRetenido
-				,razonSocialEmisior = rAts.razonSocialSujetoRetenido
-				,fechaEmision = CONVERT(NVARCHAR, FORMAT(rAts.fechaEmision, 'dd/MM/yyyy HH:mm'))
-				,rAts.claveAcceso
-				,importeTotal = 0
-			FROM FactElect.RetAtsDocSustento retDoc
-			INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts = retDoc.idRetencionAts
-			WHERE retDoc.numAutDocSustento = @claveAcceso
-			AND rAts.anuladaSri = 0
-			RETURN
-		END
-
-		IF @codDoc = '07' OR @codDoc = '04'
-		BEGIN
-			SELECT comprobante = CASE dr.codDocSustento WHEN '01' THEN 'Factura' ELSE '' END  
-				  ,serieComprobante = dr.numDocSustento
-				  ,fechaEmision = dr.fechaEmisionDocSustento
-				  ,dr.claveAcceso
-				  ,importeTotal = dr.baseImponible 
-			FROM FactElect.DocRelacionado dr WITH (NOLOCK)
-			WHERE dr.idDocumentoRecibido = @idDocumento
-			RETURN
-		END
-	END
-	
 END
 GO
 

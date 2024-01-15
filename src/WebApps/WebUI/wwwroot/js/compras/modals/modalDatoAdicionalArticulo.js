@@ -188,7 +188,7 @@ function ModalDatoAdicionalArticuloCtrl($scope, mS, $uibModalInstance, params){
 
     $scope.removeRowBD = function(idInfoAdicional) {
         if(codDoc=='01' && idInfoAdicional > 0) {
-            mS.getData('delete', 'DatoAdicionalArticulo/Delete/' + idInfoAdicional, null, true).then(response => {
+            mS.getData('delete', 'Compra/DatoAdicionalArticulo/Delete/' + idInfoAdicional, null, true).then(response => {
                 if(response.code==="0"){
                     Swal.fire({
                         icon:'warnig',

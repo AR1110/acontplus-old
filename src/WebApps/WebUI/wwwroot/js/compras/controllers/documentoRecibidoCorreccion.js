@@ -9,6 +9,7 @@
     let dataEstab = {};
     let proveedorSvc = {};
     let nombreModalInventario = {};
+    let commonSvc = {};
 
 
 
@@ -18,7 +19,7 @@
 
     function documentoRecibidoCtrl($filter, $scope, $injector, $q) {
         const mS = $injector.get('mainService');
-        const commonSvc = $injector.get('commonService');
+        commonSvc = $injector.get('commonService');
         docRecibidoSvc = $injector.get('docRecibidoService');
         tS = $injector.get('toastService');
         modalSvc = $injector.get('modalService');
@@ -295,15 +296,15 @@
                 event.preventDefault()
             }
             document.getElementById("btnGetXml").onclick = function (event) {
-                $scope.putXml()
+                putXml()
                 event.preventDefault()
             }
             document.getElementById("btnDelete").onclick = function (event) {
-                $scope.askToDelete()
+                askToDelete()
                 event.preventDefault()
             }
             document.getElementById("btnDocRel").onclick = function (event) {
-                $scope.getMergedDocs()
+                getMergedDocs()
                 event.preventDefault()
             }
 
@@ -312,7 +313,7 @@
                 document.getElementById("btnReport").style.display = "none";
             } else {
                 document.getElementById("btnReport").onclick = function () {
-                    $scope.getReport();
+                    getReport();
                 }
             }
 
@@ -331,24 +332,71 @@
                         return
                     }
 
-                    modalSvc.openModalCustom({
-                        controller: 'modalComprobanteCtrl',
-                        template: `${TEMPLATE_URL}_ModalComprobante.cshtml`,
-                        size: 'xl',
-                        params: {
-                            ...response.payload,
-                            selected: $scope.selected
-                        },
-                        isRenderRazorPartial: true,
-                        windowClass: 'uibModalFullScreen',
-                    }).result.then(result => {
 
-                        if (typeof result === 'object') {
-                            initialLoad();
-                        }
-                    })
+                    if ($scope.selected[0].codDoc === "07") {
+
+                        modalSvc.openModalCustom({
+                            controller: function ($scope, $uibModalInstance, params) {
+                                const { selected } = params;
+                                $scope.selected = selected;
+                                $scope.dataEstab = dataEstab;
+                                $scope.fullComprobante = params;
+                                //let codDoc = $scope.fullComprobante.infoTributaria.codDoc
+                                $scope.infoTributaria = $scope.fullComprobante.infoTributaria
+                                $scope.infoAdicional = $scope.fullComprobante.infoAdicional;
+
+                                $scope.infoCompRetencion = $scope.fullComprobante.infoCompRetencion;
 
 
+                                $uibModalInstance.rendered.then(() => {
+                                    getBarcode($scope.infoTributaria.claveAcceso)
+                                })
+
+                                docRecibidoSvc.getDataForm().then(response => {
+                                    const { bodegas, categoriasCompra, sustentosTributario, medidas } = response;
+
+                                    $scope.categoriasCompra = categoriasCompra;
+                                    $scope.sustentosTributario = sustentosTributario;
+                                    $scope.medidas = medidas;
+                                    $scope.bodegasFiltered = bodegas.filter(estab => estab.codEstab === $scope.dataEstab.codEstab);
+
+                                })
+
+                                $scope.getReport = function () {
+                                    getReport();
+                                }
+
+                                $scope.closeModal = function () {
+                                    $uibModalInstance.close();
+                                }
+                            },
+                            template: `${TEMPLATE_URL}_Retencion.cshtml`,
+                            size: 'xl',
+                            params: {
+                                ...response.payload,
+                                selected: $scope.selected
+                            },
+                            isRenderRazorPartial: true, 
+                        }) 
+
+                    } else {
+                        modalSvc.openModalCustom({
+                            controller: 'modalComprobanteCtrl',
+                            template: `${TEMPLATE_URL}_ModalComprobante.cshtml`,
+                            size: 'xl',
+                            params: {
+                                ...response.payload,
+                                selected: $scope.selected
+                            },
+                            isRenderRazorPartial: true,
+                            windowClass: 'uibModalFullScreen',
+                        }).result.then(result => {
+
+                            if (typeof result === 'object') {
+                                initialLoad();
+                            }
+                        })
+                    }
 
                 }).catch((error) => {
                     hideLoader()
@@ -361,6 +409,189 @@
 
         }
 
+
+        function putXml() {
+            try {
+                showLoader()
+                docRecibidoSvc.putXml($scope.selected[0].idDocumento).then(
+                    response => {
+                        if (response.code == 0) {
+                            tS.toastr('warning', response.message)
+                            return;
+                        }
+                        if (response.code == 1) {
+                            tS.toastr('success', response.message)
+                            return;
+                        }
+                        if (response.code == 2) {
+                            askToUploadXml() //call to manual xml update
+                        }
+                    }
+                ).finally(() => hideLoader())
+
+            } catch (e) {
+                hideLoader()
+                console.log(e)
+            }
+        }
+
+        function askToUploadXml() {
+            Swal.fire({
+                title: 'Xml no encontrado!',
+                text: "Desea subir el xml manualmente?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    modalSvc.openModalCustom({
+                        controller: 'modalXmlIndividualCtrl',
+                        template: `${TEMPLATE_URL}_ModalXmlIndividual.cshtml`,
+                        size: 'md',
+                        params: {
+                            selected: $scope.selected
+                        },
+                        isRenderRazorPartial: true,
+                    }).result.then(result => {
+                        if (typeof result === 'object') {
+                            $scope.showOptions()
+                        }
+                    })
+                }
+            })
+        }
+
+
+        function askToDelete() {
+            $scope.itemToDelete = $scope.selected[0];
+            Swal.fire({
+                title: '¿Está seguro de eliminar este comprobante?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!',
+                cancelButtonText: 'No, cancelar',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.value) {
+                    $scope.delete($scope.itemToDelete.idDocumento)
+                }
+            })
+        }
+
+        $scope.delete = function (idDocumento) {
+            try {
+                showLoader();
+                docRecibidoSvc.deleteDoc(idDocumento).then(
+                    response => {
+                        if (response.code == 0) {
+                            tS.toastr('warning', response.message)
+                            return;
+                        }
+                        if (response.code == 1) {
+                            $scope.getComprobantes()
+                            tS.toastr('success', response.message)
+                        }
+                    }
+                ).finally(() => hideLoader())
+            } catch (error) {
+                hideLoader()
+                console.log(error)
+            }
+        }
+
+
+        function getMergedDocs() {
+            try {
+                Swal.close();
+                modalSvc.openModalCustom({
+                    controller: function ($scope, $uibModalInstance, params) {
+                        const { selected } = params;
+                        $scope.selected = selected;
+
+                        $scope.mergedDocs = [];
+                        $scope.showOptionsMergeDoc = false;
+                        let data = {
+                            idDocumento: selected[0].idDocumento,
+                            codDoc: selected[0].codDoc,
+                            claveAcceso: selected[0].claveAcceso
+                        }
+                        showLoader();
+                        docRecibidoSvc.getDocRelacionado(data).then(response => {
+                            $scope.mergedDocs = response;
+                        }).catch(error => {
+                            console.log(error)
+                        }).finally(() => hideLoader())
+
+                        $scope.closeModal = function () {
+                            $uibModalInstance.close();
+                        }
+                    },
+                    template: `${TEMPLATE_URL}_Doc_Relacionado.cshtml`,
+                    size: 'xl',
+                    params: {
+                        selected: $scope.selected
+                    },
+                    isRenderRazorPartial: true,
+                })
+
+
+                // Swal.close()                
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+
+
+        const COD_REPORTS = {
+            "07": 'RCR',
+            '01': 'RFC'
+        }
+        function getReport() {
+            try {
+                let format = 'pdf';
+                let codDoc = $scope.selected[0].codDoc;
+                let id = $scope.selected[0].idDocumento;
+                let codEstab = $scope.selected[0].codEstab;
+
+                if (!['01', '07'].includes(codDoc)) {
+                    tS.toastr('warning', 'Reporte no disponible')
+                    return
+                }
+
+                let parameters = {
+                    dataParams: JSON.stringify({
+                        id,
+                        codigo: COD_REPORTS[codDoc],
+                        isReportImported: true,
+                    }),
+                    reportParams: JSON.stringify({
+                        codigo: COD_REPORTS[codDoc],
+                        codEstab,
+                        format,
+                        aditionalParams: []
+                    }),
+                    hasService: true,
+                }
+
+
+                commonSvc.getReport({
+                    parameters,
+                    formatType: format
+                })
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
 
 
@@ -534,11 +765,7 @@
         $scope.mainform.option = false
         $scope.files = [];
         $scope.compToImport = [];
-        console.log($scope)
-
-
-
-
+        
         $scope.$watch('files', function () {
             $scope.uploadXml($scope.files);
         });
@@ -677,6 +904,46 @@
     }
 
 
+    app.controller('modalXmlIndividualCtrl', modalXmlIndividualCtrl);
+    modalXmlIndividualCtrl.$inject = ['$scope', '$uibModalInstance', 'params'];
+    function modalXmlIndividualCtrl($scope, $uibModalInstance, params) {
+
+        const { selected } = params;
+        $scope.selected = selected;
+        $scope.fileXml = null;
+
+
+        $scope.putXmlManual = () => {
+            try {
+                let file = $scope.fileXml;
+                if (file === null || file === undefined) {
+                    hideLoader()
+                    alert('No ha seleccionado ningun archivo')
+                    return;
+                }
+
+                docRecibidoSvc.putXmlManual($scope.selected[0].idDocumento, $scope.selected[0].claveAcceso, file).then(
+                    response => {
+                        if (response.code == 0) {
+                            tS.toastr('warning', response.message)
+                            return;
+                        }
+                        if (response.code == 1) {
+                            tS.toastr('success', response.message);
+                            $uibModalInstance.close(response)
+                        }
+                    }
+                ).finally(() => hideLoader());
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        $scope.closeModal = function () {
+            $uibModalInstance.close();
+        }
+    }
+
 
     /**
      * Migrate Docs
@@ -802,17 +1069,6 @@
             }
         }
 
-        function getBarcode(item) {
-            JsBarcode("#barcodeImg", item, {
-                format: "CODE128",
-                lineColor: "#000",
-                width: 1,
-                height: 40,
-                displayValue: false
-            })
-        }
-
-
         onLoad();
         function onLoad() {
             try {
@@ -830,6 +1086,9 @@
 
                     if (codDoc === "01") {
                         setDataFactura();
+                    }
+                    if (codDoc === "04") {
+                        setDataNotaCreditoProveedor();
                     }
                     isRegisteredSupplier();
 
@@ -878,13 +1137,13 @@
         }
 
 
-
+        //Factura 
+        let idDetalle = 0;
         function setDataFactura() {
             $scope.comprobanteName = 'Factura de Compra'
             $scope.infoComprobante = $scope.fullComprobante.infoFactura
             $scope.totalTaxes = $scope.fullComprobante.infoFactura.totalImpuestos
 
-            let idDetalle = 0;
             for (const det of $scope.totalTaxes) {
                 if (Number(det.baseImponible) > 0) {
                     $scope.customDetailTemp.push(
@@ -931,7 +1190,53 @@
             setTaxes()
         }
 
+        //Nota Credito Proveedor 
+        function setDataNotaCreditoProveedor() {
+            try {
+                $scope.comprobanteName = 'Nota de Crédito Proveedor'
+                // $scope.infoNotaCredito = $scope.fullComprobante.infoNotaCredito
+                // $scope.totalTaxes = $scope.fullComprobante.infoNotaCredito.totalImpuestos
+                //$scope.getNotaCreditoDetalle($scope.fullComprobante.numeroAutorizacion)
+                //$('#notaCreditoModal').modal('show')
+                $scope.infoComprobante = $scope.fullComprobante.infoNotaCredito
+                $scope.totalTaxes = $scope.fullComprobante.infoNotaCredito.totalImpuestos
+                for (const det of $scope.totalTaxes) {
+                    if (Number(det.baseImponible) > 0) {
+                        $scope.customDetailTemp.push(
+                            {
+                                idDetalle: idDetalle,
+                                idDocumento: $scope.selected[0].idDocumento,
+                                idArticulo: 0,
+                                cantidad: 1,
+                                codigo: det.codigo, //impuesto
+                                codigoPorcentaje: det.codigoPorcentaje, //porcentaje impuesto
+                                valor: det.valor, //valor impuesto
+                                codigoPrincipal: '',
+                                codigoAuxiliar: '',
+                                descripcion: '',
+                                precioUnitario: det.baseImponible,
+                                precioTotalSinImpuesto: det.baseImponible,
+                                descuento: (det.descuentoAdicional == '' ? 0.00 : Number(det.descuentoAdicional)),
+                                impuesto: (det.codigo) == '2' ? 'iva' : 'ice',
+                                valorImpuesto: det.valor,
+                                total: ((Number(det.baseImponible) - Number(det.descuentoAdicional)) + Number(det.valor)).toFixed(2)
+                            }
+                        )
+                    }
+                    idDetalle++
+                }
+                getTempDetails()
+                $scope.provCliente.razonSocial = $scope.infoTributaria.razonSocial
+                $scope.provCliente.nombreComercial = $scope.infoTributaria.nombreComercial
+                $scope.provCliente.ruc = $scope.infoTributaria.ruc
+                $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz
 
+                //Adding by Emilio Senguana 
+                $scope.provCliente.isImport = true;
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
         function getTempDetails() {
             try {
@@ -1215,6 +1520,139 @@
             }
         }
 
+        $scope.askToAddStok = (item) => {
+            Swal.fire({
+                text: "¿Está seguro/a de añadir este articulo al stock?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si!',
+                cancelButtonText: 'No',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.value) {
+                    addStock(item)
+                }
+            })
+        }
+
+        function addStock(item) {
+            try {
+                if ($scope.tempDetail.some(item => (["", 0, null, undefined, "0"].includes(item.idBodega)))) {
+                    tS.toastr('warning', 'Agregue la bodega a los Artículos')
+                    return
+                }
+
+                showLoader();
+                docRecibidoSvc.addStock({
+                    idDocumento: $scope.selected[0].idDocumento,
+                    idArticulo: item.idArticulo
+                }).then(response => {
+                    if (response.code == '0') {
+                        tS.toastr('warning', response.message)
+                    }
+                    if (response.code == '1') {
+                        tS.toastr('success', response.message)
+                        getTempDetails()
+                    }
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader());
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        $scope.askToDeleteStok = (item) => {
+            Swal.fire({
+                title: '¿Está seguro/a de eliminar este articulo del stock?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si!',
+                cancelButtonText: 'No',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteStock(item)
+                }
+            })
+        }
+
+        function deleteStock(item) {
+            try {
+                showLoader();
+                docRecibidoSvc.deleteStock(item.idDocumentoDetalle).then(response => {
+                    if (response.code == '0') {
+                        tS.toastr('warning', response.message)
+                    }
+                    if (response.code == '1') {
+                        getTempDetails()
+                        tS.toastr('success', response.message)
+                    }
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader())
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
+        }
+
+        $scope.resultModalArticleEdit = function (dataArticulo) {
+            try {
+                for (let item of $scope.tempDetail) {
+                    if (dataArticulo.idArticulo === item.idArticulo) {
+                        item.etiquetas = dataArticulo.etiquetas;
+                        item.datosAdicionales = dataArticulo.datosAdicionales;
+                    }
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+
+        $scope.resultModalDatoAdicional = function (item) {
+            let datosAdicionales = item.map(item => {
+                return {
+                    idArticulo: item.idArticulo,
+                    idEtiqueta: item.idEtiqueta,
+                    idInfoAdicional: item.idInfoAdicional || 0,
+                    jsonAdicional: item.adicionales
+                }
+            })
+
+            showLoader();
+            docRecibidoSvc.postDatoAdicionalArticulo($scope.selected[0].idDocumento, datosAdicionales).then(response => {
+                if (response.code === '0') {
+                    tS.toastr('warning', response.message);
+                }
+                if (response.code === '1') {
+                    tS.toastr('success', response.message);
+                    let dtAdicional = JSON.parse(response.payload) || [];
+
+                    $scope.datosAdicionalesArticulo = dtAdicional.map(item => {
+                        return {
+                            idArticulo: item.idArticulo,
+                            idEtiqueta: item.idEtiqueta,
+                            idInfoAdicional: item.idInfoAdicional,
+                            adicionales: JSON.parse(item.jsonAdicional),
+                            estado: item.estado,
+                        }
+                    })
+                }
+            })
+                .catch(error => {
+                    console.log(error)
+                })
+                .finally(() => hideLoader());
+        }
+
+
         function detailValid() {
             if ($scope.idProveedor < 1) {
                 tS.toastr('warning', 'Primero debe Guardar el proveedor')
@@ -1330,6 +1768,32 @@
                 }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader()
+                console.log(error)
+            }
+        }
+
+
+
+        $scope.exportToExcel = () => {
+            try {
+                let format = 'excel';
+                const parameters = {
+                    dataParams: JSON.stringify({
+                        isReportImport: true,
+                        id: $scope.selected[0].idDocumento,
+                        codDoc: $scope.selected[0].codDoc,
+                    }),
+                    reportParams: JSON.stringify({
+                        codigo: 'RCD',
+                        codEstab: $scope.selected[0].codEstab,
+                        format,
+                    }),
+                    hasService: true,
+                }
+
+
+                commonSvc.getReport({ parameters, formatType: format })
+            } catch (error) {
                 console.log(error)
             }
         }
@@ -1535,5 +1999,16 @@
         }
     }
 
+
+
+    function getBarcode(item) {
+        JsBarcode("#barcodeImg", item, {
+            format: "CODE128",
+            lineColor: "#000",
+            width: 1,
+            height: 40,
+            displayValue: false
+        })
+    }
 
 })(window.angular)
