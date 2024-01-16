@@ -1,17 +1,29 @@
 <form autocomplete="off">
   <div class="modal-header">
     <h5 class="modal-title" id="TechSpecDialogLabel">Nuevo Dispositivo</h5>
-    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
+    <button
+      type="button"
+      class="btn-close"
+      data-dismiss="modal"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
   </div>
   <div class="modal-body">
     <!--Start section general -->
     <div class="row">
       <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
         <div class="form-group">
-          <label for="estab">
-            Estab: <span class="text-danger">*</span>
-          </label>
-          <select name="estab" id="estab" class="form-control border-select" required>
+          <label for="estab"> Estab: <span class="text-danger">*</span> </label>
+          <select
+            name="estab"
+            id="estab"
+            class="form-select border-select"
+            required
+          >
+            @for (item of establecimientos; track item.nombreComercial) {
+            <option>{{ item.nombreComercial }}</option>
+            }
           </select>
         </div>
       </div>
@@ -20,13 +32,18 @@
           <label for="puntoEmision">
             Punto Emisión: <span class="text-danger">*</span>
           </label>
-          <select name="puntoEmision" id="puntoEmision" class="form-control border-select" required>
-          </select>
+          <select
+            name="puntoEmision"
+            id="puntoEmision"
+            class="form-control border-select"
+            required
+          ></select>
         </div>
       </div>
       <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="form-group">
-          <label for="fechaEmision">Fecha Emisión:
+          <label for="fechaEmision"
+            >Fecha Emisión:
             <span class="text-danger">*</span>
           </label>
           <input type="date" class="form-control border-select" required />
@@ -37,7 +54,12 @@
           <label for="encargado">
             Responsable: <span class="text-danger">*</span>
           </label>
-          <select name="encargado" id="encargado" class="form-control border-select" required>
+          <select
+            name="encargado"
+            id="encargado"
+            class="form-control border-select"
+            required
+          >
             <option value=""></option>
           </select>
         </div>
@@ -51,11 +73,13 @@
         <div class="row">
           <div class="col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="form-group">
-              <label for="customerSearch">Cliente:
+              <label for="customerSearch"
+                >Cliente:
                 <span class="text-danger">*</span>
               </label>
               <app-company-customer-search
-                (onCustomerSelected)="onCustomerSelected($event)"></app-company-customer-search>
+                (onCustomerSelected)="onCustomerSelected($event)"
+              ></app-company-customer-search>
             </div>
           </div>
         </div>
@@ -70,44 +94,68 @@
     <div class="card rounded border border-success">
       <div class="card-header d-flex justify-content-between">
         <span>Datos Equipo:</span>
-        <button type="button" class="btn btn-outline-info btn-sm">Historial</button>
+        <button type="button" class="btn btn-outline-info btn-sm">
+          Historial
+        </button>
       </div>
       <div class="card-body">
         <!--Start Form register product-->
         <div class="row">
           <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12 col-12">
             <div class="form-group">
-              <label for="category">Categoria:
+              <label for="category"
+                >Categoria:
                 <span class="text-danger">*</span>
               </label>
-              <select name="category" id="category" class="form-control border-select"
-                (ngModel)="dataDevice.categoryId">
-              </select>
+              <select
+                name="category"
+                id="category"
+                class="form-control border-select"
+                (ngModel)="(dataDevice.categoryId)"
+              ></select>
             </div>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
             <div class="form-group">
-              <label for="productName">Nombre Producto:
+              <label for="productName"
+                >Nombre Producto:
                 <span class="text-danger">*</span>
               </label>
-              <input type="text" name="productName" id="productName" class="form-control border-select" />
+              <input
+                type="text"
+                name="productName"
+                id="productName"
+                class="form-control border-select"
+              />
             </div>
           </div>
 
           <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12">
             <div class="form-group">
-              <label for="productIMEISerie">IMEI/Serie:
+              <label for="productIMEISerie"
+                >IMEI/Serie:
                 <span class="text-danger">*</span>
               </label>
-              <input type="text" name="productIMEISerie" id="productIMEISerie" class="form-control border-select" />
+              <input
+                type="text"
+                name="productIMEISerie"
+                id="productIMEISerie"
+                class="form-control border-select"
+              />
             </div>
           </div>
           <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12">
             <div class="form-group">
-              <label for="productMarca">Marca:
+              <label for="productMarca"
+                >Marca:
                 <span class="text-danger">*</span>
               </label>
-              <input type="text" name="productMarca" id="productMarca" class="form-control border-select" />
+              <input
+                type="text"
+                name="productMarca"
+                id="productMarca"
+                class="form-control border-select"
+              />
             </div>
           </div>
         </div>
@@ -116,25 +164,45 @@
           <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
             <div class="form-group">
               <label for="productModel">Modelo: </label>
-              <input type="text" name="productModel" id="productModel" class="form-control border-select" />
+              <input
+                type="text"
+                name="productModel"
+                id="productModel"
+                class="form-control border-select"
+              />
             </div>
           </div>
           <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
             <div class="form-group">
               <label for="productYear">Año: </label>
-              <input type="number" name="productYear" id="productYear" class="form-control border-select" />
+              <input
+                type="number"
+                name="productYear"
+                id="productYear"
+                class="form-control border-select"
+              />
             </div>
           </div>
           <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
             <div class="form-group">
               <label for="productWarranty">Garantía: </label>
-              <input type="text" name="productWarranty" id="productWarranty" class="form-control border-select" />
+              <input
+                type="text"
+                name="productWarranty"
+                id="productWarranty"
+                class="form-control border-select"
+              />
             </div>
           </div>
           <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
             <div class="form-group">
               <label for="productColor">Color: </label>
-              <input type="text" name="productColor" id="productColor" class="form-control border-select" />
+              <input
+                type="text"
+                name="productColor"
+                id="productColor"
+                class="form-control border-select"
+              />
             </div>
           </div>
         </div>
@@ -142,7 +210,11 @@
           <button type="button" class="btn btn-info" (click)="saveDevice()">
             <i class="ti-save"></i> Guardar
           </button>
-          <button type="button" class="btn btn-danger mx-1" (click)="resetFormDevice()">
+          <button
+            type="button"
+            class="btn btn-danger mx-1"
+            (click)="resetFormDevice()"
+          >
             <i class="fa fa-refresh"></i> Limpiar
           </button>
         </div>
@@ -153,7 +225,10 @@
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="observación">Observación:</label>
-          <textarea class="form-control border-select" aria-label="obs"></textarea>
+          <textarea
+            class="form-control border-select"
+            aria-label="obs"
+          ></textarea>
         </div>
       </div>
     </div>
@@ -166,7 +241,12 @@
       <i class="ti-save"></i>
       Guardar
     </button>
-    <button type="button" class="btn btn-dark" data-dismiss="modal" (click)="closeModal()">
+    <button
+      type="button"
+      class="btn btn-dark"
+      data-dismiss="modal"
+      (click)="closeModal()"
+    >
       &times; Cerrar
     </button>
   </div>
