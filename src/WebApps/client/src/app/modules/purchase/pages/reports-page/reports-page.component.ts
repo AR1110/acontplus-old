@@ -200,8 +200,7 @@ export class ReportsPageComponent {
       }),
       dataParams: JSON.stringify(dataParms)
     }
-
-    showLoader();
+ 
     this.sharedSvc.getReport(parameters, format)
   }
 

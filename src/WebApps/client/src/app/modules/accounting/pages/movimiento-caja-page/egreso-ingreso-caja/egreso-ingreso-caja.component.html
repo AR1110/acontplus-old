@@ -1,115 +1,144 @@
 <div class="row">
-          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-              <div class="form-gorup">
-                  <span for="establecimiento">Establecimiento</span>
-                  <select name="establecimiento" id="establecimiento" ng-model="$ctrl.dataSearch.codEstab"
-                      class="form-control  border-select" ng-change="$ctrl.getMovCajas()">
+  <div class="col-xl-3 col-lg-3 col-md-3 col-sm6 col-12">
+    <div class="form-group">
+      <label for="establecimiento">Estab: </label>
+      <select
+        name="establecimiento"
+        id="establecimiento"
+        class="form-select"
+      ></select>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
+  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
+  <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+    <div class="button-group">
+      <button type="button" class="btn btn-info btn-sm mt-4">
+        <i class="fas fa-eye fa-sm"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger btn-sm mt-4"
+        uib-tooltip="Recargar"
+        (click)="refresh()"
+      >
+        <i class="fas fa-redo fa-sm"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-success btn-sm mt-4"
+        uib-tooltip="Nuevo"
+        (click)="openModal()"
+      >
+        <i class="ti-plus"></i>
+      </button>
+    </div>
+  </div>
+</div>
 
-                  </select>
-              </div>
-          </div>
-          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-              <div class="form-group">
+<div class="row">
+  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+    <div class="d-flex justify-content-start">
+      <span class="form-group">
+        <select
+          class="form-select"
+          [(ngModel)]="dataSearch.pageSize"
+          (change)="changePageSize()"
+        >
+          @for(item of recordsQuantity; track $index){
+          <option [value]="item">{{ item }}</option>
+          }
+        </select>
+      </span>
+    </div>
+  </div>
+  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+    <div class="d-flex justify-content-end">
+      <!-- <form class="form-material">
+            <input
+              type="text"
+              class="form-control"
+              ng-model="buscar"
+              placeholder="..."
+            />
+          </form> -->
+    </div>
+  </div>
+</div>
 
-              </div>
-          </div>
-          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-              <div class="form-group">
-
-              </div>
-          </div>
-          <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-              <div class="button-group">
-                  <button type="button" class="btn waves-effect waves-light btn-sm btn-info">
-                <i class="fas fa-eye fa-xs"></i>
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>N°.</th>
+        <th>Op.</th>
+        <th>Caja</th>
+        <th>Fecha</th>
+        <th>Nro. Doc</th>
+        <th>Entidad Financiera</th>
+        <th>Valor</th>
+        <th>Observación</th>
+        <th>Empleado</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of movimientosCaja; track $index) {
+      <tr>
+        <th scope="row">{{ $index + 1 }}</th>
+        <td>
+          <div ngbDropdown container="body">
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              ngbDropdownToggle
+            >
+              Acciones
+            </button>
+            <div ngbDropdownMenu>
+              <button ngbDropdownItem (click)="getPrint(item)">
+                <i class="fas fa-print"></i>
+                Imprimir
               </button>
-              <button type="button" class="btn waves-effect waves-light btn-sm btn-danger" (click)="refresh()">
-                <i class="fas fa-redo fa-xs"></i>
-              </button>
-              <button type="button" class="btn waves-effect waves-light btn-sm btn-success" (click)="openModal()">                
-                <i class="ti-plus"></i>
-              </button> 
-              </div>
-          </div>
-      </div>
 
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>N°.</th>
-              <th>Op.</th>
-              <th>Caja</th>
-              <th>Fecha</th>
-              <th>Nro. Doc</th>
-              <th>Entidad Financiera</th>
-              <th>Valor</th>
-              <th>Observación</th>
-              <th>Empleado</th>
-              <th>Estado</th>              
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of movimientosCaja; track $index) {
-              <tr>
-                <th scope="row">{{$index + 1}}</th>
-                <td>
-                  <div ngbDropdown container="body">
-                <button
-                  type="button"
-                  class="btn btn-outline-primary btn-sm"
-                  ngbDropdownToggle
-                >
-                  Acciones
-                </button>
-                <div ngbDropdownMenu>
-                  
-                    <button ngbDropdownItem >
-                      <i class="fas fa-print"></i>
-                      Imprimir
-                    </button> 
-                   
-                    <button ngbDropdownItem >
-                      <i class=" fas fa-file-pdf"></i>
-                      Reporte
-                    </button> 
-                </div>
-              </div>
-                </td>
-                <td>{{item.caja}}</td>
-                <td>{{item.fechaEmision}}</td>
-                <td>{{item.nroDoc}}</td>
-                <td>{{item.subEntidadFinanciera}}</td>
-                <td>{{item.valor}}</td>
-                <td>{{item.observaciones}}</td>
-                <td>{{item.empleado}}</td>
-                <td>
-                 {{item.estado}}
-                </td>
-              </tr> 
-            } 
-            @empty {
-              <tr>
-                <td colspan="9" class="text-center">
-                  No hay registros
-                </td>
-              </tr>            
-            }
-          </tbody>
-          <tfoot>
-            <tr>
-            <td align="center" colspan="9">
-              <ngb-pagination
-                [collectionSize]="totalRecords"
-                [(page)]="dataSearch.pageIndex"
-                [maxSize]="dataSearch.maxSize"
-                [pageSize]="dataSearch.pageSize"
-                [rotate]="true"
-                (pageChange)="pageChanged()"
-                [boundaryLinks]="true"
-              />
-            </td>
-          </tr>
-          </tfoot>
-        </table>
-      </div>
+              <button ngbDropdownItem (click)="getReport(item)">
+                <i class="fas fa-file-pdf"></i>
+                Reporte
+              </button>
+            </div>
+          </div>
+        </td>
+        <td>{{ item.caja }}</td>
+        <td>{{ item.fechaEmision }}</td>
+        <td>{{ item.nroDoc }}</td>
+        <td>{{ item.subEntidadFinanciera }}</td>
+        <td>{{ item.valor }}</td>
+        <td>{{ item.observaciones }}</td>
+        <td>{{ item.empleado }}</td>
+        <td>
+          {{ item.estado }}
+        </td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="9" class="text-center">No hay registros</td>
+      </tr>
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <td align="center" colspan="9">
+          <ngb-pagination
+            [collectionSize]="totalRecords"
+            [(page)]="dataSearch.pageIndex"
+            [maxSize]="dataSearch.maxSize"
+            [pageSize]="dataSearch.pageSize"
+            [rotate]="true"
+            (pageChange)="pageChanged()"
+            [boundaryLinks]="true"
+          />
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

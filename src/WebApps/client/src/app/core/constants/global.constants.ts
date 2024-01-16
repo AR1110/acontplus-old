@@ -12,7 +12,8 @@ export const enum PATHS_API {
 export const enum PATHS {
   DOWNLOAD_V1 = 'Reporte/Download',
   DOWNLOAD = 'v2/Reporte/Download',
-  APP_NOTIFICATION = 'Notificacion/'
+  APP_NOTIFICATION = 'Notificacion/',
+  PRINT = 'Print'
 }
 
 export const enum DOC_TYPE {
@@ -46,7 +47,8 @@ export enum CODE_REPORT {
   RCNH = 'RCNH',               // PDF compra no habitual
   ROC = 'ROC',                  // Orden Compra
   RCP = 'RCP',                    //Reporte Compras
-  RCC = 'RCC'                 //Reporte Control Caja
+  RCC = 'RCC',                 //Reporte Control Caja
+  RMIE = 'RMIE' //Reporte Movimiento Caja
 }
 
 // Example usage:

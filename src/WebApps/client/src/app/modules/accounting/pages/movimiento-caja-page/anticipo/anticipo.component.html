@@ -1,1 +1,120 @@
-<p>anticipo works!</p>
+<div class="row">
+  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+    <div class="form-gorup">
+      <label for="establecimiento">Establecimiento</label>
+      <select
+        name="establecimiento"
+        id="establecimiento"
+        ng-model="$ctrl.dataSearchAnticipo.codEstab"
+        class="form-select border-select"
+        ng-change="$ctrl.getAnticipos()"
+      >
+        <option
+          ng-value="item.codEstab"
+          ng-repeat="item in $ctrl.establecimientos"
+        ></option>
+      </select>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+    <div class="form-group"></div>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="clienteFiltro">Cliente</label>
+      <input
+        type="text"
+        id="customerInputSearch"
+        class="form-control border-select"
+        ng-model="$ctrl.dataSearchAnticipo.selelectedCliente"
+        cliente-search-drtv
+        placeholder="Ingrese C.I o Nombre Comercial"
+        onclick="select();"
+      />
+
+      <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+        <div class="autocomplete-suggestion-uib-typeahead">
+            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+        </div>
+      </script>
+    </div>
+  </div>
+  <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+    <div class="button-group">
+      <button
+        type="button"
+        class="btn btn-info btn-sm mt-4"
+        data-toggle="button"
+        data-more="#sh"
+        aria-pressed="false"
+        ng-click="$ctrl.onClickBtnMoreAnticipo()"
+      >
+        <span class="text"
+          ><i
+            class="fas fa-eye fa-xs"
+            aria-hidden="true"
+            uib-tooltip="Más opciones"
+          ></i
+        ></span>
+        <span class="text-active"
+          ><i
+            class="fas fa-eye fa-xs"
+            aria-hidden="true"
+            uib-tooltip="Ocultar opciones"
+          ></i
+        ></span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-success btn-sm mt-4"
+        uib-tooltip="Recargar"
+        ng-click="$ctrl.getAnticipos()"
+      >
+        <i class="fas fa-redo fa-xs"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-info btn-sm mt-4"
+        uib-tooltip="Nuevo"
+        ng-click="$ctrl.openModalAnticipoNew()"
+      >
+        <i class="ti-plus"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="row justify-content-between"
+  ng-if="$ctrl.moreSearchOptionsAnticipo"
+>
+  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="estado">Estado:</label>
+      <select
+        id="estadoDocumentos"
+        class="form-control"
+        ng-model="$ctrl.dataSearch.codEstado"
+        ng-change="$ctrl.getAnticipos()"
+      >
+        <option value="">Todos</option>
+        <option
+          ng-value="item.codigo"
+          ng-repeat="item in $ctrl.estadoDocumentos"
+        ></option>
+      </select>
+    </div>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="buscador">Buscar</label>
+      <input
+        type="text"
+        class="form-control border-select"
+        ng-change="$ctrl.searchFilterLocal()"
+        ng-model="$ctrl.dataSearchAnticipo.bySearch"
+        placeholder="Ej: 001-002"
+      />
+    </div>
+  </div>
+</div>
