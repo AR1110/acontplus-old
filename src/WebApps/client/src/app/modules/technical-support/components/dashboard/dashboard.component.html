@@ -1,0 +1,104 @@
+<div class="row">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+    <div class="card border">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="d-flex no-block align-items-center">
+              <div>
+                <h3><i class="fa fa-tools"></i></h3>
+                <p class="text-muted">Ordenes</p>
+              </div>
+              <div class="ms-auto">
+                <h2 class="counter text-primary">{{ totalOrders }}</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="progress">
+              <div
+                class="progress-bar bg-primary"
+                role="progressbar"
+                style="width: 85%; height: 6px"
+                aria-valuenow="25"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+    <div class="card border">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="d-flex no-block align-items-center">
+              <div>
+                <h3><fa-icon [icon]="'user-gear'"></fa-icon></h3>
+                <p class="text-muted">Encargados</p>
+              </div>
+              <div class="ms-auto">
+                <h2 class="counter text-info">{{ totalEmployes }}</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="progress">
+              <div
+                class="progress-bar bg-info"
+                role="progressbar"
+                style="width: 85%; height: 6px"
+                aria-valuenow="25"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+    <div class="card border">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="d-flex no-block align-items-center">
+              <div>
+                <h3><fa-icon [icon]="'user'"></fa-icon></h3>
+                <p class="text-muted">Clientes</p>
+              </div>
+              <div class="ms-auto">
+                <h2 class="counter text-success">{{ totalCustomers }}</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="progress">
+              <div
+                class="progress-bar bg-success"
+                role="progressbar"
+                style="width: 85%; height: 6px"
+                aria-valuenow="25"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+    <div class="card">
+      <div class="card-body">
+        <canvas id="chartOrders" height="200px">{{ chartOrders }}</canvas>
+      </div>
+    </div>
+  </div>
+</div>
