@@ -69,7 +69,7 @@
                   ngbTooltip="Cerrar Caja"
                   (click)="openModalCashboxClose(item)"
                 >
-                  <i class="fas fa-money-bill-alt"></i>
+                  <fa-icon [icon]="'money-bill-alt'"></fa-icon>
                 </button>
                 } @if (verReporteMovimientoCaja(item.estado)) {
                 <button
@@ -78,7 +78,7 @@
                   ngbTooltip="Reporte PDF"
                   (click)="getReport(item.id)"
                 >
-                  <i class="fa fa-file-pdf"></i>
+                  <fa-icon [icon]="['far', 'file-pdf']"></fa-icon>
                 </button>
                 }
 
