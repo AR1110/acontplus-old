@@ -41,4 +41,4 @@ GO
 --ALTER TABLE Compra.Documento_Ingreso_Detail alter column tarifa NUMERIC(18,5) not null
 --ALTER TABLE Compra.Documento_Ingreso_Detail alter column valorImpuesto NUMERIC(18,5) not null
 
-SELECT  * FROM Compra.DocumentoIngresoImpuesto
+SELECT  * FROM Compra.Documento_Ingreso_Detail
