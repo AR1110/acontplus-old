@@ -54,22 +54,8 @@
               <label for="customerSearch">Cliente:
                 <span class="text-danger">*</span>
               </label>
-              <div class="input-group">
-                <!-- <CustomerSearch {resultCustomerSelected} /> -->
-                <div class="input-group-append">
-                  <button type="button" class="btn btn-secondary btn-xs" (click)="activeShowForm('NEW', 0)">
-                    <i class="fa fa-plus fa-xs"></i>
-                  </button>
-                  <!-- @if (data.customerCompanyId > 0){ -->
-                  <button type="button" class="btn btn-secondary btn-xs"
-                    (click)="activeShowForm('UPDATE',data.customerCompanyId )">
-                    <i class="fa fa-edit fa-xs"></i>
-                  </button>
-                  <button type="button" class="btn btn-secondary btn-xs">
-                    <i class="fa fa-search fa-xs"></i>
-                  </button>
-                </div>
-              </div>
+              <app-company-customer-search
+                (onCustomerSelected)="onCustomerSelected($event)"></app-company-customer-search>
             </div>
           </div>
         </div>
