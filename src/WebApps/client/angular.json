@@ -42,7 +42,7 @@
           "options": {
             "allowedCommonJsDependencies": [
               "sweetalert2",
-              "file-sarver"
+              "file-saver"
             ],
             "outputPath": "dist/client",
             "index": "src/index.html",
