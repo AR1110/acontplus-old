@@ -1,5 +1,4 @@
 import { Component, Input, ViewEncapsulation, inject } from '@angular/core';
-import { hideLoader, showLoader } from '@core/utils';
 import { ControlCaja } from '@modules/accounting/models/cashbox.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,6 +12,7 @@ import { UserPermissionService } from '@modules/config/services/user-permission.
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { CODE_REPORT } from '@core/constants/global.constants';
+import { hideLoader, showLoader } from '@core/utils/loader';
 @Component({
   selector: 'app-movimiento-caja-modal',
   standalone: true,

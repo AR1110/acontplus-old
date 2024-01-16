@@ -8,6 +8,7 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss",
+          "inlineStyle": true,
           "skipTests": true
         },
         "@schematics/angular:class": {
@@ -39,7 +40,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
-            "allowedCommonJsDependencies": ["sweetalert2", "file-sarver"],
+            "allowedCommonJsDependencies": [
+              "sweetalert2",
+              "file-sarver"
+            ],
             "outputPath": "dist/client",
             "index": "src/index.html",
             "main": "src/main.ts",

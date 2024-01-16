@@ -2,7 +2,7 @@ import { Component, Input, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils';
+import { hideLoader, showLoader } from '@core/utils/loader';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -36,7 +36,7 @@ export class AperturaCajaModalComponent {
   ngOnInit() {
     this.dataForm.get('idCaja')?.setValue(this.params.idCaja)
 
-    
+
     showLoader();
     this.controlCajaSvc.getDataForm().subscribe({
       next: (response) => {
