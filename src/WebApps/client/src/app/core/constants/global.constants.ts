@@ -1,11 +1,12 @@
 export const enum PATHS_API {
   ACCOUNTING = `Contabilidad/`,
-  REPORT = 'Reports/',
-  PURCHASE = 'Compra/',
-  CONFIG = 'Config/',
   COMMON = 'Common/',
+  CONFIG = 'Config/',
   CUSTOMER = 'Customer/',
-  SALES = 'Ventas/'
+  PURCHASE = 'Compra/',
+  REPORT = 'Reports/',
+  SALES = 'Ventas/',
+  TECHSUPPORT = 'TechnicalSupport/'
 }
 
 export const enum PATHS {
