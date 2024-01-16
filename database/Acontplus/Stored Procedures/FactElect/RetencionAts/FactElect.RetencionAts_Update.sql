@@ -191,9 +191,6 @@ BEGIN
 			,idUsuario = @idUsuario
 			,idEntidad = @idEntidad
 			,codEstado = 1
-			,ruc = @ruc
-			,numeroIdentificacion = (SELECT identificacionSujetoRetenido FROM @tblInfoCompRet)
-			,codEstab = (SELECT codEstab FROM @tblInfoCompRet)
 			,idContribuyente = @idProveedor
 			,nroDocumento = CONVERT(BIGINT, @secuencial)
 			WHERE  idDocumento = @id AND codDoc = '07' AND versionComp = '2.0.0'
