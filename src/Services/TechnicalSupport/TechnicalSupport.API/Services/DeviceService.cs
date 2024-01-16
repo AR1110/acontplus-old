@@ -1,4 +1,5 @@
 ﻿using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
 using TechnicalSupport.API.Interfaces;
 
@@ -11,16 +12,24 @@ namespace TechnicalSupport.API.Services
         {
             _repository = repository;
         }
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("TechnicalSupport.Product_Get", parameters);
-            if (ds == null)
+            try
             {
-                return null;
+                var ds = await _repository.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
+                if (DataValidation.DataSetIsNull(ds))
+                {
+                    return new ApiResponse { code = "1", message = "No se encontraron datos"};
+                }
+                else
+                {
+                    return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+                }
             }
-            else
+            catch (Exception)
             {
-                return DataConverters.DataSetToJSON(ds);
+
+                throw;
             }
         }
     }

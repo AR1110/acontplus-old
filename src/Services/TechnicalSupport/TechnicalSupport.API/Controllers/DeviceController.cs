@@ -31,12 +31,12 @@ namespace TechnicalSupport.API.Controllers
                     {"json", SqlStringParam.Sanitize(json)}
                 };
                 var response = await _deviceService.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
+                if (response == null) { return BadRequest("Can't Get Data"); };
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Get: " + ex.Message);
+                _log.LogActivity($"Error on Get: {json}" + ex.Message);
                 return BadRequest("Error on get");
             }
         }
