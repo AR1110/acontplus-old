@@ -24,13 +24,12 @@ export class CashboxService {
   }
 
   getDataForm() {
-    console.log("test ")
     let paramsStr = JSON.stringify({ tipo: 2 })
     return this.http.get(`${this.url}?json=${paramsStr}`)
       .pipe(
-        map((response) => {  
+        map((response) => {
           return response;
-        }) 
+        })
       )
   }
 

@@ -20,20 +20,15 @@
           </div>
           <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
               <div class="button-group">
-                <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
-                  aria-pressed="false" ng-click="$ctrl.onClickBtnMore()">
-                  <span class="text"><i class="fas fa-eye fa-xs" aria-hidden="true"
-                          uib-tooltip="Más opciones"></i></span>
-                  <span class="text-active"><i class="fas fa-eye fa-xs" aria-hidden="true"
-                          uib-tooltip="Ocultar opciones"></i></span>
+                  <button type="button" class="btn waves-effect waves-light btn-sm btn-info">
+                <i class="fas fa-eye fa-xs"></i>
               </button>
-              <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
-                  ng-click="$ctrl.getMovCajas()">
-                  <i class="fas fa-redo fa-xs"></i>
+              <button type="button" class="btn waves-effect waves-light btn-sm btn-danger">
+                <i class="fas fa-redo fa-xs"></i>
               </button>
-              <button type="button" class="btn btn-info btm-sm mt-4" uib-tooltip="Nuevo" (click)="openModal()">
-                  <i class="ti-plus"></i>
-              </button>
+              <button type="button" class="btn waves-effect waves-light btn-sm btn-success" (click)="openModal()">                
+                <i class="ti-plus"></i>
+              </button> 
               </div>
           </div>
       </div>
@@ -53,14 +48,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
+            @for (item of movimientosCaja; track $index) {
+              <tr>
+                <td>{{item.caja}}</td>
+                <td>{{item.fechaEmision}}</td>
+                <td>{{item.nroDoc}}</td>
+                <td>{{item.subEntidadFinanciera}}</td>
+                <td>{{item.valor}}</td>
+                <td>{{item.observaciones}}</td>
+                <td>{{item.empleado}}</td>
+                <td>
+                 {{item.estado}}
+                </td>
+              </tr>
+
+            } 
           </tbody>
           <tfoot>
             <tr>
