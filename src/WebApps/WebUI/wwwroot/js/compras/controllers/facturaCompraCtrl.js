@@ -134,6 +134,15 @@
         };
         $scope.initiload();
 
+        $scope.pagechanged = function () {
+            $scope.getFacturas();
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getFacturas();
+        };
+
         //----------------------------------------------FILTROS ----------------------------------------
         $scope.resultRangeFilter = function (item) {
             ($scope.dataSearch.fechaInicio = item.startDate),

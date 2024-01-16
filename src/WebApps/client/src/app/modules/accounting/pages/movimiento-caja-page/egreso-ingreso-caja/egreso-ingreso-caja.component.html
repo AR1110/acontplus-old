@@ -23,7 +23,7 @@
                   <button type="button" class="btn waves-effect waves-light btn-sm btn-info">
                 <i class="fas fa-eye fa-xs"></i>
               </button>
-              <button type="button" class="btn waves-effect waves-light btn-sm btn-danger">
+              <button type="button" class="btn waves-effect waves-light btn-sm btn-danger" (click)="refresh()">
                 <i class="fas fa-redo fa-xs"></i>
               </button>
               <button type="button" class="btn waves-effect waves-light btn-sm btn-success" (click)="openModal()">                
@@ -37,6 +37,8 @@
         <table class="table">
           <thead>
             <tr>
+              <th>N°.</th>
+              <th>Op.</th>
               <th>Caja</th>
               <th>Fecha</th>
               <th>Nro. Doc</th>
@@ -50,6 +52,30 @@
           <tbody>
             @for (item of movimientosCaja; track $index) {
               <tr>
+                <th scope="row">{{$index + 1}}</th>
+                <td>
+                  <div ngbDropdown container="body">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm"
+                  ngbDropdownToggle
+                >
+                  Acciones
+                </button>
+                <div ngbDropdownMenu>
+                  
+                    <button ngbDropdownItem >
+                      <i class="fas fa-print"></i>
+                      Imprimir
+                    </button> 
+                   
+                    <button ngbDropdownItem >
+                      <i class=" fas fa-file-pdf"></i>
+                      Reporte
+                    </button> 
+                </div>
+              </div>
+                </td>
                 <td>{{item.caja}}</td>
                 <td>{{item.fechaEmision}}</td>
                 <td>{{item.nroDoc}}</td>
@@ -60,13 +86,19 @@
                 <td>
                  {{item.estado}}
                 </td>
-              </tr>
-
+              </tr> 
             } 
+            @empty {
+              <tr>
+                <td colspan="9" class="text-center">
+                  No hay registros
+                </td>
+              </tr>            
+            }
           </tbody>
           <tfoot>
             <tr>
-            <td align="center" colspan="6">
+            <td align="center" colspan="9">
               <ngb-pagination
                 [collectionSize]="totalRecords"
                 [(page)]="dataSearch.pageIndex"

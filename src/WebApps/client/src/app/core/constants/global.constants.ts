@@ -5,7 +5,7 @@ export const enum PATHS_API {
   CUSTOMER = 'Customer/',
   PURCHASE = 'Compra/',
   REPORT = 'Reports/',
-  SALES = 'Ventas/',
+  SALES = 'Venta/',
   TECHSUPPORT = 'TechnicalSupport/'
 }
 

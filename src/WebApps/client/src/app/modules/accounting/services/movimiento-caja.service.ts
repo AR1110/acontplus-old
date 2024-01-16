@@ -42,26 +42,43 @@ export class MovimientoCajaService {
             entidadesFinanciera = [],
             establecimientos = [],
             subEntidadesFinanciera = [],
-            tiposDocumentos = []
+            tiposDocumento = []
           if (isApiResponse(response)) {
             let mainData = JSON.parse(response.payload as string);
             const { caja, entidadFinanciera, establecimiento, subEntidadFinanciera, tipoDocumento } = mainData;
 
-            cajas = caja,
+            cajas = caja.map((c: any) => {
+              return {
+                idCaja: c.idCaja,
+                descripcion: c.caja
+              }
+            }),
               entidadesFinanciera = entidadFinanciera,
               establecimientos = establecimiento,
               subEntidadesFinanciera = subEntidadFinanciera,
-              tiposDocumentos = tipoDocumento
+              tiposDocumento = tipoDocumento
           }
           return {
             cajas,
             entidadesFinanciera,
             establecimientos,
             subEntidadesFinanciera,
-            tiposDocumentos
+            tiposDocumento
           }
         })
       )
+  }
+
+  post<T>(data: T) {
+    return this.http.post(`${this.url}`, {data})
+  }
+
+  put<T>(id: number, data: T) {
+    return this.http.put(`${this.url}${id}`, {data})
+  }
+
+  delete(id: number) {
+    return this.http.delete(`${this.url}${id}`)
   }
 
 }
