@@ -1,4 +1,4 @@
-
+ 
 export interface Cashbox {
   idCaja: number
   descripcion: string
@@ -23,3 +23,5 @@ export interface ControlCaja {
   estado: boolean
   totalRecords: number
 }
+
+export interface CashboxSelectHtmlOnly extends Pick<Cashbox, 'idCaja' | 'descripcion'> {}

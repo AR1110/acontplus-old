@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
+import { PATHS_API } from '@core/constants/global.constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TechnicalSupportService {
 
-  constructor() { }
+  url = `${PATHS_API.TECHSUPPORT}`
+
 }

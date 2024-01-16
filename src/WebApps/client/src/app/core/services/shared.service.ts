@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { PATHS, PATHS_API } from '@core/constants/global.constants';
-import { hideLoader, showLoader } from '@core/utils';
+import { hideLoader, showLoader } from '@core/utils/loader';
 import FileSaver from 'file-saver';
 
 @Injectable({

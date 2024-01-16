@@ -1,0 +1,19 @@
+<div class="input-group">
+  <input id="typeahead-supplier" type="text" class="form-control" [(ngModel)]="textSearch"
+  [ngbTypeahead]="search" [resultTemplate]="rt" (selectItem)="onSelect($event)" onclick="select();" />
+
+  <button type="button" class="btn btn-outline-secondary btn-sm">
+    <i class="fa fa-plus fa-xs"></i>
+  </button>
+  <!-- @if (data.customerCompanyId > 0){ -->
+  <button type="button" class="btn btn-outline-secondary btn-sm">
+    <i class="fa fa-edit fa-xs"></i>
+  </button>
+  <button type="button" class="btn btn-outline-secondary btn-sm">
+    <i class="fa fa-search fa-xs"></i>
+  </button>
+</div>
+
+<ng-template #rt let-r="result" let-t="term">
+  <ngb-highlight [result]="r.numeroIdentificacion + ' - ' + r.nombreFiscal" [term]="t" />
+</ng-template>

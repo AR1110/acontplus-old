@@ -35,7 +35,6 @@
             if (!token) { return; }
 
             let permissions = fS.getDataUserRol();
-            console.log($scope)
             // Create a new iframe element
             var iframe = document.createElement('iframe');
 

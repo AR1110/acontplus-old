@@ -1,5 +1,6 @@
 export enum GlobalRoutes {
   TechnicalSupport = 'technical-support/technical-support-page',
   ComprasReportes = 'purchase/reports-page',
-  ContabilidadCaja = 'accounting/cashbox-page'
+  ContabilidadCaja = 'accounting/cashbox-page',
+  ContabilidadMovimientoCaja = 'accounting/movimiento-caja-page'
 }

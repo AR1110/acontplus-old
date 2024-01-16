@@ -27,8 +27,8 @@ namespace Common.Infrastructure.Repository.GestionFinanciera
             {
                 using (var con = new SqlConnection(_connectionStrings))
                 {
-                    var cmd = new SqlCommand("aspMovimientoCajaGet", con);
-                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    var cmd = new SqlCommand("Contabilidad.MovimientoCaja_Get", con);
+                    cmd.Parameters.AddWithValue("userRoleId", idRol);
                     cmd.Parameters.AddWithValue("json", json);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();

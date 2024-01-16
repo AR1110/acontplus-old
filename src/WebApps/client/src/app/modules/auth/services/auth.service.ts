@@ -2,9 +2,9 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, catchError, throwError } from 'rxjs';
-import { hideLoader, showLoader } from '@core/utils';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.model';
+import { hideLoader, showLoader } from '@core/utils/loader';
 
 @Injectable({
   providedIn: 'root'
