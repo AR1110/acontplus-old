@@ -19,100 +19,126 @@ BEGIN
     --> Global
     DECLARE @tipo INT ,@idEntidad INT
 
-     --> Filters
-    DECLARE @checkBoxFecha BIT ,@idEmpleado INT,@codEstadoDoc VARCHAR(20) ,@idUsuario INT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2
+     --> Sql
+	DECLARE @params nvarchar(MAX) ,@sql nvarchar(MAX) ,@pageIndex INT ,@pageSize INT
 
-	DECLARE @byEntidad INT 
-		   ,@byEmpleado INT
-		   ,@byEstado INT
-		   ,@checkBoxEmpleado BIT
-		   ,@checkBoxEstado BIT 
-		   ,@codDoc NVARCHAR(10)
-		   ,@params NVARCHAR(MAX) = '@idEntidad    INT
-									,@idEmpleado   INT 
-									,@fechaInicio  DATETIME
-									,@fechaFin     DATETIME
-									,@codDocParamt VARCHAR(20)'
-		 
-		  ,@sql NVARCHAR(MAX) = 'SELECT  TOP 50 
-		                                 idTipoDocumento      = td.idTipoDocumento									
-										,codDoc               = td.codigo
-										,idMovimientoCaja     = mc.idMovimientoCaja
-										,codEstab             = mc.codEstab
-										,fechaEmision         = dbo.AFTConvertDate(mc.fechaEmision)
-										,valor                = mc.valor * IIF(td.codigo = ''EC'',-1,1)
-										,observaciones        = ISNULL(mc.observaciones,'''')
-										,nroDoc               = td.codigo + ''-'' + s.estab + ''-'' + dbo.AFTAutoComplete(mc.nroDoc) 
-										,estado               = IIF(mc.estado = 1,''Activo'',''Anulado'')
-										,subEntidadFinanciera = sef.descripcion
-										,empleado             = UPPER(e.nombreCompleto)
-										,caja                 = UPPER(c.descripcion)
-										,u.nroIdentificacion
-								FROM dbo.MovimientoCaja mc WITH (NOLOCK) 
-								INNER JOIN dbo.Caja                   c WITH (NOLOCK) ON c.idCaja                   = mc.idCaja
-								INNER JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.idTipoDocumento         = mc.idTipoDocumento
-								INNER JOIN dbo.SubEntidadFinanciera sef WITH (NOLOCK) ON sef.idSubEntidadFinanciera = mc.idSubEntidadFinanciera								
-								INNER JOIN Sri.Establecimiento        s WITH (NOLOCK) ON s.codEstab                 = mc.codEstab
-								INNER JOIN dbo.Empleado               e WITH (NOLOCK) ON e.idEmpleado               = mc.idEmpleado
-								INNER JOIN dbo.Usuario                u WITH (NOLOCK) ON u.idUsuario                = mc.idUsuarioRegister    
-								WHERE mc.idEntidad = @idEntidad '
+    --> Filters
+    DECLARE @checkBoxFecha BIT ,@idUsuario INT ,@idEmpleado INT ,@codEstado NVARCHAR(10) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2
 	
-	SELECT TOP 1 @byEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+    --> Recuperacion de variables
+	SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-	SELECT 
-		 @checkBoxEmpleado = checkBoxEmpleado
-		,@checkBoxEstado   = checkBoxEstado
-		,@checkBoxFecha    = checkBoxFecha
-		,@byEmpleado       = byEmpleado
-		,@byEstado         = byEstado
-		,@codDoc           = (SELECT codigo FROM EstadoPago WHERE idEstadoPago = byEstado)
-		,@fechaInicio      = CONVERT(datetime,fechaInicio,121) 
-		,@fechaFin         = CONVERT(datetime,fechaFin,121) 
-	FROM OPENJSON(@json)
-	WITH (fechaInicio VARCHAR(200) '$.fechaInicio'
-		 ,fechaFin    VARCHAR(200) '$.fechaFin'
-		 ,byEstado             INT '$.byEstado'
-		 ,byEmpleado           INT '$.byEmpleado'
-		 ,checkBoxFecha        BIT '$.checkBoxDate'
-		 ,checkBoxEstado       BIT '$.checkBoxEstado'
-		 ,checkBoxUsuario      BIT '$.checkBoxUsuario'
-		 ,checkBoxEmpleado     BIT '$.checkBoxEmpleado')
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-	BEGIN TRY 
+    --> Get 
+    IF @tipo = 1
+        BEGIN 
+            
+            SET @tableNames = 'movimientos'
+
+            SET @params = '@idEntidad   INT
+						  ,@idEmpleado  INT 
+						  ,@fechaInicio DATETIME2
+						  ,@fechaFin    DATETIME2
+						  ,@codEstado   VARCHAR(20)
+                          ,@pageIndex   INT
+                          ,@pageSize    INT'
+
+            SET @sql = 'SELECT idTipoDocumento      = td.idTipoDocumento									
+							  ,codDoc               = td.codigo
+							  ,idMovimientoCaja     = mc.idMovimientoCaja
+							  ,codEstab             = mc.codEstab
+							  ,fechaEmision         = dbo.AFTConvertDate(mc.fechaEmision)
+							  ,valor                = mc.valor * IIF(td.codigo = ''EC'',-1,1)
+							  ,observaciones        = ISNULL(mc.observaciones,'''')
+							  ,nroDoc               = td.codigo + ''-'' + s.estab + ''-'' + dbo.AFTAutoComplete(mc.nroDoc) 
+							  ,estado               = IIF(mc.estado = 1,''Activo'',''Anulado'')
+							  ,subEntidadFinanciera = sef.descripcion
+							  ,empleado             = UPPER(e.nombreCompleto)
+							  ,caja                 = UPPER(c.descripcion)
+							  ,u.nroIdentificacion
+                              ,COUNT(*) OVER() as totalRecords
+					FROM dbo.MovimientoCaja              mc WITH (NOLOCK) 
+					INNER JOIN dbo.Caja                   c WITH (NOLOCK) ON c.idCaja                   = mc.idCaja
+					INNER JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.idTipoDocumento         = mc.idTipoDocumento
+					INNER JOIN dbo.SubEntidadFinanciera sef WITH (NOLOCK) ON sef.idSubEntidadFinanciera = mc.idSubEntidadFinanciera								
+					INNER JOIN Sri.Establecimiento        s WITH (NOLOCK) ON s.codEstab                 = mc.codEstab
+					INNER JOIN dbo.Empleado               e WITH (NOLOCK) ON e.idEmpleado               = mc.idEmpleado
+					INNER JOIN dbo.Usuario                u WITH (NOLOCK) ON u.idUsuario                = mc.idUsuarioRegister    
+					WHERE mc.idEntidad = @idEntidad '
+
+	        SELECT @checkBoxFecha  = checkBoxFecha
+		          ,@idEmpleado     = idEmpleado
+		          ,@codEstado      = codEstado
+		          ,@fechaInicio    = fechaInicio
+		          ,@fechaFin       = fechaFin
+                  ,@pageSize       = pageSize
+				  ,@pageIndex      = pageIndex
+	        FROM OPENJSON(@json) WITH 
+            (     
+                  fechaInicio     DATETIME2
+		         ,fechaFin        DATETIME2 
+		         ,idEmpleado      INT 
+		         ,checkBoxFecha   BIT 
+                 ,codEstado       VARCHAR(10)
+                 ,pageSize        INT
+                 ,pageIndex       INT
+            )
+
 	
-		IF @checkBoxEmpleado =  1
-			BEGIN
-				SET @sql = @sql+'AND mc.idEmpleado =  @idEmpleado'
-			END 
+		    IF @idEmpleado > 0 
+			    BEGIN
+				    SET @sql = @sql + 'AND mc.idEmpleado =  @idEmpleado'
+			    END 
 	    
-		IF @checkBoxEstado = 1 
-			BEGIN
-				SET @sql = @sql+'AND mc.estado = IIF(@codDocParamt =''AC'',1,0)'
-			END 
+		    IF @codEstado IS NOT NULL 
+			    BEGIN
+				    SET @sql = @sql + 'AND mc.estado = IIF(@codEstado = ''AC'',1,0)'
+			    END 
 
-		IF @checkBoxFecha = 1
-			BEGIN
-				SET @sql = @sql+'AND CAST(mc.fechaEmision AS DATE) BETWEEN CAST(@fechaI as date) AND CAST(@FechaF as date) '
-			END 
+		    IF @checkBoxFecha = 1
+			    BEGIN
+				    SET @sql = @sql + 'AND CAST(mc.fechaEmision AS DATE) BETWEEN CAST(@fechaInicio as date) AND CAST(@FechaFin as date) '
+			    END 
 
-		SET @sql = @sql+' ORDER BY mc.idMovimientoCaja DESC'
-
-
- 		EXEC sp_executesql 
-			      @sql
-			     ,@params 
-			     ,@idEntidad    = @byEntidad
-				 ,@idEmpleado   = @byEmpleado
-				 ,@fechaI       = @fechaInicio
-				 ,@fechaF       = @fechaFin
-				 ,@codDocParamt = @codDoc
-
-	END TRY 
-
-	BEGIN CATCH
-		SELECT '0','Error en el proces de Get: '+ ERROR_MESSAGE(),'Movimiento Caja'
-		RETURN 
-	END CATCH 
+		    SET @sql = @sql + ' ORDER BY mc.idMovimientoCaja DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
 
+ 		    EXEC sp_executesql @sql
+			                  ,@params 
+			                  ,@idEntidad   = @idEntidad
+				              ,@idEmpleado  = @idEmpleado
+				              ,@fechaInicio = @fechaInicio
+				              ,@fechaFin    = @fechaFin
+				              ,@codEstado   = @codEstado
+                              ,@pageIndex   = @pageIndex
+                              ,@pageSize    = @pageSize
+
+	
+            RETURN 
+        END 
+    
+    --> DataForm 
+    IF @tipo = 2
+        BEGIN 
+            
+            SET @tableNames = 'establecimiento,caja,tipoDocumento,entidadFinanciera,subEntidadFinanciera'
+
+            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+
+            SELECT ac.idCaja
+                  ,ca.descripcion as caja 
+            FROM dbo.AsignacionCaja ac WITH (NOLOCK) 
+            INNER JOIN dbo.Usuario  us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
+            INNER JOIN dbo.Caja     ca WITH (NOLOCK) ON ca.idCaja    = ac.idCaja
+            WHERE ac.idUsuario = @idUsuario
+
+            SELECT idTipoDocumento,descripcion,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('IC','EC') ORDER BY descripcion DESC
+
+            SELECT idEntidadFinanciera,descripcion,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
+
+            SELECT idSubEntidadFinanciera,idEntidadFinanciera,descripcion,codigo FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+
+            RETURN
+        END
 END

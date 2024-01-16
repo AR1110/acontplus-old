@@ -19,10 +19,7 @@ GO
 -- Create date: 2022-09-17
 -- Description:	SP Para insertar los detalles temporales del comprobante importado
 -- =============================================
-IF OBJECT_ID(N'Recepcion.DocumentoDetalle_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.DocumentoDetalle_Insert 
-GO
-CREATE PROCEDURE Recepcion.DocumentoDetalle_Insert	@idUsuarioRol INT
+CREATE OR ALTER PROCEDURE Recepcion.DocumentoDetalle_Insert	@idUsuarioRol INT
 ,@idDocumento INT
 ,@idArticulo INT
 AS
@@ -129,9 +126,8 @@ BEGIN
 			
 			IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle t INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo WHERE t.idDocumento = @idDocumento  AND a.llevaInventario = 1)
 				BEGIN
-					DECLARE @idArticuloStock INT ,@idBodega INT ,@idMedida INT ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5)
-					       ,@precioCosto NUMERIC(18,5) ,@precioTotalSimImpuestos AS NUMERIC(18,5) ,@codDocInv VARCHAR(2) ,@multiplier INT
-                           ,@idTipoDocumento INT ,@idTipoTransaccion INT ,@stock NUMERIC(18,5) ,@porcentaje NUMERIC(18,5)
+					DECLARE @codDocInv VARCHAR(2) ,@multiplier INT
+                           ,@idTipoDocumento INT ,@idTipoTransaccion INT 
 					
                     DECLARE @tblDetails AS TABLE (
 							idArticulo  INT NOT NULL
@@ -168,94 +164,45 @@ BEGIN
 
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
-					DECLARE cursor_inventory CURSOR LOCAL FOR
-					SELECT td.idArticulo, idBodega,td.idMedida,cantidad * @multiplier, td.precioUnitario * @multiplier,td.precioUnitario,td.precioTotalSimImpuestos * @multiplier
-					FROM @tblDetails td
-					INNER JOIN Articulo a WITH(NOLOCK) ON td.idArticulo = a.idArticulo
-							
-					OPEN cursor_inventory
+					INSERT INTO Inventario.Transaccion 
+                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
+			        SELECT @idTipoTransaccion
+                           ,idArticulo
+                           ,idBodega
+                           ,@idTipoDocumento
+                           ,@idDocumento
+                           ,idMedida
+                           ,ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af WITH (NOLOCK) WHERE af.idArticulo = td.idArticulo AND af.idMedida = td.idMedida ),1) * td.cantidad
+                           ,precioUnitario
+                           ,precioUnitario
+                           ,precioTotalSimImpuestos
+                           ,@fechaEmision
+                           ,@idUsuario 
 
-					FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
+                    FROM @tblDetails td
 
-					WHILE @@FETCH_STATUS = 0
-						BEGIN
-							
-                            -- Articulo Fraccionado
-                            IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida)
+                    IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE codMetodoValoracion = 'UEPS' AND idEntidad = @idEntidad)
                                 BEGIN
-                                    SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida
-                                END
-                                    
-							INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
-				                    (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
-			                SELECT @idTipoTransaccion,@idArticuloStock,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSimImpuestos,@fechaEmision,@idUsuario
-								    
-                            IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticuloStock AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
-                                BEGIN
-                                    SELECT @cantidad = 0       
+                                    UPDATE ar SET
+                                           ar.fechaUltimoCosto = CASE WHEN ar.fechaUltimoCosto >= @fechaEmision THEN ar.fechaUltimoCosto
+                                                                                                                ELSE @fechaEmision
+                                                                 END
+                                          ,ar.precioCosto     =  CASE WHEN ar.fechaUltimoCosto >= @fechaEmision THEN ar.precioCosto
+                                                                                                                ELSE IIF((SELECT TOP 1 MAX(td.precioUnitario) FROM @tblDetails td WHERE td.idArticulo = ar.idArticulo AND td.idMedida = ar.idMedida) >= (ar.precioCosto / 2)
+                                                                                                                        ,(SELECT TOP 1 MAX(td.precioUnitario) FROM @tblDetails td WHERE td.idArticulo = ar.idArticulo AND td.idMedida = ar.idMedida)
+                                                                                                                        ,ar.precioCosto) 
+                                                                                                                 
+                                                                 END
+                                    FROM dbo.Articulo ar WITH (ROWLOCK)
+                                    WHERE ar.idArticulo IN (SELECT idArticulo FROM @tblDetails td)  
+
+                                    UPDATE pv SET
+                                           pv.porcentajeUtilidad = ((pv.precioVenta / ar.precioCosto) * 100) - 100
+                                    FROM dbo.ArticuloPvP pv WITH (ROWLOCK)
+                                    INNER JOIN dbo.Articulo ar WITH (ROWLOCK) ON ar.idArticulo = pv.idArticulo
+                                    WHERE ar.idArticulo IN (SELECT idArticulo FROM @tblDetails td)
+
                                 END 
-                              
-                            --> Metodo UltimoPrecio
-                            IF @codDocInv = 'FE'
-                                BEGIN 
-                                    IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codMetodoValoracion = 'UEPS')
-                                        BEGIN
-                                    
-                                            IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticuloStock AND idBodega = @idBodega AND fechaUltimoCosto IS NULL)
-                                                BEGIN
-                                                    SELECT TOP 1 @porcentaje = precioCosto / 2 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticuloStock  
-                                                    
-                                                    IF @precioUnitario >= @porcentaje 
-				                                        BEGIN
-                                                            IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida AND estado = 1)
-						                                        BEGIN 
-							                                        UPDATE dbo.Articulo SET precioCosto = @precioUnitario, fechaModificacion = dbo.ufngetDateEcuador() WHERE idArticulo = @idArticuloStock
-						
-							                                        UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioUnitario) * 100) - 100 WHERE idArticulo = @idArticuloStock
-						                                        END 
-					                                        ELSE 
-						                                        BEGIN
-							                                        UPDATE dbo.ArticuloFraccionado SET precioCostoFraccionado = @precioUnitario WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida
-							
-						                                        END
-                                                        END 
-
-                                                END 
-
-                                            IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticuloStock AND idBodega = @idBodega AND fechaUltimoCosto < @fechaEmision)
-                                                BEGIN
-                                                    SELECT TOP 1 @porcentaje = precioCosto / 2 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticuloStock  
-                                                    
-                                                    IF @precioUnitario >= @porcentaje 
-				                                        BEGIN
-                                                            IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida AND estado = 1)
-						                                        BEGIN 
-							                                        UPDATE dbo.Articulo SET precioCosto = @precioUnitario, fechaModificacion = dbo.ufngetDateEcuador() WHERE idArticulo = @idArticuloStock
-						
-							                                        UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioUnitario) * 100) - 100 WHERE idArticulo = @idArticuloStock
-						                                        END 
-					                                        ELSE 
-						                                        BEGIN
-							                                        UPDATE dbo.ArticuloFraccionado SET precioCostoFraccionado = @precioUnitario WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida
-							
-						                                        END
-                                                        END 
-
-                                                END 
-
-
-                                        END
-                                END 
-                            UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticuloStock AND idBodega = @idBodega
-
-	                        SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND s.estado = 1
-
-	                        UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticuloStock
-
-                            FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
-						END
-					CLOSE cursor_inventory
-					DEALLOCATE cursor_inventory  
 				END
 
 			SELECT '1' code, 'Detalle importado exitosamente' as 'message'
