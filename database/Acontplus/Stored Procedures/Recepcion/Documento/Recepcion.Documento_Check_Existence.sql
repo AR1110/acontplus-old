@@ -1,3 +1,5 @@
+USE [Acontplus]
+go 
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -18,11 +20,7 @@ GO
 -- Create date: 2023-05-01
 -- Description:	SP FOR CHECK EXISTENCE OF DOC
 -- =============================================
-IF OBJECT_ID(N'Recepcion.Documento_Check_Existence ', N'P') IS NOT NULL
-	DROP PROCEDURE Recepcion.Documento_Check_Existence
-GO
-
-CREATE PROCEDURE Recepcion.Documento_Check_Existence @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Recepcion.Documento_Check_Existence @json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON; 

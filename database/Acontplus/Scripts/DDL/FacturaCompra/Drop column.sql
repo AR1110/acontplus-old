@@ -5,6 +5,7 @@ GO
 --ALTER TABLE FacturaCompra DROP COLUMN [idTiempoCredito]
 
 --ALTER TABLE FacturaCompra DROP CONSTRAINT [DF__FacturaCo__abono__43A1D464]
+--ALTER TABLE FacturaCompra DROP COLUMN [saldo]
 --ALTER TABLE FacturaCompra DROP COLUMN [abono]
 
 --ALTER TABLE FacturaCompra DROP COLUMN [idEstadoPago]
@@ -20,9 +21,6 @@ GO
 --ALTER TABLE FacturaCompra DROP COLUMN [totalIce]
 --ALTER TABLE FacturaCompra DROP COLUMN [irbpnr]
 --ALTER TABLE FacturaCompra DROP COLUMN [iva]
---ALTER TABLE FacturaCompra DROP COLUMN [saldo]
-
-
 
 
 --EXEC sp_rename 'FacturaCompraDetalle.precioCosto', 'precioUnitario'
@@ -30,12 +28,11 @@ GO
 --EXEC sp_rename 'FacturaCompraDetalle.porcentajeIva', 'tarifa'
 --EXEC sp_rename 'FacturaCompraDetalle.iva', 'valorImpuesto'
 
---ALTER TABLE FacturaCompraDetalle DROP COLUMN [precioCostoNeto]
+--> DETALLES 
+
 --ALTER TABLE FacturaCompraDetalle DROP COLUMN [precioCostoNeto]
 --ALTER TABLE FacturaCompraDetalle DROP COLUMN [codigoPrincipal]
 --ALTER TABLE FacturaCompraDetalle DROP COLUMN [codigoAuxiliar]
-
---> DETALLES 
 
 --ALTER TABLE FacturaCompraDetalle ADD codigoPorcentaje VARCHAR(5)
 
