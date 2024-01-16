@@ -1,21 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-tech-spec-dialog',
+  selector: 'app-device-dialog',
   standalone: true,
   imports: [CompanyCustomerSearchComponent],
-  templateUrl: './tech-spec-dialog.component.html',
-  styleUrl: './tech-spec-dialog.component.scss'
+  templateUrl: './device-dialog.component.html',
+  styles: ``
 })
-export class TechSpecDialogComponent {
+export class DeviceDialogComponent {
+  categories: any = []
   data: any = {}
   dataDevice: any = {}
-  categories: any = []
-  constructor(private modalRef: NgbActiveModal) {
 
-  }
+  private modalRef = inject(NgbActiveModal)
+
+
+
   activeShowForm(accion: any, test: any) {
     console.log(accion)
     console.log(test)

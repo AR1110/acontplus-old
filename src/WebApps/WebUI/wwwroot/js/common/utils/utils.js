@@ -427,7 +427,6 @@
             let permisoCajaTemp = permissions.find(pp => pp.codModule === "C");
             let objPermissionVenta = JSON.parse(permisoVentaTemp.permission);
 
-            console.log(permisoCajaTemp)
             let { comprobante, detail, additional } = objPermissionVenta;
             let permisoEditarDoc = {
                 requiereClave: additional && additional.requestAuthorizationKey.requestKey
