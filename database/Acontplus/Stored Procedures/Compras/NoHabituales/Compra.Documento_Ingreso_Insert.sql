@@ -271,6 +271,29 @@ BEGIN
                              FROM @tblDetails WHERE llevaInventario = 1
 
                              EXEC dbo.Transaccion_Handler_Init 'E', 'IV', @idDocumentoIngreso, DEFAULT
+
+                             IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE codMetodoValoracion = 'UEPS' AND idEntidad = @idEntidad)
+                                BEGIN
+                                    UPDATE ar SET
+                                           ar.fechaUltimoCosto = CASE WHEN ar.fechaUltimoCosto >= @fechaEmision THEN ar.fechaUltimoCosto
+                                                                                                                ELSE @fechaEmision
+                                                                 END
+                                          ,ar.precioCosto     =  CASE WHEN ar.fechaUltimoCosto >= @fechaEmision THEN ar.precioCosto
+                                                                                                                ELSE IIF((SELECT TOP 1 MAX(td.precioUnitario) FROM @tblDetails td WHERE td.llevaInventario = 1 and td.idArticulo = ar.idArticulo AND td.idMedida = ar.idMedida) >= (ar.precioCosto / 2)
+                                                                                                                        ,(SELECT TOP 1 MAX(td.precioUnitario) FROM @tblDetails td WHERE td.llevaInventario = 1 and td.idArticulo = ar.idArticulo AND td.idMedida = ar.idMedida)
+                                                                                                                        ,ar.precioCosto) 
+                                                                                                                 
+                                                                 END
+                                    FROM dbo.Articulo ar WITH (ROWLOCK)
+                                    WHERE ar.idArticulo IN (SELECT idArticulo FROM @tblDetails td WHERE td.llevaInventario = 1)  
+
+                                    UPDATE pv SET
+                                           pv.porcentajeUtilidad = ((pv.precioVenta / ar.precioCosto) * 100) - 100
+                                    FROM dbo.ArticuloPvP pv WITH (ROWLOCK)
+                                    INNER JOIN dbo.Articulo ar WITH (ROWLOCK) ON ar.idArticulo = pv.idArticulo
+                                    WHERE ar.idArticulo IN (SELECT idArticulo FROM @tblDetails td WHERE td.llevaInventario = 1)
+
+                                END 
                         END
 				END
 
