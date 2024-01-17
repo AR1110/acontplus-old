@@ -1,5 +1,6 @@
+type EntidadFinancieraCode = 'EFECT' | 'TRAN'
 export interface EntidadFinanciera {
   idEntidadFinanciera: number
-  codigo: string
+  codigo: EntidadFinancieraCode
   descripcion: string
 }

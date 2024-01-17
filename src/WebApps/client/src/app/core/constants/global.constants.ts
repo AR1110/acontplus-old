@@ -18,7 +18,9 @@ export const enum PATHS {
 export const enum DOC_TYPE {
   FC = 'FC',
   DNH = 'DH',
-  LC = 'LC'
+  LC = 'LC',
+  IC = 'IC',
+  EC = 'EC'
 }
 
 export const enum DOC_TYPE_SRI {
