@@ -7,6 +7,7 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { Turno } from '@modules/accounting/models/turno.model';
 import { CashboxService } from '@modules/accounting/services/cashbox.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { data } from 'jquery';
 import { AppModule } from 'src/app/app.module';
 
 @Component({
@@ -43,7 +44,10 @@ export class CashboxModalComponent {
     idUsuario: new FormControl(0, Validators.required),
     descripcion: new FormControl('', Validators.required),
     idTurno: new FormControl(0, Validators.required),
+    estado: new FormControl(false),
   });
+
+  idAsignacionCaja = 0;
 
 
   ngOnInit() {
@@ -57,14 +61,32 @@ export class CashboxModalComponent {
         this.turnos = turnos;
 
         if (typeof this.params === 'object' && this.params.idCaja > 0) {
-          this.tipoRegistro = 2;
-          this.titleModal = 'Editar Caja';
-          this.btnIcon = 'ti-pencil';
-          this.btnText = 'Actualizar';
-          this.dataForm.get('idCaja')?.setValue(this.params.idCaja)
-          this.dataForm.get('descripcion')?.setValue(this.params.descripcion)
-          this.dataForm.get('idUsuario')?.setValue(this.params.idUsuario)
-          this.dataForm.get('idTurno')?.setValue(this.params.idTurno)
+          this.cashboxSvc.getId(this.params.idCaja).subscribe({
+            next: (response) => {
+              this.tipoRegistro = 2;
+              this.titleModal = 'Editar Caja';
+              this.btnIcon = 'ti-pencil';
+              this.btnText = 'Actualizar';
+              let { caja, asignaciones } = response;
+
+              const dataAsignacion = asignaciones[0];
+
+              this.idAsignacionCaja = dataAsignacion.idAsignacionCaja;
+              this.dataForm.get('idCaja')?.setValue(caja.idCaja)
+              this.dataForm.get('descripcion')?.setValue(caja.descripcion)
+              this.dataForm.get('idUsuario')?.setValue(dataAsignacion.idUsuario)
+              this.dataForm.get('idTurno')?.setValue(dataAsignacion.idTurno)
+              this.dataForm.get('estado')?.setValue(caja.estado)
+            }, error: (err) => {
+              this.tS.toastr({
+                type: 'error',
+                message: err
+              })
+              this.activeModal.close()
+            },
+          })
+
+
         }
 
       },
@@ -79,10 +101,26 @@ export class CashboxModalComponent {
   save() {
     try {
       let data = this.dataForm.value;
+      if (this.dataForm.invalid) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Complete todos los campos requeridos!'
+        })
+        return
+      }
+
+      let paramsToApi = {
+        descripcion: data.descripcion,
+        asignacion: {
+          idTurno: data.idTurno,
+          idUsuario: data.idUsuario,
+          idAsignacionCaja: this.idAsignacionCaja
+        }
+      }
 
       if (data.idCaja && data.idCaja > 0) {
         showLoader();
-        this.cashboxSvc.update(data.idCaja, data).subscribe({
+        this.cashboxSvc.update(data.idCaja, paramsToApi).subscribe({
           next: (response) => {
             if (isApiResponse(response)) {
               if (response.code === "0") {
@@ -109,7 +147,7 @@ export class CashboxModalComponent {
         })
       } else if (!(data.idCaja && data.idCaja > 0)) {
         showLoader();
-        this.cashboxSvc.save(data).subscribe({
+        this.cashboxSvc.save(paramsToApi).subscribe({
           next: (response) => {
             if (isApiResponse(response)) {
               if (response.code === "0") {

@@ -122,6 +122,7 @@ export class ModalEgresoIngresoComponent {
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!'
         })
+        return
       }
       const params = this.dataForm.value;
 

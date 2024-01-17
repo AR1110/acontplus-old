@@ -22,7 +22,7 @@
         uib-tooltip="Recargar"
         (click)="refresh()"
       >
-      <fa-icon [icon]="'redo'"></fa-icon>
+        <fa-icon [icon]="'redo'"></fa-icon>
       </button>
       <button
         type="button"
@@ -97,13 +97,18 @@
             </button>
             <div ngbDropdownMenu>
               <button ngbDropdownItem (click)="getPrint(item)">
-                <i class="fas fa-print"></i>
+                <i class="ti-printer"></i>
+
                 Imprimir
               </button>
 
               <button ngbDropdownItem (click)="getReport(item)">
-                <i class="fas fa-file-pdf"></i>
+                <fa-icon [icon]="'file-pdf'"></fa-icon>
                 Reporte
+              </button>
+              <button ngbDropdownItem (click)="askToDelete(item)">
+                <fa-icon [icon]="'trash-alt'"></fa-icon>
+                Anular
               </button>
             </div>
           </div>

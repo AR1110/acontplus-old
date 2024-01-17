@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CompanyCustomerSearch } from '@core/models/company-customer';
 import { CompanyCustomerService } from '@core/services/company-customer.service';
 import { Observable, OperatorFunction, catchError, debounceTime, switchMap } from 'rxjs';
@@ -13,6 +13,7 @@ import { AppModule } from 'src/app/app.module';
 })
 export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
+  @Input() isSearchSimple = false;
 
   textSearch = ''
   dataSearch = {

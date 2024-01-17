@@ -26,7 +26,7 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("Contabilidad.MovimientoCaja_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("Contabilidad.Anticipo_Get", parameters);
             if (ds.Tables.Count == 0)
             {
                 return null;
@@ -40,7 +40,7 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.Movimiento_Caja_Insert", parameters);
+            return await _repository.SPExecuteAsync("Contabilidad.Anticipo_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)

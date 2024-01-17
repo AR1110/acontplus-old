@@ -27,7 +27,7 @@
       <select
         name="users"
         id="users"
-        class="form-control form-control-border"
+        class="form-select form-control-border"
         formControlName="idUsuario"
       >
         @for (item of usuarios; track $index) {
@@ -42,7 +42,7 @@
       <select
         name="turnos"
         id="turnos"
-        class="form-control form-control-border"
+        class="form-select form-control-border"
         formControlName="idTurno"
       >
         @for (item of turnos; track $index) {
@@ -52,6 +52,26 @@
         }
       </select>
     </div>
+    @if (tipoRegistro===2) {
+    <div class="icheck-primary icheck-inline">
+      <input
+        type="radio"
+        id="estadoActivo"
+        formControlName="estado"
+        [value]="true"
+      />
+      <label for="estadoActivo">Activo</label>
+    </div>
+    <div class="icheck-primary icheck-inline">
+      <input
+        type="radio"
+        id="estadoInactivo"
+        formControlName="estado"
+        [value]="false"
+      />
+      <label for="estadoInactivo">Inactivo</label>
+    </div>
+    }
   </div>
   <div class="modal-footer">
     <button type="submit" class="btn btn-success" [disabled]="!dataForm.valid">
