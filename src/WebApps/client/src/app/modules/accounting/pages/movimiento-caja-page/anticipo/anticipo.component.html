@@ -49,34 +49,20 @@
         aria-pressed="false"
         ng-click="$ctrl.onClickBtnMoreAnticipo()"
       >
-        <span class="text"
-          ><i
-            class="fas fa-eye fa-xs"
-            aria-hidden="true"
-            uib-tooltip="Más opciones"
-          ></i
-        ></span>
-        <span class="text-active"
-          ><i
-            class="fas fa-eye fa-xs"
-            aria-hidden="true"
-            uib-tooltip="Ocultar opciones"
-          ></i
-        ></span>
+      <fa-icon [icon]="'eye'"></fa-icon>
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger btn-sm mt-4"
+        uib-tooltip="Recargar"
+        ng-click="$ctrl.getAnticipos()"
+      >
+      <fa-icon [icon]="'redo'"></fa-icon>
       </button>
       <button
         type="button"
         class="btn btn-success btn-sm mt-4"
-        uib-tooltip="Recargar"
-        ng-click="$ctrl.getAnticipos()"
-      >
-        <i class="fas fa-redo fa-xs"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-info btn-sm mt-4"
-        uib-tooltip="Nuevo"
-        ng-click="$ctrl.openModalAnticipoNew()"
+        (click)="openModal()"
       >
         <i class="ti-plus"></i>
       </button>
