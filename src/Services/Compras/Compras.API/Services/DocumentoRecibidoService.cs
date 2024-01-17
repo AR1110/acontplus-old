@@ -25,7 +25,7 @@ namespace Compras.API.Services
 
         public async Task<string> AddAsync(ApiRequest request)
         {
-            var parameters = new Dictionary<string, object>{
+            var parameters = new Dictionary<string, object>{ 
                 {"userRoleId", request.UserRoleId},
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
             };

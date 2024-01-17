@@ -336,7 +336,7 @@
                     if ($scope.selected[0].codDoc === "07") {
 
                         modalSvc.openModalCustom({
-                            controller: function ($scope, $uibModalInstance, params) {
+                            controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
                                 const { selected } = params;
                                 $scope.selected = selected;
                                 $scope.dataEstab = dataEstab;
@@ -369,15 +369,15 @@
                                 $scope.closeModal = function () {
                                     $uibModalInstance.close();
                                 }
-                            },
+                            }],
                             template: `${TEMPLATE_URL}_Retencion.cshtml`,
                             size: 'xl',
                             params: {
                                 ...response.payload,
                                 selected: $scope.selected
                             },
-                            isRenderRazorPartial: true, 
-                        }) 
+                            isRenderRazorPartial: true,
+                        })
 
                     } else {
                         modalSvc.openModalCustom({
@@ -512,7 +512,7 @@
             try {
                 Swal.close();
                 modalSvc.openModalCustom({
-                    controller: function ($scope, $uibModalInstance, params) {
+                    controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
                         const { selected } = params;
                         $scope.selected = selected;
 
@@ -533,7 +533,7 @@
                         $scope.closeModal = function () {
                             $uibModalInstance.close();
                         }
-                    },
+                    }],
                     template: `${TEMPLATE_URL}_Doc_Relacionado.cshtml`,
                     size: 'xl',
                     params: {
@@ -671,7 +671,7 @@
                         tS.toastr('warning', response.message)
                         return;
                     }
-                    if (response.code == 1) { 
+                    if (response.code == 1) {
                         tS.toastr('success', "Comprobantes cargados correctamente!");
                         $scope.compFounded = JSON.parse(response.payload) || [];
                         $scope.fileTxt = null;
@@ -764,7 +764,7 @@
         $scope.mainform.option = false
         $scope.files = [];
         $scope.compToImport = [];
-        
+
         $scope.$watch('files', function () {
             $scope.uploadXml($scope.files);
         });
