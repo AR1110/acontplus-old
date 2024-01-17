@@ -14,7 +14,7 @@ namespace Services.Common.CustomFilters
             if (context.Result.GetType().Equals(typeof(OkObjectResult)))
             {
                 var result = (OkObjectResult)context.Result;
-                var response = (APIResponse)result.Value;
+                var response = (ApiResponse)result.Value;
                 if (response != null && response.code == "1")
                 {
                     Dictionary<string, object> payload = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.payload);

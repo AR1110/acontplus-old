@@ -652,5 +652,11 @@
     "inputFiles": [
       "wwwroot/js/inventario/services/inventarioService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/utils/utils.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/utils/utils.js"
+    ]
   }
 ]

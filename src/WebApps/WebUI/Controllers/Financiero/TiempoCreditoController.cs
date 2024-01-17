@@ -8,7 +8,7 @@ namespace WebUI.Controllers.Financiero
     {
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private TiempoCreditoDao _tc;
 
         public TiempoCreditoController(IConfiguration config)

@@ -25,7 +25,7 @@ namespace Contabilidad.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -50,7 +50,7 @@ namespace Contabilidad.API.Controllers
         public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -75,7 +75,7 @@ namespace Contabilidad.API.Controllers
         public async Task<IActionResult> Cancel([FromBody] ApiRequest paremeter)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

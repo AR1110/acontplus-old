@@ -62,7 +62,7 @@ namespace Compras.API.Controllers
         [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -127,7 +127,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Post(IFormFile file)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
 
             if (file.ContentType != "text/plain")
             {
@@ -190,7 +190,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -233,7 +233,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> UploadXml(string json, IFormFile file)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
 
             if (file.ContentType != "text/xml")
             {
@@ -340,7 +340,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Put(int id)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -367,7 +367,7 @@ namespace Compras.API.Controllers
         [HttpGet("Preview/{id}")]
         public async Task<IActionResult> Preview(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -415,7 +415,7 @@ namespace Compras.API.Controllers
         [HttpPut("Migrate")]
         public async Task<IActionResult> Migrate(ApiRequest parameters)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -443,7 +443,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Upload(int id, IFormFile file)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
 
             if (file.ContentType != "text/plain")
             {
@@ -488,7 +488,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
 
             try
             {
@@ -516,7 +516,7 @@ namespace Compras.API.Controllers
         //   
         //    ComprobanteElectronico ceXml = new ComprobanteElectronico();
 
-        //    GenericResponse _response = new GenericResponse();
+        //    ApiResponse _response = new ApiResponse();
         //    try
         //    {
         //        int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

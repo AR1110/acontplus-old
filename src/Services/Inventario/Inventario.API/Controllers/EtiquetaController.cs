@@ -23,7 +23,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.Etiqueta_Get");
@@ -49,7 +49,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> Insert(string json)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.Etiqueta_Insert");
@@ -75,7 +75,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> Update(int id, string json)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.Etiqueta_Update");
@@ -103,7 +103,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.Etiqueta_Delete");

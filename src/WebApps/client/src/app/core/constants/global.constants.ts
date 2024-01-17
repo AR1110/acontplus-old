@@ -1,9 +1,12 @@
 export const enum PATHS_API {
   ACCOUNTING = `Contabilidad/`,
-  REPORT = 'Reports/',
-  PURCHASE = 'Compra/',
+  COMMON = 'Common/',
   CONFIG = 'Config/',
-  COMMON = 'Common/'
+  CUSTOMER = 'Customer/',
+  PURCHASE = 'Compra/',
+  REPORT = 'Reports/',
+  SALES = 'Ventas/',
+  TECHSUPPORT = 'TechnicalSupport/'
 }
 
 export const enum PATHS {
@@ -40,10 +43,10 @@ export enum CODE_REPORT {
   RFC = 'RFC',                 // Reporte Factura Compra
   RCNH = 'RCNH',               // PDF compra no habitual
   ROC = 'ROC',                  // Orden Compra
-  RCP = 'RCP',                    //Reporte Compras 
+  RCP = 'RCP',                    //Reporte Compras
   RCC = 'RCC'                 //Reporte Control Caja
 }
 
 // Example usage:
 // const reportType: CODE_REPORT = CODE_REPORT.RF;
-// console.log(reportType);  
+// console.log(reportType);

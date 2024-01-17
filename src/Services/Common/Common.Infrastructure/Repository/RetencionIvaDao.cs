@@ -8,18 +8,18 @@ namespace Common.Infrastructure.Repository
     public class RetencionIvaDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public RetencionIvaDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
 
-        public async Task<GenericResponse> CreateRetencionIvaAsync(int idRol, RetencionIva data)
+        public async Task<ApiResponse> CreateRetencionIvaAsync(int idRol, RetencionIva data)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public GenericResponse ReadRetencionIva(int idRol)
+        public ApiResponse ReadRetencionIva(int idRol)
         {
             var listar = new List<RetencionIva>();
             try
@@ -101,7 +101,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateRetencionIvaAsync(int idRol, RetencionIva data)
+        public async Task<ApiResponse> UpdateRetencionIvaAsync(int idRol, RetencionIva data)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteRetencionIvaAsync(int idRol, int idRetencionIva)
+        public async Task<ApiResponse> DeleteRetencionIvaAsync(int idRol, int idRetencionIva)
         {
             try
             {
@@ -174,7 +174,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
 
-        public async Task<GenericResponse> GetByAllAsync(int idRol)
+        public async Task<ApiResponse> GetByAllAsync(int idRol)
         {
             var list = new List<RetencionIva>();
             try

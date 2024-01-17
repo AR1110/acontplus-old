@@ -10,7 +10,7 @@ namespace Common.Infrastructure.Repository
 {
     public class GenerateRetencionDao
     {
-        private GenericResponse _gr;
+        private ApiResponse _gr;
 
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
@@ -18,9 +18,9 @@ namespace Common.Infrastructure.Repository
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         } 
-        public async Task<GenericResponse> GetSaleAsync(int idRol, int idTipoDocumento, int idComprobante)
+        public async Task<ApiResponse> GetSaleAsync(int idRol, int idTipoDocumento, int idComprobante)
         {
             var listar = new List<RetencionVentaDetalleViewModel>();
             try

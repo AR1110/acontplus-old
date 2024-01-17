@@ -25,7 +25,7 @@ namespace Configuracion.API.Controllers.Sri
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -52,7 +52,7 @@ namespace Configuracion.API.Controllers.Sri
         public async Task<IActionResult> Insert([FromBody] PtoEmiAsig data)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -78,7 +78,7 @@ namespace Configuracion.API.Controllers.Sri
         [HttpPut]
         public async Task<IActionResult> Update(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.PtoEmi_Asig_Update", true);

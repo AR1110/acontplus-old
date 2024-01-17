@@ -9,16 +9,16 @@ namespace Common.Infrastructure.Repository
 {
     public class AsignacionPuntoEmisionDao
     {
-        public GenericResponse _response = new GenericResponse();
+        public ApiResponse _response = new ApiResponse();
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         public AsignacionPuntoEmisionDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _response = new GenericResponse();
+            _response = new ApiResponse();
         }
-        public async Task<GenericResponse> GetAsync(string json)
+        public async Task<ApiResponse> GetAsync(string json)
         {
             var dt = new DataTable();
             try
@@ -52,7 +52,7 @@ namespace Common.Infrastructure.Repository
             }
             return _response;
         }
-        public async Task<GenericResponse> InsertAsync(int idRol, AsignacionPuntoEmision data)
+        public async Task<ApiResponse> InsertAsync(int idRol, AsignacionPuntoEmision data)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace Common.Infrastructure.Repository
             }
             return _response;
         }
-        public async Task<GenericResponse> UpdateAsync(int idRol, int id)
+        public async Task<ApiResponse> UpdateAsync(int idRol, int id)
         {
             try
             {

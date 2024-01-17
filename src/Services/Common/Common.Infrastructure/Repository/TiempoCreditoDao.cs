@@ -9,17 +9,17 @@ namespace Common.Infrastructure.Repository
     public class TiempoCreditoDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public TiempoCreditoDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
-        public async Task<GenericResponse> InsertAsync(int idRol, TiempoCredito data)
+        public async Task<ApiResponse> InsertAsync(int idRol, TiempoCredito data)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetAsync(int idRol, int pageIndex, int pageSize)
+        public async Task<ApiResponse> GetAsync(int idRol, int pageIndex, int pageSize)
         {
             var listar = new List<TiempoCreditoViewModel>();
             try
@@ -106,7 +106,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateAsync(int idRol, int idTiempoCredito, TiempoCredito data)
+        public async Task<ApiResponse> UpdateAsync(int idRol, int idTiempoCredito, TiempoCredito data)
         {
             try
             {
@@ -141,7 +141,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteAsync(int idRol, int idTiempoCredito)
+        public async Task<ApiResponse> DeleteAsync(int idRol, int idTiempoCredito)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
         //Operaciones Especiales 
-        public async Task<GenericResponse> OptionAsync(int idRol, bool gestion)
+        public async Task<ApiResponse> OptionAsync(int idRol, bool gestion)
         {
             var listar = new List<TiempoCredito>();
             try
@@ -214,7 +214,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetAllAsync(int idRol)
+        public async Task<ApiResponse> GetAllAsync(int idRol)
         {
             var listar = new List<TiempoCredito>();
             try

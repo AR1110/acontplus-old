@@ -4,12 +4,12 @@ namespace Common.Core.Utils
     public class ValidacionesExternas
 
     {
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         public ValidacionesExternas()
         {
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
-        internal GenericResponse VerificarDatos(HelpersResponse data)
+        internal ApiResponse VerificarDatos(HelpersResponse data)
         {
             _ = new char[13];
             int provincia;
@@ -87,7 +87,7 @@ namespace Common.Core.Utils
 
             return _gr;
         }
-        public GenericResponse VerificarCedula(char[] validarCedula)
+        public ApiResponse VerificarCedula(char[] validarCedula)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace Common.Core.Utils
             return _gr;
 
         }
-        public GenericResponse VerificarPersonaNarutal(char[] validarCedula)
+        public ApiResponse VerificarPersonaNarutal(char[] validarCedula)
         {
             try
             {
@@ -179,7 +179,7 @@ namespace Common.Core.Utils
             return _gr;
 
         }
-        public GenericResponse VerificarPersonaJuridica(char[] validarCedula)
+        public ApiResponse VerificarPersonaJuridica(char[] validarCedula)
         {
             try
             {
@@ -236,7 +236,7 @@ namespace Common.Core.Utils
             }
             return _gr;
         }
-        public GenericResponse VerificarSectorPublico(char[] validarCedula)
+        public ApiResponse VerificarSectorPublico(char[] validarCedula)
         {
             try
             {

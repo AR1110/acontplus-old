@@ -61,20 +61,20 @@
                 <div ngbDropdownMenu>
                   @if (acciones.editar) {
                     <button ngbDropdownItem (click)="openModalAddUpdate(item)">
-                      <i class="fas fa-edit"></i>
+                      <fa-icon [icon]="'edit'"></fa-icon>
                       Editar
                     </button>
                   }
                   @if (acciones.eliminar) {
                     <button ngbDropdownItem (click)="askToDelete(item.idCaja)">
-                      <i class="fas fa-trash"></i>
+                      <fa-icon [icon]="'trash'"></fa-icon>
                       Eliminar
                     </button>
                   }
                   <button ngbDropdownItem (click)="openModalAperturar(item)">
                     <i class="ti-briefcase"></i>
                     Aperturar
-                  </button> 
+                  </button>
                   <button ngbDropdownItem (click)="openModalMovimiento(item)">
                     <i class="ti-wallet"></i>
                     Movimientos

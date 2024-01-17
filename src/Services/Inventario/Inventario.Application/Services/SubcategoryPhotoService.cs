@@ -26,7 +26,7 @@ namespace Inventario.Application.Services
             }
             return DataConverters.DataSetToJSON(ds);
         }
-        public async Task<APIResponse> AddAsync(SubcategoryPhoto data)
+        public async Task<ApiResponse> AddAsync(SubcategoryPhoto data)
         {
             try
             {
@@ -36,27 +36,27 @@ namespace Inventario.Application.Services
                 }
                 _context.Add(data);
                 await _context.SaveChangesAsync();
-                return new APIResponse { code = "1", message = "Registrada exitosamente!" };
+                return new ApiResponse { code = "1", message = "Registrada exitosamente!" };
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        public async Task<APIResponse> UpdateAsync(int id, SubcategoryPhoto data)
+        public async Task<ApiResponse> UpdateAsync(int id, SubcategoryPhoto data)
         {
             try
             {
-                if (id != data.Id) { return new APIResponse { code = "0", message = "Id no coincide" }; };
+                if (id != data.Id) { return new ApiResponse { code = "0", message = "Id no coincide" }; };
                 var productFound = await _context.SubcategorytPhotos.FindAsync(id);
-                if (productFound == null) { return new APIResponse { code = "0", message = "No existe el registro!" }; };
+                if (productFound == null) { return new ApiResponse { code = "0", message = "No existe el registro!" }; };
                 productFound.S3ObjectKey = data.S3ObjectKey;
                 productFound.S3ObjectUrl = data.S3ObjectUrl;
                 productFound.Enabled = data.Enabled;
                 productFound.UserId = data.UserId;
                 _context.Update(productFound);
                 await _context.SaveChangesAsync();
-                return new APIResponse { code = "1", message = "Actualizada exitosamente!" };
+                return new ApiResponse { code = "1", message = "Actualizada exitosamente!" };
             }
             catch (Exception)
             {

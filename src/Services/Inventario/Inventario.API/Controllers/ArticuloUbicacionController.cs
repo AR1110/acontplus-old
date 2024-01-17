@@ -27,7 +27,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> Insert(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -51,7 +51,7 @@ namespace Inventario.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.ArticuloUbicacion_Update", true);
@@ -76,7 +76,7 @@ namespace Inventario.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Inventario.ArticuloUbicacion_Delete", true);

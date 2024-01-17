@@ -1,2 +1,48 @@
 <app-breadcrumb />
-<h5>Technical support</h5>
+<div class="card">
+  <div class="card-body">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <button ngbNavLink>Dashboard</button>
+        <ng-template ngbNavContent>
+          <app-dashboard></app-dashboard>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2">
+        <button ngbNavLink>Por Asignar</button>
+        <ng-template ngbNavContent>
+          <button
+            type="button"
+            class="btn btn-outline-info"
+            (click)="openTechSpec()"
+          >
+            <i class="ti-plus"></i>
+            Nueva
+          </button>
+          <app-order-list />
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="3">
+        <button ngbNavLink>En Proceso</button>
+        <ng-template ngbNavContent> </ng-template>
+      </li>
+      <li [ngbNavItem]="4">
+        <button ngbNavLink>Por Entregar</button>
+        <ng-template ngbNavContent> </ng-template>
+      </li>
+      <li [ngbNavItem]="5">
+        <button ngbNavLink>Entregadas</button>
+        <ng-template ngbNavContent> </ng-template>
+      </li>
+      <li [ngbNavItem]="6">
+        <button ngbNavLink>Sin Solución</button>
+        <ng-template ngbNavContent> </ng-template>
+      </li>
+      <li [ngbNavItem]="7">
+        <button ngbNavLink>Con Garantía</button>
+        <ng-template ngbNavContent> </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+</div>

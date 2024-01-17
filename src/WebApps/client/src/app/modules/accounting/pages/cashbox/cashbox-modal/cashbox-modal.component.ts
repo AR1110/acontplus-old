@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { User } from '@core/models/user.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils';
+import { hideLoader, showLoader } from '@core/utils/loader';
 import { Turno } from '@modules/accounting/models/turno.model';
 import { CashboxService } from '@modules/accounting/services/cashbox.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -73,7 +73,7 @@ export class CashboxModalComponent {
         console.log(err)
       },
     })
-    
+
   }
 
   save() {

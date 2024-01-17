@@ -207,6 +207,7 @@
         function getDocRelacionado(query) {
             let params = {...query, tipo: 4}
             return mS.getData('get', `${URL}?json=${JSON.stringify(params)}`, null, true).then(response => {
+                if(!response) return [];
 
                 if (response.code === '0') {
                     throw response;
@@ -215,7 +216,8 @@
 
                     let mainData = JSON.parse(response.payload);
 
-                    console.log(mainData)
+                    let comprobantes = mainData.comprobante;
+                    return comprobantes;                    
                 }
             })
         }

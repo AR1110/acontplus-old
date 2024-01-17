@@ -2,6 +2,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgbDropdownModule, NgbPaginationModule, NgbTooltipModule, NgbTypeaheadModule } from "@ng-bootstrap/ng-bootstrap";
 
 
@@ -9,6 +10,7 @@ import { NgbDropdownModule, NgbPaginationModule, NgbTooltipModule, NgbTypeaheadM
   declarations: [],
   imports: [
     CommonModule,
+    FontAwesomeModule,
     ReactiveFormsModule,
     FormsModule,
     NgbPaginationModule,
@@ -18,6 +20,7 @@ import { NgbDropdownModule, NgbPaginationModule, NgbTooltipModule, NgbTypeaheadM
   ],
   exports: [
     CommonModule,
+    FontAwesomeModule,
     ReactiveFormsModule,
     FormsModule,
     NgbPaginationModule,

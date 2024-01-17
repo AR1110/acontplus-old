@@ -8,18 +8,18 @@ namespace Common.Infrastructure.Repository
     public class TipoClienteProveedorDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public TipoClienteProveedorDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
 
-        public async Task<GenericResponse> CreateTipoClienteProveedorAsync(TipoClienteProveedor data)
+        public async Task<ApiResponse> CreateTipoClienteProveedorAsync(TipoClienteProveedor data)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> ReadTipoClienteProveedor(int idRol, int pageIndex, int pageSize, HelpersResponse data)
+        public async Task<ApiResponse> ReadTipoClienteProveedor(int idRol, int pageIndex, int pageSize, HelpersResponse data)
         {
             var listar = new List<TipoClienteProveedor>();
             try
@@ -106,7 +106,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateTipoClienteProveedorAsync(TipoClienteProveedor data)
+        public async Task<ApiResponse> UpdateTipoClienteProveedorAsync(TipoClienteProveedor data)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteTipoClienteProveedorAsync(int idTipoClienteProveedor)
+        public async Task<ApiResponse> DeleteTipoClienteProveedorAsync(int idTipoClienteProveedor)
         {
             try
             {
@@ -172,7 +172,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
 
-        public async Task<GenericResponse> TipoClienteProveedorSelectAsync(string tipoValidacion)
+        public async Task<ApiResponse> TipoClienteProveedorSelectAsync(string tipoValidacion)
         {
             var list = new List<TipoClienteProveedor>();
             try

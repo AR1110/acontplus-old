@@ -9,6 +9,40 @@
     ></button>
   </div>
   <div class="modal-body">
+
+    <div class="row">
+        <div class="col-6 d-flex justify-content-start">
+             <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm col-12">
+                  <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+                      <div class="form-group">
+                        <div class="fechaFrom">Fecha Inicio</div>
+                        <input type="text" class="form-control form-control-border">
+                      </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-12"></div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm col-12">
+                  <div class="form-group">
+                    <label for="estado">Estado: </label>
+                    <select class="form-control form-control-border">
+                      <option></option>
+                    </select>
+                  </div>
+                </div>
+             </div>
+        </div>
+
+        <div class="col-6 d-flex justify-content-end">
+            <div class="form-group">
+                <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                    ng-model="dataSearch.bySearch" placeholder="...">
+            </div>
+        </div>
+    </div>
+
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -35,7 +69,7 @@
                   ngbTooltip="Cerrar Caja"
                   (click)="openModalCashboxClose(item)"
                 >
-                  <i class="fas fa-money-bill-alt"></i>
+                  <fa-icon [icon]="'money-bill-alt'"></fa-icon>
                 </button>
                 } @if (verReporteMovimientoCaja(item.estado)) {
                 <button
@@ -44,7 +78,7 @@
                   ngbTooltip="Reporte PDF"
                   (click)="getReport(item.id)"
                 >
-                  <i class="fa fa-file-pdf"></i>
+                  <fa-icon [icon]="['far', 'file-pdf']"></fa-icon>
                 </button>
                 }
 

@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
-import { hideLoader, showLoader } from '@core/utils';
 import { AccountingModule } from '@modules/accounting/accounting.module';
 import { Cashbox } from '@modules/accounting/models/cashbox.model';
 import { CashboxService } from '@modules/accounting/services/cashbox.service';
@@ -12,6 +11,7 @@ import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { MovimientoCajaModalComponent } from './movimiento-caja-modal/movimiento-caja-modal.component';
 import { getPermisosLocal } from '@core/utils/utils';
+import { hideLoader, showLoader } from '@core/utils/loader';
 
 @Component({
   selector: 'app-cashbox',

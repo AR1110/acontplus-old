@@ -111,7 +111,7 @@ BEGIN
 				--											WHERE ap.idArticulo = a.idArticulo 
 				--											AND ap.codTarifa = ''5''), 0)
 
-				FROM v_Articulo a 
+				FROM Inventario.v_Articulo a 
 				WHERE a.estado = 1 
 				AND a.idEntidad = @idEntidad '
 	

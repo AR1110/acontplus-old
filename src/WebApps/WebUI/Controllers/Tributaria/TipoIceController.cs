@@ -9,7 +9,7 @@ namespace WebUI.Controllers.Tributaria
         // GET: TipoIce
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private TipoIceDao _ti;
 
         public TipoIceController(IConfiguration config)

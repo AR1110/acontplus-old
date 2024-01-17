@@ -2,7 +2,7 @@ import { Component, Input, ViewEncapsulation, inject } from '@angular/core';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
-import { hideLoader, showLoader } from '@core/utils';
+import { hideLoader, showLoader } from '@core/utils/loader';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

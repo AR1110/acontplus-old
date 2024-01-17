@@ -39,7 +39,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Post(int idDocumento, int idArticulo)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Recepcion.DocumentoDetalle_Insert", true);
@@ -71,7 +71,7 @@ namespace Compras.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Recepcion.DocumentoDetalle_Delete");

@@ -1660,5 +1660,46 @@
 
 
 
+    app.directive('btnRetencionAtsAddUpdate', function (toastService, modalService, nombreModalFactElect) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element) {
+                let tS = toastService;
+                element.on('click', async function () {  
+                    if ( typeof scope.params ==='object' && scope.params.versionComp !== '2.0.0') { 
+                        tS.toastr('warning', 'No disponible');
+                        return
+                    }  
+
+                    let { fileCtrl, controller, template } = nombreModalFactElect.RETENCION_ATS;
+                    let ctrl = (await import(fileCtrl))[controller];
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: {
+                            data: scope.params
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
 
 })(window.angular)

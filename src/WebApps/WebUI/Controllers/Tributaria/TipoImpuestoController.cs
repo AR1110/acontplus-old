@@ -10,7 +10,7 @@ namespace WebUI.Controllers.Tributaria
         private readonly IConfiguration _configuration;
 
         // GET: TipoImpuesto
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         private TipoImpuestoRentaDao _ti;
         public TipoImpuestoController(IConfiguration configuration)
         {

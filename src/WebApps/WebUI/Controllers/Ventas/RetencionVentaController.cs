@@ -64,7 +64,7 @@ namespace WebUI.Controllers.Ventas
         {
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Ventas.Retencion_Get_Id");

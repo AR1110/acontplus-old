@@ -50,7 +50,7 @@ namespace WebUI.Controllers.Financiero
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("ReporteIngresos.Ingreso_Egreso_Caja");
@@ -74,7 +74,7 @@ namespace WebUI.Controllers.Financiero
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("ReporteIngresos.Ingreso_Egreso_Caja");

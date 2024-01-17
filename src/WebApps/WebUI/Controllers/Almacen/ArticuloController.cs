@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Almacen
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
 
 
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         // private ArticuloDao _a;
         //
         private readonly DbAccess _db;
@@ -49,7 +49,7 @@ namespace WebUI.Controllers.Almacen
             var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlStringParam.Sanitize(json));
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -72,7 +72,7 @@ namespace WebUI.Controllers.Almacen
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Id");
@@ -97,7 +97,7 @@ namespace WebUI.Controllers.Almacen
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Id_By_Sale");
@@ -124,7 +124,7 @@ namespace WebUI.Controllers.Almacen
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Id_By_Purchase");
@@ -148,7 +148,7 @@ namespace WebUI.Controllers.Almacen
         public async Task<IActionResult> Search(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Search");
@@ -173,7 +173,7 @@ namespace WebUI.Controllers.Almacen
         //Listar articulo de manera General: bodegas, tarifas, sucursales
         public async Task<IActionResult> List(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -197,7 +197,7 @@ namespace WebUI.Controllers.Almacen
         {
             var _db = new DbAccess(_configuration);
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Data_Form");
@@ -219,7 +219,7 @@ namespace WebUI.Controllers.Almacen
 
         public async Task<IActionResult> Delete(int idArticulo)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

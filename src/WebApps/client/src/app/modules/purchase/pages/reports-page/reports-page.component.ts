@@ -9,13 +9,13 @@ import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { ITipoDoc } from '@core/models/tipo-doc.model';
-import { hideLoader, showLoader } from '@core/utils';
 import { SharedService } from '@core/services/shared.service';
 import { Observable, OperatorFunction, catchError, debounceTime, map, retry, switchMap } from 'rxjs';
 import { SupplierService } from '@modules/purchase/services/supplier.service';
 import { SupplierSearch } from '@modules/purchase/models/supplier.model';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
+import { hideLoader, showLoader } from '@core/utils/loader';
 
 @Component({
   selector: 'app-reports-page',
@@ -148,7 +148,7 @@ export class ReportsPageComponent {
 
 
   getReport(format: 'pdf' | 'excel') {
-    
+
     if (!isValidField(this.dataSearch.fromDate)) {
       this.tS.toastr({
         type: 'warning',

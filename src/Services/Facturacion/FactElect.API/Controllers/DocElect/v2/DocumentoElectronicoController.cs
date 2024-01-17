@@ -29,7 +29,7 @@ namespace FactElect.API.Controllers.DocElect.v2
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -54,7 +54,7 @@ namespace FactElect.API.Controllers.DocElect.v2
         public async Task<IActionResult> GetByStatus(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -79,7 +79,7 @@ namespace FactElect.API.Controllers.DocElect.v2
         public async Task<IActionResult> GetDataForm()
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -132,7 +132,7 @@ namespace FactElect.API.Controllers.DocElect.v2
         public async Task<IActionResult> Put(int id)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
