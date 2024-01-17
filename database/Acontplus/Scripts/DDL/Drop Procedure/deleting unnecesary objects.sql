@@ -950,5 +950,6 @@ GO
 DROP PROCEDURE IF EXISTS Contabilidad.ControlCaja_Report_Movement
 GO 
 
-DROP PROCEDURE IF EXISTS [ReporteGestionFinanc].[ControlCaja]
+DROP PROCEDURE IF EXISTS [dbo].[ASPMovimientoCajaInsert]
 go
+
