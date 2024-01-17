@@ -3,6 +3,14 @@ GO
 
 --drop table Compra.Documento_Ingreso_taxes
 
+--ALTER TABLE Compra.Documento_Ingreso DROP CONSTRAINT  [FK__Documento__idEst__0B610C31] 
+
+--ALTER TABLE Compra.Documento_Ingreso DROP COLUMN idEstablecimiento
+
+--ALTER TABLE Compra.Documento_Ingreso DROP COLUMN estab
+
+--ALTER TABLE Compra.Documento_Ingreso DROP COLUMN ptoEmi
+
 --ALTER TABLE Compra.Documento_Ingreso ADD descuento NUMERIC(18,5)
 
 --ALTER TABLE Compra.Documento_Ingreso ADD porcentajeDescuento NUMERIC(18,5)
