@@ -1,7 +1,9 @@
-﻿namespace TechnicalSupport.API.Interfaces
+﻿using Common.Core.Models;
+
+namespace TechnicalSupport.API.Interfaces
 {
     public interface IDeviceService
     {
-        public Task<object> GetAsync(Dictionary<string, object> parameters);
+        public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
     }
 }

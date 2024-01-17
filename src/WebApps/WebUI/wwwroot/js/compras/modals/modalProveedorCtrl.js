@@ -211,7 +211,7 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
             $scope.data.validationSri = false;
             commonSvc.checkClientSRIByCedula($scope.data.numeroIdentificacion).then(response => {
                 let {
-                    razonSocial,
+                    nombreCompleto,
                     direccion,
                     telefono,
                     email,
@@ -229,8 +229,8 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                 $scope.data.direccion = direccion ? direccion : null;
                 $scope.telefonos = telefono ? telefono.split(';') : []
                 $scope.correos = email ? email.split(';') : []
-                $scope.data.nombreComercial = razonSocial;
-                $scope.data.nombreFiscal = razonSocial;
+                $scope.data.nombreComercial = nombreCompleto;
+                $scope.data.nombreFiscal = nombreCompleto;
                 $scope.data.validationSri = true;
             }).finally(() => {
                 hideLoader();

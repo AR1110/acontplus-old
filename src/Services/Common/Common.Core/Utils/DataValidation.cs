@@ -21,6 +21,25 @@ namespace Common.Core.Utils
             }
             return isNull;
         }
+        public static bool DataSetIsNull(DataSet ds, bool checkFirstTable = false)
+        {
+            if (checkFirstTable)
+            {
+                if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if (ds == null || ds.Tables.Count == 0)
+            {
+                return true;
+            }
+            return false;
+        }
         public static bool IsXml(string input)
         {
             try

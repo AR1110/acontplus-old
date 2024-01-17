@@ -11,14 +11,12 @@ namespace Contabilidad.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class MovimientoCajaController : ControllerBase
-    {
-        private IConfiguration _configuration;
+    { 
         private IMovimientoCajaService _movSvc;
         private LogWriter _log;
 
-        public MovimientoCajaController(IConfiguration configuration, IMovimientoCajaService movSvc, LogWriter log)
-        {
-            _configuration = configuration;
+        public MovimientoCajaController(IMovimientoCajaService movSvc, LogWriter log)
+        { 
             _movSvc = movSvc;
             _log = log;
 
@@ -39,13 +37,13 @@ namespace Contabilidad.API.Controllers
             catch (Exception ex)
             {
 
-                _log.LogActivity("Error al listar Compra No Habitual: \n" + ex.ToString());
-                return BadRequest("Error on get: " + ex.Message);
+                _log.LogActivity("Error al listar movimientos de caja: \n" + ex.ToString());
+                return BadRequest("Error on get movimientos de caja: " + ex.Message);
             }
         }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(ApiRequest request)
+        [HttpPost]
+        public async Task<IActionResult> Post(ApiRequest request)
         { 
             try
             {
@@ -59,29 +57,11 @@ namespace Contabilidad.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al crear compra no habitual: " + ex.ToString());
+                _log.LogActivity("Error al crear movimientos de caja: " + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }
-
-        //[HttpGet("GetId/{id}")]
-        //public async Task<IActionResult> GetId(int id)
-        //{
-        //    try
-        //    {
-        //        var response = await _compraNoHabSvc.GetByIdAsync(new Dictionary<string, object> {
-        //            { "userRoleId", User.GetUserRoleId() },
-        //            { "id", id }
-        //        });
-        //        if (response == null) { return NoContent(); };
-        //        return Ok(new { code = "1", payload = response });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _log.LogActivity("Error al obtener datos de Compra No Habitual: \n" + ex.ToString());
-        //        return BadRequest("Error on get by id: " + ex.Message);
-        //    }
-        //}
+         
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, ApiRequest request)
@@ -99,7 +79,7 @@ namespace Contabilidad.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al actualizar compra no habitual: " + ex.ToString());
+                _log.LogActivity("Error al actualizar movimientos de caja: " + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }
@@ -119,7 +99,7 @@ namespace Contabilidad.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al eliminar doc. compra no habitual: " + ex.ToString());
+                _log.LogActivity("Error al eliminar movimientos de caja: " + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }
