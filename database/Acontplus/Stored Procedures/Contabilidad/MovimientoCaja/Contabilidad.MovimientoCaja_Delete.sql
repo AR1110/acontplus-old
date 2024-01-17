@@ -33,6 +33,26 @@ BEGIN
                 RETURN 
             END
 
+        BEGIN TRAN 
+            
+            UPDATE dbo.MovimientoCaja WITH (ROWLOCK) SET estado = 0 WHERE idMovimientoCaja = @id
+
+            IF @codDoc = 'IC'
+                BEGIN
+                    SELECT TOP 1 @idComprobante = idComprobanteIngreso FROM dbo.CobroDocumento WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
+
+                    UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobante
+                END
+                
+            IF @codDoc = 'EC'
+                BEGIN
+                    SELECT TOP 1 @idComprobante = idComprobanteEgreso FROM dbo.PagoDocumento WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
+
+                    UPDATE dbo.ComprobanteEgreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteEgreso = @idComprobante
+                END
+
+        COMMIT TRAN 
+        SELECT Common.ufnSpResponse('1', 'Anulado Correctamente',  DEFAULT)
     END TRY 
 
     BEGIN CATCH 

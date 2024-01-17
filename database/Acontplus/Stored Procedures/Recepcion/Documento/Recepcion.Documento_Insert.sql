@@ -46,7 +46,7 @@ BEGIN
 
         INSERT INTO @Comprobantes
               (comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal)
-		SELECT comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal
+		SELECT comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,ISNULL(importeTotal,0)
 		FROM OPENJSON(@jsonData) WITH
         ( 
 			 comprobante            VARCHAR(50) 
@@ -81,7 +81,7 @@ BEGIN
 			WHERE t.identificacionReceptor = SUBSTRING(ltrim(rtrim(@identificacionReceptor)), 1, 10) 
 
 		COMMIT TRAN
-        SELECT '1' code, 'Importación Exitosa'  as 'message'
+         SELECT [Common].[ufnSpResponse]('1', 'Importación Exitosa',DEFAULT)
 	END TRY
 
 	BEGIN CATCH
@@ -89,7 +89,7 @@ BEGIN
             BEGIN 
 			    ROLLBACK TRAN
             END 
-        SELECT '0' code, 'Error en base de datos: ' as 'message'
+        SELECT [Common].[ufnSpResponse]('0', 'Error en base de datos: ',DEFAULT)
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'DocumentoRecepcion/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH 
