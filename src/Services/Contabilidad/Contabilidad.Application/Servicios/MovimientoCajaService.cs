@@ -36,7 +36,7 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.Caja_Insert", parameters);
+            return await _repository.SPExecuteAsync("Contabilidad.Movimiento_Caja_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)

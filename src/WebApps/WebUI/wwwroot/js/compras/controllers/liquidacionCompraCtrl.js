@@ -902,7 +902,9 @@
                 idProveedor: item.idProveedor,
                 diasCredito: item.diasCredito,
                 nombreFiscal: item.nombreFiscal,
-                nombreProveedor: item.nombreFiscal
+                nombreProveedor: item.nombreFiscal,
+                numeroIdentificacion: item.numeroIdentificacion,
+                direccion: item.direccion
             }
         }
 

@@ -28,7 +28,7 @@ namespace WebUI.Controllers.Financiero
         }
 
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] MovimientoCaja data)
+        public async Task<IActionResult> Post([FromBody] MovimientoCaja data)
         {
             var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _movc.InsertAsync(idRol, data);
