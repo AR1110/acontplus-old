@@ -8,7 +8,7 @@ import { ACCOUNTING_PATHS } from '@modules/accounting/constants/accounting.const
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { ITipoDoc } from '@core/models/tipo-doc.model';
+import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { Observable, OperatorFunction, catchError, debounceTime, map, retry, switchMap } from 'rxjs';
 import { SupplierService } from '@modules/purchase/services/supplier.service';
@@ -33,7 +33,7 @@ export class ReportsPageComponent {
 
   establecimientos: Array<GroupedEstab> = [];
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  tiposDoc: Array<ITipoDoc> = [];
+  tiposDoc: Array<TipoDoc> = [];
   estadosDoc: Array<{ codigo: string, descripcion: string }> = [];
 
   dataSearch = {
@@ -200,8 +200,7 @@ export class ReportsPageComponent {
       }),
       dataParams: JSON.stringify(dataParms)
     }
-
-    showLoader();
+ 
     this.sharedSvc.getReport(parameters, format)
   }
 

@@ -8,7 +8,7 @@ type PropsModal = {
   centered?: boolean
   scrollable?: boolean,
   windowClass?: string,
-  backdrop: boolean
+  backdrop?: boolean | 'static'
 }
 
 @Injectable({
