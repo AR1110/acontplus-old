@@ -22,10 +22,7 @@ File: scss
  *	12. Forms
  *	14. Component
  */
-@import url(../../../assets/icons/simple-line-icons/css/simple-line-icons.css);
-@import url(../../../assets/icons/weather-icons/css/weather-icons.css);
 @import url(../../../assets/icons/themify-icons/themify-icons.css);
-@import url(../../../assets/icons/material-design-iconic-font/css/material-design-iconic-font.css);
 @import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700);
 @import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700);
 .skin-default .topbar {
@@ -20379,20 +20376,8 @@ icons path
   src: url("fonts/icomoon.ttf?-rdmvgc") format("truetype"); }
 
 @font-face {
-  font-family: 'simple-line-icons';
-  src: url("fonts/Simple-Line-Icons.ttf?-i3a2kk") format("truetype"); }
-
-@font-face {
   font-family: 'themify';
   src: url("fonts/themify.ttf") format("truetype"); }
-
-@font-face {
-  font-family: 'FontAwesome';
-  src: url("fonts/fontawesome-webfont.ttf?v=4.7.0") format("truetype"); }
-
-@font-face {
-  font-family: 'Material Design Icons';
-  src: url("fonts/materialdesignicons-webfont.ttf") format("truetype"); }
 
 /*==============================================================
  For all pages
