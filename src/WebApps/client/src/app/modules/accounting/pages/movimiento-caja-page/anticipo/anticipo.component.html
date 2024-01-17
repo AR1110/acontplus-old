@@ -49,34 +49,20 @@
         aria-pressed="false"
         ng-click="$ctrl.onClickBtnMoreAnticipo()"
       >
-        <span class="text"
-          ><i
-            class="fas fa-eye fa-xs"
-            aria-hidden="true"
-            uib-tooltip="Más opciones"
-          ></i
-        ></span>
-        <span class="text-active"
-          ><i
-            class="fas fa-eye fa-xs"
-            aria-hidden="true"
-            uib-tooltip="Ocultar opciones"
-          ></i
-        ></span>
+        <fa-icon [icon]="'eye'"></fa-icon>
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger btn-sm mt-4"
+        uib-tooltip="Recargar"
+        (click)="refresh()"
+      >
+        <fa-icon [icon]="'redo'"></fa-icon>
       </button>
       <button
         type="button"
         class="btn btn-success btn-sm mt-4"
-        uib-tooltip="Recargar"
-        ng-click="$ctrl.getAnticipos()"
-      >
-        <i class="fas fa-redo fa-xs"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-info btn-sm mt-4"
-        uib-tooltip="Nuevo"
-        ng-click="$ctrl.openModalAnticipoNew()"
+        (click)="openModal()"
       >
         <i class="ti-plus"></i>
       </button>
@@ -117,4 +103,110 @@
       />
     </div>
   </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+    <div class="d-flex justify-content-start">
+      <span class="form-group">
+        <select
+          class="form-select"
+          [(ngModel)]="dataSearch.pageSize"
+          (change)="changePageSize()"
+        >
+          @for(item of recordsQuantity; track $index){
+          <option [value]="item">{{ item }}</option>
+          }
+        </select>
+      </span>
+    </div>
+  </div>
+  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+    <div class="d-flex justify-content-end">
+      <!-- <form class="form-material">
+            <input
+              type="text"
+              class="form-control"
+              ng-model="buscar"
+              placeholder="..."
+            />
+          </form> -->
+    </div>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th></th>
+        <th>N°</th>
+
+        <th>Fecha</th>
+        <th>Nro. Doc</th>
+        <th>E. Financiera</th>
+        <th>Valor</th>
+        <th>Observación</th>
+        <th>Cliente</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of anticipos; track $index) {
+      <tr>
+        <td>
+          <div ngbDropdown container="body">
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              ngbDropdownToggle
+            >
+              Acciones
+            </button>
+            <div ngbDropdownMenu>
+              <button ngbDropdownItem (click)="getPrint(item)">
+                <i class="ti-printer"></i>
+
+                Imprimir
+              </button>
+
+              <button ngbDropdownItem (click)="getReport(item)">
+                <fa-icon [icon]="'file-pdf'"></fa-icon>
+                Reporte
+              </button>
+              <button ngbDropdownItem (click)="askToDelete(item)">
+                <fa-icon [icon]="'trash-alt'"></fa-icon>
+                Anular
+              </button>
+            </div>
+          </div>
+        </td>
+        <td>{{ $index + 1 }}</td>
+        <td>{{ item.fechaEmision }}</td>
+        <td>{{ item.serieComprobante }}</td>
+        <td>{{ item.subEntidadFinanciera }}</td>
+        <td>${{ item.valor }}</td>
+        <td>{{ item.obs }}</td>
+        <td>{{ item.razonSocialCiente }}</td>
+        <td>{{ item.estadoDoc }}</td>
+      </tr>
+
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <td align="center" colspan="9">
+          <ngb-pagination
+            [collectionSize]="totalRecords"
+            [(page)]="dataSearch.pageIndex"
+            [maxSize]="dataSearch.maxSize"
+            [pageSize]="dataSearch.pageSize"
+            [rotate]="true"
+            (pageChange)="pageChanged()"
+            [boundaryLinks]="true"
+          />
+        </td>
+      </tr>
+    </tfoot>
+  </table>
 </div>

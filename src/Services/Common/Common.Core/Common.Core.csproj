@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\GestionFinanciera\" />
+  </ItemGroup>
 </Project>

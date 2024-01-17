@@ -53,9 +53,9 @@ export class MovimientoCajaService {
                 descripcion: c.caja
               }
             }),
-              entidadesFinanciera = entidadFinanciera,
-              establecimientos = establecimiento,
-              subEntidadesFinanciera = subEntidadFinanciera,
+              entidadesFinanciera = entidadFinanciera;
+              establecimientos = establecimiento;
+              subEntidadesFinanciera = subEntidadFinanciera;
               tiposDocumento = tipoDocumento
           }
           return {

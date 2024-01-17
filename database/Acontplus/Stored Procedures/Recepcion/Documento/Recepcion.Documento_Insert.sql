@@ -46,7 +46,7 @@ BEGIN
 
         INSERT INTO @Comprobantes
               (comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal)
-		SELECT comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal
+		SELECT comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,ISNULL(importeTotal,0)
 		FROM OPENJSON(@jsonData) WITH
         ( 
 			 comprobante            VARCHAR(50) 

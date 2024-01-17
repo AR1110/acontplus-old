@@ -7,6 +7,9 @@ import { MovimientoCajaRead } from '@modules/accounting/models/movimiento-caja.m
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import { SharedService } from '@core/services/shared.service';
+import Swal from 'sweetalert2';
+import { isApiResponse } from '@core/models/api-response';
+import { ToasterService } from '@core/services/toaster.service';
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -20,15 +23,16 @@ export class EgresoIngresoCajaComponent {
   private modalSvc = inject(ModalService);
   private movCajaSvc = inject(MovimientoCajaService);
   private sharedSvc = inject(SharedService)
+  private tS = inject(ToasterService)
   totalRecords = 0;
 
   dataSearch = {
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: 25,
     maxSize: 5
   }
-  page = 1; 
-  recordsQuantity = [10, 25, 50, 100, 200, 500];
+  page = 1;
+  recordsQuantity = [25, 50, 100];
 
 
   movimientosCaja: Array<MovimientoCajaRead> = [];
@@ -85,7 +89,7 @@ export class EgresoIngresoCajaComponent {
   }
 
   getReport(item: MovimientoCajaRead) {
-    try { 
+    try {
       let format = 'pdf';
       let dataParms = {
         id: item.idMovimientoCaja,
@@ -106,12 +110,51 @@ export class EgresoIngresoCajaComponent {
       }
 
       this.sharedSvc.getReport(parameters, "pdf", true)
-
-      // this._commonSvc.getReport({
-      //   parameters,
-      //   formatType: format
-      // })
     } catch (error) {
+      console.log(error)
+    }
+  }
+
+  askToDelete(item: MovimientoCajaRead) {
+    try {
+      Swal.fire({
+        icon: 'warning',
+        html: `<small>Esta seguro/a de eliminar  ahora?</small>`,
+        showConfirmButton: true,
+        confirmButtonText: 'Si, eliminar',
+        showCancelButton: true,
+        cancelButtonText: 'No, cancelar',
+        allowOutsideClick: false
+      }).then(result => {
+        if (result.isConfirmed) {
+          showLoader();
+          this.movCajaSvc.delete(item.idMovimientoCaja).subscribe({
+            next: (response) => {
+              hideLoader();
+              if (isApiResponse(response)) {
+                if (response.code === "0") {
+                  this.tS.toastr({
+                    type: 'warning',
+                    message: response.message
+                  })
+                }
+                if (response.code === "1") {
+                  this.tS.toastr({
+                    type: 'success',
+                    message: response.message
+                  })
+                  this.getMovimientosCaja();
+                }
+              }
+            }, error(err) {
+              hideLoader();
+              console.log(err)
+            },
+          })
+        }
+      })
+    } catch (error) {
+      hideLoader();
       console.log(error)
     }
   }

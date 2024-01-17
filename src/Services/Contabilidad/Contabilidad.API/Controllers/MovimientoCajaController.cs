@@ -63,28 +63,6 @@ namespace Contabilidad.API.Controllers
         }
          
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ApiRequest request)
-        { 
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                {"userRoleId", User.GetUserRoleId()},
-                    {"id", id },
-                {"json", DataConverters.SerializeDictionary(request.Data)}
-            };
-
-                var response = await _movSvc.UpdateAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar movimientos de caja: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
-        }
-
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
