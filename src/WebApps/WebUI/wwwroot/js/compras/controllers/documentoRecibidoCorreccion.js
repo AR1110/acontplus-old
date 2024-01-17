@@ -671,9 +671,8 @@
                         tS.toastr('warning', response.message)
                         return;
                     }
-                    if (response.code == 1) {
-
-                        tS.toastr('success', response.message);
+                    if (response.code == 1) { 
+                        tS.toastr('success', "Comprobantes cargados correctamente!");
                         $scope.compFounded = JSON.parse(response.payload) || [];
                         $scope.fileTxt = null;
                         $scope.stepCompFoundedGoTo();

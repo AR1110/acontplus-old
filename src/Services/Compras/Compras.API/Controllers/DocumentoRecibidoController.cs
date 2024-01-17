@@ -30,10 +30,11 @@ namespace Compras.API.Controllers
         private readonly FileTxt _txtComp;
         private readonly DbAccess _db;
 
-        public DocumentoRecibidoController(IConfiguration configuration, IDocumentoRecibidoService docRecibidoSvc, LogWriter log)
+        public DocumentoRecibidoController(IConfiguration configuration, IDocumentoRecibidoService docRecibidoSvc, FileTxt txtComp, LogWriter log)
         {
             _configuration = configuration;
             _docRecibidoSvc = docRecibidoSvc;
+            _txtComp = txtComp;
             _log = log;
             _db = new DbAccess(_configuration);
 
