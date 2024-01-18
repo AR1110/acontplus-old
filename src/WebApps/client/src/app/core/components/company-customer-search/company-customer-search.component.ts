@@ -45,7 +45,7 @@ export class CompanyCustomerSearchComponent {
     } else {
       this.modalService.openModalCustom(AddEditModalComponent, {
         centered: true,
-        size: 'lg',
+        size: 'xl',
       });
     }
   }

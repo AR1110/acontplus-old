@@ -57,6 +57,7 @@
               "src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/sweetalert2/src/sweetalert2.scss",
               "node_modules/icheck-bootstrap/icheck-bootstrap.css",
               "src/styles.scss"
@@ -142,6 +143,7 @@
               "src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
             "scripts": []
