@@ -48,7 +48,8 @@ export enum CODE_REPORT {
   ROC = 'ROC',                  // Orden Compra
   RCP = 'RCP',                    //Reporte Compras
   RCC = 'RCC',                 //Reporte Control Caja
-  RMIE = 'RMIE' //Reporte Movimiento Caja
+  RMIE = 'RMIE', //Reporte Movimiento Caja
+  RA ='RA' //Reporte Anticipo
 }
 
 // Example usage:

@@ -3,6 +3,7 @@ import { PATHS_API } from "@core/constants/global.constants";
 import { ACCOUNTING_PATHS } from "../constants/accounting.constants";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
+import { isApiResponse } from "@core/models/api-response";
 
 
 @Injectable({
@@ -23,6 +24,28 @@ export class CashboxService {
     return this.http.get(`${this.url}?json=${paramsStr}`)
   }
 
+  getId(id: number) {
+    let paramsStr = JSON.stringify({ id, tipo: 3 })
+    return this.http.get(`${this.url}?json=${paramsStr}`)
+      .pipe(
+        map((response) => {
+          if (response) {
+            let { caja, asignaciones } = response as { caja: any, asignaciones: Array<any> }
+
+
+            return {
+              caja: caja[0],
+              asignaciones
+            };
+          }
+          return {
+            caja: {},
+            asignaciones: []
+          }
+        })
+      )
+  }
+
   getDataForm() {
     let paramsStr = JSON.stringify({ tipo: 2 })
     return this.http.get(`${this.url}?json=${paramsStr}`)
@@ -35,11 +58,11 @@ export class CashboxService {
 
 
   save<T>(data: T) {
-    return this.http.post(`${this.url}`, {data});
+    return this.http.post(`${this.url}`, { data });
   }
 
   update<T>(id: number, data: T) {
-    return this.http.put(`${this.url}${id}`, {data});
+    return this.http.put(`${this.url}${id}`, { data });
   }
 
   delete(id: number) {
