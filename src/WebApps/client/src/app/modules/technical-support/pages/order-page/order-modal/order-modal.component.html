@@ -1,0 +1,63 @@
+<form [formGroup]="orderForm">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+    </h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      aria-label="btn-close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+        <div class="form-group">
+          <label for="establecimientoId">Establecimiento:</label>
+          <select
+            id="establecimientoId"
+            class="form-select"
+            formControlName="establecimientoId"
+            (change)="onChangeEstab($event)"
+          >
+            @for (item of establecimientos; track $index) {
+            <option [ngValue]="item.idEstablecimiento">
+              {{ item.nombreComercial }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+        <div class="form-group">
+          <label for="idPuntoEmision">P. Emi.:</label>
+          <select
+            id="idPuntoEmision"
+            class="form-select"
+            formControlName="puntoEmisionId"
+          >
+            @for (item of puntosEmision; track $index) {
+            <option [ngValue]="item.idPuntoEmision">
+              {{ item.ptoEmi }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-outline-success btn-sm">
+      <fa-icon [icon]="'save'"></fa-icon> Guardar
+    </button>
+    <button
+      type="submit"
+      class="btn btn-outline-dark btn-sm"
+      (click)="closeModal()"
+    >
+      &times; Cancelar
+    </button>
+  </div>
+</form>
