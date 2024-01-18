@@ -953,3 +953,8 @@ GO
 DROP PROCEDURE IF EXISTS [dbo].[ASPMovimientoCajaInsert]
 go
 
+DROP PROCEDURE IF EXISTS [dbo].[aspAnticipoGet]
+go
+
+DROP PROCEDURE IF EXISTS [dbo].[aspAnticipoInsert]
+go

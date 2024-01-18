@@ -6,7 +6,7 @@ GO
 /**
 Author: Emilio Senguana
 */
-CREATE OR ALTER PROCEDURE Contabilidad.MovimientoCaja_Delete @userRoleId INT ,@id INT 
+CREATE OR ALTER PROCEDURE Contabilidad.Anticipo_Delete @userRoleId INT ,@id INT 
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,36 +21,21 @@ BEGIN
     BEGIN TRY 
         
         --> Recuperando Variables
-        SELECT TOP 1 @idTipoDocumento = td.idTipoDocumento
-                    ,@codDoc          = td.codigo
-        FROM dbo.MovimientoCaja      mc WITH (NOLOCK)
-        INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = mc.idTipoDocumento
-        WHERE mc.idMovimientoCaja = @id
+        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.Anticipo WITH (NOLOCK) WHERE idAnticipo = @id
 
-        IF EXISTS (SELECT 1 FROM dbo.MovimientoCaja WITH (NOLOCK) WHERE idMovimientoCaja = @id AND estado = 0)
+        SELECT TOP 1 @idComprobante = idComprobanteIngreso FROM dbo.CobroDocumento WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
+
+        --> Validacion de Informacion
+        IF EXISTS (SELECT 1 FROM dbo.Anticipo WITH (NOLOCK) WHERE idAnticipo = @id AND estado = 0)
             BEGIN
                 SELECT Common.ufnSpResponse('0', 'Este Comprobante ya se encuentra anulado',  DEFAULT)	
                 RETURN 
             END
 
         BEGIN TRAN 
-            
-            UPDATE dbo.MovimientoCaja WITH (ROWLOCK) SET estado = 0 WHERE idMovimientoCaja = @id
+            UPDATE dbo.Anticipo WITH (ROWLOCK) SET estado = 0 WHERE idAnticipo = @id
 
-            IF @codDoc = 'IC'
-                BEGIN
-                    SELECT TOP 1 @idComprobante = idComprobanteIngreso FROM dbo.CobroDocumento WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
-
-                    UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobante
-                END
-                
-            IF @codDoc = 'EC'
-                BEGIN
-                    SELECT TOP 1 @idComprobante = idComprobanteEgreso FROM dbo.PagoDocumento WITH (NOLOCK) WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
-
-                    UPDATE dbo.ComprobanteEgreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteEgreso = @idComprobante
-                END
-
+            UPDATE dbo.ComprobanteIngreso WITH (ROWLOCK) SET estado = 0,fechaAnulada = dbo.ufnGetDateEcuador() ,idUsuarioAnulado = @idUsuario WHERE idComprobanteIngreso = @idComprobante 
         COMMIT TRAN 
         SELECT Common.ufnSpResponse('1', 'Anulado Correctamente',  DEFAULT)
     END TRY 
@@ -63,7 +48,7 @@ BEGIN
         SELECT Common.ufnSpResponse('0', 'Info: Error en el procedimiento',  DEFAULT)
 		INSERT INTO ErroresSistema
 		    (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/MovimientoCaja/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+		SELECT NEWID(),'/Anticipo/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
     END CATCH
 
 END
