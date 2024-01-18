@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
 import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
@@ -7,6 +8,7 @@ import {
 } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { isValidField } from '@core/utils/utils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +17,7 @@ import { AppModule } from 'src/app/app.module';
 @Component({
   selector: 'app-order-modal',
   standalone: true,
-  imports: [AppModule],
+  imports: [AppModule, CompanyCustomerSearchComponent],
   templateUrl: './order-modal.component.html',
   styles: ``,
 })
@@ -34,6 +36,8 @@ export class OrderModalComponent {
     establecimientoId: [0, Validators.required],
     puntoEmisionId: [0, Validators.required],
     customerCompanyId: [0, Validators.required],
+    fechaEmision: '',
+    encargado: '',
     obs: [''],
   });
 
@@ -70,7 +74,6 @@ export class OrderModalComponent {
                 });
               }
             }
-            console.log(self);
           }
         }
       },
@@ -86,7 +89,18 @@ export class OrderModalComponent {
   ngOnInit(): void {
     this.get();
   }
-  onChangeEstab($event: any) {
-    console.log($event.target.value)
+  onChangeEstab() {
+    let establecimientoId = this.orderForm.get('establecimientoId')?.value;
+    if (isValidField(establecimientoId)) {
+      let estabs = this.establecimientos.find(
+        (x) => x.idEstablecimiento == Number(establecimientoId)
+      );
+      this.puntosEmision = estabs?.puntosEmision || [];
+      let puntoEmisionId =
+        this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
+          ?.idPuntoEmision || 0;
+      this.orderForm.patchValue({ puntoEmisionId: puntoEmisionId });
+    }
   }
+  onCustomerSelected($event: any) {}
 }

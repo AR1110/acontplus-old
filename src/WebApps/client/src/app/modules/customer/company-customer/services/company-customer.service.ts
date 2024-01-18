@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
-import { CompanyCustomerSearch } from '@core/models/company-customer';
+import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
 import { Observable, map } from 'rxjs';
 
 @Injectable({
