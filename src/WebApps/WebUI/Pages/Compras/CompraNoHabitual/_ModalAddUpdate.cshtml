@@ -9,23 +9,18 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    <label for="categoria">Estab.: <span class="text-danger">*</span></label>
-
-                    <!--Nuevo-->
+                     <label for="establecimiento">Establecimiento.: <span class="text-danger">*</span></label> 
                     <select class="form-control border-select" ng-model="data.codEstab"
                         ng-change="onChangeEstablecimiento()" ng-disabled="data.idDocumentoIngreso>0">
                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                             {{item.nombreComercial}}
                         </option>
                     </select>
-
-
                 </div>
             </div>
-
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emision <span class="text-danger">*</span></label> 
                     <!--Nuevo-->
@@ -41,23 +36,38 @@
                         ng-if="data.idDocumentoIngreso>0" />
                 </div>
             </div>
-
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    <label>Fecha Emisión: </label>
-                    <input type="date" class="form-control" ng-model="data.fechaEmision"
-                        ng-keyup="getFechaVencimiento()" ng-change="getFechaVencimiento()" />
-                    <small class="form-text text-info">{{fechaEmisionEscrita}}</small>
+                    <label for="tiempoCredito">Tiempo Credito <span class="text-danger">*</span></label>                     
+                    <select name="tiempoCredito" id="tiempoCredito" class="form-control border-select"
+                        ng-model="data.idTiempoCredito" ng-disabled="data.idDocumentoIngreso>0" ng-change="onChangeTiempoCredito()">
+                        <option ng-value="item.idTiempoCredito" ng-repeat="item in tiemposCredito">
+                            {{item.descripcion}}
+                        </option>
+                    </select> 
                 </div>
             </div>
+             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="tiempoCredito">Fecha Emisión: <span class="text-danger">*</span></label>                     
+                    <input type="date" class="form-control" ng-model="data.fechaEmision" ng-blur="onChangeFechaEmision()"/>
+                    <small class="form-text text-info">{{fechaEmisionEscrita}}</small>
 
+                </div>
+            </div>
+             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="fechaEmision">Fecha Vencimiento: <span class="text-danger">*</span></label>                     
+                    <input type="date" class="form-control" ng-model="data.fechaVencimiento" disabled ng-change="onChangeFechaVencimiento()" disabled/>
+                    <small class="form-text text-info">{{fechaVencimientoEscrita}}</small>
 
-        </div>
+                </div>
+            </div>
+        </div> 
 
-        <div class="row">
+        <div class="row">                   
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
-                <label for="proveedorFiltro">Proveedor:</label>
-
+                <label for="proveedorFiltro">Proveedor:</label> 
                 <div class="input-group">
                     <input type="text" id="providerInputSearch" class="form-control border-select"
                         ng-model="proveedor.nombreProveedor" provider-search-drtv on-select="onSelectProveedor(result)"

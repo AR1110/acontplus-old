@@ -414,7 +414,10 @@
         $scope.establecimientos = [];
         $scope.bodegas = [];
         $scope.puntosEmision = [];
-        $scope.datosAdicionalesArticulo = []
+        $scope.tiemposCredito = [];
+        $scope.datosAdicionalesArticulo = [];
+
+        $scope.cuotas = [];
 
         $scope.data = {
             idBodega: 0,
@@ -498,20 +501,16 @@
                     estabs,
                     decimal,
                     tarifasImpuesto,
-                } =
-                    mainDataForm;
+                    tiemposCredito
+                } = mainDataForm; 
 
                 $scope.establecimientos = estabs;
 
                 $scope.decimal = decimal;
                 $scope.tarifasImpuesto = tarifasImpuesto;
+                $scope.tiemposCredito = tiemposCredito;
 
-                if (
-                    !(
-                        "comprobante" in params &&
-                        params.comprobante.idDocumentoIngreso > 0
-                    )
-                ) {
+                if (!("comprobante" in params && params.comprobante.idDocumentoIngreso > 0)) {
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(
                             (estab) => estab.defaultEstab
@@ -554,21 +553,32 @@
 
                         })
                     }
+
+                    if ($scope.tiemposCredito.length > 0) {
+                        $scope.data.idTiempoCredito =
+                            $scope.tiemposCredito[0].idTiempoCredito;
+                    }
+
+                    getFechaVencimiento();
                 }
 
                 if (
                     "comprobante" in params &&
                     params.comprobante.idDocumentoIngreso > 0
                 ) {
-                    const { comprobante, proveedor, detalles, infoAdicionalDocumento } = params;
+                    const { comprobante, proveedor, detalles, infoAdicionalDocumento, cuotas } = params;
 
                     $scope.data = comprobante;
                     $scope.dataClone.codEstab = $scope.data.codEstab;
+                    $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
+                    $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
 
                     $scope.proveedor = proveedor;
                     $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
                     $scope.gridOptions.data = calculateTotalItems(detalles);
                     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+
+                    $scope.cuotas = cuotas;
 
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.codEstab === $scope.data.codEstab
@@ -993,6 +1003,50 @@
             };
         }
 
+        $scope.onChangeTiempoCredito = function () {
+            if ($scope.data.idDocumentoIngreso > 0) {
+                tS.toastr("warning", "El tiempo crédito no puede ser editada");
+                $scope.data.fechaEmision = $scope.data.fechaEmisionDocCreado;
+                return;
+            }
+            getFechaVencimiento();
+        };
+
+        $scope.refreshTiempoCredito = function () {
+            if ($scope.data.idDocumentoIngreso > 0) return;
+            compraNoHabSvc.getDataForm().then((response) => {
+                $scope.tiemposCredito = response.tiemposCredito;
+            });
+        }
+
+
+        function getFechaVencimiento() {
+            try {
+                if (!$scope.data.fechaEmision) {
+                    $scope.data.fechaEmision = new Date();
+                }
+
+                let dataTiempoCredito = $scope.tiemposCredito.find(
+                    (item) => item.idTiempoCredito === $scope.data.idTiempoCredito
+                );
+                let diasCredito = dataTiempoCredito ? dataTiempoCredito.diasCredito : 0;
+
+                $scope.data.fechaVencimiento = fS.getFechaVencimiento(
+                    $scope.data.fechaEmision,
+                    diasCredito
+                );
+                $scope.fechaEmisionEscrita = fS.getFechaEscrita(
+                    $scope.data.fechaEmision
+                );
+                $scope.fechaVencimientoEscrita = fS.getFechaEscrita(
+                    $scope.data.fechaVencimiento
+                );
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+
         $scope.onChangeFechaEmision = function () {
             try {
                 if ($scope.data.idDocumentoIngreso > 0) {
@@ -1022,6 +1076,9 @@
             }
         };
 
+        $scope.onChangeFechaVencimiento = function () {
+            tS.toastr('warning', 'Fecha Vencimiento no puede ser modificada!')
+        }
         $scope.askToChangeBodega = function () {
             try {
                 Swal.fire({
@@ -1269,6 +1326,37 @@
         const isRegister = () => !($scope.data.idDocumentoIngreso > 0);
         const isUpdate = () => $scope.data.idDocumentoIngreso > 0;
 
+        const validateCuota = function () {
+            let objParamsCuota = {
+                fechaEmision: $scope.data.fechaEmision,
+                tiemposCredito: $scope.tiemposCredito,
+                idTiempoCredito: $scope.data.idTiempoCredito,
+                montoTotal: $scope.data.total,
+                cuotas: $scope.cuotas
+            }
+            let cuotas = [];
+            let montoTotalCuota = 0;
+
+            if (isRegister()) {
+                let dataCuota = fS.calcularCuotas(objParamsCuota);
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+
+            }
+            if (isUpdate()) {
+                let dataCuota = fS.updateCuotas(objParamsCuota)
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+            }
+
+            if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
+                tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
+                return [] ;
+            }
+
+            return cuotas;
+        }
+
         const isValidaForm = () => {
             if (!fS.isValidField($scope.data.codEstab)) {
                 tS.toastr("warning", "Seleccione el Establecimiento!");
@@ -1349,6 +1437,10 @@
             try {
                 if (!isValidaForm()) return;
 
+                let cuotas = validateCuota();
+
+                if (cuotas && cuotas.length === 0) return;
+
                 let textAccion = isUpdate() ? "Actualizar" : "Guardar";
                 let title = isUpdate() ? "Actualizar Documento" : "Guardar Documento";
                 let html = '';
@@ -1384,7 +1476,8 @@
                                 comprobante: $scope.data,
                                 detalles: $scope.gridOptions.data,
                                 detallesDeleted,
-                                datosAdicionalesArticulo: $scope.datosAdicionalesArticulo
+                                datosAdicionalesArticulo: $scope.datosAdicionalesArticulo,
+                                cuotas
                             }
                         )
 

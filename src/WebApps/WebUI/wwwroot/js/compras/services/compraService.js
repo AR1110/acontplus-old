@@ -289,7 +289,7 @@
             return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
                 if (typeof response === 'object') {
                     const { liquidaciones } = JSON.parse(response.payload);
-                
+
                     return liquidaciones.map(item => ({
                         codEstab: item.codEstab,
                         idLiquidacionCompra: item.idLiquidacionCompra,
@@ -738,7 +738,6 @@
                 }
                 if (response.code === "1") {
                     const mainData = JSON.parse(response.payload);
-                    console.log(mainData)
                     let tempData = mainData.data[0];
                     const { doc, payments, taxes } = tempData;
 
@@ -793,7 +792,7 @@
                     }
                     if (response.code === "1") {
                         let [comprobanteApi, proveedorApi, detallesApi, datosAdicionalesArticuloApi, cuentaPorPagar, cuotasApi] = JSON.parse(response.payload);
-                        console.log(JSON.parse(response.payload))
+                      
                         let comprobante = comprobanteApi[0];
                         let proveedor = proveedorApi[0];
                         cuentaPorPagar = cuentaPorPagar[0];
@@ -1194,7 +1193,7 @@
         }
 
         function queryMapper(obj) {
-            const { comprobante, detalles, detallesDeleted, datosAdicionalesArticulo } = obj;
+            const { comprobante, detalles, detallesDeleted, datosAdicionalesArticulo, cuotas } = obj;
 
             const comprobanteMapper = infoComprobanteMapperTo(comprobante);
             const itemsMainMapper = detalleMapperTo(detalles);
@@ -1210,7 +1209,8 @@
                 comprobante: comprobanteMapper,
                 detalles: mergeItems,
                 impuestos,
-                artInfoAdicionales: dataAdicionalMapTo(datosAdicionalesArticulo)
+                artInfoAdicionales: dataAdicionalMapTo(datosAdicionalesArticulo),
+                cuotas
             }
         }
 
@@ -1219,12 +1219,14 @@
             const result = {
                 idProveedor: data.idProveedor,
                 idPuntoEmision: data.idPuntoEmision,
+                idTiempoCredito: data.idTiempoCredito,
                 fechaEmision: fS.formatDateTimeZone(data.fechaEmision),
+                fechaVencimiento: fS.formatDateTimeZone(data.fechaVencimiento),
                 totalSinImpuestos: data.subTotalSinImpuestos,
                 porcentajeDescuento: data.porcentajeDescuento,
                 descuento: data.totalDescuento,
                 importeTotal: data.total,
-                observacion: data.observacion || null,
+                observacion: fS.isValidField(data.observacion)
             }
             return result;
         }
@@ -1275,9 +1277,12 @@
                     if (response.code === "1") {
                         const mainData = JSON.parse(response.payload);
 
-                        let { comprobante, proveedor, detalles, infoAdicional } = mainData;
+                        let { comprobante, proveedor, detalles, infoAdicional, cuentaPorPagar, cuotas } = mainData;
+                        
                         comprobante = comprobante[0];
                         proveedor = proveedor[0];
+
+                        cuentaPorPagar = cuentaPorPagar[0];
 
 
                         comprobante = {
@@ -1286,10 +1291,12 @@
                             idPuntoEmision: comprobante.idPuntoEmision,
                             codEstab: comprobante.codEstab,
                             ptoEmi: comprobante.ptoEmi,
+                            idTiempoCredito: cuentaPorPagar.idTiempoCredito,
                             nombreComercial: comprobante.nombreComercial,
                             secuencial: comprobante.secuencial,
                             fechaEmision: fS.formatDate(comprobante.fechaEmision),
                             fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
+                            fechaVencimiento: fS.formatDate(cuentaPorPagar.fechaVencimiento || comprobante.fechaEmision),
                             subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
                             totalDescuento: comprobante.descuento,
                             porcentajeDescuento: comprobante.porcentajeDescuento || 0,
@@ -1343,14 +1350,24 @@
                                 conversion: dataMedida.conversion | 1,
                                 etiquetas: etiquetasMapper,
                             }
+                        })
 
+                        cuotas = cuotas.map(item => {
+                            return {
+                                idCuotaPorPagar: item.idCuotaPorPagar,
+                                nroCuota: item.nroCuota,
+                                fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                                cuota: item.cuota,
+                                entrada: item.entrada,
+                            }
                         })
 
                         return {
                             comprobante,
                             proveedor,
                             detalles,
-                            infoAdicionalDocumento: infoAdicional
+                            infoAdicionalDocumento: infoAdicional,
+                            cuotas
                         }
 
                     }

@@ -1235,7 +1235,7 @@
 
             if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
                 tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
-                return
+                return [];
             }
 
             return cuotas;

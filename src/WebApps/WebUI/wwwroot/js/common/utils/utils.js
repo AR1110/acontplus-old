@@ -764,9 +764,9 @@
 
             // Creación de un array que representa los números de cuota
             let cuotasArray = Array.from({ length: dataTiempoCredito.numeroCuota }, (_, index) => index + 1);
-           
+
             cuotasArray = entrada ? [...cuotasArray, cuotasArray.length + 1] : cuotasArray;
-         
+
             // Mapeo de detalles de cuotas basado en el array
             const resultCuotas = cuotasArray.map((num, index) => {
                 // Verificación de si la cuota tiene entrada y es la primera
@@ -774,18 +774,21 @@
 
                 // Cálculo de los días acumulados hasta la cuota actual
                 let sumDia = 0;
+                let nroCuota = 0;
                 if (entrada) {
                     sumDia = index * diaCuota;
+                    nroCuota = index;
                 } else {
                     sumDia = num * diaCuota;
+                    nroCuota = num;
                 }
 
                 // Manejo del caso en que hay una entrada en la primera cuota
                 if (tieneEntrada) {
                     return {
-                        nroCuota: num,
+                        nroCuota: nroCuota,
                         cuota: 0,
-                        fechaVencimiento: fechaEmision,
+                        fechaVencimiento: formSvc.formatDateTimeZone(fechaEmision),
                         entrada: 1
                     };
                 }
@@ -795,9 +798,9 @@
 
                 // Retorno de detalles de la cuota
                 return {
-                    nroCuota: num,
-                    cuota: valorCuota,
-                    fechaVencimiento,
+                    nroCuota: nroCuota,
+                    cuota: formSvc.roundNumber(valorCuota, 5),
+                    fechaVencimiento: formSvc.formatDateTimeZone(fechaVencimiento),
                     entrada: 0
                 };
             });
@@ -839,13 +842,20 @@
                     // Retorno de detalles de la cuota
                     return {
                         nroCuota: cuota.nroCuota,
-                        cuota: valorCuota,
-                        fechaVencimiento,
+                        cuota: formSvc.roundNumber(valorCuota, 5),
+                        fechaVencimiento: formSvc.formatDateTimeZone(fechaVencimiento),
                         entrada: cuota.entrada,
                         idCuotaPorPagar: cuota.idCuotaPorPagar
                     };
                 }
-                return cuota;
+
+                return {
+                    nroCuota: cuota.nroCuota,
+                    cuota: cuota.cuota,
+                    fechaVencimiento: formSvc.formatDateTimeZone(cuota.fechaVencimiento),
+                    entrada: cuota.entrada,
+                    idCuotaPorPagar: cuota.idCuotaPorPagar
+                };
             });
 
             // Retorno del array de cuotas calculadas
