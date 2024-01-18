@@ -4,7 +4,7 @@
 
     'use strict';
 
-    const FILE_PATH_PARTIAL_UI = '~/Areas/CuentaPorPagar/Pages/';
+    const FILE_PATH_PARTIAL_UI = '~/Pages/Contabilidad/CuentaPorPagar/Shared/';
 
     let cuentaPorPagarSvc = {}
 
@@ -202,7 +202,7 @@
 
                 let modalParams = {
                     controller: 'modalPagoCtrl',
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalPago.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalPago.cshtml',
                     size: 'xl',
                     //  windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
@@ -301,7 +301,7 @@
 
                 let modalParams = {
                     controller: 'modalCuotaCtrl',
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalCuota.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalCuota.cshtml',
                     size: 'xl',
                     isRenderRazorPartial: true
                 }
@@ -364,7 +364,7 @@
                 //Params Modal
                 let modalParams = {
                     controller: 'modalPagoCtrl',
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalPago.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalPago.cshtml',
                     size: 'xl',
                     //  windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
@@ -415,7 +415,7 @@
             try {
 
                 let modalParams = {
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalHistorialPago.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalHistorialPago.cshtml',
                     controller: 'historialMovimientoCtrl',
                     size: 'xl',
                     isRenderRazorPartial: true
@@ -912,7 +912,7 @@
 
                 let modalRef = _modalSvc.openModalCustom({
                     controller: 'formaPagoCtrl',
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalFormaPago.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalFormaPago.cshtml',
                     size: 'lg',
                     isRenderRazorPartial: true,
                     params
