@@ -32,25 +32,32 @@ BEGIN
     DECLARE @idUsuarioRegistro INT ,@idEntidad INT ,@id INT
 
     --> Datajson
-    DECLARE @idTurno INT ,@idUsuario INT ,@descripcion VARCHAR(150)
+    DECLARE @asignacion VARCHAR(MAX) ,@descripcion VARCHAR(150)
+
+    DECLARE @tbAsig AS TABLE(
+        idTurno INT NOT NULL
+       ,idUsuario INT NOT NULL
+    )
 
     BEGIN TRY
         
         --> Recuperando Datos
         SELECT TOP 1 @idEntidad = idEntidad, @idUsuarioRegistro = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT @idTurno     = idTurno
-              ,@idUsuario   = idUsuario
-              ,@descripcion = descripcion
-        FROM OPENJSON(@json) WITH 
-        (
-            idTurno     INT
-		   ,idUsuario   INT
-           ,descripcion VARCHAR(100)
-        )
+        SELECT @asignacion = asignacion ,@descripcion = descripcion FROM OPENJSON(@json) WITH (asignacion NVARCHAR(MAX) as json,descripcion VARCHAR(100))
+
+        INSERT INTO @tbAsig 
+              (idTurno,idUsuario)
+        SELECT idTurno,idUsuario FROM OPENJSON(@asignacion) WITH (idUsuario INT, idTurno INT)
 
         --> Validacion de informacion
-        IF EXISTS(SELECT 1 FROM dbo.AsignacionCaja WITH (NOLOCK) WHERE idUsuario = @idUsuario AND idEntidad = @idEntidad)
+        IF (SELECT COUNT(*) FROM @tbAsig) = 0 
+            BEGIN
+			    SELECT [Common].[ufnSpResponse]('0','Error en la asignacion de usuario',DEFAULT)
+			    RETURN 
+		    END
+
+        IF EXISTS(SELECT 1 FROM dbo.AsignacionCaja WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM @tbAsig) AND idEntidad = @idEntidad)
 		    BEGIN
 			    SELECT [Common].[ufnSpResponse]('0','Este Usuario ya cuenta con una Caja asignada en la empresa',DEFAULT)
 			    RETURN 
@@ -58,13 +65,13 @@ BEGIN
 
         BEGIN TRAN 
             INSERT INTO Caja (descripcion, idEntidad, idUsuario) 
-			SELECT LTRIM(RTRIM(@descripcion)), @idEntidad,@idUsuario
+			SELECT LTRIM(RTRIM(@descripcion)), @idEntidad,@idUsuarioRegistro
             
             SELECT @id = SCOPE_IDENTITY()
             
             INSERT INTO AsignacionCaja 
 				   (idCaja,idTurno,idUsuario,idUsuarioRegistro,idEntidad)
-			SELECT @id    ,@idTurno,@idUsuario,@idUsuarioRegistro,@idEntidad
+			SELECT @id    ,idTurno,idUsuario,@idUsuarioRegistro,@idEntidad FROM @tbAsig
 
         COMMIT TRAN 
         SELECT [Common].[ufnSpResponse]('1','Registrado Correctamen',DEFAULT)

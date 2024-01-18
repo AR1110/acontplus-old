@@ -22,6 +22,9 @@ BEGIN
     --> Sql
 	DECLARE @params nvarchar(MAX) ,@sql nvarchar(MAX) ,@pageIndex INT ,@pageSize INT
 
+    -->Filters 
+    DECLARE @id INT
+
     --> Permision 
     DECLARE @verOtrasCajas BIT
     
@@ -96,4 +99,19 @@ BEGIN
 
             RETURN 
         END
+
+    --> Get Id
+    IF @tipo = 3
+        BEGIN
+            
+            SET @tableNames = 'caja,asignaciones'
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT idCaja, descripcion,estado FROM Caja WITH (NOLOCK) WHERE idCaja = @id
+
+            SELECT idAsignacionCaja, idTurno,idUsuario,idCaja FROM dbo.AsignacionCaja WITH (NOLOCK) WHERE idCaja = @id
+
+            RETURN 
+        END 
 END

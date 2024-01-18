@@ -33,14 +33,14 @@ BEGIN
 	DECLARE @idEntidad INT ,@idUsuario INT ,@idDocumentoIngreso INT
 
     --> Data Json
-    DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@artInfoAdicionales VARCHAR(MAX)
+    DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@artInfoAdicionales VARCHAR(MAX) ,@cuotas VARCHAR(MAX)
 
 	--> Compra 
 	DECLARE @idPuntoEmision INT ,@fechaEmision DATETIME ,@uniqueId VARCHAR(20) ,@year VARCHAR(50) ,@secuencial INT
            ,@estab VARCHAR(20) ,@ptoEmi VARCHAR(10)
 
 	--> contabilidad
-	DECLARE @idEstadoPago INT ,@idEstablecimiento INT ,@identificacion VARCHAR(20) ,@serieComprobante VARCHAR(20)
+	DECLARE @idEstadoPago INT ,@idEstablecimiento INT ,@identificacion VARCHAR(20) ,@serieComprobante VARCHAR(20) ,@idCuentaPorPagar INT
 
 	DECLARE @document AS TABLE(
 		 idPuntoEmision INT NOT NULL
@@ -91,6 +91,13 @@ BEGIN
 		,jsonAdicional NVARCHAR(MAX)  NULL
 		
 	)
+
+    DECLARE @tbCuotas AS TABLE(
+		nroCuota INT UNIQUE NOT NULL 
+	   ,fechaVencimiento DATE NOT NULL
+	   ,cuota NUMERIC(18,5) NOT NULL
+	   ,entrada BIT NOT NULL
+	)
 	 
 	BEGIN TRY
 
@@ -102,12 +109,14 @@ BEGIN
               ,@detalles           = detalles
               ,@impuestos          = impuestos
               ,@artInfoAdicionales = artInfoAdicionales
+              ,@cuotas             = cuotas
         FROM OPENJSON(@json) WITH 
         (
              comprobante        NVARCHAR(MAX) as json
             ,detalles           NVARCHAR(MAX) as json 
             ,impuestos          NVARCHAR(MAX) as json
             ,artInfoAdicionales NVARCHAR(MAX) as json
+            ,cuotas             NVARCHAR(MAX) as json
         )
 
 
@@ -166,6 +175,16 @@ BEGIN
            ,discount  NUMERIC(18,5)
         )
 
+        INSERT INTO @tbCuotas
+              (nroCuota,fechaVencimiento,cuota,entrada)
+        SELECT nroCuota,fechaVencimiento,cuota,entrada
+        FROM OPENJSON(@cuotas) WITH 
+        (
+            nroCuota INT
+	       ,fechaVencimiento DATE 
+	       ,cuota NUMERIC(18,5) 
+	       ,entrada BIT 
+        )
 		
 		INSERT INTO @artInfoAdicional  
               (idArticulo, idEtiqueta, jsonAdicional)
@@ -202,6 +221,30 @@ BEGIN
 
 		
 		--> Validacacion de informacion
+        IF (SELECT COUNT(*) FROM @document) = 0 
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Error en la info Factura', DEFAULT)
+                RETURN
+            END
+
+        IF (SELECT COUNT(*) FROM @tblDetails) = 0
+			BEGIN
+				SELECT [Common].[ufnSpResponse]('0','Se encontro un error en el detalle del documento',DEFAULT)
+				RETURN 
+			END 
+
+		IF (SELECT COUNT(*) FROM @tbTaxes) = 0
+			BEGIN
+				SELECT [Common].[ufnSpResponse]('0','Se encontro un error en los impuestos del documento',DEFAULT)
+				RETURN 
+			END 
+
+        IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Error en las cuotas',DEFAULT)
+                RETURN
+            END
+
 		IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE uniqueId = @uniqueId)
 			BEGIN
 				SELECT [Common].[ufnSpResponse]('0','Este Id ya se encuentra registrado',DEFAULT)
@@ -214,17 +257,6 @@ BEGIN
 				RETURN 
 			END 
 
-		IF (SELECT COUNT(*) FROM @tblDetails) = 0
-			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Se encontro un error en el detalle del documento',DEFAULT)
-				RETURN 
-			END 
-
-		IF (SELECT COUNT(*) FROM @tbTaxes) = 0
-			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Se encontro un error en los impuestos del documento',DEFAULT)
-				RETURN 
-			END 
 
 		BEGIN TRAN 
 			--> Comprobante
@@ -302,6 +334,12 @@ BEGIN
                    (idEstablecimiento,idProveedor,idEstadoPago,codDoc,idDocumento,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
 		    SELECT @idEstablecimiento,idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,@uniqueId,@serieComprobante,@identificacion,fechaEmision,importeTotal,@idEntidad,@idUsuario
 		    FROM @document
+
+            SELECT @idCuentaPorPagar = SCOPE_IDENTITY()
+
+            INSERT INTO Contabilidad.CuotaPorPagar WITH (ROWLOCK)
+                   (idCuentaPorPagar, idEstadoPago,nroCuota,fechaVencimiento,cuota,entrada)
+			SELECT @idCuentaPorPagar,@idEstadoPago,nroCuota,fechaVencimiento,cuota,entrada FROM @tbCuotas 
 			
 		COMMIT TRAN 
 		SELECT [Common].[ufnSpResponse]('1','Registrado Correctamente',DEFAULT)
