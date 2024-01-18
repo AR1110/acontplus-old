@@ -1,5 +1,16 @@
 <div class="table-responsive mt-2">
   <table class="table table-condensed">
-
+    <thead>
+      <tr>
+        <th>Cliente</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of orders; track $index) {
+        <tr>
+          <td>{{item.bussinesName}}</td>
+        </tr>
+      }
+    </tbody>
   </table>
 </div>
