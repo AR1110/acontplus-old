@@ -452,11 +452,11 @@
 
 
             let permisoCajaParse = permisoCajaTemp && JSON.parse(permisoCajaTemp.permission) || {}
-         
+
             let permisoCaja = {
                 cerrarCaja: permisoCajaParse && permisoCajaParse.cerrarCaja && permisoCajaParse.cerrarCaja.cerrar || false,
                 enterKey: permisoCajaParse && permisoCajaParse.enterKey && permisoCajaParse.enterKey.isRequerid || false,
-                reporteMovimientoCaja: permisoCajaParse && permisoCajaParse.reporteMovimientoCaja.view || false, 
+                reporteMovimientoCaja: permisoCajaParse && permisoCajaParse.reporteMovimientoCaja.view || false,
                 verOtrasCajas: permisoCajaParse && permisoCajaParse.verOtrasCajas && permisoCajaParse.verOtrasCajas.view || false
             }
             return {
@@ -732,6 +732,128 @@
             }))
 
             return medidas;
+        }
+
+
+
+        // Función para calcular detalles de cuotas basadas en términos de crédito
+        formSvc.calcularCuotas = function (obj) {
+            // Desestructuración de propiedades del objeto para mayor legibilidad
+            const { fechaEmision, tiemposCredito, idTiempoCredito, montoTotal } = obj;
+
+            // Encontrar datos de tiempo de crédito según el id proporcionado
+            const dataTiempoCredito = tiemposCredito.find(t => t.idTiempoCredito === idTiempoCredito);
+
+            // Manejo del caso en que no se encuentran datos de tiempo de crédito
+            if (!dataTiempoCredito) {
+                console.error("Tiempo de crédito no encontrado.");
+                return {
+                    cuotas: 0,
+                    montoTotalCuota: 0
+                }
+            }
+
+            // Cálculo de la cantidad de días por cuota
+            const diaCuota = dataTiempoCredito.diasCredito / dataTiempoCredito.numeroCuota;
+
+            // Cálculo del monto de cada cuota
+            const valorCuota = montoTotal / dataTiempoCredito.numeroCuota;
+
+            // Extracción del valor de la entrada desde los datos de tiempo de crédito
+            const entrada = dataTiempoCredito.entrada;
+
+            // Creación de un array que representa los números de cuota
+            let cuotasArray = Array.from({ length: dataTiempoCredito.numeroCuota }, (_, index) => index + 1);
+           
+            cuotasArray = entrada ? [...cuotasArray, cuotasArray.length + 1] : cuotasArray;
+         
+            // Mapeo de detalles de cuotas basado en el array
+            const resultCuotas = cuotasArray.map((num, index) => {
+                // Verificación de si la cuota tiene entrada y es la primera
+                let tieneEntrada = entrada && num === 1;
+
+                // Cálculo de los días acumulados hasta la cuota actual
+                let sumDia = 0;
+                if (entrada) {
+                    sumDia = index * diaCuota;
+                } else {
+                    sumDia = num * diaCuota;
+                }
+
+                // Manejo del caso en que hay una entrada en la primera cuota
+                if (tieneEntrada) {
+                    return {
+                        nroCuota: num,
+                        cuota: 0,
+                        fechaVencimiento: fechaEmision,
+                        entrada: 1
+                    };
+                }
+
+                // Cálculo de la fecha de vencimiento para la cuota
+                const fechaVencimiento = new Date(fechaEmision.getTime() + sumDia * 24 * 60 * 60 * 1000);
+
+                // Retorno de detalles de la cuota
+                return {
+                    nroCuota: num,
+                    cuota: valorCuota,
+                    fechaVencimiento,
+                    entrada: 0
+                };
+            });
+
+            // Retorno del array de cuotas calculadas
+            return {
+                cuotas: resultCuotas,
+                montoTotalCuota: resultCuotas.reduce((acc, curr) => acc + curr.cuota, 0)
+            };
+        }
+
+        formSvc.updateCuotas = function (obj) {
+            const { fechaEmision, tiemposCredito, idTiempoCredito, montoTotal, cuotas } = obj;
+
+            // Encontrar datos de tiempo de crédito según el id proporcionado
+            const dataTiempoCredito = tiemposCredito.find(t => t.idTiempoCredito === idTiempoCredito);
+
+            // Manejo del caso en que no se encuentran datos de tiempo de crédito
+            if (!dataTiempoCredito) {
+                console.error("Tiempo de crédito no encontrado.");
+                return {
+                    cuotas: 0,
+                    montoTotalCuota: 0
+                }
+            }
+
+            // Cálculo de la cantidad de días por cuota
+            const diaCuota = dataTiempoCredito.diasCredito / dataTiempoCredito.numeroCuota;
+
+            // Cálculo del monto de cada cuota
+            const valorCuota = montoTotal / dataTiempoCredito.numeroCuota;
+
+            const resultCuotas = cuotas.map((cuota) => {
+                if (!cuota.entrada) {
+                    let sumDia = cuota.nroCuota * diaCuota;
+                    // Cálculo de la fecha de vencimiento para la cuota
+                    const fechaVencimiento = new Date(fechaEmision.getTime() + sumDia * 24 * 60 * 60 * 1000);
+
+                    // Retorno de detalles de la cuota
+                    return {
+                        nroCuota: cuota.nroCuota,
+                        cuota: valorCuota,
+                        fechaVencimiento,
+                        entrada: cuota.entrada,
+                        idCuotaPorPagar: cuota.idCuotaPorPagar
+                    };
+                }
+                return cuota;
+            });
+
+            // Retorno del array de cuotas calculadas
+            return {
+                cuotas: resultCuotas,
+                montoTotalCuota: resultCuotas.reduce((acc, curr) => acc + curr.cuota, 0)
+            };
+
         }
 
 

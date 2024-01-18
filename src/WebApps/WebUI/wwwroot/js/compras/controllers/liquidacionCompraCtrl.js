@@ -8,7 +8,7 @@
     let commonSvc = {};
     let tS = {};
     let fS = {};
-    let modalSvc = {}; 
+    let modalSvc = {};
 
     app.controller('liquidacionCompraCtrl', liquidacionCompraCtrl);
 
@@ -24,9 +24,9 @@
         tS = $injector.get('toastService');
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
-        const CODE_REPORT = $injector.get('CODE_REPORT'); 
-        const nombreModalCompra = $injector.get('nombreModalCompra'); 
-        
+        const CODE_REPORT = $injector.get('CODE_REPORT');
+        const nombreModalCompra = $injector.get('nombreModalCompra');
+
         $scope.proveedor = {
             nombreProveedor: ''
         }
@@ -136,7 +136,7 @@
                 hideLoader();
             })
 
-            liquidacionCompraSvc.getDataForm().then(response => { 
+            liquidacionCompraSvc.getDataForm().then(response => {
                 mainDataForm = response;
             })
 
@@ -376,6 +376,8 @@
         //Informacion adicional del documento 
         $scope.infoAdicionalDocumento = [];
 
+        $scope.cuotas = [];
+
 
 
         const detallesDeleted = [];
@@ -490,7 +492,8 @@
                         comprobante,
                         proveedor,
                         detalles,
-                        infoAdicionalDocumento
+                        infoAdicionalDocumento,
+                        cuotas
                     } = params;
 
                     $scope.data = comprobante;
@@ -501,6 +504,8 @@
                     $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
                     $scope.gridOptions.data = calculateTotalItems(detalles);
                     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+
+                    $scope.cuotas = cuotas;
 
                     let dataEstab = $scope.establecimientos.find(estab => estab.codEstab === $scope.data.codEstab);
                     if (dataEstab) {
@@ -1205,6 +1210,37 @@
         const isRegister = () => !($scope.data.idLiquidacionCompra > 0);
         const isUpdate = () => ($scope.data.idLiquidacionCompra > 0);
 
+        const validateCuota = function () {
+            let objParamsCuota = {
+                fechaEmision: $scope.data.fechaEmision,
+                tiemposCredito: $scope.tiemposCredito,
+                idTiempoCredito: $scope.data.idTiempoCredito,
+                montoTotal: $scope.data.total,
+                cuotas: $scope.cuotas
+            }
+            let cuotas = [];
+            let montoTotalCuota = 0;
+
+            if (isRegister()) {
+                let dataCuota = fS.calcularCuotas(objParamsCuota);
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+
+            }
+            if (isUpdate()) {
+                let dataCuota = fS.updateCuotas(objParamsCuota)
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+            }
+
+            if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
+                tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
+                return
+            }
+
+            return cuotas;
+        }
+
         const isValidaForm = () => {
 
             if (!fS.isValidField($scope.data.codEstab)) {
@@ -1283,14 +1319,15 @@
 
                 if (!isValidaForm()) return
 
+                let cuotas = validateCuota();
+
+                if (cuotas && cuotas.length === 0) return
+
+
                 let nroSecuencial = null;
                 if (isRegister()) {
                     showLoader();
-                    nroSecuencial = await liquidacionCompraSvc.generateSerieComprobante(
-                        {
-                            idPuntoEmision: $scope.data.idPuntoEmision
-                        }
-                    )
+                    nroSecuencial = await liquidacionCompraSvc.generateSerieComprobante({ idPuntoEmision: $scope.data.idPuntoEmision })
                         .finally(() => hideLoader())
                 }
                 if (isUpdate()) {
@@ -1320,7 +1357,8 @@
                             comprobante: $scope.data,
                             detalles: $scope.gridOptions.data,
                             detallesDeleted,
-                            infoAdicionalDocumento: $scope.infoAdicionalDocumento
+                            infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                            cuotas
                         })
 
 
