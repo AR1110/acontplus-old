@@ -21,10 +21,74 @@ export class AnticipoService {
       .pipe(
         map(response => {
           if (isApiResponse(response)) {
-            console.log(response)
+
+            if (response.code === "0") {
+              throw response;
+            }
+            if (response.code === "1") {
+              let { anticipos } = JSON.parse(response.payload as string);
+              console.log(anticipos)
+              anticipos = anticipos.map((anticipo: any) => {
+                return {
+                  idAnticipo: anticipo.idAnticipo,
+                  idTipoDocumento: anticipo.idTipoDocumento,
+                  codEstab: anticipo.codEstab,
+                  fechaEmision: anticipo.fechaEmision,
+                  valor: anticipo.valor,
+                  obs: anticipo.obs,
+                  serieComprobante: anticipo.serieComprobante,
+                  identificacion: anticipo.identificacion,
+                  razonSocialCiente: anticipo.nombreFiscal,
+                  subEntidadFinanciera: anticipo.subEntidadFinanciera,
+                  estadoDoc: anticipo.estadoDoc,
+                  codDoc: anticipo.codDoc,
+                  usuario: anticipo.usuario,
+                  identificacionUsuario: anticipo.identificacionUsuario,
+                  totalRecords: anticipo.totalRecords,
+                }
+              })
+              return anticipos
+            }
+          }
+          return []
+        })
+      )
+  }
+
+
+  getDataForm() {
+    let paramsStr = JSON.stringify({ tipo: 2 })
+    return this.http.get(`${this.url}?json=${paramsStr}`)
+      .pipe(
+        map((response) => {
+          let
+            entidadesFinanciera = [],
+            establecimientos = [],
+            subEntidadesFinanciera = [];
+          if (isApiResponse(response)) {
+            let mainData = JSON.parse(response.payload as string);
+            const { entidadFinanciera, establecimiento, subEntidadFinanciera } = mainData;
+
+            entidadesFinanciera = entidadFinanciera;
+            establecimientos = establecimiento;
+            subEntidadesFinanciera = subEntidadFinanciera;
+          }
+          return {
+            entidadesFinanciera,
+            establecimientos,
+            subEntidadesFinanciera,
           }
         })
       )
+  }
+
+
+  post<T>(data: T) {
+    return this.http.post(`${this.url}`, { data })
+  }
+
+  delete(id: number) {
+    return this.http.delete(`${this.url}${id}`)
   }
 
 }

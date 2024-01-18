@@ -23,7 +23,7 @@ namespace Contabilidad.API.Controllers
 
         }
 
-        [HttpGet("Get")]
+        [HttpGet()]
         public async Task<IActionResult> Get(string json)
         {
             try
