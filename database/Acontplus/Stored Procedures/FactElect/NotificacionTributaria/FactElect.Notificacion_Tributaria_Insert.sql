@@ -26,7 +26,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
 			INSERT INTO FactElect.NotificacionTributaria (idDocumentoElectronico, receptor, estado)
-			SELECT @idDocumentoElectronico,REPLACE(@receptor,';',','), @estado
+			SELECT @idDocumentoElectronico,@receptor, @estado
 		COMMIT TRAN 
 		SELECT '1'code, 'Reenviado el Correo Correctamente'as'message', 'Reenvío por Correo' as titleSms		
 		RETURN 
