@@ -9,7 +9,7 @@
           <select
             name="tipoDoc"
             id="tipoDoc"
-            class="form-control form-control-border"
+            class="form-select form-control-border"
             [(ngModel)]="dataSearch.codDoc"
           >
             @for (item of tiposDoc; track $index) {
@@ -23,7 +23,7 @@
         <div class="form-group">
           <label>Establecimiento: </label>
           <select
-            class="form-control form-control-border"
+            class="form-select form-control-border"
             [(ngModel)]="dataSearch.codEstab"
             (change)="onChangeEstab()"
           >
@@ -40,7 +40,7 @@
         <div class="form-group">
           <label>Punto emisión: </label>
           <select
-            class="form-control form-control-border"
+            class="form-select form-control-border"
             [(ngModel)]="dataSearch.idPuntoEmision"
           >
             <option [ngValue]="0">Todos</option>
@@ -58,7 +58,7 @@
           <select
             name="estado"
             id="estado"
-            class="form-control form-control-border"
+            class="form-select form-control-border"
             [(ngModel)]="dataSearch.codEstado"
           >
             <option value="">Todos</option>

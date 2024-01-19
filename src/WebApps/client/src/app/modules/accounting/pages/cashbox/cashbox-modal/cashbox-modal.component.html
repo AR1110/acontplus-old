@@ -75,7 +75,8 @@
   </div>
   <div class="modal-footer">
     <button type="submit" class="btn btn-success" [disabled]="!dataForm.valid">
-      <i [ngClass]="btnIcon"></i> {{ btnText }}
+      <fa-icon [icon]="btnIcon"></fa-icon>
+      {{ btnText }}
     </button>
     <button type="button" class="btn btn-dark" (click)="closeModal()">
       &times; Cerrar

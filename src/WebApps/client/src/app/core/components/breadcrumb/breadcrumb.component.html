@@ -11,7 +11,8 @@
         </ol>
       }
       @if (childData.buttonAction && crear) {
-        <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" (click)="onClick()"><i class="ti-plus"></i>
+        <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" (click)="onClick()">
+          <fa-icon [icon]="'plus'"></fa-icon>
           {{childData.buttonAction}}</button>
       }
     </div>

@@ -32,7 +32,6 @@
       </div>
     </div>
 
-
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -60,23 +59,22 @@
                 </button>
                 <div ngbDropdownMenu>
                   @if (acciones.editar) {
-                    <button ngbDropdownItem (click)="openModalAddUpdate(item)">
-                      <fa-icon [icon]="'edit'"></fa-icon>
-                      Editar
-                    </button>
-                  }
-                  @if (acciones.eliminar) {
-                    <button ngbDropdownItem (click)="askToDelete(item.idCaja)">
-                      <fa-icon [icon]="'trash'"></fa-icon>
-                      Eliminar
-                    </button>
+                  <button ngbDropdownItem (click)="openModalAddUpdate(item)">
+                    <fa-icon [icon]="'edit'"></fa-icon>
+                    Editar
+                  </button>
+                  } @if (acciones.eliminar) {
+                  <button ngbDropdownItem (click)="askToDelete(item.idCaja)">
+                    <fa-icon [icon]="'trash'"></fa-icon>
+                    Eliminar
+                  </button>
                   }
                   <button ngbDropdownItem (click)="openModalAperturar(item)">
-                    <i class="ti-briefcase"></i>
+                    <fa-icon [icon]="'briefcase'"></fa-icon>
                     Aperturar
                   </button>
                   <button ngbDropdownItem (click)="openModalMovimiento(item)">
-                    <i class="ti-wallet"></i>
+                    <fa-icon [icon]="'wallet'"></fa-icon>
                     Movimientos
                   </button>
                 </div>
@@ -90,7 +88,7 @@
             <td>{{ item.actividad }}</td>
             <td>
               @if (item.estado) {
-                <span class="label label-success">Activo</span>
+              <span class="label label-success">Activo</span>
               }
             </td>
           </tr>
