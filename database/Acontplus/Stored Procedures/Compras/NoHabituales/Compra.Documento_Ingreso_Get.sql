@@ -173,7 +173,7 @@ BEGIN
             FROM dbo.TipoIva WITH (NOLOCK) 
             WHERE estado = 1
 			
-			SELECT idTiempoCredito,descripcion,diasCredito,numeroCuota FROM TiempoCredito WITH (NOLOCK) WHERE idEntidad = @idEntidad AND gestion = 0 AND estado = 1
+			SELECT idTiempoCredito,descripcion,diasCredito,numeroCuota,entrada FROM TiempoCredito WITH (NOLOCK) WHERE idEntidad = @idEntidad AND gestion = 0 AND estado = 1
 
             SELECT idEstablecimiento
                   ,nombreComercial
@@ -218,7 +218,7 @@ BEGIN
 	IF @typeList = 4
 		BEGIN
             
-            SET @tableNames = 'comprobante,proveedor,detalles,infoAdicional'
+            SET @tableNames = 'comprobante,proveedor,detalles,infoAdicional,cuentaPorPagar,cuotas'
 
 			SELECT @id = id FROM OPENJSON(@json) WITH (id INT )
 
@@ -303,6 +303,27 @@ BEGIN
             ORDER BY dt.idDocumentoIngresoDetail ASC
 
 			SELECT * FROM Compra.InfoAdicional  WHERE uniqueId = (SELECT uniqueId FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @id)
+
+            SELECT cp.idTiempoCredito
+                  ,cp.fechaVencimiento
+                  ,tc.diasCredito
+                  ,tc.numeroCuota
+                  ,tc.entrada
+            FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
+            INNER JOIN dbo.TiempoCredito     tc WITH (NOLOCK) ON tc.idTiempoCredito = cp.idTiempoCredito 
+            WHERE idDocumento = @id 
+              AND codDoc = 'DH'
+
+            SELECT cc.idCuotaPorPagar
+                  ,cc.nroCuota
+                  ,cc.fechaVencimiento
+                  ,cc.cuota
+                  ,cc.entrada 
+            FROM Contabilidad.CuotaPorPagar cc WITH (NOLOCK)
+            INNER JOIN Contabilidad.CuentaPorPagar cp WITH (NOLOCK) ON cp.idCuentaPorPagar = cc.idCuentaPorPagar 
+            WHERE cp.idDocumento = @id 
+              AND cp.codDoc = 'DH' 
+              AND cc.estado = 1
 
             RETURN 
 		END 

@@ -40,7 +40,6 @@ export class ModalService {
   ) {
     const modalRef = this.ngbModal.open(theComponent, {
       backdrop: backdrop ? backdrop : true,
-      backdropClass: 'backdrop-custom-modal',
       windowClass,
       size,
       fullscreen,

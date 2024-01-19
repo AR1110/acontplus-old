@@ -8,7 +8,7 @@ GO
 --DELETE FROM App.Notificacion WHERE idNotificacion = 3
 -- exec App.Notificacion_Serv_Insert '{"subject":"Documento Nota Entrega - Acontplus N°: 002-003-000000042","params":{"hasFile":true,"isReport":"SI","reportParams":{"hasParams":true,"codEstab":"ESTAB-000000002","codigo":"RNE","format":"pdf"},"spParams":{"id":69577}},"idUsuarioRol":25,"receptor":"sengua2017@gmail.com;emilio.senguana@itsae.edu.ec"}'
 
-CREATE PROCEDURE App.Notificacion_Serv_Insert @json VARCHAR(MAX)
+CREATE PROCEDURE App.Notificacion_Serv_Insert @userRoleId INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -64,30 +64,26 @@ BEGIN
 
 	BEGIN TRY
 		
+		SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
+		
 		SELECT 
-			@codDoc    = js.codDoc,
-			@serieComprobante = js.serieComprobante,
-			@idEntidad = ur.idEntidad,
-			@idUsuario = ur.idUsuario,
-			@id        = js.id,
-			@codigo    = js.codigo,
-			@receptor  = js.receptor,
-			@params    = js.params,
-			@subject   = js.subjectJson
-		FROM App.UsuarioRol ur JOIN OPENJSON(@json)		
-		WITH(
-			idUsuarioRol        INT '$.idUsuarioRol',
-			codDoc        VARCHAR(6) '$.codDoc',
-			serieComprobante VARCHAR(50) '$.serieComprobante',
-			codigo       VARCHAR(5) '$.params.reportParams.codigo',
-			id                 INT  '$.params.spParams.id',
-			receptor   VARCHAR(100) '$.receptor',
-			params    NVARCHAR(MAX) '$.params' AS JSON,
-			subjectJson   VARCHAR(500)  '$.subject' 
-		) as js ON js.idUsuarioRol = ur.idUsuarioRol
-
-
- 
+			@codDoc				= js.codDoc,
+			@serieComprobante	= js.serieComprobante,			
+			@id					= js.id,
+			@codigo				= js.codigo,
+			@receptor			= js.receptor,
+			@params				= js.params,
+			@subject			= js.subjectJson
+		FROM OPENJSON(@json)		
+		WITH(			
+			codDoc				VARCHAR(6)		'$.codDoc',
+			serieComprobante	VARCHAR(50)		'$.serieComprobante',
+			codigo				VARCHAR(5)		'$.params.reportParams.codigo',
+			id					INT				'$.params.spParams.id',
+			receptor			VARCHAR(100)	'$.receptor',
+			params				NVARCHAR(MAX)	'$.params' AS JSON,
+			subjectJson			VARCHAR(500)	'$.subject' 
+		) AS js
 
 		SELECT top 1 @cc = email from Entidad where idEntidad = @idEntidad
 		SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig='CD'

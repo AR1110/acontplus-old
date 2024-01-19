@@ -4,6 +4,7 @@ import { isApiResponse } from '@core/models/api-response';
 import { User } from '@core/models/user.model';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Turno } from '@modules/accounting/models/turno.model';
 import { CashboxService } from '@modules/accounting/services/cashbox.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -32,7 +33,7 @@ export class CashboxModalComponent {
 
 
   titleModal = 'Nueva Caja';
-  btnIcon = 'ti-save';
+  btnIcon : IconProp = 'save';
   btnText = 'Guardar';
   tipoRegistro = 1;
 
@@ -65,7 +66,7 @@ export class CashboxModalComponent {
             next: (response) => {
               this.tipoRegistro = 2;
               this.titleModal = 'Editar Caja';
-              this.btnIcon = 'ti-pencil';
+              this.btnIcon = 'edit';
               this.btnText = 'Actualizar';
               let { caja, asignaciones } = response;
 

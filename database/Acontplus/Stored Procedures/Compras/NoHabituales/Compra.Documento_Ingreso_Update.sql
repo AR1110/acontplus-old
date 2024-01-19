@@ -32,7 +32,7 @@ BEGIN
 	DECLARE @idUsuario INT ,@idEntidad INT
 
     --> Data Json
-    DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@artInfoAdicionales VARCHAR(MAX)
+    DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@artInfoAdicionales VARCHAR(MAX) ,@cuotas VARCHAR(MAX)
 
 	--> Compra
 	DECLARE @uniqueId VARCHAR(150) ,@fechaEmision DATETIME2 ,@importeTotal NUMERIC(18,5)
@@ -40,10 +40,13 @@ BEGIN
     --> contabilidad
 	DECLARE @idEstablecimiento INT ,@identificacion VARCHAR(20) ,@serieComprobante VARCHAR(20) ,@idProveedor INT ,@idTiempoCredito INT
 
+    -----DATOS CONTABILIDAD------
+	DECLARE @fechaVencimiento DATETIME2
 
 	DECLARE @document AS TABLE(
 		 idProveedor INT NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
+        ,fechaVencimiento DATETIME2 NOT NULL
         ,totalSinImpuestos NUMERIC (18,5) NOT NULL
         ,porcentajeDescuento NUMERIC(18,5) NOT NULL
         ,descuento NUMERIC(18,5) NOT NULL
@@ -87,8 +90,15 @@ BEGIN
 		 idInfoAdicional INT NOT NULL
 		,idArticulo INT  NOT NULL		
 		,idEtiqueta INT  NOT NULL
-		,jsonAdicional NVARCHAR(MAX)  NULL
-		
+		,jsonAdicional NVARCHAR(MAX) NULL
+	)
+
+    DECLARE @tbCuotas AS TABLE(
+	    idCuotaPorPagar INT UNIQUE NOT NULL
+       ,nroCuota INT UNIQUE NOT NULL 
+	   ,fechaVencimiento DATE NOT NULL
+	   ,cuota NUMERIC(18,5) NOT NULL
+	   ,entrada BIT NOT NULL
 	)
 
 
@@ -102,21 +112,24 @@ BEGIN
               ,@detalles           = detalles
               ,@impuestos          = impuestos
               ,@artInfoAdicionales = artInfoAdicionales
+              ,@cuotas             = cuotas
         FROM OPENJSON(@json) WITH 
         (
              comprobante        NVARCHAR(MAX) as json
             ,detalles           NVARCHAR(MAX) as json 
             ,impuestos          NVARCHAR(MAX) as json
             ,artInfoAdicionales NVARCHAR(MAX) as json
+            ,cuotas             NVARCHAR(MAX) as json
         )
         
 		INSERT INTO @document 
-		      (idProveedor,fechaEmision,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
-		SELECT idProveedor,fechaEmision,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
+		      (idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
+		SELECT idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
 		FROM OPENJSON(@comprobante)WITH 
         (
              idProveedor         INT           '$.idProveedor' 
 		    ,fechaEmision        DATETIME2     '$.fechaEmision'
+		    ,fechaVencimiento    DATETIME2     '$.fechaVencimiento'
 		    ,totalSinImpuestos   NUMERIC(18,5) '$.totalSinImpuestos'
             ,descuento           NUMERIC(18,5) '$.descuento'
             ,porcentajeDescuento NUMERIC(18,5) '$.porcentajeDescuento'
@@ -177,37 +190,56 @@ BEGIN
 		    ,jsonAdicional   NVARCHAR(max) '$.jsonAdicional' AS JSON		
 		) 
 
+        INSERT INTO @tbCuotas
+              (idCuotaPorPagar,nroCuota,fechaVencimiento,cuota,entrada)
+        SELECT idCuotaPorPagar,nroCuota,fechaVencimiento,cuota,entrada
+        FROM OPENJSON(@cuotas) WITH 
+        (
+            idCuotaPorPagar INT
+           ,nroCuota INT
+	       ,fechaVencimiento DATE 
+	       ,cuota NUMERIC(18,5) 
+	       ,entrada BIT 
+        )
+
 		--> Recuperar datos de las Tablas
-		SELECT TOP 1 @fechaEmision = fechaEmision ,@importeTotal = importeTotal ,@idProveedor = idProveedor FROM @document
+		SELECT TOP 1 @fechaEmision = fechaEmision ,@importeTotal = importeTotal ,@idProveedor = idProveedor ,@fechaVencimiento = fechaVencimiento FROM @document
 
         SELECT TOP 1 @identificacion = numeroIdentificacion FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
 
 		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @id 
 
 		--> Validacion de la informacion
-		IF @idTiempoCredito IS NOT NULL
-			BEGIN
-				SELECT '0' code,'El Documento tiene cuotas generadas no puede ser editado' as 'message'
-				RETURN
-			END 
+        IF (SELECT COUNT(*) FROM @document) = 0 
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Error en la info Factura', DEFAULT)
+                RETURN
+            END 
+
+        IF (SELECT COUNT(*) FROM @tblDetails) = 0 
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Error en los detalles', DEFAULT)
+                RETURN
+            END
+           
+        IF (SELECT COUNT(*) FROM @tbTaxes) = 0 
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Error en los impuestos',DEFAULT)
+                RETURN
+            END
+
+        IF (SELECT COUNT(*) FROM @tbCuotas) = 0 
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Error en las cuotas',DEFAULT)
+                RETURN
+            END
+
 
 		IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = 'DH' AND codEstado != 'PE' AND idDocumento = @id)
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0','El Documento tiene movimientos financieros o esta Anulado',DEFAULT)
                 RETURN 
             END 
-
-		IF (SELECT COUNT(*) FROM @tblDetails) = 0
-			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Se encontro un error en el detalle del documento',DEFAULT)
-				RETURN 
-			END 
-
-		IF (SELECT COUNT(*) FROM @tbTaxes) = 0
-			BEGIN
-				SELECT [Common].[ufnSpResponse]('0','Se encontro un error en los impuestos del documento',DEFAULT)
-				RETURN 
-			END
 
 		BEGIN TRAN 
 			
@@ -293,11 +325,18 @@ BEGIN
 
 		    --> Contabilidad
 		    UPDATE Contabilidad.CuentaPorPagar SET 
-			       idProveedor    = @idProveedor
-		          ,identificacion = @identificacion
-		          ,fechaEmision   = @fechaEmision
-		          ,importeTotal   = @importeTotal
+			       idProveedor      = @idProveedor
+		          ,identificacion   = @identificacion
+		          ,fechaEmision     = @fechaEmision
+                  ,fechaVencimiento = @fechaVencimiento
+		          ,importeTotal     = @importeTotal
             WHERE idDocumento = @id AND codDoc = 'DH'
+
+            UPDATE cp SET 
+                   cp.fechaVencimiento = tc.fechaVencimiento
+                  ,cp.cuota            = tc.cuota
+            FROM Contabilidad.CuotaPorPagar cp WITH (ROWLOCK)
+            INNER JOIN @tbCuotas            tc ON tc.idCuotaPorPagar = cp.idCuotaPorPagar
 		    
 
 		COMMIT TRAN 
