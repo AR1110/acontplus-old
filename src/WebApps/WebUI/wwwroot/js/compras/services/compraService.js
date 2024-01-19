@@ -106,7 +106,7 @@
 
                     if (response.code === "0") {
                         console.log(response)
-                       // tS.toastr('warning', response.message)
+                        // tS.toastr('warning', response.message)
                         return [];
                     }
                     if (response.code === "1") {
@@ -289,6 +289,7 @@
             return mS.getData('get', `${url}Get?json=${JSON.stringify({ ...query, tipo: 1 })}`, null, true).then(response => {
                 if (typeof response === 'object') {
                     const { liquidaciones } = JSON.parse(response.payload);
+
                     return liquidaciones.map(item => ({
                         codEstab: item.codEstab,
                         idLiquidacionCompra: item.idLiquidacionCompra,
@@ -325,7 +326,7 @@
         }
 
         function queryMapper(obj) {
-            const { comprobante, detalles, detallesDeleted, infoAdicionalDocumento } = obj;
+            const { comprobante, detalles, detallesDeleted, infoAdicionalDocumento, cuotas } = obj;
 
             const comprobanteMapper = infoComprobanteMapperTo(comprobante);
             const itemsMainMapper = detalleMapperTo(detalles);
@@ -341,7 +342,8 @@
                 infoLiquidacion: comprobanteMapper,
                 detalles: mergeItems,
                 impuestos,
-                infoAdicional: infoAdicionalDocumento
+                infoAdicional: infoAdicionalDocumento,
+                cuotas
             }
         }
 
@@ -410,7 +412,7 @@
                     }
                     if (response.code === "1") {
                         const mainData = JSON.parse(response.payload);
-                        const [comprobanteApi, proveedorApi, detalleApi, infoAdicionalDocumento, cuentaPorPagarApi] = mainData;
+                        const [comprobanteApi, proveedorApi, detalleApi, infoAdicionalDocumento, cuentaPorPagarApi, cuotasApi] = mainData;
                         let comprobante = comprobanteApi[0];
                         const proveedor = proveedorApi[0];
                         const cuentaPorPagar = cuentaPorPagarApi[0];
@@ -475,11 +477,22 @@
 
                         })
 
+                        let cuotas = cuotasApi.map(item => {
+                            return {
+                                idCuotaPorPagar: item.idCuotaPorPagar,
+                                nroCuota: item.nroCuota,
+                                fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                                cuota: item.cuota,
+                                entrada: item.entrada,
+                            }
+                        })
+
                         return {
                             comprobante,
                             proveedor,
                             detalles,
-                            infoAdicionalDocumento
+                            infoAdicionalDocumento,
+                            cuotas
                         }
 
                     }
@@ -695,9 +708,9 @@
                     tS.toastr('warning', response.message)
                     throw response;
                 }
-                if (response.code === "1") { 
+                if (response.code === "1") {
                     const mainData = JSON.parse(response.payload);
-                   
+
                     let comprobantes = mainData.comprobantes || [];
                     comprobantes = comprobantes.map(doc => {
                         return {
@@ -715,7 +728,7 @@
 
             })
         }
-        function getDataFormRetencionAts(obj){
+        function getDataFormRetencionAts(obj) {
             return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...obj, tipo: 7 }), null, true).then(response => {
                 if (!response) return {}
                 if (response.code === "0") {
@@ -725,14 +738,13 @@
                 }
                 if (response.code === "1") {
                     const mainData = JSON.parse(response.payload);
-                    console.log(mainData)
                     let tempData = mainData.data[0];
-                    const { doc, payments, taxes} = tempData;
+                    const { doc, payments, taxes } = tempData;
 
                     let docData = JSON.parse(doc)
                     return {
-                        docData: docData && docData[0] || {}, 
-                        payments: JSON.parse(payments) || [], 
+                        docData: docData && docData[0] || {},
+                        payments: JSON.parse(payments) || [],
                         taxes: JSON.parse(taxes) || []
                     }
                 }
@@ -779,8 +791,8 @@
                         throw response;
                     }
                     if (response.code === "1") {
-                        let [comprobanteApi, proveedorApi, detallesApi, datosAdicionalesArticuloApi, cuentaPorPagar] = JSON.parse(response.payload);
-
+                        let [comprobanteApi, proveedorApi, detallesApi, datosAdicionalesArticuloApi, cuentaPorPagar, cuotasApi] = JSON.parse(response.payload);
+                      
                         let comprobante = comprobanteApi[0];
                         let proveedor = proveedorApi[0];
                         cuentaPorPagar = cuentaPorPagar[0];
@@ -864,11 +876,22 @@
                             }
                         })
 
+                        let cuotas = cuotasApi.map(item => {
+                            return {
+                                idCuotaPorPagar: item.idCuotaPorPagar,
+                                nroCuota: item.nroCuota,
+                                fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                                cuota: item.cuota,
+                                entrada: item.entrada,
+                            }
+                        })
+
                         return {
                             comprobante,
                             proveedor,
                             detalles,
-                            datosAdicionalesArticulo
+                            datosAdicionalesArticulo,
+                            cuotas
                         }
                     }
                 }
@@ -882,7 +905,7 @@
          * @returns object
          */
         function queryMapper(obj) {
-            const { detallesDeleted, data, detalles, proveedor, datosAdicionalesArticulo } = obj;
+            const { detallesDeleted, data, detalles, proveedor, datosAdicionalesArticulo, cuotas } = obj;
             data.idProveedor = proveedor.idProveedor;
             const comprobanteTemp = {
                 ...data,
@@ -905,7 +928,8 @@
                 infoFactura: comprobanteMapper,
                 detalles: mergeItems,
                 impuestos,
-                artInfoAdicionales: datosAdicionalArticuloMapperTo(datosAdicionalesArticulo)
+                artInfoAdicionales: datosAdicionalArticuloMapperTo(datosAdicionalesArticulo),
+                cuotas
             }
 
             return query;
@@ -1169,7 +1193,7 @@
         }
 
         function queryMapper(obj) {
-            const { comprobante, detalles, detallesDeleted, datosAdicionalesArticulo } = obj;
+            const { comprobante, detalles, detallesDeleted, datosAdicionalesArticulo, cuotas } = obj;
 
             const comprobanteMapper = infoComprobanteMapperTo(comprobante);
             const itemsMainMapper = detalleMapperTo(detalles);
@@ -1185,7 +1209,8 @@
                 comprobante: comprobanteMapper,
                 detalles: mergeItems,
                 impuestos,
-                artInfoAdicionales: dataAdicionalMapTo(datosAdicionalesArticulo)
+                artInfoAdicionales: dataAdicionalMapTo(datosAdicionalesArticulo),
+                cuotas
             }
         }
 
@@ -1194,12 +1219,14 @@
             const result = {
                 idProveedor: data.idProveedor,
                 idPuntoEmision: data.idPuntoEmision,
+                idTiempoCredito: data.idTiempoCredito,
                 fechaEmision: fS.formatDateTimeZone(data.fechaEmision),
+                fechaVencimiento: fS.formatDateTimeZone(data.fechaVencimiento),
                 totalSinImpuestos: data.subTotalSinImpuestos,
                 porcentajeDescuento: data.porcentajeDescuento,
                 descuento: data.totalDescuento,
                 importeTotal: data.total,
-                observacion: data.observacion || null,
+                observacion: fS.isValidField(data.observacion)
             }
             return result;
         }
@@ -1250,9 +1277,12 @@
                     if (response.code === "1") {
                         const mainData = JSON.parse(response.payload);
 
-                        let { comprobante, proveedor, detalles, infoAdicional } = mainData;
+                        let { comprobante, proveedor, detalles, infoAdicional, cuentaPorPagar, cuotas } = mainData;
+                        
                         comprobante = comprobante[0];
                         proveedor = proveedor[0];
+
+                        cuentaPorPagar = cuentaPorPagar[0];
 
 
                         comprobante = {
@@ -1261,10 +1291,12 @@
                             idPuntoEmision: comprobante.idPuntoEmision,
                             codEstab: comprobante.codEstab,
                             ptoEmi: comprobante.ptoEmi,
+                            idTiempoCredito: cuentaPorPagar.idTiempoCredito,
                             nombreComercial: comprobante.nombreComercial,
                             secuencial: comprobante.secuencial,
                             fechaEmision: fS.formatDate(comprobante.fechaEmision),
                             fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
+                            fechaVencimiento: fS.formatDate(cuentaPorPagar.fechaVencimiento || comprobante.fechaEmision),
                             subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
                             totalDescuento: comprobante.descuento,
                             porcentajeDescuento: comprobante.porcentajeDescuento || 0,
@@ -1318,14 +1350,24 @@
                                 conversion: dataMedida.conversion | 1,
                                 etiquetas: etiquetasMapper,
                             }
+                        })
 
+                        cuotas = cuotas.map(item => {
+                            return {
+                                idCuotaPorPagar: item.idCuotaPorPagar,
+                                nroCuota: item.nroCuota,
+                                fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                                cuota: item.cuota,
+                                entrada: item.entrada,
+                            }
                         })
 
                         return {
                             comprobante,
                             proveedor,
                             detalles,
-                            infoAdicionalDocumento: infoAdicional
+                            infoAdicionalDocumento: infoAdicional,
+                            cuotas
                         }
 
                     }

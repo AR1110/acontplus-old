@@ -26,7 +26,7 @@
 
         const modalSvc = $injector.get('modalService');
         const CODE_REPORT = $injector.get('CODE_REPORT');
-        const nombreModalCompra = $injector.get('nombreModalCompra'); 
+        const nombreModalCompra = $injector.get('nombreModalCompra');
         facturaCompraSvc = $injector.get("facturaCompraService");
 
         fS = $injector.get('formulario');
@@ -362,6 +362,7 @@
         $scope.infoAdicionalDocumento = [];
 
         $scope.datosAdicionalesArticulo = []
+        $scope.cuotas = [];
 
         const detallesDeleted = [];
         $scope.gridOptions = {
@@ -441,6 +442,7 @@
                 } =
                     mainDataForm;
 
+
                 $scope.establecimientos = estabs;
 
                 $scope.decimal = decimal;
@@ -508,7 +510,8 @@
                         comprobante,
                         proveedor,
                         detalles,
-                        datosAdicionalesArticulo
+                        datosAdicionalesArticulo,
+                        cuotas
                     } = params;
 
                     $scope.data = comprobante;
@@ -518,6 +521,7 @@
                     $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
                     $scope.gridOptions.data = calculateTotalItems(detalles);
                     $scope.datosAdicionalesArticulo = datosAdicionalesArticulo;
+                    $scope.cuotas = cuotas;
 
                     let dataEstab = $scope.establecimientos.find(
                         (estab) => estab.codEstab === $scope.data.codEstab
@@ -1264,6 +1268,38 @@
         const isRegister = () => !($scope.data.idFacturaCompra > 0);
         const isUpdate = () => $scope.data.idFacturaCompra > 0;
 
+
+        const validateCuota = function () {
+            let objParamsCuota = {
+                fechaEmision: $scope.data.fechaEmision,
+                tiemposCredito: $scope.tiemposCredito,
+                idTiempoCredito: $scope.data.idTiempoCredito,
+                montoTotal: $scope.data.total,
+                cuotas: $scope.cuotas
+            }
+            let cuotas = [];
+            let montoTotalCuota = 0;
+
+            if (isRegister()) {
+                let dataCuota = fS.calcularCuotas(objParamsCuota);
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+
+            }
+            if (isUpdate()) {
+                let dataCuota = fS.updateCuotas(objParamsCuota)
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+            }
+
+            if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
+                tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
+                return [];
+            }
+
+            return cuotas;
+        }
+
         const isValidaForm = () => {
             if (!fS.isValidField($scope.data.codEstab)) {
                 tS.toastr("warning", "Seleccione el Establecimiento!");
@@ -1389,6 +1425,10 @@
         $scope.onSave = async function () {
             try {
                 if (!isValidaForm()) return;
+                let cuotas = validateCuota();
+
+                if (cuotas && cuotas.length === 0) return
+
 
                 let textAccion = isUpdate() ? "Actualizar" : "Guardar";
                 let title = isUpdate() ? "Actualizar Documento" : "Guardar Documento";
@@ -1406,12 +1446,15 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
 
+                        
+
                         const query = facturaCompraSvc.queryMapper({
                             data: $scope.data,
                             proveedor: $scope.proveedor,
                             detalles: $scope.gridOptions.data,
                             detallesDeleted: detallesDeleted,
-                            datosAdicionalesArticulo: $scope.datosAdicionalesArticulo
+                            datosAdicionalesArticulo: $scope.datosAdicionalesArticulo,
+                            cuotas,
                         })
 
                         if (isRegister()) {

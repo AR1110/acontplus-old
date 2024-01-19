@@ -28,7 +28,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
 
     $scope.isReload = false;
 
-    let url = 'CuentaPorCobrar/'
+    let url = 'Contabilidad/CuentaPorCobrar/'
 
     const MAX_ROUND_NUMBER = 5;
 
@@ -481,7 +481,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                     cuotas
                 }
 
-                mS.getData('put', 'CuentaPorCobrar/Update/Cuota', {data: query},  true).then(response => {
+                mS.getData('put', 'Contabilidad/CuentaPorCobrar/Update/Cuota', {data: query},  true).then(response => {
                     hideLoader();
                     if (response.code === "0") {
                         fS.sweetAlert('warning', response.message, response.titleSms);                                           
