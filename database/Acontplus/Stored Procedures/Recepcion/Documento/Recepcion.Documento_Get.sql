@@ -215,7 +215,9 @@ BEGIN
 				          ,dr.numDocSustento                                            as serieComprobante
 				          ,dr.fechaEmisionDocSustento                                   as fechaEmision
 				          ,dr.claveAcceso
-				          ,dr.baseImponible                                             as importeTotal
+				          ,ISNULL((
+                                SELECT CAST(SUM(di.TaxBase) as numeric(18,2)) FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) WHERE di.DocumentoRecibidoId = @id
+                          ),0) as baseImponible
 			        FROM FactElect.DocRelacionado dr WITH (NOLOCK)
 			        WHERE dr.idDocumentoRecibido = @id
 		        END
