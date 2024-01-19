@@ -17,10 +17,9 @@ import { hideLoader, showLoader } from '@core/utils/loader';
   selector: 'app-cashbox',
   standalone: true,
   imports: [AppModule, AccountingModule],
-  templateUrl: './cashbox.component.html',
-  styleUrl: './cashbox.component.scss'
+  templateUrl: './cashbox-page.component.html',
 })
-export class CashboxComponent {
+export class CashboxPageComponent {
 
   private modalSvc = inject(ModalService);
   private cashboxSvc = inject(CashboxService);
@@ -158,9 +157,7 @@ export class CashboxComponent {
 
   openModalMovimiento(params: Cashbox) {
     const modalRef = this.modalSvc.openModalCustom(MovimientoCajaModalComponent, {
-      size: 'xl',
-      fullscreen: 'xxl',
-      windowClass: 'uibModalFullScreen',
+      size: 'xl',  
       centered: true
     });
     modalRef.componentInstance.params = params || {};

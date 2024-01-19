@@ -17,8 +17,7 @@ import { hideLoader, showLoader } from '@core/utils/loader';
   selector: 'app-movimiento-caja-modal',
   standalone: true,
   imports: [AppModule, AccountingModule],
-  templateUrl: './movimiento-caja-modal.component.html',
-  styleUrl: './movimiento-caja-modal.component.scss',
+  templateUrl: './movimiento-caja-modal.component.html', 
   encapsulation: ViewEncapsulation.None,
 })
 export class MovimientoCajaModalComponent {
