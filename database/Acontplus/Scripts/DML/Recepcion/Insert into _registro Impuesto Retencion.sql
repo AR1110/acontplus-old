@@ -56,14 +56,14 @@ GO
   --         ,[TaxBase]
   --         ,[TaxValue]
   --         )
-	 select idDocumento 
-		   ,descuento 
-		   ,codigo 
-		   ,codigoRetencion 
-		   ,baseImponible 
-		   ,tarifa 
-		   ,valor
-	 from @retencion
+	 --select idDocumento 
+		--   ,descuento 
+		--   ,codigo 
+		--   ,codigoRetencion 
+		--   ,tarifa 
+  --         ,baseImponible 
+		--   ,valor
+	 --from @retencion
 
 
 
