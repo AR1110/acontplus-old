@@ -1068,6 +1068,8 @@
             }
         }
 
+     
+
         onLoad();
         function onLoad() {
             try {
@@ -1078,7 +1080,7 @@
                     $scope.sustentosTributario = sustentosTributario;
                     $scope.medidas = medidas;
                     $scope.bodegasFiltered = bodegas.filter(estab => estab.codEstab === $scope.dataEstab.codEstab);
-
+                    
                     // $uibModalInstance.rendered.then(() => {
                     //     getBarcode($scope.infoTributaria.claveAcceso);
                     // })
@@ -1333,6 +1335,10 @@
 
         $scope.addBodega = async () => {
             try {
+                if (!($scope.comprobanteForm.idBodega > 0)){
+                     
+                    return
+                }
                 let { isConfirmed } = await Swal.fire({
                     title: "Cambiar bodega",
                     html: "¿Esta seguro de cambiar la bodega?",
@@ -1344,7 +1350,10 @@
                     cancelButtonText: 'No!'
                 })
 
-                if (!isConfirmed) return
+                if (!isConfirmed) {
+                    $scope.comprobanteForm.idBodega = 0;
+                    return 
+                } 
 
                 if ($scope.comprobanteForm.idBodega > 0) {
                     let data = {
