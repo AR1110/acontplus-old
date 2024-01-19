@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "ngx-toastr/toastr";
+// @import "bootstrap/scss/bootstrap";
 @import 'assets/template/css/style.css';
 @import 'tabulator-tables/dist/css/tabulator.css';
 @import 'assets/forms.css';
@@ -91,3 +92,6 @@ table {
 .swal2-container {
     z-index: 999999;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
