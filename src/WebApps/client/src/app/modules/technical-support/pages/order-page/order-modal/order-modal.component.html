@@ -17,10 +17,11 @@
         <div class="form-group">
           <label for="establecimientoId">Establecimiento:</label>
           <select
+            #estabs
             id="establecimientoId"
             class="form-select"
             formControlName="establecimientoId"
-            (change)="onChangeEstab($event)"
+            (change)="onChangeEstab()"
           >
             @for (item of establecimientos; track $index) {
             <option [ngValue]="item.idEstablecimiento">
@@ -44,6 +45,60 @@
             </option>
             }
           </select>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="form-group">
+          <label for="fechaEmision">Fecha Emisión: </label>
+          <input
+            type="date"
+            class="form-control border-select"
+            formControlName="fechaEmision"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="form-group">
+          <label for="encargado">
+            Responsable: <span class="text-danger">*</span>
+          </label>
+          <select
+            formControlName="encargado"
+            id="encargado"
+            class="form-control border-select"
+            required
+          >
+            <option value=""></option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <div class="card rounded border border-info">
+          <div class="card-header">Datos cliente:</div>
+          <div class="card-body">
+            <!--Start section customer -->
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                  <label for="customerSearch"
+                    >Cliente:
+                    <span class="text-danger">*</span>
+                  </label>
+                  <app-company-customer-search
+                    (onCustomerSelected)="onCustomerSelected($event)"
+                  ></app-company-customer-search>
+                </div>
+              </div>
+            </div>
+
+            <!--Start Form register-update customer-->
+            <!-- @if(showForm){
+                <CustomerFormFast />
+                } -->
+          </div>
         </div>
       </div>
     </div>

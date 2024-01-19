@@ -22,15 +22,16 @@
     onclick="select();"
   />
 
-  <button type="button" class="btn btn-outline-secondary btn-sm">
-    <i class="fa fa-plus fa-xs"></i>
+  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openModal()">
+    <fa-icon [icon]="'plus'"></fa-icon>
   </button>
-  <!-- @if (data.customerCompanyId > 0){ -->
-  <button type="button" class="btn btn-outline-secondary btn-sm">
-    <i class="fa fa-edit fa-xs"></i>
+  @if (dataSearch.idCliente > 0) {
+  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="openModal()">
+    <fa-icon [icon]="'edit'"></fa-icon>
   </button>
+  }
   <button type="button" class="btn btn-outline-secondary btn-sm">
-    <i class="fa fa-search fa-xs"></i>
+    <fa-icon [icon]="'search'"></fa-icon>
   </button>
 </div>
 }

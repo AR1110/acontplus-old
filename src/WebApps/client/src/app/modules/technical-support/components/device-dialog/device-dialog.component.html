@@ -1,253 +1,137 @@
-<form autocomplete="off">
-  <div class="modal-header">
-    <h5 class="modal-title" id="TechSpecDialogLabel">Nuevo Dispositivo</h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-dismiss="modal"
-      aria-label="Close"
-      (click)="closeModal()"
-    ></button>
+<!--End Form register-update customer-->
+<div class="card rounded border border-success">
+  <div class="card-header d-flex justify-content-between">
+    <span>Datos Equipo:</span>
+    <button type="button" class="btn btn-outline-info btn-sm">Historial</button>
   </div>
-  <div class="modal-body">
-    <!--Start section general -->
+  <div class="card-body">
+    <!--Start Form register product-->
     <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12 col-12">
         <div class="form-group">
-          <label for="estab"> Estab: <span class="text-danger">*</span> </label>
-          <select
-            name="estab"
-            id="estab"
-            class="form-select border-select"
-            required
-          >
-            @for (item of establecimientos; track item.nombreComercial) {
-            <option>{{ item.nombreComercial }}</option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="puntoEmision">
-            Punto Emisión: <span class="text-danger">*</span>
+          <label for="category"
+            >Categoria:
+            <span class="text-danger">*</span>
           </label>
           <select
-            name="puntoEmision"
-            id="puntoEmision"
+            name="category"
+            id="category"
             class="form-control border-select"
-            required
+            (ngModel)="(dataDevice.categoryId)"
           ></select>
         </div>
       </div>
-      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
         <div class="form-group">
-          <label for="fechaEmision"
-            >Fecha Emisión:
+          <label for="productName"
+            >Nombre Producto:
             <span class="text-danger">*</span>
           </label>
-          <input type="date" class="form-control border-select" required />
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-        <div class="form-group">
-          <label for="encargado">
-            Responsable: <span class="text-danger">*</span>
-          </label>
-          <select
-            name="encargado"
-            id="encargado"
+          <input
+            type="text"
+            name="productName"
+            id="productName"
             class="form-control border-select"
-            required
-          >
-            <option value=""></option>
-          </select>
+          />
         </div>
       </div>
-    </div>
 
-    <div class="card rounded border border-info">
-      <div class="card-header">Datos cliente:</div>
-      <div class="card-body">
-        <!--Start section customer -->
-        <div class="row">
-          <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="customerSearch"
-                >Cliente:
-                <span class="text-danger">*</span>
-              </label>
-              <app-company-customer-search
-                (onCustomerSelected)="onCustomerSelected($event)"
-              ></app-company-customer-search>
-            </div>
-          </div>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="productIMEISerie"
+            >IMEI/Serie:
+            <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            name="productIMEISerie"
+            id="productIMEISerie"
+            class="form-control border-select"
+          />
         </div>
-
-        <!--Start Form register-update customer-->
-        <!-- @if(showForm){
-        <CustomerFormFast />
-        } -->
       </div>
-    </div>
-    <!--End Form register-update customer-->
-    <div class="card rounded border border-success">
-      <div class="card-header d-flex justify-content-between">
-        <span>Datos Equipo:</span>
-        <button type="button" class="btn btn-outline-info btn-sm">
-          Historial
-        </button>
-      </div>
-      <div class="card-body">
-        <!--Start Form register product-->
-        <div class="row">
-          <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12 col-12">
-            <div class="form-group">
-              <label for="category"
-                >Categoria:
-                <span class="text-danger">*</span>
-              </label>
-              <select
-                name="category"
-                id="category"
-                class="form-control border-select"
-                (ngModel)="(dataDevice.categoryId)"
-              ></select>
-            </div>
-          </div>
-          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
-            <div class="form-group">
-              <label for="productName"
-                >Nombre Producto:
-                <span class="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                name="productName"
-                id="productName"
-                class="form-control border-select"
-              />
-            </div>
-          </div>
-
-          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12">
-            <div class="form-group">
-              <label for="productIMEISerie"
-                >IMEI/Serie:
-                <span class="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                name="productIMEISerie"
-                id="productIMEISerie"
-                class="form-control border-select"
-              />
-            </div>
-          </div>
-          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12">
-            <div class="form-group">
-              <label for="productMarca"
-                >Marca:
-                <span class="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                name="productMarca"
-                id="productMarca"
-                class="form-control border-select"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
-            <div class="form-group">
-              <label for="productModel">Modelo: </label>
-              <input
-                type="text"
-                name="productModel"
-                id="productModel"
-                class="form-control border-select"
-              />
-            </div>
-          </div>
-          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
-            <div class="form-group">
-              <label for="productYear">Año: </label>
-              <input
-                type="number"
-                name="productYear"
-                id="productYear"
-                class="form-control border-select"
-              />
-            </div>
-          </div>
-          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
-            <div class="form-group">
-              <label for="productWarranty">Garantía: </label>
-              <input
-                type="text"
-                name="productWarranty"
-                id="productWarranty"
-                class="form-control border-select"
-              />
-            </div>
-          </div>
-          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
-            <div class="form-group">
-              <label for="productColor">Color: </label>
-              <input
-                type="text"
-                name="productColor"
-                id="productColor"
-                class="form-control border-select"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="d-inline-flex justify-content-center flex-row">
-          <button type="button" class="btn btn-info" (click)="saveDevice()">
-            <i class="ti-save"></i> Guardar
-          </button>
-          <button
-            type="button"
-            class="btn btn-danger mx-1"
-            (click)="resetFormDevice()"
-          >
-            <i class="fa fa-refresh"></i> Limpiar
-          </button>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="productMarca"
+            >Marca:
+            <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            name="productMarca"
+            id="productMarca"
+            class="form-control border-select"
+          />
         </div>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
         <div class="form-group">
-          <label for="observación">Observación:</label>
-          <textarea
+          <label for="productModel">Modelo: </label>
+          <input
+            type="text"
+            name="productModel"
+            id="productModel"
             class="form-control border-select"
-            aria-label="obs"
-          ></textarea>
+          />
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="productYear">Año: </label>
+          <input
+            type="number"
+            name="productYear"
+            id="productYear"
+            class="form-control border-select"
+          />
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="productWarranty">Garantía: </label>
+          <input
+            type="text"
+            name="productWarranty"
+            id="productWarranty"
+            class="form-control border-select"
+          />
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="productColor">Color: </label>
+          <input
+            type="text"
+            name="productColor"
+            id="productColor"
+            class="form-control border-select"
+          />
         </div>
       </div>
     </div>
-
-    <!--Start Form register product-->
+    <div class="d-inline-flex justify-content-center flex-row">
+      <button type="button" class="btn btn-info" (click)="saveDevice()">
+        <i class="ti-save"></i> Guardar
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger mx-1"
+        (click)="resetFormDevice()"
+      >
+        <i class="fa fa-refresh"></i> Limpiar
+      </button>
+    </div>
   </div>
+</div>
 
-  <div class="modal-footer">
-    <button type="button" class="btn btn-success">
-      <i class="ti-save"></i>
-      Guardar
-    </button>
-    <button
-      type="button"
-      class="btn btn-dark"
-      data-dismiss="modal"
-      (click)="closeModal()"
-    >
-      &times; Cerrar
-    </button>
+<div class="row">
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="observación">Observación:</label>
+      <textarea class="form-control border-select" aria-label="obs"></textarea>
+    </div>
   </div>
-</form>
+</div>

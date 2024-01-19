@@ -60,7 +60,7 @@ namespace Ventas.API.Controllers.v2
         }
 
         [HttpPost]
-        public async Task<IActionResult> Insert(ApiRequest data)
+        public async Task<IActionResult> Insert([FromBody] ApiRequest data)
         {
             var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
