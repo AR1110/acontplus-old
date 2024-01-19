@@ -45,8 +45,10 @@ BEGIN
 	DECLARE @document AS TABLE(
 		 idPuntoEmision INT NOT NULL
         ,idProveedor INT NOT NULL
+        ,idTiempoCredito INT NOT NULL
         ,codDoc VARCHAR(5) DEFAULT 'DH' NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
+        ,fechaVencimiento DATETIME2 NOT NULL
         ,totalSinImpuestos NUMERIC (18,5) NOT NULL
         ,porcentajeDescuento NUMERIC(18,5) NOT NULL
         ,descuento NUMERIC(18,5) NOT NULL
@@ -121,13 +123,15 @@ BEGIN
 
 
 		INSERT INTO @document 
-		      (idPuntoEmision,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
-		SELECT idPuntoEmision,idProveedor,fechaEmision,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
+		      (idPuntoEmision,idProveedor,idTiempoCredito,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
+		SELECT idPuntoEmision,idProveedor,idTiempoCredito,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
 		FROM OPENJSON(@comprobante)WITH 
         (
              idPuntoEmision      INT           '$.idPuntoEmision'
 		    ,idProveedor         INT           '$.idProveedor' 
+		    ,idTiempoCredito     INT           '$.idTiempoCredito' 
 		    ,fechaEmision        DATETIME2     '$.fechaEmision'
+		    ,fechaVencimiento    DATETIME2     '$.fechaVencimiento'
 		    ,totalSinImpuestos   NUMERIC(18,5) '$.totalSinImpuestos'
             ,descuento           NUMERIC(18,5) '$.descuento'
             ,porcentajeDescuento NUMERIC(18,5) '$.porcentajeDescuento'
@@ -260,7 +264,7 @@ BEGIN
 
 		BEGIN TRAN 
 			--> Comprobante
-            INSERT INTO Compra.Documento_Ingreso
+            INSERT INTO Compra.Documento_Ingreso WITH (ROWLOCK)
 			       (uniqueId,idPuntoEmision,idProveedor,codDoc,fechaEmision, secuencial,totalSinImpuestos,descuento,porcentajeDescuento,importeTotal,fechaRegistro,idUsuario,idEntidad,observacion)
 			SELECT @uniqueId,idPuntoEmision,idProveedor,codDoc,fechaEmision,@secuencial,totalSinImpuestos,descuento,porcentajeDescuento,importeTotal,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad,observacion 
 			FROM @document
@@ -268,22 +272,23 @@ BEGIN
 			SET @idDocumentoIngreso = @@IDENTITY
 
 			--> Detalles
-			INSERT INTO Compra.Documento_Ingreso_Detail
+			INSERT INTO Compra.Documento_Ingreso_Detail WITH (ROWLOCK)
 			       (idDocumentoIngreso,idArticulo,idMedida,idBodega,idTipoIva,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto)
 			SELECT @idDocumentoIngreso,idArticulo,idMedida,idBodega,idTipoIva,descripcion,cantidad,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto
 			FROM @tblDetails
             ORDER BY orderIndex ASC
 			
 			--> Impuestos
-            INSERT INTO Compra.DocumentoIngresoImpuesto
+            INSERT INTO Compra.DocumentoIngresoImpuesto WITH (ROWLOCK)
                    (DocumentoIngresoId,TaxId,TaxPercentId,TaxBase,[Percent],TaxValue,Discount)
             SELECT @idDocumentoIngreso,TaxId,TaxPercentId,TaxBase,[Percent],TaxValue,Discount FROM @tbTaxes
 
 			--> Datos Adicionales de articulo (etiquetas)
 			IF EXISTS (SELECT 1 FROM @artInfoAdicional WHERE JSON_QUERY(jsonAdicional, '$') IS NOT NULL)
 				BEGIN
-					INSERT INTO Compra.InfoAdicional(uniqueId, idArticulo, idEtiqueta, jsonAdicional, fechaRegistro)
-					SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional, dbo.ufnGetDateEcuador() FROM @artInfoAdicional
+					INSERT INTO Compra.InfoAdicional WITH (ROWLOCK) 
+                          (uniqueId, idArticulo, idEtiqueta, jsonAdicional, fechaRegistro)
+					SELECT @uniqueId,idArticulo, idEtiqueta, jsonAdicional, dbo.ufnGetDateEcuador() FROM @artInfoAdicional
 				END
 
 			--> Inventario
@@ -330,10 +335,9 @@ BEGIN
 				END
 
 			--> Contabilidad 
-			INSERT INTO Contabilidad.CuentaPorPagar
-                   (idEstablecimiento,idProveedor,idEstadoPago,codDoc,idDocumento,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
-		    SELECT @idEstablecimiento,idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,@uniqueId,@serieComprobante,@identificacion,fechaEmision,importeTotal,@idEntidad,@idUsuario
-		    FROM @document
+			INSERT INTO Contabilidad.CuentaPorPagar WITH (ROWLOCK)
+                   (idEstablecimiento,idTiempoCredito,idProveedor, idEstadoPago,codDoc, idDocumento,        uniqueId,serieComprobante,  identificacion,fechaEmision,fechaVencimiento,importeTotal, idEntidad, idUsuario)
+		    SELECT @idEstablecimiento,idTiempoCredito,idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,@uniqueId,@serieComprobante,@identificacion,fechaEmision,fechaVencimiento,importeTotal,@idEntidad,@idUsuario FROM @document
 
             SELECT @idCuentaPorPagar = SCOPE_IDENTITY()
 
