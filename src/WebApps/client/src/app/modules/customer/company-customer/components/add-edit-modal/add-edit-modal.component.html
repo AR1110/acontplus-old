@@ -1,4 +1,4 @@
-<form [formGroup]="customerForm">
+<form [formGroup]="customerForm" (ngSubmit)="save()">
   <div class="modal-header">
     <h5 class="modal-title">
       <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
@@ -97,23 +97,33 @@
             >Email:
             <span
               tooltip-placement="top"
-              uib-tooltip="Haz doble 'Click' sobre el correo para editar"
+              ngbTooltip="Haz doble 'Click' sobre el correo para editar"
             >
-              <i class="fas fa-info-circle"></i>
+              <fa-icon [icon]="'info-circle'"></fa-icon>
             </span>
           </label>
-          <!-- <md-chips
-            formControlName="correos"
-            md-add-on-blur="true"
-            ng-keyup="onKeyupEmail($event)"
-            md-transform-chip="transformChipEmail($chip)"
-            md-removable="true"
-            md-enable-chip-edit="true"
-            placeholder="Ej: maxi@gmail.com"
-            input-aria-label="Correos"
-            tabindex="-1"
-          ></md-chips> -->
-          <small></small>
+          <mat-chip-grid #chipGridEmail aria-label="Enter emails">
+            <mat-chip-row
+              *ngFor="let email of emails"
+              (removed)="removeEmail(email)"
+              [editable]="true"
+              (edited)="editEmail(email, $event)"
+              [aria-description]="'press enter to edit ' + email"
+            >
+              {{ email }}
+              <button matChipRemove [attr.aria-label]="'remove ' + email">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+            <input
+              placeholder="example@example.com,info@example.com"
+              class="form-control"
+              [matChipInputFor]="chipGridEmail"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="addOnBlur"
+              (matChipInputTokenEnd)="addEmail($event)"
+            />
+          </mat-chip-grid>
         </div>
       </div>
       <div class="col-xl-6 col-md-6 col-sm-6 col-12">
@@ -122,21 +132,33 @@
             >Telefono:
             <span
               tooltip-placement="top"
-              uib-tooltip="Haz doble 'Click' sobre el número de telefono para editar"
+              ngbTooltip="Haz doble 'Click' sobre el número de telefono para editar"
             >
-              <i class="fas fa-info-circle"></i>
+              <fa-icon [icon]="'info-circle'"></fa-icon>
             </span>
           </label>
-          <!-- <md-chips
-            formControlName="telefonos"
-            md-add-on-blur="true"
-            md-transform-chip="transformChipTelefono($chip)"
-            md-removable="true"
-            md-enable-chip-edit="true"
-            placeholder="Ej: 0959889744"
-            input-aria-label="Número de teléfonos"
-            tabindex="-1"
-          ></md-chips> -->
+          <mat-chip-grid #chipGridTelephone aria-label="Ingrese los teléfonos">
+            <mat-chip-row
+              *ngFor="let telephone of telephones"
+              (removed)="removeTelephone(telephone)"
+              [editable]="true"
+              (edited)="editTelephone(telephone, $event)"
+              [aria-description]="'press enter to edit ' + telephone"
+            >
+              {{ telephone }}
+              <button matChipRemove [attr.aria-label]="'remove ' + telephone">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+            <input
+              placeholder="0900000001,0900000002"
+              class="form-control"
+              [matChipInputFor]="chipGridTelephone"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="addOnBlur"
+              (matChipInputTokenEnd)="addTelephone($event)"
+            />
+          </mat-chip-grid>
         </div>
       </div>
     </div>
