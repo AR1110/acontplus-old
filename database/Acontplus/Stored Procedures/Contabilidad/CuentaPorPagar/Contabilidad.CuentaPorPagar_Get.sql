@@ -279,8 +279,12 @@ BEGIN
 					 d.idDocRelacionado
 					,idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NC')
 					,dr.serieComprobante
-					,saldo = d.baseImponible + valorRetenido
-					,codDoc = 'Nota Crédito Version:'+dr.versionComp
+					,ISNULL
+                    ((
+                        SELECT SUM(di.TaxValue + di.TaxBase) FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) WHERE di.DocumentoRecibidoId = dr.idDocumento
+                    ),0) as saldo 
+
+					,codDoc = 'Nota Crédito Version:' + dr.versionComp
 				FROM factelect.DocRelacionado d
 				INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = d.idDocumentoRecibido
 				WHERE dr.codDoc = '04' 
@@ -294,7 +298,10 @@ BEGIN
 					 d.idDocRelacionado
 					,idTipoDocumento = (SELECT TOP 1 idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NC')
 					,dr.serieComprobante
-					,saldo = d.valorRetenido
+					,ISNULL
+                    ((
+                        SELECT SUM(di.TaxValue + di.TaxBase) FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) WHERE di.DocumentoRecibidoId = dr.idDocumento
+                    ),0) as saldo 
 					,codDoc = 'Nota Crédito Version:'+dr.versionComp
 				FROM factelect.DocRelacionado d
 				INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = d.idDocumentoRecibido
