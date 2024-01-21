@@ -28,10 +28,11 @@
   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
     <div class="form-group">
       <label for="employeeFilter">Empleado: </label>
-      <app-employee-search 
-      [isSearchSimple]="isSearchEmployeeSimple"   
-      (onSupplierSelected)="onEmployeeSelected($event)"
-            (emptyInput)="employeeResultEmptyInput($event)"/>
+      <app-employee-search
+        [isSearchSimple]="isSearchEmployeeSimple"
+        (onSupplierSelected)="onEmployeeSelected($event)"
+        (emptyInput)="employeeResultEmptyInput($event)"
+      />
     </div>
   </div>
   <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
@@ -120,7 +121,7 @@
             </button>
             <div ngbDropdownMenu>
               <button ngbDropdownItem (click)="getPrint(item)">
-                <i class="ti-printer"></i>
+                <fa-icon [icon]="'print'"></fa-icon>
 
                 Imprimir
               </button>

@@ -76,6 +76,7 @@ export class EgresoIngresoCajaComponent {
     showLoader()
     this.movCajaSvc.getDataFilter().subscribe({
       next: (response) => {
+        hideLoader()
         this.establecimientos = response.establecimientos;
         if (this.establecimientos.length > 0) {
           let dataEstab = this.establecimientos.find(item => (item.predeterminado))

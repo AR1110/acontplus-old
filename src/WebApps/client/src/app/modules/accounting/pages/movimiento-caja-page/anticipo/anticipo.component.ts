@@ -10,12 +10,13 @@ import { CODE_REPORT } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 
 @Component({
   selector: 'app-anticipo',
   standalone: true,
   imports: [AppModule],
-  templateUrl: './anticipo.component.html', 
+  templateUrl: './anticipo.component.html',
 })
 export class AnticipoComponent {
 
@@ -24,19 +25,22 @@ export class AnticipoComponent {
   private sharedSvc = inject(SharedService)
   private tS = inject(ToasterService)
 
+  establecimientos: Array<EstablecimientoSelectHtmlOnly> = []
   anticipos: Array<AnticipoRead> = [];
 
   recordsQuantity = [25, 50, 100]
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
-    maxSize: 5
+    maxSize: 5,
+    codEstab: ''
   }
   totalRecords = 0;
   getAnticipos() {
     let params = {
       pageIndex: this.dataSearch.pageIndex,
-      pageSize: this.dataSearch.pageSize
+      pageSize: this.dataSearch.pageSize,
+      codEstab: this.dataSearch.codEstab
     }
     showLoader();
     this.anticipoSvc.getAll(params).subscribe({
@@ -53,7 +57,25 @@ export class AnticipoComponent {
   }
 
   ngOnInit() {
-    this.getAnticipos()
+    showLoader()
+    this.anticipoSvc.getDataFilter().subscribe({
+      next: (response) => {
+        
+        hideLoader()
+        this.establecimientos = response.establecimientos;
+        if (this.establecimientos.length > 0) {
+          let dataEstab = this.establecimientos.find(item => (item.predeterminado))
+          if (dataEstab) {
+            this.dataSearch.codEstab = dataEstab.codEstab;
+            this.getAnticipos()
+          }
+        }
+      },
+      error(err) {
+        console.log(err)
+        hideLoader()
+      },
+    })
   }
 
   refresh() {

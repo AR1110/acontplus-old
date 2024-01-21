@@ -59,7 +59,7 @@ export class AnticipoService {
     let params = JSON.stringify({ tipo: 3 })
     return this.http.get(`${this.url}?json=${params}`)
       .pipe(
-        map(response => {
+        map(response => { 
           if (isApiResponse(response)) {
 
             if (response.code === "0") {

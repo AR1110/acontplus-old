@@ -1,15 +1,28 @@
 <div class="row">
   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-    
+    <div class="form-group">
+      <label for="exstablecimiento">Establecimiento: </label>
+      <select
+        name="establecimiento"
+        id="onChangeEntidadFinanciera"
+        class="form-select form-control-border"
+        [(ngModel)]="dataSearch.codEstab"
+        (change)="getAnticipos()"
+      >
+        @for (item of establecimientos; track $index) {
+        <option [ngValue]="item.codEstab">
+          {{ item.nombreComercial }}
+        </option>
+        }
+      </select>
+    </div>
   </div>
   <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
     <div class="form-group"></div>
   </div>
-  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-     
-  </div>
+  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
   <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-    <div class="button-group"> 
+    <div class="button-group">
       <button
         type="button"
         class="btn btn-danger btn-sm mt-4"
@@ -28,7 +41,6 @@
     </div>
   </div>
 </div>
- 
 
 <div class="row">
   <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
@@ -90,8 +102,7 @@
             </button>
             <div ngbDropdownMenu>
               <button ngbDropdownItem (click)="getPrint(item)">
-                <i class="ti-printer"></i>
-
+                <fa-icon [icon]="'print'"></fa-icon>
                 Imprimir
               </button>
 
