@@ -13,7 +13,7 @@ import { SupplierSearch } from '../models/supplier.model'
 
 export class SupplierService {
 
-  url = `${PATHS_API.PURCHASE}${PURCHASE_PATHS.SUPPLIER}`
+  private url = `${PATHS_API.PURCHASE}${PURCHASE_PATHS.SUPPLIER}`
 
   constructor(private http: HttpClient) { }
 
@@ -25,9 +25,19 @@ export class SupplierService {
     return this.http.get(`${this.url}?json=${JSON.stringify(query)}`)
       .pipe(
         map(response => {
-          if (isApiResponse(response)) { 
+          if (isApiResponse(response)) {
             let { proveedores } = response.payload && JSON.parse(response.payload as string) || [];
-            return proveedores || [];
+            console.log(proveedores)
+            let results = proveedores || [];
+            return results.map((proveedor: any) => {
+              return {
+                idProveedor: proveedor.idProveedor,
+                numeroIdentificacion: proveedor.numeroIdentificacion,
+                razonSocial: proveedor.razonSocial,
+                tipoIdentificacion: proveedor.tipoIdentificacion,
+                subContribuyente: proveedor.subContribuyente,
+              }
+            })
           }
           return []
         })

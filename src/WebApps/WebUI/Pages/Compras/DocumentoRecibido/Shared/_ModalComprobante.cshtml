@@ -314,7 +314,7 @@
                         <label for="idBodega">Aplicar Bodega para todos:</label>
                         <select id="idBodega" class="form-control" ng-model="comprobanteForm.idBodega"
                             ng-change="addBodega()" required>
-                            <option></option>
+                            <option ng-value="0"></option>
                             <option ng-value="item.idBodega" ng-repeat="item in bodegasFiltered">
                                 {{item.descripcion}}
                             </option>

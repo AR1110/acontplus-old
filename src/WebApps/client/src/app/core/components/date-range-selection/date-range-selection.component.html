@@ -1,0 +1,49 @@
+
+  <div
+    ngbDropdown
+    class="form-group"
+    placement="bottom-right"
+    #myDrop="ngbDropdown"
+    (openChange)="open($event, dp)"
+  >
+    <div class="input-group">
+      <input
+        #rangeID
+        name="range"
+        class="form-control"
+        [formControl]="range"
+        placeholder="yyyy-mm-dd to yyyy-mm-dd"
+      />
+      <div class="input-group-append">
+        <button
+          ngbDropdownToggle
+          class="btn btn-outline-secondary calendar"
+          type="button"
+        ></button>
+      </div>
+      <div ngbDropdownMenu>
+        <ngb-datepicker
+          #dp
+          (dateSelect)="onDateSelection($event, myDrop)"
+          [displayMonths]="2"
+          [dayTemplate]="t"
+          outsideDays="hidden"
+        >
+        </ngb-datepicker>
+      </div>
+    </div>
+  </div>
+
+
+<ng-template #t let-date let-focused="focused">
+  <span
+    class="custom-day"
+    [class.focused]="focused"
+    [class.range]="isRange(date)"
+    [class.faded]="isHovered(date) || isInside(date)"
+    (mouseenter)="hoveredDate = date"
+    (mouseleave)="hoveredDate = null"
+  >
+    {{ date.day }}
+  </span>
+</ng-template> 

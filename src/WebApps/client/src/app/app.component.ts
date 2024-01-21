@@ -39,6 +39,7 @@ export class AppComponent implements OnInit {
           localStorage.removeItem('access_token');
         }
         let route_page = getEnumValueByKey(GlobalRoutes, route);
+      
         localStorage.setItem('access_token', token);
         self.router.navigate(['/', ...route_page.split('/')]);
       }

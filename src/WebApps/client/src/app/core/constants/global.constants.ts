@@ -25,10 +25,17 @@ export const enum DOC_TYPE {
 }
 
 export const enum DOC_TYPE_SRI {
-  LC = '03'
+  LC = '03',
+  F = '01',
+  NC = '04',
+  R = '07'
 }
 
 
+export enum FORMAT_REPORT {
+  PDF = 'pdf',
+  EXCEL = 'excel'
+}
 
 export enum CODE_REPORT {
   RF = 'RF',                  // Reporte Factura
@@ -49,7 +56,8 @@ export enum CODE_REPORT {
   RCP = 'RCP',                    //Reporte Compras
   RCC = 'RCC',                 //Reporte Control Caja
   RMIE = 'RMIE', //Reporte Movimiento Caja
-  RA ='RA' //Reporte Anticipo
+  RA = 'RA', //Reporte Anticipo
+  RRF ='RRF' //Reporte Recepcion Factura
 }
 
 // Example usage:
