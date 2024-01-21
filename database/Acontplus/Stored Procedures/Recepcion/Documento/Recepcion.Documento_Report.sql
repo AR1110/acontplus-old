@@ -80,62 +80,110 @@ BEGIN
             SET @sql = 'SELECT * FROM 
                         (
                             
-                              SELECT dr.idDocumento
-                                    ,dr.idUsuario
-                                    ,es.idEstablecimiento
-									,es.nombreComercial
-                                    ,es.codEstab
-									,serieComprobante 
-									,claveAcceso 	
-									,FORMAT(CONVERT(DATE,dr.fechaEmision,103),''dd/MM/yyyy'') as fechaEmision
-									,rucEmisor 
-									,razonSocialEmisior 
-									,us.nombreUsuario as usuario
-									,CAST(ISNULL(dc.subTotalExento,0) as NUMERIC(18,2)) as subTotalExento 
-									,CAST(ISNULL(dc.subTotalNoIva,0) as NUMERIC(18,2))  as subTotalNoIva
-									,CAST(ISNULL(dc.subTotal0,0) as NUMERIC(18,2))		as subTotal0
-									,CAST(ISNULL(dc.subTotalIva,0) as NUMERIC(18,2))	as subTotalIva
-									,CAST(ISNULL(dc.descuento,0) as NUMERIC(18,2))		as descuento
-									,CAST(ISNULL(dc.iva,0) as NUMERIC(18,2))   			as iva
-									,CAST(ISNULL(dc.totalIce,0) as NUMERIC(18,2))		as totalIce
-									,CAST(dr.importeTotal as NUMERIC(18,2))				as importeTotal
-									,(
+                                SELECT es.idEstablecimiento
+                                      ,es.nombreComercial
+	                                  ,es.codEstab
+	                                  ,dr.idDocumento
+	                                  ,dr.idUsuario
+	                                  ,dr.serieComprobante
+	                                  ,dr.claveAcceso
+	                                  ,dr.fechaEmision
+	                                  ,dr.rucEmisor
+	                                  ,dr.razonSocialEmisior
+	                                  ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                                  AND di.CodePercentage = ''7''
+	                                  ),0) as subTotalExento
+
+	                                  ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                                  AND di.CodePercentage = ''6''
+	                                  ),0) as subTotalNoIva
+
+	                                  ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                                  AND di.CodePercentage = ''0''
+	                                  ),0) as subTotal0
+
+	                                  ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                                  AND di.CodePercentage IN (''2'',''8'')
+	                                  ),0) as subTotalIva
+
+	                                  ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.Discount)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
+	                                  ),0) as descuento
+
+	                                  ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento
+			                                  AND di.Code = ''2''
+	                                  ),0) as iva
+
+	                                  ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento
+			                                  AND di.Code = ''3''
+	                                  ),0) as totalIce
+
+	                                  ,CAST(dr.importeTotal as numeric(18,2)) as importeTotal
+	                                  ,(
 		
-									    SELECT TOP 1 rt.estab + ''-'' + rt.ptoEmi + ''-'' + Helper.F_Auto_Sequential(rt.secuencial)
-									    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-									    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-									    WHERE ds.numAutDocSustento = dr.claveAcceso
-									      AND rt.anuladaSri = 0 
+			                                SELECT TOP 1 rt.estab + ''-'' + rt.ptoEmi + ''-'' + Helper.F_Auto_Sequential(rt.secuencial)
+			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
+			                                WHERE ds.numAutDocSustento = dr.claveAcceso
+				                                AND rt.anuladaSri = 0 
 
-									) as nroRetencion
+		                                ) as nroRetencion
 
-									,ISNULL((
+		                                ,ISNULL((
 		
-									    SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
-									    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-									    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-									    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-									    WHERE ds.numAutDocSustento = dr.claveAcceso
-	 								      AND rt.anuladaSri = 0 
-								          AND ir.codigo = 1
+			                                SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
+			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
+			                                INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
+			                                WHERE ds.numAutDocSustento = dr.claveAcceso
+	 			                                AND rt.anuladaSri = 0 
+				                                AND ir.codigo = 1
 
-									),0) as retRenta
+		                                ),0) as retRenta
 
-									,ISNULL((
+		                                ,ISNULL((
 		
-									    SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
-									    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-									    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-									    INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-									    WHERE ds.numAutDocSustento = dr.claveAcceso
-	 								      AND rt.anuladaSri = 0 
-									      AND ir.codigo = 2
+			                                SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
+			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
+			                                INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
+			                                WHERE ds.numAutDocSustento = dr.claveAcceso
+	 			                                AND rt.anuladaSri = 0 
+				                                AND ir.codigo = 2
 
-									),0) as retIva
-							FROM Recepcion.f_Comprobante_01(@idEntidad) dc
-							INNER JOIN Recepcion.DocumentoRecibido      dr WITH (NOLOCK) ON dr.idDocumento  = dc.idDocumento
-							INNER JOIN Sri.Establecimiento              es WITH (NOLOCK) ON es.codEstab     = dr.codEstab	
-							INNER JOIN dbo.Usuario                      us WITH (NOLOCK) ON us.idUsuario    = dr.idUsuario
+		                                ),0) as retIva
+
+                                FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
+                                INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab = dr.codEstab
+                                WHERE dr.codDoc = ''01''
+                                  AND dr.xmlCompressed IS NOT NULL
 
                         ) as dt WHERE dt.idDocumento > 0 '
 
@@ -184,8 +232,6 @@ BEGIN
                               ,@identificacion = @identificacion
                               ,@idUsuario      = @idUsuario
 
-            print @sql
-
             RETURN 
         END 
     
@@ -193,7 +239,279 @@ BEGIN
     IF @tipo = 3
         BEGIN
             
+            SET @tableNames = 'dataEntidad,comprobantes'
+
+            SELECT @codEstab       = codEstab
+                  ,@ckFecha        = ckFecha
+                  ,@fechaInicio    = fechaInicio
+                  ,@fechaFin       = fechaFin
+                  ,@ckRetencion    = ckRetencion
+                  ,@identificacion = identificacion
+                  ,@idUsuario      = idUsuario
+            FROM OPENJSON(@json) WITH 
+            (
+                codEstab       VARCHAR(100)
+               ,ckFecha        BIT
+               ,fechaInicio    DATETIME2
+               ,fechaFin       DATETIME2
+               ,ckRetencion    BIT
+               ,identificacion VARCHAR(20)
+               ,idUsuario      INT
+            )
+
+            SET @params = '@idEntidad       INT
+                          ,@codEstab        VARCHAR(100)
+                          ,@fechaInicio     DATETIME2
+                          ,@fechaFin        DATETIME2
+                          ,@identificacion  VARCHAR(20)
+                          ,@idUsuario       INT'
+
+            SET @sql = '  SELECT es.idEstablecimiento
+                                ,es.nombreComercial
+	                            ,es.codEstab
+	                            ,dr.serieComprobante
+	                            ,dr.claveAcceso
+	                            ,dr.fechaEmision
+	                            ,dr.rucEmisor
+	                            ,dr.razonSocialEmisior
+	                            ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                            AND di.CodePercentage = ''7''
+	                            ),0) as subTotalExento
+
+	                            ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                            AND di.CodePercentage = ''6''
+	                            ),0) as subTotalNoIva
+
+	                            ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                            AND di.CodePercentage = ''0''
+	                            ),0) as subTotal0
+
+	                            ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                            AND di.CodePercentage IN (''2'',''8'')
+	                            ),0) as subTotalIva
+
+	                            ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.Discount)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
+	                            ),0) as descuento
+
+	                            ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento
+			                            AND di.Code = ''2''
+	                            ),0) as iva
+
+	                            ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento
+			                            AND di.Code = ''3''
+	                            ),0) as totalIce
+
+								,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxBase + di.TaxValue)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento
+	                            ),0) as importeTotal 
+
+                        FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
+                        INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab = dr.codEstab
+                        WHERE dr.codDoc = ''04''
+                            AND dr.xmlCompressed IS NOT NULL '
+
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dr.codEstab = @codEstab '
+                END 
+
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(dr.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END
+
+            IF @identificacion IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dr.rucEmisor = @identificacion '
+                END 
+
+            IF @idUsuario IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dr.idUsuario = @idUsuario '
+                END
+
+             IF @ckRetencion = 1
+                BEGIN
+                    SET @sql = @sql + 'AND dr.nroRetencion IS NOT NULL '
+                END 
+
+            SET @sql = @sql + 'ORDER BY dr.idDocumento DESC '
+
+            SELECT entidad as razonSocial 
+                  ,rucEmpresa as ruc
+                  ,telefono 
+                  ,nombreUsuario as usuario
+                  ,'Comprobantes Recibidos - Nota Credito' as nombreReporte
+                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+            FROM v_usuario
+            WHERE idUsuarioRol = @userRoleId
+
+            EXEC sp_executesql @sql
+							  ,@params 
+							  ,@idEntidad      = @idEntidad
+                              ,@codEstab       = @codEstab
+                              ,@fechaInicio    = @fechaInicio
+                              ,@fechaFin       = @fechaFin
+                              ,@identificacion = @identificacion
+                              ,@idUsuario      = @idUsuario
+
+            RETURN  
+
             RETURN 
+        END 
+
+    --> Comprobante de Retencion
+    IF @tipo = 4
+        BEGIN
+            SET @tableNames = 'dataEntidad,comprobantes'
+
+            SELECT @codEstab       = codEstab
+                  ,@ckFecha        = ckFecha
+                  ,@fechaInicio    = fechaInicio
+                  ,@fechaFin       = fechaFin
+                  ,@ckRetencion    = ckRetencion
+                  ,@identificacion = identificacion
+                  ,@idUsuario      = idUsuario
+            FROM OPENJSON(@json) WITH 
+            (
+                codEstab       VARCHAR(100)
+               ,ckFecha        BIT
+               ,fechaInicio    DATETIME2
+               ,fechaFin       DATETIME2
+               ,ckRetencion    BIT
+               ,identificacion VARCHAR(20)
+               ,idUsuario      INT
+            )
+
+            SET @params = '@idEntidad       INT
+                          ,@codEstab        VARCHAR(100)
+                          ,@fechaInicio     DATETIME2
+                          ,@fechaFin        DATETIME2
+                          ,@identificacion  VARCHAR(20)
+                          ,@idUsuario       INT'
+
+            SET @sql = 'SELECT es.idEstablecimiento
+                              ,es.nombreComercial
+	                          ,dr.serieComprobante
+	                          ,dr.fechaEmision
+	                          ,dr.claveAcceso
+	                          ,dr.rucEmisor
+	                          ,dr.razonSocialEmisior
+	                          ,ISNULL
+	                          ((
+			                        SELECT CAST(SUM(di.TaxValue) as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                          AND di.Code = ''2''
+	  
+	                          ),0) as retRenta
+	                          ,ISNULL
+	                          ((
+			                        SELECT CAST(SUM(di.TaxValue) as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
+			                          AND di.Code = ''1''
+	  
+	                          ),0) as retIva
+	                           ,ISNULL
+	                          ((
+			                        SELECT CAST(SUM(di.TaxValue) as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
+
+	                          ),0) as totalRet
+	                          ,(
+			                        SELECT TOP 1 dd.numDocSustento FROM FactElect.DocRelacionado dd WITH (NOLOCK) WHERE dd.idDocumentoRecibido = dr.idDocumento
+	  
+	                          ) as numDocSustento
+	                          ,(
+			                        SELECT TOP 1 dd.fechaEmisionDocSustento FROM FactElect.DocRelacionado dd WITH (NOLOCK) WHERE dd.idDocumentoRecibido = dr.idDocumento
+	  
+	                          ) as fechaEmisionDocSustento
+	                          ,us.nombreUsuario as usuario
+                        FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
+                        INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab  = dr.codEstab
+                        INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
+                        WHERE dr.codDoc = ''07''
+                          AND dr.xmlCompressed IS NOT NULL '
+
+            IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dr.codEstab = @codEstab '
+                END 
+
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(dr.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END
+
+            IF @identificacion IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dr.rucEmisor = @identificacion '
+                END 
+
+            IF @idUsuario IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND dr.idUsuario = @idUsuario '
+                END
+
+             IF @ckRetencion = 1
+                BEGIN
+                    SET @sql = @sql + 'AND dr.nroRetencion IS NOT NULL '
+                END 
+
+            SET @sql = @sql + 'ORDER BY dr.idDocumento DESC '
+
+            SELECT entidad as razonSocial 
+                  ,rucEmpresa as ruc
+                  ,telefono 
+                  ,nombreUsuario as usuario
+                  ,'Comprobantes Recibidos - Comprobantes de Retención' as nombreReporte
+                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+            FROM v_usuario
+            WHERE idUsuarioRol = @userRoleId
+
+            EXEC sp_executesql @sql
+							  ,@params 
+							  ,@idEntidad      = @idEntidad
+                              ,@codEstab       = @codEstab
+                              ,@fechaInicio    = @fechaInicio
+                              ,@fechaFin       = @fechaFin
+                              ,@identificacion = @identificacion
+                              ,@idUsuario      = @idUsuario
+
+            RETURN  
         END 
 END
 GO
