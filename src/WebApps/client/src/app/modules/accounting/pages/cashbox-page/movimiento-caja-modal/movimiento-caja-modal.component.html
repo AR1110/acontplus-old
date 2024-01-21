@@ -1,0 +1,137 @@
+<form autocomplete="off">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Movimiento Caja</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+        <div class="col-6 d-flex justify-content-start">
+             <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm col-12">
+                  <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+                      <div class="form-group">
+                        <div class="fechaFrom">Fecha Inicio</div>
+                        <input type="text" class="form-control form-control-border">
+                      </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-12"></div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm col-12">
+                  <div class="form-group">
+                    <label for="estado">Estado: </label>
+                    <select class="form-control form-control-border">
+                      <option></option>
+                    </select>
+                  </div>
+                </div>
+             </div>
+        </div>
+
+        <div class="col-6 d-flex justify-content-end">
+            <div class="form-group">
+                <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                    ng-model="dataSearch.bySearch" placeholder="...">
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Op.</th>
+            <th>N°</th>
+            <th>F. Apertura</th>
+            <th>F. Cierre</th>
+            <th>Faltante</th>
+            <th>Sobrante</th>
+            <th>Total</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of movimientosCaja; track $index) {
+          <tr>
+            <td>
+              <div class="button-group">
+                @if (cerrarCaja(item.estado)) {
+                <button
+                  type="button"
+                  class="btn btn-info btn-sm btn-circle text-white"
+                  ngbTooltip="Cerrar Caja"
+                  (click)="openModalCashboxClose(item)"
+                >
+                  <fa-icon [icon]="'money-bill-alt'"></fa-icon>
+                </button>
+                } @if (verReporteMovimientoCaja(item.estado)) {
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm btn-circle text-white"
+                  ngbTooltip="Reporte PDF"
+                  (click)="getReport(item.id)"
+                >
+                  <fa-icon [icon]="['far', 'file-pdf']"></fa-icon>
+                </button>
+                }
+
+                <!-- <button
+                  type="button"
+                  class="btn btn-success btn-sm btn-circle text-white"
+                >
+                  <i class="icons-Box-Full"></i>
+                </button> -->
+              </div>
+            </td>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ item.fechaApertura }}</td>
+            <td>{{ item.fechaCierre }}</td>
+            <td>{{ item.faltante }}</td>
+            <td>{{ item.sobrante }}</td>
+            <td>{{ item.totalArqueo }}</td>
+            <td>
+              @if (item.estado) {
+              <span class="label label-success">ABIERTO</span>
+              } @else {
+              <span class="label label-danger">CERRADO</span>
+              }
+            </td>
+          </tr>
+
+          }@empty{
+            <tr>
+              <td colspan="8" class="text-center">No hay registros!</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td align="center" colspan="8">
+              <ngb-pagination
+                [collectionSize]="totalRecords"
+                [(page)]="dataSearch.pageIndex"
+                [maxSize]="dataSearch.maxSize"
+                [pageSize]="dataSearch.pageSize"
+                [rotate]="true"
+                (pageChange)="pageChanged()"
+                [boundaryLinks]="true"
+              />
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-dark" (click)="closeModal()">
+      &times; Cerrar
+    </button>
+  </div>
+</form>

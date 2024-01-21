@@ -1,11 +1,11 @@
 import { Routes } from "@angular/router";
-import { CashboxComponent } from "./pages/cashbox/cashbox.component";
+import { CashboxPageComponent } from "./pages/cashbox-page/cashbox-page.component";
 import { MovimientoCajaPageComponent } from "./pages/movimiento-caja-page/movimiento-caja-page.component";
 export const routes: Routes = [
   {
     path: 'cashbox-page',
     title: 'Caja',
-    component: CashboxComponent,
+    component: CashboxPageComponent,
     data: {
       breadcrumb: 'Gestión Caja',
       buttonAction: "Nuevo"

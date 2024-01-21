@@ -5,11 +5,13 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardComponent } from '@modules/technical-support/components/dashboard/dashboard.component';
 import { OrderListComponent } from '../order-page/order-list/order-list.component';
 import { OrderModalComponent } from '../order-page/order-modal/order-modal.component';
+import { AppModule } from 'src/app/app.module';
 
 @Component({
   selector: 'app-technical-support-page',
   standalone: true,
   imports: [
+    AppModule,
     TechSupportModule,
     OrderListComponent,
     DashboardComponent,
@@ -28,5 +30,4 @@ export class TechnicalSupportPageComponent {
       size: 'xl',
     });
   }
-
 }

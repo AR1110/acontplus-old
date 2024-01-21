@@ -51,8 +51,7 @@ export class ReportsPageComponent {
 
 
   searchSupplier: OperatorFunction<string, Array<SupplierSearch>> = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
+    text$.pipe( 
       switchMap((term) => {
         if (!term || term.length < 2) {
           return [];

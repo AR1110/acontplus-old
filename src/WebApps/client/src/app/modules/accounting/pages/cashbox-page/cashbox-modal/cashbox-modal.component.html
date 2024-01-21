@@ -1,0 +1,85 @@
+<form autocomplete="off" [formGroup]="dataForm" (ngSubmit)="save()">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ titleModal }}</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="descripcion"
+        >Descripción: <span class="text-danger">*</span></label
+      >
+      <input
+        type="text"
+        formControlName="descripcion"
+        name="descripcion"
+        id="descripcion"
+        class="form-control form-control-border"
+        placeholder="..."
+      />
+    </div>
+    <div class="form-group">
+      <label for="users">Usuario: <span class="text-danger">*</span></label>
+      <select
+        name="users"
+        id="users"
+        class="form-select form-control-border"
+        formControlName="idUsuario"
+      >
+        @for (item of usuarios; track $index) {
+        <option [ngValue]="item.idUsuario">
+          {{ item.nombreUsuario }}
+        </option>
+        }
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="turnos">Turno: <span class="text-danger">*</span></label>
+      <select
+        name="turnos"
+        id="turnos"
+        class="form-select form-control-border"
+        formControlName="idTurno"
+      >
+        @for (item of turnos; track $index) {
+        <option [ngValue]="item.idTurno">
+          {{ item.descripcion }}
+        </option>
+        }
+      </select>
+    </div>
+    @if (tipoRegistro===2) {
+    <div class="icheck-primary icheck-inline">
+      <input
+        type="radio"
+        id="estadoActivo"
+        formControlName="estado"
+        [value]="true"
+      />
+      <label for="estadoActivo">Activo</label>
+    </div>
+    <div class="icheck-primary icheck-inline">
+      <input
+        type="radio"
+        id="estadoInactivo"
+        formControlName="estado"
+        [value]="false"
+      />
+      <label for="estadoInactivo">Inactivo</label>
+    </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-success" [disabled]="!dataForm.valid">
+      <fa-icon [icon]="btnIcon"></fa-icon>
+      {{ btnText }}
+    </button>
+    <button type="button" class="btn btn-dark" (click)="closeModal()">
+      &times; Cerrar
+    </button>
+  </div>
+</form>

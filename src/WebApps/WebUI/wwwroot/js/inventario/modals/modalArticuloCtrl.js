@@ -1005,6 +1005,7 @@ function modalArticuloCtrl(
                 })
                 .finally(() => hideLoader());
         } else if ($scope.data.idArticulo > 0) {
+            showLoader();
             articuloSvc
                 .update($scope.data.idArticulo, senData)
                 .then((response) => {
