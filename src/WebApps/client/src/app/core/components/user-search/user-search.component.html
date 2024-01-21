@@ -18,11 +18,11 @@
 <div class="invalid-feedback">
   Lo sentimos, no se han podido cargar las sugerencias.
 </div>
-} 
+}
 
 <ng-template #rtSuppliers let-r="result" let-t="term">
   <ngb-highlight
-    [result]="r.numeroIdentificacion + ' - ' + r.razonSocial"
+    [result]="r.nroIdentificacion + ' - ' + r.nombreCompleto"
     [term]="t"
   />
 </ng-template>

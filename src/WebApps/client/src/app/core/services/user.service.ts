@@ -6,34 +6,31 @@ import { UserSearch } from "@core/models/user.model";
 import { Observable, map } from "rxjs";
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 
 export class UserService {
-    private url = `${PATHS_API.CONFIG}${PATHS.USER}`;
-    private http = inject(HttpClient);
+  private url = `${PATHS_API.CONFIG}${PATHS.USER}`;
+  private http = inject(HttpClient);
 
   search<T extends { textSearch: string }>(data: T): Observable<Array<UserSearch>> {
     let query = {
-      textSearch: data.textSearch,
-      tipo: 5
+      busqueda: data.textSearch,
     }
-    return this.http.get(`${this.url}?json=${JSON.stringify(query)}`)
+    return this.http.get(`${this.url}Search?json=${JSON.stringify(query)}`)
       .pipe(
         map(response => {
           if (isApiResponse(response)) {
-            let users = response.payload && JSON.parse(response.payload as string) || [];
-            console.log(users)
-            return []
-            // return results.map((proveedor: any) => {
-            //   return {
-            //     idProveedor: proveedor.idProveedor,
-            //     numeroIdentificacion: proveedor.numeroIdentificacion,
-            //     razonSocial: proveedor.razonSocial,
-            //     tipoIdentificacion: proveedor.tipoIdentificacion,
-            //     subContribuyente: proveedor.subContribuyente,
-            //   }
-            // })
+            let users = response.payload && JSON.parse(response.payload as string) || []; 
+
+            return users.map((user: any) => {
+              return {
+                idUsuario: user.idUsuario,
+                nombreCompleto: user.nombreCompleto,
+                nombreUsuario: user.nombreUsuario,
+                nroIdentificacion: user.nroIdentificacion,
+              }
+            })
           }
           return []
         })

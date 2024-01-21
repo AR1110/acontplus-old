@@ -86,11 +86,11 @@ export class ReceptionReportsPageComponent {
   }
 
   onUserSelected<T extends { data: any }>($event: T) {
-      const { data } = $event;
+    const { data } = $event;
     this.dataSearch.userName = data.nombreComplero;
     this.dataSearch.userId = data.idUsuario;
   }
-  userResultEmptyInput($event:any){
+  userResultEmptyInput($event: any) {
     this.dataSearch.userId = 0;
   }
 
@@ -130,6 +130,13 @@ export class ReceptionReportsPageComponent {
       })
       return
     }
+    if (this.dataSearch.userChecked && !isValidField(this.dataSearch.userId)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el usuario!'
+      })
+      return
+    }
     let { tipo, codigo } = this.getDataReport();
     const dataParms = {
       tipo,
@@ -139,6 +146,7 @@ export class ReceptionReportsPageComponent {
       codDoc: this.dataSearch.codDoc,
       identificacion: this.dataSearch.supplierChecked && isValidField(this.dataSearch.numeroIdentificacion) || null,
       //  codEstado: isValidField(this.dataSearch.codEstado),
+      idUsuario: isValidField(this.dataSearch.userId),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate
     }
