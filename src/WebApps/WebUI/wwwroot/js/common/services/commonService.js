@@ -232,7 +232,7 @@ export class CommonService {
      *  json = {busqueda, idRol}
      */
     usuarioSearch(json) {
-        return this.mS.getData('get', 'Usuario/Search/' + JSON.stringify(json), null, true).then(response => {
+        return this.mS.getData('get', 'Config/Usuario/Search?json=' + JSON.stringify(json), null, true).then(response => {
             if (response.code === "0") {
                 return [];
             }
@@ -917,7 +917,7 @@ export class CommonService {
             detalleDocumento = [],
             medidasTemp = [];
 
-        await this.mS.getData('get', 'Consolidacion/?json=' + JSON.stringify({ tipo: 3, id: id }), null, true).then(response => {
+        await this.mS.getData('get', 'Inventario/Consolidacion/?json=' + JSON.stringify({ tipo: 3, id: id }), null, true).then(response => {
 
             if (response.code === '0') {
                 this.form.sweetAlert('warning', response.message)
@@ -957,7 +957,7 @@ export class CommonService {
             isComplete = false;
         if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
-        await this.mS.getData('get', `TransferenciaBodega/GetId?id=${id}`, null, true).then(response => {
+        await this.mS.getData('get', `Inventario/TransferenciaBodega/GetId?id=${id}`, null, true).then(response => {
 
             if (response.code === "0") {
                 this.form.sweetAlert('warning', response.message)
