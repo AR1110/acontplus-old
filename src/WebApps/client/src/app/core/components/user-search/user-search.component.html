@@ -1,0 +1,28 @@
+
+<input
+  id="typeahead-supplier"
+  type="text"
+  class="form-control"
+  [(ngModel)]="textSearch"
+  [ngbTypeahead]="search"
+  [resultTemplate]="rtSuppliers"
+  [class.is-invalid]="searchFailed"
+  (selectItem)="onSelect($event)"
+  onclick="select();"
+  (keyup)="onKeyupSearch()"
+  placeholder="Ej. Maria"
+/>
+@if (searching) {
+<small class="form-text text-muted">Buscando...</small>
+} @if (searchFailed) {
+<div class="invalid-feedback">
+  Lo sentimos, no se han podido cargar las sugerencias.
+</div>
+} 
+
+<ng-template #rtSuppliers let-r="result" let-t="term">
+  <ngb-highlight
+    [result]="r.numeroIdentificacion + ' - ' + r.razonSocial"
+    [term]="t"
+  />
+</ng-template>

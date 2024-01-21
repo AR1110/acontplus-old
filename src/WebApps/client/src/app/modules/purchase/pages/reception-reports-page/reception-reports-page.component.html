@@ -15,14 +15,21 @@
         </div>
       </div>
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
-
+         <div class="icheck-primary">
+          <input
+            type="checkbox"
+            id="userChecked"
+            [(ngModel)]="dataSearch.userChecked"
+            name="userChecked"
+          />
+          <label for="userChecked">Usuario</label>
+        </div>
       </div>
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
     </div>
     <hr />
-    <div class="row">
-
+    <div class="row"> 
       <div class="col-xl-3 col-lg-3 col-md-12 col-12">
         <div class="form-group">
           <label for="tipoComprobante">Tipo comprobante</label>
@@ -72,11 +79,22 @@
             [isSearchSimple]="isSearchSupplierSimple"
             (onSupplierSelected)="onSupplierSelected($event)"
             [textSearch]="dataSearch.supplierName"
-            (emptyInput)="resultEmptyInput($event)"
+            (emptyInput)="supplierResultEmptyInput($event)"
           ></app-supplier-search>
         </div>
-      </div>
-
+      </div> 
+      }
+      @if(dataSearch.userChecked){
+        <div class="col-xl-4 col-lg-4  col-md-12 col-12">
+        <div class="form-group">
+          <label for="userSearch">Usuario: </label>
+          <app-user-search 
+            (onUserSelected)="onUserSelected($event)"
+            [textSearch]="dataSearch.userName"
+            (emptyInput)="userResultEmptyInput($event)"
+          ></app-user-search>
+        </div>
+      </div> 
       }
     </div>
   </div>

@@ -13,7 +13,8 @@ export const enum PATHS {
   DOWNLOAD_V1 = 'Reporte/Download',
   DOWNLOAD = 'v2/Reporte/Download',
   APP_NOTIFICATION = 'Notificacion/',
-  PRINT = 'Print'
+  PRINT = 'Print',
+  USER = 'Usuario/'
 }
 
 export const enum DOC_TYPE {
@@ -57,7 +58,9 @@ export enum CODE_REPORT {
   RCC = 'RCC',                 //Reporte Control Caja
   RMIE = 'RMIE', //Reporte Movimiento Caja
   RA = 'RA', //Reporte Anticipo
-  RRF ='RRF' //Reporte Recepcion Factura
+  RRF ='RRF', //Reporte Recepcion Factura
+  RRNC = 'RRNC', //Recepcion Nota Credito
+  RRG = 'RRG' //Recepcion Retencion General
 }
 
 // Example usage:
