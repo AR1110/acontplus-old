@@ -65,16 +65,13 @@ export class CashboxPageComponent {
 
 
   ngOnInit() {
-    console.log('init')
-
-    console.log(localStorage.getItem("permisos"))
+    
     this.getCashboxs()
 
     let getDataPermiso: any = getPermisosLocal();
-    console.log(getDataPermiso)
+    
     if (getDataPermiso) {
       this.acciones = getDataPermiso.acciones;
-      console.log(this.acciones)
     }
   }
 
@@ -82,7 +79,7 @@ export class CashboxPageComponent {
     const modalRef = this.modalSvc.openModalCustom(CashboxModalComponent);
     modalRef.componentInstance.params = params || {};
     modalRef.result.then(result => {
-      console.log(result)
+      
       if (typeof result === 'object') {
         this.getCashboxs();
       }
@@ -148,7 +145,7 @@ export class CashboxPageComponent {
     const modalRef = this.modalSvc.openModalCustom(AperturaCajaModalComponent);
     modalRef.componentInstance.params = params || {};
     modalRef.result.then(result => {
-      console.log(result)
+      
       if (typeof result === 'object') {
         this.getCashboxs();
       }

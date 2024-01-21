@@ -1,56 +1,15 @@
 <div class="row">
   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-    <div class="form-gorup">
-      <label for="establecimiento">Establecimiento</label>
-      <select
-        name="establecimiento"
-        id="establecimiento"
-        ng-model="$ctrl.dataSearchAnticipo.codEstab"
-        class="form-select border-select"
-        ng-change="$ctrl.getAnticipos()"
-      >
-        <option
-          ng-value="item.codEstab"
-          ng-repeat="item in $ctrl.establecimientos"
-        ></option>
-      </select>
-    </div>
+    
   </div>
   <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
     <div class="form-group"></div>
   </div>
   <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-    <div class="form-group">
-      <label for="clienteFiltro">Cliente</label>
-      <input
-        type="text"
-        id="customerInputSearch"
-        class="form-control border-select"
-        ng-model="$ctrl.dataSearchAnticipo.selelectedCliente"
-        cliente-search-drtv
-        placeholder="Ingrese C.I o Nombre Comercial"
-        onclick="select();"
-      />
-
-      <script type="text/ng-template" id="autocompleteClienteTemplate.html">
-        <div class="autocomplete-suggestion-uib-typeahead">
-            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
-        </div>
-      </script>
-    </div>
+     
   </div>
   <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-    <div class="button-group">
-      <button
-        type="button"
-        class="btn btn-info btn-sm mt-4"
-        data-toggle="button"
-        data-more="#sh"
-        aria-pressed="false"
-        ng-click="$ctrl.onClickBtnMoreAnticipo()"
-      >
-        <fa-icon [icon]="'eye'"></fa-icon>
-      </button>
+    <div class="button-group"> 
       <button
         type="button"
         class="btn btn-danger btn-sm mt-4"
@@ -64,46 +23,12 @@
         class="btn btn-success btn-sm mt-4"
         (click)="openModal()"
       >
-        <i class="ti-plus"></i>
+        <fa-icon [icon]="'plus'"></fa-icon>
       </button>
     </div>
   </div>
 </div>
-
-<div
-  class="row justify-content-between"
-  ng-if="$ctrl.moreSearchOptionsAnticipo"
->
-  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-    <div class="form-group">
-      <label for="estado">Estado:</label>
-      <select
-        id="estadoDocumentos"
-        class="form-control"
-        ng-model="$ctrl.dataSearch.codEstado"
-        ng-change="$ctrl.getAnticipos()"
-      >
-        <option value="">Todos</option>
-        <option
-          ng-value="item.codigo"
-          ng-repeat="item in $ctrl.estadoDocumentos"
-        ></option>
-      </select>
-    </div>
-  </div>
-  <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-    <div class="form-group">
-      <label for="buscador">Buscar</label>
-      <input
-        type="text"
-        class="form-control border-select"
-        ng-change="$ctrl.searchFilterLocal()"
-        ng-model="$ctrl.dataSearchAnticipo.bySearch"
-        placeholder="Ej: 001-002"
-      />
-    </div>
-  </div>
-</div>
+ 
 
 <div class="row">
   <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">

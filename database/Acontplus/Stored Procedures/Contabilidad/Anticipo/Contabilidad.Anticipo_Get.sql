@@ -120,22 +120,25 @@ BEGIN
     IF @tipo = 2
         BEGIN 
             
-            SET @tableNames = 'establecimiento,caja,tipoDocumento,entidadFinanciera,subEntidadFinanciera'
+            SET @tableNames = 'establecimiento,entidadFinanciera,subEntidadFinanciera'
 
             SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
-
-            SELECT ac.idCaja
-                  ,ca.descripcion as caja 
-            FROM dbo.AsignacionCaja ac WITH (NOLOCK) 
-            INNER JOIN dbo.Usuario  us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
-            INNER JOIN dbo.Caja     ca WITH (NOLOCK) ON ca.idCaja    = ac.idCaja
-            WHERE ac.idUsuario = @idUsuario
-
-            SELECT idTipoDocumento,descripcion,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'A' ORDER BY descripcion DESC
+			 
 
             SELECT idEntidadFinanciera,descripcion,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
             SELECT idSubEntidadFinanciera,idEntidadFinanciera,descripcion,codigo FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+
+            RETURN
+        END
+
+    ---Filters
+	IF @tipo = 1
+        BEGIN 
+            
+            SET @tableNames = 'establecimiento'
+
+            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC			
 
             RETURN
         END

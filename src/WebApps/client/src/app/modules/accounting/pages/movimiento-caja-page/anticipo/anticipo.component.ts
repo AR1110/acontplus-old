@@ -15,8 +15,7 @@ import { ToasterService } from '@core/services/toaster.service';
   selector: 'app-anticipo',
   standalone: true,
   imports: [AppModule],
-  templateUrl: './anticipo.component.html',
-  styleUrl: './anticipo.component.scss'
+  templateUrl: './anticipo.component.html', 
 })
 export class AnticipoComponent {
 

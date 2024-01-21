@@ -141,4 +141,14 @@ BEGIN
 
             RETURN
         END
+
+      IF @tipo = 3
+        BEGIN 
+            
+            SET @tableNames = 'establecimiento'
+
+            SELECT idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+
+            RETURN
+        END
 END

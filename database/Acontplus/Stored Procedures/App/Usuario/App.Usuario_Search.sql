@@ -22,7 +22,7 @@ BEGIN
 	DECLARE @idEntidad int 
 		   ,@text nvarchar(200)
 
-	SELECT  @text  = (REPLACE(busqueda,space(1),'%'))  FROM OPENJSON(@json) WITH (busqueda NVARCHAR(500) '$.textSearch')
+	SELECT  @text  = (REPLACE(busqueda,space(1),'%'))  FROM OPENJSON(@json) WITH (busqueda NVARCHAR(500) '$.busqueda')
 
 	SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
  

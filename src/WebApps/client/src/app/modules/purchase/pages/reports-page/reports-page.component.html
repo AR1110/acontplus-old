@@ -3,6 +3,23 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-primary">
+          <input
+            type="checkbox"
+            id="supplierChecked"
+            [(ngModel)]="dataSearch.supplierChecked"
+            name="supplierChecked"
+          />
+          <label for="supplierChecked">Proveedor</label>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+    </div>
+    <hr />
+    <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="tipoDoc">Tipo Doc.:</label>
@@ -19,7 +36,7 @@
         </div>
       </div>
 
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label>Establecimiento: </label>
           <select
@@ -31,22 +48,6 @@
             @for(estab of establecimientos; track $index ){
             <option [ngValue]="estab.codEstab">
               {{ estab.nombreComercial }}
-            </option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label>Punto emisión: </label>
-          <select
-            class="form-select form-control-border"
-            [(ngModel)]="dataSearch.idPuntoEmision"
-          >
-            <option [ngValue]="0">Todos</option>
-            @for(ptoEmi of puntosEmision; track $index ){
-            <option [ngValue]="ptoEmi.idPuntoEmision">
-              {{ ptoEmi.ptoEmi }}
             </option>
             }
           </select>
@@ -71,50 +72,57 @@
     </div>
 
     <div class="row">
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="range-date-filter">Rango de Fechas</label>
-          <app-custom-date-range (onChangeDateRange)="onChangeDateRange($event)" />
+          <label>Punto emisión: </label>
+          <select
+            class="form-select form-control-border"
+            [(ngModel)]="dataSearch.idPuntoEmision"
+          >
+            <option [ngValue]="0">Todos</option>
+            @for(ptoEmi of puntosEmision; track $index ){
+            <option [ngValue]="ptoEmi.idPuntoEmision">
+              {{ ptoEmi.ptoEmi }}
+            </option>
+            }
+          </select>
         </div>
       </div>
-
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+      @if (dataSearch.supplierChecked) {
+      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
         <div class="form-group">
-          <label for="supplierFilter">Proveedor:</label>
-          <div class="input-group">
-            <div class="input-group-text">
-              <input
-                class="form-check-input mt-0"
-                type="checkbox"
-                value=""
-                aria-label="Checkbox for following text input"
-                [(ngModel)]="dataSearch.checkboxSupplier"
-              />
-            </div>
-            <input
-              id="typeahead-supplier"
-              type="text"
-              class="form-control form-control-border"
-              [(ngModel)]="supplierRazonSocial"
-              [ngbTypeahead]="searchSupplier"
-              [resultTemplate]="rt"
-              (selectItem)="onSelectSupplier($event)"
-              onclick="select();"
-            />
-          </div>
-
-          <ng-template #rt let-r="result" let-t="term">
-            <ngb-highlight
-              [result]="r.numeroIdentificacion + ' - ' + r.razonSocial"
-              [term]="t"
-            />
-          </ng-template>
+          <label for="supplierSearch">Proveedor</label>
+          <app-supplier-search
+            [isSearchSimple]="isSearchSupplierSimple"
+            (onSupplierSelected)="onSupplierSelected($event)"
+            [textSearch]="dataSearch.supplierName"
+            (emptyInput)="supplierResultEmptyInput($event)"
+          ></app-supplier-search>
+        </div>
+      </div>
+      }
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="dateRangeSelect">Rango Fechas</label>
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
         </div>
       </div>
     </div>
   </div>
-  <div class="card-footer">
-    <button class="btn btn-info m-r-5" (click)="getReport('pdf')">PDF</button>
-    <button class="btn btn-success" (click)="getReport('excel')">EXCEL</button>
+  <div class="card-body">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+      <button class="btn btn-danger" type="button" (click)="getReport('pdf')">
+        PDF
+      </button>
+      <button
+        class="btn btn-success"
+        type="button"
+        (click)="getReport('excel')"
+      >
+        EXCEL
+      </button>
+    </div>
   </div>
 </div>
