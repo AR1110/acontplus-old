@@ -152,9 +152,9 @@ BEGIN
             
             SET @tableNames = 'establecimientos,tipoComprobantes'
 
-            SELECT idEstablecimiento,codEstab,nombreComercial FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
+            SELECT idEstablecimiento,codEstab,nombreComercial FROM dbo.v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
 
-            SELECT descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','03','04','06','07') ORDER BY codigoSri
+            SELECT descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','04','07') ORDER BY codigoSri
 
             RETURN 
         END 
@@ -206,7 +206,7 @@ BEGIN
 			        FROM FactElect.RetAtsDocSustento retDoc
 			        INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts = retDoc.idRetencionAts
 			        WHERE retDoc.numAutDocSustento = @claveAcceso
-			        AND rAts.anuladaSri = 0
+			          AND rAts.anuladaSri = 0
 		        END
 
 		    IF @codDoc = '07' OR @codDoc = '04'
@@ -215,7 +215,9 @@ BEGIN
 				          ,dr.numDocSustento                                            as serieComprobante
 				          ,dr.fechaEmisionDocSustento                                   as fechaEmision
 				          ,dr.claveAcceso
-				          ,dr.baseImponible                                             as importeTotal
+				          ,ISNULL((
+                                SELECT CAST(SUM(di.TaxBase) as numeric(18,2)) FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) WHERE di.DocumentoRecibidoId = @id
+                          ),0) as baseImponible
 			        FROM FactElect.DocRelacionado dr WITH (NOLOCK)
 			        WHERE dr.idDocumentoRecibido = @id
 		        END

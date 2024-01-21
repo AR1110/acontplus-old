@@ -95,7 +95,6 @@ BEGIN
 		,baseImponible NUMERIC(18,2) NOT NULL
 		,porcentajeRetener NUMERIC(18,2) NOT NULL
 		,valorRetenido NUMERIC(18,2) NOT NULL
-
 		,codDocSustento VARCHAR(10)
         ,numDocSustento VARCHAR(40)
         ,fechaEmisionDocSustento VARCHAR(50) 

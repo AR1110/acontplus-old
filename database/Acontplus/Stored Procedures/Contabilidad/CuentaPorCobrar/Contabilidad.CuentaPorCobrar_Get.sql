@@ -299,7 +299,10 @@ BEGIN
 			     d.idDocRelacionado
 				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07')
 				,dr.serieComprobante
-				,saldo           = d.valorRetenido
+				,ISNULL
+                    ((
+                        SELECT SUM(di.TaxValue) FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) WHERE di.DocumentoRecibidoId = dr.idDocumento
+                    ),0) as saldo 
 				,codDoc          = 'Retención Version:'+dr.versionComp
 				,nroDoc          = ''
 				,GETDATE()
