@@ -323,10 +323,10 @@
             try {
                 showLoader();
                 docRecibidoSvc.getId($scope.selected[0].idDocumento).then(response => {
-                    if (response.code === "0") {
-                        tS.toastr('warning', response.message);
-                        return
-                    }
+                    // if (response.code === "0") {
+                    //     tS.toastr('warning', response.message);
+                    //     return
+                    // }
                     if (!response.payload) {
                         tS.toastr('warning', "Aun no se actualizado el Xml del SRI");
                         return
