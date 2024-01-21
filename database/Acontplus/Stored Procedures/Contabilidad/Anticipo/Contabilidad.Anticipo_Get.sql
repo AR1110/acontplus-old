@@ -133,7 +133,7 @@ BEGIN
         END
 
     ---Filters
-	IF @tipo = 1
+	IF @tipo = 3
         BEGIN 
             
             SET @tableNames = 'establecimiento'
