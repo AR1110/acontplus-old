@@ -10,7 +10,7 @@
     let modalSvc = {};
     let tipoDoc = {}
     const NUM_CONSUMIDOR_FINAL = "9999999999999";
-    let nombreModalVenta = {}
+    let nombreModalVenta = {}  ;
 
 
     app.controller('facturaCtrl', facturaCtrl)

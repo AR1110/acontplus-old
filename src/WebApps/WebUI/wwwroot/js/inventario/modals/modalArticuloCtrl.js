@@ -560,11 +560,12 @@ function modalArticuloCtrl(
 
             const { subFamilias } = await articuloSvc.getDataForForm();
             $scope.subFamilias = subFamilias;
-            const { idSubFamilia, codigo } = $scope.subFamilias.at(
+            const { idSubFamilia } = $scope.subFamilias.at(
                 $scope.subFamilias.length - 1
             );
             $scope.data.idSubFamilia = idSubFamilia;
-            setCodigo(codigo);
+            //  setCodigo(codigo);
+            $scope.getArticuloCodigo();
         } catch (error) {
             console.log(error);
         }
@@ -2125,7 +2126,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
                 hideLoader()
                 console.log(error);
             });
-        } 
+        }
     }
 
     $scope.delete = async (item) => {
@@ -2156,7 +2157,7 @@ function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, produc
                 hideLoader()
                 console.log(error);
             });
-        } 
+        }
     }
 
     $scope.upload = async () => {
