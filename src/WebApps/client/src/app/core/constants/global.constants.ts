@@ -22,7 +22,8 @@ export const enum DOC_TYPE {
   DNH = 'DH',
   LC = 'LC',
   IC = 'IC',
-  EC = 'EC'
+  EC = 'EC',
+  FV = 'FV'
 }
 
 export const enum DOC_TYPE_SRI {

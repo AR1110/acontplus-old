@@ -77,6 +77,7 @@
             try {
 
                 $scope.cuentasPorPagar = [];
+                $scope.selectedDocumentos = [];
 
                 let dataSearch = {
                     checkboxFecha: $scope.dataSearch.checkBoxFecha,

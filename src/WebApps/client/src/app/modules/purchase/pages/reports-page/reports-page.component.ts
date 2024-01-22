@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AppModule } from 'src/app/app.module';
 import { PurchaseModule } from '@modules/purchase/purchase.module';
 import { HttpClient } from '@angular/common/http';
-import { CODE_REPORT, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
+import { CODE_REPORT, DOC_TYPE, DOC_TYPE_SRI, PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@modules/accounting/constants/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
@@ -78,6 +78,7 @@ export class ReportsPageComponent {
             }
             this.tiposDoc = tiposDoc;
 
+            console.log(this.tiposDoc)
             this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codigo === DOC_TYPE.FC)?.codigo || '';
             //console.log(this.tiposDoc)
             this.estadosDoc = estadosDoc;
@@ -125,6 +126,12 @@ export class ReportsPageComponent {
     this.dataSearch.toDate = range.to;
   }
 
+  getCodDoc() {
+    if (this.dataSearch.codDoc === DOC_TYPE.LC) return DOC_TYPE_SRI.LC;
+    if (this.dataSearch.codDoc === DOC_TYPE.DNH) return DOC_TYPE.DNH;
+    if (this.dataSearch.codDoc === DOC_TYPE.FV) return DOC_TYPE_SRI.F;
+    return DOC_TYPE.FC;
+  }
 
 
 
@@ -159,12 +166,14 @@ export class ReportsPageComponent {
 
 
 
+
+
     const dataParms = {
       tipo: 1,
       format,
       ckFecha: true,
-      codEstab: this.dataSearch.codEstab,
-      codDoc: this.dataSearch.codDoc,
+      codEstab: isValidField(this.dataSearch.codEstab),
+      codDoc: this.getCodDoc(),
       idProveedor: this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor) || null,
       codEstado: isValidField(this.dataSearch.codEstado),
       fechaInicio: this.dataSearch.fromDate,
