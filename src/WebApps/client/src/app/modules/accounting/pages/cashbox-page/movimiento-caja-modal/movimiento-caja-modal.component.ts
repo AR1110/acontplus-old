@@ -13,11 +13,12 @@ import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 @Component({
   selector: 'app-movimiento-caja-modal',
   standalone: true,
-  imports: [AppModule, AccountingModule],
-  templateUrl: './movimiento-caja-modal.component.html', 
+  imports: [AppModule, AccountingModule, DateRangeSelectionComponent],
+  templateUrl: './movimiento-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })
 export class MovimientoCajaModalComponent {
@@ -41,24 +42,38 @@ export class MovimientoCajaModalComponent {
 
   dataSearch = {
     pageIndex: 1,
-    pageSize: 10,
-    maxSize: 5
-
+    pageSize: 25,
+    maxSize: 5,
+    fromDate: '',
+    toDate: '',
+    statusMovement: ''
   }
 
   page = 1;
 
   totalRecords = 0;
-  recordsQuantity = [10, 25, 50, 100, 200, 500];
+  recordsQuantity = [25, 50, 100, 200, 500];
 
   movimientosCaja: Array<ControlCaja> = [];
+
+  estadosMovimiento = [{
+    estado: false,
+    descripcion: 'CERRADO'
+  }, {
+    estado: true,
+    descripcion: 'ABIERTO'
+  }]
 
   getMovimientosCaja() {
 
     let dataSearch = {
       idCaja: this.params.idCaja,
       pageIndex: this.dataSearch.pageIndex,
-      pageSize: this.dataSearch.pageSize
+      pageSize: this.dataSearch.pageSize,
+      checkBoxDate: true,
+      dateStart: this.dataSearch.fromDate,
+      dateEnd: this.dataSearch.toDate,
+      statusMovement: [""].includes(this.dataSearch.statusMovement) ? null : this.dataSearch.statusMovement
     }
     showLoader();
     this.controlCajaSvc.getAll(dataSearch).subscribe({
@@ -87,6 +102,12 @@ export class MovimientoCajaModalComponent {
     }
   }
 
+  onDateRangeSelection(range: { from: string, to: string }) {
+    
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
+  }
+
   pageChanged(): void {
     this.getMovimientosCaja();
   }
@@ -96,6 +117,9 @@ export class MovimientoCajaModalComponent {
     this.getMovimientosCaja();
   }
 
+  refresh() {
+    this.getMovimientosCaja()
+  }
 
   cerrarCaja(estado: boolean) {
     return (estado && this.dataPermisosCaja.cerrarCaja);

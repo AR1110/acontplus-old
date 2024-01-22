@@ -33,6 +33,29 @@ export class MovimientoCajaService {
       )
   }
 
+  getDataFilter() {
+    let paramsStr = JSON.stringify({ tipo: 3 })
+    return this.http.get(`${this.url}Get?json=${paramsStr}`)
+      .pipe(
+        map(response => {
+          if (isApiResponse(response)) {
+            if (response.code === "0") {
+              throw response;
+            }
+            if (response.code === "1") {
+              let { establecimiento } = JSON.parse(response.payload as string)
+              return {
+                establecimientos: establecimiento
+              };
+            }
+          }
+          return {
+            establecimientos: []
+          }
+        })
+      )
+  }
+
   getDataForm() {
     let paramsStr = JSON.stringify({ tipo: 2 })
     return this.http.get(`${this.url}Get?json=${paramsStr}`)
@@ -54,9 +77,9 @@ export class MovimientoCajaService {
               }
             }),
               entidadesFinanciera = entidadFinanciera;
-              establecimientos = establecimiento;
-              subEntidadesFinanciera = subEntidadFinanciera;
-              tiposDocumento = tipoDocumento
+            establecimientos = establecimiento;
+            subEntidadesFinanciera = subEntidadFinanciera;
+            tiposDocumento = tipoDocumento
           }
           return {
             cajas,
@@ -70,11 +93,11 @@ export class MovimientoCajaService {
   }
 
   post<T>(data: T) {
-    return this.http.post(`${this.url}`, {data})
+    return this.http.post(`${this.url}`, { data })
   }
 
   put<T>(id: number, data: T) {
-    return this.http.put(`${this.url}${id}`, {data})
+    return this.http.put(`${this.url}${id}`, { data })
   }
 
   delete(id: number) {

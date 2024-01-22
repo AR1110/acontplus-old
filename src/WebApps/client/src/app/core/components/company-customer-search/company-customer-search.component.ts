@@ -6,9 +6,11 @@ import { CompanyCustomerService } from '@modules/customer/company-customer/servi
 import {
   Observable,
   OperatorFunction,
-  catchError,
-  debounceTime,
+  catchError, 
+  distinctUntilChanged,
+  of,
   switchMap,
+  tap,
 } from 'rxjs';
 import { AppModule } from 'src/app/app.module';
 
@@ -21,7 +23,12 @@ import { AppModule } from 'src/app/app.module';
 })
 export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
+  @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
+
+  private modalService = inject(ModalService);
+  searching = false;
+  searchFailed = false;
 
   textSearch = '';
   dataSearch = {
@@ -29,8 +36,7 @@ export class CompanyCustomerSearchComponent {
     razonSocial: '',
   };
 
-  private modalService = inject(ModalService);
-  constructor(private companyCustomerService: CompanyCustomerService) {}
+  constructor(private companyCustomerService: CompanyCustomerService) { }
 
   openModal() {
     if (this.dataSearch.idCliente > 0) {
@@ -53,7 +59,7 @@ export class CompanyCustomerSearchComponent {
   onSelect($event: any) {
     let customer: CompanyCustomerSearch = $event.item;
     this.dataSearch.idCliente = customer.idCliente;
-    this.onCustomerSelected.emit({ data: this.dataSearch });
+    this.onCustomerSelected.emit({ data: customer });
     setTimeout(() => {
       this.textSearch = customer.nombreFiscal;
     });
@@ -63,17 +69,28 @@ export class CompanyCustomerSearchComponent {
     text$: Observable<string>
   ) =>
     text$.pipe(
-      debounceTime(200),
+      distinctUntilChanged(),
+      tap(() => (this.searching = true)),
       switchMap((term) => {
         if (!term || term.length < 2) {
-          return [];
+
+          return of([]);
         }
         return this.companyCustomerService.search({ textSearch: term }).pipe(
+          tap(() => (this.searchFailed = false)),
           catchError((error) => {
             console.log(error);
-            return [];
+            this.searchFailed = true;
+            return of([]);
           })
         );
-      })
+      }),
+      tap(() => (this.searching = false)),
     );
+
+  onKeyupSearch() {
+    if (!this.textSearch) {
+      this.resultEmptyInput.emit({})
+    }
+  }
 }

@@ -3,3 +3,5 @@ export interface User {
   nombreUsuario:  string
   nroIdentificacion: string
 }
+
+export interface UserSearch extends User {}

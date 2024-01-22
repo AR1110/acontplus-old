@@ -139,8 +139,7 @@ export class DateRangeSelectionComponent {
     const dateRange = {
       from: this.formatter.format(this.fromDate),
       to: this.formatter.format(this.toDate),
-    };
-    console.log(this)
+    }; 
     this.onChangeDateRange.emit(dateRange);
 
     // if (close) {

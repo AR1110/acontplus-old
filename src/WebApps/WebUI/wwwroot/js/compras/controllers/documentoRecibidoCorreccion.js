@@ -1068,7 +1068,7 @@
             }
         }
 
-     
+
 
         onLoad();
         function onLoad() {
@@ -1080,7 +1080,7 @@
                     $scope.sustentosTributario = sustentosTributario;
                     $scope.medidas = medidas;
                     $scope.bodegasFiltered = bodegas.filter(estab => estab.codEstab === $scope.dataEstab.codEstab);
-                    
+
                     // $uibModalInstance.rendered.then(() => {
                     //     getBarcode($scope.infoTributaria.claveAcceso);
                     // })
@@ -1335,8 +1335,8 @@
 
         $scope.addBodega = async () => {
             try {
-                if (!($scope.comprobanteForm.idBodega > 0)){
-                     
+                if (!($scope.comprobanteForm.idBodega > 0)) {
+
                     return
                 }
                 let { isConfirmed } = await Swal.fire({
@@ -1352,8 +1352,9 @@
 
                 if (!isConfirmed) {
                     $scope.comprobanteForm.idBodega = 0;
-                    return 
-                } 
+                    $scope.$apply()
+                    return
+                }
 
                 if ($scope.comprobanteForm.idBodega > 0) {
                     let data = {
@@ -1413,7 +1414,11 @@
                     cancelButtonText: 'No!'
                 })
 
-                if (!isConfirmed) return
+                if (!isConfirmed) {
+                    $scope.comprobanteForm.idMedida = 0;
+                    $scope.$apply()
+                    return
+                }
 
                 let data = {
                     todos: true,

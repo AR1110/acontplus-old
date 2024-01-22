@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AppModule } from 'src/app/app.module';
 import { PurchaseModule } from '@modules/purchase/purchase.module';
-
 import { HttpClient } from '@angular/common/http';
 import { CODE_REPORT, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@modules/accounting/constants/accounting.constants';
@@ -10,24 +9,22 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
-import { Observable, OperatorFunction, catchError, debounceTime, map, retry, switchMap } from 'rxjs';
-import { SupplierService } from '@modules/purchase/services/supplier.service';
-import { SupplierSearch } from '@modules/purchase/models/supplier.model';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { SupplierSearchComponent } from '@modules/purchase/components/supplier-search/supplier-search.component';
 
 @Component({
   selector: 'app-reports-page',
   standalone: true,
-  imports: [AppModule, PurchaseModule],
+  imports: [AppModule, PurchaseModule, SupplierSearchComponent, DateRangeSelectionComponent],
   templateUrl: './reports-page.component.html',
   styleUrl: './reports-page.component.scss'
 })
 export class ReportsPageComponent {
   http = inject(HttpClient);
   private sharedSvc = inject(SharedService);
-  private supplierSvc = inject(SupplierService)
   private tS = inject(ToasterService)
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
 
@@ -41,30 +38,14 @@ export class ReportsPageComponent {
     idPuntoEmision: 0,
     codDoc: '',
     idProveedor: 0,
-    checkboxSupplier: false,
     codEstado: '',
     fromDate: '',
-    toDate: ''
+    toDate: '',
+    supplierChecked: false,
+    supplierName: ''
   }
 
-  supplierRazonSocial = ''
-
-
-  searchSupplier: OperatorFunction<string, Array<SupplierSearch>> = (text$: Observable<string>) =>
-    text$.pipe( 
-      switchMap((term) => {
-        if (!term || term.length < 2) {
-          return [];
-        }
-
-        return this.supplierSvc.search({ textSearch: term }).pipe(
-          catchError((err) => {
-            console.log(err);
-            return [];
-          })
-        );
-      })
-    );
+  isSearchSupplierSimple = true;
 
   private initialed() {
 
@@ -115,13 +96,14 @@ export class ReportsPageComponent {
     this.initialed()
   }
 
-  onSelectSupplier($event: any) {
-    let supplier: SupplierSearch = $event.item;
-    this.dataSearch.idProveedor = supplier.idProveedor;
+  onSupplierSelected<T extends { data: any }>($event: T) {
+    const { data } = $event;
+    this.dataSearch.supplierName = data.razonSocial;
+    this.dataSearch.idProveedor = data.idProveedor;
+  }
 
-    setTimeout(() => {
-      this.supplierRazonSocial = supplier.razonSocial
-    })
+  supplierResultEmptyInput($event: any) {
+    this.dataSearch.idProveedor = 0
   }
 
   onChangeEstab() {
@@ -138,9 +120,9 @@ export class ReportsPageComponent {
   }
 
 
-  onChangeDateRange(data: { fromDate: any, toDate: any }) {
-    this.dataSearch.fromDate = data.fromDate;
-    this.dataSearch.toDate = data.toDate;
+  onDateRangeSelection(range: { from: string, to: string }) {
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
   }
 
 
@@ -164,7 +146,7 @@ export class ReportsPageComponent {
       return
     }
 
-    if (this.dataSearch.checkboxSupplier) {
+    if (this.dataSearch.supplierChecked) {
       if (!isValidField(this.dataSearch.idProveedor)) {
         this.tS.toastr({
           type: 'warning',
@@ -183,7 +165,7 @@ export class ReportsPageComponent {
       ckFecha: true,
       codEstab: this.dataSearch.codEstab,
       codDoc: this.dataSearch.codDoc,
-      idProveedor: this.dataSearch.checkboxSupplier && isValidField(this.dataSearch.idProveedor) || null,
+      idProveedor: this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor) || null,
       codEstado: isValidField(this.dataSearch.codEstado),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate
@@ -199,7 +181,7 @@ export class ReportsPageComponent {
       }),
       dataParams: JSON.stringify(dataParms)
     }
- 
+
     this.sharedSvc.getReport(parameters, format)
   }
 

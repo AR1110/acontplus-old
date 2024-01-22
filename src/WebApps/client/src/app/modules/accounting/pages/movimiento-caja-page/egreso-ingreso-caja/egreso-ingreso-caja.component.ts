@@ -10,13 +10,16 @@ import { SharedService } from '@core/services/shared.service';
 import Swal from 'sweetalert2';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { isValidField } from '@core/utils/utils';
+import { EmployeeSearchComponent } from '@modules/sale/components/employee-search/employee-search.component';
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
   standalone: true,
-  imports: [AppModule],
+  imports: [AppModule, DateRangeSelectionComponent, EmployeeSearchComponent],
   templateUrl: './egreso-ingreso-caja.component.html',
-  styleUrl: './egreso-ingreso-caja.component.scss'
 })
 export class EgresoIngresoCajaComponent {
 
@@ -29,20 +32,35 @@ export class EgresoIngresoCajaComponent {
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
-    maxSize: 5
+    maxSize: 5,
+    codEstab: '',
+    fromDate: '',
+    toDate: '',
+    employeeId: 0,
+    codEstado: ''
   }
   page = 1;
   recordsQuantity = [25, 50, 100];
 
 
+  establecimientos: Array<EstablecimientoSelectHtmlOnly> = []
   movimientosCaja: Array<MovimientoCajaRead> = [];
 
+  isSearchEmployeeSimple = true;
   getMovimientosCaja() {
+
     let params = {
+      codEstab: this.dataSearch.codEstab,
       pageIndex: this.dataSearch.pageIndex,
-      pageSize: this.dataSearch.pageSize
+      pageSize: this.dataSearch.pageSize,
+      checkBoxFecha: true,
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate,
+      idEmpleado: isValidField(this.dataSearch.employeeId),
+      codEstado: isValidField(this.dataSearch.codEstado)
     }
     showLoader();
+    this.movimientosCaja = [];
     this.movCajaSvc.getAll(params).subscribe({
       next: (response) => {
         hideLoader();
@@ -56,11 +74,41 @@ export class EgresoIngresoCajaComponent {
     })
   }
   ngOnInit() {
-    this.getMovimientosCaja()
+    showLoader()
+    this.movCajaSvc.getDataFilter().subscribe({
+      next: (response) => {
+        hideLoader()
+        this.establecimientos = response.establecimientos;
+        if (this.establecimientos.length > 0) {
+          let dataEstab = this.establecimientos.find(item => (item.predeterminado))
+          if (dataEstab) {
+            this.dataSearch.codEstab = dataEstab.codEstab;
+            this.getMovimientosCaja()
+          }
+        }
+      },
+      error(err) {
+        console.log(err)
+        hideLoader()
+      },
+    })
+  }
+
+  onDateRangeSelection(range: { from: string, to: string }) {
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
   }
 
   refresh() {
     this.getMovimientosCaja()
+  }
+
+  onEmployeeSelected<T extends { data: any }>($event: T) {
+    const { data } = $event;
+    this.dataSearch.employeeId = data.idEmpleado;
+  }
+  employeeResultEmptyInput($event: any) {
+    this.dataSearch.employeeId = 0;
   }
 
   openModal(params?: any) {

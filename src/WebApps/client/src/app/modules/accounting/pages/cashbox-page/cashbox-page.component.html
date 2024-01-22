@@ -12,7 +12,7 @@
               (change)="changePageSize()"
             >
               @for(item of recordsQuantity; track $index){
-              <option [value]="item">{{ item }}</option>
+              <option [ngValue]="item">{{ item }}</option>
               }
             </select>
           </span>

@@ -27,7 +27,7 @@ export class AnticipoService {
             }
             if (response.code === "1") {
               let { anticipos } = JSON.parse(response.payload as string);
-              console.log(anticipos)
+               
               anticipos = anticipos.map((anticipo: any) => {
                 return {
                   idAnticipo: anticipo.idAnticipo,
@@ -51,6 +51,32 @@ export class AnticipoService {
             }
           }
           return []
+        })
+      )
+  }
+
+  getDataFilter() {
+    let params = JSON.stringify({ tipo: 3 })
+    return this.http.get(`${this.url}?json=${params}`)
+      .pipe(
+        map(response => { 
+          if (isApiResponse(response)) {
+
+            if (response.code === "0") {
+              throw response;
+            }
+            if (response.code === "1") { 
+
+              let mainData = JSON.parse(response.payload as string);
+              const { establecimiento } = mainData;
+              return {
+                establecimientos: establecimiento
+              }
+            }
+          }
+          return {
+            establecimientos: []
+          }
         })
       )
   }

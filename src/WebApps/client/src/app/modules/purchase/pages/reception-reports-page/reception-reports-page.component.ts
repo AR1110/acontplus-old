@@ -1,4 +1,3 @@
-import { DateRangeSelectionComponent } from './../../../../core/components/date-range-selection/date-range-selection.component';
 
 import { Component, inject } from '@angular/core';
 import { hideLoader, showLoader } from '@core/utils/loader';
@@ -9,14 +8,22 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { CODE_REPORT, DOC_TYPE_SRI, FORMAT_REPORT } from '@core/constants/global.constants';
 import { SupplierSearchComponent } from '@modules/purchase/components/supplier-search/supplier-search.component';
+import { UserSearchComponent } from '@core/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 @Component({
   selector: 'app-reception-reports-page',
   standalone: true,
-  imports: [AppModule, AccountingModule, SupplierSearchComponent, DateRangeSelectionComponent],
+  imports: [
+    AppModule,
+    AccountingModule,
+    SupplierSearchComponent,
+    DateRangeSelectionComponent,
+    UserSearchComponent
+  ],
   templateUrl: './reception-reports-page.component.html',
   styles: ``
 })
@@ -35,10 +42,13 @@ export class ReceptionReportsPageComponent {
     codEstab: '',
     codDoc: '',
     supplierChecked: false,
+    userChecked: false,
     supplierName: '',
+    userName: '',
     numeroIdentificacion: '',
     fromDate: '',
-    toDate: ''
+    toDate: '',
+    userId: 0
   }
 
   ngOnInit() {
@@ -71,9 +81,19 @@ export class ReceptionReportsPageComponent {
     this.dataSearch.numeroIdentificacion = data.numeroIdentificacion;
   }
 
-  resultEmptyInput($event: any) {
+  supplierResultEmptyInput($event: any) {
     this.dataSearch.numeroIdentificacion = ''
   }
+
+  onUserSelected<T extends { data: any }>($event: T) {
+    const { data } = $event;
+    this.dataSearch.userName = data.nombreComplero;
+    this.dataSearch.userId = data.idUsuario;
+  }
+  userResultEmptyInput($event: any) {
+    this.dataSearch.userId = 0;
+  }
+
 
   onDateRangeSelection(range: { from: string, to: string }) {
     this.dataSearch.fromDate = range.from;
@@ -87,10 +107,19 @@ export class ReceptionReportsPageComponent {
     this.getReport(FORMAT_REPORT.EXCEL)
   }
 
-  getTipoByDoc() {
-    if (this.dataSearch.codDoc === DOC_TYPE_SRI.NC) return 3;
-    if (this.dataSearch.codDoc === DOC_TYPE_SRI.R) return 4;
-    return 2; //Factura por defecto
+  getDataReport() {
+    if (this.dataSearch.codDoc === DOC_TYPE_SRI.NC) return {
+      tipo: 3,
+      codigo: CODE_REPORT.RRNC
+    }
+    if (this.dataSearch.codDoc === DOC_TYPE_SRI.R) return {
+      tipo: 4,
+      codigo: CODE_REPORT.RRG
+    }
+    return {
+      tipo: 2,
+      codigo: CODE_REPORT.RRF
+    } //Factura por defecto
   }
 
   getReport(format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL) {
@@ -101,7 +130,14 @@ export class ReceptionReportsPageComponent {
       })
       return
     }
-    let tipo = this.getTipoByDoc();
+    if (this.dataSearch.userChecked && !isValidField(this.dataSearch.userId)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el usuario!'
+      })
+      return
+    }
+    let { tipo, codigo } = this.getDataReport();
     const dataParms = {
       tipo,
       format,
@@ -110,6 +146,7 @@ export class ReceptionReportsPageComponent {
       codDoc: this.dataSearch.codDoc,
       identificacion: this.dataSearch.supplierChecked && isValidField(this.dataSearch.numeroIdentificacion) || null,
       //  codEstado: isValidField(this.dataSearch.codEstado),
+      idUsuario: isValidField(this.dataSearch.userId),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate
     }
@@ -117,7 +154,7 @@ export class ReceptionReportsPageComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: CODE_REPORT.RRF,
+        codigo,
         codEstab: this.dataSearch.codEstab,
         format,
         aditionalParams: []

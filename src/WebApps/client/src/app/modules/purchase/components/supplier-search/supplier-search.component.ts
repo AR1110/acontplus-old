@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AppModule } from 'src/app/app.module';
 import { SupplierSearch } from '@modules/purchase/models/supplier.model';
 import { SupplierService } from '@modules/purchase/services/supplier.service';
 import { Observable, OperatorFunction, catchError, debounceTime, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
-import { AppModule } from 'src/app/app.module';
 
 @Component({
   selector: 'app-supplier-search',
