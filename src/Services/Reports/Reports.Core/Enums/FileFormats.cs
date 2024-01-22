@@ -9,6 +9,8 @@ namespace Reports.Core.Enums
         {
             [Description("application/pdf")]
             PDF,
+            [Description("application/vnd.ms-excel")]
+            EXCEL,
             [Description("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
             EXCELOPENXML,
             [Description("application/vnd.openxmlformats-officedocument.wordprocessingml.document")]
@@ -22,8 +24,10 @@ namespace Reports.Core.Enums
         {
             [Description(".pdf")]
             PDF,
+            [Description(".xls")]
+            EXCEL,
             [Description(".xlsx")]
-            EXCELOPENXML,
+            EXCELOPENXML, 
             [Description(".docx")]
             WORDOPENXML,
             [Description(".html")]
