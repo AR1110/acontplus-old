@@ -389,6 +389,7 @@ BEGIN
 				  ,fechaEmision         = FORMAT(@fechaEmision,'dd/MM/yyyy')
 				  ,serieComprobante     = @serieComprobante
 			FROM @tbVentas
+
 			RETURN 
 		END
 	

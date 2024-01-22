@@ -86,7 +86,7 @@ BEGIN
 										INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.idEstablecimiento = pp.idEstablecimiento
    										LEFT JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
 										INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
-										WHERE pp.idEntidad = @idEntidad'
+										WHERE pp.idEntidad = @idEntidad '
 
 			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT,
 												@codEstab VARCHAR(100),
@@ -229,12 +229,6 @@ BEGIN
 
 				SELECT TOP 1 @identificacionReceptor = ruc , @cedula = ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 				
-				SELECT * FROM EntidadFinanciera WHERE estado = 1
-				SELECT * FROM SubEntidadFinanciera WHERE idEntidad = @idEntidad AND estado = 1
-				SELECT * FROM Banco WHERE estado = 1
-				SELECT * FROM Ciudad WHERE estado = 1
-
-
 				INSERT INTO @pagoDocuments(idComprobante,codDoc)
 				SELECT p.idComprobante,td.codigoSri FROM Pago p WITH (NOLOCK) 
 													INNER JOIN dbo.TipoDocumento     td WITH (NOLOCK) ON p.idTipoDocumento      = td.idTipoDocumento 
@@ -270,7 +264,7 @@ BEGIN
 				  AND de.versionComp = '2.0.0'
 				  AND de.codEstado = 4
 				  AND de.idEntidad = @idEntidad
-				  AND de.idContribuyente = @rucEmisor
+				  AND de.idContribuyente = @idProveedor
 				  AND de.idDocumentoElectronico NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '07')
 
 
@@ -309,8 +303,18 @@ BEGIN
 				  AND dr.identificacionReceptor = @cedula
 				  AND dr.rucEmisor = @rucEmisor 
 				  AND d.idDocRelacionado NOT IN (SELECT idComprobante FROM @pagoDocuments t WHERE t.codDoc = '04')
-				SELECT * FROM @table
+				
+                SELECT * FROM EntidadFinanciera WHERE estado = 1
+				
+                SELECT * FROM SubEntidadFinanciera WHERE idEntidad = @idEntidad AND estado = 1
+				
+                SELECT * FROM Banco WHERE estado = 1
+				
+                SELECT * FROM Ciudad WHERE estado = 1
 
+                
+                SELECT * FROM @table
+                RETURN 
 				
 			END 
 
@@ -362,7 +366,7 @@ BEGIN
 
             SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NPA','PA')
 
-            SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('LC','FV','DH','FC')
+            SELECT idTipoDocumento,descripcion,codigo,codigoSri FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FF','FE','IV','LC')
             
             RETURN 
         END 
