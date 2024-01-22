@@ -60,6 +60,7 @@ export class EgresoIngresoCajaComponent {
       codEstado: isValidField(this.dataSearch.codEstado)
     }
     showLoader();
+    this.movimientosCaja = [];
     this.movCajaSvc.getAll(params).subscribe({
       next: (response) => {
         hideLoader();

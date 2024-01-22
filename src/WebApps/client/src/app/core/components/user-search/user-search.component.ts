@@ -28,6 +28,7 @@ export class UserSearchComponent {
       tap(() => (this.searching = true)),
       switchMap((term) => {
         if (!term || term.length < 2) {
+          
           return of([]);
         }
         return this.userSvc.search({ textSearch: term }).pipe(

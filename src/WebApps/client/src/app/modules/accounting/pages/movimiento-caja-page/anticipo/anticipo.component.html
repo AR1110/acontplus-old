@@ -17,10 +17,25 @@
       </select>
     </div>
   </div>
-  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-    <div class="form-group"></div>
+  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="dateRangeSelect">Rango Fechas: </label>
+      <app-date-range-selection
+        (onChangeDateRange)="onDateRangeSelection($event)"
+      />
+    </div>
   </div>
-  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="customerSearch">Cliente: </label>
+      <app-company-customer-search
+        [isSearchSimple]="isCustomerSearchSimple"
+        (onCustomerSelected)="onCustomerSelected($event)"
+        (resultEmptyInput)="resultCustomerEmptyInput($event)"
+      />
+    </div>
+  </div>
+
   <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
     <div class="button-group">
       <button
@@ -127,6 +142,10 @@
         <td>{{ item.estadoDoc }}</td>
       </tr>
 
+      } @empty{
+      <tr>
+        <td colspan="9" align="center">No hay registros!</td>
+      </tr>
       }
     </tbody>
     <tfoot>
