@@ -267,8 +267,7 @@
                 $scope.getCuotaCuentaPorPagar(item).then(response => {
 
                     if (response.code === "0") {
-                        hideLoader();
-                        console.log(response)
+                        hideLoader(); 
                         $scope.deleteDocSeleted(item);
                     }
 
@@ -1102,7 +1101,6 @@
 
 
         $scope.showPagoDetalle = (data) => {
-            console.log($scope.pagosDetalle)
             let tempPagosDetalle = $scope.pagosDetalle.filter(item => item.idCuotaPorPagar === data.idCuotaPorPagar);
             let infoPagosDetalle = [];
 
@@ -1276,7 +1274,7 @@
                             historial: JSON.stringify(historialPagos),
                         }
                         mS.getData('post', '/ComprobanteEgreso/Post', spParams).then(response => {
-                            console.log(response)
+                          
                             if (response.code === "0") {
                                 hideLoader();
                                 fS.sweetAlert('warning', response.message)
@@ -1348,7 +1346,7 @@
 
             try {
                 let spParams = JSON.stringify({ tipo: 3, idProveedor: $scope.proveedor.idProveedor })
-
+                showLoader();
                 mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
 
                     if (response.code === "0") {
@@ -1358,8 +1356,6 @@
                     if (response.code === "1") {
 
                         let tempData = JSON.parse(response.payload);
-
-                        console.log(tempData)
 
                         $scope.entidadesFinancieras = tempData[0];
                         $scope.tempSubEntidadesFinancieras = tempData[1];
@@ -1373,7 +1369,7 @@
                         $scope.documentosElectronicos = tempData[4];
 
                     }
-                })
+                }).finally(()=>hjide)
             } catch (error) {
                 console.log('Initiload Form Payment', error);
             }
@@ -1518,7 +1514,7 @@
             }
 
 
-            console.log($scope.getDataPago())
+           
             $uibModalInstance.close($scope.getDataPago());
         }
 
