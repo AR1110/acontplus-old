@@ -1,9 +1,7 @@
-
-
+ 
 (function () {
 
-    'use strict';
-
+    'use strict'; 
     /**
      * Para documentos de ventas
      */
@@ -488,10 +486,7 @@
         return service;
 
     }
-
-
-
-
+ 
     /**
      * Para documentos de compras 
      */
@@ -702,7 +697,7 @@
                 let { totalNetoIva } = filteredItems.reduce((acc, prev) => {
                     // Calcular el total neto con descuentos 
                     let precioTotalSinImpuesto = (prev.precioUnitario * prev.cantidad) - prev.valorDescuento;
-                    acc.totalNetoIva += precioTotalSinImpuesto; 
+                    acc.totalNetoIva += precioTotalSinImpuesto;
 
                     return acc;
                 }, {
@@ -737,7 +732,7 @@
                                     <td class="right">$${fS.roundNumber(totalIva, decimal.nroIva)}</td>
                                 </tr>`
                 }
-            } 
+            }
 
             const importeTotal = totalPrecioTotalSinImpuesto + sumTotalIva;
             if (totalSinImpuesto > 0) {
@@ -816,7 +811,7 @@
 
             return isConfirmed;
 
-        } 
+        }
 
 
         /**
