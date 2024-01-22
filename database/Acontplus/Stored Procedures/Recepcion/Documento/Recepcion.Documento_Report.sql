@@ -89,7 +89,7 @@ BEGIN
 	                                  ,dr.claveAcceso
 	                                  ,dr.fechaEmision
 	                                  ,dr.rucEmisor
-	                                  ,dr.razonSocialEmisior
+	                                  ,dr.razonSocialEmisior as razonSocialEmisor
 	                                  ,ISNULL
 	                                  ((
 			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
@@ -179,18 +179,130 @@ BEGIN
 				                                AND ir.codigo = 2
 
 		                                ),0) as retIva
-
+                                        ,us.nombreUsuario as usuario
                                 FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
-                                INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab = dr.codEstab
+                                INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab  = dr.codEstab
+                                INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
                                 WHERE dr.codDoc = ''01''
                                   AND dr.xmlCompressed IS NOT NULL
+                                  AND dr.codEstab = @codEstab
+
+                                UNION ALL
+
+                                SELECT es.idEstablecimiento
+                                      ,es.nombreComercial
+	                                  ,es.codEstab
+	                                  ,fc.idFacturaCompra
+	                                  ,fc.idUsuario
+	                                  ,fc.puntoEmision + ''-'' + Helper.F_Auto_Sequential(fc.nroDocumento) 
+	                                  ,fc.nroAutorizacion
+	                                  ,fc.fechaEmision
+	                                  ,pr.numeroIdentificacion
+	                                  ,pr.nombreFiscal
+	                                  ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(fi.TaxBase)as numeric(18,2)) 
+			                                FROM Compra.FacturaImpuesto fi WITH (NOLOCK)
+			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
+			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
+			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
+			                                  AND ti.codigoPorcentaje = ''7''
+			
+	                                   ),0) 
+	                                   ,ISNULL
+	                                   ((
+			                                SELECT CAST(SUM(fi.TaxBase)as numeric(18,2)) 
+			                                FROM Compra.FacturaImpuesto fi WITH (NOLOCK)
+			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
+			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
+			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
+			                                  AND ti.codigoPorcentaje = ''6''
+			
+	                                   ),0) 
+	                                    ,ISNULL
+	                                   ((
+			                                SELECT CAST(SUM(fi.TaxBase)as numeric(18,2)) 
+			                                FROM Compra.FacturaImpuesto fi WITH (NOLOCK)
+			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
+			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
+			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
+			                                  AND ti.codigoPorcentaje = ''0''
+			
+	                                   ),0)
+	                                   ,ISNULL
+	                                   ((
+			                                SELECT CAST(SUM(fi.TaxBase)as numeric(18,2)) 
+			                                FROM Compra.FacturaImpuesto fi WITH (NOLOCK)
+			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
+			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
+			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
+			                                  AND ti.codigoPorcentaje IN(''2'',''8'')
+			
+	                                   ),0)
+	                                   ,CAST(fc.totalDescuento as numeric(18,2))
+	                                   ,ISNULL
+	                                   ((
+			                                SELECT CAST(SUM(fi.TaxValue)as numeric(18,2)) 
+			                                FROM Compra.FacturaImpuesto fi WITH (NOLOCK)
+			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
+			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
+			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
+			                                  AND im.codigo = ''2''
+			
+	                                   ),0)
+	                                   ,ISNULL
+	                                   ((
+			                                SELECT CAST(SUM(fi.TaxValue)as numeric(18,2)) 
+			                                FROM Compra.FacturaImpuesto fi WITH (NOLOCK)
+			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
+			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
+			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
+			                                  AND im.codigo = ''3''
+			
+	                                   ),0)
+	                                   ,CAST(fc.total as numeric(18,2))
+                                       ,(
+		
+			                                SELECT TOP 1 rt.estab + ''-'' + rt.ptoEmi + ''-'' + Helper.F_Auto_Sequential(rt.secuencial)
+			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
+			                                WHERE ds.numAutDocSustento = fc.nroAutorizacion
+				                                AND rt.anuladaSri = 0 
+
+		                                ) as nroRetencion
+
+		                                ,ISNULL((
+		
+			                                SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
+			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
+			                                INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
+			                                WHERE ds.numAutDocSustento = fc.nroAutorizacion
+	 			                                AND rt.anuladaSri = 0 
+				                                AND ir.codigo = 1
+
+		                                ),0) as retRenta
+
+		                                ,ISNULL((
+		
+			                                SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
+			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
+			                                INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
+			                                WHERE ds.numAutDocSustento = fc.nroAutorizacion
+	 			                                AND rt.anuladaSri = 0 
+				                                AND ir.codigo = 2
+
+		                                ),0) as retIva
+                                        ,us.nombreUsuario as usuario
+                                FROM dbo.FacturaCompra         fc WITH (NOLOCK) 
+                                INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab    = fc.codEstab
+                                INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor = fc.idProveedor
+                                INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario   = fc.idUsuario
+                                WHERE fc.codEstab = @codEstab
+                                  AND fc.estado =  1
 
                         ) as dt WHERE dt.idDocumento > 0 '
-
-            IF @codEstab IS NOT NULL
-                BEGIN
-                    SET @sql = @sql + 'AND dt.codEstab = @codEstab '
-                END 
 
             IF @ckFecha = 1
                 BEGIN
@@ -273,7 +385,7 @@ BEGIN
 	                            ,dr.claveAcceso
 	                            ,dr.fechaEmision
 	                            ,dr.rucEmisor
-	                            ,dr.razonSocialEmisior
+	                            ,dr.razonSocialEmisior as razonSocialEmisor
 	                            ,ISNULL
 	                            ((
 			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
@@ -335,9 +447,10 @@ BEGIN
 			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento
 	                            ),0) as importeTotal 
-
+                                ,us.nombreUsuario as usuario
                         FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
                         INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab = dr.codEstab
+                        INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
                         WHERE dr.codDoc = ''04''
                             AND dr.xmlCompressed IS NOT NULL '
 
@@ -427,7 +540,7 @@ BEGIN
 	                          ,dr.fechaEmision
 	                          ,dr.claveAcceso
 	                          ,dr.rucEmisor
-	                          ,dr.razonSocialEmisior
+	                          ,dr.razonSocialEmisior as razonSocialEmisor
 	                          ,ISNULL
 	                          ((
 			                        SELECT CAST(SUM(di.TaxValue) as numeric(18,2)) 
