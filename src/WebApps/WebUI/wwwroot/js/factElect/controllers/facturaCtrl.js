@@ -10,7 +10,7 @@
     let modalSvc = {};
     let tipoDoc = {}
     const NUM_CONSUMIDOR_FINAL = "9999999999999";
-    let nombreModalVenta = {}
+    let nombreModalVenta = {}  ;
 
 
     app.controller('facturaCtrl', facturaCtrl)
@@ -268,8 +268,7 @@
 
 
         $scope.onOrderInvoice = function (item) {
-            console.log('test order', item)
-            console.log($scope.dataSearch.order)
+            console.log('test order', item) 
         }
 
         $scope.validateOperationPrintAndPayment = (result) => {
@@ -1096,8 +1095,6 @@
             $scope.decimal = decimal;
             $scope.config = config;
 
-            console.log(tarifasImpuesto)
-            console.log($scope.tarifasImpuesto)
 
             if ($scope.bodegas.length > 0) {
                 let dataBodega = $scope.bodegas.find(bodega => (bodega.defaultBodega));
