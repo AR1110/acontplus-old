@@ -2756,6 +2756,7 @@
     </ReportParameter>
     <ReportParameter Name="mimeType">
       <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
       <Prompt>mimeType</Prompt>
     </ReportParameter>
   </ReportParameters>

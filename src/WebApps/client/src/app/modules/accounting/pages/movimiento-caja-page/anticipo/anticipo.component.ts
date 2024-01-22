@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ModalService } from '@core/services/modal.service';
 import { AppModule } from 'src/app/app.module';
 import { AnticipoModalComponent } from './anticipo-modal/anticipo-modal.component';
@@ -10,13 +11,15 @@ import { CODE_REPORT } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { isValidField } from '@core/utils/utils';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 @Component({
   selector: 'app-anticipo',
   standalone: true,
-  imports: [AppModule],
+  imports: [AppModule, AccountingModule, DateRangeSelectionComponent],
   templateUrl: './anticipo.component.html',
-  styleUrl: './anticipo.component.scss'
 })
 export class AnticipoComponent {
 
@@ -25,21 +28,33 @@ export class AnticipoComponent {
   private sharedSvc = inject(SharedService)
   private tS = inject(ToasterService)
 
+
+  establecimientos: Array<EstablecimientoSelectHtmlOnly> = []
+  isCustomerSearchSimple = true;
   anticipos: Array<AnticipoRead> = [];
 
   recordsQuantity = [25, 50, 100]
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
-    maxSize: 5
+    maxSize: 5,
+    codEstab: '',
+    customerId: 0,
+    fromDate: '',
+    toDate: ''
   }
   totalRecords = 0;
   getAnticipos() {
     let params = {
       pageIndex: this.dataSearch.pageIndex,
-      pageSize: this.dataSearch.pageSize
+      pageSize: this.dataSearch.pageSize,
+      codEstab: this.dataSearch.codEstab,
+      idCliente: isValidField(this.dataSearch.customerId),
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate
     }
     showLoader();
+    this.anticipos = [];
     this.anticipoSvc.getAll(params).subscribe({
       next: (response) => {
         hideLoader();
@@ -54,8 +69,41 @@ export class AnticipoComponent {
   }
 
   ngOnInit() {
-    this.getAnticipos()
+    showLoader()
+    this.anticipoSvc.getDataFilter().subscribe({
+      next: (response) => {
+
+        hideLoader()
+        this.establecimientos = response.establecimientos;
+        if (this.establecimientos.length > 0) {
+          let dataEstab = this.establecimientos.find(item => (item.predeterminado))
+          if (dataEstab) {
+            this.dataSearch.codEstab = dataEstab.codEstab;
+            this.getAnticipos()
+          }
+        }
+      },
+      error(err) {
+        console.log(err)
+        hideLoader()
+      },
+    })
   }
+
+  onCustomerSelected<T extends { data: any }>($event: T) {
+    let { data } = $event;
+    this.dataSearch.customerId = data.idCliente;
+  }
+
+  resultCustomerEmptyInput($event: any) {
+    this.dataSearch.customerId = 0;
+  }
+
+  onDateRangeSelection(range: { from: string, to: string }) {
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
+  }
+
 
   refresh() {
     this.getAnticipos()

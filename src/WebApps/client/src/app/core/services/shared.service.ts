@@ -44,8 +44,13 @@ export class SharedService {
             }
           }
         } else {
+          console.log('excel')
           if (response.body) {
-            FileSaver.saveAs(response.body, fileName);
+            console.log(response)
+            let serverData = new Blob([response.body], {
+              type: response.body.type
+            });
+            FileSaver.saveAs(serverData, fileName);
           }
         }
 

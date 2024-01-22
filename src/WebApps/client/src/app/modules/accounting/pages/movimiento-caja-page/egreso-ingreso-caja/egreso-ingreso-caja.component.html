@@ -1,24 +1,48 @@
 <div class="row">
   <div class="col-xl-3 col-lg-3 col-md-3 col-sm6 col-12">
     <div class="form-group">
-      <label for="establecimiento">Estab: </label>
+      <label for="exstablecimiento">Establecimiento: </label>
       <select
         name="establecimiento"
-        id="establecimiento"
-        class="form-select"
-      ></select>
+        id="onChangeEntidadFinanciera"
+        class="form-select form-control-border"
+        [(ngModel)]="dataSearch.codEstab"
+        (change)="getMovimientosCaja()"
+      >
+        @for (item of establecimientos; track $index) {
+        <option [ngValue]="item.codEstab">
+          {{ item.nombreComercial }}
+        </option>
+        }
+      </select>
     </div>
   </div>
-  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
-  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="dateRangeSelect">Rango Fechas</label>
+      <app-date-range-selection
+        (onChangeDateRange)="onDateRangeSelection($event)"
+      />
+    </div>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+    <div class="form-group">
+      <label for="employeeFilter">Empleado: </label>
+      <app-employee-search
+        [isSearchSimple]="isSearchEmployeeSimple"
+        (onSupplierSelected)="onEmployeeSelected($event)"
+        (emptyInput)="employeeResultEmptyInput($event)"
+      />
+    </div>
+  </div>
   <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
     <div class="button-group">
-      <button type="button" class="btn btn-info btn-sm mt-4">
+      <!-- <button type="button" class="btn btn-info btn-sm mt-4">
         <fa-icon [icon]="'eye'"></fa-icon>
-      </button>
+      </button> -->
       <button
         type="button"
-        class="btn btn-danger btn-sm mt-4"
+        class="btn btn-danger btn-sm mt-4 m-l-2"
         uib-tooltip="Recargar"
         (click)="refresh()"
       >
@@ -30,7 +54,7 @@
         uib-tooltip="Nuevo"
         (click)="openModal()"
       >
-        <i class="ti-plus"></i>
+        <fa-icon [icon]="'plus'"></fa-icon>
       </button>
     </div>
   </div>
@@ -97,7 +121,7 @@
             </button>
             <div ngbDropdownMenu>
               <button ngbDropdownItem (click)="getPrint(item)">
-                <i class="ti-printer"></i>
+                <fa-icon [icon]="'print'"></fa-icon>
 
                 Imprimir
               </button>

@@ -2,6 +2,7 @@
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Configuracion.API.Controllers
@@ -45,16 +46,17 @@ namespace Configuracion.API.Controllers
             }
             return Ok(_response);
         }
+         
 
-
-        [HttpGet("Search/{json}")]
+        [HttpGet("Search")]
         public async Task<IActionResult> Search(string json)
         {
 
             var _response = new ApiResponse();
             try
-            {
-                await _db.SPExecute("App.Usuario_Get_Search");
+            {                
+                await _db.SPExecute("App.Usuario_Search");
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
@@ -69,6 +71,7 @@ namespace Configuracion.API.Controllers
             }
             return Ok(_response);
         }
+ 
 
         [HttpPost("{json}")]
         public async Task<IActionResult> Post(string json)

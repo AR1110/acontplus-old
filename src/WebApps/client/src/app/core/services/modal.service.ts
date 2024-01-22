@@ -22,8 +22,7 @@ export class ModalService {
     this.ngbModal.activeInstances
       .pipe(takeUntilDestroyed())
       .subscribe((list) => {
-        this.modalNumbers = list.length;
-        console.log(this.modalNumbers);
+        this.modalNumbers = list.length; 
       });
   }
 
@@ -40,7 +39,6 @@ export class ModalService {
   ) {
     const modalRef = this.ngbModal.open(theComponent, {
       backdrop: backdrop ? backdrop : true,
-      backdropClass: 'backdrop-custom-modal',
       windowClass,
       size,
       fullscreen,

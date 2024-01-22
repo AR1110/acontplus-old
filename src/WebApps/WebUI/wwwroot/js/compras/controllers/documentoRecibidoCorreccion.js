@@ -323,10 +323,10 @@
             try {
                 showLoader();
                 docRecibidoSvc.getId($scope.selected[0].idDocumento).then(response => {
-                    if (response.code === "0") {
-                        tS.toastr('warning', response.message);
-                        return
-                    }
+                    // if (response.code === "0") {
+                    //     tS.toastr('warning', response.message);
+                    //     return
+                    // }
                     if (!response.payload) {
                         tS.toastr('warning', "Aun no se actualizado el Xml del SRI");
                         return
@@ -1068,6 +1068,8 @@
             }
         }
 
+
+
         onLoad();
         function onLoad() {
             try {
@@ -1333,6 +1335,10 @@
 
         $scope.addBodega = async () => {
             try {
+                if (!($scope.comprobanteForm.idBodega > 0)) {
+
+                    return
+                }
                 let { isConfirmed } = await Swal.fire({
                     title: "Cambiar bodega",
                     html: "¿Esta seguro de cambiar la bodega?",
@@ -1344,7 +1350,11 @@
                     cancelButtonText: 'No!'
                 })
 
-                if (!isConfirmed) return
+                if (!isConfirmed) {
+                    $scope.comprobanteForm.idBodega = 0;
+                    $scope.$apply()
+                    return
+                }
 
                 if ($scope.comprobanteForm.idBodega > 0) {
                     let data = {
@@ -1404,7 +1414,11 @@
                     cancelButtonText: 'No!'
                 })
 
-                if (!isConfirmed) return
+                if (!isConfirmed) {
+                    $scope.comprobanteForm.idMedida = 0;
+                    $scope.$apply()
+                    return
+                }
 
                 let data = {
                     todos: true,

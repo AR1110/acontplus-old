@@ -1,9 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 @import "ngx-toastr/toastr";
-// @import "bootstrap/scss/bootstrap";
-@import 'assets/template/css/style.css';
-@import 'tabulator-tables/dist/css/tabulator.css';
-@import 'assets/forms.css';
+@import "bootstrap/dist/css/bootstrap.css";
+@import "assets/css/custom.css";
+@import "assets/css/forms.css";
+@import "tabulator-tables/dist/css/tabulator.css";
 @import "ngx-toastr/toastr";
 @import "perfect-scrollbar";
 
@@ -86,12 +86,18 @@ table {
 }
 
 .form-control-border:focus {
-    border-color: blue !important;
+  border-color: blue !important;
 }
 
 .swal2-container {
-    z-index: 999999;
+  z-index: 999999;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
