@@ -106,8 +106,8 @@ namespace Reports.Application.Services
 
                 //return lr.Render(format, null, out _, out _, out _, out _, out _);
                 byte[] fileReport = lr.Render(reportProps.ReportFormat, null, out _, out _, out _, out _, out _);
-                Enum.TryParse(reportProps.ReportFormat, out FileFormats.FileContentType fc);
-                Enum.TryParse(reportProps.ReportFormat, out FileFormats.FileExtension fe);
+                Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileContentType fc);
+                Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileExtension fe);
                 return new ReportResponse { FileContents = fileReport, ContentType = EnumExtensions.DisplayName(fc), FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + EnumExtensions.DisplayName(fe), Encoding.UTF8) };
             }
         }
