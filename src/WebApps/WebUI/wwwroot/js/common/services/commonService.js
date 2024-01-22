@@ -16,9 +16,7 @@ export class CommonService {
         "empleadoService",
         "ventaService",
         "clienteService"
-    ];
-
-
+    ]; 
     constructor(
         $rootScope,
         $http,
@@ -214,9 +212,7 @@ export class CommonService {
             .then(({
                 data: response
             }) => response || []);
-    }
-
-
+    } 
     //Buscador Empleado 
     querySearchEmpleado(textSearch) {
         if (!textSearch && textSearch.length < 2) return []
@@ -225,8 +221,7 @@ export class CommonService {
             textSearch
         })
     }
-
-
+ 
     //-------------------------------------Usuario--------------------------------
     /***
      *  json = {busqueda, idRol}
@@ -324,9 +319,7 @@ export class CommonService {
                     return (nroDocumentoSecuencial = response.data);
                 }
             })
-    }
-
-
+    } 
     //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
     //Eliminar mas Adelante en depuracion co
@@ -337,11 +330,7 @@ export class CommonService {
             }
             return JSON.parse(response.payload)
         })
-    }
-
-
-
-
+    } 
     //por mejorar mas adelante 
     async generarNroDocumento({
         puntoEmision,
@@ -419,86 +408,9 @@ export class CommonService {
         }
 
         switch (codigoDocumento) {
-            case "FC":
-                await this.mS.getData('get', `IngresoFacturaCompra/GetId?id=${id}`, null, true).then(response => {
+            
 
-                    if (response.code == "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-                    if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload);
-                        let datosAdicionales = []
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
-
-                        proveedor = dataMain[1][0];
-
-                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[2])
-
-
-                        datosAdicionales = dataMain[3].map(item => {
-                            return {
-                                idArticulo: item.idArticulo,
-                                idEtiqueta: item.idEtiqueta,
-                                idInfoAdicional: item.idInfoAdicional,
-                                adicionales: JSON.parse(item.jsonAdicional),
-                                estado: item.estado,
-                            }
-                        })
-
-                        datosAdicionalesArticulo = datosAdicionales
-
-                        isComplete = true;
-                    }
-                });
-                break;
-
-            case "IB":
-
-                await this.mS.getData('get', `/IngresoBodega/GetId?id=${id}`).then(response => {
-                    if (response.code === "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-                    if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload)
-
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
-                        proveedor = dataMain[1][0];
-                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
-                        datosAdicionalesArticulo = dataMain[3];
-
-
-                        isComplete = true;
-                    }
-                });
-                break;
-
-            case "LC":
-                await this.mS.getData('get', "/LiquidacionCompra/GetId?id=" + id).then(response => {
-                    if (response.code == "0") {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-                    if (response.code == "1") {
-                        let dataMain = JSON.parse(response.payload)
-
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        dataDocumento.fechaVencimiento = this.form.formatDate(dataDocumento.fechaVencimiento)
-                        proveedor = dataMain[1][0];
-                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
-                        infoAdicionalDocumento = dataMain[3];
-
-                        isComplete = true;
-                    }
-                })
-
-                break;
+            case "IB": 
 
             case 'NCP':
                 showLoader();
@@ -584,9 +496,7 @@ export class CommonService {
             isComplete,
         }
     }
-
-
-
+ 
     /*  
     -------------------------------------------------START GET DATA TIPO DOCUMENTO VENTA-------------------
     */
@@ -844,10 +754,7 @@ export class CommonService {
         };
     }
     /**--------------------------------------------------END GET DATA TIPO DOCUMENTO VENTA  */
-
-
-
-
+ 
     /**------------------------------------------------- OTROS DOCUMENTOS-------------------*/
 
     async getDataGuiaRemision(id) {
