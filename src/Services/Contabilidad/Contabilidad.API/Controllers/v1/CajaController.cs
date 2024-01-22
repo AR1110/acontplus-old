@@ -101,7 +101,7 @@ namespace Contabilidad.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al anular doc. factura compra: " + ex.ToString());
+                _log.LogActivity("Error al anular caja: " + ex.ToString());
                 return BadRequest(ex.Message);
             }
         }
