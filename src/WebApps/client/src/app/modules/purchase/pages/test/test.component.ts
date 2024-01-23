@@ -12,6 +12,6 @@ export class TestComponent {
 
   router: Router = inject(Router);
   clickMe(){
-    this.router.navigate(['/', "inventory", "category-page"]);
+    this.router.navigate(['/', "inventory", "subcategory-page"]);
   }
 }

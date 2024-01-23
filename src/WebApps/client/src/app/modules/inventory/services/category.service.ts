@@ -16,7 +16,7 @@ export class CategoryService {
 
   getAll<T>(data: T) {
     let params = JSON.stringify({ ...data, tipo: 1 })
-    return this.http.get(`${this.url}?json=${params}`)
+    return this.http.get(`${this.url}Get?json=${params}`)
       .pipe(
         map(response => {
           if (isApiResponse(response)) {
@@ -25,8 +25,17 @@ export class CategoryService {
               throw response;
             }
             if (response.code === "1") {
-              const mainData = JSON.parse(response.payload as string)
-              console.log(mainData)
+              const categories = JSON.parse(response.payload as string) || []
+              const results = categories.map((category: any) => {
+                return {
+                  idFamilia: category.idFamilia,
+                  descripcion: category.descripcion,
+                  siglas: category.siglas,
+                  estado: category.estado,
+                  totalRecords: category.totalRecords,
+                }
+              })
+              return results;
             }
           }
           return []

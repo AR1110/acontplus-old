@@ -1,21 +1,32 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 <div class="card">
   <div class="card-body">
     <div class="row">
-        <div class="col-6 d-flex justify-content-start">
-            <span class="form-group pull-left page-size form-inline">
-                <select class="form-select" ng-model="dataSearch.pageSize"
-                    ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
-                </select>
-            </span>
-        </div>
+      <div class="col-6 d-flex justify-content-start">
+        <span class="form-group pull-left page-size form-inline">
+            <select
+              class="form-select control-color"
+              [(ngModel)]="dataSearch.pageSize"
+              (change)="changePageSize()"
+            >
+              @for(item of recordsQuantity; track $index){
+              <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+          </span>
+      </div>
 
-        <div class="col-6 d-flex justify-content-end">
-            <div class="form-group">
-                <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                    ng-model="dataSearch.bySearch" placeholder="...">
-            </div>
+      <div class="col-6 d-flex justify-content-end">
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control border-select"
+            ng-change="searchFilterLocal()"
+            ng-model="dataSearch.bySearch"
+            placeholder="..."
+          />
         </div>
+      </div>
     </div>
     <div class="table-responsive">
       <table class="table table-striped">
@@ -24,15 +35,36 @@
             <th>N°</th>
             <th>Código</th>
             <th>Descripción</th>
+            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
+          @for (item of categories; track $index) {
           <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ item.siglas }}</td>
+            <td>{{ item.descripcion }}</td>
+            <td>
+              <div [innerHTML]="item.estado| primaryStatus"></div>
+            </td>
           </tr>
+          }
         </tbody>
+        <tfoot>
+          <tr>
+            <td align="center" colspan="6">
+              <ngb-pagination
+                [collectionSize]="dataSearch.totalRecords"
+                [(page)]="dataSearch.pageIndex"
+                [maxSize]="dataSearch.maxSize"
+                [pageSize]="dataSearch.pageSize"
+                [rotate]="true"
+                (pageChange)="pageChanged()"
+                [boundaryLinks]="true"
+              />
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>
