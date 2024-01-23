@@ -77,6 +77,7 @@
             try {
 
                 $scope.cuentasPorPagar = [];
+                $scope.selectedDocumentos = [];
 
                 let dataSearch = {
                     checkboxFecha: $scope.dataSearch.checkBoxFecha,
@@ -1352,7 +1353,7 @@
                         $scope.documentosElectronicos = tempData[4];
 
                     }
-                }).finally(() => hjide)
+                }).finally(() => hideLoader())
             } catch (error) {
                 console.log('Initiload Form Payment', error);
             }

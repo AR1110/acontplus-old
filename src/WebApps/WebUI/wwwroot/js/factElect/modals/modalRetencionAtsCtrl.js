@@ -303,7 +303,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                     selectSujetoRetenido(proveedores[0], false)
                 }
                 else if (proveedores.length > 1) {
-                    console.log('this')
+                    
                     openModalSuppliers(proveedores); 
                 } else {
                     tS.toastr('info', 'No se encontraron los resultados!')
@@ -376,7 +376,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                         controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
                             let { comprobantes } = params;
 
-                            console.log(params)
+                            
                             $scope.docsFounded = comprobantes;
 
                             $scope.docPreview = async (item) => {
@@ -441,7 +441,8 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                 } else {
                     tS.toastr('warning', 'Impuestos no encontrados')
                 }
-                console.log(response)
+             
+                
             }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
@@ -1019,10 +1020,10 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
         }
         return true
     }
-    $scope.addRetencion = (uniqueIdDoc, toBd) => {
+    $scope.addRetencion = (uniqueIdDoc, toBd, idElement) => {
 
         if ($scope.retencionValid(toBd)) {
-            //console.log($scope.retencion)
+            
             if (toBd) {
                 let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                 if (idRetAtsDocSustento > 0) {
@@ -1051,7 +1052,22 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                 porcentajeRetener: $scope.retencion.porcentajeRetener,
                 valorRetenido: $scope.retencion.valorRetenido
             })
-            $scope.retencion = {}
+            $scope.retencion = {} 
+            clearValueMdSelectPorcentajeRetener(idElement)
+
+        }
+    }
+
+    function clearValueMdSelectPorcentajeRetener(idElement){
+
+        let mdSelectElement = document.getElementById(idElement);
+
+        // Access the md-text element within the md-select element
+        let mdTextElement = mdSelectElement.querySelector('.md-text'); // Replace '.md-text' with the appropriate selector
+
+        // Clear the text content
+        if (mdTextElement) {
+            mdTextElement.textContent = '';
         }
     }
     //$scope.retencionCodigoSearch = {}
@@ -1059,12 +1075,13 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
         $scope.indexRet = item
         $scope.retencion = $scope.retencionAdded[item]
 
+        
         $scope.setPorcentajesRet($scope.retencion.codigo, d.uniqueIdDoc)
         $scope.setPorcentajeRet($scope.retencion.codigoRetencion, false)
         document.getElementById(d.uniqueIdDoc + '-btnAddRet').style.display = 'none'
         document.getElementById(d.uniqueIdDoc + '-btnEditRet').style.display = 'block'
     }
-    $scope.updateRet = (uniqueIdDoc) => {
+    $scope.updateRet = (uniqueIdDoc, idElement) => {
         if ($scope.retencionValid()) {
             if ($scope.retencion.idRetencionAtsRet > 0) {
                 mS.getData('put', `${PATH_FACT_ELECT}` + 'DocSustRetencion/' + $scope.retencion.idRetencionAtsRet + '?json=' + JSON.stringify($scope.retencion), null, true).then(
@@ -1086,6 +1103,8 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                             document.getElementById(uniqueIdDoc + '-btnAddRet').style.display = 'block'
                             document.getElementById(uniqueIdDoc + '-btnEditRet').style.display = 'none'
                             tS.toastr('success', response.message)
+                            clearValueMdSelectPorcentajeRetener(idElement)
+
                         }
                     }
                 ).catch(error => {
@@ -1095,7 +1114,8 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             } else {
                 angular.forEach($scope.retencionAdded, (value, index) => {
                     if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexRet == index) {
-                        value.codigo = $scope.retencion.codImpuestoDocSustento
+                      //  value.codigo = $scope.retencion.codImpuestoDocSustento
+                        value.codigo = $scope.retencion.codigo,
                         value.codigoPorcentaje = $scope.retencion.codigoPorcentaje
                         value.baseImponible = $scope.retencion.baseImponible
                         value.porcentajeRetener = $scope.retencion.porcentajeRetener
@@ -1105,6 +1125,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                 $scope.retencion = {}
                 document.getElementById(uniqueIdDoc + '-btnAddRet').style.display = 'block'
                 document.getElementById(uniqueIdDoc + '-btnEditRet').style.display = 'none'
+                clearValueMdSelectPorcentajeRetener(idElement)
             }
         }
     }
