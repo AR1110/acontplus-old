@@ -1353,7 +1353,7 @@
                         $scope.documentosElectronicos = tempData[4];
 
                     }
-                }).finally(() => hjide)
+                }).finally(() => hideLoader())
             } catch (error) {
                 console.log('Initiload Form Payment', error);
             }
