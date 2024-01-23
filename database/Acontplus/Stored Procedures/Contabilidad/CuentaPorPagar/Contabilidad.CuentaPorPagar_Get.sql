@@ -52,8 +52,8 @@ BEGIN
 			DECLARE @checkboxEstado BIT 
 			DECLARE @codEstado VARCHAR(5)
 			DECLARE @checkboxProveedor BIT 
-			DECLARE @dateStart DATETIME 
-			DECLARE @dateEnd DATETIME
+			DECLARE @dateStart DATETIME2 
+			DECLARE @dateEnd DATETIME2
 
 
 			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 50
@@ -119,8 +119,8 @@ BEGIN
 				codEstado VARCHAR(5) '$.codEstado',
 				checkboxProveedor BIT '$.checkboxProveedor',
 				idProveedor INT '$.idProveedor',
-				dateStart DATETIME '$.dateStart',
-				dateEnd DATETIME '$.dateEnd'
+				dateStart DATETIME2 '$.dateStart',
+				dateEnd DATETIME2 '$.dateEnd'
 			)
 
 			IF @checkboxFecha = 1
@@ -366,7 +366,16 @@ BEGIN
 
             SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NPA','PA')
 
-            SELECT idTipoDocumento,descripcion,codigo,codigoSri FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FF','FE','IV','LC')
+            SELECT idTipoDocumento
+                  ,descripcion
+                  ,CASE codigo WHEN 'FE' THEN '01' 
+                               WHEN 'FF' THEN 'FC'
+                               WHEN 'IV' THEN 'DH'
+                               WHEN 'LC' THEN '03'
+                               ELSE ''
+                   END as codDoc 
+            FROM Inventario.TipoDocumento WITH (NOLOCK) 
+            WHERE codigo IN ('FF','FE','IV','LC')
             
             RETURN 
         END 
