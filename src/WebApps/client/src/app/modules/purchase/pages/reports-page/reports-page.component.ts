@@ -14,11 +14,12 @@ import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { SupplierSearchComponent } from '@modules/purchase/components/supplier-search/supplier-search.component';
+import { TestComponent } from '../test/test.component';
 
 @Component({
   selector: 'app-reports-page',
   standalone: true,
-  imports: [AppModule, PurchaseModule, SupplierSearchComponent, DateRangeSelectionComponent],
+  imports: [AppModule, PurchaseModule, SupplierSearchComponent, DateRangeSelectionComponent, TestComponent],
   templateUrl: './reports-page.component.html',
   styleUrl: './reports-page.component.scss'
 })
@@ -30,7 +31,7 @@ export class ReportsPageComponent {
 
   establecimientos: Array<GroupedEstab> = [];
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  tiposDoc: Array<TipoDoc> = [];
+  tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
   estadosDoc: Array<{ codigo: string, descripcion: string }> = [];
 
   dataSearch = {
@@ -79,7 +80,7 @@ export class ReportsPageComponent {
             this.tiposDoc = tiposDoc;
 
             console.log(this.tiposDoc)
-            this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codigo === DOC_TYPE.FC)?.codigo || '';
+            this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FC)?.codDoc || '';
             //console.log(this.tiposDoc)
             this.estadosDoc = estadosDoc;
           }
@@ -126,12 +127,12 @@ export class ReportsPageComponent {
     this.dataSearch.toDate = range.to;
   }
 
-  getCodDoc() {
-    if (this.dataSearch.codDoc === DOC_TYPE.LC) return DOC_TYPE_SRI.LC;
-    if (this.dataSearch.codDoc === DOC_TYPE.DNH) return DOC_TYPE.DNH;
-    if (this.dataSearch.codDoc === DOC_TYPE.FV) return DOC_TYPE_SRI.F;
-    return DOC_TYPE.FC;
-  }
+  // getCodDoc() {
+  //   if (this.dataSearch.codDoc === DOC_TYPE.LC) return DOC_TYPE_SRI.LC;
+  //   if (this.dataSearch.codDoc === DOC_TYPE.IV) return DOC_TYPE.DNH;
+  //   if (this.dataSearch.codDoc === DOC_TYPE.FE) return DOC_TYPE_SRI.F;
+  //   return DOC_TYPE.FC;
+  // }
 
 
 
@@ -173,7 +174,7 @@ export class ReportsPageComponent {
       format,
       ckFecha: true,
       codEstab: isValidField(this.dataSearch.codEstab),
-      codDoc: this.getCodDoc(),
+      codDoc: isValidField(this.dataSearch.codDoc),
       idProveedor: this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor) || null,
       codEstado: isValidField(this.dataSearch.codEstado),
       fechaInicio: this.dataSearch.fromDate,

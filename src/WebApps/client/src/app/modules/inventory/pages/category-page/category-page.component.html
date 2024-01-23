@@ -1,0 +1,39 @@
+<app-breadcrumb/>
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+        <div class="col-6 d-flex justify-content-start">
+            <span class="form-group pull-left page-size form-inline">
+                <select class="form-select" ng-model="dataSearch.pageSize"
+                    ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                </select>
+            </span>
+        </div>
+
+        <div class="col-6 d-flex justify-content-end">
+            <div class="form-group">
+                <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                    ng-model="dataSearch.bySearch" placeholder="...">
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>N°</th>
+            <th>Código</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

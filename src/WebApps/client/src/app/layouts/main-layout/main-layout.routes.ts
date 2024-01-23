@@ -19,6 +19,11 @@ export const routes: Routes = [
         path: 'accounting',
         title: 'App - Contabilidad',
         loadChildren: () => import('@modules/accounting/accounting.routes').then(r => r.routes)
+      },
+      {
+        path: 'inventory',
+        title: 'App - Inventario',
+        loadChildren: () => import('@modules/inventory/inventory.routes').then(r => r.routes)
       }
     ]
   }
