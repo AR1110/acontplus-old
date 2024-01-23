@@ -25,14 +25,21 @@ export class SubCategoryService {
               throw response;
             }
             if (response.code === "1") {
-              const categories = JSON.parse(response.payload as string) || []
-              console.log(categories)
-              const results = categories.map((category: any) => {
+              const subCategorias = JSON.parse(response.payload as string) || [] 
+              const results = subCategorias.map((category: any) => {
                 return {
+                  idSubFamilia: category.idSubFamilia,
                   idFamilia: category.idFamilia,
                   descripcion: category.descripcion,
-                  siglas: category.siglas,
                   estado: category.estado,
+                  siglas: category.siglas,
+                  codigo: category.codigo,
+                  montoObjetivo: category.montoObjetivo,
+                  nombreFamilia: category.nombreFamilia,
+                  ultimoSecuencial: category.ultimoSecuencial,
+                  s3ObjectKey: category.s3ObjectKey,
+                  s3ObjectUrl: category.s3ObjectUrl,
+                  subcategoryPhotoId: category.subcategoryPhotoId,
                   totalRecords: category.totalRecords,
                 }
               })

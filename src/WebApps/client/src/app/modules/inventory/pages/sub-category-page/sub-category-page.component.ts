@@ -5,17 +5,20 @@ import { InventoryModule } from '@modules/inventory/inventory.module';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { SubCategoryRead } from '@modules/inventory/models/sub-category.model';
 import { SubCategoryService } from '@modules/inventory/services/sub-category.service';
+import { ModalService } from '@core/services/modal.service';
+import { SubCategoryModalComponent } from './sub-category-modal/sub-category-modal.component';
 
 @Component({
   selector: 'app-subcategory-page',
   standalone: true,
   imports: [AppModule, InventoryModule],
   templateUrl: './sub-category-page.component.html',
-  styles: ``
+  
 })
 export class SubCategoryPageComponent {
 
-  private subcategorySvc = inject(SubCategoryService)
+  private subCategorySvc = inject(SubCategoryService);
+  private modalSvc = inject(ModalService)
   dataSearch = {
     pageIndex: 1,
     pageSize: 25,
@@ -32,12 +35,13 @@ export class SubCategoryPageComponent {
       pageSize: this.dataSearch.pageSize
     }
     showLoader();
-    this.subcategorySvc.getAll(params).subscribe({
+    this.subCategorySvc.getAll(params).subscribe({
       next: (categories) => {
         this.subcategories = categories;
         this.dataSearch.totalRecords = this.subcategories.length > 0 ? this.subcategories[0].totalRecords : 0
       },
       error(err) {
+        hideLoader()
         console.log(err)
       },
       complete() {
@@ -46,7 +50,7 @@ export class SubCategoryPageComponent {
     })
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.getSubcategories()
   }
 
@@ -59,4 +63,12 @@ export class SubCategoryPageComponent {
     this.getSubcategories();
   }
 
+  openModalAddEdit<T>(data?: T) {
+    const modalRef = this.modalSvc.openModalCustom(SubCategoryModalComponent)
+    modalRef.result.then(result => {
+      if (typeof result === 'object') {
+        console.log('this')
+      }
+    })
+  }
 }
