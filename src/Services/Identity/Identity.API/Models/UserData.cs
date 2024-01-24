@@ -11,6 +11,7 @@
         public string Fullname { get; set; }
         public string IDCardCompany { get; set; }
         public string IDCardUser { get; set; }
+        public string LatestVersion { get; set; }
         public dynamic Menus { get; set; }
         public dynamic Permissions { get; set; }
         public string ProfilePicture { get; set; }
