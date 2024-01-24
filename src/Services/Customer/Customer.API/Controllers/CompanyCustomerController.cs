@@ -1,6 +1,8 @@
-﻿using Common.Core.Utils;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Customer.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
 
@@ -29,6 +31,39 @@ namespace Customer.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Cliente data)
+        {
+            try
+            {
+                var response = await _companyCustomer.AddAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "json", JsonConvert.SerializeObject(data) } });
+                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Cant Save"); }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logWriter.LogActivity($"Error on Get: \n {ex}");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] Cliente data)
+        {
+            try
+            {
+                var response = await _companyCustomer.UpdateAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "id", id }, { "json", JsonConvert.SerializeObject(data) } });
+                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Cant Save"); }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logWriter.LogActivity($"Error on Get: \n {ex}");
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [HttpGet("Search")]
         public async Task<IActionResult> Search(string json)

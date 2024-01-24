@@ -16,10 +16,11 @@ export class OrderListComponent implements OnInit {
 
   get() {
     showLoader();
+    const self = this;
     this.orderService.get(JSON.stringify({ tipo: 2 })).subscribe({
       next(response) {
         if (isApiResponse(response)) {
-          console.log(response);
+          self.orders = JSON.parse(response.payload as string);
         }
       },
       complete() {

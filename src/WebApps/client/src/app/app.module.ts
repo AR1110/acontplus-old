@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgbDropdownModule, NgbModule, NgbPaginationModule, NgbTooltipModule, NgbTypeaheadModule } from "@ng-bootstrap/ng-bootstrap";
 import { NgxFileDropModule } from "ngx-file-drop";
-import { ImageCropperModule } from "ngx-image-cropper";
 
 
 @NgModule({
@@ -22,7 +21,6 @@ import { ImageCropperModule } from "ngx-image-cropper";
     NgbTooltipModule,
     NgOptimizedImage,
     NgxFileDropModule,
-    ImageCropperModule,
   ],
   exports: [
     CommonModule,
@@ -36,7 +34,6 @@ import { ImageCropperModule } from "ngx-image-cropper";
     NgbTooltipModule,
     NgOptimizedImage,
     NgxFileDropModule,
-    ImageCropperModule,
   ]
 })
 

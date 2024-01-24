@@ -75,6 +75,18 @@ BEGIN
                 RETURN
             END 
 
+        IF NOT EXISTS (SELECT 1 FROM @Comprobantes WHERE identificacionReceptor = @identificacionReceptor) 
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Los comprobantes no pertenecen al Contribuyente' + ' ' +  @identificacionReceptor, DEFAULT)
+                RETURN
+            END 
+
+        IF NOT EXISTS (SELECT 1 FROM @Comprobantes WHERE identificacionReceptor = SUBSTRING(ltrim(rtrim(@identificacionReceptor)), 1, 10))
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0','Los comprobantes no pertenecen al Contribuyente' + ' ' +  @identificacionReceptor , DEFAULT)
+                RETURN
+            END 
+
 		BEGIN TRAN
 			
 			INSERT  INTO Recepcion.DocumentoRecibido(idEstablecimiento, [codEstab], [comprobante], [serieComprobante], [rucEmisor], [razonSocialEmisior], [fechaEmision], [fechaAutorizacion], [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], [idUsuario], [fechaRegistro], downloaded)

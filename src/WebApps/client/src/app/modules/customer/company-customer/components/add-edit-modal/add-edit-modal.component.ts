@@ -31,8 +31,10 @@ export class AddEditModalComponent implements OnInit {
 
   activeTab = 1;
   addOnBlur = true;
+  cargos: any = [];
   data: any = {};
   emails: string[] = [];
+  empresas: any = [];
   modalIcon: IconProp = 'plus';
   modalTitle = 'Nuevo Cliente';
   numeroIdentificacion = new FormControl({ value: '', disabled: false }, [
@@ -41,13 +43,22 @@ export class AddEditModalComponent implements OnInit {
     Validators.maxLength(15),
   ]);
   telephones: string[] = [];
+  tiempoCreditos: any = [];
+  tipoContribuyentes: any = [];
+  tiposCliente: any = [];
   tiposIdentificacion: any = [];
 
   customerForm = this.fb.group({
     direccion: ['', Validators.required],
-    idCliente: [0],
+    idCargo: 0,
+    idCliente: 0,
+    idEmpresa: 0,
+    idTipoClienteProveedor: 0,
     idTipoIdentificacion: [Validators.required],
+    idSubContribuyente: 0,
+    idTiempoCredito: 0,
     nombreFiscal: ['', Validators.required],
+    nombreComercial: [''],
     numeroIdentificacion: this.numeroIdentificacion,
   });
 
@@ -134,11 +145,15 @@ export class AddEditModalComponent implements OnInit {
     });
   }
 
-  async getCustomer(id: string) {
+  async getCustomer(codigo: string, id: string) {
     const self = this;
     let exists = false;
+    debugger;
     //check if exists for company
-    this.companyCustomerService.checkExistence({ textSearch: id }).subscribe({
+    (
+      await //check if exists for company
+      this.companyCustomerService.checkExistence({ textSearch: id })
+    ).subscribe({
       next(response) {
         if (isApiResponse(response)) {
           if (response.code == '1') {
@@ -146,7 +161,8 @@ export class AddEditModalComponent implements OnInit {
               type: 'warning',
               message: 'El cliente ya se encuentra registrado en su empresa',
             });
-            //exists = true;
+            self.customerForm.patchValue({ numeroIdentificacion: '' });
+            exists = true;
           }
         }
       },
@@ -154,13 +170,26 @@ export class AddEditModalComponent implements OnInit {
 
     if (!exists) {
       //search in global customers or in sri
-      (await this.sriCustomerService.getRuc(id)).subscribe({
+      (
+        await //search in global customers or in sri
+        this.sriCustomerService.get(codigo, id)
+      ).subscribe({
         next(response: any) {
-          if (response.numeroRuc) {
-            self.customerForm.patchValue({
-              numeroIdentificacion: response.numeroRuc,
-              nombreFiscal: response.razonSocial,
-            });
+          if (codigo == '04') {
+            if (response.numeroRuc) {
+              self.customerForm.patchValue({
+                numeroIdentificacion: response.numeroRuc,
+                nombreFiscal: response.razonSocial,
+              });
+            }
+          } else {
+            if (response.identificacion) {
+              self.customerForm.patchValue({
+                numeroIdentificacion: response.identificacion,
+                nombreFiscal: response.nombreCompleto,
+                direccion: response.direccion,
+              });
+            }
           }
         },
       });
@@ -172,17 +201,89 @@ export class AddEditModalComponent implements OnInit {
     if (this.data.idCliente > 0) {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Cliente';
-      this.customerForm.patchValue({ nombreFiscal: this.data.bussinesName });
+      if (this.data.correo) {
+        let correos = this.data.correo.split(';');
+        for (const item of correos) {
+          this.emails.push(item);
+        }
+      }
+      if (this.data.telefono) {
+        let telephones = this.data.telefono.split(';');
+        for (const item of telephones) {
+          this.telephones.push(item);
+        }
+      }
+      this.customerForm.patchValue(this.data);
     }
   }
 
-  onChangeTipoIdentificacion() {}
+  onChangeTipoIdentificacion() {
+    this.customerForm.patchValue({ numeroIdentificacion: '' });
+  }
+
+  refreshTiempoCredito() {}
 
   save() {
-    const data = {
+    showLoader();
+    const self = this;
+    const dataForm = {
       ...this.customerForm.value,
     };
-    console.log(data);
+    console.log(dataForm);
+
+    if (dataForm.idCliente || 0 > 0) {
+      this.companyCustomerService.put(this.data.idCliente, dataForm).subscribe({
+        next(response) {
+          if (isApiResponse(response)) {
+            if (response.code == '0') {
+              self.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code == '1') {
+              self.tS.toastr({
+                type: 'success',
+                message: response.message,
+              });
+            }
+          }
+        },
+        complete() {
+          hideLoader();
+        },
+        error(err) {
+          hideLoader();
+          console.log(err);
+        },
+      });
+    } else {
+      this.companyCustomerService.post(dataForm).subscribe({
+        next(response) {
+          if (isApiResponse(response)) {
+            if (response.code == '0') {
+              self.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code == '1') {
+              self.tS.toastr({
+                type: 'success',
+                message: response.message,
+              });
+            }
+          }
+        },
+        complete() {
+          hideLoader();
+        },
+        error(err) {
+          hideLoader();
+          console.log(err);
+        },
+      });
+    }
   }
 
   async validarNumeroIdentificacion() {
@@ -201,6 +302,7 @@ export class AddEditModalComponent implements OnInit {
             message: 'El número del ruc debe tener 13 dígitos',
           });
         }
+        this.getCustomer(codigoSri, dataForm.numeroIdentificacion);
       }
       if (codigoSri === '05' && dataForm.numeroIdentificacion) {
         if (dataForm.numeroIdentificacion?.length != 10) {
@@ -209,6 +311,7 @@ export class AddEditModalComponent implements OnInit {
             message: 'El número de la cédula debe tener 10 dígitos',
           });
         }
+        this.getCustomer(codigoSri, dataForm.numeroIdentificacion);
       }
     }
   }

@@ -54,7 +54,7 @@ namespace Identity.API.Controllers.v1
                 var mainResponse = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
                 var _response = JsonConvert.DeserializeObject<ApiResponse>(mainResponse);
                 //User founded
-                if (_response.code == "1")
+                if (_response.code == "1" && !string.IsNullOrEmpty(_response.payload))
                 {
                     List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.payload);
 

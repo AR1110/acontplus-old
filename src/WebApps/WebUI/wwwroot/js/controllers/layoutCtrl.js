@@ -1,49 +1,51 @@
-﻿angular.module('acontPlusApp')
-    .controller('layoutCtrl', layoutCtrl);
+﻿angular.module("acontPlusApp").controller("layoutCtrl", layoutCtrl);
 
-layoutCtrl.$inject = [
-    '$scope',
-    '$rootScope',
-    '$window'
-];
+layoutCtrl.$inject = ["$scope", "$rootScope", "$window", "decodeToken"];
 
-function layoutCtrl($scope, $rootScope, $window) {
-    'use strict';
+function layoutCtrl($scope, $rootScope, $window, decodeToken) {
+    "use strict";
 
     $scope.logout = function () {
         Object.keys(localStorage).forEach(function (key) {
             localStorage.removeItem(key);
-        })
-        location.href = '/Login';
-    }
+        });
+        location.href = "/Login";
+    };
 
-    if (JSON.parse(localStorage.getItem('userData')) === null) {
+    if (JSON.parse(localStorage.getItem("userData")) === null) {
         $scope.logout();
-        return
+        return;
     }
 
-    $scope.userData = JSON.parse(localStorage.getItem('userData'));
+    $scope.userData = JSON.parse(localStorage.getItem("userData"));
+
+    let { latestVersion } = $scope.userData;
+
+    if (!latestVersion) {
+        $scope.logout();
+    } else {
+        //consume from bd
+    }
 
     $scope.menus = $scope.userData.menus || [];
 
     if ($scope.menus.length == 0) {
         $scope.logout();
-        return
+        return;
     }
 
     $scope.subMenus = $scope.userData.submenus || [];
     $scope.permissions = $scope.userData.permissions || [];
-    $scope.accions = $scope.userData.actions || []
+    $scope.accions = $scope.userData.actions || [];
 
     if ($scope.menus.length == 0) {
         $scope.logout();
-        return
+        return;
     }
 
     $scope.drawMenus = function () {
         let textHtml = "";
-        textHtml +=
-            `<li class="user-pro">
+        textHtml += `<li class="user-pro">
                 <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                     <img src="/assets/images/user/user.png" alt="" class="img-circle">
                     <span class="hide-menu">${$scope.userData.fullname}</span>
@@ -54,7 +56,7 @@ function layoutCtrl($scope, $rootScope, $window) {
                 </ul>
             </li>`;
         for (let i = 0; i < $scope.menus.length; i++) {
-            textHtml += '</ul></li>';
+            textHtml += "</ul></li>";
             textHtml += `<li>
                                 <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                                     <i class="${$scope.menus[i].icono}"></i>
@@ -63,13 +65,12 @@ function layoutCtrl($scope, $rootScope, $window) {
                 <ul aria-expanded="false" class="collapse">`;
             for (let sm = 0; sm < $scope.subMenus.length; sm++) {
                 if ($scope.menus[i].idMenu == $scope.subMenus[sm].idMenu) {
-
                     textHtml += `<li><a href="${$scope.subMenus[sm].url}"><i class="${$scope.subMenus[sm].icono}"></i> ${$scope.subMenus[sm].descripcion}</a></li>`;
                 }
             }
         }
 
-        $('#sidebarnav').html(textHtml);
+        $("#sidebarnav").html(textHtml);
     };
 
     if ($scope.menus.length > 0 || $scope.subMenus.length > 0) {
@@ -78,26 +79,31 @@ function layoutCtrl($scope, $rootScope, $window) {
 
     const pathname = $window.location.pathname;
     if (pathname) {
-
-        if (pathname === '/') {
-            location.href = '/Home/Index';
+        if (pathname === "/") {
+            location.href = "/Home/Index";
         }
-        if (pathname.indexOf('/Home') == -1) {
-            let lengthPath = pathname.split('/').splice(1).length;
+        if (pathname.indexOf("/Home") == -1) {
+            let lengthPath = pathname.split("/").splice(1).length;
 
             if ([1, 2, 3].includes(lengthPath)) {
-                let dataMenu = $scope.subMenus.find(item => item.url === pathname);
+                let dataMenu = $scope.subMenus.find((item) => item.url === pathname);
                 if (dataMenu) {
                     $rootScope.usuarioPermiso = {
-                        almacenPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "AR").permission),
-                        ventaPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "V").permission),
-                        cajaPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "C").permission),
-                    }
-                    $scope.accion = dataMenu
+                        almacenPermiso: JSON.parse(
+                            $scope.permissions.find((x) => x.codModule == "AR").permission
+                        ),
+                        ventaPermiso: JSON.parse(
+                            $scope.permissions.find((x) => x.codModule == "V").permission
+                        ),
+                        cajaPermiso: JSON.parse(
+                            $scope.permissions.find((x) => x.codModule == "C").permission
+                        ),
+                    };
+                    $scope.accion = dataMenu;
                     $rootScope.articlePermission = $scope.accions[0];
                     $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
                 } else {
-                   location.href = '/Home/Index'
+                    location.href = "/Home/Index";
                 }
             }
         }
@@ -105,10 +111,8 @@ function layoutCtrl($scope, $rootScope, $window) {
     $scope.onChangeSubMenu = function (item) {
         try {
             location.href = item.url;
-
         } catch (error) {
-            location.href = '/Login/Logout';
+            location.href = "/Login/Logout";
         }
-    }
-
+    };
 }

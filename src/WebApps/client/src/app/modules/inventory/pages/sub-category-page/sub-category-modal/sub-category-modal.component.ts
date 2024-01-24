@@ -1,7 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { NgxFileDropEntry } from "ngx-file-drop";
-import { ImageCroppedEvent } from "ngx-image-cropper";
 import { AppModule } from "src/app/app.module";
 
 
@@ -46,7 +45,7 @@ export class SubCategoryModalComponent {
     // Handle file leave event if needed
   }
 
-  imageCropped(event: ImageCroppedEvent) {
+  imageCropped(event: any) {
     // Handle cropped image event if needed
     this.croppedImage = event.base64;
   }

@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
-         <div class="icheck-primary">
+        <div class="icheck-primary">
           <input
             type="checkbox"
             id="userChecked"
@@ -29,7 +29,7 @@
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
     </div>
     <hr />
-    <div class="row"> 
+    <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-12 col-12">
         <div class="form-group">
           <label for="tipoComprobante">Tipo comprobante</label>
@@ -38,6 +38,7 @@
             id="tipoComprobante"
             class="form-select"
             [(ngModel)]="dataSearch.codDoc"
+            (change)="onChangeDocType()"
           >
             @for (item of tiposComprobante; track $index) {
             <option [ngValue]="item.codigoSri">{{ item.descripcion }}</option>
@@ -63,16 +64,37 @@
           </select>
         </div>
       </div>
-      <div class="col-xl-4 col-lg-4  col-md-12 col-12">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
         <div class="form-group">
           <label for="dateRangeSelect">Rango Fechas</label>
-          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)"/>
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
         </div>
       </div>
+      @if(dataSearch.codDoc==="01"){
+        <div class="col-lg-2 col-md-2 col-sm-6 col-12" ng-if="showField">
+          <div class="form-group">
+            <label for="retencion">Retencion</label>
+            <select
+              class="form-select"
+              [(ngModel)]="dataSearch.ckRetencion"
+            >
+            @for (item of estadosRetencion; track $index) {
+              <option
+                [ngValue]="item.estado"
+              >
+              {{item.descripcion}}
+            </option>
+            }
+            </select>
+          </div>
+        </div>
+      }
     </div>
     <div class="row">
       @if (dataSearch.supplierChecked) {
-      <div class="col-xl-4 col-lg-4  col-md-12 col-12">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
         <div class="form-group">
           <label for="supplierSearch">Proveedor</label>
           <app-supplier-search
@@ -82,19 +104,18 @@
             (emptyInput)="supplierResultEmptyInput($event)"
           ></app-supplier-search>
         </div>
-      </div> 
-      }
-      @if(dataSearch.userChecked){
-        <div class="col-xl-4 col-lg-4  col-md-12 col-12">
+      </div>
+      } @if(dataSearch.userChecked){
+      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
         <div class="form-group">
           <label for="userSearch">Usuario: </label>
-          <app-user-search 
+          <app-user-search
             (onUserSelected)="onUserSelected($event)"
             [textSearch]="dataSearch.userName"
             (emptyInput)="userResultEmptyInput($event)"
           ></app-user-search>
         </div>
-      </div> 
+      </div>
       }
     </div>
   </div>

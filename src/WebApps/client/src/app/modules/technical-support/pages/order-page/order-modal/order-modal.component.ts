@@ -102,5 +102,9 @@ export class OrderModalComponent {
       this.orderForm.patchValue({ puntoEmisionId: puntoEmisionId });
     }
   }
-  onCustomerSelected($event: any) {}
+  onCustomerSelected($event: any) {
+    let { data } = $event;
+    console.log(data.idCliente);
+    this.orderForm.patchValue({ customerCompanyId: data.idCliente });
+  }
 }

@@ -13,7 +13,7 @@ export class CompanyCustomerService {
   url = `${PATHS_API.CUSTOMER}CompanyCustomer/`
   constructor(private http: HttpClient) { }
 
-  checkExistence(params: any) {
+  async checkExistence(params: any) {
     return this.http.get(`${this.url}?json=${JSON.stringify({ ...params, tipo: 3 })}`).pipe(map((response) => response))
   }
 
