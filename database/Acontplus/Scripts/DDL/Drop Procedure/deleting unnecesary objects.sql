@@ -52,10 +52,7 @@ DROP PROCEDURE IF EXISTS [Recepcion].[Factura_Insert]
 GO 
 DROP PROCEDURE IF EXISTS [Ventas].[NotaEntrega_Convert]
 GO
-DROP PROCEDURE IF EXISTS [Ventas].[NotaEntrega_Delete]
-GO
-DROP PROCEDURE IF EXISTS [Ventas].[NotaEntrega_Detele]
-GO
+
 --
 DROP PROCEDURE IF EXISTS [Config].[CantidadDecimal_Get]
 GO
@@ -845,6 +842,9 @@ go
 DROP PROCEDURE IF EXISTS ReporteCompras.Factura
 go
 
+DROP PROCEDURE IF EXISTS [ReporteCompras].[Liquidacion]
+go
+
 DROP PROCEDURE IF EXISTS ReporteCompras.NotaCredito
 go
 
@@ -957,4 +957,16 @@ DROP PROCEDURE IF EXISTS [dbo].[aspAnticipoGet]
 go
 
 DROP PROCEDURE IF EXISTS [dbo].[aspAnticipoInsert]
+go
+
+DROP PROCEDURE IF EXISTS [Compra].[Factura_FindByProveedor]
+go
+
+DROP PROCEDURE IF EXISTS [Compra].[Factura_Get_Data_Form]
+go
+
+DROP PROCEDURE IF EXISTS [ReporteVentas].[Factura_Printer_Thermal]
+go
+
+DROP PROCEDURE IF EXISTS [ReporteVentas].[NotaEntrega_Printer_Thermal]
 go

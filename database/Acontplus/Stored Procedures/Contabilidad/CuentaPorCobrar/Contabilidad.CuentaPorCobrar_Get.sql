@@ -27,10 +27,17 @@ BEGIN
     SET NOCOUNT ON;
     SET LANGUAGE SPANISH 
 
+    --> Global
+    DECLARE @idEntidad INT ,@tipo INT 
+
+     --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+
 	DECLARE @fecha AS DATE
-	DECLARE @idEntidad AS INT 
-	DECLARE @tipo AS INT 
-	DECLARE @idCuentaPorCobrar AS INT
+
+    -->Filters
+    DECLARE @idCliente INT ,@codEstab VARCHAR(50) ,@idCuentaPorCobrar INT ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2
+	
 
 	-- ==== PARAMETER CONFIG ==========
 	DECLARE @configInteres AS BIT
@@ -42,8 +49,7 @@ BEGIN
 	DECLARE @codEstado VARCHAR(5)
 
 	--=== PARAMETER TIPO 3 PARA COBROS===
-	DECLARE @idCliente AS INT 
-	DECLARE @codEstab AS VARCHAR(50)
+	
 	DECLARE @nombreFiscal AS VARCHAR(100)
 	DECLARE @numeroIdentificacion AS VARCHAR(15)
 	DECLARE @identificacionReceptor AS VARCHAR(50)
@@ -63,22 +69,6 @@ BEGIN
 		,diasMora INT NOT NULL
 		,estado VARCHAR(150) NOT NULL
 		,codEstado VARCHAR(5) NOT NULL
-	)
-
-	DECLARE @tbVentas AS TABLE
-	(
-		 idCuentaPorCobrar INT NOT NULL UNIQUE
-		,serieComprobante VARCHAR(20) NOT NULL
-		,tipoDoc VARCHAR(5) NOT NULL
-		,fechaEmision DATETIME NOT NULL
-		,fechaVencimiento DATETIME NOT NULL
-		,importeTotal NUMERIC(18,5) NOT NULL
-		,diasMora INT NOT NULL
-		,mora NUMERIC(18,5) NOT NULL
-		,abono NUMERIC(18,5) NOT NULL
-		,saldo NUMERIC(18,5) NOT NULL
-		,estado VARCHAR(100) NOT NULL
-		,cuotas VARCHAR(MAX) NULL
 	)
 
 	DECLARE @cobroDocuments AS TABLE
@@ -184,105 +174,91 @@ BEGIN
 	--> Datos para cobros rapidos,lotes,credito 
 	IF @tipo = 3
 		BEGIN
-
-			SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-
-			SELECT @idCliente = idCliente,@codEstab = codEstab, @tiempoCredito = credito FROM OPENJSON(@json) WITH (idCliente INT '$.idCliente', codEstab VARCHAR(50) '$.codEstab', credito BIT '$.credito')
-
-			IF @tiempoCredito = 1 OR @tiempoCredito = 0  
-				BEGIN
-					SELECT TOP 1 @idCliente = idCliente , @numeroIdentificacion = identificacionComprador, @nombreFiscal = razonSocialComprador FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
-				END 
-			ELSE 
-				BEGIN
-					SELECT TOP 1 @numeroIdentificacion = numeroIdentificacion, @nombreFiscal = nombreFiscal FROM v_Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
-				END 
-
-			-- ====================================== Datos por lote se trae por cliente y establecimiento   ==================================================================
-			IF @tiempoCredito IS NULL
-				BEGIN 
-					INSERT INTO @tbVentas (idCuentaPorCobrar,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,diasMora,mora,abono,saldo,estado,cuotas)
-					SELECT cc.idCuentaPorCobrar
-						  ,cc.serieComprobante 
-						  ,cc.codDoc
-						  ,fechaEmision
-						  ,fechaVencimiento
-						  ,cc.importeTotal
-						  ,cc.diasMora
-						  ,cc.mora
-						  ,cc.abono
-						  ,cc.saldo
-						  ,ep.descripcion
-						  ,cuotas = (
-						             SELECT cx.idCuotaPorCobrar
-										   ,cx.idCuentaPorCobrar
-										   ,cx.nroCuota
-										   ,cx.cuota
-										   ,cx.mora
-										   ,cx.interes
-										   ,cx.diasMora
-										   ,cx.abono
-										   ,saldoCta = cx.cuota - cx.abono
-										   ,cx.saldo
-										   ,estado = ep.descripcion
-						             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-									 INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-						             WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar 
-									   AND cx.estado = 1 
-									   AND ep.codigo IN ('PE','PP')
-									 ORDER BY cx.nroCuota ASC
-									 FOR JSON PATH
-									 )
+            
+            SET @sql = 'SELECT cc.idCuentaPorCobrar
+						      ,cc.serieComprobante 
+						      ,cc.codDoc
+						      ,FORMAT(cc.fechaEmision, ''dd/MM/yyyy HH:mm'') as fechaEmision
+						      ,FORMAT(cc.fechaVencimiento, ''dd/MM/yyyy'')   as fechaVencimiento
+						      ,cc.importeTotal
+						      ,cc.diasMora
+						      ,cc.mora
+						      ,cc.abono
+						      ,cc.saldo
+						      ,ep.descripcion
+						      ,cuotas = (
+						                     SELECT cx.idCuotaPorCobrar
+										           ,cx.idCuentaPorCobrar
+										           ,cx.nroCuota
+										           ,cx.cuota
+										           ,cx.mora
+										           ,cx.interes
+										           ,cx.diasMora
+										           ,cx.abono
+										           ,saldoCta = cx.cuota - cx.abono
+										           ,cx.saldo
+										           ,estado = ep.descripcion
+						                     FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
+									         INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
+						                     WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar 
+									           AND cx.estado = 1 
+									           AND ep.codigo IN (''PE'',''PP'')
+									         ORDER BY cx.nroCuota ASC
+									         FOR JSON PATH
+									    )
 					FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
 					INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
 					INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
 					INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago   = cc.idEstadoPago
-					WHERE cc.idCliente = @idCliente AND ep.codigo IN ('PP','PE') AND es.codEstab = @codEstab
-				END 
+					WHERE ep.codigo IN (''PP'',''PE'') 
+                      AND es.codEstab = @codEstab '
 
-			-- ====================================== Documento a credito o contado  ==================================================================
-		    IF @tiempoCredito = 0 OR @tiempoCredito = 1
-				BEGIN
-					INSERT INTO @tbVentas (idCuentaPorCobrar,serieComprobante,tipoDoc,fechaEmision,fechaVencimiento,importeTotal,diasMora,mora,abono,saldo,estado,cuotas)
-					SELECT cc.idCuentaPorCobrar
-						  ,cc.serieComprobante 
-						  ,cc.codDoc
-						  ,fechaEmision
-						  ,fechaVencimiento
-						  ,cc.importeTotal
-						  ,cc.diasMora
-						  ,cc.mora
-						  ,cc.abono
-						  ,cc.saldo
-						  ,ep.descripcion
-						  ,cuotas = (
-						             SELECT cx.idCuotaPorCobrar
-									       ,cx.idCuentaPorCobrar
-										   ,cx.nroCuota
-										   ,cx.cuota
-										   ,cx.interes
-										   ,cx.mora
-										   ,cx.diasMora
-										   ,cx.abono
-										   ,saldoCta = cx.cuota - cx.abono
-										   ,cx.saldo
-										   ,estado = ep.descripcion
-						             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
-									 INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
-						             WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar 
-									   AND cx.estado          = 1 
-									   AND ep.codigo         IN ('PE','PP')
-									 ORDER BY cx.nroCuota ASC
-									 FOR JSON PATH
-									 )
-					FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
-					INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
-					INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
-					INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago   = cc.idEstadoPago
-					WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar AND ep.codigo IN ('PP','PE') AND es.codEstab = @codEstab
-				END 
+            SET @params = '@codEstab          VARCHAR(50)
+                          ,@idCliente         INT
+                          ,@idCuentaPorCobrar INT
+                          ,@fechaInicio       DATETIME2
+                          ,@fechaFin          DATETIME2'
 
-			-- ====================== Documetos Emitidos o recibidos para aplicar a cobros ; si el documento es a credito ===========================================
+
+            SELECT @idCliente         = idCliente
+                  ,@idCuentaPorCobrar = idCuentaPorCobrar
+                  ,@codEstab          = codEstab 
+                  ,@tiempoCredito     = credito
+                  ,@ckFecha           = ckFecha
+                  ,@fechaInicio       = fechaInicio
+                  ,@fechaFin          = fechaFin
+            FROM OPENJSON(@json) WITH 
+            (
+                idCliente         INT
+               ,idCuentaPorCobrar INT
+               ,codEstab          VARCHAR(50) 
+               ,credito           BIT
+               ,ckFecha           BIT
+               ,fechaInicio       DATETIME2
+               ,fechaFin          DATETIME2
+            )
+
+            SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+
+            IF @idCliente > 0
+                BEGIN
+                    SET @sql = @sql + 'AND cc.idCliente = @idCliente '
+                END 
+
+            IF @idCuentaPorCobrar > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND cc.idCuentaPorCobrar = @idCuentaPorCobrar '
+                END 
+
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(cc.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END 
+
+            SET @sql = @sql + 'ORDER BY cc.fechaEmision ASC '
+
+            
 			
 			INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
 			SELECT co.idComprobante,td.codigoSri,td.codigo 
@@ -346,12 +322,7 @@ BEGIN
 				AND a.estado = 1 
 				AND a.idAnticipo NOT IN (SELECT t.idComprobante FROM @cobroDocuments t WHERE t.codMov = 'A')
 			
-			-- ==================================== PAYLOAD ================================================================================
-			IF @tiempoCredito = 1 OR @tiempoCredito = 0
-				BEGIN
-					SELECT @fechaEmision = fechaEmision, @serieComprobante = serieComprobante FROM @tbVentas 
-				END 
-
+			
 			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
 			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 
@@ -362,33 +333,13 @@ BEGIN
 
 			SELECT idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision = FORMAT(fechaEmision,'MM/dd/yyyy HH:mm') FROM @documents 
 
-			SELECT idCuentaPorCobrar
-			      ,serieComprobante
-				  ,tipoDoc          = CASE tipoDoc WHEN '01' THEN 'Factura' ELSE 'N. Entrega' END 
-				  ,fechaEmision     = FORMAT(fechaEmision,'dd/MM/yyyy')
-				  ,fechaVencimiento = FORMAT(fechaVencimiento,'dd/MM/yyyy')
-				  ,importeTotal
-				  ,diasMora
-				  ,mora
-				  ,abono
-				  ,saldoDoc = importeTotal - abono
-				  ,saldo
-				  ,estado
-				  ,cuotas
-			FROM @tbVentas ORDER BY CONVERT(DATE, fechaEmision, 103) DESC
-
-			SELECT importeTotal         = SUM(importeTotal) 
-			      ,mora                 = SUM(mora)
-				  ,totalSaldoDoc        = SUM(importeTotal - abono)
-				  ,saldo                = SUM(saldo)
-				  ,abono                = SUM(abono)
-				  ,idCliente            = @idCliente
-				  ,numeroIdentificacion = @numeroIdentificacion
-				  ,nombreFiscal         = @nombreFiscal
-				  ,codEstab             = @codEstab 
-				  ,fechaEmision         = FORMAT(@fechaEmision,'dd/MM/yyyy')
-				  ,serieComprobante     = @serieComprobante
-			FROM @tbVentas
+            EXEC sp_executesql @sql
+							  ,@params 
+							  ,@codEstab          = @codEstab
+							  ,@idCliente         = @idCliente
+                              ,@idCuentaPorCobrar = @idCuentaPorCobrar
+							  ,@fechaInicio       = @fechaInicio
+							  ,@fechaFin          = @fechaFin
 
 			RETURN 
 		END
