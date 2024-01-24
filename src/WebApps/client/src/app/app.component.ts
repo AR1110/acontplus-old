@@ -5,9 +5,9 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
-import { GlobalRoutes } from '@core/constants';
 import { getEnumValueByKey } from '@core/utils/constant-value'
-import { AuthService } from '@modules/auth/services';
+import { AuthService } from '@modules/auth/services/auth.service';
+import { GlobalRoutes } from '@core/constants/global-routes';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -28,12 +28,20 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     let self = this;
     this.route.queryParams.subscribe(params => {
-      let { token, route } = params
+      let { token, route, permission } = params;
+
+      if (permission) {
+        localStorage.setItem("permisos", permission);
+      }
+
       if (token) {
-        if (this.authService.isLoggedIn != true) {
-          localStorage.setItem('access_token', token);
+        if (this.authService.isLoggedIn == true) {
+          localStorage.removeItem('access_token');
         }
-        self.router.navigate(['/', getEnumValueByKey(GlobalRoutes, route)]);
+        let route_page = getEnumValueByKey(GlobalRoutes, route);
+      
+        localStorage.setItem('access_token', token);
+        self.router.navigate(['/', ...route_page.split('/')]);
       }
     });
   }

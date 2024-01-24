@@ -25,7 +25,7 @@ namespace Ventas.API.Controllers.v2
         public async Task<IActionResult> Get(string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -51,7 +51,7 @@ namespace Ventas.API.Controllers.v2
         public async Task<IActionResult> GetDataForm(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -74,7 +74,7 @@ namespace Ventas.API.Controllers.v2
         [HttpGet("Search")]
         public async Task<IActionResult> Search(string json)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -103,7 +103,7 @@ namespace Ventas.API.Controllers.v2
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] Cliente data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -129,7 +129,7 @@ namespace Ventas.API.Controllers.v2
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Cliente data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -156,7 +156,7 @@ namespace Ventas.API.Controllers.v2
         [HttpPut("UpdateApp/{id}")]
         public async Task<IActionResult> UpdateApp(int id, [FromBody] Cliente data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -183,7 +183,7 @@ namespace Ventas.API.Controllers.v2
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
@@ -209,7 +209,7 @@ namespace Ventas.API.Controllers.v2
         [HttpGet("FindById/{id}")]
         public async Task<IActionResult> FindById(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {

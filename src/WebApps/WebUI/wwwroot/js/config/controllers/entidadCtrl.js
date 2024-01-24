@@ -2,7 +2,7 @@
 
     'use strict';
 
-    let url = 'Entidad/';
+    let url = 'Config/Entidad/';
     let mS = '';
     let tS = {};
 

@@ -4,12 +4,15 @@
   </div>
   <div class="col-md-7 align-self-center text-end">
     <div class="d-flex justify-content-end align-items-center">
-      <ol class="breadcrumb justify-content-end">
-        <li class="breadcrumb-item"><a href="javascript:void(0)">{{parentData.breadcrumb}}</a></li>
-        <li class="breadcrumb-item active">{{childData.breadcrumb}}</li>
-      </ol>
-      @if (childData.buttonAction) {
-        <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" (click)="onClick()"><i class="ti-plus"></i>
+      @if(parentData.breadcrumb){
+        <ol class="breadcrumb justify-content-end">
+          <li class="breadcrumb-item"><a href="javascript:void(0)">{{parentData.breadcrumb}}</a></li>
+          <li class="breadcrumb-item active">{{childData.breadcrumb}}</li>
+        </ol>
+      }
+      @if (childData.buttonAction && crear) {
+        <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" (click)="onClick()">
+          <fa-icon [icon]="'plus'"></fa-icon>
           {{childData.buttonAction}}</button>
       }
     </div>

@@ -1,13 +1,33 @@
-import { Component } from '@angular/core';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { Component, inject } from '@angular/core';
+import { ModalService } from '@core/services/modal.service';
+import { TechSupportModule } from '@modules/technical-support/tech-support.module';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { DashboardComponent } from '@modules/technical-support/components/dashboard/dashboard.component';
+import { OrderListComponent } from '../order-page/order-list/order-list.component';
+import { OrderModalComponent } from '../order-page/order-modal/order-modal.component';
+import { AppModule } from 'src/app/app.module';
 
 @Component({
   selector: 'app-technical-support-page',
   standalone: true,
-  imports: [BreadcrumbComponent],
+  imports: [
+    AppModule,
+    TechSupportModule,
+    OrderListComponent,
+    DashboardComponent,
+    NgbNavModule,
+  ],
   templateUrl: './technical-support-page.component.html',
-  styleUrl: './technical-support-page.component.scss'
+  styles: ``,
 })
 export class TechnicalSupportPageComponent {
+  active = 2;
+  private modalRef = inject(ModalService);
 
+  openOrderModal() {
+    this.modalRef.openModalCustom(OrderModalComponent, {
+      centered: true,
+      size: 'xl',
+    });
+  }
 }

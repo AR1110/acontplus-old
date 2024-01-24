@@ -6,7 +6,7 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from '@modules/auth/services';
+import { AuthService } from '@modules/auth/services/auth.service';
 
 @Injectable()
 export class InjectSessionInterceptor implements HttpInterceptor {
@@ -15,8 +15,13 @@ export class InjectSessionInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const authToken = this.authService.getToken();
-    console.log(authToken)
+    const parseJwt = this.authService.parseJwt();
+
+    const baseUrl = parseJwt.urlGateway;
+    // console.log(baseUrl)
+    // console.log(request.url)
     request = request.clone({
+      url: `${baseUrl}/gateway/${request.url}`,
       setHeaders: {
         Authorization: "Bearer " + authToken
       }

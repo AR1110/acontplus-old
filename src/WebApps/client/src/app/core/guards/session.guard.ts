@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '@modules/auth/services';
+import { AuthService } from '@modules/auth/services/auth.service';
 
 export const sessionGuard: CanActivateFn = (route, state) => {
   const router: Router = inject(Router);
@@ -9,6 +9,5 @@ export const sessionGuard: CanActivateFn = (route, state) => {
     console.log('no auth')
     //router.navigate(['/', 'auth'])
   }
-  console.log('auth')
   return true;
 };

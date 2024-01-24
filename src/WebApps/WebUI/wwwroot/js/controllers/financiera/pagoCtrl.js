@@ -155,7 +155,7 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, proveedorSvc
     }
 
     $scope.selectProveedorFiltro = (item) => {
-        $scope.dataSearch.byPersona = item.proveedor.numeroIdentificacion
+        $scope.dataSearch.byPersona = item.numeroIdentificacion
     }
 
     $scope.onKeyupSearchEmpleadoFiltro = () => {

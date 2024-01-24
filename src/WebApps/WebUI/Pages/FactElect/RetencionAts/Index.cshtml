@@ -1,0 +1,30 @@
+﻿@page
+@model WebUI.Pages.FactElect.RetencionAts.IndexModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["title"] = "Retención ATS";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="retencionAtsCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Retención ATS</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-info m-l-15" btn-retencion-ats-add-update>
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+     
+
+</div>
+@section Scripts {
+       <script src="~/js/factElect/controllers/retencionAtsCtrl.min.js" asp-append-version="true"></script>
+
+
+}

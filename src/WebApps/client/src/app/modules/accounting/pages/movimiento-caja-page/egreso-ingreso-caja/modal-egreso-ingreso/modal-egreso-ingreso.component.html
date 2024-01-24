@@ -1,0 +1,175 @@
+<form autocomplete="off" [formGroup]="dataForm" (ngSubmit)="save()">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ titleModal }}</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="row justify-content-between">
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="exstablecimiento"
+            >Establecimiento: <span class="text-danger">*</span></label
+          >
+          <select
+            name="establecimiento"
+            id="onChangeEntidadFinanciera"
+            class="form-select form-control-border"
+            formControlName="codEstab"
+            required
+          >
+            @for (item of establecimientos; track $index) {
+            <option [ngValue]="item.codEstab">
+              {{ item.nombreComercial }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="caja">Caja: <span class="text-danger">*</span></label>
+          <select
+            class="form-select form-control-border"
+            formControlName="idCaja"
+            name="idCaja"
+            required          >
+            @for (item of cajas; track $index) {
+            <option [ngValue]="item.idCaja">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="tipoDoc"
+            >Tipo Documento: <span class="text-danger">*</span></label
+          >
+          <select
+            name="tipoDoc"
+            id="tipoDoc"
+            class="form-select form-control-border"
+            formControlName="idTipoDocumento"
+            required
+          >
+            @for (item of tiposDocumento; track $index) {
+            <option [ngValue]="item.idTipoDocumento">
+              {{ item.descripcion }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="entidadFinanciera"
+            >Entidad Financiera: <span class="text-danger">*</span></label
+          >
+          <select
+          name="idEntidadFinanciera"
+            class="form-select form-control-border"
+            (change)="onChangeEntidadFinanciera()"
+            formControlName="idEntidadFinanciera"
+            required
+          >
+            @for (item of entidadesFinanciera; track $index) {
+
+            <option [ngValue]="item.idEntidadFinanciera">
+              {{ item.descripcion }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="">Sub Entidad Financiera</label>
+          <select
+            class="form-select form-control-border"
+            formControlName="idSubEntidadFinanciera"
+            name="idSubEntidadFinanciera"
+            required
+          >
+            @for (item of subEntidadesFinanciera; track $index) {
+            <option [ngValue]="item.idSubEntidadFinanciera">
+              {{ item.descripcion }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="employee"
+            >Empleado: <span class="text-danger">*</span></label
+          >
+          <div class="input-group">
+            <input
+              id="typeahead-supplier"
+              type="text"
+              formControlName="employeeName"
+              class="form-control form-control-border"
+              [ngbTypeahead]="searchEmployee"
+              [resultTemplate]="rt"
+              onclick="select();"
+              (selectItem)="selectEmployee($event)"
+            />
+          </div>
+
+          <ng-template #rt let-r="result" let-t="term">
+            <ngb-highlight
+              [result]="r.nroIdentificacion + ' - ' + r.nombreCompleto"
+              [term]="t"
+            />
+          </ng-template>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="">Valor <span class="text-danger">*</span></label>
+          <input
+            type="number"
+            class="form-control form-control-border"
+            placeholder="0.00"
+            formControlName="valor"
+            name="valor"
+            required
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm 12 col-12">
+        <div class="form-group">
+          <label for="">Observación <span class="text-danger">*</span></label>
+          <textarea
+            name="observaciones"
+            class="form-control form-control-border"
+            formControlName="observaciones"
+            touppercase
+            required
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-success" [disabled]="!dataForm.valid">
+      <i class="ti-save"></i> Guardar
+    </button>
+    <button type="button" class="btn btn-dark" (click)="closeModal()">&times; Cerrar</button>
+  </div>
+</form>

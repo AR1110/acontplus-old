@@ -21,7 +21,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TipoEntidad_Get");
@@ -48,7 +48,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Insert(string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TipoEntidad_Insert");
@@ -75,7 +75,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Update(int id, string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TipoEntidad_Update");
@@ -104,7 +104,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TipoEntidad_Delete");
@@ -133,7 +133,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> ListForSelect(int id)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TipoEntidad_For_Select");

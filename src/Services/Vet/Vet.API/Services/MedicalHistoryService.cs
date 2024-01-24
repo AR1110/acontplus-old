@@ -8,13 +8,13 @@ namespace Vet.API.Services
     public class MedicalHistoryService : IMedicalHistory
     {
         private readonly IADORepository _generic;
-        private readonly APIResponse _response;
+        private readonly ApiResponse _response;
         public MedicalHistoryService(IADORepository genericRepository)
         {
-            _response = new APIResponse();
+            _response = new ApiResponse();
             _generic = genericRepository;
         }
-        public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             //var sqlParam = new SqlParameter("@json", Converters.SerializeDictionary(parameters.Data));
             //var result = _context.MedicalHistories.FromSqlRaw($"Pet.MedicalHistory_Get {sqlParam}");
@@ -30,7 +30,7 @@ namespace Vet.API.Services
             }
             return _response;
         }
-        public async Task<APIResponse> GetByIdAsync(int id)
+        public async Task<ApiResponse> GetByIdAsync(int id)
         {
             var parameters = new Dictionary<string, object>()
             {

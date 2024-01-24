@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Tributaria
             _ia = new ImpuestoArticuloDao(_config);
         }
         // GET: ImpuestoArticulo
-        GenericResponse _gr = new();
+        ApiResponse _gr = new();
         public IActionResult Index()
         {
             return View();

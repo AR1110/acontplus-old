@@ -1,0 +1,64 @@
+@if (isSearchSimple) {
+<input
+  id="typeahead-company-customers"
+  type="text"
+  class="form-control form-control-border"
+  [(ngModel)]="textSearch"
+  [ngbTypeahead]="search"
+  [resultTemplate]="rt"
+  [class.is-invalid]="searchFailed"
+  (selectItem)="onSelect($event)"
+  onclick="select();"
+  (keyup)="onKeyupSearch()"
+  placeholder="..."
+/>
+} @else {
+<div class="input-group">
+  <input
+    id="typeahead-company-customers"
+    type="text"
+    class="form-control"
+    [(ngModel)]="textSearch"
+    [ngbTypeahead]="search"
+    [resultTemplate]="rt"
+     [class.is-invalid]="searchFailed"
+    (selectItem)="onSelect($event)"
+    onclick="select();"
+    (keyup)="onKeyupSearch()"
+    placeholder="Buscar cliente"
+  />
+
+  <button
+    type="button"
+    class="btn btn-outline-secondary btn-sm"
+    (click)="openModal()"
+  >
+    <fa-icon [icon]="'plus'"></fa-icon>
+  </button>
+  @if (dataSearch.idCliente > 0) {
+  <button
+    type="button"
+    class="btn btn-outline-secondary btn-sm"
+    (click)="openModal()"
+  >
+    <fa-icon [icon]="'edit'"></fa-icon>
+  </button>
+  }
+  <button type="button" class="btn btn-outline-secondary btn-sm">
+    <fa-icon [icon]="'search'"></fa-icon>
+  </button>
+</div>
+} @if (searching) {
+<small class="form-text text-muted">Buscando...</small>
+} @if (searchFailed) {
+<div class="invalid-feedback">
+  Lo sentimos, no se han podido cargar las sugerencias.
+</div>
+}
+
+<ng-template #rt let-r="result" let-t="term">
+  <ngb-highlight
+    [result]="r.numeroIdentificacion + ' - ' + r.nombreFiscal"
+    [term]="t"
+  />
+</ng-template>

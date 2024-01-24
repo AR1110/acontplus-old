@@ -1,0 +1,56 @@
+<div class="table-responsive mt-2">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Año</th>
+        <th>Color</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of devices; track $index) {
+      <tr>
+        <td>
+          {{ item.name }}
+        </td>
+        <td>
+          {{ item.marca }}
+        </td>
+        <td>
+          {{ item.model }}
+        </td>
+        <td>
+          {{ item.year }}
+        </td>
+        <td>
+          {{ item.color }}
+        </td>
+        <td>
+          <button
+            type="button"
+            class="btn btn-outline-warning btn-sm btn-rounded"
+          >
+            <i class="ti-pencil"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm btn-rounded m-l-5"
+          >
+            <i class="ti-trash"></i>
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+    @if(devices.length == 0){
+    <tfoot>
+      <tr>
+        <td colspan="6">No se encontraron registros</td>
+      </tr>
+    </tfoot>
+    }
+  </table>
+</div>

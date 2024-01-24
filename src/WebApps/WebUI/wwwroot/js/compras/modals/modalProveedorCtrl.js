@@ -211,7 +211,7 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
             $scope.data.validationSri = false;
             commonSvc.checkClientSRIByCedula($scope.data.numeroIdentificacion).then(response => {
                 let {
-                    razonSocial,
+                    nombreCompleto,
                     direccion,
                     telefono,
                     email,
@@ -229,8 +229,8 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                 $scope.data.direccion = direccion ? direccion : null;
                 $scope.telefonos = telefono ? telefono.split(';') : []
                 $scope.correos = email ? email.split(';') : []
-                $scope.data.nombreComercial = razonSocial;
-                $scope.data.nombreFiscal = razonSocial;
+                $scope.data.nombreComercial = nombreCompleto;
+                $scope.data.nombreFiscal = nombreCompleto;
                 $scope.data.validationSri = true;
             }).finally(() => {
                 hideLoader();
@@ -319,12 +319,17 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
             }
 
             $scope.data.telefono = this.telefonos.join(';')
-            $scope.data.correo = this.correos.join(';')
+            $scope.data.correo = this.correos.join(';');
+            let idTiempoCredito = $scope.data.idTiempoCredito;
+            let spParams = {
+                ...$scope.data,
+                idTiempoCredito: [0, null, undefined].includes(idTiempoCredito) ? null : idTiempoCredito
+            }
 
             if (!($scope.data.idProveedor > 0)) {
                 showLoader();
                 proveedorSvc
-                    .post($scope.data)
+                    .post(spParams)
                     .then(successResponse)
                     .catch((error) => {
                         console.log(error);
@@ -335,7 +340,7 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
             if ($scope.data.idProveedor > 0) {
                 showLoader();
                 proveedorSvc
-                    .put($scope.data.idProveedor, $scope.data)
+                    .put($scope.data.idProveedor, spParams)
                     .then(successResponse)
                     .catch((error) => {
                         console.log(error);
@@ -361,10 +366,9 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                 let results = JSON.parse(response.payload);
                 idProveedor = results.idProveedor;
             }
-            $uibModalInstance.close({
-                idProveedor,
-                idTiempoCredito: $scope.data.idTiempoCredito
-            });
+            let dataProveedor = proveedorSvc.getId(idProveedor);
+
+            $uibModalInstance.close(dataProveedor);
         }
     }
 
@@ -445,7 +449,8 @@ function modalProveedorListaCtrl(
     };
 
     $scope.selectedCustomer = (item) => {
-        $uibModalInstance.close(item);
+        let dataProveedor = proveedorSvc.getId(item.idProveedor);
+        $uibModalInstance.close(dataProveedor);
     };
 
     $scope.closeModal = function () {

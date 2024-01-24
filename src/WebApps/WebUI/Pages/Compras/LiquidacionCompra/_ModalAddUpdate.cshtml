@@ -1,0 +1,275 @@
+<form autocomplete="off" ng-submit="onSave()">
+    <div class="modal-header">
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" ng-model="showHeader" id="checkbox0" value="check">
+            <label class="custom-control-label" for="checkbox0">Mas datos</label>
+        </div>
+        <h4><strong>Total: </strong>${{data.total}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row" ng-if="showHeader">
+            <div class="col-xl-3 col-md-3 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="estabs">Estab.: <span class="text-danger">*</span></label>
+                    <select class="form-control border-select" 
+                    ng-model="data.codEstab"
+                    ng-disabled="data.idLiquidacionCompra>0"
+                        ng-change="onChangeEstablecimiento()">
+                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                            {{item.nombreComercial}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <label for="proveedorFiltro">Proveedor:</label>
+
+                <div class="input-group">
+                    <input type="text" id="providerInputSearch" class="form-control border-select"
+                        ng-model="proveedor.nombreProveedor" provider-search-drtv on-select="onSelectProveedor(result)"
+                        on-keyup="onKeyupProveedor()" is-return-data="true" placeholder="Ingrese C.I o Nombre Comercial"
+                        onclick="select();">
+
+                    <script type="text/ng-template" id="autocompleteProviderTemplate.html">
+                        <div class="autocomplete-suggestion-uib-typeahead">
+                            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                        </div>
+                    </script>
+
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary btn-xs border-select"
+                            id="btnNewCustomerDocument" btn-proveedor-add-update
+                            result-modal="onSelectProveedor(result)">
+                            <i class="fa fa-plus fa-xs"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-xs" ng-if="proveedor.idProveedor>0"
+                            btn-proveedor-add-update result-modal="onSelectProveedor(result)" params='proveedor'
+                            tabindex="-1">
+                            <i class="fa fa-edit fa-xs"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-xs" btn-proveedor-lista
+                            result-modal="onSelectProveedor(result)" tabindex="-1">
+                            <i class="fa fa-search fa-xs"></i>
+                        </button>
+
+                        <button type="button" cliente-info-popover customer="cliente" popover-placement='top'
+                            class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
+                            <i class="fa fa-info fa-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-3">
+                <div class="form-group">
+                    <label>Nro. Identificación: </label>
+                    <input type="text" class="form-control" ng-model="proveedor.numeroIdentificacion"
+                        ng-disabled="true">
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-3">
+                <div class="form-group">
+                    <label>Dirección: </label>
+                    <input type="text" ng-model="proveedor.direccion" ng-disabled="true" class="form-control" />
+                </div>
+            </div>
+
+            @* <div class="col-lg-2 col-md-2 col-sm-6 col-xs-3">
+            <div class="form-group">
+            <label>Correo: </label>
+            <input type="text" ng-model="proveedor.correo" ng-disabled="true" class="form-control" />
+            </div>
+            </div> *@
+        </div>
+
+
+        <div class="row" ng-show="showHeader">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="puntoEmision">Punto Emision <span class="text-danger">*</span></label>
+                    <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
+                        ng-model="data.idPuntoEmision" ng-disabled="data.idLiquidacionCompra>0" ng-change="onChangePuntoEmision()">
+                        <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                            {{item.ptoEmi}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>Tiempo Credito: <span class="text-danger">*</span> </label>
+                    <div class="input-group">
+                        <select class="form-control border-select" ng-model="data.idTiempoCredito"
+                            ng-change="onChangeTiempoCredito()" ng-disabled="data.idLiquidacionCompra>0">
+                            <option ng-value="item.idTiempoCredito" ng-repeat="item in tiemposCredito">
+                                {{item.descripcion}}</option>
+                        </select>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-secondary btn-sm" ng-disabled="data.idLiquidacionCompra>0" ng-click="refreshTiempoCredito()">
+                                <i class="mdi mdi-cached"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>F. Emisión: </label>
+                    <input type="date" class="form-control" ng-model="data.fechaEmision"
+                        ng-blur="onChangeFechaEmision()" />
+                    <small class="form-text text-info">{{fechaEmisionEscrita}}</small>
+                </div>
+            </div>
+
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>F. de Vencimiento: </label>
+                    <input type="date" class="form-control" ng-model="data.fechaVencimiento" disabled />
+                    <small class="form-text text-info">{{fechaVencimientoEscrita}}</small>
+                </div>
+            </div>
+
+            @* <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+            <div class="form-group">
+            <label>Usuario: </label>
+            <input type="text" ng-model="usuario" ng-disabled="true" class="form-control" />
+            </div>
+            </div> *@
+        </div>
+
+        <div class="row">
+            <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <label for="">Buscar por Artículo</label>
+                        <md-autocomplete-articulo-component tipo-doc="tipoDoc"
+                            set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)" id-bodega="data.idBodega">
+                        </md-autocomplete-articulo-component>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="bodegas">Bodega</label>
+                            <select name="bodegas" id="bodegas" class="form-control border-select"
+                                ng-model="data.idBodega" ng-change="askToChangeBodega()">
+                                <option ng-value="item.idBodega" ng-repeat="item in bodegas">{{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="row justify-content-end">
+                    <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <button type="submit" class="btn btn-block btn-lg btn-success mt-4"
+                            id="btnSaveAndUpdateDocument">
+                            <i class="{{data.idLiquidacionCompra>0?'ti-pencil': 'ti-save'}}"></i>
+                            {{data.idLiquidacionCompra>0?'Actualizar': 'Guardar'}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+            class="grid">
+        </div>
+
+
+
+        <div class="row mt-1">
+            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
+                <div class="card border border-secondary-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>% Descuento</label>
+                                    <div class="input-group">
+                                        <input ng-model="data.porcentajeDescuento"
+                                            ng-disabled="gridOptions.data.length==0" decimal
+                                            class="form-control border-select" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                ng-click="calcularPorcentajeDescuento()">
+                                                <i class="fa fa-calculator fa-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Descuento</label>
+                                    <div class="input-group">
+                                        <input ng-model="data.totalDescuento" id="totalDescuento"
+                                            ng-disabled="gridOptions.data.length==0" decimal placeholder="0.00"
+                                            class="form-control border-select" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                ng-click="calcularDescuento()">
+                                                <i class="fa fa-calculator fa-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Transporte</label>
+                                    <input type="text" decimal ng-model="data.transporte"
+                                        ng-blur="sumaTransporteRecargo()" class="form-control border-select"
+                                        placeholder="0.00" />
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Rercargo</label>
+                                    <input type="text" decimal ng-model="data.recargo" ng-blur="sumaTransporteRecargo()"
+                                        class="form-control border-select" placeholder="0.00" />
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label>Observacion</label>
+                                    <textarea class="form-control border-select" ng-model="data.observacion" touppercase
+                                        placeholder="..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="card border p-2">
+
+                    <div id="drawImpuestoTotales"></div>
+
+                </div>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
+                        open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento"
+                        get-data-additional-document="resultModalDatoAdicional(result)"
+                        ng-click="openModalInfoAdicional(false)">
+                        <i class="fas fa-info-circle text-info"></i> Dato Adicional
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-dark waves-effect" ng-click="closeModal()">&times; Cerrar</button>
+    </div>
+
+</form>

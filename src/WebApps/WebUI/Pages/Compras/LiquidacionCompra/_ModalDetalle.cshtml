@@ -1,0 +1,160 @@
+<div class="modal-header">
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" ng-model="showHeader" id="checkbox0" value="check">
+        <label class="custom-control-label" for="checkbox0">Mas datos</label>
+    </div>
+    <h4><strong>Total: </strong>${{data.total}}</h4>
+</div>
+<div class="modal-body">
+    <div class="row" ng-if="showHeader">
+        <div class="col-xl-3 col-md-3 col-sm-12 col-12">
+            <div class="form-group">
+                <label for="estabs">Estab.: </label>
+                <input type="text" class="form-control" ng-model="data.establecimiento" disabled>
+
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+            <label for="proveedorFiltro">Proveedor:</label>
+            <input type="text" class="form-control" ng-model="proveedor.nombreProveedor" disabled>
+        </div>
+
+        <div class="col-lg-2 col-md-2 col-sm-6 col-xs-3">
+            <div class="form-group">
+                <label>Nro. Identificación: </label>
+                <input type="text" class="form-control" ng-model="proveedor.numeroIdentificacion" disabled>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-3">
+            <div class="form-group">
+                <label>Dirección: </label>
+                <input type="text" ng-model="proveedor.direccion" ng-disabled="true" class="form-control" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row" ng-show="showHeader">
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+            <div class="form-group">
+                <label for="puntoEmision">Punto Emision </label>
+                <input type="text" class="form-control" ng-model="data.ptoEmi" disabled>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+            <div class="form-group">
+                <label>Tiempo Credito: </label>
+                <input type="text" class="form-control" ng-model="data.tiempoCredito" disabled>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+            <div class="form-group">
+                <label>F. Emisión: </label>
+                <input type="date" class="form-control" ng-model="data.fechaEmision" disabled />
+                <small class="form-text text-info">{{data.fechaEmisionEscrita}}</small>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+            <div class="form-group">
+                <label>F. de Vencimiento: </label>
+                <input type="date" class="form-control" ng-model="data.fechaVencimiento" disabled />
+                <small class="form-text text-info">{{data.fechaVencimientoEscrita}}</small>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-success mb-2" ng-click="getReport()">
+        <i class="far fa-file-excel"></i> Exportar Excel
+    </button>
+
+    <div id="grid" ui-grid="gridOptions"  ui-grid-resize-columns  ui-grid-auto-resize
+        class="grid">
+    </div>
+
+    <div class="row mt-1">
+        <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
+            <div class="card border border-secondary-1">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>% Descuento</label>
+                                <div class="input-group">
+                                    <input ng-model="data.porcentajeDescuento" disabled decimal
+                                        class="form-control border-select" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                            <i class="fa fa-calculator fa-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Descuento</label>
+                                <div class="input-group">
+                                    <input ng-model="data.totalDescuento" id="totalDescuento" disabled decimal
+                                        placeholder="0.00" class="form-control border-select" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                            <i class="fa fa-calculator fa-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Transporte</label>
+                                <input type="text" decimal ng-model="data.transporte" disabled
+                                    class="form-control border-select" placeholder="0.00" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Rercargo</label>
+                                <input type="text" decimal ng-model="data.recargo" disabled
+                                    class="form-control border-select" placeholder="0.00" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>Observacion</label>
+                                <textarea class="form-control border-select" ng-model="data.observacion" touppercase disabled
+                                    placeholder="..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+            <div class="card border p-2">
+
+                <div id="drawImpuestoTotalesDetalle"></div>
+
+            </div>
+            <div class="mt-2">
+                <button type="button" is-view="true" class="btn btn-secondary btn-sm btn-lg btn-block"
+                    open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento">
+                    <i class="fas fa-info-circle text-info"></i> Dato Adicional
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark waves-effect" ng-click="closeModal()">&times; Cerrar</button>
+</div>

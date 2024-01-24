@@ -1,0 +1,184 @@
+﻿<script lang="ts">
+	import Modal from "$components/Modal.svelte";
+	import toast from "$utils/toast";
+	import type { Floor } from "$restaurant/interfaces/floor";
+	import { floorService } from "$restaurant/services/floor-service";
+	import { onMount } from "svelte";
+	import { estabAsignService } from "$modules/restaurant/services/estab-asign-service";
+   import { hideLoader, showLoader } from "$utils/loading-spinner";
+
+	export let openNew;
+	export let modalClosed;
+
+	export let data = {} as Floor;
+	let establecimientos = [];
+   let validation = [undefined, null, "", 0];
+
+	onMount(() => {
+		getEstabAsign();
+	});
+
+	const getEstabAsign = () => {
+		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+			if (response) {
+				establecimientos = response;
+			}
+		});
+	};
+
+	const onSave = () => {
+		if (!onValidate(data)) return;
+
+		showLoader();
+		floorService.post(data).then((response) => {
+			hideLoader();
+			if (response.status == 200) {
+				onModalClose();
+				toast({ type: "success", message: response.data });
+				data = {} as Floor;
+			} else {
+				toast({ type: "warning", message: response.data });
+			}
+		});
+	};
+
+	const onUpdate = () => {
+		if (!onValidate(data)) return;
+
+		showLoader();
+		floorService.put(data.id, data).then((response) => {
+			hideLoader();
+			if (response.status == 200) {
+				onModalClose();
+				toast({ type: "success", message: response.data });
+				data = {} as Floor;
+			} else {
+				toast({ type: "error", message: response.data });
+			}
+		});
+	};
+
+	const onValidate = (data: Floor) => {
+		let isValid = true;
+
+		try {
+			if (validation.includes(data.codEstab)) {
+				toast({
+					type: "warning",
+					message: "Seleccione un establecimiento",
+				});
+				isValid = false;
+			}
+
+			if (validation.includes(data.description)) {
+				toast({ type: "warning", message: "Ingrese una descripción" });
+				isValid = false;
+			}
+
+			if (validation.includes(data.code)) {
+				toast({ type: "warning", message: "Ingrese un código" });
+				isValid = false;
+			}
+
+			if (validation.includes(data.capacity)) {
+				toast({ type: "warning", message: "Ingrese una capacidad" });
+				isValid = false;
+			}
+			return isValid;
+		} catch (error) {
+			return false;
+		}
+	};
+
+	const setCode = (description: string) => {
+		if (description === undefined || description === null) return;
+		data.code = description.substring(0, 3).toUpperCase();
+	};
+
+	const onModalClose = () => {
+		openNew = false;
+		modalClosed();
+	};
+</script>
+
+{#if openNew}
+	<Modal
+		open={openNew}
+		iconTitle={data.id > 0 ? "ti-sync" : "ti-plus"}
+		title={data.id > 0 ? "Actualizar" : "Registrar"}
+		onClosed={() => onModalClose()}
+	>
+		<form
+			on:submit|preventDefault={data.id > 0 ? onUpdate : onSave}
+			autocomplete="off"
+		>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="tipo"
+						>Establecimiento.: <span class="text-danger">*</span
+						></label
+					>
+					<select
+						name="establecimiento"
+						id="establecimiento"
+						class="form-control border-select"
+						bind:value={data.codEstab}
+					>
+						{#each establecimientos as item}
+							<option value={item.codEstab}>
+								{item.nombreComercial}
+							</option>
+						{/each}
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="descripcion">
+						Descripción <span class="text-danger">*</span>
+					</label>
+					<input
+						type="text"
+						name="description"
+						id="description"
+						bind:value={data.description}
+						on:keyup={(e) => setCode(data.description)}
+						class="form-control border-select"
+					/>
+				</div>
+				<div class="form-group">
+					<label for="descripcion">
+						Código <span class="text-danger">*</span>
+					</label>
+					<input
+						type="text"
+						name="code"
+						id="code"
+						bind:value={data.code}
+						class="form-control border-select"
+					/>
+				</div>
+				<div class="form-group">
+					<label for="descripcion">
+						Capacidad <span class="text-danger">*</span>
+					</label>
+					<input
+						type="number"
+						name="capacity"
+						id="capacity"
+						bind:value={data.capacity}
+						class="form-control border-select"
+					/>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success">
+					<i class="ti-save" /> Guardar</button
+				>
+				<button
+					type="button"
+					class="btn btn-dark"
+					on:click={() => onModalClose()}>&times; Cerrar</button
+				>
+			</div>
+		</form>
+	</Modal>
+{/if}

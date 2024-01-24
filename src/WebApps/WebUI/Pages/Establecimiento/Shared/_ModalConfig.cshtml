@@ -13,6 +13,14 @@
     .dragover {
         border: 5px dashed blue;
     }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    img {
+        cursor: pointer;
+    }
 </style>
 
 <div class="modal-header">
@@ -27,23 +35,42 @@
             <div class="card">
 
                 <div class="card-body shadow">
-                    <center class="m-t-30">
-                        <img ngf-src="$ctrl.file" ng-if="$ctrl.file" ngf-no-object-url="false" class="img-fluid">
-                        <div type="file" ng-if="!$ctrl.file"
-                             ngf-select="$ctrl.onSave()"
-                             ng-model="$ctrl.file"
-                             class="drop-box"
-                             ngf-drag-over-class="'dragover'"
-                             ngf-accept="'image/*'"
-                             ngf-validate="{size: {min: 10, max: '20MB'}, width: {min: 100, max:10000}, height: {min: 100, max: 300} ratio: '2x1', duration: {min: '10s', max: '5m'}">
-                            Haga clic para cargar imagen.
-                        </div>
-                        <div class="text-center justify-content-md-center mt-2" ng-if="$ctrl.file">
-                            <div class="btn-group" role="group" aria-label="Btn Delete">
-                                <button type="button" class="btn btn-danger" ng-click="$ctrl.removeImg()"><i class="far fa-times-circle"></i> Eliminar</button>
+                    <ng-form name="filesEstab"> 
+                        <center class="m-t-30">
+                            <input type="file" ngf-select="$ctrl.onSave()"
+                                   ng-model="$ctrl.file"
+                                   class="drop-box"
+                                   ngf-drag-over-class="'dragover'"
+                                   ngf-accept="'image/*'"
+                                   ngf-model-invalid="errorFile"
+                                   ngf-max-size="1MB"
+                                   ngf-validate="{size: {min: '50KB', max: '1MB'}" />
+                                   <small class="text-warning">Tamaño máximo 1MB</small>
+
+                            <i ng-show="filesEstab.$ctrl.file.$error.maxSize" class="text-danger">
+                                Archivo muy grande
+                                {{errorFile.size / 10000|number:1}}MB: max 1Mb
+                            </i>
+                            <i ng-show="filesEstab.$ctrl.file.$error.pattern" class="text-danger">
+                                Formato de archivo no aceptado
+                            </i>
+                            <img ngf-src="$ctrl.file" ng-if="$ctrl.file" ngf-no-object-url="false" class="img-fluid" ng-click="$ctrl.update()" title="Haga click para actualizar el logo">
+                            <div type="file" ng-if="!$ctrl.file"
+                                 ngf-select="$ctrl.onSave()"
+                                 ng-model="$ctrl.file"
+                                 class="drop-box"
+                                 ngf-drag-over-class="'dragover'"
+                                 ngf-accept="'image/*'"
+                                 ngf-validate="{size: {min: '50KB', max: '1MB'}, width: {min: 100, max:10000}, height: {min: 100, max: 300} ratio: '2x1', duration: {min: '10s', max: '5m'}">
+                                Haga clic para cargar imagen.
                             </div>
-                        </div>
-                    </center>
+                            <div class="text-center justify-content-md-center mt-2" ng-if="$ctrl.file">
+                                <div class="btn-group" role="group" aria-label="Btn Delete">
+                                    <button type="button" class="btn btn-danger" ng-click="$ctrl.removeImg()"><i class="far fa-times-circle"></i> Eliminar</button>
+                                </div>
+                            </div>
+                        </center>
+                    </ng-form>
                     <div><hr></div>
                     <small class="text-muted">RUC</small>
                     <h6>{{$ctrl.data.ruc}}</h6>
@@ -57,10 +84,10 @@
 
                 @* <div class="card-footer text-center">
 
-                        <button class="btn btn-theme"
-                                type="button">+
-                        </button>
-                    </div>                                      *@
+                <button class="btn btn-theme"
+                type="button">+
+                </button>
+                </div>                                      *@
 
             </div>
         </div>
@@ -80,7 +107,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-12 b-r">
-                                    <strong>Npmbre Comercial</strong>
+                                    <strong>Nombre Comercial</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.nombreComercial}}</p>
                                 </div>

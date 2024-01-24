@@ -434,11 +434,11 @@
                 params: '='
             },
             link: function (scope, element) {
-                element.on('click', async function () { 
-                    if (typeof scope.params === 'object' && /^9{13}$/.test(scope.params.numeroIdentificacion)){
+                element.on('click', async function () {
+                    if (typeof scope.params === 'object' && /^9{13}$/.test(scope.params.numeroIdentificacion)) {
                         toastService.toastr('warning', 'Consumir Final no puede ser editada.');
                         return
-                    } 
+                    }
 
                     let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['M']];
@@ -642,7 +642,7 @@
                                 return
                             }
 
-                            
+
                             //retornamos datos al controlador principal donde llamamos la directiva
                             scope.functionTrigger({
                                 result: {
@@ -1149,7 +1149,7 @@
                     }
                     //===================================
 
-                    mainService.getData('GET', 'WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 }), null, true).then(
+                    mainService.getData('GET', 'Config/WhatsappUsage/?json=' + JSON.stringify({ tipo: 2, idEntidad: 0 }), null, true).then(
                         async response => {
                             if (response.code == '0') {
                                 toastService.toastr('warning', response.message)
@@ -1305,7 +1305,7 @@
                         width: auto;
                     }
                 `;
-                
+
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
@@ -1373,7 +1373,7 @@
                         width: auto;
                     }
                 `;
-                
+
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
@@ -1445,7 +1445,8 @@
             scope: {
                 onSelect: '&',
                 onKeyup: '&',
-                ngModel: '='
+                ngModel: '=',
+                isReturnData: "="
             },
             link: function (scope, element) {
                 scope.proveedor = {
@@ -1484,11 +1485,26 @@
                     }
                 }
 
+                scope.onSelectProveedor = function (data) {
+                    if (scope.isReturnData) {
+                        showLoader();
+                        proveedorService.getId(data.idProveedor).then(response => {
+                            scope.onSelect({ result: response })
+                        })
+                            .catch((error) => {
+                                console.log(error)
+                            })
+                            .finally(() => hideLoader())
+                        return
+                    }
+                    scope.onSelect({ result: data })
+                }
+
                 element.attr('uib-typeahead', 'item as item.nombreFiscal for item in search($viewValue)');
-                element.attr('typeahead-on-select', 'onSelect({result: $item})');
+                element.attr('typeahead-on-select', 'onSelectProveedor($item)');
                 element.attr('typeahead-template-url', 'autocompleteProviderTemplate.html');
                 element.attr('ng-keyup', 'onKeyup()');
-                element.attr('typeahead-editable', 'false');
+                element.attr('typeahead-editable', 'true');
 
 
                 // element.attr('ng-model', 'ngModel')
@@ -1564,7 +1580,7 @@
                         articuloService.getArticlesFractionalInfo(query).then(response => {
                             scope.tarifas = response[0].tarifas;
                             scope.articlesFractionals = response;
-                            
+
                         }).catch(error => {
                             console.log(error)
                         })
@@ -1643,6 +1659,47 @@
     })
 
 
+
+    app.directive('btnRetencionAtsAddUpdate', function (toastService, modalService, nombreModalFactElect) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element) {
+                let tS = toastService;
+                element.on('click', async function () {  
+                    if ( typeof scope.params ==='object' && scope.params.versionComp !== '2.0.0') { 
+                        tS.toastr('warning', 'No disponible');
+                        return
+                    }  
+
+                    let { fileCtrl, controller, template } = nombreModalFactElect.RETENCION_ATS;
+                    let ctrl = (await import(fileCtrl))[controller];
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: {
+                            data: scope.params
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
 
 
 })(window.angular)

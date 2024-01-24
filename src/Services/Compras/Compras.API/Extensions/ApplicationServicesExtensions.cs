@@ -15,6 +15,12 @@ namespace Compras.API.Extensions
 
             services.AddScoped<FileTxt>();
             services.AddScoped<IProveedorService, ProveedorService>();
+            services.AddScoped<ILiquidacionCompraService, LiquidacionCompraService>();
+            services.AddScoped<IFacturaCompraService, FacturaCompraService>();
+            services.AddScoped<IOrdenCompraService, OrdenCompraService>();
+            services.AddScoped<INotaCreditoService, NotaCreditoService>();
+            services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
+            services.AddScoped<IDocumentoRecibidoService, DocumentoRecibidoService>();
 
             services.AddSingleton<LogWriter>();
             return services;

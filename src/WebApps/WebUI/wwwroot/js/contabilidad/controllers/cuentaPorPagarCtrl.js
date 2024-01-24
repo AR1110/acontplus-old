@@ -4,7 +4,7 @@
 
     'use strict';
 
-    const FILE_PATH_PARTIAL_UI = '~/Areas/CuentaPorPagar/Pages/';
+    const FILE_PATH_PARTIAL_UI = '~/Pages/Contabilidad/CuentaPorPagar/Shared/';
 
     let cuentaPorPagarSvc = {}
 
@@ -19,7 +19,7 @@
         const _mS = $injector.get('mainService');
         const _sS = $injector.get('screenSize');
         const _modalSvc = $injector.get('modalService');
-        const _form = $injector.get('formulario');
+        const fS = $injector.get('formulario');
         cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
 
 
@@ -40,49 +40,12 @@
             }, 1100)
         }
 
-
-        //Filter 
-        let thisMoment = moment()
-        let endOfMonth = moment(thisMoment).endOf('month')
-        let startOfMonth = moment(thisMoment).startOf('month')
-
-        //https://www.daterangepicker.com/
-        $scope.dateRangePicker = {
-            date: { startDate: startOfMonth, endDate: endOfMonth },
-            picker: null,
-            options: {
-                pickerClasses: 'custom-display', //angular-daterangepicker extra
-                buttonClasses: 'btn',
-                applyButtonClasses: 'btn-success',
-                cancelButtonClasses: 'btn-danger',
-                locale: {
-                    applyLabel: "Aplicar",
-                    cancelLabel: 'Cancelar',
-                    customRangeLabel: 'Rango Personalizado',
-                    separator: ' - ',
-                    format: "YYYY-MM-DD", //will give you 2017-01-06
-                    //format: "D-MMM-YY", //will give you 6-Jan-17
-                    //format: "D-MMMM-YY", //will give you 6-January-17
-                },
-                ranges: {
-                    // 'Hoy': [moment(), moment()],
-                    // 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
-                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()]
-                },
-                eventHandlers: {
-                    'apply.daterangepicker': function () {
-                        $scope.initialLoad()
-                        console.log('applied')
-                    }
-                }
-            }
-        }
-
+        $scope.moreSearchOptions = false;
         $scope.dataSearch = {
             codEstab: 'ALL',
             codDoc: 'ALL',
             codEstado: 'ALL',
+            checkBoxFecha: true
         }
 
         $scope.tipoDocumentos = [
@@ -93,6 +56,7 @@
 
         $scope.cuentasPorPagar = [];
         $scope.selectedDocumentos = [];
+        $scope.proveedor = {};
 
         $scope.options = {
             limitOptions: [5, 10, 15],
@@ -111,12 +75,12 @@
 
         $scope.getCuentasPorPagar = () => {
             try {
-                showLoader();
 
                 $scope.cuentasPorPagar = [];
+                $scope.selectedDocumentos = [];
 
                 let dataSearch = {
-                    checkboxFecha: true,
+                    checkboxFecha: $scope.dataSearch.checkBoxFecha,
                     checkboxEstab: $scope.dataSearch.codEstab === 'ALL' ? $scope.dataSearch.checkboxEstab = false : $scope.dataSearch.checkboxEstab = true,
                     codEstab: $scope.dataSearch.codEstab,
                     checkboxEstado: $scope.dataSearch.codEstado === 'ALL' ? $scope.dataSearch.checkboxEstado = false : $scope.dataSearch.checkboxEstado = true,
@@ -125,8 +89,8 @@
                     codDoc: $scope.dataSearch.codDoc,
                     checkboxProveedor: $scope.dataSearch.idProveedor > 0 ? $scope.dataSearch.checkboxProveedor = true : $scope.dataSearch.checkboxProveedor = false,
                     idProveedor: $scope.dataSearch.idProveedor,
-                    dateStart: $scope.dateRangePicker.date.startDate._d,
-                    dateEnd: $scope.dateRangePicker.date.endDate._d
+                    dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin)
                 }
 
                 //Activar seleccion multiple para pago  por lote 
@@ -145,20 +109,30 @@
                     })
                     .finally(() => hideLoader())
             } catch (error) {
+                hideLoader();
                 console.log(error)
             }
         }
 
         $scope.initialLoad = () => {
             try {
-                $scope.getCuentasPorPagar();
 
+                showLoader();
                 commonSvc.getEstabAsign().then(response => {
                     $scope.establecimientos = response;
-                })
+                    if ($scope.establecimientos.length > 0) {
+                        let dataEstab = $scope.establecimientos.find(item => item.predeterminado);
+                        $scope.dataSearch.codEstab = dataEstab.codEstab;
+                        $scope.getCuentasPorPagar();
+                    }
+                }).catch(error => {
+                    console.log_(error)
+                }).finally(() => hideLoader())
 
                 commonSvc.getEstadoDocByCodDoc('CP').then(response => {
                     $scope.estadoDocumentos = response;
+                }).catch(error => {
+                    console.log(error)
                 })
 
             } catch (error) {
@@ -167,19 +141,26 @@
             }
         }
 
-        $scope.initialLoad()
+        $scope.initialLoad();
 
-
-        //----------------------------------------FILTRO------------------------------------------------------------
-        //-------------------------------------------Proveedor filter------------------------------
-        $scope.proveedorFilte = {};
-        $scope.searchProveedorFilter = (textSearch) => {
-            return proveedorSvc.search(textSearch)
+        //----------------------------------------------FILTROS ----------------------------------------
+        $scope.resultRangeFilter = function (item) {
+            $scope.dataSearch.fechaInicio = item.startDate;
+            $scope.dataSearch.fechaFin = item.endDate;
+            $scope.getCuentasPorPagar();
         };
 
-        $scope.selectedOnChangeFilter = (item) => {
-            $scope.dataSearch.idProveedor = item.idProveedor
-        }
+
+
+        $scope.onKeyupProveedor = function () {
+            if (!$scope.proveedor.nombreProveedor) {
+                $scope.dataSearch.idProveedor = 0;
+            }
+        };
+        $scope.onSelectProveedor = function (item) {
+            $scope.dataSearch.idProveedor = item.idProveedor;
+            $scope.getCuentasPorPagar();
+        };
 
         $scope.getCuentasPorProveedor = () => {
             if ($scope.dataSearch.idProveedor > 0) {
@@ -195,6 +176,9 @@
             $scope.getCuentasPorPagar();
         }
 
+        $scope.onClickBtnMore = function () {
+            $scope.moreSearchOptions = !$scope.moreSearchOptions;
+        };
 
         //-------------------------------------PAGO ----------------------------
         $scope.openModalPagoLote = () => {
@@ -202,7 +186,7 @@
 
                 let modalParams = {
                     controller: 'modalPagoCtrl',
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalPago.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalPago.cshtml',
                     size: 'xl',
                     //  windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
@@ -226,7 +210,7 @@
 
             } else {
 
-                _form.sweetAlert(
+                fS.sweetAlert(
                     'info',
                     `<div class="text-left">
                         Para realizar Pago por Lote realice lo siguiente: 
@@ -251,7 +235,7 @@
             })
 
 
-            return _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true);
+            return _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true);
         }
 
 
@@ -268,7 +252,6 @@
 
                     if (response.code === "0") {
                         hideLoader();
-                        console.log(response)
                         $scope.deleteDocSeleted(item);
                     }
 
@@ -297,11 +280,11 @@
 
         //======================================MODAL CUOTA================================================ 
         $scope.openModalCuota = async (item) => {
-            try { 
+            try {
 
                 let modalParams = {
                     controller: 'modalCuotaCtrl',
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalCuota.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalCuota.cshtml',
                     size: 'xl',
                     isRenderRazorPartial: true
                 }
@@ -310,7 +293,7 @@
 
 
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
+                _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
 
                     let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
 
@@ -364,7 +347,7 @@
                 //Params Modal
                 let modalParams = {
                     controller: 'modalPagoCtrl',
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalPago.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalPago.cshtml',
                     size: 'xl',
                     //  windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
@@ -415,7 +398,7 @@
             try {
 
                 let modalParams = {
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalHistorialPago.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalHistorialPago.cshtml',
                     controller: 'historialMovimientoCtrl',
                     size: 'xl',
                     isRenderRazorPartial: true
@@ -428,10 +411,10 @@
 
 
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
+                _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
                     if (response.code === '0') {
                         hideLoader()
-                        _form.sweetAlert('warning', response.message)
+                        fS.sweetAlert('warning', response.message)
                     }
                     if (response.code === '1') {
                         modalParams.params = {
@@ -517,7 +500,7 @@
                         codPago: $scope.data.codPago
                     };
 
-                    mS.getData('post', 'CuentaPorPagar/' + JSON.stringify(data), null, true).then(response => {
+                    mS.getData('post', 'Contabilidad/CuentaPorPagar/' + JSON.stringify(data), null, true).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
@@ -766,7 +749,7 @@
                         let data = {
                             cuotas: JSON.stringify($scope.cuotas)
                         }
-                        mS.getData('put', 'CuentaPorPagar/' + $scope.data.id, data, true)
+                        mS.getData('put', 'Contabilidad/CuentaPorPagar/' + $scope.data.id, data, true)
                             .then(response => {
                                 if (response.code === "0") {
                                     hideLoader()
@@ -912,7 +895,7 @@
 
                 let modalRef = _modalSvc.openModalCustom({
                     controller: 'formaPagoCtrl',
-                    template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalFormaPago.cshtml',
+                    template: FILE_PATH_PARTIAL_UI + '_ModalFormaPago.cshtml',
                     size: 'lg',
                     isRenderRazorPartial: true,
                     params
@@ -926,7 +909,6 @@
                             $scope.esAbonoPosfechado = result.isPosfechado;
                             $scope.valorAbonoFormaPago = result.valorAbono;
 
-                            console.log($scope.valorAbonoFormaPago)
 
                             $scope.addFormaPago();
 
@@ -1103,7 +1085,6 @@
 
 
         $scope.showPagoDetalle = (data) => {
-            console.log($scope.pagosDetalle)
             let tempPagosDetalle = $scope.pagosDetalle.filter(item => item.idCuotaPorPagar === data.idCuotaPorPagar);
             let infoPagosDetalle = [];
 
@@ -1277,7 +1258,7 @@
                             historial: JSON.stringify(historialPagos),
                         }
                         mS.getData('post', '/ComprobanteEgreso/Post', spParams).then(response => {
-                            console.log(response)
+
                             if (response.code === "0") {
                                 hideLoader();
                                 fS.sweetAlert('warning', response.message)
@@ -1349,8 +1330,8 @@
 
             try {
                 let spParams = JSON.stringify({ tipo: 3, idProveedor: $scope.proveedor.idProveedor })
-
-                mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
+                showLoader();
+                mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
 
                     if (response.code === "0") {
                         console.log(response)
@@ -1359,8 +1340,6 @@
                     if (response.code === "1") {
 
                         let tempData = JSON.parse(response.payload);
-
-                        console.log(tempData)
 
                         $scope.entidadesFinancieras = tempData[0];
                         $scope.tempSubEntidadesFinancieras = tempData[1];
@@ -1374,7 +1353,7 @@
                         $scope.documentosElectronicos = tempData[4];
 
                     }
-                })
+                }).finally(() => hideLoader())
             } catch (error) {
                 console.log('Initiload Form Payment', error);
             }
@@ -1519,7 +1498,7 @@
             }
 
 
-            console.log($scope.getDataPago())
+
             $uibModalInstance.close($scope.getDataPago());
         }
 

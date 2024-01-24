@@ -1,0 +1,114 @@
+<form [formGroup]="orderForm">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+    </h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-hidden="true"
+      aria-label="btn-close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+        <div class="form-group">
+          <label for="establecimientoId">Establecimiento:</label>
+          <select
+            #estabs
+            id="establecimientoId"
+            class="form-select"
+            formControlName="establecimientoId"
+            (change)="onChangeEstab()"
+          >
+            @for (item of establecimientos; track $index) {
+            <option [ngValue]="item.idEstablecimiento">
+              {{ item.nombreComercial }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+        <div class="form-group">
+          <label for="idPuntoEmision">P. Emi.:</label>
+          <select
+            id="idPuntoEmision"
+            class="form-select"
+            formControlName="puntoEmisionId"
+          >
+            @for (item of puntosEmision; track $index) {
+            <option [ngValue]="item.idPuntoEmision">
+              {{ item.ptoEmi }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="form-group">
+          <label for="fechaEmision">Fecha Emisión: </label>
+          <input
+            type="date"
+            class="form-control border-select"
+            formControlName="fechaEmision"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="form-group">
+          <label for="encargado">
+            Responsable: <span class="text-danger">*</span>
+          </label>
+          <select
+            formControlName="encargado"
+            id="encargado"
+            class="form-control border-select"
+            required
+          >
+            <option value=""></option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <div class="card rounded border border-info">
+          <div class="card-header">Datos cliente:</div>
+          <div class="card-body">
+            <!--Start section customer -->
+            <div class="form-group">
+              <label for="customerSearch"
+                >Cliente:
+                <span class="text-danger">*</span>
+              </label>
+              <app-company-customer-search
+                (onCustomerSelected)="onCustomerSelected($event)"
+              ></app-company-customer-search>
+            </div>
+
+            <!--Start Form register-update customer-->
+            <!-- @if(showForm){
+                <CustomerFormFast />
+                } -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-outline-success btn-sm">
+      <fa-icon [icon]="'save'"></fa-icon> Guardar
+    </button>
+    <button
+      type="submit"
+      class="btn btn-outline-dark btn-sm"
+      (click)="closeModal()"
+    >
+      &times; Cancelar
+    </button>
+  </div>
+</form>

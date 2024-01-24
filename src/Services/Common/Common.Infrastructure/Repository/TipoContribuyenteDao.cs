@@ -8,18 +8,18 @@ namespace Common.Infrastructure.Repository
     public class TipoContribuyenteDao
     {
         private readonly IConfiguration _config;
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly string _connectionStrings = string.Empty;
 
         public TipoContribuyenteDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
 
         }
         //Gestios de informacion
-        public async Task<GenericResponse> CreateTipoContribuyenteAsync(int idRol, TipoContribuyente data)
+        public async Task<ApiResponse> CreateTipoContribuyenteAsync(int idRol, TipoContribuyente data)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> ReadTipoContribuyente(int idRol, int pageIndex, int pageSize)
+        public async Task<ApiResponse> ReadTipoContribuyente(int idRol, int pageIndex, int pageSize)
         {
             var listar = new List<TipoContribuyente>();
             try
@@ -105,7 +105,7 @@ namespace Common.Infrastructure.Repository
 
             return _gr;
         }
-        public async Task<GenericResponse> UpdateTipoContribuyenteAsync(int idRol, TipoContribuyente data)
+        public async Task<ApiResponse> UpdateTipoContribuyenteAsync(int idRol, TipoContribuyente data)
         {
             try
             {
@@ -141,7 +141,7 @@ namespace Common.Infrastructure.Repository
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteTipoContribuyenteAsync(int idRol, int idTipoContribuyente)
+        public async Task<ApiResponse> DeleteTipoContribuyenteAsync(int idRol, int idTipoContribuyente)
         {
             try
             {
@@ -176,7 +176,7 @@ namespace Common.Infrastructure.Repository
             return _gr;
         }
         //Operaciones Especiales 
-        public async Task<GenericResponse> OptionTipoContribuyenteAsync(int idRol)
+        public async Task<ApiResponse> OptionTipoContribuyenteAsync(int idRol)
         {
             var listar = new List<TipoContribuyente>();
             try

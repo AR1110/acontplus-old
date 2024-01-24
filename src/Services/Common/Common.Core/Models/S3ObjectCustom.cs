@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 namespace Common.Core.Models
 {
-    public sealed class S3ObjectCustom
+    public sealed class S3ObjectCustom : IDisposable
     {
         private readonly IConfiguration _configuration;
         public S3ObjectCustom(IConfiguration configuration)
@@ -32,6 +32,41 @@ namespace Common.Core.Models
                 Key = _configuration["AwsConfiguration:AWSAccessKey"],
                 Secret = _configuration["AwsConfiguration:AWSSecretKey"]
             };
+        }
+
+        public void Add(string s3ObjectKey)
+        {
+            this.BucketName = _configuration["S3Bucket:Name"];
+            this.Region = _configuration["S3Bucket:Region"];
+            this.S3ObjectKey = s3ObjectKey; 
+            this.AwsCredentials = new AwsCredentials
+            {
+                Key = _configuration["AwsConfiguration:AWSAccessKey"],
+                Secret = _configuration["AwsConfiguration:AWSSecretKey"]
+            };
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                BucketName = null;
+                Region = null;
+                S3ObjectKey = null;
+                S3ObjectUrl = null;
+                AwsCredentials = null;
+            }
+        }
+
+        ~S3ObjectCustom()
+        {
+            Dispose(false);
         }
     }
 }

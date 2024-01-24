@@ -1,6 +1,7 @@
 -- ================================================
 -- Template generated from Template Explorer using:
 USE Acontplus
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -21,27 +22,7 @@ BEGIN
 
     SELECT @id = id FROM OPENJSON (@json) WITH(id INT '$.id')
 
-    DECLARE @dataSources AS TABLE (dsName VARCHAR(50))
-    DECLARE @tblParams AS TABLE (
-                            paramName VARCHAR(100),
-                            isBase64 BIT,
-                            paramValue VARBINARY(MAX))
-
-    DECLARE @logoImg VARBINARY(MAX)
-    ,@mimeType VARCHAR(20)
-
-	INSERT INTO @dataSources(dsName)
-	VALUES	('mainDataSet'),
-			('behaviorTests'),
-            ('healthChecks')
-
-	SET @tableNames = 'RdlcProps,RdlcDataSources,mainDataSet,healthChecks,behaviorTests,RdlcParams'
-
-	--RdlcProps
-	SELECT 'Vet\MedicalHistory.rdl' ReportPath, 'PDF' ReportFormat, 'Historial Clinico' ReportName
-
-	--RdlcDataSources
-	SELECT * FROM @dataSources
+	SET @tableNames = 'mainDataSet,healthChecks,behaviorTests'
 
 	--Main DS
 		SELECT CASE 
@@ -91,20 +72,5 @@ BEGIN
 		INNER JOIN Pet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id
 		CROSS JOIN Pet.BehaviorStatus bs
 	WHERE bt.MedicalHistoryId = @id
-
-		--RdlcParams
-	DECLARE @petId INT 
-	SET @petId = (SELECT PetId FROM Pet.MedicalHistory WITH(NOLOCK) WHERE id = @id)
-	SELECT TOP 1 @logoImg = imagen
-			,@mimeType = mimeType
-	FROM AcontPlus.Config.Estab_Logo WITH(NOLOCK)
-	WHERE ruc = (SELECT TOP 1 e.ruc FROM Pet.Pet p WITH(NOLOCK) INNER JOIN Entidad e WITH(NOLOCK) ON p.CompanyId = e.idEntidad WHERE id = @petId)
-	ORDER BY idEstab_Logo DESC
-
-    INSERT INTO @tblParams(paramName, isBase64, paramValue)
-    VALUES('logo', 1, @logoImg),
-        ('mimeType', 0, CONVERT(VARBINARY, @mimeType))
-
-    SELECT * FROM @tblParams
 END
 GO

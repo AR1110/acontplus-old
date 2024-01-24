@@ -622,5 +622,41 @@
     "inputFiles": [
       "wwwroot/js/common/modals/modalMailCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/iframeAngularCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/iframeAngularCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/services/reporteVentaService.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/services/reporteVentaService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/controllers/firmaElectronicaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/controllers/firmaElectronicaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/modals/modalSubFamiliaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/modals/modalSubFamiliaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/services/inventarioService.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/services/inventarioService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/utils/utils.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/utils/utils.js"
+    ]
   }
 ]

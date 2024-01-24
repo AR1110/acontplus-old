@@ -1,0 +1,23 @@
+<app-breadcrumb />
+<div class="card">
+  <div class="card-body">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <button ngbNavLink>EGRESOS/INGRESOS CAJA</button>
+        <ng-template ngbNavContent>
+          <app-egreso-ingreso-caja />
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2">
+        <button ngbNavLink>ANTICIPO</button>
+        <ng-template ngbNavContent>
+          @defer {
+          <app-anticipo />
+          } @loading { Loading... } @error { Something went wrong : }
+        </ng-template>
+      </li>
+    </ul>
+
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+</div>

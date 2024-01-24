@@ -134,7 +134,7 @@
                 })
 
                 if (isConfirmed) {
-                    _mS.getData('delete', 'Usuario/' + item.idUsuario, null, true).then(response => {
+                    _mS.getData('delete', 'Config/Usuario/' + item.idUsuario, null, true).then(response => {
                         if (response.id == "0") {
                             toast.toastr('warning', response.message, response.titleSms);
                         }
@@ -280,7 +280,7 @@
                 codRol: 'AD'
             }
 
-            mS.getData('post', 'Usuario/' + JSON.stringify(data), null, true).then(response => {
+            mS.getData('post', 'Cofnfig/Usuario/' + JSON.stringify(data), null, true).then(response => {
                 if (response.code == "0" || response.id == "0") {
                     tS.toastr('warning', response.message, response.titleSms);
                 }
@@ -316,7 +316,7 @@
                     return
                 }
 
-                mS.getData('put', `Usuario/${$scope.data.idUsuario}/${JSON.stringify($scope.data)}`, null, true).then(response => {
+                mS.getData('put', `Config/Usuario/${$scope.data.idUsuario}/${JSON.stringify($scope.data)}`, null, true).then(response => {
                     if (response.code == "0" || response.id == "0") {
                         tS.toastr('warning', response.message, response.titleSms);
                     }
@@ -378,7 +378,7 @@
             try {
                 showLoader();
                 $scope.usuarioRoles = [];
-                mS.getData('get', 'UsuarioRol/Get/' + params.idUsuario, null, true).then(response => {
+                mS.getData('get', 'Config/UsuarioRol/Get/' + params.idUsuario, null, true).then(response => {
                     if (response.code === "0") {
                         hideLoader();
                         tS.toastr('warning', response.message)
@@ -387,6 +387,8 @@
                         $scope.usuarioRoles = JSON.parse(response.payload) || [];
                         hideLoader();
                     }
+                }).catch(error=>{
+                    console.log(error)
                 })
 
             } catch (error) {

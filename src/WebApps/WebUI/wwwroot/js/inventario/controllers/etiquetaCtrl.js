@@ -53,9 +53,10 @@
             try {
                 let modalRef = modalSvc.openModalCustom({
                     controller: modalEtiquetaCtrl,
-                    template: 'Etiqueta/_ModalAddUpdate.cshtml',
+                    template: '~/Pages/Etiqueta/_ModalAddUpdate.cshtml',
                     size:'md',
-                    params
+                    params,
+                    isRenderRazorPartial: true
                 });
 
                 modalRef.result.then(result => {

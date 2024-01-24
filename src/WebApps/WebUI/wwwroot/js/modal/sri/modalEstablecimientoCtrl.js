@@ -230,7 +230,7 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl {
 
         this.tipoRegistro = this._params.tipoRegistro;
         this.data = {};
-        this.dataLogo = {}; 
+        this.dataLogo = {};
         this.file = null;
 
         this.patternImg = "'.jpg,.png'"
@@ -247,10 +247,12 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl {
             showLoader();
             let request = this.requestInitiload();
             request.push(this._mS.getData('get', this.urlEstabGet, null, true));
+            request.push(this._mS.getData('get', `Config/EstablecimientoLogo/${this._params.idEstablecimiento}`, null, true))
 
             let requestResults = await Promise.all(request);
             let results = JSON.parse(requestResults[0].payload);
             let resultsDataEstab = JSON.parse(requestResults[1].payload)
+            let resultLogo = requestResults[2]
 
             this.cantones = results[0];
             this.actividadesEconomicas = results[1];
@@ -263,9 +265,12 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl {
             this.tipoContribuyente = this.tipoContribuyentes.find(item => item.codigo === this.data.contribuyente).descripcion
 
             //Logo
-            if (resultsDataEstab[1][0]) {
-                this.dataLogo = resultsDataEstab[1][0];
-                this.file = `data:${this.dataLogo.mimeType};base64,${this.dataLogo.imagen}`
+            if (resultLogo) {
+                this.dataLogo = resultLogo
+                if (!this.dataLogo.isCompressed) {
+                    this._tS.toastr('info', 'Por favor actualize nuevamente el logo del establecimiento, gracias!', 'Aviso!');
+                }
+                this.file = `data:${this.dataLogo.contentType};base64,${this.dataLogo.content}`
             }
             //Puntos Emisiones 
             this.puntosEmision = resultsDataEstab[2];
@@ -287,11 +292,15 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl {
             }
 
             showLoader();
-            const data = {
-                codEstab: this.data.codEstab
+
+            let urlLogo;
+            if (this.dataLogo.id > 0) {
+                urlLogo = `Config/EstablecimientoLogo/Put/${this.dataLogo.id}`
+            } else {
+                urlLogo = `Config/EstablecimientoLogo/${this._params.idEstablecimiento}`
             }
 
-            await this._mS.getDataFile('/EstabLogo/Insert', this.file, data).then(response => {
+            await this._mS.uploadFile({ url: urlLogo, file: this.file, forApi: true }).then(response => {
                 if (response.code == 0) {
                     this._tS.toastr('warning', response.message, response.titleSms);
                     return;
@@ -311,6 +320,15 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl {
             hideLoader();
         }
 
+    }
+
+    async update() {
+        let imgBtn = document.querySelector('img');
+        let fileInp = document.querySelector('[type="file"]');
+
+        imgBtn.addEventListener('click', function () {
+            fileInp.click();
+        })
     }
 
 
@@ -340,7 +358,7 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl {
         })
 
         if (isConfirmed) {
-            this._mS.getData('delete', '/EstabLogo/Delete?id=' + this.dataLogo.idEstab_Logo).then(response => {
+            this._mS.getData('delete', 'Config/EstablecimientoLogo/' + this.dataLogo.idEstab_Logo, null, true).then(response => {
                 if (response.code === '0') {
                     this._tS.toastr('warning', response.message)
                 }

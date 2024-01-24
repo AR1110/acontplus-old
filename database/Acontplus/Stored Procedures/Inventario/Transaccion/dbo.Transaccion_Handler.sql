@@ -6,12 +6,12 @@ AS
 DECLARE @RecvReqDlgHandle UNIQUEIDENTIFIER;
 DECLARE @RecvReqMsg XML;
 DECLARE @RecvReqMsgName SYSNAME;
-DECLARE @idTipoTransaccion INT
-DECLARE @idTipoDocumento INT
-DECLARE @codTran VARCHAR(2)
-DECLARE @codDoc VARCHAR(2)
-DECLARE @documentoId INT 
+
+--> Data Global
 DECLARE @tipo INT = 1
+
+--> Inventario
+DECLARE @codTran VARCHAR(2) ,@codDoc VARCHAR(2) ,@documentoId INT ,@idTipoTransaccion INT ,@idTipoDocumento INT
 
 WHILE (1 = 1)
 BEGIN
@@ -34,10 +34,10 @@ BEGIN
 
 		--declare @targetpProcedure nvarchar(100);
 		--set @targetpProcedure = CAST(@RecvReqMsg AS nvarchar(100))
-		SELECT @codTran     = nref.value('(codTran)[1]', 'VARCHAR(5)')
+		SELECT @codTran     = nref.value('(codTran)[1]','VARCHAR(5)')
 			  ,@codDoc      = nref.value('(codDoc)[1]', 'VARCHAR(5)')
 			  ,@documentoId = nref.value('(documentoId)[1]', 'INT')
-			  ,@tipo        = nref.value('(tipo)[1]', 'INT')
+			  ,@tipo        = nref.value('(tipo)[1]','INT')
 		FROM @RecvReqMsg.nodes('/msg') AS R(nref);
 
 		--IF LEN(@targetpProcedure) > 0

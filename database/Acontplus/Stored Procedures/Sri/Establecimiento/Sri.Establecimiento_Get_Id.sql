@@ -21,10 +21,7 @@ GO
 -- Description:	SP para traer los datos de los establecimientos.
 -- =============================================
 
-IF OBJECT_ID(N'Sri.Establecimiento_Get_Id', N'P') IS NOT NULL
-DROP PROCEDURE Sri.Establecimiento_Get_Id 
-GO
-CREATE PROCEDURE Sri.Establecimiento_Get_Id @json VARCHAR(MAX) 
+CREATE OR ALTER PROCEDURE Sri.Establecimiento_Get_Id @json VARCHAR(MAX) 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -61,14 +58,6 @@ BEGIN
 
 	IF @typeList = 1
 		BEGIN 
-			SELECT 
-			     idEstab_Logo
-				,imagen
-				,mimeType
-				,nombreImagen
-			FROM Config.Estab_Logo
-			WHERE codEstab = @codEstab
-
 			SELECT idPuntoEmision
 					,pe.ambiente
 					,pe.ptoEmi 
@@ -78,6 +67,5 @@ BEGIN
 			INNER JOIN Sri.Ambiente a ON a.codigo = pe.ambiente
 			WHERE pe.codEstab = @codEstab
 		END 
-	
 END
 GO

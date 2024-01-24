@@ -25,7 +25,7 @@ namespace Inventario.API.Controllers.v2
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -54,7 +54,7 @@ namespace Inventario.API.Controllers.v2
         [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
 
             try
@@ -78,7 +78,7 @@ namespace Inventario.API.Controllers.v2
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
 
             try
@@ -103,9 +103,9 @@ namespace Inventario.API.Controllers.v2
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ApiRequest parameters)
+        public async Task<IActionResult> Update(int id, ApiRequest parameters)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -113,8 +113,6 @@ namespace Inventario.API.Controllers.v2
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _db.AddDynamicParam("s3ObjectKey", "");
-                _db.AddDynamicParam("s3ObjectUrl", "");
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -132,7 +130,7 @@ namespace Inventario.API.Controllers.v2
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

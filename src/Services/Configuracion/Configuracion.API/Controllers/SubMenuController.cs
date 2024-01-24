@@ -23,7 +23,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> FindByIdMenu(int idMenu)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.SubMenu_Get");
@@ -47,7 +47,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Post(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.SubMenu_Insert");
@@ -71,7 +71,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Put(int id, string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.SubMenu_Update");
@@ -96,7 +96,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.SubMenu_Delete");

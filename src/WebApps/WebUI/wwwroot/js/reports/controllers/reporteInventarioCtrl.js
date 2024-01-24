@@ -14,7 +14,10 @@
         let tS = $injector.get('toastService');
         let articuloSvc = $injector.get('articuloService');
 
-        $scope.dataSearch = {};
+        $scope.dataSearch = {
+            bySubFamilia: 0,
+            idMarca: 0
+        };
         $scope.dataSearch.byOrderCampo = 'ar.descripcion';
         $scope.dataSearch.byOrder = 'ASC';
         $scope.dataSearch.byTipoReporte = 0 //Consumo Diario
@@ -35,7 +38,7 @@
         $scope.initiload = function () {
 
             articuloSvc.getDataFormReport().then(response => {
-                const { estabs, subFamilias } = response;
+                const { estabs, subFamilias, marcas} = response;
                 $scope.establecimientos = estabs;
                 let dataEstab = $scope.establecimientos.find(item => (item.defaultEstab))
                 console.log(dataEstab)
@@ -68,7 +71,7 @@
                     return acc;
                 }, []);
 
-                console.log($scope.subFamilias)
+                $scope.marcas = marcas;
 
             })
         }
@@ -220,17 +223,17 @@
                 }
 
                 if ($scope.dataSearch.byTipoReporte === 1) {
-                    if (!($scope.dataSearch.bySubFamilia > 0)) {
-                        tS.toastr('warning', 'Seleccione la Subfamilia!');
-                        return
-                    }
+                    // if (!($scope.dataSearch.bySubFamilia > 0)) {
+                    //     tS.toastr('warning', 'Seleccione la Subfamilia!');
+                    //     return
+                    // }
                     getReportArticuloStock();
                 }
                 if ($scope.dataSearch.byTipoReporte === 2) {
-                    if (!($scope.dataSearch.bySubFamilia > 0)) {
-                        tS.toastr('warning', 'Seleccione la Subfamilia!');
-                        return
-                    }
+                    // if (!($scope.dataSearch.bySubFamilia > 0)) {
+                    //     tS.toastr('warning', 'Seleccione la Subfamilia!');
+                    //     return
+                    // }
                     getReportArticuloPVP();
                 }
                 if ($scope.dataSearch.byTipoReporte === 3) {
@@ -304,6 +307,7 @@
                     numeroIdentificacion: isValidField($scope.dataSearch.numeroIdentificacion),
                     codEstab,
                     idBodega: isValidField($scope.dataSearch.idBodega),
+                    idMarca: isValidField($scope.dataSearch.idMarca),
                     filtroFecha: $scope.dataSearch.filtroFecha
                 }
 

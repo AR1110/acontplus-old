@@ -19,6 +19,10 @@
     <None Remove="Reports\Compras\LiquidacionCompra.rdlc" />
     <None Remove="Reports\Compras\NotaCreditoProveedor.rdlc" />
     <None Remove="Reports\Compras\OrdenCompra.rdlc" />
+    <None Remove="Reports\Compras\RecepcionFactura.rdl" />
+    <None Remove="Reports\Compras\RecepcionNotaCredito.rdl" />
+    <None Remove="Reports\Compras\RecepcionRetencion.rdl" />
+    <None Remove="Reports\Compras\ReporteCompras.rdl" />
     <None Remove="Reports\Compras\RetencionCompra.rdlc" />
     <None Remove="Reports\ConsumoEmpresaTpv.rdl" />
     <None Remove="Reports\ConsumoGeneralTpv.rdl" />
@@ -74,9 +78,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="Reports\Compras\RecepcionFactura.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+    <Content Include="Reports\Compras\RecepcionNotaCredito.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\RecepcionRetencion.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\ReporteCompras.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+
     <Content Include="Reports\Restaurant\Order.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -269,12 +287,15 @@
     <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
     <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
+    <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
+    <ProjectReference Include="..\Reports.Core\Reports.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
-    <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
 
   <ItemGroup>

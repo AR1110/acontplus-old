@@ -14,7 +14,7 @@ namespace Vet.API.Data
 
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings")) //old ../Vet.API
+                                .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared")) //old ../Vet.API
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
                 .Build();
 

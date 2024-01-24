@@ -21,7 +21,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> Filters()
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -44,7 +44,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

@@ -41,7 +41,7 @@ namespace FactElect.API.Controllers.RetencionAts
         public async Task<IActionResult> Post(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -71,7 +71,7 @@ namespace FactElect.API.Controllers.RetencionAts
         public async Task<IActionResult> Put(int id, string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -98,7 +98,7 @@ namespace FactElect.API.Controllers.RetencionAts
         public async Task<IActionResult> Delete(int id)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

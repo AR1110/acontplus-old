@@ -19,7 +19,9 @@ namespace Common.Core.Utils
             if (!env.HasValue)
                 env = EnvHelper.GetEnvironment();
             configurationBuilder.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
-            configurationBuilder.AddJsonFile($"SharedSettings/sharedsettings.{env}.json", optional: true, reloadOnChange: true);
+            var sharedFolder = Path.Combine("C:\\Acontplus\\", "Shared");
+            configurationBuilder.AddJsonFile(Path.Combine(sharedFolder, $"sharedsettings.{env}.json"), optional: true);
+            //configurationBuilder.AddJsonFile($"SharedSettings/sharedsettings.{env}.json", optional: true, reloadOnChange: true);
         }
     }
 }

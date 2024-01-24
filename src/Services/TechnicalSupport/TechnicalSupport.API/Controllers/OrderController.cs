@@ -24,13 +24,13 @@ namespace TechnicalSupport.API.Controllers
             try
             {
                 var response = await _orderService.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
-                if (response == null) { return NotFound(); }
+                if (response == null) { return BadRequest("Cant get Data"); }
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on get: " + ex.ToString());
-                return BadRequest("Error on get");
+                _log.LogActivity($"Error on get: {json} \n {ex}");
+                return BadRequest(ex.Message);
             }
         }
         [HttpPost]

@@ -28,7 +28,7 @@ namespace Restaurant.API.Controllers
         [HttpGet("GetByCode/{CodEstab}")]
         public async Task<ActionResult<IEnumerable<Room>>> GetByCode(string CodEstab)
         {
-            return await _context.Rooms.Include(x => x.Floor).Where(x => x.Floor.CodEstab == CodEstab).ToListAsync();
+            return await _context.Rooms.Include(x => x.Floor).Where(x => x.Floor.CodEstab == CodEstab && x.Deleted == null).ToListAsync();
         }
 
         // POST: api/Rooms
@@ -94,8 +94,7 @@ namespace Restaurant.API.Controllers
                 room.Deleted = true;
                 room.Enabled = false;
                 room.UserId = User.GetUserId();
-
-                _context.Entry(room).State = EntityState.Modified;
+                _context.Update(room);
                 await _context.SaveChangesAsync();
 
                 return Ok("Eliminado exitosamente");

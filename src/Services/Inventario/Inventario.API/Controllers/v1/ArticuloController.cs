@@ -32,7 +32,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -61,7 +61,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -87,7 +87,7 @@ namespace Inventario.API.Controllers.v1
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<ApiRequest>(json); 
 
@@ -113,38 +113,33 @@ namespace Inventario.API.Controllers.v1
 
                 _log.LogActivity("Error al insertar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar articulo");
+                
             }
             finally
             {
                 _db.Close();
+                if (file != null)
+                {
+                    _s3ObjectCustom.Dispose();
+                }
             }
             return Ok(_response);
         }
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> Put(int id, string json, IFormFile file)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<ApiRequest>(json);
             
             try
             {
-                if (file != null)
-                {
-                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/articulos/", file);
-                }
                 await _db.SPExecute("Inventario.Articulo_Update");
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-                _db.AddDynamicParam("s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "");
-                _db.AddDynamicParam("s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
-                if (_response.code == "1" && file != null)
-                {
-                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-                }
             }
             catch (Exception ex)
             {
@@ -162,7 +157,7 @@ namespace Inventario.API.Controllers.v1
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -187,7 +182,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> Search(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -216,7 +211,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> FindForPurchase(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -241,7 +236,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> FindForSale(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -266,7 +261,7 @@ namespace Inventario.API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetDataForm(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

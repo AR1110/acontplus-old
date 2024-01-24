@@ -34,8 +34,8 @@ BEGIN
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
 
     --> Filters
-    DECLARE @idCliente INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME ,@fechaFin DATETIME ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@ckCxcVencida BIT
-           ,@codDoc VARCHAR(10) ,@idPuntoEmision INT 
+    DECLARE @idCliente INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@ckCxcVencida BIT
+           ,@codDoc VARCHAR(10) ,@idPuntoEmision INT ,@ckCuotas BIT
     
     --> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
@@ -53,90 +53,113 @@ BEGIN
                   ,@codEstab     = codEstab
                   ,@codEstado    = codEstado
                   ,@ckCxcVencida = ckCxcVencida
+                  ,@ckCuotas     = ckCuotas
+                  ,@codDoc       = codDoc
             FROM OPENJSON(@json) WITH 
             (
-                idCliente         INT '$.idCliente'
-               ,ckFecha           BIT '$.ckFecha'
-               ,fechaInicio  DATETIME '$.fechaInicio'
-               ,fechaFin     DATETIME '$.fechaFin'
-               ,codEstab  VARCHAR(25) '$.codEstab'
-               ,codEstado VARCHAR(15) '$.codEstado'
-               ,ckCxcVencida      BIT '$.ckCxcVencida'
+                idCliente    INT         '$.idCliente'
+               ,ckFecha      BIT         '$.ckFecha'
+               ,fechaInicio  DATETIME2   '$.fechaInicio'
+               ,fechaFin     DATETIME2   '$.fechaFin'
+               ,codEstab     VARCHAR(25) '$.codEstab'
+               ,codEstado    VARCHAR(15) '$.codEstado'
+               ,ckCxcVencida BIT         '$.ckCxcVencida'
+               ,ckCuotas     BIT         '$.ckCuotas'
+               ,codDoc       VARCHAR(10) '$.codDoc'
             )
 
-            SET @sql = 'SELECT codDoc
+            SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
                               ,razonSocialComprador
                               ,serieComprobante
-                              ,fechaEmision
-                              ,fechaVencimiento
-                              ,CAST(importeTotal as numeric(18,2)) as importeTotal
-                              ,CAST(abono as numeric(18,2))        as abono
-                              ,CAST(saldo as numeric(18,2))        as saldo
+                              ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
+                              ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
+                              ,CAST(importeTotal as numeric(18,2))        as importeTotal
+                              ,CAST(abono as numeric(18,2))               as abono
+                              ,CAST(saldo as numeric(18,2))               as saldo
                               ,estado 
-                        FROM v_CuentaPorCobrar WITH (NOLOCK)
+                        FROM v_CuentaPorCobrar cc WITH (NOLOCK)
                         WHERE idCuentaPorCobrar > 0 '
 
             SET @params = '@idCliente         INT
                           ,@codEstab  VARCHAR(25)
                           ,@fechaInicio  DATETIME
                           ,@fechaFin     DATETIME
-                          ,@codEstado VARCHAR(15)'
+                          ,@codEstado VARCHAR(15)
+                          ,@codDoc    VARCHAR(10)'
 
 
-            IF @ckCxcVencida = 1
+            IF @ckCuotas = 1
                 BEGIN
                     SET @sql = 'SELECT cc.idCuentaPorCobrar
-                                      ,cc.codDoc
+                                      ,IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)   as codDoc
                                       ,cc.razonSocialComprador
                                       ,cc.serieComprobante
-                                      ,cc.fechaEmision
-                                      ,cc.fechaVencimiento
-                                      ,CAST(cc.importeTotal as numeric(18,2)) as importeTotal
-                                      ,CAST(cc.abono as numeric(18,2))        as abono
-                                      ,CAST(cc.saldo as numeric(18,2))        as saldo
+                                      ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
+                                      ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
+                                      ,CAST(cc.importeTotal as numeric(18,2))     as importeTotal
+                                      ,CAST(cc.abono as numeric(18,2))            as abono
+                                      ,CAST(cc.saldo as numeric(18,2))            as saldo
                                       ,cc.estado 
                                       ,cp.idCuotaPorCobrar
 		                              ,cp.nroCuota
-		                              ,CAST(cp.cuota as numeric(8,2))         as cuota
-		                              ,cp.fechaVencimiento                    as fechaEmisionCuota
-		                              ,CAST(cp.abono as numeric(8,2))         as abonoCuota
-		                              ,CAST(cp.saldo as numeric(8,2))         as saldoCuota
-		                              ,ep.descripcion                         as estadoCuota
+		                              ,CAST(cp.cuota as numeric(8,2))              as cuota
+		                              ,FORMAT(cp.fechaVencimiento,''dd/MM/yyyy'')  as fechaVencimientoCuota
+                                      ,DATEDIFF(DAY,cp.fechaVencimiento,GETDATE()) as diasMora
+		                              ,CAST(cp.abono as numeric(8,2))              as abonoCuota
+		                              ,CAST(cp.saldo as numeric(8,2))              as saldoCuota
+		                              ,ep.descripcion                              as estadoCuota
                                 FROM v_CuentaPorCobrar                 cc WITH (NOLOCK) 
                                 INNER JOIN Contabilidad.CuotaPorCobrar cp WITH (NOLOCK) ON cp.idCuentaPorCobrar = cc.idCuentaPorCobrar
                                 INNER JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
                                 WHERE cc.idCuentaPorCobrar > 0 '
-                   
-                    SET @sql = @sql + 'AND cc.mora > 0 '
 
+                    IF @ckCxcVencida = 1 
+                        BEGIN
+                            SET @sql = @sql + 'AND DATEDIFF(DAY,cp.fechaVencimiento,GETDATE()) > 0 '
+                        END 
                 END 
+
+            IF @codDoc IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND cc.codDoc = @codDoc '
+                END
+
+            IF @ckCuotas = 0
+                BEGIN
+                    IF @ckCxcVencida = 1 
+                        BEGIN
+                            SET @sql = @sql + 'AND DATEDIFF(DAY,CC.fechaVencimiento,GETDATE()) > 0 '
+                        END 
+                END
 
             IF @codEstab IS NOT NULL 
                 BEGIN
-                    SET @sql = @sql + 'AND codEstab = @codEstab '
+                    SET @sql = @sql + 'AND cc.codEstab = @codEstab '
                 END 
 
             IF @ckFecha = 1
                 BEGIN
-                    SET @sql = @sql + 'AND CAST(fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                    SET @sql = @sql + 'AND CAST(cc.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
                 END 
 
             IF @idCliente > 0 
                 BEGIN
-                    SET @sql = @sql + 'AND idCliente = @idCliente '
+                    SET @sql = @sql + 'AND cc.idCliente = @idCliente '
                 END 
 
             IF @codEstado IS NOT NULL
                 BEGIN
                     IF @codEstado = 'NCBR'
                         BEGIN 
-                            SET @sql = @sql + 'AND codEstado IN (''PE'',''PP'') '
+                            SET @sql = @sql + 'AND cc.codEstado IN (''PE'',''PP'') '
                         END 
                     ELSE
                         BEGIN
-                            SET @sql = @sql + 'AND codEstado = @codEstado '
+                            SET @sql = @sql + 'AND cc.codEstado = @codEstado '
                         END 
                 END 
+
+            SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idCliente,cc.codDoc ASC '
 
             SELECT en.razonSocial
                   ,es.nombreComercial
@@ -144,7 +167,7 @@ BEGIN
                   ,es.telefono
                   ,es.dirEstablecimiento
                   ,@usuario             as usuario 
-                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFechas
                   ,'Cartera de Cliente' as nombreReporte
             FROM Sri.Establecimiento es WITH (NOLOCK)
             INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.ruc = es.ruc
@@ -157,6 +180,7 @@ BEGIN
                               ,@fechaInicio = @fechaInicio
                               ,@fechaFin    = @fechaFin
                               ,@codEstado   = @codEstado
+                              ,@codDoc      = @codDoc
 
             RETURN 
 

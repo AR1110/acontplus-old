@@ -1,4 +1,5 @@
 ﻿using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
 using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Interfaces;
@@ -13,16 +14,16 @@ namespace TechnicalSupport.API.Services
             _context = context;
             _repository = repository;
         }
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             var ds = await _repository.GetDataSetAsync("TechnicalSupport.Order_Get", parameters);
-            if (ds.Tables[0].Rows.Count == 0)
+            if (DataValidation.DataSetIsNull(ds))
             {
-                return null;
+                return new ApiResponse { code = "0", message = "No se encontraron datos" };
             }
             else
             {
-                return DataConverters.DataSetToJSON(ds);
+                return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
             }
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)

@@ -10,21 +10,21 @@ namespace Common.Infrastructure.Repository.GestionTributaria
 {
     public class ImpuestoArticuloDao
     {
-        protected GenericResponse _gr;
+        protected ApiResponse _gr;
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
         public ImpuestoArticuloDao(IConfiguration config)
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
 
         public ImpuestoArticuloDao()
         {
         }
 
-        public async Task<GenericResponse> InsertAsync(int idRol, ImpuestoArticulo data)
+        public async Task<ApiResponse> InsertAsync(int idRol, ImpuestoArticulo data)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetIdAsync(int idRol, int idArticulo)
+        public async Task<ApiResponse> GetIdAsync(int idRol, int idArticulo)
         {
             var listar = new List<ImpuestoArticuloViewModel>();
             try
@@ -114,7 +114,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateAsync(int idRol, int idImpuestoArticulo, ImpuestoArticulo data)
+        public async Task<ApiResponse> UpdateAsync(int idRol, int idImpuestoArticulo, ImpuestoArticulo data)
         {
             try
             {
@@ -151,7 +151,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteAsync(int idRol, int idImpuestoArticulo)
+        public async Task<ApiResponse> DeleteAsync(int idRol, int idImpuestoArticulo)
         {
             try
             {
@@ -186,7 +186,7 @@ namespace Common.Infrastructure.Repository.GestionTributaria
         }
 
         //Guardar Lista de Articulos Impuestos 
-        public async Task<GenericResponse> ListaInsertAsync(int idRol, List<ImpuestoArticulo> data)
+        public async Task<ApiResponse> ListaInsertAsync(int idRol, List<ImpuestoArticulo> data)
         {
             try
             {

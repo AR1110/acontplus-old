@@ -1,17 +1,15 @@
 const GATEWAY = "gateway/"
 export const enum PATHS {
     //For Prd
-    // ACCOUNT = `${GATEWAY}Restaurant/Account/login`,
-    // CREATE_TOKEN = `${GATEWAY}Restaurant/Account/createToken`,
-    ACCOUNT = `Restaurant/Account/login`,
-    CREATE_TOKEN = `Restaurant/Account/createToken`,
+    ACCOUNT = `${GATEWAY}Seguridad/v3/Account/login`,
+    CREATE_TOKEN = `${GATEWAY}Seguridad/v3/Account/createToken`, 
     PRIVATE = `${GATEWAY}Restaurant/`,
     INVENTARIO = `${GATEWAY}Inventario/`,
     SALE = `${GATEWAY}Venta/`,
     ACCOUNTING = `${GATEWAY}Contabilidad/`,
     CONFIG = `${GATEWAY}Config/`,
     CONSULTA = `${GATEWAY}Consultas/`,
-    REPORT = `${GATEWAY}Reporte/`
+    REPORT = `${GATEWAY}Reports/v2/Reporte/`
 }
 
 export const enum PERSIS_USER {
@@ -56,5 +54,6 @@ export enum ITEM_TYPE_CODE {
 
 export enum DOC_TYPE_REPORT {
     FV = 'RF',
-    NE = 'RNE'
+    NE = 'RNE',
+    OR = 'RRO'
 }

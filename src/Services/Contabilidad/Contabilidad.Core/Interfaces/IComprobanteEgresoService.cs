@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Contabilidad.Core.Interfaces
+{
+    public interface IComprobanteEgresoService
+    {
+        Task<object> GetAsync(Dictionary<string, object> parameters);
+        Task<string> AddAsync(Dictionary<string, object> parameters); 
+        Task<string> DeleteAsync(Dictionary<string, object> parameters);
+    }
+}

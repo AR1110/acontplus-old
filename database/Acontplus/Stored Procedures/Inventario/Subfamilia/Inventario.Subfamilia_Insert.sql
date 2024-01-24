@@ -63,10 +63,18 @@ BEGIN
 
 		BEGIN TRAN 
 			     INSERT INTO SubFamilia 
-						(idFamilia, descripcion, siglas,codigo  ,montoObjetivo,ultimoSecuencial,idUsuario,idEntidad, s3ObjectKey, s3ObjectUrl)
-				 SELECT @idFamilia,@descripcion,@siglas,newid(),@montoObjetivo,1,@idUsuario,@idEntidad, @s3ObjectKey, @s3ObjectUrl
+						(idFamilia, descripcion, siglas,codigo  ,montoObjetivo,ultimoSecuencial,idUsuario,idEntidad)
+				 SELECT @idFamilia,@descripcion,@siglas,newid(),@montoObjetivo,1,@idUsuario,@idEntidad
 
 				 SET @idSubFamilia = @@IDENTITY
+
+                 
+                 --> Photo
+                 IF @s3ObjectKey IS NOT NULL AND @s3ObjectUrl IS NOT NULL
+                    BEGIN 
+                        INSERT INTO [Inventario].[SubcategoryPhoto] ([SubcategoryId], [S3ObjectKey], [S3ObjectUrl], [IsDefault], [UserId] ) 
+                        SELECT @idSubFamilia,@s3ObjectKey,@s3ObjectUrl,1,@idUsuario
+                    END 
 
 				 SET @payload = (SELECT idSubFamilia = @idSubFamilia FOR JSON PATH)
 

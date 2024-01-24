@@ -11,7 +11,7 @@ namespace Common.Infrastructure.Repository.Ventas
 {
     public class RetencionVentaDao
     {
-        private GenericResponse _gr;
+        private ApiResponse _gr;
 
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
@@ -19,10 +19,10 @@ namespace Common.Infrastructure.Repository.Ventas
         {
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
-            _gr = new GenericResponse();
+            _gr = new ApiResponse();
         }
 
-        public async Task<GenericResponse> GetAsync(int idRol, string json)
+        public async Task<ApiResponse> GetAsync(int idRol, string json)
         {
             var dt = new DataTable();
             try
@@ -51,7 +51,7 @@ namespace Common.Infrastructure.Repository.Ventas
             }
             return _gr;
         }
-        public async Task<GenericResponse> GetIdAsync(int idRol, int idRetencionVenta)
+        public async Task<ApiResponse> GetIdAsync(int idRol, int idRetencionVenta)
         {
             var retencion = new RetencionVentaViewModel();
             var detalle = new List<RetencionVentaDetalleViewModel>();
@@ -132,7 +132,7 @@ namespace Common.Infrastructure.Repository.Ventas
             }
             return _gr;
         }
-        public async Task<GenericResponse> InsertAsync(int idRol, RetencionVentaViewModel data)
+        public async Task<ApiResponse> InsertAsync(int idRol, RetencionVentaViewModel data)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace Common.Infrastructure.Repository.Ventas
             }
             return _gr;
         }
-        public async Task<GenericResponse> UpdateAsync(int idRol, int idRetencionVenta, RetencionVentaViewModel data)
+        public async Task<ApiResponse> UpdateAsync(int idRol, int idRetencionVenta, RetencionVentaViewModel data)
         {
             try
             {
@@ -218,7 +218,7 @@ namespace Common.Infrastructure.Repository.Ventas
             }
             return _gr;
         }
-        public async Task<GenericResponse> DeleteAsync(int idRol, int idRetencionVenta)
+        public async Task<ApiResponse> DeleteAsync(int idRol, int idRetencionVenta)
         {
             try
             {

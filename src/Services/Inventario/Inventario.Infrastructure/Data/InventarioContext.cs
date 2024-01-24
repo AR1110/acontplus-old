@@ -14,6 +14,7 @@ namespace Inventario.Infrastructure.Data
         public DbSet<StockFisico> StockFisicos { get; set; }
         public DbSet<StockFisicoDetalle> StockFisicoDetalles { get; set; }
         public DbSet<ProductPhoto> ProductPhotos { get; set; }
+        public DbSet<SubcategoryPhoto> SubcategorytPhotos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -33,10 +34,15 @@ namespace Inventario.Infrastructure.Data
            .WithOne(d => d.StockFisico)
            .HasForeignKey(d => d.StockFisicoId);
 
+            modelBuilder.Entity<ProductPhoto>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<ProductPhoto>().Property(x => x.Enabled).HasDefaultValue(true);
 
             modelBuilder.Entity<StockFisicoDetalle>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<StockFisicoDetalle>().Property(x => x.Enabled).HasDefaultValue(true);
 
-            modelBuilder.Entity<ProductPhoto>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<SubcategoryPhoto>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<SubcategoryPhoto>().Property(x => x.Enabled).HasDefaultValue(true);
+
         }
 
         public override int SaveChanges()

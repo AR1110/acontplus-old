@@ -10,6 +10,7 @@ GO
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
 -- =============================================
+--- Inventario.Articulo_Get 28 '{"idArticulo":76408,"idBodega":2,"tipo":6}'
 CREATE OR ALTER PROCEDURE Inventario.Articulo_Get @idRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
@@ -19,25 +20,21 @@ BEGIN
     --> Global
 	DECLARE @tipo INT ,@idEntidad INT ,@pageIndex INT ,@pageSize INT
 
+    --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX)
+
 	--> Filters
-	DECLARE @idSubFamilia INT ,@idMedida  INT ,@fraccion NUMERIC(18,5),@idMarca INT ,@idModelo INT
+	DECLARE @idSubFamilia INT ,@idMedida  INT ,@idMarca INT ,@idModelo INT
 	       ,@checkBoxFraccionado BIT ,@idTipoIva INT ,@estado BIT ,@byStock INT ,@checkBoxInventario  BIT 
 	       ,@idArticulo INT ,@idBodega INT ,@bySearch NVARCHAR(300) ,@byColumn VARCHAR(10)
 
-    --> Sql
-	DECLARE @params NVARCHAR(MAX)
-	DECLARE @sql NVARCHAR(MAX)
+    --> Inventario 
+	DECLARE @ventaStockMinimo BIT ,@stockCantidad BIT ,@ventaStockCero BIT ,@stock NUMERIC(18,5) ,@stockMinimo NUMERIC(18,5) ,@cantidad NUMERIC(18,5)
 
-	DECLARE @ventaStockMinimo BIT
-	DECLARE @stockCantidad BIT 
-    DECLARE @ventaStockCero BIT 
-    DECLARE @stock NUMERIC(15,5)
-	DECLARE @stockMinimo NUMERIC(18,5)
-	DECLARE @cantidad NUMERIC(18,5)
-
+    --> Recuperando Datos
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 	
 	--> Get
 	IF @tipo = 1
@@ -328,7 +325,6 @@ BEGIN
 	--> DataForm 
 	IF @tipo = 5
 		BEGIN
-            --- NO CAMBIAR EL ORDEN DE LOS SELECT => MAPEO DATO POR POSICIONES EN LA APP ---
 			SELECT idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
 
             SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL'
@@ -595,15 +591,6 @@ BEGIN
 			FROM Inventario.v_Articulo a 
 			WHERE a.idArticulo = @idArticulo
 
-
-			--SELECT 
-			--	a.idMedida
-			--   ,a.medida
-			--   ,tarifas		 = (SELECT idTarifa, precioVenta, precioConIva, tarifa, precioPredeterminado
-			--					FROM Inventario.v_Articulo_Tarifa  vat
-			--					WHERE vat.idArticulo = a.idArticulo
-			--					ORDER BY precioPredeterminado DESC FOR JSON PATH) 
-			--FROM Inventario.v_Articulo a WHERE idArticulo = @idArticulo AND estado = 1 
             SELECT idMedida     = m.idMedida 
 			      ,descripcion  = m.descripcion
 			      ,tarifas		= (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, ta.predeterminada
@@ -632,7 +619,7 @@ BEGIN
 			WHERE a.idArticulo = @idArticulo AND a.estado = 1
 			ORDER BY orden ASC
 
-             SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo 
+            SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo 
             RETURN 
         END 
 
@@ -669,21 +656,14 @@ BEGIN
 				  ,precioCosto          = a.precioCosto
 				  ,precioSinSubsidio    = ISNULL(a.precioSinSubsidio,0)
 				  ,nombreTipoIva        = ti.descripcion
-				  ,porcentajeTipoIva    = ti.porcentaje
-                  ,codigoTipoIva        = ti.codigo
+				  ,tarifa               = ti.porcentaje
 				  ,codigoPorcentaje     = CAST(ti.codigoPorcentaje as varchar)
 				  ,codigoArticulo       = IIF(ti.porcentaje > 0,'*','')+a.codigo
 				  ,stock                = a.stock
 				  ,cantMinimaVentaPorMayor
                   ,medidas              = ( SELECT
 				                                m.idMedida
-			                                   ,tarifas		 = (SELECT ap.idTarifa
-                                                                        , ap.precioVenta
-                                                                        , ap.precioConIva
-                                                                        , tarifa = UPPER(ta.descripcion)
-                                                                        , porcentaje = ISNULL(ap.porcentajeUtilidad, 0)
-                                                                        , ta.ventaPorMayor 
-                                                                        , predeterminada = ISNULL(ta.predeterminada, 0)
+			                                   ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor, ta.predeterminada 
 								                                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 								                                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 								                                WHERE ap.idArticulo = a.idArticulo
@@ -699,13 +679,8 @@ BEGIN
 		    LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = a.idMedida
 			WHERE a.idArticulo = @idArticulo
                             
-            --- Fechas consolidaciones
-            SELECT idArticulo
-                  ,idBodega
-                  ,fechaConsolidacion
-            FROM Inventario.Stock
-            WHERE idArticulo = @idArticulo
-			
+            SELECT idArticulo, idBodega, fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo
+            SELECT * FROM Compra.InfoAdicional WITH (NOLOCK) WHERE idArticulo = @idArticulo AND estado = 1			
             RETURN 
 		END
     
@@ -726,6 +701,54 @@ BEGIN
            RETURN 
         END 
 
-	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
+    --> Data Compra
+    IF @tipo = 14
+        BEGIN
+            
+            SELECT @idArticulo = idArticulo  FROM OPENJSON(@json) WITH (idArticulo INT)
+
+            SELECT a.idArticulo
+                  ,a.idTipoIva
+                  ,CASE WHEN ti.porcentaje > 0 THEN '* '+a.codigo ELSE a.codigo END  as codigoArticulo
+                  ,a.descripcion 
+                  ,ISNULL(tic.valor,0)           as valorIce
+                  ,a.llevaInventario
+                  ,ISNULL(a.datosAdicionales, 0) as datosAdicionales
+                  ,a.productoFraccionable
+                  ,a.stock 
+                  ,im.codigo
+                  ,CAST(ti.codigoPorcentaje as varchar) as codigoPorcentaje
+                  ,ti.porcentaje                        as tarifa
+            FROM dbo.Articulo        a WITH (NOLOCK)
+            INNER JOIN dbo.TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva  = a.idTipoIva
+            INNER JOIN dbo.Impuesto im WITH (NOLOCK) ON im.idImpuesto = ti.idImpuesto
+             LEFT JOIN dbo.TipoIce tic WITH (NOLOCK) ON tic.idTipoIce = a.idTipoIce 
+            WHERE a.idArticulo = @idArticulo
+
+            SELECT me.idMedida 
+                  ,me.descripcion as medida
+                  ,a.precioCosto
+                  ,1 as conversion
+            FROM Articulo      a WITH (NOLOCK) 
+            INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = a.idMedida 
+            WHERE a.idArticulo = @idArticulo
+
+            SELECT me.idMedida
+                  ,me.descripcion as medida
+                  ,af.precioCostoFraccionado as precioCostoFraccionado
+                  ,af.conversion
+            FROM ArticuloFraccionado af WITH (NOLOCK) 
+            INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida = af.idMedida 
+            WHERE af.idArticulo = @idArticulo 
+
+            SELECT et.idEtiqueta ,et.descripcion, et.etiquetas
+            FROM Inventario.Etiqueta et WITH (NOLOCK)
+            INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idEtiqueta = et.idEtiqueta
+            WHERE ar.idArticulo = @idArticulo
+
+            RETURN 
+        END 
+	
+    SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END

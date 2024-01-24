@@ -1,18 +1,18 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebUI.Pages.ConfigEmail
 {
-    public class Index : PageModel
+    public class IndexModel : PageModel
     {
-        private readonly ILogger<Index> _logger;
-
-        public Index(ILogger<Index> logger)
+        private readonly IConfiguration _configuration;
+        public IndexModel(IConfiguration configuration)
         {
-            _logger = logger;
+            _configuration = configuration;
         }
-
         public void OnGet()
         {
+            var url = _configuration["UrlApps:SveltekitApp"];
+            ViewData["FrontEnd"] = url;
         }
     }
 }

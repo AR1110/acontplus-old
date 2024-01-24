@@ -55,7 +55,7 @@ BEGIN
 
 	SET @establecimientoId = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
     
-	IF NOT EXISTS (SELECT 1 FROM Config.Printer WITH (NOLOCK) WHERE EstablecimientoId = @establecimientoId)
+	IF NOT EXISTS (SELECT 1 FROM Config.Printer WITH (NOLOCK) WHERE EstablecimientoId = @establecimientoId AND [Enabled] = 1)
 		BEGIN
 			SELECT Common.ufnSpResponse ('0','No tienes ninguna impresora configurada', DEFAULT)
 			RETURN 
@@ -63,7 +63,7 @@ BEGIN
 
 	SELECT TOP 1 @urlPrinter = IpAddress
 	FROM Config.PrinterDocument     cd WITH (NOLOCK)
-	INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId
+	INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
 	INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId
 	WHERE cd.codDoc  = @codDoc
 	  AND i.EstablecimientoId = @establecimientoId 
@@ -80,10 +80,13 @@ BEGIN
 
 	IF (@totalThermalPrinters = 0 AND @totalInyectionPrinters > 0)
 		BEGIN 
-			IF EXISTS (SELECT 1 FROM Config.Estab_Logo WHERE codEstab = @codEstab)		
+			IF EXISTS (SELECT 1 FROM Config.EstablecimientoLogo el
+                        INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab)		
 				BEGIN
 					SET @hasParams = 1
-					SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+					SET @rdlcParams = (SELECT logo = [FileName], contentType mimeType FROM Config.EstablecimientoLogo el
+                        INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento
+                    WHERE codEstab = @codEstab FOR JSON PATH)
 				END
 			ELSE
 				BEGIN
@@ -93,10 +96,10 @@ BEGIN
 
 	IF (@totalThermalPrinters > 0 AND @totalInyectionPrinters > 0)
 		BEGIN 
-			IF EXISTS (SELECT 1 FROM Config.Estab_Logo WHERE codEstab = @codEstab)		
+			IF EXISTS (SELECT 1 FROM Config.EstablecimientoLogo el INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab)		
 				BEGIN
 					SET @hasParams = 1
-					SET @rdlcParams = (SELECT logo = nombreImagen, mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab FOR JSON PATH)
+					SET @rdlcParams = (SELECT logo = [filename], ContentType mimeType FROM Config.EstablecimientoLogo el INNER JOIN Sri.Establecimiento e ON el.EstablecimientoId = e.idEstablecimiento WHERE codEstab = @codEstab FOR JSON PATH)
 				END
 			ELSE
 				BEGIN
@@ -126,13 +129,14 @@ BEGIN
 												    WHEN 'A'  THEN 'A'
 												    ELSE @codDoc
 									   END 
+                            ,@establecimientoId establecimientoId
+                            ,@codEstab codEstab
  						FROM Config.PrinterDocument     cd WITH (NOLOCK)
-						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId
+						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
 						INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId
 						WHERE cd.codDoc    = @codDoc
 						    AND i.EstablecimientoId = @establecimientoId 
 						    AND cd.[enabled]  = 1
-                            AND i.[Enabled] = 1
                             AND (i.Machine IS NOT NULL AND LEN(LTRIM(RTRIM(i.Machine))) > 0)
                             FOR JSON PATH
 					 )
@@ -140,10 +144,16 @@ BEGIN
 	SELECT  @dataSources = dataSources FROM Config.Documento_To_Print(@idDocument,@codDoc)
 
 	SELECT Common.ufnSpResponse ('1', 'Successful',
-    (SELECT IIF(@urlPrinter = '127.0.0.1:9100','http://' + @urlPrinter  ,'https://acontplusprint.com:9200') as urlPrinter 
+    (SELECT IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') as urlPrinter 
         ,@rdlcProps rdlcProps
         ,@dataSources dataSources
         ,@rdlcParams rdlcParams 
 	FOR JSON PATH))
+
+--SELECT payload = (SELECT @rdlcProps rdlcProps
+--        ,@dataSources dataSources
+--        ,@rdlcParams rdlcParams 
+--	FOR JSON PATH, WITHOUT_aRRAY_WRAPPER)
+
 END
 GO

@@ -424,6 +424,7 @@
             let userData = JSON.parse(localStorage.getItem("userData"));
             let { permissions } = userData;
             let permisoVentaTemp = permissions.find(pp => pp.codModule === "V");
+            let permisoCajaTemp = permissions.find(pp => pp.codModule === "C");
             let objPermissionVenta = JSON.parse(permisoVentaTemp.permission);
 
             let { comprobante, detail, additional } = objPermissionVenta;
@@ -449,9 +450,19 @@
                 }
             }
 
+
+            let permisoCajaParse = permisoCajaTemp && JSON.parse(permisoCajaTemp.permission) || {}
+
+            let permisoCaja = {
+                cerrarCaja: permisoCajaParse && permisoCajaParse.cerrarCaja && permisoCajaParse.cerrarCaja.cerrar || false,
+                enterKey: permisoCajaParse && permisoCajaParse.enterKey && permisoCajaParse.enterKey.isRequerid || false,
+                reporteMovimientoCaja: permisoCajaParse && permisoCajaParse.reporteMovimientoCaja.view || false,
+                verOtrasCajas: permisoCajaParse && permisoCajaParse.verOtrasCajas && permisoCajaParse.verOtrasCajas.view || false
+            }
             return {
                 permisoVenta,
-                permisoEditarDoc
+                permisoEditarDoc,
+                permisoCaja
             }
         }
 
@@ -654,18 +665,32 @@
          */
 
         formSvc.processAndSortMeasures = function (medidasPrincipal, medidasFraccionado) {
-            // Medidas del artículo fraccionado del principal
-            let medidasFraccionadoTemp = JSON.parse(medidasFraccionado) || [];
+            let medidasPrincipalTemp = [];
+            let medidasFraccionadoTemp = [];
 
             // Medida principal con las tarifas
-            let medidasPrincipalTemp = JSON.parse(medidasPrincipal) || [];
+            if (!Array.isArray(medidasPrincipal)) {
+                medidasPrincipalTemp = JSON.parse(medidasPrincipal) || [];
+            } else {
+                medidasPrincipalTemp = medidasPrincipal;
+            }
+
+            // Medidas del artículo fraccionado del principal
+            if (!Array.isArray(medidasFraccionado)) {
+                medidasFraccionadoTemp = JSON.parse(medidasFraccionado) || [];
+            } else {
+                medidasFraccionadoTemp = medidasFraccionado;
+            }
+
 
             const medidasPrincipalMapper = medidasPrincipalTemp.map(medidaPrincipal => ({
                 ...medidaPrincipal,
+                precioCosto: medidaPrincipal.precioCosto || 0,
                 tipo: 'PRINCIPAL'
             }))
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
+                precioCosto: medidaFraccionado.precioCostoFraccionado || 0,
                 tipo: 'FRACCIONADO'
             }))
 
@@ -698,14 +723,147 @@
             // Crear un nuevo array de medidas con un formato específico
             let medidas = orderMedidaArray.map(item => ({
                 idMedida: item.idMedida,
-                conversion: item.conversion,
-                descripcion: item.descripcion,
+                conversion: item.conversion || 1,
+                descripcion: item.descripcion || item.medida,
                 defaultMedida: item.defaultMedida,
                 tipo: item.tipo,
+                precioCosto: item.precioCosto,
                 tarifas: item.tarifas || []
             }))
 
             return medidas;
+        }
+
+
+
+        // Función para calcular detalles de cuotas basadas en términos de crédito
+        formSvc.calcularCuotas = function (obj) {
+            // Desestructuración de propiedades del objeto para mayor legibilidad
+            const { fechaEmision, tiemposCredito, idTiempoCredito, montoTotal } = obj;
+
+            // Encontrar datos de tiempo de crédito según el id proporcionado
+            const dataTiempoCredito = tiemposCredito.find(t => t.idTiempoCredito === idTiempoCredito);
+
+            // Manejo del caso en que no se encuentran datos de tiempo de crédito
+            if (!dataTiempoCredito) {
+                console.error("Tiempo de crédito no encontrado.");
+                return {
+                    cuotas: 0,
+                    montoTotalCuota: 0
+                }
+            }
+
+            // Cálculo de la cantidad de días por cuota
+            const diaCuota = dataTiempoCredito.diasCredito / dataTiempoCredito.numeroCuota;
+
+            // Cálculo del monto de cada cuota
+            const valorCuota = montoTotal / dataTiempoCredito.numeroCuota;
+
+            // Extracción del valor de la entrada desde los datos de tiempo de crédito
+            const entrada = dataTiempoCredito.entrada;
+
+            // Creación de un array que representa los números de cuota
+            let cuotasArray = Array.from({ length: dataTiempoCredito.numeroCuota }, (_, index) => index + 1);
+
+            cuotasArray = entrada ? [...cuotasArray, cuotasArray.length + 1] : cuotasArray;
+
+            // Mapeo de detalles de cuotas basado en el array
+            const resultCuotas = cuotasArray.map((num, index) => {
+                // Verificación de si la cuota tiene entrada y es la primera
+                let tieneEntrada = entrada && num === 1;
+
+                // Cálculo de los días acumulados hasta la cuota actual
+                let sumDia = 0;
+                let nroCuota = 0;
+                if (entrada) {
+                    sumDia = index * diaCuota;
+                    nroCuota = index;
+                } else {
+                    sumDia = num * diaCuota;
+                    nroCuota = num;
+                }
+
+                // Manejo del caso en que hay una entrada en la primera cuota
+                if (tieneEntrada) {
+                    return {
+                        nroCuota: nroCuota,
+                        cuota: 0,
+                        fechaVencimiento: formSvc.formatDateTimeZone(fechaEmision),
+                        entrada: 1
+                    };
+                }
+
+                // Cálculo de la fecha de vencimiento para la cuota
+                const fechaVencimiento = new Date(fechaEmision.getTime() + sumDia * 24 * 60 * 60 * 1000);
+
+                // Retorno de detalles de la cuota
+                return {
+                    nroCuota: nroCuota,
+                    cuota: formSvc.roundNumber(valorCuota, 5),
+                    fechaVencimiento: formSvc.formatDateTimeZone(fechaVencimiento),
+                    entrada: 0
+                };
+            });
+
+            // Retorno del array de cuotas calculadas
+            return {
+                cuotas: resultCuotas,
+                montoTotalCuota: resultCuotas.reduce((acc, curr) => acc + curr.cuota, 0)
+            };
+        }
+
+        formSvc.updateCuotas = function (obj) {
+            const { fechaEmision, tiemposCredito, idTiempoCredito, montoTotal, cuotas } = obj;
+
+            // Encontrar datos de tiempo de crédito según el id proporcionado
+            const dataTiempoCredito = tiemposCredito.find(t => t.idTiempoCredito === idTiempoCredito);
+
+            // Manejo del caso en que no se encuentran datos de tiempo de crédito
+            if (!dataTiempoCredito) {
+                console.error("Tiempo de crédito no encontrado.");
+                return {
+                    cuotas: 0,
+                    montoTotalCuota: 0
+                }
+            }
+
+            // Cálculo de la cantidad de días por cuota
+            const diaCuota = dataTiempoCredito.diasCredito / dataTiempoCredito.numeroCuota;
+
+            // Cálculo del monto de cada cuota
+            const valorCuota = montoTotal / dataTiempoCredito.numeroCuota;
+
+            const resultCuotas = cuotas.map((cuota) => {
+                if (!cuota.entrada) {
+                    let sumDia = cuota.nroCuota * diaCuota;
+                    // Cálculo de la fecha de vencimiento para la cuota
+                    const fechaVencimiento = new Date(fechaEmision.getTime() + sumDia * 24 * 60 * 60 * 1000);
+
+                    // Retorno de detalles de la cuota
+                    return {
+                        nroCuota: cuota.nroCuota,
+                        cuota: formSvc.roundNumber(valorCuota, 5),
+                        fechaVencimiento: formSvc.formatDateTimeZone(fechaVencimiento),
+                        entrada: cuota.entrada,
+                        idCuotaPorPagar: cuota.idCuotaPorPagar
+                    };
+                }
+
+                return {
+                    nroCuota: cuota.nroCuota,
+                    cuota: cuota.cuota,
+                    fechaVencimiento: formSvc.formatDateTimeZone(cuota.fechaVencimiento),
+                    entrada: cuota.entrada,
+                    idCuotaPorPagar: cuota.idCuotaPorPagar
+                };
+            });
+
+            // Retorno del array de cuotas calculadas
+            return {
+                cuotas: resultCuotas,
+                montoTotalCuota: resultCuotas.reduce((acc, curr) => acc + curr.cuota, 0)
+            };
+
         }
 
 

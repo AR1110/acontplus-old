@@ -29,7 +29,7 @@ namespace Inventario.API.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -54,7 +54,7 @@ namespace Inventario.API.Controllers
         [HttpPost("Post")]
         public async Task<IActionResult> Post(string json, IFormFile file)
         { 
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             
             try
@@ -78,59 +78,33 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-
                 _log.LogActivity("Error al insertar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar subfamilia");
             }
             finally
             {
+                if (file != null)
+                {
+                    _s3ObjectCustom.Dispose();
+                }
                 _db.Close();
             }
             return Ok(_response);
         }
 
-        [HttpPost("Put/{id}")]
-        public async Task<IActionResult> Put(int id, string json, IFormFile file)
+        [HttpPut("Put/{id}")]
+        public async Task<IActionResult> Put(int id, string json)
         {
-            GenericResponse _response = new GenericResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            var data = JsonConvert.DeserializeObject<SubFamilia>(json);
-            bool nofile = true;
+            ApiResponse _response = new ApiResponse();
+            DbAccess _db = new DbAccess(_configuration); 
             try
             {
-                if (file != null)
-                {
-                    if (string.IsNullOrEmpty(data.S3ObjectKey))
-                    {
-                        await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/subfamilias/", file);
-                        data.S3ObjectKey = _s3ObjectCustom.S3ObjectKey;
-                        data.S3ObjectUrl = _s3ObjectCustom.S3ObjectUrl;
-                    }
-                    else
-                    {
-                        nofile = false;
-                        await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/subfamilias/", file, data.S3ObjectKey, data.S3ObjectUrl);
-                    }
-                }
                 int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Inventario.Subfamilia_Update");
                 _db.AddDynamicParam("userRoleId", userRoleId);
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _db.AddDynamicParam("s3ObjectKey", data.S3ObjectKey ?? "");
-                _db.AddDynamicParam("s3ObjectUrl", data.S3ObjectUrl ?? "");
-                _response = _db.GetDefault();
-                if (_response.code == "1" && file != null)
-                { 
-                    if (nofile)
-                    {
-                        var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
-                    }
-                    else
-                    {
-                        var s3Response = await _storageService.UpdateAsync(_s3ObjectCustom);
-                    }
-                }
+                _response = _db.GetDefault(); 
             }
             catch (Exception ex)
             {
@@ -147,7 +121,7 @@ namespace Inventario.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
@@ -172,7 +146,7 @@ namespace Inventario.API.Controllers
         [HttpGet("ListForSelect")]
         public async Task<IActionResult> ListForSelect(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {

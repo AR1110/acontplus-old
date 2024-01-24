@@ -27,31 +27,16 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true);
+            return mS.getData('post', url + 'Insert', {data}, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true);
+            return mS.getData('put', url + 'Update/' + id, {data}, true);
         }
 
         service.delete = function (id) {
             return mS.getData('delete', url + 'Delete/' + id, null, true);
-        }
-
-        service.listForSelect = function (query) {
-            return mS.getData('get', url + 'ListForSelect?json=' + JSON.stringify(query), null, true).then(response => {
-                if (response.code === "0") {
-                    throw response;
-                }
-                if (response.code === "1") {
-                    let familias = JSON.parse(response.payload) || [];
-                    return familias.map(item => ({
-                        idFamilia: item.idFamilia,
-                        descripcion: item.descripcion,
-                    }))
-                }
-            })
-        }
+        } 
 
         return service;
     })
@@ -82,6 +67,7 @@
                         estado: item.estado,
                         siglas: item.siglas,
                         codigo: item.codigo,
+                        subcategoryPhotoId: item.subcategoryPhotoId,
                         s3ObjectUrl: item.s3ObjectUrl,
                         s3ObjectKey: item.s3ObjectKey,
                         montoObjetivo: item.montoObjetivo,
@@ -103,17 +89,15 @@
             return mS.getDataFile(url + "Post/?json=" + JSON.stringify(spParams), file, null, true);
         }
 
-        service.update = function (id, file, data) {
+        service.update = function (id, data) {
             let spParams = {
                 idFamilia: data.idFamilia,
                 descripcion: data.descripcion,
                 montoObjetivo: data.montoObjetivo,
                 estado: data.estado,
-                secuencial: data.ultimoSecuencial || 0,
-                s3ObjectKey: data.s3ObjectKey,
-                s3ObjectUrl: data.s3ObjectUrl
+                secuencial: data.ultimoSecuencial || 0
             }
-            return mS.getDataFile(url + `Put/${id}/?json=${JSON.stringify(spParams)}`, file, null, true);
+            return mS.getData('PUT', url + `Put/${id}/?json=${JSON.stringify(spParams)}`, null, true);
         }
 
         service.delete = function (id) {
@@ -375,7 +359,31 @@
         return service;
     })
 
+    app.factory('subcategoryPhotoService', subcategoryPhotoService);
 
+    subcategoryPhotoService.$inject = ['mainService'];
+
+    function subcategoryPhotoService(mS) {
+        let service = {}
+        let url = 'Inventario/SubcategoryPhoto/'
+        function _get() {
+
+        }
+        function _post({ subcategoryId, file }) {
+            return mS.uploadFile({ url: `${url}${subcategoryId}`, file, });
+        }
+        function _update({ id, data = null, file }) {
+            return mS.uploadFile({ url: `${url}Put/${id}?json=${data}`, file, });
+        }
+        function _delete(id) {
+
+        }
+        service.get = _get;
+        service.post = _post;
+        service.update = _update;
+        service.delete = _delete;
+        return service;
+    }
 
 
 })(window.angular)

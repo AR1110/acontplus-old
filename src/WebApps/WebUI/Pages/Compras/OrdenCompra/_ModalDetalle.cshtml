@@ -1,0 +1,125 @@
+
+<form autocomplete="off">
+    <div class="modal-header">    
+        <h5 class="modal-title">Detalle Orden Compra</h5> 
+        <span class="h5"><strong>Total: </strong>${{data.total}}</span>                                         
+    </div>
+    <div class="modal-body">
+        <div class="row" ng-if="showHeader">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="categoria">Estab.: <span class="text-danger">*</span></label>                  
+                    <input type="text" class="form-control" ng-value="data.establecimiento" disabled>                               
+
+                </div> 
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" ng-value="data.ptoEmi" disabled>
+
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
+                    <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select" ng-model="data.fechaEmision" disabled />
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-show="showHeader">                        
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="">Proveedor <span class="text-danger">*</span></label>                    
+                    <input type="text" class="form-control" ng-value="proveedor.nombreFiscal" disabled>                               
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label>Nro. Identificación: </label>
+                    <input type="text" class="form-control" ng-model="proveedor.numeroIdentificacion" disabled>                    
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label>Dirección: </label>
+                    <input type="text" ng-model="proveedor.direccion" disabled class="form-control" />
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label>Correo: </label>
+                    <input type="text" ng-model="proveedor.correo" disabled class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div id="grid" ui-grid="gridOptions" ui-grid-resize-columns ui-grid-auto-resize class="grid">
+        </div>
+
+        <div class="row mt-1">
+            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
+                <div class="card border border-secondary-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>% Descuento</label>
+                                    <div class="input-group">
+                                        <input ng-model="data.porcentajeDescuento" disabled decimal
+                                            class="form-control border-select" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                                <i class="fa fa-calculator fa-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Descuento</label>
+                                    <div class="input-group">
+                                        <input ng-model="data.totalDescuento" id="totalDescuento" disabled decimal
+                                            placeholder="0.00" class="form-control border-select" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                                <i class="fa fa-calculator fa-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Observacion</label>
+                                    <textarea class="form-control border-select" ng-model="data.observacion" touppercase
+                                        disabled placeholder="..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="card border p-2">
+
+                    <div id="drawImpuestoTotalesDetalle"></div>
+
+                </div> 
+            </div>
+        </div>    
+    </div>             
+    <div class="modal-footer">    
+        <button type="button" class="btn btn-dark waves-effect" ng-click="closeModal()">&times; Cerrar</button>                
+    </div>
+</form>
+       

@@ -21,7 +21,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TiempoCredito_Get");
@@ -48,7 +48,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Post(string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TiempoCredito_Insert");
@@ -75,7 +75,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Put(int id, string json)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TiempoCredito_Update");
@@ -104,7 +104,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var _db = new DbAccess(_configuration);
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.TiempoCredito_Delete");

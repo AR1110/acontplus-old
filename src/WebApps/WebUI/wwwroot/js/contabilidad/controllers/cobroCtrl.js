@@ -220,7 +220,7 @@
                     nroSecuencialDoc: $scope.dataSearch.nroSecuencialDoc
                 }
           
-                _mS.getData('get', 'ComprobanteIngreso/?json=' + JSON.stringify(dataSearch), null, true).then(response => {
+                _mS.getData('get', 'Contabilidad/ComprobanteIngreso/?json=' + JSON.stringify(dataSearch), null, true).then(response => {
                     hideLoader();
                     if (response.code === "0") {
                         console.warn(response)
@@ -306,7 +306,7 @@
                     observacion: value
                 }
                 showLoader();
-                _mS.getData('put', `ComprobanteIngreso/Cancel`, {data}, true).then(response => {
+                _mS.getData('put', `Contabilidad/ComprobanteIngreso/Cancel`, {data}, true).then(response => {
                     hideLoader();
                     if (response.code == "0") {
                         tS.toastr('warning', response.message, response.titleSms);

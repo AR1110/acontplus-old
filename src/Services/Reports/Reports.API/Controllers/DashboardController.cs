@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Reports.API.Interfaces;
+using Reports.Core.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
 
@@ -23,7 +23,7 @@ namespace Reports.API.Controllers
             {
                 var response = await _dashboard.GetAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json ?? "") } });
                 if (response == null || string.IsNullOrEmpty(response)) { return BadRequest(); }
-                return Ok(new APIResponse() { code = "1", payload = response });
+                return Ok(new ApiResponse() { code = "1", payload = response });
             }
             catch (Exception ex)
             {

@@ -28,7 +28,7 @@ namespace FactElect.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -53,7 +53,7 @@ namespace FactElect.API.Controllers
         public async Task<IActionResult> GetByStatus(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -78,7 +78,7 @@ namespace FactElect.API.Controllers
         public async Task<IActionResult> GetDataForm()
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -113,7 +113,7 @@ namespace FactElect.API.Controllers
                     var xmlSri = string.Empty;
                     xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
                     var byteXml = Encoding.UTF8.GetBytes(xmlSri);
-                    _response.Create(byteXml, "text/xml", dt.Rows[0].Field<string>("filename") + ".xml");
+                    _response.CreateBase64(byteXml, "text/xml", dt.Rows[0].Field<string>("filename") + ".xml");
                     //var sms = "";
                     //await new FileUpload().Upload(_configuration.GetSection("WhatsAppFiles").Value, _response.FileName, _response.Content);
                     return File(_response.Content, _response.ContentType, _response.FileName);
@@ -131,7 +131,7 @@ namespace FactElect.API.Controllers
         public async Task<IActionResult> Put(int id)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

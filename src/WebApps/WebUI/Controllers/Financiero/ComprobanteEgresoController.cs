@@ -28,7 +28,7 @@ namespace WebUI.Controllers.Financiero
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -49,7 +49,7 @@ namespace WebUI.Controllers.Financiero
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CobroPago data)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -72,7 +72,7 @@ namespace WebUI.Controllers.Financiero
 
         public async Task<IActionResult> Cancel(int id, string observacion)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

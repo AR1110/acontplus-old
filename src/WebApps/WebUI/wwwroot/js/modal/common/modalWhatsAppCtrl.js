@@ -292,7 +292,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
             dataParams: JSON.stringify(dataParms),
             reportParams: JSON.stringify(dataParms)
         }
-        mS.getFile('post', "Reporte/Download", JSON.stringify(parameters), true).then(response => {
+        mS.getFile('post', "Reports/Reporte/Download", JSON.stringify(parameters), true).then(response => {
             let fileName = response
                 .headers()["content-disposition"].split(";")[1]
                 .split("=")[1];
@@ -407,7 +407,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
             totalMensajes: totalMessages,
             params: JSON.stringify(params)
         }
-        mS.getData('post', 'WhatsappMessage/Post', { data: data }, true).then(response => {
+        mS.getData('post', 'Config/WhatsappMessage/Post', { data: data }, true).then(response => {
             if (response.code == '1') {
                 tS.toastr("info", response.message)
             } else {

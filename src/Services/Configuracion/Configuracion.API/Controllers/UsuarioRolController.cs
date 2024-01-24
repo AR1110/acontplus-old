@@ -23,7 +23,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Get(int id)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

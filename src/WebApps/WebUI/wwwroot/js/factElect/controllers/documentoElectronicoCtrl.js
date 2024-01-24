@@ -133,6 +133,7 @@
                         if (!$scope.isMobile) {
                             document.getElementById('menu_toggle').click();
                         }
+                     
                         $scope.comprobantes = response;
                         $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
                     })
@@ -284,7 +285,7 @@
         }
 
         $scope.onSelectComprobante = (item) => {
-            console.log(item)
+        
         }
         //=====================================================END FILTER===============================================
         const REPORT_CODES = Object.freeze({
@@ -494,13 +495,21 @@
 
             }
         }
-        $scope.edit = (item) => {
-            if (item.versionComp == '2.0.0') {
-                location.href = '/RetencionAts/Index?id=' + item.idDocumentoElectronico
-            } else {
-                tS.toastr('warning', 'No disponible')
+
+
+        $scope.updateComprobanteResult = function(result){
+            if(typeof result==='object'){
+                $scope.getComprobantes();
             }
         }
+
+        // $scope.edit = (item) => {
+        //     if (item.versionComp == '2.0.0') {
+        //         location.href = '/RetencionAts/Index?id=' + item.idDocumentoElectronico
+        //     } else {
+        //         tS.toastr('warning', 'No disponible')
+        //     }
+        // }
         $scope.askToCancel = (item) => {
             try {
                 if (item.codDoc != '07') {

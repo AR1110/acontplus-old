@@ -821,3 +821,140 @@ go
 
 DROP PROCEDURE IF EXISTS ReporteVentas.Proforma
 go
+
+-->Ramirez Alexis 12/21/2021
+DROP PROCEDURE IF EXISTS Almacen.Articulo_Get_Id_By_Purchase
+GO
+
+DROP PROCEDURE IF EXISTS ReporteCompras.Liquidacion
+GO
+
+DROP PROCEDURE IF EXISTS aspLiquidacionCompraReporteGeneral
+GO
+
+DROP PROCEDURE IF EXISTS Compra.Factura_FindByProveedor
+GO
+
+DROP PROCEDURE IF EXISTS Compra.Factura_Get_Data_Form
+GO
+
+--> New
+DROP PROCEDURE IF EXISTS Compra.Documento_Ingreso_Update_Cancel
+go
+
+DROP PROCEDURE IF EXISTS ReporteCompras.Factura
+go
+
+DROP PROCEDURE IF EXISTS ReporteCompras.NotaCredito
+go
+
+DROP PROCEDURE IF EXISTS ReporteCompras.OrdenCompra
+go
+
+DROP PROCEDURE IF EXISTS aspFacturaCompraReporteGeneral
+go
+
+DROP PROCEDURE IF EXISTS aspIngresoBodegaReporteGeneral
+go
+
+DROP PROCEDURE IF EXISTS aspNotaCreditoProveedorReporteGeneral
+GO
+
+DROP PROCEDURE IF EXISTS aspOrdenCompraReporteGeneral
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspRetencionCompraReporteGeneral] 
+GO 
+
+DROP PROCEDURE IF EXISTS [ReporteVentas].[Aprob_Document]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Delete]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Get]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Get_Id]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Insert]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Retencion_Update]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Catalogo_Get]
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPEntidadLogoDelete]
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPEntidadLogoGet]
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPEntidadLogoInsert]
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPEntidadLogoUpdate]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Delete]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Get]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Get_Id]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Insert]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Send_Email]
+GO 
+
+DROP PROCEDURE IF EXISTS [Compra].[Retencion_Update]
+GO 
+
+DROP PROCEDURE IF EXISTS  dbo.ASPMovimientoCajaGet
+GO
+
+DROP PROCEDURE IF EXISTS  aspCajaGet
+GO
+
+DROP PROCEDURE IF EXISTS  [dbo].[aspCajaInsert]
+GO
+
+DROP PROCEDURE IF EXISTS  [dbo].[aspAsignacionCajaInsert]
+GO
+
+DROP PROCEDURE IF EXISTS  [dbo].[aspCajaUpdate] 
+go
+
+DROP PROCEDURE IF EXISTS [dbo].[aspCajaDelete]
+GO 
+
+DROP PROCEDURE IF EXISTS [Administrador].[ControlCaja_Get]
+GO 
+
+DROP PROCEDURE IF EXISTS Administrador.ControlCaja_Insert 
+GO
+
+DROP PROCEDURE IF EXISTS Administrador.ControlCaja_Update
+GO
+
+DROP PROCEDURE IF EXISTS Administrador.DetalleArqueo_Get
+GO 
+
+DROP PROCEDURE IF EXISTS Contabilidad.ControlCaja_Report_Movement
+GO 
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPMovimientoCajaInsert]
+go
+
+DROP PROCEDURE IF EXISTS [dbo].[aspAnticipoGet]
+go
+
+DROP PROCEDURE IF EXISTS [dbo].[aspAnticipoInsert]
+go

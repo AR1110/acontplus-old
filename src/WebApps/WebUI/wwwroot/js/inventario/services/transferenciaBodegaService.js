@@ -7,7 +7,7 @@
     app.factory('transferenciaBodegaService', function ($injector) {
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
-        let url = 'TransferenciaBodega/';
+        let url = 'Inventario/TransferenciaBodega/';
 
 
         return {

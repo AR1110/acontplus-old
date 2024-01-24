@@ -23,6 +23,10 @@ GO
 CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
+    
+    SET NOCOUNT ON;
+    SET LANGUAGE SPANISH 
+
 	DECLARE @fecha AS DATE
 	DECLARE @idEntidad AS INT 
 	DECLARE @tipo AS INT 
@@ -295,7 +299,10 @@ BEGIN
 			     d.idDocRelacionado
 				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07')
 				,dr.serieComprobante
-				,saldo           = d.valorRetenido
+				,ISNULL
+                    ((
+                        SELECT SUM(di.TaxValue) FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) WHERE di.DocumentoRecibidoId = dr.idDocumento
+                    ),0) as saldo 
 				,codDoc          = 'Retención Version:'+dr.versionComp
 				,nroDoc          = ''
 				,GETDATE()
@@ -382,6 +389,7 @@ BEGIN
 				  ,fechaEmision         = FORMAT(@fechaEmision,'dd/MM/yyyy')
 				  ,serieComprobante     = @serieComprobante
 			FROM @tbVentas
+
 			RETURN 
 		END
 	
@@ -464,27 +472,9 @@ BEGIN
             RETURN 
         END 
 
-    --> Filter for report Cartera
+    --> Filter 
     IF @tipo = 6
         BEGIN
-            SELECT idEstablecimiento
-                  ,nombreComercial
-                  ,codEstab
-                  ,idPuntoEmision
-                  ,ptoEmi + '-' + estab as ptoEmi
-                  ,defaultEstab
-                  ,defaultPtoEmi 
-            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
-
-            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NCBR','CBR')
-
-            RETURN 
-        END
-
-    -->Filter Reporte General
-    IF @tipo = 7
-        BEGIN
-
             SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
@@ -499,6 +489,99 @@ BEGIN
             SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
 
             RETURN 
+        END
+
+    --> Reporte Filter 
+    IF @tipo = 7
+        BEGIN
+            
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NCBR','CBR')
+
+            SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
+
+            -- DAY
+            SELECT td.descripcion as doc
+                  ,(
+			            SELECT COUNT(*)  
+                        FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
+                        WHERE cc.idEntidad = @idEntidad
+                           AND cc.codEstado NOT IN ('TRA','A') 
+			               AND cc.codDoc = IIF(td.codigo = 'FV','01','NE')
+                           AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+                           AND DATEPART(DAY,cc.fechaEmision) = DATEPART(DAY,GETDATE())
+              
+	               ) as totalDoc
+                  ,ISNULL((
+			            SELECT SUM(cc.importeTotal)  
+                        FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
+                        WHERE cc.idEntidad = @idEntidad
+                           AND cc.codEstado NOT IN ('TRA','A') 
+			               AND cc.codDoc = IIF(td.codigo = 'FV','01','NE')
+			               AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+                           AND DATEPART(DAY,cc.fechaEmision) = DATEPART(DAY,GETDATE()) 
+              
+	               ),0) as total
+            FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigo IN ('NE','FV')
+
+            -- WEEK
+            SELECT dd.descripcion as [day]
+	              ,(
+			            SELECT COUNT(*)  
+                        FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
+                        WHERE cc.idEntidad = @idEntidad
+                           AND cc.codEstado NOT IN ('TRA','A') 
+                           AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+                           AND DATEPART(WEEK,fechaEmision) = DATEPART(WEEK,GETDATE()) 
+			               AND DATEPART(WEEKDAY,cc.fechaEmision) = dd.diaSemana
+              
+	               ) as totalDoc
+                  ,ISNULL((
+			            SELECT SUM(cc.importeTotal)  
+                        FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
+                        WHERE cc.idEntidad = @idEntidad
+                           AND cc.codEstado NOT IN ('TRA','A') 
+			               AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+			               AND DATEPART(WEEK,fechaEmision) = DATEPART(WEEK,GETDATE()) 
+			               AND DATEPART(WEEKDAY,cc.fechaEmision) = dd.diaSemana
+              
+	               ),0) as total
+            FROM dbo.Dia dd WITH (NOLOCK)
+            ORDER BY dd.diaSemana ASC
+
+            -- MONTH
+            SELECT cm.[Description] as [Month]
+	              ,(
+			            SELECT COUNT(*)  
+                        FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
+                        WHERE cc.idEntidad = @idEntidad
+                           AND cc.codEstado NOT IN ('TRA','A') 
+                           AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+                           AND DATEPART(MONTH,cc.fechaEmision) = cm.Code
+              
+	               ) as totalDoc
+                  ,ISNULL((
+			            SELECT SUM(cc.importeTotal)  
+                        FROM v_CuentaPorCobrar cc WITH (NOLOCK) 
+                        WHERE cc.idEntidad = @idEntidad
+                           AND cc.codEstado NOT IN ('TRA','A') 
+			               AND DATEPART(YEAR,fechaEmision) = DATEPART(YEAR,GETDATE()) 
+                           AND DATEPART(MONTH,cc.fechaEmision) = cm.Code 
+              
+	              ),0) as total
+            FROM Catalogo.[Month] cm WITH (NOLOCK)
+            ORDER BY cm.Code ASC
+
+            RETURN 
         END 
+
 END
 GO

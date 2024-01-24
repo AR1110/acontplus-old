@@ -12,7 +12,6 @@ modalDocVentaDetalleCtrl.$inject = [
 
 function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout, params) {
     const DOC_TYPE = $injector.get('DOC_TYPE');
-    const TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
     const notaEntregaSvc = $injector.get('notaEntregaService');
     const facturaSvc = $injector.get('facturaService');
     const proformaSvc = $injector.get('proformaService');
@@ -23,11 +22,6 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     const fS = $injector.get('formulario')
 
     let { id, codDoc } = params;
-    let tarifaImpuesto = {
-        [TAX_RATE_CODE.TWELVE_PERCENT]: "IVA 12%",
-        [TAX_RATE_CODE.DIFFERENTIATED_TAX]: "IVA 8%",
-
-    }
     $scope.showHeader = true;
     $scope.infoAdicionalDocumento = [];
     $scope.tarifasImpuesto = [];
@@ -76,7 +70,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             notaEntregaSvc.getIdForInfo(id).then(response => {
                 let { data, cliente, items, infoAdicionalDocumento, tarifasImpuesto } = response;
                 $scope.data = data;
-                $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
+
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = calculateTotalItems(items)
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
@@ -100,7 +94,6 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             facturaSvc.getIdForInfo(id).then(response => {
                 let { data, cliente, items, infoAdicionalDocumento, tarifasImpuesto } = response;
                 $scope.data = data;
-                $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = calculateTotalItems(items);
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento || [];
@@ -124,7 +117,6 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             proformaSvc.getIdForInfo(id).then(response => {
                 let { data, cliente, items, tarifasImpuesto } = response;
                 $scope.data = data;
-                $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = calculateTotalItems(items)
                 $scope.tarifasImpuesto = tarifasImpuesto;
@@ -147,7 +139,6 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
             notaCreditoSvc.getIdForInfo(id).then(response => {
                 let { data, cliente, items, factura, infoAdicionalDocumento } = response;
                 $scope.data = data;
-                $scope.data.tarifaImpuestoVigente = tarifaImpuesto[$scope.data.codigoPorcentaje]
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = items;
                 $scope.factura = factura;

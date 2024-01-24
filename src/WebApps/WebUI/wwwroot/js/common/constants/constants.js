@@ -8,6 +8,8 @@ const CHANGE_VERSION = (largo = 50) => {
     return '?v=' + codigo;
 }
 
+const PATH_API_COMPRA = 'Compras/'
+
 app.constant('nombreModalCommon', {
     MAIL: {
         fileCtrl: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
@@ -31,46 +33,44 @@ app.constant('nombreModalInventario', {
             //'M': 'ModalArticuloCtrl',
             'M': 'modalArticuloCtrl', //depuracion crud articulo
             'AFI': 'ModalArticuloFraccionadoInfoCtrl',
-            'MAI': 'ModalArticuloImagenCtrl',
+            'MAI': 'modalProductPhotoCtrl',
             'MID': 'ModalArticuloImagenDetalleCtrl',
             'HC': 'modalHistorialCompraCtrl',
             'AF': 'modalArticuloFraccionadoCtrl'
         },
         templates: {
             'LG': '~/Pages/Articulo/_ModalArticuloGeneral.cshtml',
-            //'M': 'Articulo/_ModalNuevoArticulo.cshtml',
-            'M': '~/Pages/Articulo/_ModalAddUpdate.cshtml', //depuracion crud articulo
+            'M': '~/Pages/Articulo/_ModalAddUpdate.cshtml',
             'AFI': 'Articulo/_ArticuloFraccionadoInfo.cshtml',
-            'MAI': 'Articulo/_ModalArticuloImagen.cshtml',
-            'MID': 'Articulo/_ModalArticuloImagenDetalle.cshtml',
-            'HC': '~/Pages/DocumentoRecibido/Shared/_HistoryCompras.cshtml',
+            'MAI': '~/Pages/Articulo/Shared/_ModalProductPhoto.cshtml',
+            'HC': '~/Pages/Compras/DocumentoRecibido/Shared/_HistoryCompras.cshtml',
             'AF': '~/Pages/ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
         }
     },
     FAMILIA: {
-        fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalFamiliaCtrl',
-        template: 'Familia/_ModalFamilia.cshtml'
+        template: '~/Pages/Inventario/Familia/_ModalFamilia.cshtml'
     },
     SUBFAMILIA: {
-        fileCtrl: '/js/inventario/modals/modalSubFamiliaCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalSubFamiliaCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalSubFamiliaCtrl',
-        template: '~/Pages/Subfamilia/Shared/_ModalSubFamilia.cshtml'
+        template: '~/Pages/Inventario/Subfamilia/_ModalSubFamilia.cshtml'
     },
     MEDIDA: {
         fileCtrl: '/js/inventario/modals/modalMedidaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalMedidaCtrl',
-        template: 'Medida/_ModalMedida.cshtml'
+        template: '~/Pages/Inventario/Medida/Shared/_ModalMedida.cshtml'
     },
     MARCA: {
         fileCtrl: '/js/inventario/modals/modalMarcaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalMarcaCtrl',
-        template: 'Marca/_ModalMarca.cshtml'
+        template: '~/Pages/Inventario/Marca/Shared/_ModalMarca.cshtml'
     },
     MODELO: {
         fileCtrl: '/js/inventario/modals/modalModeloCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalModeloCtrl',
-        template: 'Modelo/_ModalModelo.cshtml'
+        template: '~/Pages/Inventario/Modelo/Shared/_ModalModelo.cshtml'
     },
     ARTICULO_FRACCIONADO: {
         fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
@@ -114,7 +114,7 @@ app.constant('nombreModalFactElect', {
     DATO_ADICIONAL_ARTICULO: {
         fileCtrl: '/js/factElect/modals/modalDatoAdicionalArticuloCtrl.min.js' + CHANGE_VERSION(),
         controller: 'ModalDatoAdicionalArticuloCtrl',
-        template: '~/Areas/FactElect/Pages/Shared/_ModalDatoAdicionalArticulo.cshtml'
+        template: '~/Views/Shared/_ModalDatoAdicionalArticulo.cshtml'
     },
     FACTURA: {
         fileCtrl: '/js/modal/ventas/modalFacturaCtrl.min.js' + CHANGE_VERSION(),
@@ -129,12 +129,17 @@ app.constant('nombreModalFactElect', {
         fileCtrl: '/js/factElect/modals/modalNotaCreditoDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'modalNotaCreditoDetalleCtrl',
         template: '~/Pages/NotaCredito/_ModalDetalle.cshtml'
+    },
+    RETENCION_ATS: {
+        fileCtrl: '/js/factElect/modals/modalRetencionAtsCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalRetencionAtsCtrl',
+        template: '~/Pages/FactElect/RetencionAts/Shared/_ModalAddUpdate.cshtml'
     }
 })
 
 app.constant('nombreModalVenta', {
     DOC_VENTA_DETALLE: {
-        fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'modalDocVentaDetalleCtrl',
         templates: {
             NE: '~/Pages/NotaEntrega/_ModalDetalle.cshtml',
@@ -151,8 +156,8 @@ app.constant('nombreModalVenta', {
             ML: 'ModalClienteListaCtrl'
         },
         templates: {
-            M: '~/Areas/Cliente/Pages/Shared/_ModalAddUpdate.cshtml',
-            ML: '~/Areas/Cliente/Pages/Shared/_ModalClienteLista.cshtml'
+            M: '~/Pages/Cliente/_ModalAddUpdate.cshtml',
+            ML: '~/Pages/Cliente/_ModalClienteLista.cshtml'
         }
     },
     EMPRESA: {
@@ -216,13 +221,24 @@ app.constant('nombreModalVenta', {
 
 //Compras
 app.constant('nombreModalCompra', {
+    DOC_COMPRA_DETALLE: {
+        fileCtrl: '/js/common/modals/modalDocCompraDetalleCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalDocCompraDetalleCtrl',
+        templates: {
+            LC: `~/Pages/${PATH_API_COMPRA}LiquidacionCompra/_ModalDetalle.cshtml`,
+            FC: `~/Pages/${PATH_API_COMPRA}FacturaCompra/_ModalDetalle.cshtml`,
+            CNH: `~/Pages/${PATH_API_COMPRA}CompraNoHabitual/_ModalDetalle.cshtml`,
+            OC: `~/Pages/${PATH_API_COMPRA}OrdenCompra/_ModalDetalle.cshtml`,
+        }
+
+    },
     FACTURA_FISICA: {
         fileCtrl: '/js/modal/compras/modalFacturaCtrl.js' + CHANGE_VERSION(),
         controllers: {
             D: 'ModalFacturaDetalleCtrl',
         },
         templates: {
-            D: '~/Areas/FacturaCompra/Pages/Shared/_ModalDetalle.cshtml'
+            D: `~/Pages/${PATH_API_COMPRA}FacturaCompra/_ModalDetalle.cshtml`
         }
     },
     PROVEEDOR: {
@@ -233,33 +249,20 @@ app.constant('nombreModalCompra', {
             L: 'modalProveedorListaCtrl'
         },
         templates: {
-            M: '~/Pages/Proveedor/_ModalAddUpdate.cshtml',
-            L: '~/Pages/Proveedor/_ModalLista.cshtml'
+            M: `~/Pages/${PATH_API_COMPRA}Proveedor/_ModalAddUpdate.cshtml`,
+            L: `~/Pages/${PATH_API_COMPRA}Proveedor/_ModalLista.cshtml`
         }
     },
     CATEGORIA_COMPRA: {
         fileCtrl: '/js/compras/modals/modalCategoriaCompraCtrl.js' + CHANGE_VERSION(),
         controller: 'modalCategoriaCompraCtrl',
-        template: '~/Pages/CategoriaCompra/_ModalAddUpdate.cshtml',
-    },
-    COMPRA_NO_HABITUAL: {
-        fileCtrl: '/js/modal/compras/modalCompraNoHabitualCtrl.min.js' + CHANGE_VERSION(),
-        controllers: {
-            MN: 'ModalAddCtrl',
-            MU: 'ModalUpdateCtrl',
-            MD: 'ModalDetalleCtrl'
-        },
-        templates: {
-            MN: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml',
-            MU: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml',
-            MD: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalDetalle.cshtml'
-        }
+        template: `~/Pages/${PATH_API_COMPRA}CategoriaCompra/_ModalAddUpdate.cshtml`,
     },
     DOCUMENTO_RECIBIDO: {
         fileCtrl: '/js/compras/modals/docRecibidoPreviewCtrl.js' + CHANGE_VERSION(),
         controller: 'docRecibidoPreviewCtrl',
         F: {
-            template: '~/Pages/DocumentoRecibido/Shared/_InvoicePreview.cshtml'
+            template: '~/Pages/Compras/DocumentoRecibido/Shared/_InvoicePreview.cshtml'
         }
     },
 })
@@ -276,7 +279,7 @@ app.constant('nombreModalLogistica', {
             M: 'ModalTransportistaCtrl'
         },
         templates: {
-            M: '~/Areas/Transportista/Pages/Shared/_ModalAddUpdate.cshtml'
+            M: '~/Pages/FactElect/Transportista/Shared/_ModalAddUpdate.cshtml'
         }
     },
     VEHICULO: {
@@ -285,7 +288,7 @@ app.constant('nombreModalLogistica', {
             M: 'ModalVehiculoCtrl'
         },
         templates: {
-            M: '~/Areas/Vehiculo/Pages/Shared/_ModalAddUpdate.cshtml'
+            M: '~/Pages/FactElect/Vehiculo/Shared/_ModalAddUpdate.cshtml'
         }
     }
 })
@@ -303,12 +306,12 @@ app.constant('nombreModalContabilidad', {
             MM: 'ModalMoraCtrl'
         },
         templates: {
-            CR: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroRapido.cshtml',
-            CL: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroLote.cshtml',
-            MFC: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalFormaCobro.cshtml',
-            CD: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCobroDetalle.cshtml',
-            MC: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalCuota.cshtml',
-            MM: '~/Areas/CuentaPorCobrar/Pages/Shared/_ModalMora.cshtml',
+            CR: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroRapido.cshtml',
+            CL: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroLote.cshtml',
+            MFC: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalFormaCobro.cshtml',
+            CD: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCobroDetalle.cshtml',
+            MC: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCuota.cshtml',
+            MM: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalMora.cshtml',
         }
     }
 })
@@ -334,10 +337,10 @@ app.constant('nombreModal', {
         MODAL_COMPROBANTE_ERROR_CSHTML: 'Common/_ModalComprobanteError.cshtml',
 
         MODAL_SEND_MAIL_CTRL: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
-        MODAL_STATUS_MAIL_CSHTML: '~/Areas/DocumentoElectronico/Pages/Shared/_ModalStatusEmail.cshtml',
+        MODAL_STATUS_MAIL_CSHTML: '~/Pages/FactElect/DocumentoElectronico/Shared/_ModalStatusEmail.cshtml',
 
         MODAL_SEND_WHATSAPP_CTRL: '/js/modal/common/ModalWhatsAppCtrl.js' + CHANGE_VERSION(),
-        MODAL_SEND_WHATSAPP_CSHTML: '~/Areas/WhatsApp/Pages/Shared/_ModalWhatsApp.cshtml',
+        MODAL_SEND_WHATSAPP_CSHTML: '~/Pages/Common/WhatsApp/Shared/_ModalWhatsApp.cshtml',
 
         MODAL_INFO_ADICIONAL_DOC: {
             controller: 'InfoAdicionalTipoDocCtrl',
@@ -845,8 +848,11 @@ app.constant('DOC_TYPE', {
     PR: 'PR',
     NC: 'NC',
     NC_SRI: '04',
-    APROB_DOC: ''
-
+    APROB_DOC: '',
+    LC: 'LC',
+    FC: 'FC',
+    CNH: 'CNH',
+    OC: 'OC'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",
@@ -865,5 +871,10 @@ app.constant('CODE_REPORT', {
     NCRG: 'NCRG', //Reporte Nota Credito General
     PR: 'PR', //Reporte Proforma,
     PRE_F: 'RAC', //Aprobacion-Factura
-    P_NE: 'P-NE' //Aprobacion - Nota Entrega
+    P_NE: 'P-NE', //Aprobacion - Nota Entrega
+    RLC: 'RLC', //Reporte Liquidacion Compra
+    RCD: 'RCD', //Reporte Compra detalle
+    RFC: 'RFC', //Reporte Factura Compra
+    RCNH: 'RCNH', //PDF compra no habitual
+    ROC: 'ROC' //Orden Compra 
 })

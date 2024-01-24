@@ -2,7 +2,8 @@ export {
     modalArticuloCtrl,
     modalArticuloFraccionadoCtrl,
     ModalArticuloGeneralCtrl,
-    modalHistorialCompraCtrl
+    modalHistorialCompraCtrl,
+    modalProductPhotoCtrl
 };
 
 modalArticuloCtrl.$inject = [
@@ -26,6 +27,7 @@ function modalArticuloCtrl(
     let tS = $injector.get("toastService");
     let fS = $injector.get("formulario");
     let pricingUtils = $injector.get("pricingUtils");
+    let productPhotoService = $injector.get("productPhotoService");
 
     const CODIGO_IVA = "IVA12";
 
@@ -458,6 +460,7 @@ function modalArticuloCtrl(
                     }
                 }
             });
+            return
         }
         //if (params && params.isImport && $scope.data.codigo && $scope.data.codigoAuxiliar && $scope.data.codigoBarra) return;
 
@@ -557,11 +560,12 @@ function modalArticuloCtrl(
 
             const { subFamilias } = await articuloSvc.getDataForForm();
             $scope.subFamilias = subFamilias;
-            const { idSubFamilia, codigo } = $scope.subFamilias.at(
+            const { idSubFamilia } = $scope.subFamilias.at(
                 $scope.subFamilias.length - 1
             );
             $scope.data.idSubFamilia = idSubFamilia;
-            setCodigo(codigo);
+            //  setCodigo(codigo);
+            $scope.getArticuloCodigo();
         } catch (error) {
             console.log(error);
         }
@@ -1004,7 +1008,7 @@ function modalArticuloCtrl(
         } else if ($scope.data.idArticulo > 0) {
             showLoader();
             articuloSvc
-                .update($scope.data.idArticulo, $scope.image.selectedFile, senData)
+                .update($scope.data.idArticulo, senData)
                 .then((response) => {
                     if (response.code == 0) {
                         tS.toastr("warning", response.message, response.titleSms);
@@ -1023,6 +1027,43 @@ function modalArticuloCtrl(
                 .finally(() => hideLoader());
         }
     };
+
+    $scope.uploadFile = () => {
+        if ($scope.data.productPhotoId > 0 && $scope.image.selectedFile != null) {
+            showLoader();
+            productPhotoService.update({ id: $scope.data.productPhotoId, data: JSON.stringify({ id: $scope.data.productPhotoId, s3ObjectKey: $scope.data.s3ObjectKey, s3ObjectUrl: $scope.data.s3ObjectUrl }), file: $scope.image.selectedFile, }).then(response => {
+                if (response.code == "0") {
+                    tS.toastr("warning", response.message)
+                }
+                if (response.code == "1") {
+                    let src = URL.createObjectURL($scope.image.selectedFile)
+                    document.getElementById('productImage').src = src
+                    tS.toastr("success", response.message)
+                }
+                hideLoader()
+            }).catch(error => {
+                hideLoader()
+                console.log(error);
+            });
+        }
+        if ($scope.data.idArticulo > 0 && $scope.data.productPhotoId == 0 && $scope.image.selectedFile != null) {
+            showLoader();
+            productPhotoService.post({ productId: $scope.data.idArticulo, file: $scope.image.selectedFile, }).then(response => {
+                if (response.code == "0") {
+                    tS.toastr("warning", response.message)
+                }
+                if (response.code == "1") {
+                    let src = URL.createObjectURL($scope.image.selectedFile)
+                    document.getElementById('productImage').src = src
+                    tS.toastr("success", response.message)
+                }
+                hideLoader()
+            }).catch(error => {
+                hideLoader()
+                console.log(error);
+            });
+        }
+    }
 
     $scope.closeModal = function () {
         if (
@@ -1981,6 +2022,8 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
         })
     }
 
+    let isRefresh = false;
+
     $scope.deleteCH = (item) => {
         try {
             showLoader();
@@ -1993,6 +2036,8 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
                     let index = $scope.historyComprasArticle.indexOf(item)
                     $scope.historyComprasArticle.splice(index, 1)
                     tS.toastr('success', response.message)
+                    isRefresh = true;
+                    $uibModalInstance.close({ isRefresh });
                 }
             }).finally(() => hideLoader())
         } catch (error) {
@@ -2001,211 +2046,173 @@ function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
     }
 
     $scope.closeModal = function () {
-        $uibModalInstance.close({ test: 1 });
+        $uibModalInstance.close({ isRefresh });
     }
 }
 
+/*******PRODUCT PHOTO****************/
+modalProductPhotoCtrl.$inject = [
+    '$scope',
+    'mainService',
+    'toastService',
+    '$uibModalInstance',
+    'params',
+    'productPhotoService'
+]
+function modalProductPhotoCtrl($scope, mS, tS, $uibModalInstance, params, productPhotoService) {
+    $scope.photos = []
+    $scope.product = params;
+    $scope.productPhoto = {}
+    $scope.photoSelected = {}
+    const url = 'Inventario/ProductPhoto/'
+    function init() {
+        showLoader();
+        mS.getData('GET', `${url}${params.idArticulo}`, null, true).then(
+            response => {
+                if (response.code == "1") {
+                    $scope.photos = response.payload;
+                }
+                hideLoader();
+            }
+        ).catch(error => {
+            hideLoader();
+            console.log(error);
+        })
+    }
+    init();
 
+    $scope.edit = async (item) => {
+        let { isConfirmed } = await Swal.fire({
+            icon: 'question',
+            title: 'Esta seguro/a de actualizar la imagen?',
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No',
+            allowOutsideClick: false
+        })
+        if (isConfirmed) {
+            $scope.productPhoto = item;
+            let fileInp = document.getElementById('photo');
+            fileInp.click();
+        }
+    }
 
-/**
- *
- * ---------------------------------GESTION DE IMAGEN------------------------------
- * Agregar y eliminar
- */
+    $scope.setDefault = async (item) => {
+        let { isConfirmed } = await Swal.fire({
+            icon: 'warning',
+            title: 'Esta seguro/a de colocar como predeterminada esta imagen?',
+            imageHeight: 300,
+            imageUrl: item.s3ObjectUrl,
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No',
+            allowOutsideClick: false
+        })
 
-// export class ModalArticuloImagenCtrl {
-//     static $inject = [
-//         "$scope",
-//         "mainService",
-//         "$uibModalInstance",
-//         "toastService",
-//         "params",
-//     ];
-//     constructor($scope, _mS, $uibModalInstance, _toastr, _params) {
-//         this.$scope = $scope;
-//         this._mS = _mS;
-//         this.$uibModalInstance = $uibModalInstance;
-//         this._toastr = _toastr;
-//         this._params = _params;
+        if (isConfirmed) {
+            showLoader();
+            productPhotoService.setDefault({ id: item.id, isDefault: item.isDefault }).then(response => {
+                if (response.code == "0") {
+                    tS.toastr("warning", response.message)
+                }
+                if (response.code == "1") {
+                    init();
+                    tS.toastr("success", response.message)
+                }
+                hideLoader()
+            }).catch(error => {
+                hideLoader()
+                console.log(error);
+            });
+        }
+    }
 
-//         this.modelImagenes = [];
-//         this.imagenes = [];
-//     }
+    $scope.delete = async (item) => {
+        let { isConfirmed } = await Swal.fire({
+            icon: 'warning',
+            title: 'Esta seguro/a de eliminar la imagen?',
+            imageHeight: 300,
+            imageUrl: item.s3ObjectUrl,
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No',
+            allowOutsideClick: false
+        })
 
-//     $onInit() {
-//         this.getAllImage();
-//     }
+        if (isConfirmed) {
+            showLoader();
+            productPhotoService.delete(item.id).then(response => {
+                if (response.code == "0") {
+                    tS.toastr("warning", response.message)
+                }
+                if (response.code == "1") {
+                    init();
+                    tS.toastr("success", response.message)
+                }
+                hideLoader()
+            }).catch(error => {
+                hideLoader()
+                console.log(error);
+            });
+        }
+    }
 
-//     getAllImage() {
-//         showLoader();
-//         this._mS
-//             .getData(
-//                 "get",
-//                 "/ArticuloImagen/GetArticuloImagen?idArticulo=" +
-//                 this._params.idArticulo
-//             )
-//             .then((response) => {
-//                 if (response.id === "0") {
-//                     hideLoader();
-//                     this.toastr.toastr("warning", response.message, response.titleSms);
-//                     return;
-//                 }
+    $scope.upload = async () => {
+        let src = URL.createObjectURL($scope.photoSelected)
 
-//                 this.imagenes = response.data.map((val) => {
-//                     val.imagen = `data:${val.mimeType};base64,${val.imagenBase64}`;
-//                     return val;
-//                 });
-//                 hideLoader();
-//             });
-//     }
+        let { isConfirmed } = await Swal.fire({
+            icon: 'question',
+            title: 'Esta seguro de subir esta foto?',
+            imageHeight: 300,
+            imageUrl: src,
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No',
+            allowOutsideClick: false
+        })
 
-//     onChangeSelectImage() {
-//         if (this.modelImagenes.length > 5) {
-//             this.modelImagenes = [];
-//             this._toastr.toastr("Solo puedes ingresar 5 imagenes");
-//             return;
-//         }
+        if (isConfirmed) {
+            showLoader();
+            if ($scope.productPhoto.id > 0) {
+                productPhotoService.update({ id: $scope.productPhoto.id, data: JSON.stringify({ id: $scope.productPhoto.id, s3ObjectKey: $scope.productPhoto.s3ObjectKey, s3ObjectUrl: $scope.productPhoto.s3ObjectUrl }), file: $scope.photoSelected, }).then(response => {
+                    if (response.code == "0") {
+                        tS.toastr("warning", response.message)
+                    }
+                    if (response.code == "1") {
+                        init();
+                        tS.toastr("success", response.message)
+                    }
+                    hideLoader()
+                }).catch(error => {
+                    hideLoader()
+                    console.log(error);
+                });
+            } else {
+                productPhotoService.post({ productId: params.idArticulo, file: $scope.photoSelected, }).then(response => {
+                    if (response.code == "0") {
+                        tS.toastr("warning", response.message)
+                    }
+                    if (response.code == "1") {
+                        $scope.photoSelected = ''
+                        $scope.productPhoto = {}
+                        init()
+                        tS.toastr("success", response.message)
+                    }
+                    hideLoader()
+                }).catch(error => {
+                    hideLoader()
+                    console.log(error);
+                });
+            }
+        }
+    }
 
-//         for (let file of this.modelImagenes) {
-//             let reader = new FileReader();
-
-//             reader.onload = (e) => {
-//                 let imagenBase64 = reader.result
-//                     .replace("data:", "")
-//                     .replace(/^.+,/, "");
-//                 let mimeType = file.type,
-//                     nombreImagen = file.name;
-//                 let obj = {
-//                     imagen: e.target.result,
-//                     imagenBase64,
-//                     mimeType,
-//                     nombreImagen,
-//                 };
-//                 this.imagenes.push(obj);
-//             };
-//             reader.readAsDataURL(file);
-//         }
-//         this.modelImagenes = [];
-//         this.$scope.$apply();
-//     }
-
-//     eliminar(file) {
-//         let index = this.imagenes.indexOf(file);
-//         this.imagenes.splice(index, 1);
-//     }
-
-//     guardar() {
-//         try {
-//             let tituloToast = "Guardar";
-//             if (this.imagenes.length === 0) {
-//                 this._toastr.toastr(
-//                     "warning",
-//                     "Seleccione al menos una imagen",
-//                     tituloToast
-//                 );
-//                 return;
-//             }
-
-//             if (this.imagenes.length > 5) {
-//                 this._toastr.toastr(
-//                     "warning",
-//                     "Solo puedes subir 5 imagenes",
-//                     tituloToast
-//                 );
-//                 return;
-//             }
-
-//             showLoader();
-//             this._mS
-//                 .getData(
-//                     "post",
-//                     "/ArticuloImagen/UploadImagen?idArticulo=" + this._params.idArticulo,
-//                     this.imagenes
-//                 )
-//                 .then((response) => {
-//                     if (response.id === "0") {
-//                         hideLoader();
-//                         this._toastr.toastr("warning", response.message, response.titleSms);
-//                         return;
-//                     }
-//                     if (response.id === "1") {
-//                         hideLoader();
-//                         this._toastr.toastr("success", response.message, response.titleSms);
-//                         this.$uibModalInstance.close(response);
-//                     }
-//                 });
-//         } catch (error) {
-//             hideLoader();
-//         }
-//     }
-
-//     closeModal() {
-//         this.$uibModalInstance.close();
-//     }
-// }
-
-/**
- *
- * -------------------------------------Presentacion de Imagen--------------------------
- *
- *
- */
-
-// export class ModalArticuloImagenDetalleCtrl {
-//     static $inject = [
-//         "$scope",
-//         "mainService",
-//         "$uibModalInstance",
-//         "params",
-//         "articuloService",
-//     ];
-
-//     constructor($scope, _mS, $uibModalInstance, _params, articulSvc) {
-//         this.$scope = $scope;
-//         this._mS = _mS;
-//         this.$uibModalInstance = $uibModalInstance;
-//         this._params = _params;
-//         this.data = _params;
-//         this.imagenes = [];
-//         this.tarifas = [];
-//         this.articulSvc = articulSvc;
-//     }
-
-//     $onInit() {
-//         this.getAllImage();
-//     }
-
-//     async getAllImage() {
-//         try {
-//             showLoader();
-//             let results = await Promise.all([
-//                 this._mS.getData(
-//                     "get",
-//                     "/ArticuloImagen/GetArticuloImagen?idArticulo=" +
-//                     this._params.idArticulo
-//                 ),
-//                 this.articulSvc.getId(this._params.idArticulo),
-//             ]);
-
-//             this.imagenes = results[0].data.map((val) => {
-//                 val.imagen = `data:${val.mimeType};base64,${val.imagenBase64}`;
-//                 return val;
-//             });
-
-//             const dataArticulo = JSON.parse(results[1].payload);
-//             this.data = dataArticulo[0][0];
-
-//             this.tarifas = dataArticulo[1].map((val) => {
-//                 return val;
-//             });
-//             this.$scope.$apply();
-//             hideLoader();
-//         } catch (error) {
-//             hideLoader();
-//         }
-//     }
-
-//     closeModal() {
-//         this.$uibModalInstance.close();
-//     }
-// }
+    $scope.closeModal = function () {
+        $uibModalInstance.close({ test: 'closing' });
+    }
+}
+/**END PRODUCT PHOTO*/

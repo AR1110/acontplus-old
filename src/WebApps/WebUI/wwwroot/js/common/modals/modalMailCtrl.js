@@ -70,7 +70,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
                     subject: $scope.data.subject,
                     params: $scope.data.json,
                     idUsuarioRol,
-                    receptor: $scope.correos.join(';')
+                    receptor: $scope.correos.join(',')
                 }
 
                 mS.getData('post', url + JSON.stringify(data), null, true).then($scope.successResponse).catch(error => {
@@ -78,13 +78,13 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
                     console.log(error)
                 })
             } else if(typeSend==='SRI') {
-                url = 'NotificacionTributaria/'
+                url = 'FactElect/NotificacionTributaria/'
                 data = {
                     codDoc: $scope.data.codDoc,
                     codEstado: $scope.data.codEstado,
                     idDocumento: $scope.data.idDocumento,
                     idDocumentoElectronico: $scope.data.idDocumentoElectronico,
-                    receptor: $scope.correos.join(';')
+                    receptor: $scope.correos.join(',')
                 }
                 mS.getData('post', url, {data}, true).then($scope.successResponse).catch(error => {
                     Swal.close();
@@ -135,7 +135,7 @@ function StatusEmail($scope, $uibModalInstance, mS, commonSvc, tS, fS, params) {
             $scope.estadoCorreos = $scope.data.comprobantes.map(item => {
                 item.statusEmail = [];
                 item.isStatusMail = true;
-                mS.getData('get', 'NotificacionTributaria/' + item.idDocumentoElectronico, null, true).then(
+                mS.getData('get', 'FactElect/NotificacionTributaria/' + item.idDocumentoElectronico, null, true).then(
                     response => {
                         const tempEmails = JSON.parse(response.payload) || [];
                         item.statusEmail = tempEmails.map(item => {
@@ -152,7 +152,7 @@ function StatusEmail($scope, $uibModalInstance, mS, commonSvc, tS, fS, params) {
         }
 
         $scope.showStatusMailByComp = true;
-        mS.getData('get', 'NotificacionTributaria/' + $scope.data.idDocumentoElectronico, null, true).then(
+        mS.getData('get', 'FactElect/NotificacionTributaria/' + $scope.data.idDocumentoElectronico, null, true).then(
             response => {
                 if (response.code === '0') {
                     tS.toastr('warning', response.message)

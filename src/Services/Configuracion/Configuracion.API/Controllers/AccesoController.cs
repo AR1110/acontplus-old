@@ -24,7 +24,7 @@ namespace Configuracion.API.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -48,7 +48,7 @@ namespace Configuracion.API.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(ApiRequest parameters)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Config.Acceso_Update", true);

@@ -1013,7 +1013,7 @@
 
         $scope.proveedorSearch = (textSearch) => proveedorSvc.search(textSearch)
         $scope.selectProveedorFiltro = (item) => {
-            $scope.mainForm.rucProveedor = item.proveedor.numeroIdentificacion
+            $scope.mainForm.rucProveedor = item.numeroIdentificacion
             $scope.getArticles()
         }
 

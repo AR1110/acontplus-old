@@ -85,15 +85,25 @@ class BaseSearchArticulo {
 
     validarGetDataArticulo() {
         if (['FV', 'NE', 'PR', 'NC'].includes(this.tipoDoc.codigo)) {
-            this.getDataArticuloParaVenta()
+            this.getDataArticuloParaVenta();
+            return
+        }
+
+        if (['CIV'].includes(this.tipoDoc.codigo)) {
+            this.getId()
+            return
+        }
+
+
+        if (["C"].includes(this.tipoDoc.codigo)) {
+            this.getDataArticuloParaCompra();
+            return
         }
 
         if (['FC', 'IB', 'LC', 'NCP', 'OC', 'TRA', 'GR'].includes(this.tipoDoc.codigo)) {
             this.getDataArticuloParaCompra();
         }
-        if (['CIV'].includes(this.tipoDoc.codigo)) {
-            this.getId()
-        }
+
     }
 
 
@@ -186,8 +196,10 @@ class BaseSearchArticulo {
         try {
 
             showLoader();
-            this.dataArticulo.idBodega = this.idBodega;
-            this.articuloSvc.findForPurchase(this.dataArticulo).then(response => {
+            let spParams = {
+                idArticulo: this.dataArticulo.idArticulo
+            }
+            this.articuloSvc.getForPurchase(spParams).then(response => {
                 hideLoader();
                 this.setItemArticuloEnDetalle({
                     item: response
@@ -449,7 +461,7 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo {
 
 
 app.component('mdAutocompleteArticuloComponent', {
-    templateUrl: '/Articulo/MdAutocomplete',
+    templateUrl: `/Index?name=~/Pages/Articulo/MdAutocomplete.cshtml`,
     //controllerAs: '$ctrl',
     bindings: {
         tipoDoc: '=',

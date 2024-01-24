@@ -14,6 +14,12 @@ namespace Contabilidad.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ISubCategoriaService, SubCategoriaService>();
+            services.AddScoped<ICajaService, CajaService>();
+            services.AddScoped<IControlCajaService, ControlCajaService>();
+            services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
+            services.AddScoped<IAnticipoService, AnticipoService>();
+            services.AddScoped<IComprobanteEgresoService, ComprobanteEgresoService>();
+
 
             services.AddSingleton<LogWriter>();
             return services;

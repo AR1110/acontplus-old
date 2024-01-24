@@ -462,14 +462,19 @@
                     <div class="row">
                         <div class="form-group col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
-                                <label>Imagen: </label>
+                                <label>Imagen Principal: </label>
                                 <input type="file"
                                        class="form-control"
                                        ngf-select
                                        ngf-pattern="'image/*'"
                                        ngf-accept="'image/*'"
-                                       ng-model="image.selectedFile" />
+                                       ng-model="image.selectedFile" ng-change="uploadFile()" />
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <img id="productImage" class="img-fluid" width="50%" alt="Producto Imagen" />
                         </div>
                     </div>
                 </div>

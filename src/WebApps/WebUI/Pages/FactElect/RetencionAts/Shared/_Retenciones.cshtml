@@ -1,0 +1,142 @@
+﻿<style>
+    /* Angular Material Overrides */
+    .md-select-menu-container, md-backdrop {
+        z-index: 9999 !important;
+    }
+    .selectdemoSelectHeader {
+    /* Please note: All these selectors are only applied to children of elements with the 'selectdemoSelectHeader' class */
+    }
+    /* .selectdemoSelectHeader .demo-header-searchbox {
+        border: none;
+        outline: none;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+    } */
+
+    /* .selectdemoSelectHeader .demo-select-header {
+        box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14), 0 0 0 0 rgba(0, 0, 0, 0.12);
+        padding-left: 16px;
+        height: 48px;
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        width: auto;
+    } */
+    .selectdemoSelectHeader md-content._md {
+        max-height: 240px;
+    }
+    .selectdemoSelectHeader md-input-container {
+        min-width: 112px;
+    }
+</style>
+
+<hr>
+<h4>Retenciones</h4>
+<div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+        <div class="form-group">
+            <label for="codigo">Impuesto:</label>
+            <select name="codigo" id="codigo" class="form-control" ng-model="retencion.codigo"
+                ng-change="setPorcentajesRet(retencion.codigo, item.uniqueIdDoc)">
+                <option></option>
+                <option ng-value="item.codigo" ng-repeat="item in impuestosRet">{{item.codigo}} - {{item.descripcion}}
+                </option>
+            </select>
+        </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+        <div class="form-group">
+            <label for="codigoRetencion">Código Retención:</label>
+            @* <input type="text" id="{{item.uniqueIdDoc}}-descripcion" class="form-control"
+            name="{{item.uniqueIdDoc}}-descripcion" autocomplete="off" class="form-control border-select"
+            placeholder="Buscar código de retención" ng-model="retencionCodigoSearch" ng-keyup="clearSearch()"
+            uib-typeahead="a as a.codigo + '-' + a.descripcion for a in porcentajeRetener | filter: $viewValue"
+            typeahead-loading="articleFinded.loading"
+            typeahead-no-results="articleFinded.noResults" typeahead-editable="false"
+            typeahead-on-select="setPorcentajeRet($item.codigo, false)"
+            uib-popover="{{retencionCodigoSearch.descripcion}}" popover-trigger="'focus'"
+            onclick="select()"
+            required /> *@
+            @* <select name="codigoRetencion" id="codigoRetencion" class="form-control"
+            ng-model="retencion.codigoRetencion" ng-change="setPorcentajeRet(retencion.codigoRetencion, false)">
+            <option></option>
+            <option ng-value="item.codigo" ng-repeat="item in porcentajeRetener">{{item.codigo}} -
+            {{item.descripcion}}</option>
+            </select> *@
+
+            <md-select id="{{item.uniqueIdDoc}}-selectCodRet" ng-model="retencionCodigoSearch" md-on-close="clearSearchTerm()"
+                md-container-class="selectdemoSelectHeader" ng-change="setPorcentajeRet(retencionCodigoSearch.codigo, false)">
+                <md-select-header class="demo-select-header">
+                    <input id="codRetSearch" ng-model="searchTerm" aria-label="Filtro Código Retencion" type="search"
+                        placeholder="Ej. 312" class="form-control">
+                </md-select-header>
+                <md-optgroup label="codigosRetencion">
+                    <md-option ng-value="codigoRet" 
+                        ng-repeat="codigoRet in porcentajeRetener | filter:searchTerm">
+                        {{codigoRet.codigo}} - {{codigoRet.descripcion}}
+                    </md-option>
+                </md-optgroup>
+            </md-select>
+        </div>
+
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-3">
+        <div class="form-group">
+            <label for="baseImponible">Base Imponible:</label>
+            <input type="number" name="baseImponible" id="baseImponible" class="form-control"
+                ng-model="retencion.baseImponible" step="any" min="0" ng-blur="setValueRet(this)" />
+        </div>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-3">
+        <div class="form-group">
+            <label for="porcentajeRetener">Porcentaje:</label>
+            <input type="text" name="porcentajeRetener" id="porcentajeRetener" class="form-control"
+                ng-model="retencion.porcentajeRetener" step="any" min="0" ng-blur="setPorcentajeRet(this, true)" />
+        </div>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-3">
+        <div class="form-group">
+            <label for="valorRetenido">Valor Retenido:</label>
+            <input type="text" name="valorRetenido" id="valorRetenido" class="form-control"
+                ng-model="retencion.valorRetenido" step="any" min="0" disabled />
+        </div>
+    </div>
+</div>
+<button type="button" id="{{item.uniqueIdDoc}}-btnAddRet" class="btn btn-info  btn-sm"
+    ng-click="addRetencion(item.uniqueIdDoc, true, item.uniqueIdDoc + '-' + 'selectCodRet')"><i class="ti-plus"></i> Añadir
+    Retención</button>
+<button type="button" id="{{item.uniqueIdDoc}}-btnEditRet" class="btn btn-info  btn-sm"
+    ng-click="updateRet(item.uniqueIdDoc, item.uniqueIdDoc + '-' + 'selectCodRet')" style="display:none;"><i class="ti-save"></i> Guardar
+    Retención</button>
+<hr>
+<div class="table-responsive" ng-if="retencionAdded.length > 0">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Impuesto</th>
+                <th>Código Ret.</th>
+                <th>Base Imponible</th>
+                <th>Porcentaje</th>
+                <th>Valor Retenido</th>
+                <th>Opc.</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr dir-paginate="ret in retencionAdded|orderBy:sortKey : reverse | filter: {uniqueIdDoc: item.uniqueIdDoc}|itemsPerPage:10"
+                ng-class-even="'even'" ng-class-odd="'odd'">
+                <td>{{ret.impuesto}}</td>
+                <td>{{ret.codRet}}</td>
+                <td>{{ret.baseImponible | currency}}</td>
+                <td>{{ret.porcentajeRetener}}</td>
+                <td>{{ret.valorRetenido | currency}}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" ng-click="editRetencion($index, ret, item)"><i
+                            class="ti-pencil"></i></button>
+                    <button class="btn btn-danger btn-sm" ng-click="askToRemoveRet($index, ret, item)"><i
+                            class="ti-trash"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

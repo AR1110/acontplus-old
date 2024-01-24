@@ -1,8 +1,7 @@
 ﻿using Asp.Versioning;
 using Common.Core.Models;
 using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using FactElect.API.Dtos;
+using Common.Infrastructure.Repository; 
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -27,7 +26,7 @@ namespace FactElect.API.Controllers.Factura.v2
         public async Task<IActionResult> Get(string json)
         {
 
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -51,7 +50,7 @@ namespace FactElect.API.Controllers.Factura.v2
         [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 await _db.SPExecute("Ventas.Factura_Get_Id", true);
@@ -71,19 +70,16 @@ namespace FactElect.API.Controllers.Factura.v2
             return Ok(_response);
         }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] FacturaParamsDto data)
+        [HttpPost]
+        public async Task<IActionResult> Insert([FromBody] ApiRequest data)
         {
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Factura_Insert");
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonFactura", SqlStringParam.Sanitize(data.factura));
-                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", SqlStringParam.Sanitize(data.adicional));
-                _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
+                await _db.SPExecute("Ventas.Factura_Insert", true);
+                _db.AddDynamicParam("userRoleId", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -98,21 +94,16 @@ namespace FactElect.API.Controllers.Factura.v2
             return Ok(_response);
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] FacturaParamsDto data)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, ApiRequest data)
         {
-            var _db = new DbAccess(_configuration);
-
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
-                await _db.SPExecute("Ventas.Factura_Update");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                await _db.SPExecute("Ventas.Factura_Update", true);
+                _db.AddDynamicParam("userRoleId", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("jsonFactura", SqlStringParam.Sanitize(data.factura));
-                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", SqlStringParam.Sanitize(data.adicional));
-                _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -128,15 +119,13 @@ namespace FactElect.API.Controllers.Factura.v2
         }
 
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _db = new DbAccess(_configuration);
-
-            var _response = new GenericResponse();
+            var _response = new ApiResponse();
             try
             {
-                await _db.SPExecute("Ventas.Factura_Delete");
+                await _db.SPExecute("Ventas.Factura_Delete", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();

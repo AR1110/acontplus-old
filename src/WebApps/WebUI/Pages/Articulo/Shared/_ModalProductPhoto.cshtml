@@ -1,0 +1,55 @@
+﻿<style>
+    .parent-div {
+        height: 250px;
+        width: 100%;
+    }
+
+        .parent-div img {
+            height: 100%;
+            width: 100%;
+        }
+</style>
+<div class="modal-header">
+    <h5 class="modal-title"><i class="icon icon-picture"></i> Imagenes del Producto</h5>
+    <button class="close" ng-click="closeModal()" aria-hidden="true">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col mb-1">
+            <h5 class="card-subtitle">
+                {{product.descripcion}}
+            </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" ng-repeat="item in photos">
+            <div class="card border border-1 border-info shadow-lg">
+                <div class="card-body">
+                    <img src="{{item.s3ObjectUrl}}" alt="Alternate Text" id="{{item.s3ObjectKey}}" class="img-fluid" style="cursor: pointer;" title="click para actualizar la imagen" ng-click="edit(item)" />
+                </div>
+                <div class="card-footer">
+                    <input type="checkbox" name="isDefault" id="isDefault" ng-model="item.isDefault" ng-change="setDefault(item)" /> <label for="isDefault">Predeterminada</label>
+                    <button type="button" class="btn btn-outline-danger" ng-click="delete(item)"><i class="ti-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="form-group">
+                <label for="photo">Añadir Imagen: <small class="text-warning">Tamaño recomendado 500x500 y 1MB</small></label>
+                <input type="file"
+                       name="photo" id="photo"
+                       class="form-control"
+                       ngf-select
+                       ngf-pattern="'image/*'"
+                       ngf-accept="'image/*'"
+                       ngf-max-size="1MB"
+                       ng-model="photoSelected" ng-change="upload()" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div>

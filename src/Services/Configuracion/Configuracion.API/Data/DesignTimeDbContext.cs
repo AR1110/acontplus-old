@@ -11,7 +11,7 @@ namespace Configuracion.API.Data
         public ConfigContext CreateDbContext(string[] args)
         {
             IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings"))
+                                .SetBasePath(Path.Combine("C:\\Acontplus\\", "Shared"))
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
                 .Build();
 

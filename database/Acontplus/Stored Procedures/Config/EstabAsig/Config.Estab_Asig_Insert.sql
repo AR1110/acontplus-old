@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Config.Estab_Asig_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Config.Estab_Asig_Insert
-GO
-CREATE PROCEDURE Config.Estab_Asig_Insert @userRoleId INT ,@json VARCHAR(MAX) 
+CREATE OR ALTER PROCEDURE Config.Estab_Asig_Insert @userRoleId INT ,@json VARCHAR(MAX) 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -44,10 +41,13 @@ BEGIN
 
 		SET @predeterminado = IIF ((SELECT COUNT(*) FROM Config.Estab_Asig WHERE idUsuarioRol = @idUsuarioRol ) = 0,1,0)
 
-        IF EXISTS (SELECT 1 FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND codEstab = @codEstab)
-            BEGIN
-                SELECT Common.ufnSpResponse('0','Ya existe este Acceso',NULL)
-                RETURN 
+        IF @id = 0 
+            BEGIN 
+                IF EXISTS (SELECT 1 FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND codEstab = @codEstab)
+                    BEGIN
+                        SELECT Common.ufnSpResponse('0','Ya existe este Acceso',NULL)
+                        RETURN 
+                    END 
             END 
 
 		BEGIN TRAN 

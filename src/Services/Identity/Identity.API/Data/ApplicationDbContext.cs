@@ -11,8 +11,9 @@ namespace Identity.API.Data
         {
         }
 
+        public DbSet<ForgotPassword> ForgotPasswords { get; set; }
         public DbSet<LoginHistory> LoginHistories { get; set; }
-        public DbSet<LoginFailed> loginFaileds { get; set; }
+        public DbSet<LoginFailed> LoginFaileds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -48,6 +49,8 @@ namespace Identity.API.Data
             builder.Entity<LoginHistory>().Property(x => x.IsLoggedIn).HasDefaultValue(true);
 
             builder.Entity<LoginFailed>().Property(p => p.ErrorDate).HasDefaultValueSql("GETDATE()");
+
+            builder.Entity<ForgotPassword>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         }
     }
 }

@@ -28,7 +28,7 @@ namespace WebUI.Controllers.Config
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -49,7 +49,7 @@ namespace WebUI.Controllers.Config
         [HttpPut]
         public async Task<IActionResult> Put(string json)
         {
-            var response = new GenericResponse();
+            var response = new ApiResponse();
             try
             {
                 using (DbAccess _db = new DbAccess(_configuration))

@@ -2,9 +2,159 @@
 @model WebUI.Pages.Ventas.Report.IndexModel
  
 @{
-    ViewData["Title"] = "Ventas. Report";
+    ViewData["Title"] = "Reporte Contabilidad";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
-<div id="ventas-report"></div>
+<div ng-controller="reporteContabilidadCtrl">
+    <div class="row page-titles">
+	<div class="col-md-5 align-self-center">
+		<h5 class="text-themecolor">Reporte Contabilidad</h5>
+	</div> 
+    <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+            
+        </div>
+    </div> 
+</div> 
+
+<div class="card">
+	<div class="card-body">
+		<div class="row">
+			<div class="col-lg-3 col-md-3 col-sm-6 col-12">
+				<div class="form-group">
+					<span for="estabs">Estab: <span class="text-danger">*</span></span>
+					<select
+						name="estabs"
+						id="estabs"
+						class="form-control border-select"
+						ng-model="dataSearch.codEstab"
+						ng-change="onChangeEstab()"
+					>
+						 
+                        <option ng-value="estab.codEstab" ng-repeat="estab in establecimientos">
+                            {{estab.nombreComercial}}
+                        </option>
+					 
+					</select>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-2 col-sm-6 col-12">
+				<div class="form-group">
+					<span for="estabs">Pto. emisión: <span class="text-danger">*</span></span>
+					<select
+						name="estabs"
+						id="estabs"
+						class="form-control border-select"
+						ng-model="dataSearch.idPuntoEmision"
+					> 
+                        <option ng-value="ptoEmi.idPuntoEmision"  ng-repeat="ptoEmi in puntosEmision"> 
+                            {{ptoEmi.ptoEmi}}
+                        </option>						 
+					</select>
+				</div>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                <span for="date-range-filter">Rango Fechas: </span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox mr-sm-2">
+                                            <input type="checkbox"
+                                                   ng-model="dataSearch.ckFecha" 
+                                                   class="custom-control-input"
+                                                   id="ckFecha">
+                                            <label class="custom-control-label" for="ckFecha"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <date-range-filter current-date="dataSearch.fechaInicio"
+                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div>
+			</div>
+			<div class="col-lg-3 col-md-3 col-sm-6 col-12">
+				<div class="form-group">
+					<span for="estadosDoc">Estado:</span>
+					<select
+						name="estadosDoc"
+						id="estadosDoc"
+						ng-model="dataSearch.codEstado"
+						class="form-control border-select"
+					>
+						<option ng-value="0">Todos</option> 
+							<option ng-value="estado.codigo" ng-repeat="estado in estadosDoc"> 
+                                {{estado.descripcion}}
+                            </option> 
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
+				<div class="form-group">
+					<span for="tipoDoc">Tipo Doc.</span>
+					<select
+						name="tipoDoc"
+						id="tipoDoc"
+						ng-model="dataSearch.codDoc"
+						class="form-control border-select"
+					>
+						<option value="">Todos</option> 
+                            <option ng-value="tipoDoc.codigo" ng-repeat="tipoDoc in tiposDoc"> {{tipoDoc.descripcion}}
+                            </option>
+						 
+					</select>
+				</div>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                 <div class="form-group">
+                                <span for="clienteFiltro">Cliente</span>
+                                <input type="text" id="customerInputSearch" class="form-control border-select"
+                                       ng-model="cliente.nombreCliente" cliente-search-drtv
+                                       on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                                       placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                                <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                    </div>
+                                </script>
+                            </div>
+			</div>
+			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
+				<div class="form-group mt-4">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="ckCuotas" ng-model="dataSearch.ckCuotas" />
+                        <label for="ckCuotas">Cuotas</label>
+                    </div> 
+				</div>  
+			</div>
+			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
+                <div class="form-group mt-4">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="ckCxcVencida" ng-model="dataSearch.ckCxcVencida" />
+                            <label for="ckCxcVencida">Vencidas</label>
+                    </div> 
+				</div>     
+			</div>
+		</div>
+	</div>
+	<div class="card-footer">
+		<button class="btn btn-success" ng-click="getReport('pdf')">
+			PDF 
+		</button>
+		<button class="btn btn-info" ng-click="getReport('excel')">
+			 
+			Excel
+		</button>
+	</div>
+</div>
+
+</div>
+@section Scripts {
+    <script src="~/js/contabilidad/services/contabilidadService.js" asp-append-version="true"></script>
+    <script src="~/js/contabilidad/controllers/reporteContabilidadCtrl.js" asp-append-version="true"></script>
+}

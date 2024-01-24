@@ -235,32 +235,15 @@
                     template,
                     size: 'lg',
                     params,
-                    reload: true
+                    reload: true,
+                    isRenderRazorPartial: true,
                 }
-                $scope.openModal(modalParams)
+                modalSvc.openModalCustom(modalParams)
             } catch (error) {
                 console.log(error)
             }
         }
-
-
-        //     //Presentacion del imagen 
-        $scope.openModalImagen = async (params) => {
-            try {
-                let controller = (await import(fileCtrl))[controllers["MID"]];
-                let template = templates["MID"];
-                let modalParams = {
-                    controller,
-                    template,
-                    size: 'xl',
-                    params,
-                    reload: false
-                }
-                $scope.openModal(modalParams)
-            } catch (error) {
-                console.log(error);
-            }
-        }
+        
 
         $scope.updateStockArticle = async (item) => {
             let {

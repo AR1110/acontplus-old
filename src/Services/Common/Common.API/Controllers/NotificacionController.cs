@@ -14,13 +14,25 @@ namespace Common.API.Controllers
             _notificacion = notificacion;
             _log = log;
         }
+
+
         [HttpPost]
-        public async Task<IActionResult>Post(string json)
+        public async Task<IActionResult> Post(string json)
         {
             try
             {
-                var response = await _notificacion.AddAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(json) } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Cant Save"); };
+                var parameters = new Dictionary<string, object>
+                {
+                    { "userRoleId", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value) },
+                    { "json", SqlStringParam.Sanitize(json) },
+                };
+
+                var response = await _notificacion.AddAsync(parameters);
+
+                if (response == null || string.IsNullOrEmpty(response))
+                {
+                    return BadRequest("Can't Save");
+                };
                 return Ok(response);
             }
             catch (Exception ex)

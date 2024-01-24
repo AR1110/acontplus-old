@@ -96,9 +96,9 @@ BEGIN
 								,cantidad       = cast(fd.cantidad as numeric(18,2)) 
 								,medida         = me.descripcion
 								,tipoIva        = ti.descripcion
-								,precioUnitario = cast(fd.precioCosto as numeric(18,2)) 
+								,precioUnitario = cast(fd.precioUnitario as numeric(18,2)) 
 								,valorDescuento = cast(fd.valorDescuento as numeric(18,2))
-								,total          = cast(fd.total as numeric(18,2))		
+								,total          = CAST(fd.precioTotalSinImpuesto as numeric(18,2))                                
 								,precioVenta    = ap.precioVenta
 								,precioConIva   = ap.precioConIva
 								,tarifa         = ta.descripcion
@@ -148,9 +148,9 @@ BEGIN
 							,cantidad       = cast(lcd.cantidad as numeric(18,2)) 
 							,medida         = m.descripcion
 							,tipoIva        = ti.descripcion
-							,precioUnitario = cast(lcd.precioCosto as numeric(18,2)) 
+							,precioUnitario = cast(lcd.precioUnitario as numeric(18,2)) 
 							,valorDescuento = cast(lcd.valorDescuento as numeric(18,2))
-							,total          = cast(lcd.total as numeric(18,2))		
+							,total          = cast(lcd.precioTotalSinImpuesto as numeric(18,2))		
 							,precioVenta    = ap.precioVenta
 							,precioConIva   = ap.precioConIva
 							,tarifa         = t.descripcion

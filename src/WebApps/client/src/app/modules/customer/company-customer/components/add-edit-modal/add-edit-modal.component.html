@@ -1,0 +1,477 @@
+<form [formGroup]="customerForm" (ngSubmit)="save()">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+    </h5>
+    <button type="button" class="btn-close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <button ngbNavLink>Datos Principales</button>
+        <ng-template ngbNavContent>
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+              <div class="form-group">
+                <label for=""
+                  >Tipo Identificación: <span class="text-danger">*</span>
+                </label>
+                <select
+                  class="form-select"
+                  formControlName="idTipoIdentificacion"
+                  (change)="onChangeTipoIdentificacion()"
+                  formControlName="idTipoIdentificacion"
+                >
+                  @for (item of tiposIdentificacion; track $index) {
+                  <option [ngValue]="item.idTipoIdentificacion">
+                    {{ item.descripcion }}
+                  </option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+              <div class="form-group">
+                <label for="numeroIdentificacion"
+                  >Número de Identificación</label
+                >
+                <input
+                  type="text"
+                  class="form-control border-select"
+                  id="numeroIdentificacion"
+                  formControlName="numeroIdentificacion"
+                  (keydown.enter)="validarNumeroIdentificacion()"
+                  maxlength="15"
+                  placeholder="Ej: 2105234568"
+                />
+
+                <div
+                  *ngIf="
+                    numeroIdentificacion.invalid &&
+                    (numeroIdentificacion.dirty || numeroIdentificacion.touched)
+                  "
+                  class="alert alert-danger"
+                >
+                  Numero invalido
+                </div>
+
+                <!-- <small class="invalid-feedback text-right">{{ message }} </small>
+              <small class="valid-feedback text-right">{{ message }} </small> -->
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+              <div class="form-group">
+                <label>Nombre Fiscal: <span class="text-danger">*</span></label>
+                <input
+                  type="text"
+                  class="form-control border-select"
+                  id="nombreComercial"
+                  (keyup)="copyTradeName()"
+                  touppercase
+                  autocomplete="off"
+                  formControlName="nombreFiscal"
+                  placeholder="Ej: TECNOMEGA"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+              <div class="form-group">
+                <label>Dirección</label>
+                <textarea
+                  type="text"
+                  class="form-control border-select"
+                  formControlName="direccion"
+                  touppercase
+                  placeholder="AV. 09 DE OCTUBRE..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-6 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label
+                  >Email:
+                  <span
+                    tooltip-placement="top"
+                    ngbTooltip="Haz doble 'Click' sobre el correo para editar"
+                  >
+                    <fa-icon [icon]="'info-circle'"></fa-icon>
+                  </span>
+                </label>
+                <mat-chip-grid #chipGridEmail aria-label="Enter emails">
+                  <mat-chip-row
+                    *ngFor="let email of emails"
+                    (removed)="removeEmail(email)"
+                    [editable]="true"
+                    (edited)="editEmail(email, $event)"
+                    [aria-description]="'press enter to edit ' + email"
+                  >
+                    {{ email }}
+                    <button matChipRemove [attr.aria-label]="'remove ' + email">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                  <input
+                    placeholder="example@example.com,info@example.com"
+                    class="form-control"
+                    [matChipInputFor]="chipGridEmail"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    [matChipInputAddOnBlur]="addOnBlur"
+                    (matChipInputTokenEnd)="addEmail($event)"
+                  />
+                </mat-chip-grid>
+              </div>
+            </div>
+            <div class="col-xl-6 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label
+                  >Telefono:
+                  <span
+                    tooltip-placement="top"
+                    ngbTooltip="Haz doble 'Click' sobre el número de telefono para editar"
+                  >
+                    <fa-icon [icon]="'info-circle'"></fa-icon>
+                  </span>
+                </label>
+                <mat-chip-grid
+                  #chipGridTelephone
+                  aria-label="Ingrese los teléfonos"
+                >
+                  <mat-chip-row
+                    *ngFor="let telephone of telephones"
+                    (removed)="removeTelephone(telephone)"
+                    [editable]="true"
+                    (edited)="editTelephone(telephone, $event)"
+                    [aria-description]="'press enter to edit ' + telephone"
+                  >
+                    {{ telephone }}
+                    <button
+                      matChipRemove
+                      [attr.aria-label]="'remove ' + telephone"
+                    >
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                  <input
+                    placeholder="0900000001,0900000002"
+                    class="form-control"
+                    [matChipInputFor]="chipGridTelephone"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    [matChipInputAddOnBlur]="addOnBlur"
+                    (matChipInputTokenEnd)="addTelephone($event)"
+                  />
+                </mat-chip-grid>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2">
+        <button ngbNavLink>Datos Adicionales</button>
+        <ng-template ngbNavContent>
+          <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+              <div class="form-group">
+                <label>Nombre Comercial: </label>
+                <input
+                  type="text"
+                  class="form-control border-select"
+                  autocomplete="off"
+                  formControlName="nombreComercial"
+                  touppercase
+                  placeholder="Ej: TECNOMEGA"
+                />
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+              <div class="form-group">
+                <label for="idSubContribuyente">Contribuyente: </label>
+                <select
+                  formControlName="idSubContribuyente"
+                  id="idSubContribuyente"
+                  class="form-select border-select"
+                >
+                  @for (item of tipoContribuyentes; track $index) {
+                  <option [ngValue]="item.idSubContribuyente">
+                    {{ item.descripcion }}
+                  </option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+              <div class="form-group">
+                <label for="idTiempoCredito">Tiempo de Credito </label>
+                <div class="input-group">
+                  <select
+                    id="idTiempoCredito"
+                    formControlName="idTiempoCredito"
+                    class="form-select border-select"
+                  >
+                    @for (item of tiempoCreditos; track $index) {
+                    <option [ngValue]="item.idTiempoCredito">
+                      {{ item.descripcion }}
+                    </option>
+                    }
+                  </select>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    (click)="refreshTiempoCredito()"
+                  >
+                    <fa-icon [icon]="'sync'"></fa-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Ciudad: </label>
+                <select
+                  class="form-select border-select"
+                  ng-model="data.idCiudad"
+                  ng-options="cp.idCiudad as cp.ciudad group by cp.provincia for cp in ciudades"
+                >
+                  <option value=""></option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="idTipoClienteProveedor">Tipo Cliente: </label>
+                <select
+                  id="idTipoClienteProveedor"
+                  formControlName="idTipoClienteProveedor"
+                  class="form-select border-select"
+                >
+                  @for (item of tiposCliente; track $index) {
+                  <option [ngValue]="item.idTipoClienteProveedor">
+                    {{ item.descripcion }}
+                  </option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="idEmpresa">Empresa</label>
+                <div class="input-group">
+                  <select
+                    ng-model="data.idEmpresa"
+                    id="idEmpresa"
+                    formControlName="idEmpresa"
+                    class="form-select border-select"
+                  >
+                    @for (item of empresas; track $index) {
+                    <option [ngValue]="item.idEmpresa">
+                      {{ item.razonSocial }}
+                    </option>
+                    }
+                  </select>
+                  <button
+                    type="button"
+                    tabindex="-1"
+                    class="btn btn-outline-secondary btn-sm"
+                    btn-empresa
+                    result-modal="resultModalEmpresa(result)"
+                  >
+                    <fa-icon [icon]="'plus'"></fa-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="empleado">Empleado</label>
+                <div class="input-group">
+                  <input
+                    type="text"
+                    id="clienteAutocomplete"
+                    autocomplete="off"
+                    name="empleadoAutocomplete"
+                    class="form-control border-select"
+                    placeholder="Buscar Empleado"
+                    ng-model="selectedEmpleado"
+                    ng-keyup="onKeyupSearchEmpleado(selectedEmpleado)"
+                    uib-typeahead="a as a.nombreCompleto for a in searchEmpleadoFilter($viewValue)"
+                    typeahead-loading="loadingLocations"
+                    typeahead-no-results="data.noResults"
+                    typeahead-template-url="autocompleteEmpleado.html"
+                    typeahead-editable="false"
+                    typeahead-on-select="selectedEmpleadoChange($item)"
+                    onClick="select();"
+                  />
+
+                  <script
+                    type="text/ng-template"
+                    id="autocompleteEmpleado.html"
+                  >
+                    <div class="autocomplete-suggestion-cliente">
+                        <span class="item-title">
+                            {{match.model.nombreCompleto}}
+                        </span>
+                    </div>
+                  </script>
+                  <button
+                    type="button"
+                    tabindex="-1"
+                    class="btn btn-outline-secondary btn-sm"
+                    btn-empleado
+                    result-modal="resultModalEmpleado(result)"
+                  >
+                    <fa-icon [icon]="'plus'"></fa-icon>
+                  </button>
+                </div>
+                <small class="text-danger" ng-show="data.noResults"
+                  >No se encontraron los resultados</small
+                >
+              </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="idCargo">Cargo</label>
+                <div class="input-group">
+                  <select
+                    id="idCargo"
+                    formControlName="idCargo"
+                    class="form-select border-select"
+                  >
+                    @for (item of cargos; track $index) {
+                    <option [ngValue]="item.idCargo">
+                      {{ item.descripcion }}
+                    </option>
+                    }
+                  </select>
+                  <button
+                    type="button"
+                    tabindex="-1"
+                    class="btn btn-outline-secondary btn-sm"
+                    btn-cargo
+                    result-modal="resultModalCargo(result)"
+                  >
+                    <fa-icon [icon]="'plus'"></fa-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="">Observación</label>
+                <textarea
+                  class="form-control border-select"
+                  touppercase
+                  ng-model="data.nota"
+                  placeholder="..."
+                >
+                </textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="row justify-content-between">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+              <div class="form-group">
+                <label for="Placa"
+                  >Placa
+                  <span
+                    tooltip-placement="top"
+                    uib-tooltip="Haz doble 'Click' sobre el placa para editar"
+                  >
+                    <fa-icon [icon]="'info'"></fa-icon
+                  ></span>
+                </label>
+                <!-- <md-chips
+                  ng-model="placas"
+                  md-removable="true"
+                  md-enable-chip-edit="true"
+                  md-add-on-blur="true"
+                  placeholder="Ej: AAC-0123 "
+                  input-aria-label="Placas"
+                ></md-chips> -->
+              </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+              <div class="form-group">
+                <label for="barcode"> Código de Barras:</label>
+                <button
+                  type="button"
+                  class="btn btn-info btn-sm"
+                  ng-click="getBarcode(data.numeroIdentificacion)"
+                >
+                  <i class="fa fa-barcode"></i> Generar
+                </button>
+                <img id="barcode" src="" alt="" style="display: none" />
+              </div>
+              <div
+                class="card border border-success"
+                id="cardBusiness"
+                style="max-width: 18rem"
+              >
+                <div class="card-body">
+                  <h5 class="card-title text-center">
+                    {{ data.nombreFiscal }}
+                  </h5>
+                  <div class="row">
+                    <div class="col-md-12"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 text-center">
+                      <h5 style="align-content: center">
+                        {{ data.numeroIdentificacion }}
+                      </h5>
+                      <img id="barcode" src="{{ data.barcodeCard }}" alt="" />
+                      <br />
+                      <h6><small>&copy; Acontplus</small></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                class="btn btn-success btn-sm"
+                ng-if="data.barcodeGenerated"
+                ng-click="exportTpvCard(data.numeroIdentificacion)"
+              >
+                <fa-icon [icon]="'share'"></fa-icon> Compartir Tarjeta
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="submit"
+      class="btn btn-outline-success btn-sm"
+      [disabled]="!customerForm.valid"
+    >
+      <fa-icon [icon]="'save'"></fa-icon> Guardar
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-dark btn-sm"
+      (click)="closeModal()"
+    >
+      &times; Cancelar
+    </button>
+  </div>
+</form>
