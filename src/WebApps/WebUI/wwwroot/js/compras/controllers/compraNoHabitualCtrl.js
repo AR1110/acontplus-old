@@ -502,7 +502,7 @@
                     decimal,
                     tarifasImpuesto,
                     tiemposCredito
-                } = mainDataForm; 
+                } = mainDataForm;
 
                 $scope.establecimientos = estabs;
 
@@ -572,6 +572,7 @@
                     $scope.dataClone.codEstab = $scope.data.codEstab;
                     $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+                    $scope.dataClone.idTiempoCreditoOriginal = $scope.data.idTiempoCredito;
 
                     $scope.proveedor = proveedor;
                     $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
@@ -1004,9 +1005,9 @@
         }
 
         $scope.onChangeTiempoCredito = function () {
-            if ($scope.data.idDocumentoIngreso > 0) {
+            if ($scope.data.idDocumentoIngreso > 0 && ($scope.dataClone.idTiempoCredito > 0)) {
                 tS.toastr("warning", "El tiempo crédito no puede ser editada");
-                $scope.data.fechaEmision = $scope.data.fechaEmisionDocCreado;
+                $scope.data.idTiempoCredito = $scope.dataClone.idTiempoCredito;
                 return;
             }
             getFechaVencimiento();
@@ -1343,7 +1344,14 @@
                 montoTotalCuota = dataCuota.montoTotalCuota;
 
             }
-            if (isUpdate()) {
+
+            //Cuando el documentp no tiene cuotas generadas al editar 
+            if (isUpdate() && $scope.dataClone.idTiempoCreditoOriginal === 0) {
+                let dataCuota = fS.calcularCuotas(objParamsCuota);
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+            }
+            else if (isUpdate()) {
                 let dataCuota = fS.updateCuotas(objParamsCuota)
                 cuotas = dataCuota.cuotas;
                 montoTotalCuota = dataCuota.montoTotalCuota;
@@ -1351,7 +1359,7 @@
 
             if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
                 tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
-                return [] ;
+                return [];
             }
 
             return cuotas;
@@ -1371,6 +1379,12 @@
                 tS.toastr("warning", "Seleccione el Proveedor!");
                 return;
             }
+
+            if (!fS.isValidField($scope.data.idTiempoCredito)) {
+                tS.toastr("warning", "Seleccione el Tiempo Credito!");
+                return;
+            }
+
 
             if (!fS.isDateValid($scope.data.fechaEmision)) {
                 tS.toastr("warning", "Ingrese la Fecha de emisión");

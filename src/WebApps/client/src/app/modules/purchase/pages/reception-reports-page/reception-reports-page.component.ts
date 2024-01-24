@@ -48,8 +48,24 @@ export class ReceptionReportsPageComponent {
     numeroIdentificacion: '',
     fromDate: '',
     toDate: '',
-    userId: 0
+    userId: 0,
+    ckRetencion: null
   }
+
+  estadosRetencion = [
+    {
+      estado: null,
+      descripcion: 'Todos'
+    },
+    {
+      estado: false,
+      descripcion: 'Sin Retención'
+    }, {
+      estado: true,
+      descripcion: 'Con Retención'
+    }
+  ]
+
 
   ngOnInit() {
     showLoader()
@@ -122,6 +138,10 @@ export class ReceptionReportsPageComponent {
     } //Factura por defecto
   }
 
+  onChangeDocType(){
+    this.dataSearch.ckRetencion = null;
+  }
+
   getReport(format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL) {
     if (this.dataSearch.supplierChecked && !isValidField(this.dataSearch.numeroIdentificacion)) {
       this.tS.toastr({
@@ -147,6 +167,7 @@ export class ReceptionReportsPageComponent {
       identificacion: this.dataSearch.supplierChecked && isValidField(this.dataSearch.numeroIdentificacion) || null,
       //  codEstado: isValidField(this.dataSearch.codEstado),
       idUsuario: isValidField(this.dataSearch.userId),
+      ckRetencion: isValidField(this.dataSearch.ckRetencion),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate
     }
