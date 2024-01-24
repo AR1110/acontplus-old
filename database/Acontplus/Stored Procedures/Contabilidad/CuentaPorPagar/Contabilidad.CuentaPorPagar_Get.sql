@@ -366,7 +366,16 @@ BEGIN
 
             SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NPA','PA')
 
-            SELECT idTipoDocumento,descripcion,codigo,codigoSri FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FF','FE','IV','LC')
+            SELECT idTipoDocumento
+                  ,descripcion
+                  ,CASE codigo WHEN 'FE' THEN '01' 
+                               WHEN 'FF' THEN 'FC'
+                               WHEN 'IV' THEN 'DH'
+                               WHEN 'LC' THEN '03'
+                               ELSE ''
+                   END as codDoc 
+            FROM Inventario.TipoDocumento WITH (NOLOCK) 
+            WHERE codigo IN ('FF','FE','IV','LC')
             
             RETURN 
         END 
