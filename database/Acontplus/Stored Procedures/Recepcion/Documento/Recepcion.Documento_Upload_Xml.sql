@@ -32,7 +32,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @idEntidad INT ,@ruc VARCHAR(15)
+	DECLARE @idEntidad INT ,@ruc VARCHAR(20)
 	,@idProveedor INT 
 	,@idEstadoPago INT
 	,@idTipoIdentificacion INT
@@ -163,13 +163,13 @@ BEGIN
 
         IF @ruc != @rucReceptor
             BEGIN
-                SELECT '0','El comprobante no pertenece al Contribuyente' + ' ' +  @ruc
+                SELECT '0'code,'El comprobante no pertenece al Contribuyente' + ' ' +  @ruc as 'message'
                 RETURN
             END 
 
-        IF @ruc = @rucReceptor + IIF(LEN(@rucReceptor) = 10,'001','')
+        IF @ruc != @rucReceptor + IIF(LEN(@rucReceptor) = 10,'001','')
             BEGIN
-                SELECT '0','El comprobante no pertenece al Contribuyente' + ' ' +  @ruc 
+                SELECT '0'code,'El comprobante no pertenece al Contribuyente' + ' ' +  @ruc as 'message' 
                 RETURN
             END 
 
@@ -213,8 +213,11 @@ BEGIN
 	END TRY
 	BEGIN CATCH
  		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
-		DECLARE @method VARCHAR(200)
+            BEGIN 
+			    ROLLBACK TRAN
+		    END 
+        DECLARE @method VARCHAR(200)
+        SELECT '0' code, 'Error en el procedimiento' as 'message'
  		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate])
 		VALUES (NEWID(), 'DocumentoService/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador())
 	END CATCH 

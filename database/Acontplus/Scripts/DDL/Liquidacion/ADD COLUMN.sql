@@ -2,8 +2,23 @@ USE [Acontplus]
 GO
 
 --ALTER TABLE LiquidacionCompraDetalle ADD ice NUMERIC(18,5)
---UPDATE LiquidacionCompraDetalle SET ice = 0
 --ALTER TABLE LiquidacionCompraDetalle ALTER COLUMN ice NUMERIC(18,5) NOT NULL
+
+--UPDATE LiquidacionCompraDetalle SET ice = 0
+
+--ALTER TABLE LiquidacionCompra DROP CONSTRAINT [FK__Liquidaci__idTie__1FD8A9E3]
+--ALTER TABLE LiquidacionCompra DROP COLUMN idTiempoCredito
+
+--ALTER TABLE LiquidacionCompra DROP CONSTRAINT [FK__Liquidaci__idEst__3A8CA01F]
+--ALTER TABLE LiquidacionCompra DROP COLUMN idEstadoPago
+
+--ALTER TABLE LiquidacionCompra DROP CONSTRAINT[FK__Liquidaci__idTip__75BB8041]
+--ALTER TABLE LiquidacionCompra DROP COLUMN idTipoContribuyente
+
+
+--ALTER TABLE LiquidacionCompra DROP COLUMN fechaBaja
+--ALTER TABLE LiquidacionCompra DROP COLUMN idTipoIva
+--ALTER TABLE LiquidacionCompra DROP COLUMN idTipoAmbiente
 --ALTER TABLE LiquidacionCompra DROP COLUMN [subTotalIva]
 --ALTER TABLE LiquidacionCompra DROP COLUMN [subTotalNetoIva]
 --ALTER TABLE LiquidacionCompra DROP COLUMN [subTotalIvaCero]
@@ -18,6 +33,13 @@ GO
 --ALTER TABLE LiquidacionCompra DROP COLUMN ambiente
 --ALTER TABLE LiquidacionCompra DROP COLUMN codigoPorcentaje
 --ALTER TABLE LiquidacionCompra DROP COLUMN tarifa
+--ALTER TABLE LiquidacionCompra DROP COLUMN fechaVencimiento
+--ALTER TABLE LiquidacionCompra DROP COLUMN saldo
+--ALTER TABLE LiquidacionCompra DROP CONSTRAINT[DF__Liquidaci__abono__4F138710] 
+--ALTER TABLE LiquidacionCompra DROP COLUMN abono
+--ALTER TABLE LiquidacionCompra DROP COLUMN actividad
+
+
 
 --> Detalles
 --EXEC sp_rename 'LiquidacionCompraDetalle.precioCosto', 'precioUnitario'
@@ -42,4 +64,4 @@ GO
 --ALTER TABLE LiquidacionCompraDetalle ALTER COLUMN valorImpuesto NUMERIC(18,5) NOT NULL
 --ALTER TABLE LiquidacionCompraDetalle ALTER COLUMN tarifa NUMERIC(18,5) NOT NULL
 
-SELECT * FROM LiquidacionCompra
+SELECT * FROM LiquidacionCompradetalle

@@ -196,7 +196,7 @@ BEGIN
 	                                  ,fc.idUsuario
 	                                  ,fc.puntoEmision + ''-'' + Helper.F_Auto_Sequential(fc.nroDocumento) 
 	                                  ,fc.nroAutorizacion
-	                                  ,fc.fechaEmision
+	                                  ,Format(fc.fechaEmision,''dd/MM/yyyy'') 
 	                                  ,pr.numeroIdentificacion
 	                                  ,pr.nombreFiscal
 	                                  ,ISNULL
@@ -322,9 +322,14 @@ BEGIN
              IF @ckRetencion = 1
                 BEGIN
                     SET @sql = @sql + 'AND dt.nroRetencion IS NOT NULL '
-                END 
+                END
+            
+             IF @ckRetencion = 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.nroRetencion IS NULL '
+                END
 
-            SET @sql = @sql + 'ORDER BY dt.idDocumento DESC '
+            SET @sql = @sql + 'ORDER BY dt.fechaEmision ASC '
 
             SELECT entidad as razonSocial 
                   ,rucEmpresa as ruc

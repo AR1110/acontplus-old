@@ -14,19 +14,20 @@ SELECT dr.idDocumento
 FROM Recepcion.DocumentoRecibido dr
 WHERE codDoc IN('01','04') AND xmlCompressed IS NOT NULL
 	
+    
 
-	--INSERT INTO [Recepcion].[DocumentoImpuesto]
- --          ([DocumentoRecibidoId]
- --          ,[Discount]
- --          ,[Code]
- --          ,[CodePercentage]
- --          ,[Fee]
- --          ,[TaxBase]
- --          ,[TaxValue]
- --          )
+	INSERT INTO [Recepcion].[DocumentoImpuesto]
+           ([DocumentoRecibidoId]
+           ,[Discount]
+           ,[Code]
+           ,[CodePercentage]
+           ,[Fee]
+           ,[TaxBase]
+           ,[TaxValue]
+           )
 	SELECT 
 		 cp.idDocumento
-		,descuento = x.y.value('(descuento)[1]','NUMERIC(18,5)')
+		,descuento = ISNULL(x.y.value('(descuento)[1]','NUMERIC(18,5)'),0)
 		,codigo = x.y.value('(impuestos/impuesto/codigo)[1]','VARCHAR(5)')
 		,codigoPorcentaje = x.y.value('(impuestos/impuesto/codigoPorcentaje)[1]','VARCHAR(5)')
 		,tarifa = x.y.value('(impuestos/impuesto/tarifa)[1]','NUMERIC(18,5)')

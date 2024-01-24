@@ -47,23 +47,23 @@ GO
 	CROSS APPLY cm.xmlComp.nodes('//impuestos/impuesto') x(y)
 	WHERE cm.versionComp = '1.0.0'
      
-	 --INSERT INTO [Recepcion].[DocumentoImpuesto]
-  --         ([DocumentoRecibidoId]
-  --         ,[Discount]
-  --         ,[Code]
-  --         ,[CodePercentage]
-  --         ,[Fee]
-  --         ,[TaxBase]
-  --         ,[TaxValue]
-  --         )
-	 --select idDocumento 
-		--   ,descuento 
-		--   ,codigo 
-		--   ,codigoRetencion 
-		--   ,tarifa 
-  --         ,baseImponible 
-		--   ,valor
-	 --from @retencion
+	 INSERT INTO [Recepcion].[DocumentoImpuesto]
+           ([DocumentoRecibidoId]
+           ,[Discount]
+           ,[Code]
+           ,[CodePercentage]
+           ,[Fee]
+           ,[TaxBase]
+           ,[TaxValue]
+           )
+	 select idDocumento 
+		   ,descuento 
+		   ,codigo 
+		   ,codigoRetencion 
+		   ,tarifa 
+           ,baseImponible 
+		   ,valor
+	 from @retencion
 
 
 
