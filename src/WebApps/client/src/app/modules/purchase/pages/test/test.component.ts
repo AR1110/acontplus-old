@@ -10,8 +10,8 @@ import { ActivatedRoute, Route, Router, RouterOutlet } from '@angular/router';
 })
 export class TestComponent {
 
-  router: Router = inject(Router); 
+  router: Router = inject(Router);
   clickMe(){
-    this.router.navigate(['/', "purchase", "reports-page"]);
+    this.router.navigate(['/', "inventory", "subcategory-page"]);
   }
 }

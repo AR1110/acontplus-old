@@ -103,7 +103,7 @@ namespace Inventario.API.Controllers.v2
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ApiRequest parameters)
+        public async Task<IActionResult> Update(int id, ApiRequest parameters)
         {
             ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);

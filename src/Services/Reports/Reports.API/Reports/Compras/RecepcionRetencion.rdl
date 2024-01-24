@@ -2138,7 +2138,7 @@
             <Top>28.1341mm</Top>
             <Left>0mm</Left>
             <Height>24mm</Height>
-            <Width>393.94818mm</Width>
+            <Width>393.9482mm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2860,7 +2860,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>393.94818mm</Width>
+      <Width>393.9482mm</Width>
       <Page>
         <PageFooter>
           <Height>7.41111mm</Height>
@@ -2971,11 +2971,13 @@
   <ReportParameters>
     <ReportParameter Name="logo">
       <DataType>String</DataType>
+      <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
       <Prompt>logo</Prompt>
     </ReportParameter>
     <ReportParameter Name="mimeType">
       <DataType>String</DataType>
+      <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
       <Prompt>mimeType</Prompt>
     </ReportParameter>
