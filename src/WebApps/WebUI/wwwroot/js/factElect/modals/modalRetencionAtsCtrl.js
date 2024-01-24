@@ -1,11 +1,11 @@
 export {
     modalRetencionAtsCtrl
 }
- 
+
 
 modalRetencionAtsCtrl.$inject = [
     '$scope',
-    '$injector', 
+    '$injector',
     '$cookies',
     '$window',
     'FileSaver',
@@ -15,7 +15,7 @@ modalRetencionAtsCtrl.$inject = [
 ]
 
 function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, Blob, $uibModalInstance, params) {
-    const {data} = params;
+    const { data } = params;
     const TEMPLATE_URL = '~/Pages/FactElect/RetencionAts/Shared/'
 
     const mS = $injector.get('mainService')
@@ -26,10 +26,10 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     const nombreModalCompra = $injector.get('nombreModalCompra');
     const retencionAtsSvc = $injector.get('retencionAtsService');
     const facturaCompraSvc = $injector.get('facturaCompraService');
-    const modalSvc = $injector.get('modalService'); 
+    const modalSvc = $injector.get('modalService');
     const PATH_FACT_ELECT = 'FactElect/'
     const url = 'RetencionAts/'
- 
+
     /**Initial Load */
     $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
 
@@ -80,7 +80,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     const idDocumentoElectronico = data && data.idDocumentoElectronico > 0 ? data.idDocumentoElectronico : 0;
 
     $scope.idDocumentoElectronico = idDocumentoElectronico;
-    $scope.retencionesTemp = [] 
+    $scope.retencionesTemp = []
 
 
     $scope.initialLoad = () => {
@@ -218,7 +218,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
 
 
     $scope.isVisibleInfoComprobante = true;
-    $scope.onClickVisibleInfoComprobante = function()    {
+    $scope.onClickVisibleInfoComprobante = function () {
         $scope.isVisibleInfoComprobante = !$scope.isVisibleInfoComprobante;
     }
 
@@ -239,35 +239,35 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
 
     /**End Info Comp Retencion */
 
-    /** Proveedor*/ 
-    function selectSujetoRetenido (item)  {
+    /** Proveedor*/
+    function selectSujetoRetenido(item) {
         $scope.infoCompRet.tipoIdentificacionSujetoRetenido = item.tipoIdentificacion
         $scope.infoCompRet.razonSocialSujetoRetenido = item.razonSocial
         $scope.infoCompRet.identificacionSujetoRetenido = item.numeroIdentificacion
         $scope.subContribuyente = item.subContribuyente;
     }
 
-    function openModalSuppliers(proveedores){
-        try {  
+    function openModalSuppliers(proveedores) {
+        try {
             modalSvc.openModalCustom({
-                controller: ['$scope', '$uibModalInstance', 'params', function($scope, $uibModalInstance,  params){
-                    const {proveedores} = params;
+                controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
+                    const { proveedores } = params;
                     $scope.proveedores = proveedores;
 
-                    $scope.selectSujetoRetenido = function(data){
+                    $scope.selectSujetoRetenido = function (data) {
                         selectSujetoRetenido(data);
                         $uibModalInstance.close();
                     }
 
-                    $scope.closeModal = function(){
+                    $scope.closeModal = function () {
                         $uibModalInstance.close();
                     }
                 }],
                 template: `${TEMPLATE_URL}_ModalSearchProveedor.cshtml`,
                 size: 'lg',
-                params: { 
+                params: {
                     proveedores
-                }, 
+                },
                 isRenderRazorPartial: true
             })
         } catch (error) {
@@ -276,7 +276,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     }
 
     $scope.getProveedor = (item) => {
-        try {  
+        try {
             if (item == 1 && !$scope.infoCompRet.razonSocialSujetoRetenido) {
                 tS.toastr('warning', 'Ingresa un texto de busqueda correcto')
                 return
@@ -298,13 +298,13 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             const textSearch = (item == 1 ? $scope.infoCompRet.razonSocialSujetoRetenido : $scope.infoCompRet.identificacionSujetoRetenido)
 
             showLoader();
-            proveedorSvc.search(textSearch).then(proveedores => { 
+            proveedorSvc.search(textSearch).then(proveedores => {
                 if (proveedores.length == 1) {
                     selectSujetoRetenido(proveedores[0], false)
                 }
                 else if (proveedores.length > 1) {
-                    
-                    openModalSuppliers(proveedores); 
+
+                    openModalSuppliers(proveedores);
                 } else {
                     tS.toastr('info', 'No se encontraron los resultados!')
                 }
@@ -319,12 +319,12 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     /**Documentos de Sustento */
     /****************************************************************************** */
 
-    function callDocViewOfSearchDoc (item){
+    function callDocViewOfSearchDoc(item) {
         $scope.docPreview(item);
     }
     $scope.docPreview = async (item) => {
         try {
-           
+
             if (!item.isAutomatic) {
                 let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
                 let ctrl = (await import(fileCtrl))[controller];
@@ -376,7 +376,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                         controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
                             let { comprobantes } = params;
 
-                            
+
                             $scope.docsFounded = comprobantes;
 
                             $scope.docPreview = async (item) => {
@@ -441,8 +441,8 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                 } else {
                     tS.toastr('warning', 'Impuestos no encontrados')
                 }
-             
-                
+
+
             }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
@@ -947,7 +947,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
         // $scope.retencion.valorRetenido = ''
         $scope.retencionCodigoSearch = {}
         $scope.searchTerm = ''
-      
+
         let inputCods = document.getElementById('codRetSearch');
 
         inputCods.addEventListener('keydown', function (ev) {
@@ -1023,7 +1023,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
     $scope.addRetencion = (uniqueIdDoc, toBd, idElement) => {
 
         if ($scope.retencionValid(toBd)) {
-            
+
             if (toBd) {
                 let idRetAtsDocSustento = $scope.docsAdded.find(item => (item.uniqueIdDoc == uniqueIdDoc)).idRetAtsDocSustento
                 if (idRetAtsDocSustento > 0) {
@@ -1052,30 +1052,30 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                 porcentajeRetener: $scope.retencion.porcentajeRetener,
                 valorRetenido: $scope.retencion.valorRetenido
             })
-            $scope.retencion = {} 
+            $scope.retencion = {}
             clearValueMdSelectPorcentajeRetener(idElement)
 
         }
     }
 
-    function clearValueMdSelectPorcentajeRetener(idElement){
+    function clearValueMdSelectPorcentajeRetener(idElement) {
 
-        let mdSelectElement = document.getElementById(idElement);
+        // let mdSelectElement = document.getElementById(idElement);
 
-        // Access the md-text element within the md-select element
-        let mdTextElement = mdSelectElement.querySelector('.md-text'); // Replace '.md-text' with the appropriate selector
+        // // Access the md-text element within the md-select element
+        // let mdTextElement = mdSelectElement.querySelector('.md-text'); // Replace '.md-text' with the appropriate selector
 
-        // Clear the text content
-        if (mdTextElement) {
-            mdTextElement.textContent = '';
-        }
+        // // Clear the text content
+        // if (mdTextElement) {
+        //     mdTextElement.textContent = '';
+        // }
     }
     //$scope.retencionCodigoSearch = {}
     $scope.editRetencion = (item, ret, d) => {
         $scope.indexRet = item
         $scope.retencion = $scope.retencionAdded[item]
 
-        
+
         $scope.setPorcentajesRet($scope.retencion.codigo, d.uniqueIdDoc)
         $scope.setPorcentajeRet($scope.retencion.codigoRetencion, false)
         document.getElementById(d.uniqueIdDoc + '-btnAddRet').style.display = 'none'
@@ -1114,9 +1114,9 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             } else {
                 angular.forEach($scope.retencionAdded, (value, index) => {
                     if (value.uniqueIdDoc == uniqueIdDoc && $scope.indexRet == index) {
-                      //  value.codigo = $scope.retencion.codImpuestoDocSustento
+                        //  value.codigo = $scope.retencion.codImpuestoDocSustento
                         value.codigo = $scope.retencion.codigo,
-                        value.codigoPorcentaje = $scope.retencion.codigoPorcentaje
+                            value.codigoPorcentaje = $scope.retencion.codigoPorcentaje
                         value.baseImponible = $scope.retencion.baseImponible
                         value.porcentajeRetener = $scope.retencion.porcentajeRetener
                         value.valorRetenido = $scope.retencion.valorRetenido
@@ -1718,12 +1718,12 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                         //         $window.location.reload();
                         //     }
                         // }, 2500)
-                    } 
+                    }
                 }
             ).catch(error => {
-                $scope.blockButton = false 
+                $scope.blockButton = false
                 console.log(error)
-            }).finally(()=>hideLoader())
+            }).finally(() => hideLoader())
         } catch (error) {
             hideLoader()
             console.log(error)

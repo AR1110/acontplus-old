@@ -4,5 +4,5 @@ export interface TipoDoc {
   idTipoDocumento: number
   descripcion: string
   codigoSri: DOC_TYPE_SRI.LC | DOC_TYPE_SRI.F | DOC_TYPE_SRI.NC | DOC_TYPE_SRI.R
-  codigo: DOC_TYPE.FC | DOC_TYPE.DNH | DOC_TYPE.LC
+  codigo: DOC_TYPE.FC | DOC_TYPE.DNH | DOC_TYPE.LC | DOC_TYPE.FE | DOC_TYPE.FF | DOC_TYPE.IV
 }

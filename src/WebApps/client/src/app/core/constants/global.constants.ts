@@ -6,7 +6,8 @@ export const enum PATHS_API {
   PURCHASE = 'Compra/',
   REPORT = 'Reports/',
   SALES = 'Venta/',
-  TECHSUPPORT = 'TechnicalSupport/'
+  TECHSUPPORT = 'TechnicalSupport/',
+  INVENTORY = 'Inventario/'
 }
 
 export const enum PATHS {
@@ -23,7 +24,11 @@ export const enum DOC_TYPE {
   LC = 'LC',
   IC = 'IC',
   EC = 'EC',
-  FV = 'FV'
+  FV = 'FV',
+  FE = 'FE', //Factura Electrónica
+  FF = 'FF', // Factura Fisica
+  IV = 'IV' //Ingresos Varios (Compras No Habituales)
+
 }
 
 export const enum DOC_TYPE_SRI {

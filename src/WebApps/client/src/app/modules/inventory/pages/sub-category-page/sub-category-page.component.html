@@ -1,0 +1,109 @@
+<app-breadcrumb />
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-6 d-flex justify-content-start">
+        <span class="form-group pull-left page-size form-inline">
+          <select
+            class="form-select control-color"
+            [(ngModel)]="dataSearch.pageSize"
+            (change)="changePageSize()"
+          >
+            @for(item of recordsQuantity; track $index){
+            <option [ngValue]="item">{{ item }}</option>
+            }
+          </select>
+        </span>
+      </div>
+
+      <div class="col-6 d-flex justify-content-end">
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="..."
+            aria-label="Recipient's username"
+            aria-describedby="button-addon2"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-success"
+            (click)="getSubcategories()"
+          >
+            <fa-icon [icon]="'redo'"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th>N°</th>
+            <th>Imagen</th>
+            <th>Familia</th>
+            <th>Código</th>
+            <th>SubFamilia</th>
+            <th>Monto Objetivo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of subcategories; track $index) {
+          <tr>
+            <td>
+              <div class="d-flex justify-content-center mr-2">
+                <button type="button" class="d-inline btn btn-info btn-sm ms-2" (click)="openModalAddEdit()">
+                  <fa-icon [icon]="'edit'"></fa-icon>
+                </button>
+                <button type="button" class="d-inline btn btn-danger btn-sm">
+                  <fa-icon [icon]="'trash'"></fa-icon>
+                </button>
+              </div>
+            </td>
+            <td>{{ $index + 1 }}</td>
+            <td>
+              <div class="d-flex align-items-center">
+                <img
+                  [src]="item.s3ObjectUrl"
+                  alt=""
+                  style="width: 45px; height: 45px"
+                  class="rounded-circle"
+                  fill
+                />
+                <!-- <div class="ms-3">
+                  <p class="fw-bold mb-1">John Doe</p>
+                  <p class="text-muted mb-0">john.doegmail.com</p>
+                </div> -->
+              </div>
+            </td>
+            <td>{{ item.nombreFamilia }}</td>
+            <td>{{ item.siglas }}</td>
+            <td>{{ item.descripcion }}</td>
+            <td>{{ item.montoObjetivo }}</td>
+            <td>
+              <div [innerHTML]="item.estado | primaryStatus"></div>
+            </td>
+          </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td align="center" colspan="6">
+              <ngb-pagination
+                [collectionSize]="dataSearch.totalRecords"
+                [(page)]="dataSearch.pageIndex"
+                [maxSize]="dataSearch.maxSize"
+                [pageSize]="dataSearch.pageSize"
+                [rotate]="true"
+                (pageChange)="pageChanged()"
+                [boundaryLinks]="true"
+              />
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

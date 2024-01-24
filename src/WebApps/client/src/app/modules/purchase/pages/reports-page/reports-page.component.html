@@ -29,8 +29,9 @@
             class="form-select form-control-border"
             [(ngModel)]="dataSearch.codDoc"
           >
+          <option value="">Todos</option>
             @for (item of tiposDoc; track $index) {
-            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+            <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
             }
           </select>
         </div>
@@ -126,3 +127,5 @@
     </div>
   </div>
 </div>
+
+<!-- <app-test/> -->
