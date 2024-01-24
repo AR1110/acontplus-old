@@ -71,7 +71,7 @@ BEGIN
         --> Validacion de informacion
         IF (SELECT COUNT(*) FROM @Comprobantes) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la info de los comprobantes', DEFAULT)
+                SELECT [Common].[ufnSpResponse]('0','Los comprobantes ya se encuentran registrados', DEFAULT)
                 RETURN
             END 
 
