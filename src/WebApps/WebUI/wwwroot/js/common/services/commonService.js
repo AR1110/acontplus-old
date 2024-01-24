@@ -1020,30 +1020,30 @@ export class CommonService {
             allowOutsideClick: false
         })
         if (isConfirmed) {
-            this.mS
-                .getData("POST", "https://acontplusprint.com/Print", parameters)
-                .then((response) => {
-                    if (response.code === "0") {
-                        toastr.warning(response.message, "", {
-                            positionClass: "toast-bottom-right",
-                            closeButton: true,
-                            preventDuplicates: true,
-                            progressBar: true,
-                        });
-                    }
-                    if (response.code === "1") {
-                        toastr.success(response.message, "", {
-                            positionClass: "toast-bottom-right",
-                            closeButton: true,
-                            preventDuplicates: true,
-                            progressBar: true,
-                        });
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            //this.getPrinter(parameters)
+            //this.mS
+            //    .getData("POST", "https://acontplusprint.com/Print", parameters)
+            //    .then((response) => {
+            //        if (response.code === "0") {
+            //            toastr.warning(response.message, "", {
+            //                positionClass: "toast-bottom-right",
+            //                closeButton: true,
+            //                preventDuplicates: true,
+            //                progressBar: true,
+            //            });
+            //        }
+            //        if (response.code === "1") {
+            //            toastr.success(response.message, "", {
+            //                positionClass: "toast-bottom-right",
+            //                closeButton: true,
+            //                preventDuplicates: true,
+            //                progressBar: true,
+            //            });
+            //        }
+            //    })
+            //    .catch((error) => {
+            //        console.log(error);
+            //    });
+            this.getPrinter(parameters)
         }
     }
 

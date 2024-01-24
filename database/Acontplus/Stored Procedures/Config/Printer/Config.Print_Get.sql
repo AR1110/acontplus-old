@@ -143,17 +143,17 @@ BEGIN
 	
 	SELECT  @dataSources = dataSources FROM Config.Documento_To_Print(@idDocument,@codDoc)
 
-	--SELECT Common.ufnSpResponse ('1', 'Successful',
- --   (SELECT IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') as urlPrinter 
- --       ,@rdlcProps rdlcProps
- --       ,@dataSources dataSources
- --       ,@rdlcParams rdlcParams 
-	--FOR JSON PATH))
-
-SELECT payload = (SELECT @rdlcProps rdlcProps
+	SELECT Common.ufnSpResponse ('1', 'Successful',
+    (SELECT IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') as urlPrinter 
+        ,@rdlcProps rdlcProps
         ,@dataSources dataSources
         ,@rdlcParams rdlcParams 
-	FOR JSON PATH, WITHOUT_aRRAY_WRAPPER)
+	FOR JSON PATH))
+
+--SELECT payload = (SELECT @rdlcProps rdlcProps
+--        ,@dataSources dataSources
+--        ,@rdlcParams rdlcParams 
+--	FOR JSON PATH, WITHOUT_aRRAY_WRAPPER)
 
 END
 GO
