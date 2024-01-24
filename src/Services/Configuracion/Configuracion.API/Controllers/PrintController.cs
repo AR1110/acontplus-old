@@ -21,7 +21,7 @@ namespace Configuracion.API.Controllers
             try
             {
                 var response = await _print.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
-                if (response == null || string.IsNullOrEmpty(response)) { return NotFound(); }
+                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest(); }
                 return Ok(response);
             }
             catch (Exception ex)

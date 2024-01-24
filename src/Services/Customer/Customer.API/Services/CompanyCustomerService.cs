@@ -47,7 +47,7 @@ namespace Customer.API.Services
                 {
                     return new ApiResponse { code = "0", message = "No se encontraron clientes" };
                 }
-                return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+                return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds, true) };
             }
             catch (Exception)
             {

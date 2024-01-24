@@ -104,10 +104,10 @@
     </div>
 </div>
 <button type="button" id="{{item.uniqueIdDoc}}-btnAddRet" class="btn btn-info  btn-sm"
-    ng-click="addRetencion(item.uniqueIdDoc, true)"><i class="ti-plus"></i> Añadir
+    ng-click="addRetencion(item.uniqueIdDoc, true, item.uniqueIdDoc + '-' + 'selectCodRet')"><i class="ti-plus"></i> Añadir
     Retención</button>
 <button type="button" id="{{item.uniqueIdDoc}}-btnEditRet" class="btn btn-info  btn-sm"
-    ng-click="updateRet(item.uniqueIdDoc)" style="display:none;"><i class="ti-save"></i> Guardar
+    ng-click="updateRet(item.uniqueIdDoc, item.uniqueIdDoc + '-' + 'selectCodRet')" style="display:none;"><i class="ti-save"></i> Guardar
     Retención</button>
 <hr>
 <div class="table-responsive" ng-if="retencionAdded.length > 0">

@@ -21,6 +21,7 @@
     <None Remove="Reports\Compras\OrdenCompra.rdlc" />
     <None Remove="Reports\Compras\RecepcionFactura.rdl" />
     <None Remove="Reports\Compras\RecepcionNotaCredito.rdl" />
+    <None Remove="Reports\Compras\RecepcionRetencion.rdl" />
     <None Remove="Reports\Compras\ReporteCompras.rdl" />
     <None Remove="Reports\Compras\RetencionCompra.rdlc" />
     <None Remove="Reports\ConsumoEmpresaTpv.rdl" />
@@ -85,6 +86,9 @@
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
     <Content Include="Reports\Compras\RecepcionNotaCredito.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\RecepcionRetencion.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Compras\ReporteCompras.rdl">
