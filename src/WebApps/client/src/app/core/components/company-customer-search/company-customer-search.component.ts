@@ -6,7 +6,7 @@ import { CompanyCustomerService } from '@modules/customer/company-customer/servi
 import {
   Observable,
   OperatorFunction,
-  catchError, 
+  catchError,
   distinctUntilChanged,
   of,
   switchMap,
@@ -25,18 +25,27 @@ export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
-
   private modalService = inject(ModalService);
-  searching = false;
-  searchFailed = false;
 
-  textSearch = '';
+  customer: CompanyCustomerSearch = {
+    idCliente: 0,
+    nombreFiscal: '',
+    nombreComercial: '',
+    telefono: '',
+    direccion: '',
+    correo: '',
+  };
+
   dataSearch = {
     idCliente: 0,
     razonSocial: '',
   };
 
-  constructor(private companyCustomerService: CompanyCustomerService) { }
+  textSearch = '';
+  searching = false;
+  searchFailed = false;
+
+  constructor(private companyCustomerService: CompanyCustomerService) {}
 
   openModal() {
     if (this.dataSearch.idCliente > 0) {
@@ -47,7 +56,7 @@ export class CompanyCustomerSearchComponent {
           size: 'lg',
         }
       );
-      modalRef.componentInstance.data = { idCliente: this.dataSearch.idCliente, bussinesName: 'Test' };
+      modalRef.componentInstance.data = this.customer;
     } else {
       this.modalService.openModalCustom(AddEditModalComponent, {
         centered: true,
@@ -57,11 +66,11 @@ export class CompanyCustomerSearchComponent {
   }
 
   onSelect($event: any) {
-    let customer: CompanyCustomerSearch = $event.item;
-    this.dataSearch.idCliente = customer.idCliente;
-    this.onCustomerSelected.emit({ data: customer });
+    this.customer = $event.item;
+    this.dataSearch.idCliente = this.customer.idCliente;
+    this.onCustomerSelected.emit({ data: this.customer });
     setTimeout(() => {
-      this.textSearch = customer.nombreFiscal;
+      this.textSearch = this.customer.nombreFiscal;
     });
   }
 
@@ -73,7 +82,6 @@ export class CompanyCustomerSearchComponent {
       tap(() => (this.searching = true)),
       switchMap((term) => {
         if (!term || term.length < 2) {
-
           return of([]);
         }
         return this.companyCustomerService.search({ textSearch: term }).pipe(
@@ -85,12 +93,12 @@ export class CompanyCustomerSearchComponent {
           })
         );
       }),
-      tap(() => (this.searching = false)),
+      tap(() => (this.searching = false))
     );
 
   onKeyupSearch() {
     if (!this.textSearch) {
-      this.resultEmptyInput.emit({})
+      this.resultEmptyInput.emit({});
     }
   }
 }
