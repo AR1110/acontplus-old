@@ -54,6 +54,14 @@ export class AperturaCajaModalComponent {
   save() {
     try {
       let data = this.dataForm.value;
+      
+       if (this.dataForm.invalid) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Ingrese todos los campos requeridos!'
+        })
+        return
+      }
 
       if (data.idCaja && data.idCaja > 0) {
         showLoader();
