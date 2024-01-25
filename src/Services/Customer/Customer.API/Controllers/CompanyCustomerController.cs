@@ -38,7 +38,7 @@ namespace Customer.API.Controllers
             try
             {
                 var response = await _companyCustomer.AddAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "json", JsonConvert.SerializeObject(data) } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Cant Save"); }
+                if (response == null) { return BadRequest("Cant Save"); }
                 return Ok(response);
             }
             catch (Exception ex)
