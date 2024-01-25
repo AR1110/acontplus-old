@@ -90,7 +90,9 @@
         const url = 'Contabilidad/CuentaPorCobrar/';
         return {
             getDataFilter,
-            getAll
+            getAll,
+            getCuotasById,
+            getDataForm
         }
 
         function getDataFilter() {
@@ -120,6 +122,7 @@
 
                 const { cuentasPorCobrar } = response;
 
+                console.log(cuentasPorCobrar)
                 const results = cuentasPorCobrar.map(cxc => {
                     return {
                         idCuentaPorCobrar: cxc.idCuentaPorCobrar,
@@ -133,6 +136,7 @@
                         saldo: cxc.saldo,
                         tiempoCredito: cxc.tiempoCredito,
                         estado: cxc.estado,
+                        codEstado: cxc.codEstado
                     }
                 })
 
@@ -147,6 +151,28 @@
                     totalSaldo: dataFiltered && dataFiltered.totalSaldo || 0,
                 };
 
+            })
+        }
+
+        function getCuotasById(id){
+            const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 8 });
+            return mS.getData('get', `${url}?json=${params}`, null, true);
+        }
+
+        function getDataForm(){
+            const params = JSON.stringify({ tipo: 3 });
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
+                console.log(response)
+                if(!response) return {};
+                
+                const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia} = response;
+
+                const resultEntidadesFinanciera = entidadFinanciera.map(ef=>{
+                    let filteredSubEntidadFinanciera = subEntidadFinanciera.filter()
+                })
+                return {
+
+                }
             })
         }
 

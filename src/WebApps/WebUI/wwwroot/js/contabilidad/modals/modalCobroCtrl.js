@@ -350,7 +350,7 @@ export {
 //=====================================================================================================
 ModalCobroRapidoCtrl.$inject = [
     '$scope',
-    '$uibModalInstance',
+    '$uibModalInstance', 
     'mainService',
     'commonService',
     'modalService',
@@ -365,6 +365,8 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
     let { data } = params;
     let { idCuentaPorCobrar } = data;
     let cobroSvc = new CobroService(tS, mS, fS);
+
+  
 
     $scope.data = {}
 
@@ -640,6 +642,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
 ModalCobroLoteCtrl.$inject = [
     '$scope',
     '$uibModalInstance',
+    '$injector',
     'mainService',
     'commonService',
     'clienteService',
@@ -649,9 +652,12 @@ ModalCobroLoteCtrl.$inject = [
     'formulario',
     'params'
 ]
-function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc, modalSvc, nombreModalContabilidad, tS, fS, params) {
+function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, commonSvc, clienteSvc, modalSvc, nombreModalContabilidad, tS, fS, params) {
+    
+    let cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
+
     let cobroSvc = new CobroService(tS, mS, fS);
-    let { data } = params;
+    let { data, selectedDocumentos } = params;
     let { idCuentaPorCobrar } = typeof data === 'object' ? data : 0;
 
     //const NUM_MAX_ROUND = 4;
@@ -722,6 +728,18 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
 
     // $scope.footerActionStepUno=false;
     // $scope.footerActionStepDos=true;
+
+
+    loadInitialData();
+    function loadInitialData(){
+        try {
+            cuentaPorCobrarSvc.getDataForm().then(response=>{
+                console.log(response)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 
 

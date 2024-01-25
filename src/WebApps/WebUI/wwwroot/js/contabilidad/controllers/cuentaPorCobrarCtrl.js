@@ -5,7 +5,10 @@
     app.controller('cuentaPorCobrarCtrl', ['$scope', '$injector', function ($scope, $injector) {
         const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
         const fS = $injector.get('formulario');
+        const tS = $injector.get('toastService');
         const DOC_TYPE = $injector.get('DOC_TYPE');
+        const modalSvc = $injector.get("modalService");
+        const nombreModalContabilidad = $injector.get("nombreModalContabilidad");
 
         $scope.dataSearch = {
             pageIndex: 1,
@@ -26,8 +29,13 @@
         $scope.cuentasPorCobrar = [];
         $scope.recordsQuantity = [25, 50, 100]
 
+        let selectedDocumentosTemp = [];
+        $scope.selectedDocumentos = [];
+
         $scope.tableOptions = {
-            sortBy: ''
+            sortBy: '',
+            rowSelection: true,
+            multiSelect: true
         }
 
         $scope.establecimientos = [];
@@ -82,6 +90,9 @@
                 idCliente: fS.isValidField($scope.dataSearch.idCliente),
                 codDoc: fS.isValidField(getCodigoTipoDoc())
             }
+            $scope.selectedDocumentos = [];
+            $scope.cuentasPorCobrar = [];
+            selectedDocumentosTemp = [];
             showLoader();
             cuentaPorCobrarSvc.getAll(params).then(response => {
                 const { cuentasPorCobrar, totalRecords, totalVenta, totalAbono, totalSaldo } = response;
@@ -145,7 +156,115 @@
 
         //=========================END FILTERS =======================================
 
+        $scope.rowEnabledPayment = function (item) {
+            return !(["PP", "PE"].includes(item.codEstado))
+        }
 
+        $scope.selectedRow = function (item) {
+
+        }
+
+        function deleteDocSeleted(item) {
+            let index = $scope.selectedDocumentos.indexOf(item);
+            $scope.selectedDocumentos.splice(index, 1);
+        }
+
+
+        $scope.onSelectDoc = function (item) {
+
+        }
+
+
+        $scope.onDesSelectDoc = function (item) {
+            let index = selectedDocumentosTemp.indexOf(item);
+            selectedDocumentosTemp.splice(index, 1);
+        }
+
+
+        // Función para verificar si los valores de razonSocialComprador son los mismos
+        function verificarRazonSocialCompradorIgual() {
+            const primeraRazonSocial = $scope.selectedDocumentos[0].razonSocialComprador;
+
+            // Verificar si todas las demás entradas tienen la misma razonSocialComprador
+            const sonIguales = $scope.selectedDocumentos.every(cuenta => cuenta.razonSocialComprador === primeraRazonSocial);
+
+            return sonIguales;
+        }
+
+        $scope.openDocPaymentModal = function () {
+            if ($scope.selectedDocumentos.length === 0) {
+                tS.toastr('warning', 'Seleccione al menos un documento!');
+                return
+            }
+
+            if (!verificarRazonSocialCompradorIgual()) {
+                tS.toastr('warning', 'Seleccione documentos que pertenezca al mismo cliente');
+                return
+            }
+
+
+            const selectedDocumentos = structuredClone($scope.selectedDocumentos);
+            // Crear un array de promesas para cada solicitud
+            const promises = selectedDocumentos.map(cxc => cuentaPorCobrarSvc.getCuotasById(cxc.idCuentaPorCobrar));
+
+            // Utilizar Promise.all para ejecutar las promesas concurrentemente
+            showLoader();
+            Promise.all(promises)
+                .then(results => {
+                    hideLoader();
+                    console.log(results)
+                    let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
+                    openModalCobroLote(mergeWithCuotas);
+                })
+                .catch(error => {
+                    console.error('Al menos una solicitud falló:', error);
+                    // Manejar el error
+                }).finally(() => hideLoader());
+
+        }
+
+        function mergeCuotas(selectedDocumentos, results) {
+            return selectedDocumentos.map(cxc => {
+                const cuotasFiltradas = results.filter(item =>
+                    item.cuotas.some(cuota => cuota.idCuentaPorCobrar === cxc.idCuentaPorCobrar)
+                ).map(c => c.cuotas);
+
+                return {
+                    ...cxc,
+                    cuotas: structuredClone(cuotasFiltradas),
+                    cuotasOriginal: structuredClone(cuotasFiltradas)
+                };
+            });
+        }
+
+
+
+
+        async function openModalCobroLote(selectedDocumentos) {
+            try {
+                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
+                let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
+                let template = nombreModalContabilidad.COBRO.templates['CL'];
+                let controller = (await import(fileCtrl))[ctrl];
+
+                let modalRef = modalSvc.openModalCustom({
+                    controller,
+                    template,
+                    params: {
+                        selectedDocumentos
+                    },
+                    size: 'xl',
+                    isRenderRazorPartial: true
+                })
+                modalRef.result.then(result => {
+                    if (typeof result === 'object') {
+                        $scope.getCobros();
+                    }
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
 
 
