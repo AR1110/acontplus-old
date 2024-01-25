@@ -112,7 +112,7 @@ namespace Common.Infrastructure.Repository
                 }
                 finally
                 {
-                    if (!wasOpen) await cmd.Connection.CloseAsync();
+                    if (!wasOpen) cmd.Connection.Close();
                 }
                 return mappedObject;
             }
@@ -232,11 +232,11 @@ namespace Common.Infrastructure.Repository
                     }
                     cmd.CommandType = CommandType.StoredProcedure;
                     if (!wasOpen) await _context.Database.OpenConnectionAsync();
-                    await cmd.ExecuteNonQueryAsync();
+                    cmd.ExecuteNonQuery();
                 }
                 finally
                 {
-                    if (!wasOpen) await cmd.Connection.CloseAsync();
+                    if (!wasOpen) cmd.Connection.Close();
                 }
             }
         }
