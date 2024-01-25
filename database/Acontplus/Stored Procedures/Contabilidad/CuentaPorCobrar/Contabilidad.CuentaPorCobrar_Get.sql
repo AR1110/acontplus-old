@@ -184,6 +184,7 @@ BEGIN
 						      ,cc.diasMora
 						      ,cc.mora
 						      ,cc.abono
+                              ,saldoDoc = cc.importeTotal - cc.abono
 						      ,cc.saldo
 						      ,ep.descripcion
 						      ,cuotas = (
@@ -206,6 +207,11 @@ BEGIN
 									         ORDER BY cx.nroCuota ASC
 									         FOR JSON PATH
 									    )
+                                ,COUNT(*)                        OVER() as totalRecords
+                                ,SUM(cc.importeTotal)            OVER() as totalImporteTotal
+                                ,SUM(cc.abono)                   OVER() as totalAbono
+                                ,SUM(cc.saldo)                   OVER() as totalSaldo
+                                ,SUM(cc.importeTotal - cc.abono) OVER() as totalSaldoDoc
 					FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
 					INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision = cc.idPuntoEmision
 					INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
