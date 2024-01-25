@@ -15,7 +15,7 @@ namespace Configuracion.API.Services
         public async Task<ApiResponse> GetAsync(string json)
         {
             var data = new ApiResponse();
-            var estados = await _repository.CustomReader<EstadoPago>("Gestion.EstadoDocumento_Get", new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(json) } });
+            var estados = await _repository.DynamicListAsync<EstadoPago>("Gestion.EstadoDocumento_Get", new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(json) } });
             if (estados.Count > 0)
             {
                 data.code = "1";
