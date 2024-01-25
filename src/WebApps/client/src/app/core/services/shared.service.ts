@@ -122,33 +122,29 @@ export class SharedService {
   async print<T extends { urlPrinter: string, rdlcProps: string, dataSources: string, rdlcParams: string }>(params: T[]) {
     try {
       let urlPrinter = `${params[0].urlPrinter}?rdlcProps=${params[0].rdlcProps}&dataSources=${encodeURIComponent(params[0].dataSources)}&rdlcParams=${params[0].rdlcParams}`;
-      showLoader();
-      return fetch(urlPrinter, {
-        method: 'post',
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {
-          "Content-Type": "application/json",
-        }
-      }).then(response => {
-        hideLoader()
-        const result = response.json()
-        if (isApiResponse(result)) {
-          this.tS.toastr({
-            type: 'warning',
-            message: result.message
-          })
-          if (result.code === "1") {
+
+      showLoader()
+      this.http.post(urlPrinter, null).subscribe({
+        next: (response) => {
+          hideLoader()
+          if (isApiResponse(response)) {
             this.tS.toastr({
-              type: 'success',
-              message: result.message
+              type: 'warning',
+              message: response.message
             })
+            if (response.code === "1") {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message
+              })
+            }
           }
-        }
-      }).catch(error => {
-        hideLoader()
-        console.log('Hubo un problema al imprimir:' + error?.message);
-      })
+        },
+        error(err) {
+          hideLoader()
+          console.log('Hubo un problema al imprimir:' + err?.message);
+        },
+      }) 
 
     } catch (error) {
       hideLoader()
