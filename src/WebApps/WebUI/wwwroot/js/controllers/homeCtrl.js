@@ -194,7 +194,7 @@
         init()
 
         $scope.fixDocs = () => {
-            location.href = '/DocumentoElectronico/Index?tipo=' + 3
+            location.href = '/FactElect/DocumentoElectronico/Index?tipo=' + 3
         }
     }
 })(window.angular)
