@@ -1,0 +1,13 @@
+﻿@page
+@model WebUI.Pages.Contabilidad.Cobro.IndexModel 
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["title"] = "Movimiento Caja";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+@section Scripts {
+    <script src="~/js/controllers/iframeAngularCtrl.js" asp-append-version="true"></script>
+}
