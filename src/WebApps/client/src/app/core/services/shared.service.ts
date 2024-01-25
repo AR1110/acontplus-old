@@ -128,13 +128,15 @@ export class SharedService {
         next: (response) => {
           hideLoader()
           if (isApiResponse(response)) {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message
-            })
+
             if (response.code === "1") {
               this.tS.toastr({
                 type: 'success',
+                message: response.message
+              })
+            }else{
+              this.tS.toastr({
+                type: 'warning',
                 message: response.message
               })
             }
@@ -144,7 +146,7 @@ export class SharedService {
           hideLoader()
           console.log('Hubo un problema al imprimir:' + err?.message);
         },
-      }) 
+      })
 
     } catch (error) {
       hideLoader()
