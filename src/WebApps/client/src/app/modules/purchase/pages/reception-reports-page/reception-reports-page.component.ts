@@ -13,6 +13,7 @@ import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 
 @Component({
   selector: 'app-reception-reports-page',
@@ -46,8 +47,8 @@ export class ReceptionReportsPageComponent {
     supplierName: '',
     userName: '',
     numeroIdentificacion: '',
-    fromDate: '',
-    toDate: '',
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date()),
     userId: 0,
     ckRetencion: null
   }

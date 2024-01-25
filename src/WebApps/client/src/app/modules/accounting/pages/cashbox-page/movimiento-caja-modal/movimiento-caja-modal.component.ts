@@ -14,6 +14,7 @@ import { SharedService } from '@core/services/shared.service';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 @Component({
   selector: 'app-movimiento-caja-modal',
   standalone: true,
@@ -44,8 +45,8 @@ export class MovimientoCajaModalComponent {
     pageIndex: 1,
     pageSize: 25,
     maxSize: 5,
-    fromDate: '',
-    toDate: '',
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date()),
     statusMovement: ''
   }
 
@@ -103,9 +104,10 @@ export class MovimientoCajaModalComponent {
   }
 
   onDateRangeSelection(range: { from: string, to: string }) {
-    
+
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
+    this.getMovimientosCaja()
   }
 
   pageChanged(): void {
