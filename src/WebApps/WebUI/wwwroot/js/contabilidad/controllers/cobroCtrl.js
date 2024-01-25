@@ -7,6 +7,7 @@
     cobroCtrl.$inject = [
         '$scope', 
         '$filter',
+        '$injector',
         'mainService', 
         'commonService', 
         'modalService', 
@@ -17,7 +18,9 @@
         '$mdDialog'
     ]
 
-    function cobroCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _form, tS, $mdDialog) { 
+    function cobroCtrl($scope, $filter, $injector, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _form, tS, $mdDialog) { 
+
+        let compIngresoSvc = $injector.get('comprobanteIngresoService');
         //Filtro y Pagination  
         $scope.moreSearchOptions = false;
 
@@ -178,11 +181,11 @@
         $scope.filterLocal= function(){
             let cobros = JSON.parse(JSON.stringify($scope.cloneCobros));
             $scope.cobros = $filter("filter")(cobros, $scope.dataSearch.bySearch);
-            $scope.setTotalsColumn();
+            setTotalsColumn();
         }
 
 
-        $scope.setTotalsColumn = function(){
+        function setTotalsColumn(){
             let total = 0, abono = 0, cambio = 0;
             for(let item of $scope.cobros){
                 total+=item.total;
@@ -201,7 +204,7 @@
                 showLoader();
                 $scope.cobros = [];
                 $scope.cloneCobros  = [];
-                $scope.setTotalsColumn();
+                setTotalsColumn();
 
                 const dataSearch = {
                     tipo: 1,
@@ -220,29 +223,16 @@
                     nroSecuencialDoc: $scope.dataSearch.nroSecuencialDoc
                 }
           
-                _mS.getData('get', 'Contabilidad/ComprobanteIngreso/?json=' + JSON.stringify(dataSearch), null, true).then(response => {
-                    hideLoader();
-                    if (response.code === "0") {
-                        console.warn(response)
-                    }
-                    if (response.code === "1") {                        
-                        let tempCobros = JSON.parse(response.payload)[0] || [];
-                        $scope.cobros = tempCobros.map(item=>({ 
-                            ...item,
-                            codDoc: 'CI',
-                            serieComprobante: item.nroDoc,
-                            comprobante: 'Comprobante Ingreso',
-                            esAnulado: item.color==='table-danger'
-                        }))
-                        $scope.cloneCobros = JSON.parse(JSON.stringify(tempCobros))
-                        $scope.setTotalsColumn();
-                    }
-
-                }).catch(error => {
-                    hideLoader();
-                    console.error(error)
-                })
+                compIngresoSvc.getAll(dataSearch).then(response=>{
+                    $scope.cobros = response;
+                    $scope.cloneCobros = JSON.parse(JSON.stringify(tempCobros))
+                    setTotalsColumn();
+                    console.log(response)
+                }).catch(error=>{
+                    console.log(error)
+                }).finally(()=>hideLoader()) 
             } catch (error) {
+                hideLoader();
                 console.log(error)
             }
         }

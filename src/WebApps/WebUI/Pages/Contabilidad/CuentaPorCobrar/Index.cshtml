@@ -1,5 +1,210 @@
 ﻿@page
 @model WebUI.Pages.Contabilidad.CuentaPorCobrar.IndexModel
 @{
+    ViewData["Title"] = "Cuentas por cobrar";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="cuentaPorCobrarCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Cuentas por Pagar</h5>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="establish">Establecimiento: <span class="text-danger">*</span> </span>
+                                 <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                                    class="form-control  border-select" ng-change="estabFilter()">
+                                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                        {{item.nombreComercial}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <span for="date-range-filter">Rango Fechas: </span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox mr-sm-2">
+                                            <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
+                                                   class="custom-control-input" id="checkBoxFecha">
+                                            <label class="custom-control-label" for="checkBoxFecha"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                                                   end-date="dataSearch.fechaFin"
+                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="clienteFiltro">Cliente</span>
+                                <input type="text" id="customerInputSearch" class="form-control border-select"
+                                    ng-model="cliente.nombreCliente" cliente-search-drtv
+                                    on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                                    placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                                <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                    </div>
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
+                                    aria-pressed="false" ng-click="onClickMoreFilter()">
+                                <span class="text">
+                                    <i class="mdi mdi-eye" aria-hidden="true" uib-tooltip="Más opciones"></i>
+                                </span>
+                                <span class="text-active">
+                                    <i class="mdi mdi-eye-off" aria-hidden="true" uib-tooltip="Ocultar opciones"></i>
+                                </span>
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm" ng-click="refresh()"
+                                    uib-tooltip="Recargar">
+                                <i class="mdi mdi-refresh"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="row" ng-if="dataSearch.showMoreFilter">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="tipoDocumento" >Tipo Documento</label>
+                    <select name="tipoDoc" id="tipoDoc" class="form-control  border-select" ng-model="dataSearch.idTipoDocumento" ng-change="callGetCuentasPorCobrar()">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="item.idTipoDocumento" ng-repeat="item in tiposDoc">
+                                {{item.descripcion}}
+                            </option>
+                        </select>      
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label  for="estado">Estado</label>
+                    <select name="estadoDoc" id="estadoDoc" ng-model="dataSearch.codEstado" class="form-control  border-select" ng-change="callGetCuentasPorCobrar()">
+                        <option ng-value="0">Todos</option>
+                        <option ng-value="item.codigo" ng-repeat="item in estadosDoc">
+                            {{item.descripcion}}
+                        </option>
+                    </select>     
+                    </div>
+                </div>                
+            </div>
+             <div class="row">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
+
+                <div class="col-6 d-flex justify-content-end">
+                    <div class="form-group">
+                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                            ng-model="dataSearch.bySearch" placeholder="...">
+                    </div>
+                </div>
+            </div>
+        <md-table-container style="max-height: 400px;">
+            <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}"  ng-model="selectedDocumentos" md-progress="promise">
+                <thead fix-head md-head md-order="tableOptions.sortBy">
+                    <tr class="border-bottom">
+                        <th md-column colspan="6"></th>
+                        <th md-column>Total:</th>
+                        <th md-column md-numeric>{{dataSearch.totalVenta}}</th>
+                        <th md-column md-numeric>{{dataSearch.totalAbono}}</th>
+                        <th md-column md-numeric>{{dataSearch.totalSaldo}}</th>
+                        <th md-column md-numeric></th> 
+                    </tr>
+                    <tr md-row>
+                        <th md-column >Op.</th>
+                        <th md-column >N°.</th>
+                        <th md-column >Cod. Doc</th>
+                        <th md-column md-order-by="serieComprobante" >Serie Comprobante</th>
+                        <th md-column md-order-by="razonSocialComprador">Razon Social Comprador</th>
+                        <th md-column md-order-by="fechaEmision">Fecha Emisión</th>
+                        <th md-column md-order-by="fechaVencimiento">Fecha Vcto.</th>
+                        <th md-column md-order-by="importeTotal">Total</th>
+                        <th md-column md-order-by="abono">Abono</th>
+                        <th md-column md-order-by="saldo">Saldo</th>
+                        <th md-column>Estado</th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row 
+                        md-select="item" 
+                        md-on-select="selectedRow"  
+                        md-select-id="idCuentaPorCobrar" 
+                        md-auto-select 
+                        ng-repeat="item in cuentasPorCobrar | orderBy: tableOptions.sortBy track by $index" ng-style="{'background-color': item.colorRow}">
+                        <td md-cell>
+                            <md-menu>
+                                <md-button aria-label="Open demo menu" class="md-icon-button"
+                                            ng-click="$mdMenu.open($event)">
+                                    <i class="mdi mdi-menu"></i>
+                                </md-button>
+                                <md-menu-content class="md-dense">
+                                    <md-menu-item>
+                                        <md-button ng-click="openModalCuota(item)"><span
+                                            md-menu-align-target>Cuotas</span>
+                                        </md-button>
+                                    </md-menu-item>
+
+                                    <md-menu-item>
+                                        <md-button ng-click="openModalPago(item)" ng-disabled="item.codPago==='PA' || item.codPago=='PFC'"><span
+                                            md-menu-align-target>Pago</span>
+                                        </md-button>
+                                    </md-menu-item>     
+
+                                    <md-menu-item>
+                                        <md-button ng-click="openModalHistorialMov(item)" ng-disabled="(item.codPago==='PE')"><span
+                                            md-menu-align-target>Hist. Movimiento</span>
+                                        </md-button>
+                                    </md-menu-item>     
+                                                                   
+                                </md-menu-content>
+                            </md-menu>
+                        </td>
+                        <td md-cell>{{$index+1}}</td>
+                        <td md-cell>{{item.codDoc}}</td>
+                        <td md-cell>{{item.serieComprobante}}</td>
+                        <td md-cell>{{item.razonSocialComprador}}</td>
+                        <td md-cell>{{item.fechaEmision}}</td>
+                        <td md-cell>{{item.fechaVencimiento}}</td>
+                        <td md-cell>${{item.importeTotal}}</td>
+                        <td md-cell>${{item.abono}}</td>
+                        <td md-cell>${{item.saldo}}</td>
+                        <td md-cell>{{item.estado}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+        </div>
+         <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/contabilidad/controllers/cuentaPorCobrarCtrl.min.js" asp-append-version="true"></script>
 }
