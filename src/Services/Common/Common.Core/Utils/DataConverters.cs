@@ -82,7 +82,10 @@ namespace Common.Core.Utils
             var json = JsonConvert.SerializeObject(data, options);
             return json;
         }
-
+        public static string DictionaryToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        {
+            return "{" + string.Join(", ", dictionary.Select(kvp => kvp.Key + "=" + kvp.Value).ToArray()) + "}";
+        }
         //public static string ToCamelCase(this string str)
         //{
         //    //var words = str.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
