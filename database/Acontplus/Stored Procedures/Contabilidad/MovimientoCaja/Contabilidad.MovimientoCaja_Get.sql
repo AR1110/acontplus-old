@@ -131,7 +131,7 @@ BEGIN
             FROM dbo.AsignacionCaja ac WITH (NOLOCK) 
             INNER JOIN dbo.Usuario  us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
             INNER JOIN dbo.Caja     ca WITH (NOLOCK) ON ca.idCaja    = ac.idCaja
-            WHERE ac.idUsuario = @idUsuario
+            WHERE ac.idUsuario = @idUsuario AND ac.idEntidad = @idEntidad
 
             SELECT idTipoDocumento,descripcion,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('IC','EC') ORDER BY descripcion DESC
 
