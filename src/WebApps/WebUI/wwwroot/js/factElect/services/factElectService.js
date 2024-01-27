@@ -163,42 +163,12 @@
                     let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
 
                     // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
-                    const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                puntosEmision: [{
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                }]
-                            });
-                        } else {
-                            existingItem.puntosEmision.push({
-                                idPuntoEmision: item.idPuntoEmision,
-                                ptoEmi: item.ptoEmi,
-                                defaultPtoEmi: item.defaultPtoEmi
-                            });
-                        }
-                        return acc;
-                    }, []);
-
-                    // Organiza establecimientos y sus almacenes correspondientes
-                    let estabs = tempEstabs.map(estab => ({
-                        ...estab,
-                        bodegas: tempBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
-                            .map(bodega => ({
-                                idBodega: bodega.idBodega,
-                                bodega: bodega.bodega,
-                                descripcion: bodega.bodega,
-                                defaultBodega: bodega.defaultBodega,
-                            }))
-                    }));
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                        bodegas: tempBodegas, // Establecimientos con bodegas
+                        isGroupBodega: true
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup); 
 
                     // Devuelve los datos finales estructurados
                     return {
@@ -231,32 +201,10 @@
                     let tempEstabsAndPtosEmision = mainData[0];
                     let estadosDoc = mainData[1];
 
-                    const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                puntosEmision: [{
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                }]
-                            });
-                        } else {
-                            existingItem.puntosEmision.push({
-                                idPuntoEmision: item.idPuntoEmision,
-                                ptoEmi: item.ptoEmi,
-                                defaultPtoEmi: item.defaultPtoEmi
-                            });
-                        }
-                        return acc;
-                    }, []);
-
-
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision 
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);  
                     return {
                         estabs,
                         estadosDoc

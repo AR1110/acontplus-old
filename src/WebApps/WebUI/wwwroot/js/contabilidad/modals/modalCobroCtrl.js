@@ -56,27 +56,27 @@ class CobroService {
 
         // =================== TARJETA DE CREDITO / DEBITO  =================================== //
         if (codigoEntidad === 'TAR') {
-            if (!cobro.nro) {
-                this.tS.toastr('warning', 'Ingrese el Número')
-                return
-            }
+            // if (!cobro.nro) {
+            //     this.tS.toastr('warning', 'Ingrese el Número')
+            //     return
+            // }
 
-            if (!cobro.idCiudad > 0) {
-                this.tS.toastr('warning', 'Ingrese la Ciudad')
-                return
-            }
-            if (!cobro.referencia) {
-                this.tS.toastr('warning', 'Ingrese la referencia')
-                return
-            }
-            if (!cobro.aprobacion) {
-                this.tS.toastr('warning', 'Ingrese la Aprobación')
-                return
-            }
-            if (!cobro.lote) {
-                this.tS.toastr('warning', 'Ingrese el Lote')
-                return
-            }
+            // if (!cobro.idCiudad > 0) {
+            //     this.tS.toastr('warning', 'Ingrese la Ciudad')
+            //     return
+            // }
+            // if (!cobro.referencia) {
+            //     this.tS.toastr('warning', 'Ingrese la referencia')
+            //     return
+            // }
+            // if (!cobro.aprobacion) {
+            //     this.tS.toastr('warning', 'Ingrese la Aprobación')
+            //     return
+            // }
+            // if (!cobro.lote) {
+            //     this.tS.toastr('warning', 'Ingrese el Lote')
+            //     return
+            // }
         }
 
         // =================== TRANSFERENCIAS  =================================== //
@@ -351,8 +351,8 @@ export {
 ModalCobroRapidoCtrl.$inject = [
     '$scope',
     '$uibModalInstance',
-    'mainService',
-    'commonService',
+    '$injector',
+    'mainService', 
     'modalService',
     'nombreModalContabilidad',
     'toastService',
@@ -361,7 +361,10 @@ ModalCobroRapidoCtrl.$inject = [
 ]
 
 
-function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc, nombreModalContabilidad, tS, fS, params) {
+function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, nombreModalContabilidad, tS, fS, params) {
+
+    const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
+
     let { data } = params;
     let { idCuentaPorCobrar } = data;
     let cobroSvc = new CobroService(tS, mS, fS);
@@ -388,9 +391,12 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
 
     const NUM_MAX_ROUND = 5;
 
+    $scope.entidadesFinancieras = [];
+    $scope.subEntidadesFinancieras = [];
 
 
-    $scope.resetData = function () {
+
+    function resetData () {
         $scope.cobro.valorAbono = $scope.comprobante.saldo;
         $scope.cobro.valorCambio = 0;
 
@@ -405,79 +411,78 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
         $scope.cobro.posFechado = false;
 
         if ($scope.entidadFinanciera.codigo === 'CHE') {
-            $scope.cobro.referencia = $scope.comprobante.nombreFiscal
+            $scope.cobro.referencia = $scope.comprobante.razonSocialComprador
         }
     }
 
     $scope.findSubEntidad = function (id) {
         $scope.entidadFinanciera = $scope.entidadesFinancieras.find(item => item.idEntidadFinanciera === id);
-        $scope.subEntidadesFinancieras = $scope.tempSubEntidadesFinancieras.filter(item => item.idEntidadFinanciera === id);
-        $scope.cobro.idSubEntidadFinanciera = $scope.subEntidadesFinancieras[0].idSubEntidadFinanciera;
-        $scope.resetData();
+        $scope.subEntidadesFinancieras = $scope.entidadFinanciera.subEntidadesFinanciera;
+        if ($scope.subEntidadesFinancieras.length>0){
+            $scope.cobro.idSubEntidadFinanciera = $scope.subEntidadesFinancieras[0].idSubEntidadFinanciera;
+        }else{
+            tS.toastr('warning', 'No posee SubEntidades financieras!');
+        }
+        resetData();
     }
 
-    $scope.initiload = function () {
+    loadInitialData();
+    function loadInitialData() {
         try {
             showLoader();
-            let query = {
-                tipo: 3,
-                //   idCliente : data.idCliente, QUITAR MAS ADELANTE
-                codEstab: data.codEstab,
-                idCuentaPorCobrar,
-                credito: data.tiempoCredito
-            }
-            cobroSvc.getCuotas(query).then(response => {
-                let mainDataRepository = JSON.parse(response.payload);
-                $scope.entidadesFinancieras = mainDataRepository[0];
+            cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar).then(response => {
+                let {
+                    entidadesFinanciera,
+                    bancos,                    
+                    ciudades,
+                    cuentaPorCobrar
+                } = response;
+                $scope.entidadesFinancieras = entidadesFinanciera;
+                let dataEntidadFinanciera = $scope.entidadesFinancieras.find(val => val.codigo === 'EFE');
+                
+         
+                $scope.bancos = bancos;
 
-                let idEntidadFinanciera = $scope.entidadesFinancieras.find(val => val.codigo === 'EFE').idEntidadFinanciera
-                $scope.tempSubEntidadesFinancieras = mainDataRepository[1]; //Todo los subentidades 
+                $scope.ciudades = ciudades;
 
-                $scope.bancos = mainDataRepository[2];
-
-                $scope.ciudades = mainDataRepository[3];
-
-
-
-
-                //documentos.cuotas 
-                let selectedDocumentos = mainDataRepository[5].map(item => ({
-                    ...item,
-                    cuotas: JSON.parse(item.cuotas),
-                }))
-
-                if (selectedDocumentos.some(item => [null, undefined].includes(item.cuotas))) {
+                if (cuentaPorCobrar.some(item => [null, undefined].includes(item.cuotas))) {
                     fS.sweetAlert('warning', 'No posee cuotas');
                     throw 'No posee cuotas'
                 }
 
-                $scope.selectedDocumentos = selectedDocumentos.map(item => {
-                    return {
-                        ...item,
-                        cuotaOriginal: JSON.parse(JSON.stringify(item.cuotas))
-                    }
-                })
+                $scope.selectedDocumentos = cuentaPorCobrar;
 
-                $scope.comprobante = mainDataRepository[6][0];
+                let dataCuentaPorCobrar = $scope.selectedDocumentos[0];
+                $scope.comprobante = {
+                    codEstab: dataCuentaPorCobrar.codEstab,
+                    idCliente: dataCuentaPorCobrar.idCliente,
+                    identificacionComprador: dataCuentaPorCobrar.identificacionComprador,
+                    razonSocialComprador: dataCuentaPorCobrar.razonSocialComprador,
+                    serieComprobante: dataCuentaPorCobrar.serieComprobante,
+                    fechaEmision: fS.formatDateMoment(fS.formatDate(dataCuentaPorCobrar.fechaEmision)),
+                    importeTotal: dataCuentaPorCobrar.importeTotal,
+                    saldo: dataCuentaPorCobrar.saldo,
+                    abono: dataCuentaPorCobrar.abono
+                }
 
                 $scope.cobro = Object.assign($scope.cobro, {
                     valorAbono: $scope.comprobante.saldo,
                     abono: $scope.comprobante.saldo
                 })
-                $scope.findSubEntidad(idEntidadFinanciera);
-                hideLoader();
 
+                if (dataEntidadFinanciera) {
+                    $scope.findSubEntidad(dataEntidadFinanciera.idEntidadFinanciera);
+                } else {
+                    tS.toastr('warning', 'Entidad Financiera Efectivo no posee subentidad financiera');
+                }  
             }).catch(error => {
-                hideLoader();
                 console.log(error)
-            })
+            }).finally(() => hideLoader()); 
         } catch (error) {
-            hideLoader();
-
+            hideLoader(); 
             console.log(error)
         }
     }
-    $scope.initiload();
 
     $scope.openModalCobroAvanzado = async function () {
         try {
@@ -508,6 +513,8 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
 
     $scope.setValorEfectivo = function () {
         let valorCambio = 0, saldo = 0;
+        if($scope.entidadFinanciera.codigo!=="EFE") return
+
         if (!(typeof $scope.cobro.valorAbono === 'number')) {
             $scope.cobro.valorCambio = 0
             $scope.cobro.abono = 0
@@ -551,8 +558,8 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
                         total: $scope.cobro.valorAbono,
                         abono: $scope.cobro.abono,
                         codEstab: $scope.comprobante.codEstab,
-                        numeroIdentificacion: $scope.comprobante.numeroIdentificacion,
-                        nombreFiscal: $scope.comprobante.nombreFiscal
+                        numeroIdentificacion: $scope.comprobante.identificacionComprador,
+                        nombreFiscal: $scope.comprobante.razonSocialComprador
                     }
 
                     let infoCobro = [{
@@ -578,7 +585,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
                     cobroSvc.valorAbono = $scope.cobro.valorAbono;
 
                     for (let item of $scope.selectedDocumentos) {
-                        item.cuotas = JSON.parse(JSON.stringify(item.cuotaOriginal))
+                        item.cuotas = JSON.parse(JSON.stringify(item.cuotasOriginal))
                     }
 
 
@@ -642,7 +649,7 @@ ModalCobroLoteCtrl.$inject = [
     '$scope',
     '$uibModalInstance',
     '$injector',
-    'mainService', 
+    'mainService',
     'modalService',
     'nombreModalContabilidad',
     'toastService',
@@ -654,8 +661,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     let cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
 
     let cobroSvc = new CobroService(tS, mS, fS);
-    let { data, selectedDocumentos } = params;
-    let { idCuentaPorCobrar } = typeof data === 'object' ? data : 0;
+    let { data, selectedDocumentos } = params; 
 
     //const NUM_MAX_ROUND = 4;
     //Cobro Lote
@@ -731,7 +737,11 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     function loadInitialData() {
         try {
             showLoader();
-            cuentaPorCobrarSvc.getDataForm().then(response => {
+            let idCuentaPorCobrar = null;
+            if (Object.prototype.toString.call(data) === '[object Object]') {
+                idCuentaPorCobrar = data.idCuentaPorCobrar;
+            } 
+            cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar).then(response => {
 
                 dataFormaCobro = response;
 
@@ -756,6 +766,39 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                     })
                     $scope.isPaymentOfCuentaPorCobrar = true;
                 }
+
+                //Cobro por documento 
+                if(idCuentaPorCobrar > 0){
+                    let cuentaPorCobrar = response.cuentaPorCobrar;
+                    if (cuentaPorCobrar.some(item => [null, undefined].includes(item.cuotas))) {
+                        fS.sweetAlert('warning', 'No posee cuotas');
+                        throw 'No posee cuotas'
+                    }
+
+                    $scope.selectedDocumentos = cuentaPorCobrar;
+
+                    let dataCuentaPorCobrar = $scope.selectedDocumentos[0];
+                    $scope.comprobante = {
+                        codEstab: dataCuentaPorCobrar.codEstab,
+                        idCliente: dataCuentaPorCobrar.idCliente,
+                        identificacionComprador: dataCuentaPorCobrar.identificacionComprador,
+                        razonSocialComprador: dataCuentaPorCobrar.razonSocialComprador,
+                        serieComprobante: dataCuentaPorCobrar.serieComprobante,
+                        fechaEmision: fS.formatDateMoment(fS.formatDate(dataCuentaPorCobrar.fechaEmision)),
+                        importeTotal: dataCuentaPorCobrar.importeTotal,
+                        saldo: dataCuentaPorCobrar.saldo,
+                        abono: dataCuentaPorCobrar.abono
+                    }
+                    $uibModalInstance.rendered.then(() => {
+                        stepSelectDoc = document.getElementById('stepSelectDocs');
+                        stepCuotas = document.getElementById('stepCuotas');
+                        getTotalesCuota();
+                        $scope.stepCuotaPaymentLote();
+                        $("#paymentStep a:first-child").removeClass('active').addClass('disabled')
+                    })
+                    $scope.isPaymentOfCuentaPorCobrar = true;
+                }
+
             }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
@@ -767,52 +810,48 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 
 
     //Cobro desde Documento 
-    if (data && data.idCuentaPorCobrar > 0) {
-        try {
-            showLoader();
-            $scope.isPaymentDocument = true;
-            let query = {
-                tipo: 3,
-                codEstab: data.codEstab,
-                idCliente: data.idCliente, //REMOVER MAS ADELANTE
-                idCuentaPorCobrar,
-                credito: data.tiempoCredito,
-            }
-            cobroSvc.getCuotas(query).then(response => {
-                hideLoader();
-                if (response.code === "0") {
-                    throw response;
-                }
-                let mainDataRepository = JSON.parse(response.payload);
-                initDataForm(mainDataRepository);
+    // if (data && data.idCuentaPorCobrar > 0) {
+    //     try {
+    //         showLoader();
+    //         $scope.isPaymentDocument = true;
+    //         let query = {
+    //             tipo: 3,
+    //             codEstab: data.codEstab,
+    //             idCliente: data.idCliente,  
+    //             idCuentaPorCobrar,
+    //             credito: data.tiempoCredito,
+    //         }
+    //         cobroSvc.getCuotas(query).then(response => {
+    //             hideLoader();
+    //             if (response.code === "0") {
+    //                 throw response;
+    //             }
+    //             let mainDataRepository = JSON.parse(response.payload);
+    //             initDataForm(mainDataRepository);
+ 
+    //             let selectedDocumentos = mainDataRepository[5].map(item => ({
+    //                 ...item,
+    //                 cuotas: JSON.parse(item.cuotas),
+    //             }))
 
-                //documentos.cuotas 
-                let selectedDocumentos = mainDataRepository[5].map(item => ({
-                    ...item,
-                    cuotas: JSON.parse(item.cuotas),
-                }))
-
-                $scope.selectedDocumentos = selectedDocumentos.map(item => {
-                    return {
-                        ...item,
-                        cuotaOriginal: JSON.parse(JSON.stringify(item.cuotas))
-                    }
-                })
-
-                //Comprobante 
-                $scope.comprobante = mainDataRepository[6][0];
-                getTotalesCuota();
-            }).catch(error => {
-                hideLoader();
-                console.log(error)
-            })
-        } catch (error) {
-            hideLoader();
-        }
-    } else {
-        $scope.isPaymentLote = false;
-        //  initiload();
-    }
+    //             $scope.selectedDocumentos = selectedDocumentos.map(item => {
+    //                 return {
+    //                     ...item,
+    //                     cuotaOriginal: JSON.parse(JSON.stringify(item.cuotas))
+    //                 }
+    //             })  
+    //             $scope.comprobante = mainDataRepository[6][0];
+    //             getTotalesCuota();
+    //         }).catch(error => {
+    //             hideLoader();
+    //             console.log(error)
+    //         })
+    //     } catch (error) {
+    //         hideLoader();
+    //     }
+    // } else {
+    //     $scope.isPaymentLote = false; 
+    // }
 
     // function initiload() {
     //     commonSvc.getEstabAsign().then(response => {
@@ -822,15 +861,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     //         $scope.cloneCodEstab = codEstab;
     //     })
     // }
-
-    function initDataForm(mainDataRepository) {
-        //Forma Pago 
-        dataFormaCobro.entidadesFinancieras = mainDataRepository[0];
-        dataFormaCobro.subEntidadesFinancieras = mainDataRepository[1];
-        dataFormaCobro.bancos = mainDataRepository[2];
-        dataFormaCobro.ciudades = mainDataRepository[3];
-        dataFormaCobro.documentos = mainDataRepository[4];
-    }
+  
 
     // function resetDataStepCuota() {
     //     $scope.selectedDocumentos = [];
@@ -1295,8 +1326,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 
         if (totalValorAbonoEfectivo >= $scope.comprobante.saldo) {
             valorCambio = totalValorAbonoEfectivo - $scope.comprobante.saldo
-        }
-        console.log($scope.datosCobro)
+        } 
 
         $scope.data.valorCambio = fS.roundNumber(valorCambio, 5);
 

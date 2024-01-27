@@ -136,25 +136,22 @@
             return mS.getData('get', 'Contabilidad/CuentaPorCobrar/?json=' + JSON.stringify(params), null, true)
                 .then(async response => {
                     hideLoader();
-                    if (response.code === "0") {
-                        console.log(response)
-                        return true;
-                    }
-                    if (response.code === "1") {
-                        let mainData = JSON.parse(response.payload);
-                        let pendientAccounts = mainData[0];
+                    if (!response) return true;
 
-                        if (pendientAccounts.length === 0) return false;
+                    const { deuda } = response;
+                    let pendientAccounts = deuda[0];
 
-                        let { totalImporteTotal, totalAbono, totalSaldo } = pendientAccounts.reduce((value, item) => {
-                            value.totalImporteTotal += item.importeTotal;
-                            value.totalAbono += item.abono;
-                            value.totalSaldo += item.saldo;
-                            return value;
+                    if (pendientAccounts.length === 0) return false;
 
-                        }, { totalImporteTotal: 0, totalAbono: 0, totalSaldo: 0 })
+                    let { totalImporteTotal, totalAbono, totalSaldo } = pendientAccounts.reduce((value, item) => {
+                        value.totalImporteTotal += item.importeTotal;
+                        value.totalAbono += item.abono;
+                        value.totalSaldo += item.saldo;
+                        return value;
 
-                        let html = `<div class="table-responsive">
+                    }, { totalImporteTotal: 0, totalAbono: 0, totalSaldo: 0 })
+
+                    let html = `<div class="table-responsive">
                     <table class="table table-hover table-bordered table-sm">
                         <thead>
                             <tr>
@@ -167,9 +164,9 @@
                         </thead>
                         <tbody>`;
 
-                        let index = 1;
-                        for (let pendientAccount of pendientAccounts) {
-                            html += ` <tr>
+                    let index = 1;
+                    for (let pendientAccount of pendientAccounts) {
+                        html += ` <tr>
                         <td>${index++}</td>
                         <td>${pendientAccount.documento}</td>                        
                         <td>$${pendientAccount.importeTotal}</td>
@@ -177,8 +174,8 @@
                         <td>$${pendientAccount.saldo}</td>
                     </tr>
                 `
-                        }
-                        html += `</tbody>
+                    }
+                    html += `</tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="2">Total:</td>
@@ -187,15 +184,14 @@
                                 <td>${totalSaldo.toFixed(2)}</td>
                             </tr>
                         </tfoot></table></div>`
-                        await Swal.fire({
-                            title: '<small>Cuentas pendientes</small>',
-                            icon: 'info',
-                            html,
-                            width: 800
-                        })
+                    await Swal.fire({
+                        title: '<small>Cuentas pendientes</small>',
+                        icon: 'info',
+                        html,
+                        width: 800
+                    })
+                    return true;
 
-                        return true;
-                    }
                 })
                 .catch(error => {
                     hideLoader();
@@ -1314,7 +1310,7 @@
                 totalDescuento: data.totalDescuento || 0,
                 porcentajeDescuento: data.porcentajeDescuento || 0,
                 irbpnr: data.irbpnr || 0,
-                propina: data.propina ||  0,
+                propina: data.propina || 0,
                 recargo: data.recargo || 0,
                 transporte: data.transporte || 0,
                 total: data.total,
