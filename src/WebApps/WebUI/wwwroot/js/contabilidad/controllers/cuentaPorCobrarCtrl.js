@@ -182,11 +182,11 @@
 
 
         // Función para verificar si los valores de razonSocialComprador son los mismos
-        function verificarRazonSocialCompradorIgual() {
-            const primeraRazonSocial = $scope.selectedDocumentos[0].razonSocialComprador;
+        function verificarClienteIgual() {
+            const firstCustomerId = $scope.selectedDocumentos[0].idCliente;
 
-            // Verificar si todas las demás entradas tienen la misma razonSocialComprador
-            const sonIguales = $scope.selectedDocumentos.every(cuenta => cuenta.razonSocialComprador === primeraRazonSocial);
+            // Verificar si todas las demás entradas tienen la misma idCliente
+            const sonIguales = $scope.selectedDocumentos.every(cuenta => cuenta.idCliente === firstCustomerId);
 
             return sonIguales;
         }
@@ -197,7 +197,7 @@
                 return
             }
 
-            if (!verificarRazonSocialCompradorIgual()) {
+            if (!verificarClienteIgual()) {
                 tS.toastr('warning', 'Seleccione documentos que pertenezca al mismo cliente');
                 return
             }
@@ -211,8 +211,7 @@
             showLoader();
             Promise.all(promises)
                 .then(results => {
-                    hideLoader();
-                    console.log(results)
+                    hideLoader(); 
                     let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
                     openModalCobroLote(mergeWithCuotas);
                 })
@@ -225,10 +224,9 @@
 
         function mergeCuotas(selectedDocumentos, results) {
             return selectedDocumentos.map(cxc => {
-                const cuotasFiltradas = results.filter(item =>
-                    item.cuotas.some(cuota => cuota.idCuentaPorCobrar === cxc.idCuentaPorCobrar)
-                ).map(c => c.cuotas);
-
+                const [cuotasFiltradas] = results.filter(item =>
+                    item.some(cuota => cuota.idCuentaPorCobrar === cxc.idCuentaPorCobrar)
+                )  
                 return {
                     ...cxc,
                     cuotas: structuredClone(cuotasFiltradas),
@@ -258,7 +256,7 @@
                 })
                 modalRef.result.then(result => {
                     if (typeof result === 'object') {
-                        $scope.getCobros();
+                        getCuentasPorCobrar();
                     }
                 })
             } catch (error) {

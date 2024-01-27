@@ -6,6 +6,7 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import FileSaver from 'file-saver';
 import Swal from 'sweetalert2';
 import { ToasterService } from './toaster.service';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -134,7 +135,7 @@ export class SharedService {
                 type: 'success',
                 message: response.message
               })
-            }else{
+            } else {
               this.tS.toastr({
                 type: 'warning',
                 message: response.message
@@ -152,6 +153,24 @@ export class SharedService {
       hideLoader()
       console.log(error)
     }
+  }
+
+
+  getEstabAsign() {
+    return this.http.get('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 }))
+      .pipe(
+        map(response => { 
+          let estabs = response as [] || [];
+          let results = estabs.map((estab:any)=>{
+            return {
+              codEstab: estab.codEstab,
+              nombreComercial: estab.nombreComercial,
+              predeterminado: estab.predeterminado,
+            }
+          })
+          return results
+        })
+      )
   }
 
 }

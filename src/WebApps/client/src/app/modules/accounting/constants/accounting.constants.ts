@@ -3,5 +3,6 @@ export const enum ACCOUNTING_PATHS {
   CASHBOX = 'Caja/',
   CONTROL_CAJA = 'ControlCaja/',
   MOVIMIENTO_CAJA = 'MovimientoCaja/',
-  ANTICIPO = 'Anticipo/'
+  ANTICIPO = 'Anticipo/',
+  COMPROBANTE_INGRESO = 'ComprobanteIngreso/'
 }

@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
 import { CashboxPageComponent } from "./pages/cashbox-page/cashbox-page.component";
 import { MovimientoCajaPageComponent } from "./pages/movimiento-caja-page/movimiento-caja-page.component";
+import { CobroPageComponent } from "./pages/cobro-page/cobro-page.component";
 export const routes: Routes = [
   {
     path: 'cashbox-page',
@@ -18,6 +19,15 @@ export const routes: Routes = [
     component: MovimientoCajaPageComponent,
     data: {
       breadcrumb: 'Movimiento Caja',
+    }
+  },
+
+  {
+    path: 'cobro-page',
+    title: 'Cobros',
+    component: CobroPageComponent,
+    data: {
+      breadcrumb: 'Cobros',
     }
   },
 

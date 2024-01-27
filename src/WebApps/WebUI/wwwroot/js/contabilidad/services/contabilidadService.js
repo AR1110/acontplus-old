@@ -74,9 +74,9 @@
                             style: compIngreso.style,
                             estado: compIngreso.estado,
                             usuario: compIngreso.usuario,
-                            serieComprobante: item.nroDoc,
+                            serieComprobante: compIngreso.nroDoc,
                             comprobante: 'Comprobante Ingreso',
-                            esAnulado: item.color === 'table-danger'
+                            esAnulado: compIngreso.color === 'table-danger'
                         }
                     })
                     return results;
@@ -122,7 +122,7 @@
 
                 const { cuentasPorCobrar } = response;
 
-                console.log(cuentasPorCobrar)
+                
                 const results = cuentasPorCobrar.map(cxc => {
                     return {
                         idCuentaPorCobrar: cxc.idCuentaPorCobrar,
@@ -136,10 +136,16 @@
                         saldo: cxc.saldo,
                         tiempoCredito: cxc.tiempoCredito,
                         estado: cxc.estado,
-                        codEstado: cxc.codEstado
+                        codEstado: cxc.codEstado,
+                        idCliente: cxc.idCliente,
+                        codEstab: cxc.codEstab,
+                        identificacionComprador: cxc.identificacionComprador,
+                        diasMora: cxc.diasMora,
+                        mora: cxc.mora
                     }
                 })
 
+               
                 let dataFiltered = cuentasPorCobrar[0];
 
 
@@ -156,7 +162,12 @@
 
         function getCuotasById(id){
             const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 8 });
-            return mS.getData('get', `${url}?json=${params}`, null, true);
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
+                if(response){
+                    return response.cuotas; 
+                }
+                return []
+            })
         }
 
         function getDataForm(){
@@ -168,11 +179,23 @@
                 const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia} = response;
 
                 const resultEntidadesFinanciera = entidadFinanciera.map(ef=>{
-                    let filteredSubEntidadFinanciera = subEntidadFinanciera.filter()
+                    let filteredSubEntidadFinanciera = subEntidadFinanciera.filter(sef=>sef.idEntidadFinanciera===ef.idEntidadFinanciera)
+                    return {
+                        idEntidadFinanciera: ef.idEntidadFinanciera,
+                        descripcion: ef.descripcion,
+                        detalle: ef.detalle,
+                        codigo: ef.codigo,
+                        subEntidadesFinanciera: filteredSubEntidadFinanciera
+                    }
                 })
-                return {
 
+                let obj = {
+                    entidadesFinanciera: resultEntidadesFinanciera,                    
+                    bancos: banco,
+                    documentos,
+                    ciudades: provincia
                 }
+                return obj;
             })
         }
 

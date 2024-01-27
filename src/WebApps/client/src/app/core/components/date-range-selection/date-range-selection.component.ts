@@ -67,10 +67,12 @@ export class DateRangeSelectionComponent {
           ranges: {
             'Hoy': [moment(), moment()],
             'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+            'Últimos 5 días': [moment().subtract(4, 'days'), moment()],
+            'Últimos 10 días': [moment().subtract(9, 'days'), moment()],
             'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
             'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
             'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+            'El mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
           },
           locale: {
             applyLabel: "Aplicar",
