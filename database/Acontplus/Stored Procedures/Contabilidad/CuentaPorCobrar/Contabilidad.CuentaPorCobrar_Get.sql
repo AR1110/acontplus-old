@@ -135,20 +135,26 @@ BEGIN
                           ,@pageSize    INT'
 
             SET @sql = 'SELECT cc.idCuentaPorCobrar
+                              ,cc.idCliente
+                              ,cc.codEstab
                               ,IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)                        as codDoc
-                              ,razonSocialComprador
+                              ,cc.razonSocialComprador
+                              ,cc.identificacionComprador
                               ,serieComprobante
                               ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')                          as fechaEmision
                               ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'')                      as fechaVencimiento
                               ,CAST(importeTotal as numeric(18,2))                             as importeTotal
                               ,CAST(abono as numeric(18,2))                                    as abono
                               ,CAST(saldo as numeric(18,2))                                    as saldo
+                              ,cc.diasMora
+                              ,cc.mora
                               ,tipoTiempoCredito                                               as tiempoCredito
                               ,estado
                               ,COUNT(*)                                                 OVER() as totalRecords
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,importeTotal)) OVER() as totalVenta
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,abono))        OVER() as totalAbono
                               ,SUM(IIF(cc.codEstado IN (''A'',''TRA''),0,saldo))        OVER() as totalSaldo
+                              ,codEstado
                         FROM v_CuentaPorCobrar cc WITH (NOLOCK)
                         WHERE idEntidad = @idEntidad '
 
@@ -347,8 +353,7 @@ BEGIN
 			WHERE a.idCliente =  @idCliente 
 				AND a.estado = 1 
 				AND a.idAnticipo NOT IN (SELECT t.idComprobante FROM @cobroDocuments t WHERE t.codMov = 'A')
-			
-			
+
 			SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
 			SELECT idEntidadFinanciera,idSubEntidadFinanciera,descripcion,codigo,interes,controlCaja FROM dbo.SubEntidadFinanciera WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 
@@ -466,6 +471,8 @@ BEGIN
     IF @tipo = 7
         BEGIN
             
+            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento'
+
             SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
@@ -559,7 +566,7 @@ BEGIN
         BEGIN
             SET @tableNames = 'cuotas'
 
-            SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
+            SELECT @idCuentaPorCobrar = idCuentaPorCobrar  FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT )
 
             SELECT cx.idCuotaPorCobrar
 				  ,cx.idCuentaPorCobrar
