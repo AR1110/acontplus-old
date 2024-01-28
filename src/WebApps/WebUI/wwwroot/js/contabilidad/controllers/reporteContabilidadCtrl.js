@@ -28,7 +28,7 @@
         function initial() {
             showLoader();
             cuentaPorCobrarSvc
-                .getDataFilterReport()
+                .getDataFilter()
                 .then((response) => {
                     const { estabs, estadosDoc, tiposDoc } = response;
                     $scope.establecimientos = estabs;
