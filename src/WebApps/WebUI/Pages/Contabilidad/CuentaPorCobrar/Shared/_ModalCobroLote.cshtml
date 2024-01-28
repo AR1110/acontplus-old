@@ -31,7 +31,7 @@
         <!--Tab Content-->
         <div class="tab-content">
             <div class="tab-pane fade show active" id="stepSelectDocs" role="tabpanel">
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
 
                 <md-table-container style=" max-height: 400px;" ng-show="tipoDocumentos.length>0">
@@ -139,7 +139,7 @@
             </div>
 
             <div class="tab-pane fade show active" id="stepCuotas" style="display: none;" role="tabpanel">
-                <div class="card">
+                <!-- <div class="card">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3 col-xs-6 b-r"> <strong>C.I./RUC</strong>
@@ -149,24 +149,18 @@
                             <div class="col-md-3 col-xs-6 b-r"> <strong>Cliente</strong>
                                 <br>
                                 <p class="text-muted">{{comprobante.nombreFiscal}}</p>
-                            </div>
-                            @* <div class="col-md-3 col-xs-6 b-r"> <strong>Email</strong>
-                                <br>
-                                <p class="text-muted">johnathan@admin.com</p>
-                            </div>
-                            <div class="col-md-3 col-xs-6"> <strong>Location</strong>
-                                <br>
-                                <p class="text-muted">London</p>
-                            </div> *@
+                            </div>  
                         </div>
                     </div>
-                </div>
-                <div class="row">
+                </div> -->
+                <div class="row mt-2">
                     <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
-                        <div class="card border border-info">
+                        <div class="card border border-info"> 
                             <div class="card-header">
-                                <h6 class="card-title">Cuotas</h6>
+                                <span class="card-title">Cuotas</span>
                             </div>
+
+                            <div class="card-body">
                             <md-table-container style=" max-height: 400px;">
                                 <table md-table>
                                     <thead md-head>
@@ -188,11 +182,16 @@
                                                 <span ng-if="group.display"><i class="fas fa-caret-square-down"></i></span>
                                                 <span ng-if="!group.display"><i class="fas fa-caret-square-right"></i></span>
                                             </td>
-                                            <td md-cell colspan="3">{{group.tipoDoc}} - {{group.serieComprobante}}</td>
-                                            <td md-cell colspan="5">
-                                                <strong>${{group.importeTotal}}</strong>
+                                            <td md-cell colspan="2">{{group.codDoc}} - {{group.serieComprobante}}</td>
+                                            <td md-cell colspan="3">
+                                            <span class="font-weight-bold text-uppercase">
+                                                {{group.razonSocialComprador}}
+                                            </span> 
                                             </td>
-
+                                            <td md-cell colspan="1">
+                                                <span class="font-weight-bold">${{group.importeTotal}}</strong>
+                                            </td>
+                                            <td md-cell colspan="3"></td>
                                         </tr>
                                         <tr md-row ng-repeat-end ng-repeat="cuota in group.cuotas" ng-show="group.display">
                                             <td md-cell>
@@ -212,13 +211,15 @@
                                     </tbody>
                                 </table>
                             </md-table-container>
+                            </div>   
                         </div>
 
-                        <div class="card border border-dark">
-                            <div class="card-header bg-secondary">
-                                <h6 class="card-title">Datos de cobro</h6>
+                        <div class="card border border-success">
+                            <div class="card-header">
+                                 <span class="card-title">Datos de cobro</span>
                             </div>
-                            <md-table-container style=" max-height: 400px;">
+                           <div class="card-body">
+                             <md-table-container style=" max-height: 400px;">
                                 <table md-table>
                                     <thead md-head>
                                         <tr md-row>
@@ -296,6 +297,7 @@
                                     </tbody>
                                 </table>
                             </md-table-container>
+                           </div>
 
                         </div>
                     </div>
@@ -372,10 +374,15 @@
             </div>
         </div>
 
-        <div ng-if="isPaymentDocument">
+        <!-- <div ng-if="isPaymentDocument">
             <button type="button" class="btn btn-success" ng-click="save()"> <i class="ti-save"></i> Guardar</button>
             <button type="button" class="btn btn-dark" ng-click="closeModal()"> &times; Cerrar</button>
-        </div>
+        </div> -->
+
+        <div ng-if="isPaymentOfCuentaPorCobrar">
+            <button type="button" class="btn btn-success" ng-click="save()"> <i class="ti-save"></i> Guardar</button>
+            <button type="button" class="btn btn-dark" ng-click="closeModal()"> &times; Cerrar</button>
+        </div> 
 
     </div>
 </form>
