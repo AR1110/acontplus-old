@@ -334,6 +334,7 @@ BEGIN
 				  ,cc.mora
 				  ,cc.abono
 				  ,cc.saldo
+                  ,cc.importeTotal - cc.abono as saldoDoc
 				  ,ep.descripcion
 				  ,cuotas = (
 						      SELECT cx.idCuotaPorCobrar

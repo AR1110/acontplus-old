@@ -42,6 +42,7 @@ BEGIN
 				  ,dt.printerAutomatic           
 				  ,dt.payAutomatic
 				  ,dt.multipleVendedor
+                  ,dt.detailDuplicate
 				  ,dt.configDeuda     
 				  ,dt.tipoConfig 
 				  ,dt.interes
@@ -52,6 +53,7 @@ BEGIN
 				,printerAutomatic  BIT '$.printerAutomatic'
 				,payAutomatic      BIT '$.payAutomatic'
 				,multipleVendedor  BIT '$.multipleVendedor'
+				,detailDuplicate   BIT '$.detailDuplicate'
 				,configDeuda       BIT '$.configInteres'
 				,tipoConfig VARCHAR(5) '$.infoInteres.tipoConfig'
 				,interes NUMERIC(18,5) '$.infoInteres.interes'
