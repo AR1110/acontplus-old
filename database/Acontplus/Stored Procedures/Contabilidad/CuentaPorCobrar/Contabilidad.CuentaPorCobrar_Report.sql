@@ -271,7 +271,7 @@ BEGIN
                         END 
                 END 
 
-            SET @sql = @sql + 'ORDER BY fechaEmision DESC '
+            SET @sql = @sql + 'ORDER BY fechaEmision ASC '
 
             SELECT razonSocial
                   ,ruc
