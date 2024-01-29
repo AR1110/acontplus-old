@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { PATHS, PATHS_API } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
@@ -7,6 +7,7 @@ import FileSaver from 'file-saver';
 import Swal from 'sweetalert2';
 import { ToasterService } from './toaster.service';
 import { map } from 'rxjs';
+import { customUrl } from '@core/interceptors/inject-session.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -86,30 +87,35 @@ export class SharedService {
       allowOutsideClick: false,
     });
     if (isConfirmed) {
-      let url = `${PATHS_API.CONFIG}${PATHS.PRINT}?json=${parameters}`;
+      let url = `${PATHS_API.PRINT_SERVER}${PATHS.PRINT}`;
+      console.log(parameters)
       showLoader();
-      this.http.post(url, parameters).subscribe({
-        next: (response) => {
-          hideLoader();
-          if (isApiResponse(response)) {
-            if (response.code === '1') {
-              this.tS.toastr({
-                type: 'success',
-                message: response.message,
-              });
-            } else {
-              this.tS.toastr({
-                type: 'warning',
-                message: response.message,
-              });
+      this.http
+        .post(url, JSON.parse(parameters), {
+          context: customUrl(),
+        })
+        .subscribe({
+          next: (response) => {
+            hideLoader();
+            if (isApiResponse(response)) {
+              if (response.code === '1') {
+                this.tS.toastr({
+                  type: 'success',
+                  message: response.message,
+                });
+              } else {
+                this.tS.toastr({
+                  type: 'warning',
+                  message: response.message,
+                });
+              }
             }
-          }
-        },
-        error(err) {
-          hideLoader();
-          console.log('Hubo un problema al imprimir:' + err?.message);
-        },
-      });
+          },
+          error(err) {
+            hideLoader();
+            console.log('Hubo un problema al imprimir:' + err?.message);
+          },
+        });
       //this.getPrinter(parameters)
     }
   }

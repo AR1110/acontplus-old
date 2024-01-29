@@ -3,11 +3,12 @@ export const enum PATHS_API {
   COMMON = 'Common/',
   CONFIG = 'Config/',
   CUSTOMER = 'Customer/',
+  PRINT_SERVER = 'https://acontplusprint.com/',
   PURCHASE = 'Compra/',
   REPORT = 'Reports/',
   SALES = 'Venta/',
   TECHSUPPORT = 'TechnicalSupport/',
-  INVENTORY = 'Inventario/'
+  INVENTORY = 'Inventario/',
 }
 
 export const enum PATHS {
