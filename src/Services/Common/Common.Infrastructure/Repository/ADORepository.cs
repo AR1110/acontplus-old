@@ -120,57 +120,71 @@ namespace Common.Infrastructure.Repository
         public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp)
         {
             DataSet ds = null;
-            var _context = _contexts.GetContext(_configuration["ContextName"]);
-            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
+            using (var _context = _contexts.GetContext(_configuration["ContextName"]))
             {
-                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
-                try
+                using (var cmd = _context.Database.GetDbConnection().CreateCommand())
                 {
-                    cmd.CommandText = spName;
-                    if (parameters.Count > 0)
+                    bool wasOpen = cmd.Connection.State == ConnectionState.Open;
+                    try
                     {
-                        foreach (var parameter in parameters)
+                        cmd.CommandText = spName;
+                        if (parameters.Count > 0)
                         {
-                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            foreach (var parameter in parameters)
                             {
-                                ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                                if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                                {
+                                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                                }
                             }
                         }
-                    }
 
-                    string outParam = "@tableNames";
-                    if (!oldSp)
-                    {
-                        ParametersUtils.AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
-                    }
-
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
-                    using (SqlDataAdapter adapter = new SqlDataAdapter())
-                    {
-                        adapter.SelectCommand = (SqlCommand)cmd;
-                        ds = new DataSet();
-                        adapter.Fill(ds);
-                    }
-
-                    if (!oldSp)
-                    {
-                        string[] tableNames = ParametersUtils.GetParameter(cmd, outParam).ToString().Split(',');
-
-                        for (int i = 0; i < tableNames.Length; i++)
+                        string outParam = "@tableNames";
+                        if (!oldSp)
                         {
-                            if (!string.IsNullOrEmpty(tableNames[i]))
+                            ParametersUtils.AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
+                        }
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                        using (SqlDataAdapter adapter = new SqlDataAdapter())
+                        {
+                            adapter.SelectCommand = (SqlCommand)cmd;
+                            ds = new DataSet();
+                            await Task.Run(() => adapter.Fill(ds));
+                        }
+
+                        if (!oldSp)
+                        {
+                            string[] tableNames = ParametersUtils.GetParameter(cmd, outParam).ToString().Split(',');
+
+                            //for (int i = 0; i < tableNames.Length; i++)
+                            //{
+                            //    if (!string.IsNullOrEmpty(tableNames[i]))
+                            //    {
+                            //        ds.Tables[i].TableName = tableNames[i];
+                            //    }
+                            //}
+                            await Task.Run(() =>
                             {
-                                ds.Tables[i].TableName = tableNames[i];
-                            }
+                                Parallel.ForEach(tableNames, (tableName, state, index) =>
+                                {
+                                    if (!string.IsNullOrEmpty(tableName))
+                                    {
+                                        ds.Tables[(int)index].TableName = tableName;
+                                    }
+                                });
+                            });
+
                         }
                     }
-                }
-                finally
-                {
-                    if (!wasOpen) cmd.Connection.Close();
+                    finally
+                    {
+                        if (!wasOpen) cmd.Connection.Close();
+                    }
                 }
             }
+
             return ds;
         }
         public async Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters)
