@@ -314,8 +314,7 @@
                                 </tr>`
                 }
             }
-            console.log(sumTotalIva)
-
+          
             const importeTotal = totalPrecioTotalSinImpuesto + sumTotalIva;
             if (totalSinImpuesto > 0) {
                 totalPorcentajeDescuento = ((totalSinImpuesto - totalPrecioTotalSinImpuesto) * 100) / totalSinImpuesto;
