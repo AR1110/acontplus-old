@@ -139,8 +139,8 @@ BEGIN
 												    ELSE @codDoc
 									   END 
                             ,@establecimientoId establecimientoId
-                            ,@logoName logoName
-                            ,@logoMimeType logoMimeType
+                            ,ISNULL(@logoName, '') logoName
+                            ,ISNULL(@logoMimeType, '') logoMimeType
  						FROM Config.PrinterDocument     cd WITH (NOLOCK)
 						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
 						INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId
