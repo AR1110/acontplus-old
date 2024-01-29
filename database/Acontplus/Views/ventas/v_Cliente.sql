@@ -40,8 +40,8 @@ SELECT c.[idCliente]
     ,ti.codigoSri codIdentSri
     ,IIF(cs.IDType IS NULL,ti.codigoSri,cs.IDType) as IDType
     ,IIF(cs.IDCard IS NULL,c.numeroIdentificacion,cs.IDCard) as IDCard
-    ,IIF(cs.BusinessName IS NULL, c.nombreComercial,cs.BusinessName) as BusinessName
-    ,IIF(cs.TradeName IS NULL, c.nombreFiscal,cs.TradeName) as TradeName
+    ,IIF(cs.BusinessName IS NULL, c.nombreFiscal,cs.BusinessName) as BusinessName
+    ,IIF(cs.TradeName IS NULL, c.nombreComercial,cs.TradeName) as TradeName
     ,c.correo as Email
     ,c.telefono as Telephone
     ,c.direccion as [Address]

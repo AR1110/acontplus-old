@@ -18,6 +18,7 @@ namespace Configuracion.API.Services
             try
             {
                 data.IsCompressed = true;
+                data.LatestVersion = 1;
                 await _context.AddAsync(data);
                 await _context.SaveChangesAsync();
                 return new { code = "1", message = "Guardado Exitosamente" };
@@ -67,6 +68,7 @@ namespace Configuracion.API.Services
                 logo.Content = data.Content;
                 logo.ContentType = data.ContentType;
                 logo.IsCompressed = true;
+                logo.LatestVersion = data.LatestVersion + 1;
                 _context.Update(logo);
                 await _context.SaveChangesAsync();
                 return new { code = "1", message = "Actualizado Exitosamente" };

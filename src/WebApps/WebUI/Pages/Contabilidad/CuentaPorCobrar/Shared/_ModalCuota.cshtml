@@ -14,7 +14,7 @@
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
             <strong>Cliente:</strong>
             <br>                        
-            <p class="text-muted">{{comprobante.nombreFiscal}}</p>
+            <p class="text-muted">{{comprobante.razonSocialComprador}}</p>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
             <strong>Nro. Documento:</strong>
@@ -72,10 +72,10 @@
             </div>
         </div>   
     </div>
-    <div class="btn-group btn-group-sm" role="group" aria-label="Basic example" >
+    <!-- <div class="btn-group btn-group-sm" role="group" aria-label="Basic example" >
         <button type="button" class="btn btn-success" ng-click="askToApplyMora()">Aplicar Mora</button>
         <button type="button" class="btn btn-warning" ng-click="initiload()">Cancelar</button>                    
-    </div> 
+    </div>  -->
 
      <div class="table-responsive mt-3">
         <table class="table table-hover">
@@ -105,16 +105,16 @@
                                ng-model="item.cuota" 
                                id="valorEntrada" 
                                ng-blur="setValorEntrada(item.cuota)" 
-                               class="form-control border-select text-center" />
+                               class="form-control border-select text-center" onclick="select();"  />
                                 
                         <!--Input Cuota -->
                         <input type="text" 
                                 ng-if="item.nroCuota!=='E'" 
-                                id="setValcuota{{item.idCuotaXCobrar}}" 
+                                id="setValcuota{{item.idCuotaPorCobrar}}" 
                                 valid-number 
                                 ng-keyup="setValorCuota(item)" 
                                 ng-model="item.cuota" 
-                                class="form-control border-select text-center" />
+                                class="form-control border-select text-center"  onclick="select();"  />
                     </td>
                     <td >{{item.interes}}</td>
                     <td >{{item.diasMora}}</td>
@@ -128,7 +128,7 @@
                         <input type="date" uib-popover-html="getFechaEscritaCuota(item)"  popover-trigger="'focus'"
                                min="2020-01-01" 
                                max="2030-12-31" 
-                               id="fechaVencimiento{{item.idCuotaXCobrar}}" 
+                               id="fechaVencimiento{{item.idCuotaPorCobrar}}" 
                                ng-if="item.nroCuota!=='E'" 
                                ng-model="item.fechaVencimiento" 
                                ng-change="setFechaVencimientoCuota(item)" 
@@ -143,7 +143,7 @@
                     <td  width="100">
                         <span ng-if="c.nroCuota=='E'" class="ml-1">{{c.cxc.fechaVencimiento | date:'dd/MM/yyyy'}}</span>
 
-                        <input type="date" min="2020-01-01" max="2030-12-31" id="fechaVencimiento{{c.cxc.idCuotaXCobrar}}" ng-if="c.nroCuota!=='E'" ng-model="c.cxc.fechaVencimiento" ng-change="$ctrl.setFechaVencimientoCuota(c)" class="form-control border-select" required />
+                        <input type="date" min="2020-01-01" max="2030-12-31" id="fechaVencimiento{{c.cxc.idCuotaPorCobrar}}" ng-if="c.nroCuota!=='E'" ng-model="c.cxc.fechaVencimiento" ng-change="$ctrl.setFechaVencimientoCuota(c)" class="form-control border-select" required />
                         <small class="invalid-feedback">Fecha Vcto. no válida </small>
                     </td>
                     <td  width="100">

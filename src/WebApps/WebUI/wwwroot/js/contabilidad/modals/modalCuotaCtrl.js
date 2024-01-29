@@ -1,21 +1,21 @@
 
 export {
-    ModalCuotaCtrl    
+    ModalCuotaCtrl
 }
 
 ModalCuotaCtrl.$inject = [
-    '$scope', 
-    '$uibModalInstance', 
-    'mainService',
-    'modalService', 
-    'nombreModalContabilidad', 
-    'toastService', 
-    'formulario', 
+    '$scope',
+    '$uibModalInstance',
+    '$injector',
+    'toastService',
+    'formulario',
     'params'
 ];
 
-function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalContabilidad,  tS, fS, params){
-    let {idCuentaPorCobrar} = params;
+function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
+    const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
+
+    let { idCuentaPorCobrar } = params;
 
     $scope.tiempoCreditos = [];
     $scope.cuotas = [];
@@ -27,69 +27,58 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
     $scope.totalDiferencia = 0;
 
     $scope.isReload = false;
-
-    let url = 'Contabilidad/CuentaPorCobrar/'
-
+    
     const MAX_ROUND_NUMBER = 5;
 
     $scope.initiload = initiload;
     $scope.initiload();
 
-    function initiload(){
+    function initiload() {
         try {
             showLoader();
-            let query ={
-                tipo: 2,
-                idCuentaPorCobrar
-            }
+            cuentaPorCobrarSvc.getCuotaByToGenerate(idCuentaPorCobrar).then(response => {
+                const { cuentaPorCobrar, tiemposCredito, cuotas } = response;
+                $scope.comprobante = structuredClone(cuentaPorCobrar);
 
-            mS.getData('get', url + '?json=' + JSON.stringify(query)  , null, true).then(response=>{
-                hideLoader();
-                if(response.code==='0'){
-                    throw response
-                }
-                if(response.code==="1"){
-                    let mainDataRepository = JSON.parse(response.payload);
-                    $scope.comprobante = mainDataRepository[0][0];
-                    $scope.comprobante.fechaEmision = formatDateFecha($scope.comprobante.fechaEmision);
-                    $scope.comprobante.fechaEmisionFormat =  moment( $scope.comprobante.fechaEmision).format('DD-MM-YYYY');
-                    $scope.comprobante.configFecha =  $scope.comprobante.fechaEmision;
-                    $scope.cloneIdTiempoCredito = $scope.comprobante.idTiempoCredito;
-                    $scope.showColumnPorcentajeInteres = $scope.comprobante.tipoConfig ==='PI';
-                    $scope.showColumnPrecioFijo = $scope.comprobante.tipoConfig ==='PF';
+                $scope.comprobante.fechaEmision = formatDateFecha(new Date($scope.comprobante.fechaEmision));
+                $scope.comprobante.fechaEmisionFormat = cuentaPorCobrar.fechaEmision;
 
-                    $scope.totalCuota = $scope.comprobante.importeTotal;
 
-                    $scope.tiempoCreditos = mainDataRepository[1];
-                    
-                    let tempCuotas = mainDataRepository[2];
-                    $scope.cuotas = tempCuotas.map(cuotaMappFrom)
-                    
+                $scope.comprobante.configFecha = $scope.comprobante.fechaEmision;
+                $scope.cloneIdTiempoCredito = $scope.comprobante.idTiempoCredito;
+                $scope.showColumnPorcentajeInteres = $scope.comprobante.tipoConfig === 'PI';
+                $scope.showColumnPrecioFijo = $scope.comprobante.tipoConfig === 'PF';
 
-                    let tempCuotasMora = mainDataRepository[3];
-                    $scope.cuotasMora = tempCuotasMora;
+                $scope.totalCuota = $scope.comprobante.importeTotal;
 
-                    setFooterTotals();
-                }
-            }).catch(error=>{
-                hideLoader();
+                $scope.tiempoCreditos = tiemposCredito;
+
+                $scope.cuotas = cuotas.map(cuotaMappFrom)
+
+
+                // let tempCuotasMora = mainDataRepository[3];
+                // $scope.cuotasMora = tempCuotasMora;
+
+                setFooterTotals();
+
+            }).catch(error => {
                 console.log(error)
-            })
+            }).finally(() => hideLoader())
         } catch (error) {
             hideLoader();
             console.log(error)
         }
-    } 
+    }
 
-    function cuotaMappFrom(item){
+    function cuotaMappFrom(item) {
         return ({
             ...item,
             fechaVencimiento: new Date(item.fechaVencimiento)
         })
     }
 
-    function formatDateFecha(fecha){
-       
+    function formatDateFecha(fecha) {
+
         const fechaCadena = fecha;
         const formatoEntrada = "DD/MM/YYYY HH:mm";
         const fechaReal = moment(fechaCadena, formatoEntrada).toDate();
@@ -97,10 +86,10 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
         return fechaReal;
     }
 
-    $scope.getFechaEscritaCuota = function(item) {        
+    $scope.getFechaEscritaCuota = function (item) {
         if (item.fechaVencimiento) {
             return item.fechaVencimiento.toLocaleDateString("es-ES", { year: 'numeric', month: 'long', day: 'numeric' });
-        }            
+        }
     }
 
     function getTotalCuota() {
@@ -108,33 +97,33 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
         return fS.roundNumber(total, 5);
     }
 
-    function setFooterTotals(){
+    function setFooterTotals() {
         let totalCuota = 0, totalMora = 0, totalSaldo = 0, totalSaldoCta = 0, totalAbono = 0;
-        for(let item of $scope.cuotas){
-            totalCuota+=item.cuota;
-            totalMora+=item.mora;
-            totalSaldo+=item.saldo;
-            totalSaldoCta+=item.saldoCta;
-            totalAbono+=item.abono;
+        for (let item of $scope.cuotas) {
+            totalCuota += Number(item.cuota);
+            totalMora += item.mora;
+            totalSaldo += item.saldo;
+            totalSaldoCta += item.saldoCta;
+            totalAbono += item.abono;
         }
-        $scope.totalCuota    = fS.roundNumber(totalCuota, MAX_ROUND_NUMBER);
-        $scope.totalMora     = fS.roundNumber(totalMora, MAX_ROUND_NUMBER);
-        $scope.totalSaldo    = fS.roundNumber(totalSaldo, MAX_ROUND_NUMBER);
+        $scope.totalCuota = fS.roundNumber(totalCuota, MAX_ROUND_NUMBER);
+        $scope.totalMora = fS.roundNumber(totalMora, MAX_ROUND_NUMBER);
+        $scope.totalSaldo = fS.roundNumber(totalSaldo, MAX_ROUND_NUMBER);
         $scope.totalSaldoCta = fS.roundNumber(totalSaldoCta, MAX_ROUND_NUMBER);
-        $scope.totalAbono    = fS.roundNumber(totalAbono, MAX_ROUND_NUMBER);
+        $scope.totalAbono = fS.roundNumber(totalAbono, MAX_ROUND_NUMBER);
 
     }
 
-    $scope.askToChangeCreditTime = async function() {
+    $scope.askToChangeCreditTime = async function () {
         try {
-            if(!($scope.comprobante.idTiempoCredito>0)){
+            if (!($scope.comprobante.idTiempoCredito > 0)) {
                 tS.toastr('warning', 'Seleccione el tiempo credito');
                 return
             }
 
-            let dataCredito = $scope.tiempoCreditos.find(item=>item.idTiempoCredito===$scope.comprobante.idTiempoCredito);
-           
-            let {isConfirmed} = await Swal.fire({
+            let dataCredito = $scope.tiempoCreditos.find(item => item.idTiempoCredito === $scope.comprobante.idTiempoCredito);
+
+            let { isConfirmed } = await Swal.fire({
                 html: `<small>Está seguro/a de generar <h3><b> ${dataCredito.numeroCuota}</b></h3> cuotas de este Comprobante</small>`,
                 icon: 'warning',
                 showCancelButton: true,
@@ -144,21 +133,21 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                 cancelButtonText: 'No!'
             })
 
-            if(isConfirmed){
+            if (isConfirmed) {
                 $scope.crearCuota();
                 $scope.cloneIdTiempoCredito = $scope.comprobante.idTiempoCredito;
                 $scope.$apply()
-            }else{
+            } else {
                 $scope.comprobante.idTiempoCredito = $scope.cloneIdTiempoCredito;
                 $scope.$apply()
             }
 
         } catch (error) {
             console.log(error)
-        }        
+        }
     }
 
-    $scope.crearCuota = function() {
+    $scope.crearCuota = function () {
         let query = {
             idCuentaPorCobrar,
             idTiempoCredito: $scope.comprobante.idTiempoCredito,
@@ -168,28 +157,26 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
         };
 
         showLoader();
-        mS.getData('post', 'CuentaPorCobrar/Insert/Cuota', {data: query},  true).then(response => {
-            hideLoader();
+        cuentaPorCobrarSvc.saveCuota(query).then(response => {
             if (response.code === "0") {
-                fS.sweetAlert('warning', response.message);                                                       
+                fS.sweetAlert('warning', response.message);
             }
-            if (response.code == "1") { 
-                $scope.isReload = true;               
-                fS.sweetAlert('success', response.message, response.titleSms, 1000);  
-                let tempCuotas = JSON.parse(response.payload) || [];                
+            if (response.code == "1") {
+                $scope.isReload = true;
+                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                let tempCuotas = JSON.parse(response.payload) || [];
                 $scope.cuotas = tempCuotas.map(cuotaMappFrom);
-                setFooterTotals();                                                               
+                setFooterTotals();
             }
-        }).catch(error=>{
-            hideLoader();
+        }).catch(error => {
             console.log(error)
-        })
+        }).finally(() => hideLoader());
     }
 
-    $scope.askToApplyMora = async function(){
+    $scope.askToApplyMora = async function () {
         try {
-            
-            let {isConfirmed} = await Swal.fire({
+
+            let { isConfirmed } = await Swal.fire({
                 html: `<small>Desea Aplicar el calculo de mora a estas Cuotas</small>`,
                 icon: 'warning',
                 showCancelButton: true,
@@ -199,29 +186,21 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                 cancelButtonText: 'No!'
             })
 
-            if(isConfirmed){
+            if (isConfirmed) {
                 let query = {
-                    idCuentaPorCobrar,                   
+                    idCuentaPorCobrar,
                     interes: $scope.comprobante.interes,
                     tipoConfig: $scope.comprobante.tipoConfig,
-                    tipo: 4
                 }
                 showLoader();
-                mS.getData('get', url + '?json=' + JSON.stringify(query)  , null, true).then(response=>{
-                    hideLoader();
-                    
-                    if(response.code==='0'){
-                        fS.sweetAlert('warning', response.message)
-                    }
-                    if(response.code==='1'){
-                        let tempCuotas = JSON.parse(response.payload)[0]
-                        $scope.cuotas = tempCuotas.map(cuotaMappFrom);
-                        setFooterTotals();
-
-                    }
-                })
+                cuentaPorCobrarSvc.applyMora(query).then(cuotas => {
+                    $scope.cuotas = cuotas.map(cuotaMappFrom);
+                    setFooterTotals();
+                }).catch(error => console.log(error))
+                    .finally(() => hideLoader())
             }
         } catch (error) {
+            hideLoader();
             console.log(error)
         }
     }
@@ -230,56 +209,56 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
      * @param {*} valid 
      * @returns 
      */
-    $scope.getConfigFechaCuota = function(valid) {                                                 
-        
+    $scope.getConfigFechaCuota = function (valid) {
+
         try {
 
             if (!$scope.comprobante.configFecha) {
-                fS.sweetAlert('warning', 'Ingrese la Config. Fecha');              
+                fS.sweetAlert('warning', 'Ingrese la Config. Fecha');
                 return
             }
 
             if (!fS.isValidDate($scope.comprobante.configFecha)) {
-                fS.sweetAlert('warning', 'Config. Fecha inválida')                                         
-                return
-            }
-    
-            if ($scope.comprobante.configFecha.getFullYear().toString().length !== 4) {
-                fS.sweetAlert('warning', 'El Formato del Año es incorrecto');                             
-                return
-            }
-    
-            if (!valid && $scope.comprobante.configFecha.getDate() >= 28) {
-                fS.sweetAlert('warning','Para la opción <code>Mismo Día</code>, el día tiene que ser menor a 28 días!');               
+                fS.sweetAlert('warning', 'Config. Fecha inválida')
                 return
             }
 
-            if(valid){
+            if ($scope.comprobante.configFecha.getFullYear().toString().length !== 4) {
+                fS.sweetAlert('warning', 'El Formato del Año es incorrecto');
+                return
+            }
+
+            if (!valid && $scope.comprobante.configFecha.getDate() >= 28) {
+                fS.sweetAlert('warning', 'Para la opción <code>Mismo Día</code>, el día tiene que ser menor a 28 días!');
+                return
+            }
+
+            if (valid) {
                 getEndOfMonthDates($scope.comprobante.configFecha)
-            }else{
+            } else {
                 getSameDayOfMonth($scope.comprobante.configFecha)
             }
-            
-            
+
+
         } catch (error) {
             console.log(error)
         }
     }
 
-    function getEndOfMonthDates(startDate){
+    function getEndOfMonthDates(startDate) {
         let currentDate = new Date(startDate)
 
-        for(let item of $scope.cuotas){
+        for (let item of $scope.cuotas) {
 
             // Obtener el último día del mes actual
             const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-            
+
             // Establecer la fecha actual en el último día del mes actual
             currentDate.setDate(lastDayOfMonth);
-            
+
             // Agregar la fecha vecimiento 
             item.fechaVencimiento = new Date(currentDate)
-        
+
             // Establecer la fecha actual en el primer día del mes siguiente
             currentDate.setDate(1);
             currentDate.setMonth(currentDate.getMonth() + 1);
@@ -287,7 +266,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
     }
 
 
-    function getSameDayOfMonth(date){
+    function getSameDayOfMonth(date) {
         const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
         const dayOfMonth = date.getDate() <= daysInMonth ? date.getDate() : daysInMonth;
         let index = 0;
@@ -295,21 +274,21 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
             const newDate = new Date(date);
             newDate.setMonth(date.getMonth() + index++);
             newDate.setDate(dayOfMonth);
-            item.fechaVencimiento = newDate;               
+            item.fechaVencimiento = newDate;
         }
-        
+
     }
 
-    $scope.setValorEntrada = function(valorEntrada) {
+    $scope.setValorEntrada = function (valorEntrada) {
         try {
             let subTotalCuota = 0, cuota = 0;
-            let dataCredito = $scope.tiempoCreditos.find(item=>item.idTiempoCredito===$scope.comprobante.idTiempoCredito)
+            let dataCredito = $scope.tiempoCreditos.find(item => item.idTiempoCredito === $scope.comprobante.idTiempoCredito)
 
             $scope.totalDiferencia = 0;
-            
+
             if (![null, undefined, "", "0"].includes(valorEntrada)) {
                 if (Number(valorEntrada) >= $scope.comprobante.importeTotal) {
-                    valorEntrada =$scope.comprobante.importeTotal;
+                    valorEntrada = $scope.comprobante.importeTotal;
                 }
             } else {
                 setTimeout(() => {
@@ -321,8 +300,8 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
 
             subTotalCuota = $scope.comprobante.importeTotal - Number(valorEntrada);
             subTotalCuota = fS.roundNumber(subTotalCuota, 5);
-            cuota         = subTotalCuota / dataCredito.numeroCuota;
-            cuota         = fS.roundNumber(cuota, 5);
+            cuota = subTotalCuota / dataCredito.numeroCuota;
+            cuota = fS.roundNumber(cuota, 5);
 
             for (let val of $scope.cuotas) {
                 if (val.nroCuota === "E") {
@@ -341,16 +320,16 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
     }
 
 
-    
-    $scope.setValorCuota = function(cuota) {
+
+    $scope.setValorCuota = function (cuota) {
         try {
             $scope.totalDiferencia = 0;
 
             if ([null, undefined, "", "0", "-"].includes(cuota.cuota)) {
                 cuota.cuota = 0;
                 setTimeout(() => {
-                    $("#setValcuota" + cuota.idCuotaXCobrar).select();
-                }, 50);
+                    $("#setValcuota" + cuota.idCuotaPorCobrar).select();
+                }, 500);
             }
 
             let getCuotasIndexMenor = $scope.cuotas.filter((val, index, arrayCuota) => index <= arrayCuota.indexOf(cuota));
@@ -358,7 +337,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
             let rowTotalCuota = getCuotasIndexMenor.map(val => Number(val.cuota)).reduce((prev, curr) => prev + curr, 0);
 
             if (rowTotalCuota > $scope.comprobante.importeTotal) {
-                tS.toastr('warning', 'El valor de la Cuota tiene que ser menor al Total del Comprobante');                
+                tS.toastr('warning', 'El valor de la Cuota tiene que ser menor al Total del Comprobante');
             }
 
             if (getCuotasIndexMayor.length > 0) {
@@ -388,9 +367,9 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
     }
 
 
-    $scope.setFechaVencimientoCuota = function(cuota) {
+    $scope.setFechaVencimientoCuota = function (cuota) {
         try {
-            let inputFvcto = $("#fechaVencimiento" + cuota.idCuotaXCobrar);
+            let inputFvcto = $("#fechaVencimiento" + cuota.idCuotaPorCobrar);
 
             if (!cuota.fechaVencimiento || !fS.isValidDate(cuota.fechaVencimiento)) {
                 inputFvcto.removeClass('is-valid');
@@ -419,27 +398,27 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
         }
     }
 
-    
-    const isValidValueCuota = (cuota)=> [null, undefined, "", 0, "0", ".", "-"].includes(cuota)
 
-    $scope.onSave = async function() {            
+    const isValidValueCuota = (cuota) => [null, undefined, "", 0, "0", ".", "-"].includes(cuota)
+
+    $scope.onSave = async function () {
 
         try {
             if ($scope.cuotas.some(val => val.nroCuota === "E" && isValidValueCuota(val.cuota))) {
                 tS.toastr('warning', 'Ingrese el Valor de la Entrada');
                 return
             }
-    
+
             if ($scope.cuotas.some(val => isValidValueCuota(val.cuota) || val.cuota < 0)) {
                 tS.toastr('warning', 'Verifique el valor de las Cuotas', 'Guardar Cuotas');
                 return
             }
 
-            if ($scope.cuotas.some(val => [null, undefined, ""].includes(val.fechaVencimiento) || $("#fechaVencimiento" + val.idCuotaXCobrar).hasClass('is-invalid'))) {
+            if ($scope.cuotas.some(val => [null, undefined, ""].includes(val.fechaVencimiento) || $("#fechaVencimiento" + val.idCuotaPorCobrar).hasClass('is-invalid'))) {
                 tS.toastr('warning', 'Verifique las Fechas de Vcto.');
                 return
             }
-    
+
             if ($scope.totalDiferencia > 0 || $scope.totalDiferencia < 0) {
                 tS.toastr('warning', 'El valor de la Diferencia tiene que ser 0');
                 return
@@ -447,13 +426,13 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
 
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                  confirmButton: 'btn btn-success',
-                  cancelButton: 'btn btn-danger ml-2'
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
                 },
                 buttonsStyling: false
             })
-              
-            let {isConfirmed} = await  swalWithBootstrapButtons.fire({                
+
+            let { isConfirmed } = await swalWithBootstrapButtons.fire({
                 html: `<small>Está seguro/a de guardar las cuotas de este Comprobante N°: <b>${$scope.comprobante.serieComprobante}</b></small>`,
                 icon: 'warning',
                 showCancelButton: true,
@@ -461,54 +440,51 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                 cancelButtonText: 'No, cancelar!',
                 reverseButtons: false
             })
-            
-            if(isConfirmed){
-                showLoader();
 
-                let cuotas =  $scope.cuotas.map(val => ({
+            if (isConfirmed) {
+
+                let cuotas = $scope.cuotas.map(val => ({
                     idCuotaPorCobrar: val.idCuotaPorCobrar,
                     cuota: Number(val.cuota),
                     fechaVencimiento: fS.formatDateTimeZone(val.fechaVencimiento, "YYYY-MM-DD HH:mm:ss A"),
-                    interes : val.interes,
+                    interes: val.interes,
                     diasMora: val.diasMora,
-                    mora: val.mora                    
+                    mora: val.mora
                 }))
                 let query = {
                     idCuentaPorCobrar,
                     codEstado: $scope.comprobante.codEstado,
-                    tipoConfig : $scope.comprobante.tipoConfig,
-                    interes : $scope.comprobante.interes,
+                    tipoConfig: $scope.comprobante.tipoConfig,
+                    interes: $scope.comprobante.interes,
                     cuotas
                 }
-
-                mS.getData('put', 'Contabilidad/CuentaPorCobrar/Update/Cuota', {data: query},  true).then(response => {
-                    hideLoader();
+                showLoader();
+                cuentaPorCobrarSvc.updateCuota(query).then(response => { 
                     if (response.code === "0") {
-                        fS.sweetAlert('warning', response.message, response.titleSms);                                           
+                        fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.code === "1") {                        
-                        fS.sweetAlert('success', response.message, response.titleSms, 1000);                                                               
+                    if (response.code === "1") {
+                        fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         $scope.isReload = true;
-                        let tempCuotas = JSON.parse(response.payload) || [];                
-                        $scope.cuotas = tempCuotas.map(cuotaMappFrom) ;
+                        let tempCuotas = JSON.parse(response.payload) || [];
+                        $scope.cuotas = tempCuotas.map(cuotaMappFrom);
                         setFooterTotals();
                     }
-                }).catch(error=>{
-                    hideLoader();
+                }).catch(error => { 
                     console.log(error)
-                })
+                }).finally(()=>hideLoader());
             }
-            
+
         } catch (error) {
-            hideLoader();            
+            hideLoader();
             console.log(error)
         }
-        
+
     }
 
 
 
-    $scope.closeModal = function(){
+    $scope.closeModal = function () {
         let isReload = $scope.isReload;
         $uibModalInstance.close({
             isReload

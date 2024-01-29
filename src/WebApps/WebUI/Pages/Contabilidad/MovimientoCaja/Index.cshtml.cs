@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,15 +10,15 @@ namespace WebUI.Pages.Contabilidad.MovimientoCaja
 {
     public class Index : PageModel
     {
-        private readonly ILogger<Index> _logger;
-
-        public Index(ILogger<Index> logger)
+        private readonly IConfiguration _configuration;
+        public Index(IConfiguration configuration)
         {
-            _logger = logger;
+            _configuration = configuration;
         }
-
         public void OnGet()
         {
+            var url = _configuration["UrlApps:AngularApp"];
+            ViewData["FrontEnd"] = url;
         }
     }
 }

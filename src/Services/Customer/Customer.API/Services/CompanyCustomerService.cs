@@ -12,11 +12,11 @@ namespace Customer.API.Services
         {
             _repository = repository;
         }
-        public async Task<string> AddAsync(Dictionary<string, object> data)
+        public async Task<ApiResponse> AddAsync(Dictionary<string, object> data)
         {
             try
             {
-                return await _repository.SPExecuteAsync("Ventas.Cliente_Insert", data);
+                return await _repository.DinamycObjectAsync<ApiResponse>("Ventas.Cliente_Insert", data);
             }
             catch (Exception)
             {
