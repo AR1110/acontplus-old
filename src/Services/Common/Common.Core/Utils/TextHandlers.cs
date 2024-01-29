@@ -6,19 +6,26 @@ namespace Common.Core.Utils
     {
         public static string StringSplit(string input, int length)
         {
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < input.Length; i++)
+            try
             {
-                sb.Append(input[i]);
-                if ((i + 1) % length == 0)
-                {
-                    sb.Append("\\n");
-                }
-            }
+                StringBuilder sb = new StringBuilder();
 
-            string output = sb.ToString();
-            return output;
+                for (int i = 0; i < input.Length; i++)
+                {
+                    sb.Append(input[i]);
+                    if ((i + 1) % length == 0)
+                    {
+                        sb.Append("\\n");
+                    }
+                }
+
+                string output = sb.ToString();
+                return output;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
