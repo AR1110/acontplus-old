@@ -43,21 +43,23 @@ BEGIN
     DECLARE @payments VARCHAR(MAX)
 	--DECLARE @pago DECIMAL(15,2)
  --   DECLARE @cambio DECIMAL(15,2)
+    DECLARE @saldo NUMERIC(18,2)
 	
     IF @codDoc = 'FV' OR @codDoc = 'NE'
         BEGIN
-         --SELECT TOP 1
-		       --  @pago =  ci.total
-		       -- ,@cambio = ci.cambio
-		       -- ,@formaPago = ef.descripcion
-	        --FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) 
-	        --INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
-	        --INNER JOIN dbo.ComprobanteIngreso       ci WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
-	        --INNER JOIN dbo.Cobro                     c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
-	        --INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-	        --WHERE cc.codDoc = IIF(@codDoc = 'FV','01','NE') 
-         --     AND cc.idDocumento = @idDocument 
-         --     AND ci.estado = 1
+         SELECT TOP 1
+		        -- @pago =  ci.total
+		        --,@cambio = ci.cambio
+		        --,@formaPago = ef.descripcion
+                @saldo = ISNULL(cc.saldo, 0)
+	        FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) 
+	        INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
+	        INNER JOIN dbo.ComprobanteIngreso       ci WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
+	        INNER JOIN dbo.Cobro                     c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
+	        INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
+	        WHERE cc.codDoc = IIF(@codDoc = 'FV','01','NE') 
+              AND cc.idDocumento = @idDocument 
+              AND ci.estado = 1
 
 	       SET @payments = (SELECT CAST(ci.total AS numeric(18,2)) valor
                 ,CAST(c.abono AS numeric(18,2)) abono
@@ -174,6 +176,7 @@ BEGIN
 						        --,cambio = ISNULL(@cambio,0)
 						        --,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
               --                  ,@payments payments
+                                ,@saldo saldo
 					        FROM dbo.Factura f WITH (NOLOCK)
 					        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK)  ON pe.idPuntoEmision = f.idPuntoEmision 
 					        INNER JOIN Sri.Establecimiento s  WITH (NOLOCK)  ON s.codEstab        = pe.codEstab
@@ -299,6 +302,7 @@ BEGIN
 							,tipoIva = 'IVA 12'
 							,'subTotal 12 %' as porcentajeIva
 							,usuario = u.nombreUsuario
+                            ,@saldo saldo
 							--,pago = ISNULL(@pago,0)
 							--,cambio = ISNULL(@cambio,0)
 						 --   ,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
