@@ -133,6 +133,7 @@ BEGIN
             INNER JOIN dbo.Caja     ca WITH (NOLOCK) ON ca.idCaja    = ac.idCaja
             WHERE ac.idUsuario = @idUsuario AND ac.idEntidad = @idEntidad
 
+
             SELECT idTipoDocumento,descripcion,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('IC','EC') ORDER BY descripcion DESC
 
             SELECT idEntidadFinanciera,descripcion,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
