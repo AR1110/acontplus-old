@@ -18,6 +18,7 @@ const ButtonAction = ({ data, getOrderDocuments }: ActionsProps) => {
     const [openDialogWhatsApp, setDialogWhatsApp] = useState(false);
     const [openCheckout, setOpenCheckout] = useState(false)
 
+    console.log(data.idCuentaPorCobrar)
     const documentReport = () => {
         try {
             const format = 'pdf';
