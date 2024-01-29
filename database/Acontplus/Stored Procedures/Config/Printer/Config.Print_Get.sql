@@ -48,10 +48,14 @@ BEGIN
            ,@totalThermalPrinters INT
 	       ,@totalInyectionPrinters INT
 	       ,@hasParams BIT = 0
+           ,@logoName VARCHAR(300)
+           ,@logoMimeType VARCHAR(300)
 	-------------END----------------
 
-	SELECT @codEstab  = codEstab , @idDocument = idDocument, @codDoc= codDoc 
-    FROM OPENJSON(@json) WITH (idDocument INT  '$.idDocument' ,codEstab VARCHAR(50) '$.codEstab',codDoc VARCHAR(5) '$.codDoc')
+	SELECT @codEstab = codEstab
+        ,@idDocument = idDocument
+        ,@codDoc= codDoc 
+    FROM OPENJSON(@json) WITH (idDocument INT  '$.idDocument',codEstab VARCHAR(50) '$.codEstab',codDoc VARCHAR(5) '$.codDoc')
 
 	SET @establecimientoId = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
     
@@ -60,6 +64,11 @@ BEGIN
 			SELECT Common.ufnSpResponse ('0','No tienes ninguna impresora configurada', DEFAULT)
 			RETURN 
 		END
+
+    IF EXISTS (SELECT TOP 1 1 FROM Config.EstablecimientoLogo WHERE EstablecimientoId = @establecimientoId)
+        BEGIN
+            SELECT @logoName = @codEstab + '-' + CONVERT(VARCHAR, LatestVersion), @logoMimeType = ContentType FROM Config.EstablecimientoLogo WHERE EstablecimientoId = @establecimientoId
+        END
 
 	SELECT TOP 1 @urlPrinter = IpAddress
 	FROM Config.PrinterDocument     cd WITH (NOLOCK)
@@ -130,7 +139,8 @@ BEGIN
 												    ELSE @codDoc
 									   END 
                             ,@establecimientoId establecimientoId
-                            ,@codEstab codEstab
+                            ,@logoName logoName
+                            ,@logoMimeType logoMimeType
  						FROM Config.PrinterDocument     cd WITH (NOLOCK)
 						INNER JOIN Config.Printer      i WITH (NOLOCK) ON i.Id      = cd.PrinterId AND i.[Enabled] = 1
 						INNER JOIN Config.PrinterType ti WITH (NOLOCK) ON ti.Id = i.PrinterTypeId
@@ -143,17 +153,17 @@ BEGIN
 	
 	SELECT  @dataSources = dataSources FROM Config.Documento_To_Print(@idDocument,@codDoc)
 
-	SELECT Common.ufnSpResponse ('1', 'Successful',
-    (SELECT IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') as urlPrinter 
-        ,@rdlcProps rdlcProps
+	--SELECT Common.ufnSpResponse ('1', 'Successful',
+ --   (SELECT IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') as urlPrinter 
+ --       ,@rdlcProps rdlcProps
+ --       ,@dataSources dataSources
+ --       ,@rdlcParams rdlcParams 
+	--FOR JSON PATH))
+
+SELECT payload = (SELECT @rdlcProps rdlcProps
         ,@dataSources dataSources
         ,@rdlcParams rdlcParams 
-	FOR JSON PATH))
-
---SELECT payload = (SELECT @rdlcProps rdlcProps
---        ,@dataSources dataSources
---        ,@rdlcParams rdlcParams 
---	FOR JSON PATH, WITHOUT_aRRAY_WRAPPER)
+	FOR JSON PATH, WITHOUT_aRRAY_WRAPPER)
 
 END
 GO
