@@ -71,9 +71,8 @@
 
     @if (moreSearchOptions) {
     <div class="row" ng-if="moreSearchOptions">
-      <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
         <div class="row">
-
           <div class="col-xl-4 col-lg-4 col-md-12 col-12">
             <div class="form-group">
               <label for="cliente-empleado">Persona</label>
@@ -96,27 +95,49 @@
           </div>
 
           @if (showCliente || showEmpleado) {
-            <div class="col-xl-8 col-lg-8 col-md-12 col-12">
-              @if (showCliente) {
-                <div class="form-group">
-                  <label for="customerSearch">Cliente: </label>
-                  <app-company-customer-search
-                    [isSearchSimple]="isCustomerSearchSimple"
-                    (onCustomerSelected)="onCustomerSelected($event)"
-                    (resultEmptyInput)="resultCustomerEmptyInput($event)"
-                    [textSearch]="companyCustomerSearchName"
-                  />
-                </div>
-              }
+          <div class="col-xl-8 col-lg-8 col-md-12 col-12">
+            @if (showCliente) {
+            <div class="form-group">
+              <label for="customerSearch">Cliente: </label>
+              <app-company-customer-search
+                [isSearchSimple]="isCustomerSearchSimple"
+                (onCustomerSelected)="onCustomerSelected($event)"
+                (resultEmptyInput)="resultCustomerEmptyInput($event)"
+                [textSearch]="companyCustomerSearchName"
+              />
             </div>
+            } @if (showEmpleado) {
+            <div class="form-group">
+              <label for="employeeFilter">Empleado: </label>
+              <app-employee-search
+                [isSearchSimple]="isSearchEmployeeSimple"
+                (onSupplierSelected)="onEmployeeSelected($event)"
+                (emptyInput)="employeeResultEmptyInput($event)"
+                [textSearch]="companyCustomerSearchName"
+              />
+            </div>
+            }
+          </div>
           }
         </div>
       </div>
-      <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
         <div class="row">
           <div class="col-xl-7 col-lg-7 col-md-12 col-12">
             <div class="form-group">
-              <span>Nro. Doc. Ingreso:</span>
+              <label>Usuario:</label>
+              <input
+                type="text"
+                class="form-control border-select"
+                ng-model="dataSearch.nroSecuencialDoc"
+                ngbTooltip="Ingrese Número de Documento del cobro!"
+                placeholder="Ej: 123"
+              />
+            </div>
+          </div>
+          <div class="col-xl-5 col-lg-5 col-md-12 col-12">
+            <div class="form-group">
+              <label>Nro. Doc. Ingreso:</label>
               <input
                 type="text"
                 class="form-control border-select"

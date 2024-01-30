@@ -2,111 +2,92 @@
 
     'use strict';
 
-    app.factory('guiaRemisionService', function ($injector) {
+    app.factory('guiaRemisionService', ['$injector', function ($injector) {
         let url = 'Logistica/GuiaRemision/';
         let mS = $injector.get('mainService');
-        let service = {};
+        let fS = $injector.get('formulario');
 
-        service.get = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
-                if (response.code === '0') {
-                    throw response
+        return {
+            getDataForm,
+            getDataFilter,
+            getAll,
+            post,
+            put,
+            anular
+        }
+
+        function getDataForm(){
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response=>{ 
+                if(!response) return {}
+                const { ptoEmision } = response;
+
+                const estabs = fS.groupingEstab({
+                    estabs: ptoEmision
+                })
+                return {
+                    estabs: estabs || [],
                 }
-                if (response.code === '1') {
-                    let mainData = JSON.parse(response.payload) || [];
+            })
+        }
+        function getDataFilter() {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (!response) return {};
+                const { ptoEmision, estadoDocumento } = response;
 
-                    if (query.tipo === 1) {
-                        let guiasRemision = mainData[0]
-                        return guiasRemision.map(item => {
-                            return {
-                                idGuiaRemision: item.idGuiaRemision,
-                                fechaEmision: item.fechaEmision,
-                                fechaInicio: item.fechaInicio,
-                                fechaFin: item.fechaFin,
-                                claveAcceso: item.claveAcceso,
-                                autorizada: item.autorizada,
-                                anulada: item.anulada,
-                                nroDoc: item.nroDoc,
-                                serieComprobante: item.nroDoc,
-                                cliente: item.cliente,
-                                correos: item.correos,
-                                nroFactura: item.nroFactura,
-                                transportista: item.transportista,
-                                estadoSri: item.estadoSri,
-                                usuario: item.usuario,
-                                style: item.style,
-                                codEstab: item.codEstab,
-                            }
-                        })
-                    }
-
-                    if (query.tipo === 2) {
-                        let tempEstabsAndPtosEmision = mainData[0];
-                        let estadosDoc = mainData[1];
-
-                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                            if (!existingItem) {
-                                acc.push({
-                                    idEstablecimiento: item.idEstablecimiento,
-                                    nombreComercial: item.nombreComercial,
-                                    codEstab: item.codEstab,
-                                    defaultEstab: item.defaultEstab,
-                                    puntosEmision: [{
-                                        idPuntoEmision: item.idPuntoEmision,
-                                        ptoEmi: item.ptoEmi,
-                                        defaultPtoEmi: item.defaultPtoEmi
-                                    }]
-                                });
-                            } else {
-                                existingItem.puntosEmision.push({
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                });
-                            }
-                            return acc;
-                        }, []);
-
-
-                        return {
-                            estabs,
-                            estadosDoc
-                        }
-                    }
+                const estabs = fS.groupingEstab({
+                    estabs: ptoEmision
+                })
+                return {
+                    estabs,
+                    estadosDoc: estadoDocumento
                 }
-            }).catch(error => {
-                console.log(error)
-                throw error
             })
         }
 
-        service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true)
-                .catch(errorResponse => {
-                    throw errorResponse
+        function getAll(obj) {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 1 }), null, true).then(response => {
+                if (!response) []; 
+
+                let guiasRemision = response.guias || []
+                return guiasRemision.map(item => {
+                    return {
+                        idGuiaRemision: item.idGuiaRemision,
+                        fechaEmision: item.fechaEmision,
+                        fechaInicio: item.fechaInicio,
+                        fechaFin: item.fechaFin,
+                        claveAcceso: item.claveAcceso,
+                        autorizada: item.autorizada,
+                        anulada: item.anulada,
+                        nroDoc: item.nroDoc,
+                        serieComprobante: item.nroDoc,
+                        cliente: item.cliente,
+                        correos: item.correos,
+                        nroFactura: item.nroFactura,
+                        transportista: item.transportista,
+                        estadoSri: item.estadoSri,
+                        usuario: item.usuario,
+                        style: item.style,
+                        codEstab: item.codEstab,
+                    }
                 })
+            })
         }
 
-        service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true)
-                .catch(errorResponse => {
-                    throw errorResponse
-                })
+
+        function post(data) {
+            return mS.getData('post', url, { data }, true)
         }
 
-        service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true)
-                .catch(errorResponse => {
-                    throw errorResponse
-                })
+        function put(id, data) {
+            return mS.getData('put', url + id, { data }, true)
         }
-        return service;
-    });
+        function anular(id) {
+            return mS.getData('delete', url + id, null, true)
+        }
+    }]);
 
 
-    app.factory('transportistaService', function ($injector) {
+    app.factory('transportistaService', ["$injector", function ($injector) {
         let url = 'Logistica/Transportista/';
         let mS = $injector.get('mainService');
         let service = {};
@@ -195,13 +176,13 @@
         }
 
         service.getDataForm = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tyList : 4}), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tyList: 4 }), null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload);
-                    return  results;
+                    return results;
                 }
             }).catch(error => {
                 throw error;
@@ -209,10 +190,10 @@
         }
         return service;
 
-    })
+    }])
 
 
-    app.factory('vehiculoService', function ($injector) {
+    app.factory('vehiculoService', ["$injector", function ($injector) {
         let url = 'Logistica/Vehiculo/';
         let mS = $injector.get('mainService');
         let service = {};
@@ -329,7 +310,7 @@
 
         return service;
 
-    })
+    }])
 
 
 

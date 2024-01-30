@@ -3,7 +3,7 @@
     'use strict';
 
     //Variables Constantes
-    const URL_TEMPLATE = '~/Pages/GuiaRemision/Shared/'
+    const URL_TEMPLATE = '~/Pages/FactElect/GuiaRemision/Shared/'
 
     let guiaRemisionSvc = {};
     let commonSvc = {};
@@ -32,9 +32,12 @@
             { codigo: 'AUTH', descripcion: 'AUTORIZADO' },
             { codigo: 'NAUTH', descripcion: 'NO AUTORIZADO' },
         ]
+
+        $scope.recordsQuantity = [25, 50, 100];
+
         $scope.dataSearch = {
             pageIndex: 1,
-            pageSize: 50,
+            pageSize: 25,
             checkBoxDate: true
         };
 
@@ -43,7 +46,9 @@
                 let modalRef = modalSvc.openModalCustom({
                     controller: 'ModalGuiaRemisionCtrl',
                     template: URL_TEMPLATE + '_ModalAddUpdate.cshtml',
-                    params: {},
+                    params: {
+                        tipoRegistro: 1
+                    },
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 })
@@ -150,8 +155,7 @@
                 $scope.guiasRemision = [];
                 $scope.cloneGuiasRemision = [];
 
-                let query = {
-                    tipo: 1,
+                let query = { 
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     checkBoxDate: $scope.dataSearch.checkBoxDate,
@@ -160,10 +164,12 @@
                     byUsuario: $scope.dataSearch.byUsuario,
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize
                 }
 
-                guiaRemisionSvc.get(query).then(response => {
+                guiaRemisionSvc.getAll(query).then(response => {
                     $scope.guiasRemision = response;
                     $scope.cloneGuiasRemision = JSON.parse(JSON.stringify($scope.guiasRemision))
                 }).catch(error => {
@@ -179,7 +185,7 @@
 
         $scope.initiload = function () {
             showLoader();
-            guiaRemisionSvc.get({ tipo: 2 }).then(response => {
+            guiaRemisionSvc.getDataFilter({ tipo: 2 }).then(response => {
                 establecimientos = response.estabs;
                 $scope.establecimientos = response.estabs;
 
@@ -344,12 +350,20 @@
      * 
      */
     app.controller('ModalGuiaRemisionCtrl', ModalGuiaRemisionCtrl);
-    ModalGuiaRemisionCtrl.$inject = ['$scope', '$uibModalInstance', '$timeout', 'transportistaService',
-        'vehiculoService', 'params',];
+    ModalGuiaRemisionCtrl.$inject = [
+        '$scope', 
+        '$uibModalInstance', 
+        '$timeout', 
+        '$injector', 
+        'params',];
 
-    function ModalGuiaRemisionCtrl($scope, $uibModalInstance, $timeout, transportistaSvc,
-        vehiculoSvc, params) {
+    function ModalGuiaRemisionCtrl($scope, $uibModalInstance, $timeout, $injector, params) {
 
+        const guiaRemisionSvc = $injector.get('guiaRemisionService');
+        const transportistaSvc = $injector.get('transportistaService');
+        const vehiculoSvc = $injector.get('vehiculoService');
+
+            
         $scope.tipoDoc = {
             codigo: 'GR'
         }
@@ -365,7 +379,7 @@
 
         $scope.dataClone = {}
 
-        $scope.establecimientos = establecimientos;
+        $scope.establecimientos = [];
 
         $scope.gridOptionsDetalle = {
             enableColumnMenus: false,
@@ -477,56 +491,70 @@
         initiload();
         async function initiload() {
             try {
+                showLoader();
+                guiaRemisionSvc.getDataForm().then(response=>{
+                    const {estabs} = response;
+                    $scope.establecimientos = estabs;
 
-                if (typeof params.dataDocumento === 'object' && params.dataDocumento.idGuiaRemision > 0) {
-                    $scope.tipoRegistro = 2;
-                    $scope.titleModal = 'Actualizar';
-                    $scope.iconBtnSave = 'ti-save';
+                    //Nuevo 
+                    if(params !==null && typeof params==="object" && params.tipoRegistro===1){
+                        $scope.tipoRegistro = 1;
+                        $scope.titleModal = 'Guardar';
+                        $scope.iconBtnSave = 'ti-save';
 
-                    $scope.searchClienteOptions.showBtnNew = true;
-                    $scope.searchClienteOptions.showBtnList = true;
-                    $scope.searchClienteOptions.showBtnEdit = true;
+                        const dataEstab =  $scope.establecimientos.find(estab=>estab.defaultEstab);
+                        if(dataEstab){
+                            $scope.data.codEstab = dataEstab.codEstab;
+                            $scope.dataClone.codEstab = dataEstab.codEstab;
+
+                            $scope.puntosEmision = dataEstab.puntosEmision;
+                            let dataPuntoEmision = $scope.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi);
+                            if(dataPuntoEmision){
+                                $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+                            } 
+                        }
+
+                    }
+                    // if (typeof params.dataDocumento === 'object' && params.dataDocumento.idGuiaRemision > 0) {
+                    //     $scope.tipoRegistro = 2;
+                    //     $scope.titleModal = 'Actualizar';
+                    //     $scope.iconBtnSave = 'ti-save';
+
+                    //     $scope.searchClienteOptions.showBtnNew = true;
+                    //     $scope.searchClienteOptions.showBtnList = true;
+                    //     $scope.searchClienteOptions.showBtnEdit = true;
 
 
-                    let {
-                        dataDocumento,
-                        cliente,
-                        transportista,
-                        vehiculo,
-                        empleado,
-                        detalleDocumento,
-                        infoAdicionalDocumento
-                    } = params;
-                    $scope.data = dataDocumento;
-                    $scope.cliente = cliente;
-                    $scope.transportista = transportista;
+                    //     let {
+                    //         dataDocumento,
+                    //         cliente,
+                    //         transportista,
+                    //         vehiculo,
+                    //         empleado,
+                    //         detalleDocumento,
+                    //         infoAdicionalDocumento
+                    //     } = params;
+                    //     $scope.data = dataDocumento;
+                    //     $scope.cliente = cliente;
+                    //     $scope.transportista = transportista;
 
-                    $scope.vehiculo = vehiculo;
-                    $scope.empleado = empleado;
+                    //     $scope.vehiculo = vehiculo;
+                    //     $scope.empleado = empleado;
 
-                    $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                    //     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
 
-                    let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab)
-                    $scope.puntosEmision = dataEstab.puntosEmision;
+                    //     let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab)
+                    //     $scope.puntosEmision = dataEstab.puntosEmision;
 
-                    $scope.gridOptionsDetalle.data = detalleDocumento;
-                    enumGridOptions()
+                    //     $scope.gridOptionsDetalle.data = detalleDocumento;
+                    //     enumGridOptions()
 
-                } else {
-                    $scope.tipoRegistro = 1;
-                    $scope.titleModal = 'Guardar';
-                    $scope.iconBtnSave = 'ti-save';
+                    // } 
+                }).finally(()=>hideLoader());
 
-                    let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
-
-                    $scope.data.codEstab = dataEstab.codEstab;
-                    $scope.dataClone.codEstab = dataEstab.codEstab;
-
-                    $scope.puntosEmision = dataEstab.puntosEmision;
-                    $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi)).idPuntoEmision : 0;
-
-                }
+                
             } catch (error) {
+                hideLoader();
                 console.log(error);
             }
         }

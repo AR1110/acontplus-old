@@ -10,12 +10,13 @@ import { isValidField } from '@core/utils/utils';
 import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ComprobanteIngreso } from '@modules/accounting/models/comp-ingreso.model';
 import { ComprobanteIngresoService } from '@modules/accounting/services/comprobante-ingreso.service';
+import { EmployeeSearchComponent } from '@modules/sale/components/employee-search/employee-search.component';
 import { AppModule } from 'src/app/app.module';
 
 @Component({
   selector: 'app-cobro-page',
   standalone: true,
-  imports: [AppModule, AccountingModule, DateRangeSelectionComponent],
+  imports: [AppModule, AccountingModule, DateRangeSelectionComponent, EmployeeSearchComponent],
   templateUrl: './cobro-page.component.html',
   styles: ``
 })
@@ -51,6 +52,8 @@ export class CobroPageComponent {
   disabledTempInputPersona = false;
   showCliente = false;
   showEmpleado = false;
+
+  isSearchEmployeeSimple = true;
 
 
   getComprobantesIngreso() {
@@ -126,6 +129,7 @@ export class CobroPageComponent {
     this.showCliente = false;
     this.showEmpleado = false;
     this.dataSearch.identificacionComprador = null;
+    this.companyCustomerSearchName = ''
     if (typeof this.dataSearch.byTipoPersona === 'number' && this.dataSearch.byTipoPersona === 1) {
       this.showCliente = true;
       this.showEmpleado = false;
@@ -159,6 +163,17 @@ export class CobroPageComponent {
     }
 
     this.getComprobantesIngreso()
+  }
+
+
+  onEmployeeSelected<T extends { data: any }>($event: T) {
+    const { data } = $event;
+    this.dataSearch.identificacionComprador = data.nroIdentificacion;
+    this.companyCustomerSearchName = data.nombreCompleto;
+  }
+  employeeResultEmptyInput($event: any) {
+    this.dataSearch.identificacionComprador = null;
+    this.companyCustomerSearchName = "";
   }
 
 }
