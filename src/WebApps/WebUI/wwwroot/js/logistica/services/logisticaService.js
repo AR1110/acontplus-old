@@ -11,6 +11,7 @@
             getDataForm,
             getDataFilter,
             getAll,
+            getDocs,
             post,
             put,
             anular
@@ -73,6 +74,9 @@
             })
         }
 
+        function getDocs(obj){
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 5 }), null, true)
+        }
 
         function post(data) {
             return mS.getData('post', url, { data }, true)

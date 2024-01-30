@@ -155,7 +155,7 @@
                 $scope.guiasRemision = [];
                 $scope.cloneGuiasRemision = [];
 
-                let query = { 
+                let query = {
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     checkBoxDate: $scope.dataSearch.checkBoxDate,
@@ -351,19 +351,23 @@
      */
     app.controller('ModalGuiaRemisionCtrl', ModalGuiaRemisionCtrl);
     ModalGuiaRemisionCtrl.$inject = [
-        '$scope', 
-        '$uibModalInstance', 
-        '$timeout', 
-        '$injector', 
-        'params',];
+        '$scope',
+        '$uibModalInstance',
+        '$timeout',
+        '$injector',
+        'params'
+    ];
 
     function ModalGuiaRemisionCtrl($scope, $uibModalInstance, $timeout, $injector, params) {
 
         const guiaRemisionSvc = $injector.get('guiaRemisionService');
         const transportistaSvc = $injector.get('transportistaService');
         const vehiculoSvc = $injector.get('vehiculoService');
+        const modalSvc = $injector.get('modalService');
+        const tS = $injector.get('toastService');
+        const fS = $injector.get('formulario');
 
-            
+
         $scope.tipoDoc = {
             codigo: 'GR'
         }
@@ -492,26 +496,26 @@
         async function initiload() {
             try {
                 showLoader();
-                guiaRemisionSvc.getDataForm().then(response=>{
-                    const {estabs} = response;
+                guiaRemisionSvc.getDataForm().then(response => {
+                    const { estabs } = response;
                     $scope.establecimientos = estabs;
 
                     //Nuevo 
-                    if(params !==null && typeof params==="object" && params.tipoRegistro===1){
+                    if (params !== null && typeof params === "object" && params.tipoRegistro === 1) {
                         $scope.tipoRegistro = 1;
                         $scope.titleModal = 'Guardar';
                         $scope.iconBtnSave = 'ti-save';
 
-                        const dataEstab =  $scope.establecimientos.find(estab=>estab.defaultEstab);
-                        if(dataEstab){
+                        const dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
+                        if (dataEstab) {
                             $scope.data.codEstab = dataEstab.codEstab;
                             $scope.dataClone.codEstab = dataEstab.codEstab;
 
                             $scope.puntosEmision = dataEstab.puntosEmision;
                             let dataPuntoEmision = $scope.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi);
-                            if(dataPuntoEmision){
+                            if (dataPuntoEmision) {
                                 $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
-                            } 
+                            }
                         }
 
                     }
@@ -550,9 +554,9 @@
                     //     enumGridOptions()
 
                     // } 
-                }).finally(()=>hideLoader());
+                }).finally(() => hideLoader());
 
-                
+
             } catch (error) {
                 hideLoader();
                 console.log(error);
@@ -672,6 +676,131 @@
 
         $scope.selectedEmpleadoChange = function (item) {
             $scope.empleado = item;
+        }
+
+
+        $scope.onSelectedClienteChange = function (result) {
+            $scope.cliente.idCliente = result.idCliente;
+        }
+
+        $scope.isShowDataGuia = true;
+        $scope.mostrarDatosGuia = function(){
+            $scope.isShowDataGuia = !$scope.isShowDataGuia;
+        }
+        //=====================================SEARCH DOCS ================
+        $scope.dataDocumentoReferenciado = {};
+        $scope.openModalDoc = function () {
+            try {
+                if (!($scope.cliente.idCliente > 0)) {
+                    tS.toastr('warning', 'Seleccione el Cliente');
+                    return
+                }
+                const modalRef = modalSvc.openModalCustom({
+                    controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
+                        const { cliente, codEstab } = params;
+
+
+                        $scope.recordsQuantity = [5, 10];
+
+                        $scope.dataSearch = {
+                            pageIndex: 1,
+                            pageSize: 5,
+                            maxSize: 5,
+                            totalRecords: 0
+                        };
+                        $scope.documentos = [];
+
+                        $scope.getDocs = function () {
+                            try {
+
+                                if ($scope.dataSearch.nroSecuencial) {
+                                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) { 
+                                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                                        return
+                                    } 
+                                }
+
+                                const params = {
+                                    pageIndex: $scope.dataSearch.pageIndex,
+                                    pageSize: $scope.dataSearch.pageSize,
+                                    idCliente: cliente.idCliente,
+                                    codEstab,
+                                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                                }
+                                showLoader();
+                                guiaRemisionSvc.getDocs(params).then(response => {
+                                    if (!response) {
+                                        console.log(response)
+                                        documentos = [];
+                                    }
+                                    let tempData = response.facturas;
+                                    let results = tempData.map(doc => {
+                                        let detalles = JSON.parse(doc.detalles);
+                                        return {
+                                            idDocumento: doc.idFactura,
+                                            serieComprobante: doc.serieComprobante,
+                                            razonSocialComprador: doc.razonSocialComprador,
+                                            detalles,
+                                            totalRecords: doc.totalRecords,
+                                        }
+                                    })
+                                    $scope.documentos = results;
+                                    $scope.dataSearch.totalRecords = $scope.documentos.length > 0 ? $scope.documentos[0].totalRecords : 0
+
+                                    if($scope.documentos.length===0){
+                                        tS.toastr('info', 'No se encontró los resultados!');
+                                    }
+                                }).catch(error=>{
+                                    console.log(error)
+                                }).finally(()=>hideLoader());
+                            } catch (error) {
+                                console.log(error)
+                            }
+                        }
+
+                        $scope.getDocs();
+
+
+                        $scope.pagechanged = function () {
+                            $scope.getDocs();
+                        };
+
+                        $scope.changePageSize = function () {
+                            $scope.dataSearch.pageIndex = 1;
+                            $scope.getDocs();
+                        };
+
+                        $scope.selectedDoc = function(item){
+                            $uibModalInstance.close(item);
+                        }
+
+                        $scope.closeModal = function () {
+                            $uibModalInstance.close();
+                        }
+                    }],
+                    template: `${URL_TEMPLATE}_ModalDocs.cshtml`,
+                    size: 'lg',
+                    params: {
+                        cliente: $scope.cliente,
+                        codEstab: $scope.data.codEstab
+                    },
+                    isRenderRazorPartial: true
+                })
+
+                modalRef.result.then(result=>{
+                    if(result!==null && typeof result==='object'){
+                        setDataDocReferenciado(result)
+                    }
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        function setDataDocReferenciado(result){
+            $scope.dataDocumentoReferenciado = result;
+            $scope.gridOptionsDetalle.data = result.detalles;
+            tS.toastr('success', 'Agregado correctamente!');
         }
 
         //==========================Detalle==========================      
@@ -912,8 +1041,8 @@
                     guia.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision);
                     guia.fechaInicio = fS.formatDateTimeZone($scope.data.fechaInicio);
                     guia.fechaFin = fS.formatDateTimeZone($scope.data.fechaFin);
-                    guia.estableDestino = ["",null, undefined].includes($scope.data.estableDestino)? null: $scope.data.estableDestino;
-                    
+                    guia.estableDestino = ["", null, undefined].includes($scope.data.estableDestino) ? null : $scope.data.estableDestino;
+
                     let data = {
                         guia,
                         detalle: $scope.gridOptionsDetalle.data,
