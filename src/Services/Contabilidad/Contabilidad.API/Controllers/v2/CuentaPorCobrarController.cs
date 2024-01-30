@@ -1,102 +1,91 @@
 ﻿using Asp.Versioning;
 using Common.Core.Models;
 using Common.Core.Utils;
-using Common.Infrastructure.Repository;
+using Contabilidad.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Contabilidad.API.Controllers.v2
 {
     [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiController]    
+    [ApiController]
     [ApiVersion("2.0")]
     public class CuentaPorCobrarController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly ICuentaPorCobrarService _service;
         private readonly LogWriter _log;
 
-        public CuentaPorCobrarController(IConfiguration configuration, LogWriter log)
+        public CuentaPorCobrarController(ICuentaPorCobrarService service, LogWriter log)
         {
-            _configuration = configuration;
+            _service = service;
             _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            var _dbAccess = new DbAccess(_configuration);
-
-            var _response = new ApiResponse();
             try
             {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _dbAccess.SPExecute("Contabilidad.CuentaPorCobrar_Get");
-                _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _dbAccess.GetDataSetAsync();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(json)}
+                };
+
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Cuenta Por Cobrar -> Get: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al traer las cuentas por cobrar");
+                _log.LogActivity("Error en get Cuenta Por Cobrar " + ex.Message);
+                return BadRequest("Error en get Cuenta Por Cobrar" + ex.Message);
             }
-            finally
-            {
-                _dbAccess.Close();
-            }
-            return Ok(_response);
         }
 
-        [HttpPost("Insert/Cuota")]
-        public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
+        [HttpPost]
+        public async Task<IActionResult> Insert([FromBody] ApiRequest data)
         {
-            var _dbAccess = new DbAccess(_configuration);
-
-            var _response = new ApiResponse();
             try
             {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Insert");
-                _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
-                _response = _dbAccess.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Cuenta Por Cobrar -> Post: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Insertar las cuotas por cobrar");
+                _log.LogActivity("Error en Post Cuenta Por Cobrar " + ex.Message);
+                return BadRequest("Error en Post Cuenta Por Cobrar" + ex.Message);
             }
-            finally
-            {
-                _dbAccess.Close();
-            }
-            return Ok(_response);
         }
 
-        [HttpPut("Update/Cuota")]
-        public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] ApiRequest data)
         {
-            var _dbAccess = new DbAccess(_configuration);
-
-            var _response = new ApiResponse();
             try
             {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Update");
-                _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
-                _response = _dbAccess.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Cuenta Por Cobrar -> Put: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar las Cuota por Cobrar");
+                _log.LogActivity("Error en Update Cuenta Por Cobrar " + ex.Message);
+                return BadRequest("Error en Update Cuenta Por Cobrar" + ex.Message);
             }
-            finally
-            {
-                _dbAccess.Close();
-            }
-            return Ok(_response);
         }
     }
 }
