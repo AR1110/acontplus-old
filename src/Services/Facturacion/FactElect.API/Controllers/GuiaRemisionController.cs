@@ -61,8 +61,8 @@ namespace FactElect.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al obtener datos de la nota de entrega: \n" + ex.ToString());
-                return BadRequest("Error on get by id: " + ex.Message);
+                _log.LogActivity("Error al obtener datos de Guia Remision: \n" + ex.ToString());
+                return BadRequest("Error on get by id Guia Remision: " + ex.Message);
             }
         }
 

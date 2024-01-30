@@ -920,14 +920,14 @@
                             //format: "D-MMMM-YY", //will give you 6-January-17
                         },
                         ranges: {
-                             'Hoy': [moment(), moment()],
-            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Últimos 5 días': [moment().subtract(4, 'days'), moment()],
-            'Últimos 10 días': [moment().subtract(9, 'days'), moment()],
-            'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
-            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-            'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-            'El mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                            'Hoy': [moment(), moment()],
+                            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Últimos 5 días': [moment().subtract(4, 'days'), moment()],
+                            'Últimos 10 días': [moment().subtract(9, 'days'), moment()],
+                            'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                            'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                            'El mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                         },
                         eventHandlers: {
                             'apply.daterangepicker': function () {
@@ -1671,11 +1671,11 @@
             },
             link: function (scope, element) {
                 let tS = toastService;
-                element.on('click', async function () {  
-                    if ( typeof scope.params ==='object' && scope.params.versionComp !== '2.0.0') { 
+                element.on('click', async function () {
+                    if (typeof scope.params === 'object' && scope.params.versionComp !== '2.0.0') {
                         tS.toastr('warning', 'No disponible');
                         return
-                    }  
+                    }
 
                     let { fileCtrl, controller, template } = nombreModalFactElect.RETENCION_ATS;
                     let ctrl = (await import(fileCtrl))[controller];
@@ -1703,5 +1703,20 @@
         }
     })
 
+    app.directive('btnCopy', function (toastService) {
+        return {
+            restrict: 'A',
+            scope: {
+                text: '='
+            },
+            link: function (scope, element) {
+                let tS = toastService
+                element.on('click', async function () {
+                    navigator.clipboard.writeText(scope.text);
+                    tS.toastr('info', 'Copiado: ' + scope.text)
+                });
+            }
+        }
+    })
 
 })(window.angular)

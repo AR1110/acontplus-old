@@ -49,7 +49,7 @@
                     </div>
                     <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <label for="docAduanero">Doc. Aduanero </label>
+                            <label for="docAduanero">Documento Aduanero: </label>
                             <input type="text" class="form-control border-select" ng-model="data.docAduanero">
                         </div>
                     </div>
@@ -173,7 +173,7 @@
                     <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Identificador Comprador: </label>
-                            <input type="text" class="form-control" readonly>
+                            <input type="text" class="form-control" ng-value="cliente.numeroIdentificacion" readonly>
                         </div>
                     </div>
                 </div>
@@ -264,15 +264,16 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex align-items-center justify-content-between">
                         <div class="col-12">
                             <div class="row">
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-cyan btn-lg btn-block" ng-click="openModalDoc()">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <button type="button" class="btn btn-cyan btn-block" ng-click="openModalDoc()">
                                         <i class="fas fa-search"></i> Documentos de referencia
                                     </button>
                                 </div>
-                                <div class="col-6">
-                                    <p>
-                                        <span class="font-weight-bold">Serie Comprobante</span>
-                                        <span>{{dataDocumentoReferenciado.serieComprobante}}</span>                                    
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <p class="border border-danger px-3">
+                                        <span class="font-weight-bold">Serie Comprobante: </span>
+                                        <span>{{dataDocumentoReferenciado.serieComprobante}}</span>    
+                                    </p>                             
                                 </div>
                             </div>
 
@@ -297,7 +298,7 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-success" ng-click="save()">
+        <button type="button" class="btn btn-success" ng-click="onSave()">
             <i ng-class="btnIconSave"></i> {{titleModal}}
         </button>
         <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>

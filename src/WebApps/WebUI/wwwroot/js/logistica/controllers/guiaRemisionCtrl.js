@@ -6,27 +6,23 @@
     const URL_TEMPLATE = '~/Pages/FactElect/GuiaRemision/Shared/'
 
     let guiaRemisionSvc = {};
-    let commonSvc = {};
-    let clienteSvc = {};
+    let commonSvc = {}; 
     let fS = {};
     let tS = {};
 
-    let establecimientos = [];
-
     app.controller('guiaRemisionCtrl', guiaRemisionCtrl);
 
-    guiaRemisionCtrl.$inject = ['$scope', '$injector', '$filter', 'modalService', 'decodeToken'];
+    guiaRemisionCtrl.$inject = ['$scope', '$injector', '$filter', 'modalService'];
 
-    function guiaRemisionCtrl($scope, $injector, $filter, modalSvc, decodeToken) {
+    function guiaRemisionCtrl($scope, $injector, $filter, modalSvc) {
 
 
         guiaRemisionSvc = $injector.get('guiaRemisionService');
-        commonSvc = $injector.get('commonService');
-        clienteSvc = $injector.get('clienteService');
+        commonSvc = $injector.get('commonService'); 
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
 
-        let idUsuarioRol = Number(decodeToken.idUsuarioRol);
+        $scope.cliente = {}; 
 
         $scope.estadosDocumento = [
             { codigo: 'AUTH', descripcion: 'AUTORIZADO' },
@@ -38,7 +34,9 @@
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 25,
-            checkBoxDate: true
+            checkBoxDate: true,
+            totalRecords: 0,
+            maxSize: 5
         };
 
         $scope.openModalNew = function () {
@@ -69,60 +67,32 @@
             $scope.dataSearch.fechaInicio = item.startDate,
                 $scope.dataSearch.fechaFin = item.endDate
             $scope.getGuiasRemision();
-        }
+        } 
 
-        $scope.clienteSearch = function (textSearch) {
-            let query = {
-                textSearch
-            }
-
-            if (textSearch.length > 2) {
-                return clienteSvc.search(query).catch(error => {
-                    console.log(error)
-                })
-            }
-        }
-
-        $scope.onKeyupClienteSearchFiltro = function () {
-            if (!$scope.modelTextSearch) {
+        $scope.onKeyupCliente = function () {
+            if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.byCliente = 0;
                 $scope.dataSearch.checkBoxDate = true;
             }
         }
 
-        $scope.selectedClienteSearchFiltro = function (item) {
+        $scope.onSelectCliente = function (item) {
             $scope.dataSearch.byCliente = item.idCliente;
             $scope.dataSearch.checkBoxDate = true;
             $scope.getGuiasRemision();
         }
+ 
 
-        $scope.usuarioSearch = function (textSearch) {
-            try {
-                let query = {
-                    idRol: idUsuarioRol,
-                    busqueda: textSearch
-                }
-
-                if (query.busqueda.length > 2) {
-                    return commonSvc.usuarioSearch(query)
-                        .catch(error => {
-                            console.log(error);
-                            throw error;
-                        })
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-
+        $scope.usuario = {}
         $scope.onKeyupUsuarioSearch = function () {
-            if (!$scope.modelNombreCompleto) {
+            if (!$scope.usuario.nombreUsuario) {
                 $scope.dataSearch.byUsuario = 0;
             }
         }
 
         $scope.selectedUsuarioSearch = function (item) {
             $scope.dataSearch.byUsuario = item.idUsuario;
+            $scope.getGuiasRemision();
         }
 
         $scope.onClickBtnMore = function () {
@@ -151,7 +121,6 @@
                     }
                 }
 
-                showLoader();
                 $scope.guiasRemision = [];
                 $scope.cloneGuiasRemision = [];
 
@@ -159,9 +128,9 @@
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     checkBoxDate: $scope.dataSearch.checkBoxDate,
-                    idCliente: $scope.dataSearch.byCliente,
-                    codEstado: $scope.dataSearch.codEstado,
-                    byUsuario: $scope.dataSearch.byUsuario,
+                    idCliente: fS.isValidField($scope.dataSearch.byCliente),
+                    codEstado: fS.isValidField($scope.dataSearch.codEstado),
+                    byUsuario: fS.isValidField($scope.dataSearch.byUsuario),
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                     secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
@@ -169,11 +138,12 @@
                     pageSize: $scope.dataSearch.pageSize
                 }
 
+                showLoader();
                 guiaRemisionSvc.getAll(query).then(response => {
                     $scope.guiasRemision = response;
-                    $scope.cloneGuiasRemision = JSON.parse(JSON.stringify($scope.guiasRemision))
+                    $scope.cloneGuiasRemision = JSON.parse(JSON.stringify($scope.guiasRemision));
+                    $scope.dataSearch.totalRecords = $scope.guiasRemision.length > 0 ? $scope.guiasRemision[0].totalRecords : 0;
                 }).catch(error => {
-                    hideLoader();
                     console.log(error)
                 }).finally(() => hideLoader())
 
@@ -185,8 +155,7 @@
 
         $scope.initiload = function () {
             showLoader();
-            guiaRemisionSvc.getDataFilter({ tipo: 2 }).then(response => {
-                establecimientos = response.estabs;
+            guiaRemisionSvc.getDataFilter().then(response => {
                 $scope.establecimientos = response.estabs;
 
                 if ($scope.establecimientos.length > 0) {
@@ -221,26 +190,23 @@
             try {
 
                 showLoader();
-                commonSvc.getDataGuiaRemision(item.idGuiaRemision).then(response => {
-                    hideLoader();
-                    if (!response.isComplete) throw response
 
-                    let modalRef = modalSvc.openModalCustom({
-                        controller: 'ModalGuiaRemisionCtrl',
-                        template: URL_TEMPLATE + '_ModalAddUpdate.cshtml',
-                        params: response,
-                        windowClass: 'uibModalFullScreen',
-                        isRenderRazorPartial: true
-                    })
+                let modalRef = modalSvc.openModalCustom({
+                    controller: 'ModalGuiaRemisionCtrl',
+                    template: URL_TEMPLATE + '_ModalAddUpdate.cshtml',
+                    params: {
+                        tipoRegistro: 2,
+                        id: item.idGuiaRemision,
+                        serieComprobanteDocReferenciado: item.serieFactura
+                    },
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                })
 
-                    modalRef.result.then(result => {
-                        if (typeof result === 'object') {
-                            $scope.getGuiasRemision();
-                        }
-                    })
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error);
+                modalRef.result.then(result => {
+                    if (result !== null && typeof result === 'object') {
+                        $scope.getGuiasRemision();
+                    }
                 })
 
             } catch (error) {
@@ -289,7 +255,7 @@
 
                 if (isConfirmed) {
                     showLoader();
-                    guiaRemisionSvc.delete(item.idGuiaRemision).then(response => {
+                    guiaRemisionSvc.anular(item.idGuiaRemision).then(response => {
                         hideLoader()
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
@@ -360,6 +326,7 @@
 
     function ModalGuiaRemisionCtrl($scope, $uibModalInstance, $timeout, $injector, params) {
 
+        const commonSvc = $injector.get('commonService');
         const guiaRemisionSvc = $injector.get('guiaRemisionService');
         const transportistaSvc = $injector.get('transportistaService');
         const vehiculoSvc = $injector.get('vehiculoService');
@@ -519,41 +486,48 @@
                         }
 
                     }
-                    // if (typeof params.dataDocumento === 'object' && params.dataDocumento.idGuiaRemision > 0) {
-                    //     $scope.tipoRegistro = 2;
-                    //     $scope.titleModal = 'Actualizar';
-                    //     $scope.iconBtnSave = 'ti-save';
 
-                    //     $scope.searchClienteOptions.showBtnNew = true;
-                    //     $scope.searchClienteOptions.showBtnList = true;
-                    //     $scope.searchClienteOptions.showBtnEdit = true;
+                    if (params !== null && typeof params === 'object' && params.id > 0) {
+                        $scope.tipoRegistro = 2;
+                        $scope.titleModal = 'Actualizar';
+                        $scope.iconBtnSave = 'ti-save';
+                        showLoader();
+                        guiaRemisionSvc.getId(params.id).then(response => {
+                            const {
+                                comprobante,
+                                detalles,
+                                cliente,
+                                empleado,
+                                infoAdicionalDocumento,
+                                transportista,
+                                vehiculo,
+                            } = response; 
 
+                            $scope.data = comprobante;
+                            $scope.cliente = cliente;
+                            $scope.transportista = transportista;
 
-                    //     let {
-                    //         dataDocumento,
-                    //         cliente,
-                    //         transportista,
-                    //         vehiculo,
-                    //         empleado,
-                    //         detalleDocumento,
-                    //         infoAdicionalDocumento
-                    //     } = params;
-                    //     $scope.data = dataDocumento;
-                    //     $scope.cliente = cliente;
-                    //     $scope.transportista = transportista;
+                            $scope.vehiculo = vehiculo;
+                            $scope.empleado = empleado;
 
-                    //     $scope.vehiculo = vehiculo;
-                    //     $scope.empleado = empleado;
+                            $scope.infoAdicionalDocumento = infoAdicionalDocumento;
 
-                    //     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                            let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab)
+                            $scope.puntosEmision = dataEstab.puntosEmision;
 
-                    //     let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab)
-                    //     $scope.puntosEmision = dataEstab.puntosEmision;
+                            $scope.gridOptionsDetalle.data = detalles;
 
-                    //     $scope.gridOptionsDetalle.data = detalleDocumento;
-                    //     enumGridOptions()
+                            $scope.dataDocumentoReferenciado = {
+                                serieComprobante: params.serieComprobanteDocReferenciado,
+                                idDocumento: comprobante.idDocumento
+                            }
 
-                    // } 
+                        })
+                            .catch(error => {
+                                console.log(error)
+                            })
+                            .finally(() => hideLoader());
+                    }
                 }).finally(() => hideLoader());
 
 
@@ -605,10 +579,6 @@
             }
         }
 
-
-        $scope.selectedItemCliente = function (item) {
-            $scope.cliente = item;
-        }
 
         //----------------------------TRANSPORTISTA----------------------
 
@@ -678,16 +648,30 @@
             $scope.empleado = item;
         }
 
-
-        $scope.onSelectedClienteChange = function (result) {
-            $scope.cliente.idCliente = result.idCliente;
+        //======================Cliente==========================================
+        $scope.onKeyupCustomer = function () {
+            if (!$scope.cliente.nombreFiscal) {
+                $scope.cliente = {};
+                $scope.dataDocumentoReferenciado = {};
+                $scope.gridOptionsDetalle.data = [];
+            }
         }
+        $scope.onSelectedClienteChange = function (result) {
+            if (result.idCliente !== $scope.cliente.idCliente) {
+                $scope.gridOptionsDetalle.data = [];
+                $scope.dataDocumentoReferenciado = {};
+            }
+            $scope.cliente.idCliente = result.idCliente;
+            $scope.cliente.nombreFiscal = result.nombreFiscal;
+        }
+        //=====================End cliente========================================
 
         $scope.isShowDataGuia = true;
-        $scope.mostrarDatosGuia = function(){
+        $scope.mostrarDatosGuia = function () {
             $scope.isShowDataGuia = !$scope.isShowDataGuia;
         }
-        //=====================================SEARCH DOCS ================
+
+        //=====================================START SEARCH DOCS ============================
         $scope.dataDocumentoReferenciado = {};
         $scope.openModalDoc = function () {
             try {
@@ -714,10 +698,10 @@
                             try {
 
                                 if ($scope.dataSearch.nroSecuencial) {
-                                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) { 
+                                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                                         return
-                                    } 
+                                    }
                                 }
 
                                 const params = {
@@ -734,6 +718,7 @@
                                         documentos = [];
                                     }
                                     let tempData = response.facturas;
+
                                     let results = tempData.map(doc => {
                                         let detalles = JSON.parse(doc.detalles);
                                         return {
@@ -744,15 +729,16 @@
                                             totalRecords: doc.totalRecords,
                                         }
                                     })
+
                                     $scope.documentos = results;
                                     $scope.dataSearch.totalRecords = $scope.documentos.length > 0 ? $scope.documentos[0].totalRecords : 0
 
-                                    if($scope.documentos.length===0){
+                                    if ($scope.documentos.length === 0) {
                                         tS.toastr('info', 'No se encontró los resultados!');
                                     }
-                                }).catch(error=>{
+                                }).catch(error => {
                                     console.log(error)
-                                }).finally(()=>hideLoader());
+                                }).finally(() => hideLoader());
                             } catch (error) {
                                 console.log(error)
                             }
@@ -770,7 +756,7 @@
                             $scope.getDocs();
                         };
 
-                        $scope.selectedDoc = function(item){
+                        $scope.selectedDoc = function (item) {
                             $uibModalInstance.close(item);
                         }
 
@@ -787,8 +773,8 @@
                     isRenderRazorPartial: true
                 })
 
-                modalRef.result.then(result=>{
-                    if(result!==null && typeof result==='object'){
+                modalRef.result.then(result => {
+                    if (result !== null && typeof result === 'object') {
                         setDataDocReferenciado(result)
                     }
                 })
@@ -796,42 +782,54 @@
                 console.log(error)
             }
         }
-
-        function setDataDocReferenciado(result){
+        function setDataDocReferenciado(result) {
             $scope.dataDocumentoReferenciado = result;
             $scope.gridOptionsDetalle.data = result.detalles;
+            focusColumnCantidad();
             tS.toastr('success', 'Agregado correctamente!');
         }
 
+        //=====================================END SEARCH DOCS ============================
+
         //==========================Detalle==========================      
-        $scope.indexRowDetalle = null;
+
+        function addRow() {
+            $scope.gridOptionsDetalle.data.push({
+                n: 0,
+                idGuiaRemisionDetalle: 0,
+                idArticulo: 0,
+                codigo: null,
+                descripcion: null,
+                llevaInventario: false,
+                cantidad: 0,
+                estado: true
+            })
+        }
+
         $scope.setItemArticuloEnDetalle = function (item) {
-
             try {
-
-                showLoader();
                 let { articulo } = item;
 
                 let entity = {};
 
-                if ([null, undefined].includes($scope.indexRowDetalle)) {
-                    $scope.addRow()
-                    $scope.indexRowDetalle = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
+                let index = $scope.gridOptionsDetalle.data.findIndex(item => item.idArticulo === articulo.idArticulo);
+
+                if (index === -1) {
+                    addRow()
+                    index = $scope.gridOptionsDetalle.data.findIndex(value => value.idArticulo === 0);
+                    entity = $scope.gridOptionsDetalle.data[index];
+                } else {
+                    entity = $scope.gridOptionsDetalle.data[index];
+                    entity.cantidad += 1;
 
                 }
 
-                entity = $scope.gridOptionsDetalle.data[$scope.indexRowDetalle];
-
-                entity.idArticulo = articulo.idArticulo,
-                    entity.codigo = articulo.codigoArticulo,
-                    entity.descripcion = articulo.descripcion,
-                    entity.llevaInventario = articulo.llevaInventario
-                entity.cantidad = entity.cantidad + 1;
-
-
+                entity.idArticulo = articulo.idArticulo;
+                entity.codigo = articulo.codigoArticulo;
+                entity.descripcion = articulo.descripcion;
+                entity.llevaInventario = articulo.llevaInventario;
                 enumGridOptions();
-                $scope.focusColumnCantidad();
-                hideLoader();
+                focusColumnCantidad();
             } catch (error) {
                 console.log(error)
                 hideLoader();
@@ -840,17 +838,7 @@
         }
 
 
-        $scope.addRow = function () {
-            $scope.gridOptionsDetalle.data.push({
-                n: 0,
-                idGuiaRemisionDetalle: 0,
-                idArticulo: 0,
-                codigo: null,
-                descripcion: null,
-                llevaInventario: false,
-                cantidad: 0
-            })
-        }
+
         function enumGridOptions() {
             let index = 1;
             for (let item of $scope.gridOptionsDetalle.data) {
@@ -859,7 +847,7 @@
         }
 
 
-        $scope.focusColumnCantidad = function () {
+        function focusColumnCantidad() {
             let index = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'cantidad')
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptionsDetalle.data[0],
@@ -876,7 +864,7 @@
         }
 
 
-        $scope.setFocusArticulo = function () {
+        function setFocusArticulo() {
             setTimeout(function () {
                 document.querySelector('#custom-template-md-autocomplete-articulo').focus();
             }, 100);
@@ -921,11 +909,13 @@
         }
 
 
+        const isUpdate = () => $scope.data.idGuiaRemision > 0;
+        const isRegister = () => !($scope.data.idGuiaRemision > 0)
 
-        $scope.save = async function () {
+
+        $scope.onSave = async function () {
             try {
-
-                if (!$scope.data.codEstab) {
+                if (!fS.isValidField($scope.data.codEstab)) {
                     tS.toastr('warning', 'Seleccione el Establecimiento');
                     return
                 }
@@ -935,13 +925,28 @@
                     return
                 }
 
-                if (!$scope.data.fechaEmision) {
+                if (!fS.isValidField($scope.data.fechaEmision)) {
                     tS.toastr('warning', 'Ingrese la Fecha de Emisión');
                     return
                 }
 
-                if (!($scope.cliente.idCliente > 0)) {
-                    tS.toastr('warning', 'Seleccione el Cliente');
+                if (!(fS.isDateValid($scope.data.fechaEmision))) {
+                    tS.toastr('warning', 'Ingrese la Fecha de emisión');
+                    return
+                }
+
+                if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                    tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                    return
+                }
+
+
+                let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
+
+                if (ajusteFechaEmision) {
+                    $scope.data.fechaEmision = ajusteFechaEmision;
+                } else {
+                    console.log('Error al justar la fecha de Emisión')
                     return
                 }
 
@@ -957,6 +962,32 @@
                     tS.toastr('warning', 'Fecha Fin no tiene que ser menor al Fecha de Inicio');
                     return
                 }
+
+                if (!fS.isValidField($scope.data.ptoPartida)) {
+                    tS.toastr('warning', 'Ingrese el Punto de Partida');
+                    return
+                }
+                if (!fS.isValidField($scope.data.ptoLlegada)) {
+                    tS.toastr('warning', 'Ingrese el Punto de Llegada');
+                    return
+                }
+
+                if (!fS.isValidField($scope.data.ruta)) {
+                    tS.toastr('warning', 'Ingrese la Ruta');
+                    return
+                }
+
+                if (!fS.isValidField($scope.data.motivo)) {
+                    tS.toastr('warning', 'Ingrese el Motivo de Traslado');
+                    return
+                }
+
+                if (!($scope.cliente.idCliente > 0)) {
+                    tS.toastr('warning', 'Seleccione el Cliente');
+                    return
+                }
+
+
                 if (!($scope.transportista.idTransportista > 0)) {
                     tS.toastr('warning', 'Seleccione el Transportista');
                     return
@@ -966,47 +997,34 @@
                     return
                 }
 
-                if (!$scope.data.ptoPartida) {
-                    tS.toastr('warning', 'Ingrese el Punto de Partida');
-                    return
-                }
-                if (!$scope.data.ptoLlegada) {
-                    tS.toastr('warning', 'Ingrese el Punto de Llegada');
-                    return
-                }
+
 
                 // if (!$scope.data.estableDestino) {
                 //     tS.toastr('warning', 'Ingrese Est. Destino');
                 //     return
                 // }
 
-                if (!$scope.data.ruta) {
-                    tS.toastr('warning', 'Ingrese la Ruta');
-                    return
-                }
-
-                if (!$scope.data.motivo) {
-                    tS.toastr('warning', 'Ingrese el Motivo de Traslado');
-                    return
-                }
-
                 if ($scope.gridOptionsDetalle.data.length === 0) {
                     tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle');
                     return
                 }
+                if ($scope.gridOptionsDetalle.data.some((item) => ["", null, undefined].includes(item.cantidad))) {
+                    tS.toastr('warning', 'Agregue la cantidades!');
+                    return
+                }
 
                 let nroDocSecuencial = null;
-                if ($scope.data.idGuiaRemision > 0) {
-                    nroDocSecuencial = $scope.data.serieComprobante;
-                } else {
-                    showLoader();
-                    nroDocSecuencial = await commonSvc.generarNroDocumentoCompra({
-                        idPuntoEmision: $scope.data.idPuntoEmision,
-                        codigoDocumento: $scope.tipoDoc.codigo
-                    })
-                    hideLoader();
-                    if (!nroDocSecuencial) throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL";
-                }
+                // if ($scope.data.idGuiaRemision > 0) {
+                //     nroDocSecuencial = $scope.data.serieComprobante;
+                // } else {
+                //     showLoader();
+                //     nroDocSecuencial = await commonSvc.generarNroDocumentoCompra({
+                //         idPuntoEmision: $scope.data.idPuntoEmision,
+                //         codigoDocumento: $scope.tipoDoc.codigo
+                //     })
+                //     hideLoader();
+                //     if (!nroDocSecuencial) throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL";
+                // }
 
                 const swalSave = Swal.mixin({
                     customClass: {
@@ -1029,51 +1047,54 @@
                 })
 
                 if (isConfirmed) {
-                    showLoader();
-
-                    let guia = Object.assign({}, $scope.data);
-
-                    guia.idCliente = $scope.cliente.idCliente;
-                    guia.idTransportista = $scope.transportista.idTransportista;
-                    guia.idVehiculo = $scope.vehiculo.idVehiculo;
-                    guia.idEmpleado = $scope.empleado.idEmpleado
-
-                    guia.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision);
-                    guia.fechaInicio = fS.formatDateTimeZone($scope.data.fechaInicio);
-                    guia.fechaFin = fS.formatDateTimeZone($scope.data.fechaFin);
-                    guia.estableDestino = ["", null, undefined].includes($scope.data.estableDestino) ? null : $scope.data.estableDestino;
-
-                    let data = {
-                        guia,
-                        detalle: $scope.gridOptionsDetalle.data,
-                        adicional: $scope.infoAdicionalDocumento
-                    }
-
-                    if ($scope.data.idGuiaRemision > 0) {
-                        guiaRemisionSvc.update($scope.data.idGuiaRemision, data)
-                            .then($scope.successResponse)
-                            .catch(error => {
-                                hideLoader();
-                                console.log(error);
-                            })
-                    } else {
-                        guiaRemisionSvc.save(data)
-                            .then($scope.successResponse)
-                            .catch(error => {
-                                hideLoader();
-                                console.log(error);
-                            })
-                    }
+                    save();
                 }
-
             } catch (error) {
                 hideLoader();
                 console.log(error)
             }
         }
 
+        function save() {
+
+            let data = {
+                ...$scope.data,
+                idCliente: $scope.cliente.idCliente,
+                idTransportista: $scope.transportista.idTransportista,
+                idVehiculo: $scope.vehiculo.idVehiculo,
+                idEmpleado: $scope.empleado.idEmpleado,
+                idDocumento: $scope.dataDocumentoReferenciado.idDocumento
+            }
+
+            let params = {
+                data: structuredClone(data),
+                detalles: structuredClone($scope.gridOptionsDetalle.data),
+                infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                docReferenciado: $scope.dataDocumentoReferenciado
+            }
+            let dataMapper = guiaRemisionSvc.mapperTo(params)
+
+
+            if (isUpdate()) {
+                showLoader();
+                guiaRemisionSvc.put($scope.data.idGuiaRemision, dataMapper)
+                    .then($scope.successResponse)
+                    .catch(error => {
+                        console.log(error);
+                    }).finally(() => hideLoader())
+            }
+
+            if (isRegister()) {
+                showLoader();
+                guiaRemisionSvc.post(dataMapper)
+                    .then($scope.successResponse)
+                    .catch(error => {
+                        console.log(error);
+                    }).finally(() => hideLoader())
+            }
+        }
+
         $scope.successResponse = function (response) {
-            hideLoader();
             if (response.code === '0') {
                 fS.sweetAlert('warning', response.message)
             }

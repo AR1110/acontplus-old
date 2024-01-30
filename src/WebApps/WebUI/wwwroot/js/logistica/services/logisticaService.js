@@ -12,14 +12,16 @@
             getDataFilter,
             getAll,
             getDocs,
+            mapperTo,
+            getId,
             post,
             put,
             anular
         }
 
-        function getDataForm(){
-            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response=>{ 
-                if(!response) return {}
+        function getDataForm() {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+                if (!response) return {}
                 const { ptoEmision } = response;
 
                 const estabs = fS.groupingEstab({
@@ -47,35 +49,137 @@
 
         function getAll(obj) {
             return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 1 }), null, true).then(response => {
-                if (!response) []; 
+                if (!response) [];
 
-                let guiasRemision = response.guias || []
+                let guiasRemision = response.guias || [];
+                
                 return guiasRemision.map(item => {
                     return {
                         idGuiaRemision: item.idGuiaRemision,
+                        codEstab: item.codEstab,
                         fechaEmision: item.fechaEmision,
                         fechaInicio: item.fechaInicio,
                         fechaFin: item.fechaFin,
                         claveAcceso: item.claveAcceso,
-                        autorizada: item.autorizada,
-                        anulada: item.anulada,
-                        nroDoc: item.nroDoc,
-                        serieComprobante: item.nroDoc,
-                        cliente: item.cliente,
-                        correos: item.correos,
-                        nroFactura: item.nroFactura,
-                        transportista: item.transportista,
-                        estadoSri: item.estadoSri,
+                        serieFactura: item.serieFactura,
+                        razonSocialDestinatario: item.razonSocialDestinatario,
+                        identificacionDestinatario: item.identificacionDestinatario,
+                        serieComprobante: item.serieComprobante,
+                        razonSocialTransportista: item.razonSocialTransportista,
+                        estado: item.estado,
                         usuario: item.usuario,
                         style: item.style,
-                        codEstab: item.codEstab,
+                        totalRecords: item.totalRecords,
                     }
                 })
             })
         }
 
-        function getDocs(obj){
+        function getDocs(obj) {
             return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 5 }), null, true)
+        }
+
+        function mapperTo(obj) {
+            const { data, detalles, infoAdicionalDocumento } = obj;
+
+
+            const infoGuiaRemision = infoComprobanteMapperTo(data);
+            const detallesResult = detalleMapperTo(detalles)
+            return {
+                infoGuiaRemision,
+                detalles: detallesResult,
+                infoAdicional: infoAdicionalDocumento
+            }
+        }
+
+        function infoComprobanteMapperTo(data) {
+            return {
+                idPuntoEmision: data.idPuntoEmision,
+                idCliente: data.idCliente,
+                idTransportista: data.idTransportista,
+                idVehiculo: data.idVehiculo,
+                idEmpleado: data.idEmpleado,
+                idFactura: data.idFactura,
+                fechaEmision: fS.formatDateMoment(data.fechaEmision),
+                fechaInicio: fS.formatDateMoment(data.fechaInicio),
+                fechaFin: fS.formatDateMoment(data.fechaFin),
+                docAduanero: data.docAduanero,
+                ptoPartida: data.ptoPartida,
+                ptoLlegada: data.ptoLlegada,
+                ruta: data.ruta,
+                estableDestino: fS.isValidField(data.estableDestino),
+                entregar: data.entregar,
+                motivo: data.motivo,
+                idFactura: fS.isValidField(data.idDocumento)
+            }
+        }
+
+        function detalleMapperTo(items) {
+            let arr = items.map((item, index) => {
+                return {
+                    idGuiaRemisionDetalle: item.idGuiaRemisionDetalle || 0,
+                    orderIndex: index,
+                    idArticulo: item.idArticulo,
+                    cantidad: item.cantidad,
+                    descripcion: item.descripcion,
+                    estado: item.estado                    
+                }
+            })
+            return arr;
+        }
+
+        function getId(id) {
+            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code == "1") {
+                    let { cliente, detalles, empleado, guia, infoAdicional, transportista, vehiculo } = JSON.parse(response.payload);
+                                       
+                    let comprobante = guia[0];
+                    let resultComprobante = {
+                      
+                        idGuiaRemision: comprobante.idGuiaRemision,
+                        codEstab: comprobante.codEstab,
+                        idPuntoEmision: comprobante.idPuntoEmision,
+                        serieComprobante: comprobante.serieComprobante,
+                        fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
+                        fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                        fechaInicio: fS.formatDate(comprobante.fechaInicio),
+                        fechaFin: fS.formatDate(comprobante.fechaFin),
+                        docAduanero: comprobante.docAduanero,
+                        ptoPartida: comprobante.ptoPartida,
+                        ptoLlegada: comprobante.ptoLlegada,
+                        ruta: comprobante.ruta,
+                        estableDestino: comprobante.estableDestino,
+                        entregar: comprobante.entregar,
+                        motivo: comprobante.motivo,
+                        idDocumento: comprobante.idFactura
+                    }
+
+                    let resultDetalles = detalles.map((item, index) => {
+                        return {
+                            n: index + 1,
+                            idGuiaRemisionDetalle: item.idGuiaRemisionDetalle,
+                            idArticulo: item.idArticulo,
+                            cantidad: item.cantidad,
+                            descripcion: item.descripcion,
+                            codigo: item.codigo,
+                            estado:  true
+                        }
+                    })
+
+                    return {
+                        comprobante: resultComprobante,
+                        detalles: resultDetalles,
+                        cliente: cliente[0] || {},
+                        empleado: empleado[0] || {},
+                        infoAdicionalDocumento: infoAdicional,
+                        transportista: transportista[0] || {},
+                        vehiculo: vehiculo[0] || {}
+                    }
+                }
+            })
         }
 
         function post(data) {
