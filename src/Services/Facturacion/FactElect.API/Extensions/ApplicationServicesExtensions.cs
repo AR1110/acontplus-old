@@ -14,6 +14,7 @@ namespace FactElect.API.Extensions
 
             //           
             services.AddScoped<IDocumentoElectronicoErrorService, DocumentoElectronicoErrorService>();
+            services.AddScoped<IGuiaRemisionService, GuiaRemisionService>();
             return services;
         }
     }

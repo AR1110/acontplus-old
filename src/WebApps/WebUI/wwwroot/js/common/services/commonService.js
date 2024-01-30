@@ -1020,6 +1020,59 @@ export class CommonService {
             allowOutsideClick: false
         })
         if (isConfirmed) {
+            //this.mS
+            //    .getData("POST", "https://acontplusprint.com/Print", parameters)
+            //    .then((response) => {
+            //        if (response.code === "0") {
+            //            toastr.warning(response.message, "", {
+            //                positionClass: "toast-bottom-right",
+            //                closeButton: true,
+            //                preventDuplicates: true,
+            //                progressBar: true,
+            //            });
+            //        }
+            //        if (response.code === "1") {
+            //            toastr.success(response.message, "", {
+            //                positionClass: "toast-bottom-right",
+            //                closeButton: true,
+            //                preventDuplicates: true,
+            //                progressBar: true,
+            //            });
+            //        }
+            //    })
+            //    .catch((error) => {
+            //        console.log(error);
+            //    });
+            //this.getPrinter(parameters)
+            this.print(parameters);
+        }
+    }
+
+    getPrinter(parameters) {
+        try {
+            //let url = `Config/Print/?json=${parameters}`
+            //this.mS.getData('get', url, null, true).then(
+            //    response => {
+            //        if (response.code === '0') {
+            //            toastr.warning(response.message)
+            //        }
+            //        if (response.code === '1') {
+            //            this.print(JSON.parse(response.payload))
+            //        }
+            //    }
+            //).catch(error => {
+            //    console.log(error)
+            //})
+            this.print(parameters);
+        } catch (error) {
+            console.log(error)
+            toastr.error(error)
+        }
+    }
+
+    async print(parameters) {
+        try {
+
             this.mS
                 .getData("POST", "https://acontplusprint.com/Print", parameters)
                 .then((response) => {
@@ -1043,54 +1096,27 @@ export class CommonService {
                 .catch((error) => {
                     console.log(error);
                 });
-            //this.getPrinter(parameters)
-        }
-    }
-
-    getPrinter(parameters) {
-        try {
-            let url = `Config/Print/?json=${parameters}`
-            this.mS.getData('get', url, null, true).then(
-                response => {
-                    if (response.code === '0') {
-                        toastr.warning(response.message)
-                    }
-                    if (response.code === '1') {
-                        this.print(JSON.parse(response.payload))
-                    }
-                }
-            ).catch(error => {
-                console.log(error)
-            })
-        } catch (error) {
-            console.log(error)
-            toastr.error(error)
-        }
-    }
-
-    async print(params) {
-        try {
-            let urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
-            this.mS.getData('POST', urlPrinter).then(data => {
-                if (data.code == "0") {
-                    toastr.warning(data.message, '', {
-                        positionClass: 'toast-bottom-right',
-                        closeButton: true,
-                        preventDuplicates: true,
-                        progressBar: true
-                    })
-                }
-                if (data.code == "1") {
-                    toastr.success(data.message, '', {
-                        positionClass: 'toast-bottom-right',
-                        closeButton: true,
-                        preventDuplicates: true,
-                        progressBar: true
-                    })
-                }
-            }).catch(function (error) {
-                console.log('Hubo un problema al imprimir:' + error.message);
-            })
+            //let urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
+            //this.mS.getData('POST', urlPrinter).then(data => {
+            //    if (data.code == "0") {
+            //        toastr.warning(data.message, '', {
+            //            positionClass: 'toast-bottom-right',
+            //            closeButton: true,
+            //            preventDuplicates: true,
+            //            progressBar: true
+            //        })
+            //    }
+            //    if (data.code == "1") {
+            //        toastr.success(data.message, '', {
+            //            positionClass: 'toast-bottom-right',
+            //            closeButton: true,
+            //            preventDuplicates: true,
+            //            progressBar: true
+            //        })
+            //    }
+            //}).catch(function (error) {
+            //    console.log('Hubo un problema al imprimir:' + error.message);
+            //})
         } catch (error) {
             hideLoader()
             console.log(error)

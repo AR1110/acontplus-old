@@ -5,6 +5,7 @@ export interface CompanyCustomer {
   telefono: string
   direccion: string
   correo: string
+  numeroIdentificacion: string
 }
 
 export interface CompanyCustomerSearch extends CompanyCustomer { }

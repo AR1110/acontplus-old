@@ -14,7 +14,7 @@
     ]
 
     function configGeneralCtrl($scope, mS, commonSvc, tS, articuloSvc) {
-
+        const url = 'Config/Sistema/'
 
         $scope.data = {};
         $scope.decimales = [2, 3, 4, 5];
@@ -33,7 +33,7 @@
                 showLoader();
                 $scope.codConfig = codConfig;
 
-                mS.getData('get', 'Config/Sistema/Get/' + JSON.stringify({ codConfig }), null, true).then(response => {
+                mS.getData('get', `${url}Get/${JSON.stringify({ codConfig }) }`, null, true).then(response => {
                     if (response.code === '0') {
                         hideLoader();
                         console.log(response)
@@ -44,6 +44,7 @@
                         switch (codConfig) {
                             case 'CV':
                                 $scope.gestionSistema = JSON.parse(response.payload)[0][0];
+                                console.log($scope.gestionSistema)
                                 $scope.searchText = $scope.gestionSistema.nombreFiscal;
                                 $scope.searchTextArticle = $scope.gestionSistema.descripcion;
                                 // $scope.gestionSistema.configPorcentaje = 'PI'
@@ -63,7 +64,7 @@
 
                             case 'CS':
                                 $scope.entidadNotificaciones = JSON.parse(response.payload)[0];
-                                
+
                                 break;
                             default:
                                 break;
@@ -137,7 +138,7 @@
             try {
                 let jsonConfig = {}
                 let data = {}
-                
+
                 //---------------------------------Configuracion de Ventas---------------------------
                 if ($scope.codConfig === $scope.codigo.CV) {
 
@@ -186,6 +187,7 @@
                     jsonConfig.payAutomatic = $scope.gestionSistema.payAutomatic;
                     jsonConfig.configInteres = $scope.gestionSistema.configDeuda;
                     jsonConfig.multipleVendedor = $scope.gestionSistema.multipleVendedor;
+                    jsonConfig.detailDuplicate = $scope.gestionSistema.detailDuplicate;
                     jsonConfig.infoInteres = {
                         tipoConfig: $scope.gestionSistema.tipoConfig,
                         interes: $scope.gestionSistema.interes,
@@ -196,7 +198,7 @@
                         }
                 }
 
-                
+
                 //---------------------------------Configuracion de Inventario---------------------------
                 if ($scope.codConfig === $scope.codigo.CI) {
                     if ($scope.gestionInventario.llevaInventario) {
@@ -244,7 +246,7 @@
 
 
                 showLoader()
-                mS.getData('put', 'Config/Sistema/Put?json= ' + JSON.stringify(data), null, true).then(response => {
+                mS.getData('put', `${url}Put?json=${JSON.stringify(data) }`, null, true).then(response => {
                     if (response.code === '0') {
                         hideLoader();
                         tS.toastr('warning', response.message)

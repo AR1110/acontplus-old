@@ -418,6 +418,17 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
     }
 
+    previewImg($event, data){ 
+        $event.stopPropagation();
+        Swal.fire({ 
+            imageUrl: data.s3ObjectUrl,
+            imageWidth: 500,
+            imageHeight: 500,
+            imageAlt: "Custom image"
+        });
+        
+    }
+
 }
 
 

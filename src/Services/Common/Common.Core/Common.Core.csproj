@@ -16,5 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Models\GestionFinanciera\" />
+    <Folder Include="ViewModels\Logistica\" />
   </ItemGroup>
 </Project>

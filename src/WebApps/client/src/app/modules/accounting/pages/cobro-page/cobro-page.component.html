@@ -1,33 +1,190 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 <div class="card">
   <div class="card-body">
     <div class="row">
       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="form-group">
-          <label for="establish">Establecimiento: <span class="text-danger">*</span></label>
-          <select name="establish" id="establish" class="form-select" [(ngModel)]="dataSearch.codEstab" (change)="getComprobantesIngreso()">
+          <label for="establish"
+            >Establecimiento: <span class="text-danger">*</span></label
+          >
+          <select
+            name="establish"
+            id="establish"
+            class="form-select"
+            [(ngModel)]="dataSearch.codEstab"
+            (change)="filterValidation()"
+          >
             @for (item of establecimientos; track $index) {
-              <option [ngValue]="item.codEstab">{{item.nombreComercial}}</option>
+            <option [ngValue]="item.codEstab">
+              {{ item.nombreComercial }}
+            </option>
             }
           </select>
         </div>
       </div>
       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="form-group">
-        <label for="dateRangeSelection">Rango Fechas: </label>
-        <app-date-range-selection
-          (onChangeDateRange)="onDateRangeSelection($event)"
-        />
+          <label for="dateRangeSelection">Rango Fechas: </label>
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
+        </div>
       </div>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="form-group">
+          <label>Estado</label>
+          <select
+            name="estado"
+            id="estado"
+            class="form-select"
+            [(ngModel)]="dataSearch.byEstado"
+            (change)="filterValidation()"
+          >
+            <option value="">Todos</option>
+            <option [ngValue]="1">Activo</option>
+            <option [ngValue]="0">Anulado</option>
+          </select>
+        </div>
       </div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12"></div>
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="card mt-2">
+          <div class="card-body">
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              (click)="onClickBtnMore()"
+            >
+              <fa-icon [icon]="'eye'" />
+            </button>
+            <button
+              type="button"
+              class="btn btn-success btn-sm ml-2"
+              (click)="filterValidation()"
+            >
+              <fa-icon [icon]="'redo'" />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="table-responsive ">
+    @if (moreSearchOptions) {
+    <div class="row" ng-if="moreSearchOptions">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="row">
+          <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+            <div class="form-group">
+              <label for="cliente-empleado">Persona</label>
+              <select
+                name="cliente-empleado"
+                id="cliente-empleado"
+                class="form-select"
+                [(ngModel)]="dataSearch.byTipoPersona"
+                (change)="onChangePersona()"
+                [disabled]="disabledTempInputPersona"
+              >
+                <option value="">Todos</option>
+                @for (item of tiposPersona; track $index) {
+                <option [ngValue]="item.codigo">
+                  {{ item.descripcion }}
+                </option>
+                }
+              </select>
+            </div>
+          </div>
+
+          @if (showCliente || showEmpleado) {
+          <div class="col-xl-8 col-lg-8 col-md-12 col-12">
+            @if (showCliente) {
+            <div class="form-group">
+              <label for="customerSearch">Cliente: </label>
+              <app-company-customer-search
+                [isSearchSimple]="isCustomerSearchSimple"
+                (onCustomerSelected)="onCustomerSelected($event)"
+                (resultEmptyInput)="resultCustomerEmptyInput($event)"
+                [textSearch]="companyCustomerSearchName"
+              />
+            </div>
+            } @if (showEmpleado) {
+            <div class="form-group">
+              <label for="employeeFilter">Empleado: </label>
+              <app-employee-search
+                [isSearchSimple]="isSearchEmployeeSimple"
+                (onSupplierSelected)="onEmployeeSelected($event)"
+                (emptyInput)="employeeResultEmptyInput($event)"
+                [textSearch]="companyCustomerSearchName"
+              />
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="row">
+          <div class="col-xl-7 col-lg-7 col-md-12 col-12">
+            <div class="form-group">
+              <label>Usuario:</label>
+              <input
+                type="text"
+                class="form-control border-select"
+                ng-model="dataSearch.nroSecuencialDoc"
+                ngbTooltip="Ingrese Número de Documento del cobro!"
+                placeholder="Ej: 123"
+              />
+            </div>
+          </div>
+          <div class="col-xl-5 col-lg-5 col-md-12 col-12">
+            <div class="form-group">
+              <label>Nro. Doc. Ingreso:</label>
+              <input
+                type="text"
+                class="form-control border-select"
+                ng-model="dataSearch.nroSecuencialDoc"
+                ngbTooltip="Ingrese Número de Documento del cobro!"
+                placeholder="Ej: 123"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-start">
+          <span class="form-group">
+            <select
+              class="form-select"
+              [(ngModel)]="dataSearch.pageSize"
+              (change)="changePageSize()"
+            >
+              @for(item of recordsQuantity; track $index){
+              <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+          </span>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-end">
+          <!-- <form class="form-material">
+            <input
+              type="text"
+              class="form-control"
+              ng-model="buscar"
+              placeholder="..."
+            />
+          </form> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
       <table class="table table-striped table-fixed">
-        <thead >
+        <thead>
           <tr>
             <th></th>
             <th>N°</th>
@@ -43,25 +200,39 @@
         </thead>
         <tbody>
           @for (item of comprobantesIngreso; track $index) {
-            <tr>
-              <td></td>
-              <td>{{$index+1}}</td>
-              <td>{{item.nroDoc}}</td>
-              <td>{{item.fechaRegistro}}</td>
-              <td>{{item.cliente}}</td>
-              <td>{{item.total}}</td>
-              <td>{{item.abono}}</td>
-              <td>{{item.cambio}}</td>
-              <td>{{item.usuario}}</td>
-              <td>{{item.estado}}</td>
-            </tr>
-          }
-          @empty {
-            <tr>
-              <td colspan="10" class="text-center">No hay registros!</td>
-            </tr>
+          <tr>
+            <td></td>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ item.nroDoc }}</td>
+            <td>{{ item.fechaRegistro }}</td>
+            <td>{{ item.cliente }}</td>
+            <td>{{ item.total }}</td>
+            <td>{{ item.abono }}</td>
+            <td>{{ item.cambio }}</td>
+            <td>{{ item.usuario }}</td>
+            <td>{{ item.estado }}</td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="10" class="text-center">No hay registros!</td>
+          </tr>
           }
         </tbody>
+        <tfoot>
+          <tr>
+            <td align="center" colspan="9">
+              <ngb-pagination
+                [collectionSize]="dataSearch.totalRecords"
+                [(page)]="dataSearch.pageIndex"
+                [maxSize]="dataSearch.maxSize"
+                [pageSize]="dataSearch.pageSize"
+                [rotate]="true"
+                (pageChange)="pageChanged()"
+                [boundaryLinks]="true"
+              />
+            </td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>
