@@ -25,9 +25,10 @@ BEGIN
 
 	IF @tipo = 1
 		BEGIN
-			SET @tableNames = 'puntosEmision,bodegas'
+			SET @tableNames = 'puntosEmision,bodegas,categories'
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 			SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+            SELECT * FROM TechnicalSupport.Category
 		END
 
 END
