@@ -1,0 +1,61 @@
+@page
+@model WebUI.Pages.Config.ConfigGeneral.Index
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="configGeneralCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Configuración General</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div>
+                <md-content>
+                    <md-tabs class="md-primary" md-center-tabs md-dynamic-height="">
+
+                        <md-tab label="Ventas" md-on-select="getDataTabs('CV')">
+                            <md-content class="md-padding">
+                                @await Html.PartialAsync("~/Pages/Config/ConfigGeneral/Shared/_ConfigSale.cshtml")
+                            </md-content>
+                        </md-tab>
+
+                        <md-tab label="Inventario" md-on-select="getDataTabs('CI')">
+                            <md-content class="md-padding">
+                                @await Html.PartialAsync("~/Pages/Config/ConfigGeneral/Shared/_ConfigInventory.cshtml")                                
+                            </md-content>
+                        </md-tab>
+
+                        <md-tab label="DECIMALES" md-on-select="getDataTabs('CD')">
+                            <md-content class="md-padding">
+                                @await Html.PartialAsync("~/Pages/Config/ConfigGeneral/Shared/_ConfigDecimal.cshtml")                                                                
+                            </md-content>
+                        </md-tab>
+
+                        <md-tab label="NOTIFICACIONES" md-on-select="getDataTabs('CS')">
+                            <md-content class="md-padding">
+                                @await Html.PartialAsync("~/Pages/Config/ConfigGeneral/Shared/_ConfigNotification.cshtml")                                                                                               
+                            </md-content>
+                        </md-tab>
+
+                    </md-tabs>
+                </md-content>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/config/controllers/configGeneralCtrl.min.js" asp-append-version="true"></script>
+
+}

@@ -1,0 +1,187 @@
+<div class="row align-items-center">
+    <div class="col-8 mx-auto">
+        <div class="card shadow border">
+            <div class="card-body">
+
+                <div class="row justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="cliente" id="cliente"
+                                   ng-model="gestionSistema.customerDefault">
+                            <label for="cliente">Cliente</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div ng-if="gestionSistema.customerDefault">
+                            <md-autocomplete md-input-name="autocompleteField"
+                                             md-input-minlength="1" md-input-maxlength="2000"
+                                             md-no-cache="false"
+                                             md-search-text-change="searchTextChange(searchText)"
+                                             md-search-text="searchText"
+                                             md-selected-item-change="selectedItemChangeCliente(item)"
+                                             md-items="item in searchCustomer(searchText)"
+                                             md-item-text="item.nombreFiscal"
+                                             md-escape-options="clear"
+                                             placeholder="Ej: Jorge Ramirez" md-clear-button="false"
+                                             input-aria-describedby="Buscar Cliente">
+                                <md-item-template>
+                                    <span md-highlight-text="searchText">{{item.nombreFiscal}}</span>
+                                </md-item-template>
+                            </md-autocomplete>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="articuloDefect"
+                                   id="articuloDefect"
+                                   ng-model="gestionSistema.articleDefault">
+                            <label for="articuloDefect">Artículo</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div ng-if="gestionSistema.articleDefault">
+                            <md-autocomplete class="md-block mr-10"
+                                             md-input-name="autocompleteField" md-min-length="3"
+                                             md-no-cache="false"
+                                             md-search-text-change="searchTextChangeArticle(searchTextArticle)"
+                                             md-search-text="searchTextArticle"
+                                             md-selected-item-change="selectedItemChangeArticle(item)"
+                                             md-items="item in searchArticle(searchTextArticle)"
+                                             md-item-text="item.descripcion"
+                                             md-escape-options="clear" placeholder="Ej: Mouse..."
+                                             md-clear-button="false"
+                                             input-aria-describedby="Buscar Artículo">
+                                <md-item-template>
+                                    <span md-highlight-text="searchTextArticle">{{item.descripcion}}</span>
+                                </md-item-template>
+                            </md-autocomplete>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row justify-content-between">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="searchBarcode"
+                                   id="searchBarcode" ng-model="gestionSistema.searchCode">
+                            <label for="searchBarcode">
+                                Búsqueda de artículo por
+                                <code>Código de Barra</code> en venta
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="printerAutomatic "
+                                   id="printerAutomatic "
+                                   ng-model="gestionSistema.printerAutomatic ">
+                            <label for="printerAutomatic ">
+                                Impresión automática en
+                                Ventas
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <hr>
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="payAutomatic "
+                                   id="payAutomatic "
+                                   ng-model="gestionSistema.payAutomatic ">
+                            <label for="payAutomatic ">
+                                Cobro rápido automático en
+                                Ventas
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="row justify-content-between">
+                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="configDeuda" id="configDeuda"
+                                   ng-model="gestionSistema.configDeuda">
+                            <label for="configDeuda">Crédito Vencido de Clientes</label>
+                        </div>
+                    </div>
+                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12"
+                         ng-if="gestionSistema.configDeuda">
+                        <div class="form-group">
+                            <md-radio-group ng-model="gestionSistema.tipoConfig"
+                                            ng-change="onChangeConfigPorcentaje()"
+                                            aria-labelledby="">
+                                <md-radio-button value="PI"
+                                                 class="md-primary d-inline p-2">
+                                    Con
+                                    Interes
+                                </md-radio-button>
+                                <md-radio-button value="PF" class="d-inline p-2">
+                                    Precio
+                                    fijo
+                                </md-radio-button>
+                            </md-radio-group>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="dias">Interes</label>
+                            <input type="text" name="porcentaje" id="porcentaje"
+                                   valid-number class="form-control border-select"
+                                   placeholder="20%" ng-model="gestionSistema.interes">
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="multipleVendedor"
+                                   id="multipleVendedor"
+                                   ng-model="gestionSistema.multipleVendedor">
+                            <label for="multipleVendedor">Múltiples vendedores</label>
+                        </div>
+                    </div>
+                </div> 
+                <hr> 
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="dateilDuplicate"
+                                   id="dateilDuplicate"
+                                   ng-model="gestionSistema.detailDuplicate">
+                            <label for="dateilDuplicate">Duplicar artículo</label>
+                        </div>
+                    </div>
+                </div> 
+                <hr>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn btn-success float-right"
+                        ng-click="save()">
+                    <i class="ti-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -145,7 +145,7 @@
                             <th md-column md-numeric></th>
                         </tr>
                         <tr md-row>
-                            <th md-column>Op.</th>
+                            <!-- <th md-column>Op.</th> -->
                             <th md-column>N°.</th>
                             <th md-column>Cod. Doc</th>
                             <th md-column md-order-by="serieComprobante">Serie Comprobante</th>
@@ -168,7 +168,7 @@
                             md-select-id="idCuentaPorCobrar"
                             md-auto-select
                             ng-repeat="item in cuentasPorCobrar | orderBy: tableOptions.sortBy track by $index" ng-style="{'background-color': item.colorRow}">
-                            <td md-cell>
+                            <!-- <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
                                                ng-click="$mdMenu.open($event)">
@@ -189,7 +189,7 @@
 
                                     </md-menu-content>
                                 </md-menu>
-                            </td>
+                            </td> -->
                             <td md-cell>{{$index+1}}</td>
                             <td md-cell>{{item.codDoc}}</td>
                             <td md-cell>{{item.serieComprobante}}</td>

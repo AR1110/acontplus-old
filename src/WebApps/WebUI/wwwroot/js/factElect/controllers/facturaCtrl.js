@@ -10,7 +10,7 @@
     let modalSvc = {};
     let tipoDoc = {}
     const NUM_CONSUMIDOR_FINAL = "9999999999999";
-    let nombreModalVenta = {}  ;
+    let nombreModalVenta = {};
 
 
     app.controller('facturaCtrl', facturaCtrl)
@@ -161,7 +161,7 @@
         $scope.getFacturas = function () {
 
             try {
-              //  $scope.dataSearch.checkBoxFecha = true;
+                //  $scope.dataSearch.checkBoxFecha = true;
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
@@ -268,14 +268,14 @@
 
 
         $scope.onOrderInvoice = function (item) {
-            console.log('test order', item) 
+            console.log('test order', item)
         }
 
         $scope.validateOperationPrintAndPayment = (result) => {
             //Verificamos 
             let { isRegister, data } = result;
             $scope.isRegister = isRegister;
-            $scope.isPrintDocument = data.printerAutomatic;
+            $scope.isPrintDocument = mainDataForm.config.printerAutomatic;
 
             $scope.parametersPrint = {
                 ...data,
@@ -294,7 +294,7 @@
                 return
             }
 
-            if (data.printerAutomatic) {
+            if (mainDataForm.config.printerAutomatic) {
                 commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
             }
 
@@ -744,6 +744,7 @@
         let storageSvc = $injector.get('storageService');
         let articuloSvc = $injector.get('articuloService');
         let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
+        const uuid2 = $injector.get('uuid2')
 
         $scope.tipoDoc = tipoDoc;
         $scope.infoEstabPtoEmi = {};
@@ -865,77 +866,6 @@
         $scope.gridOptionsItemsDeleted = [];
 
         /**
-         * Combina elementos en base a propiedades específicas del objeto rowEntity.
-         * @param {*} items - Conjunto de elementos a fusionar.
-         * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
-         * @returns {*} - Objeto resultante de la fusión.
-         */
-        function mergeItem(items, rowEntity) {
-            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
-            let foundItemByArticuloAndBodega = items.filter(item => (
-                item.idArticulo === rowEntity.idArticulo &&
-                item.idBodega === rowEntity.idBodega
-            ))
-
-            let totalCantidadFraccionada = foundItemByArticuloAndBodega.reduce((total, item) => {
-                let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO')
-                if (dataMedida) {
-                    let conversionSum = item.cantidad * dataMedida.conversion;
-                    total += conversionSum;
-                }
-                return total;
-            }, 0);
-
-            let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
-                let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
-                if (dataMedida) {
-                    let conversionSum = item.cantidad * dataMedida.conversion;
-                    total += conversionSum;
-                }
-                return total;
-            }, 0)
-
-            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
-                itemPrevious.cantidad += itemCurrent.cantidad;
-                return itemPrevious;
-            }, {
-                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
-                ...rowEntity,
-                cantidad: 0,
-            });
-
-            // Devuelve el objeto resultante de la fusión. 
-            return {
-                idBodega: dataItemMerge.idBodega,
-                cantidad: dataItemMerge.cantidad,
-                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
-                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
-            };
-        }
-
-        function getCantidadStock(rowEntity) {
-            try {
-                let fechaEmisionValidate = $scope.data.fechaEmision;
-                let cantidadStock = rowEntity.cantidadStock;
-
-                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
-                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
-                )
-
-                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
-                        return 0;
-                    }
-                }
-
-                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-                return resultCantStock;
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        /**
          * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
          * @param {string} field - Campo modificado.
          * @param {*} rowEntity - Objeto de fila actual.
@@ -954,14 +884,14 @@
                 let gridOptionsClone = structuredClone($scope.gridOptions.data);
 
                 // Realiza la fusión de elementos en la lista de artículos clonada.
-                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+                let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
 
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
 
                 // Llama a un servicio para verificar la notificación de stock.
-                let cantidadStock = getCantidadStock(dataItemMerge);
+                let cantidadStock = fS.getCantidadStock(dataItemMerge, $scope.data.fechaEmision);
                 if (cantidadStock === 0) {
                     setCalculoTotales(field, rowEntity, oldValue);
                     return;
@@ -1094,6 +1024,7 @@
             $scope.notificacionVenta = notificacionVenta;
             $scope.decimal = decimal;
             $scope.config = config;
+            console.log($scope.config)
 
 
             if ($scope.bodegas.length > 0) {
@@ -1105,6 +1036,8 @@
                 $scope.data.idTarifa = $scope.tarifas[0].idTarifa;
                 $scope.dataClone.idTarifa = $scope.data.idTarifa;
             }
+
+
 
 
             if (params && params.action === "NUEVO") {
@@ -1590,7 +1523,12 @@
 
         }
 
+
         $scope.openModalArticle = function (item) {
+            if ($scope.config.detailDuplicate) {
+                fS.sweetAlert('warning', 'No disponible para editar el artículo cuando se ha seleccionado <b>Duplicar Artículo</b>.');
+                return
+            }
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
@@ -1955,25 +1893,33 @@
                 let itemsDuplicated = $scope.gridOptions.data.filter(item => (
                     item.llevaInventario && item.idArticulo === articulo.idArticulo
                 ))
-                if (itemsDuplicated.length > 1) {
-                    fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
-                    return
-                }
 
                 let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
-                if (findIndexById === -1) {
+                //Verificamos si tiene configurado: <<Duplicar Artículo en el detalle>>
+                if ($scope.config.detailDuplicate) {
                     addRow();
                     index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
                     entity.cantidad = 1;
                 } else {
-                    index = findIndexById;
-                    entity = $scope.gridOptions.data[index];
-                    cantidad = entity.cantidad;
-                    entity.cantidad = cantidad + 1;
-                }
+                    if (itemsDuplicated.length > 1) {
+                        fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                        return
+                    }
 
+                    if (findIndexById === -1) {
+                        addRow();
+                        index = $scope.gridOptions.data.length - 1;
+                        entity = $scope.gridOptions.data[index];
+                        entity.cantidad = 1;
+                    } else {
+                        index = findIndexById;
+                        entity = $scope.gridOptions.data[index];
+                        cantidad = entity.cantidad;
+                        entity.cantidad = cantidad + 1;
+                    }
+                }
 
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 

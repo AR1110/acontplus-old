@@ -1,0 +1,318 @@
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-header bg-success">
+                <h6 class="m-b-0 text-white">VENTAS</h6>
+            </div>
+            <div class="card-body shadow">
+                <div class="row pb-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Precio</span>
+                            </div>
+
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.nroPrecio">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Cantidad</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.nroCantidad">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>IVA</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.nroIva">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Descuento</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.nroDescuento">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Descuento Detalle</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.nroDescuentoDetalle">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Total Detalle</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.nroTotalDetalle">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>SubTotales Comprobante</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.nroTotalSubTotal">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>ICE</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.nroIce">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Importe Total</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalVenta.importeTotal">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-header bg-info">
+                <h6 class="m-b-0 text-white">COMPRAS</h6>
+            </div>
+            <div class="card-body shadow">
+                <div class="row pb-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Precio</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalCompra.nroPrecio">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Cantidad</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalCompra.nroCantidad">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>IVA</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalCompra.nroIva">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Descuento</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalCompra.nroDescuento">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Descuento Detalle</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalCompra.nroDescuentoDetalle">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Total Detalle</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalCompra.nroTotalDetalle">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Totales y SubTotales</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalCompra.nroTotalSubTotal">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>ICE</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalCompra.nroIce">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-header bg-primary">
+                <h6 class="m-b-0 text-white">ALMACÉN</h6>
+            </div>
+            <div class="card-body shadow">
+                <div class="row pb-1">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-6 py-2">
+                                <span>Precio</span>
+                            </div>
+                            <div class="col-6 py-2 text-truncate">
+                                <select class="form-control border-select"
+                                        ng-model="decimalAlmacen.nroPrecio">
+                                    <option ng-value="decimal"
+                                            ng-repeat="decimal in decimales">
+                                        {{decimal}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="float-right">
+    <button type="button" class="btn btn-success" ng-click="save()">
+        <icon class="ti-pencil"></icon> Actualizar
+    </button>
+</div>

@@ -1,0 +1,39 @@
+<div class="row align-items-center">
+    <div class="col-8 mx-auto">
+        <div class="card shadow border">
+            <div class="card-body">
+                <div class="row justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="icheck-success">
+                            <input type="checkbox" name="llevaInventario"
+                                   id="llevaInventario"
+                                   ng-model="gestionInventario.llevaInventario">
+                            <label for="llevaInventario">Control Inventario</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="form-group"
+                             ng-if="gestionInventario.llevaInventario">
+                            <select name="metodoValoracion" id="metodoValoracion"
+                                    class="form-control border-select"
+                                    ng-model="gestionInventario.idMetodoValoracion">
+                                <option ng-value="item.idMetodoValoracion"
+                                        ng-repeat="item in valoracionMetodos">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button type="button" class="btn btn-success float-right"
+                        ng-click="save()">
+                    <i class="ti-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
