@@ -17,7 +17,7 @@
         height: auto;
         padding-top: 1px;
         padding-bottom: 1px;
-        white-space: normal;
+        /* white-space: normal; */
     }
 
     .rtable #headerAutocompleteArticulo:hover {
@@ -101,6 +101,7 @@
                             </td>
                             <td class="column-articulo-descripcion text-left" uib-tooltip="{{item.descripcion}}"
                                 tooltip-placement="bottom" tooltip-trigger="focus">
+                                <img ng-if="item.s3ObjectUrl" ng-click="$ctrl.previewImg($event, item)" src="{{item.s3ObjectUrl}}" class="img-thumbnail" width="30">
                                 <span class="item-desc font-weight-bold">
                                     {{item.descripcion}}
                                 </span>

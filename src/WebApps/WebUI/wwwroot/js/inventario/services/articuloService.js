@@ -408,12 +408,13 @@
                 }
                 if (response.code === "1") {
                     let articulos = JSON.parse(response.payload) || [];
-
+                    console.log(articulos)
                     return articulos.map(item => {
                         let priceSales = JSON.parse(item.priceSale) || [];
                         let warehouses = JSON.parse(item.warehouses) || [];
 
                         return {
+                            s3ObjectUrl: item.s3ObjectUrl,
                             codigo: item.codigo,
                             descripcion: item.descripcion,
                             idArticulo: item.idArticulo,
