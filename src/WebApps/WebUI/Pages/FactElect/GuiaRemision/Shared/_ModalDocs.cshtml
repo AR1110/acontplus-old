@@ -14,15 +14,18 @@
         </div>
         <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
             <div class="row">
-                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                 <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="tipoDocumento">Tipo Documento: </label>
-                        <select class="form-control border-select" ng-model="dataSearch.pageSize"
-                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity" id="tipoDocumento" name="tipoDocumento">
+                        <select class="form-control border-select" ng-model="dataSearch.codDoc"
+                                ng-change="getDocs()"  id="tipoDocumento" name="tipoDocumento">
+                                <option ng-value="item.codigo" ng-repeat="item in tiposDoc">
+                                    {{item.descripcion}}
+                                </option>
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="nroDocumento">Buscar por Nro. Documento:</label>
                         <div class="input-group">

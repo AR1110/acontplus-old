@@ -876,5 +876,6 @@ app.constant('CODE_REPORT', {
     RCD: 'RCD', //Reporte Compra detalle
     RFC: 'RFC', //Reporte Factura Compra
     RCNH: 'RCNH', //PDF compra no habitual
-    ROC: 'ROC' //Orden Compra 
+    ROC: 'ROC', //Orden Compra 
+    RGR: 'RGR'
 })

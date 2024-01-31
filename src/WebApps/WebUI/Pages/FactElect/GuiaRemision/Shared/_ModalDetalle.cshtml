@@ -1,189 +1,209 @@
 <form autocomplete="off">
     <div class="modal-header">
-        <h5 class="modal-title">Detalle Guia Remisión</h5>      
+        <h5 class="modal-title">Detalle Guia de Remisión</h5><br>
         <button type="button" class="close" ng-click="closeModal()">&times;</button>
     </div>
 
     <div class="modal-body">
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="card border border-info rounded">
+            <div class="card-header  bg-info text-white">
+                <span class="card-title">Datos de la Guía</span>
+                <i class="fas fa-eye" ng-click="mostrarDatosGuia()"></i>
+            </div>
+            <div class="mx-3 mt-1" ng-if="isShowDataGuia">
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">                        
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <label for="establecimiento">Estab.:</label>
-                            <select class="form-control border-select" ng-model="data.codEstab" disabled>
-                                <option ng-value="item.codEstab" ng-repeat="item in  establecimientos">{{item.nombreComercial}}</option>
-                            </select>                                    
-                        </div> 
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">                       
-                        <div class="form-group">
-                            <label for="ptoEmision">Punto Emisión:</label>
-                            <select class="form-control border-select" ng-model="data.idPuntoEmision" disabled>
-                                <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">{{item.ptoEmi}}</option>
+                            <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
+                            <select class="form-control border-select" ng-model="data.codEstab"  disabled>
+                                <option ng-value="item.codEstab" ng-repeat="item in  establecimientos">
+                                    {{item.nombreComercial}}
+                                </option>
                             </select>
-                        </div>                                                                 
-                    </div>
-
-                    <div class="col-lg-3">
-                        <div class="form-group">                                    
-                            <label for="fechaEmision">Fecha Emisión:</label>
-                            <input type="date" class="form-control  border-select" ng-model="data.fechaEmision" disabled>                                    
                         </div>
                     </div>
-
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="ptoEmision">Punto Emisión: <span class="text-danger">*</span></label>
+                            <select class="form-control border-select" ng-model="data.idPuntoEmision"
+                                    disabled>
+                                <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                    {{item.ptoEmi}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control  border-select" ng-model="data.fechaEmision" disabled>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="EstDestino">Est. Destino: </label>
+                            <input type="text" mask="999" maxlength=3 class="form-control ssn-inputmask border-select" disabled
+                                   ng-value="data.estableDestino">
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="docAduanero">Documento Aduanero: </label>
+                            <input type="text" class="form-control border-select" ng-value="data.docAduanero" disabled>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <label for="">Cliente:</label>                            
-                            <input type="text" class="form-control" ng-value="cliente.nombreComercial" disabled>                                           
-                        </div>                    
+                            <label for="">Fecha de Inicio: <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control border-select" ng-model="data.fechaInicio" disabled>
+                        </div>
                     </div>
-
-                    <div class="col-lg-4">
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <label for="ruc">Ruc:</label>
-                            <input type="text" class="form-control" ng-value="cliente.numeroIdentificacion" tabindex="-1" disabled>
+                            <label for="">Fecha de llegada: <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control border-select" ng-model="data.fechaFin" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="ptoPartida" class="">Punto de Partida: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control border-select"  ng-value="data.ptoPartida" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="ptoPartida" class="">Punto de Destino: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control border-select"  ng-value="data.ptoLlegada" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="MotivoTraslado">Ruta <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control border-select"  ng-value="data.ruta" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="MotivoTraslado">Motivo Traslado <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control border-select"  ng-value="data.motivo" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="ptoPartida" class="">Entrega A: </label>
+                            <input type="text" class="form-control border-select"  ng-value="data.entregar" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="empleado" class="">Empleado</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control border-select" ng-value="empleado.nombreCompleto" disabled /> 
+                                <div class="input-group-append">
+                                    <button class="btn btn-secondary btn-sm"  tabindex="-1" type="button" disabled>
+                                        <i class="fa fa-plus fa-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="companyCustomerSearch">Cliente Destinatario: <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
+                                       class="form-control border-select"  ng-value="cliente.nombreFiscal" disabled
+                                       placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-secondary btn-xs border-select" disabled>
+                                        <i class="fa fa-plus fa-xs"></i>
+                                    </button> 
+                                    <button type="button" class="btn btn-secondary btn-xs" disabled>
+                                        <i class="fa fa-search fa-xs"></i>
+                                    </button>
+
+                                    <button type="button" cliente-info-popover customer="cliente" popover-placement='top'
+                                            class="btn btn-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
+                                        <i class="fa fa-info fa-xs"></i>
+                                    </button>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label>Identificador Comprador: </label>
+                            <input type="text" class="form-control" ng-value="cliente.numeroIdentificacion" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="transportista">Transportista <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" autocomplete="off" class="form-control border-select"
+                                       placeholder="Ingrese Descripción"  ng-value="transportista.nombre" disabled/> 
+                                <div class="input-group-append"> 
+
+                                    <button class="btn btn-secondary btn-sm" tabindex="-1" type="button" disabled>
+                                        <i class="fas fa-pencil-alt fa-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="vehiculo">Vehículo <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" autocomplete="off" class="form-control border-select"
+                                       placeholder="Ingrese Descripción"  ng-value="vehiculo.placa" disabled /> 
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                        <i class="fa fa-plus fa-xs"></i>
+                                    </button> 
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="">Fecha Inicio <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control border-select" ng-model="data.fechaInicio" disabled>
-                </div>  
+        <div class="card border border-info rounded">
+            <div class="card-header bg-info text-white">
+                <span class="card-title">Items de la guía</span>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="">Fecha Fin:</label>
-                    <input type="date" class="form-control border-select" ng-model="data.fechaFin" disabled>
-                </div>
-            </div>
+            <div class="mx-3 mb-2"> 
 
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="transportista">Transportista:</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" ng-value="transportista.nombre" disabled>
-                        <div class="input-group-append">
-                            <button class="btn btn-default btn-sm" tabindex="-1" type="button" disabled><i class="fa fa-plus fa-xs"></i></button>                                                                                                                
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="vehiculo">Vehículo:</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" ng-value="vehiculo.placa" disabled>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-secondary btn-sm" disabled tabindex="-1" >
-                                <i class="fa fa-plus fa-xs"></i>
-                            </button>                                                                        
-                        </div>
-                    </div>
+                <div ui-grid="gridOptionsDetalle"   ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+                     class="grid">
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="ptoPartida" class="">Punto de Partida:</label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.ptoPartida" disabled>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="ptoPartida" class="">Punto de Llegada  </label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.ptoLlegada" disabled>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="EstDestino">Est. Destino </label>
-                    <input type="text" 
-                            mask="999" maxlength=3
-                            class="form-control ssn-inputmask border-select" 
-                            ng-model="data.estableDestino" disabled>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="docAduanero">Doc. Aduanero </label>
-                    <input type="text" class="form-control border-select" ng-model="data.docAduanero" disabled>
-                </div>
+        <div class="row justify-content-end">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
+                        open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento" is-view="true" >
+                    <i class="fas fa-info-circle text-info"></i> Dato Adicional
+                </button>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="MotivoTraslado">Ruta  </label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.ruta" disabled>
-                </div>
-            </div> 
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="MotivoTraslado">Motivo Traslado  </label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.motivo" disabled>
-                </div>
-            </div> 
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="ptoPartida" class="">Entrega A: </label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.entregar" disabled>
-                </div>
-            </div> 
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="empleado" class="">Empleado</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" ng-value="empleado.nombreCompleto" disabled>
-                        <div class="input-group-append">
-                            <button class="btn btn-secondary btn-sm" disabled tabindex="-1" type="button">
-                                <i class="fa fa-plus fa-xs"></i>
-                            </button>                                                                      
-                        </div>
-                    </div>               
-                </div>
-            </div>   
-        </div>
-
-
-        <div ui-grid="gridOptionsDetalle"
-            ui-grid-edit
-            ui-grid-resize-columns 
-            ui-grid-cellNav
-            ui-grid-auto-resize 
-            class="grid">
-        </div>
-
-        <div class="row justify-content-end">                   
-            <div class="col-md-2">
-                <div class="mt-2">
-                    <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block" open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento" is-view="true">
-                        <i class="fas fa-info-circle text-info"></i> Dato Adicional
-                    </button>
-                </div>                            
-            </div>
-        </div>
-
     </div>
 
-    <div class="modal-footer">      
+    <div class="modal-footer"> 
         <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
     </div>
 </form>
