@@ -1,0 +1,87 @@
+<div class="modal-header">
+    <h5 class="modal-title">Documentos</h5>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <label></label>
+            <span class="form-group pull-left page-size form-inline">
+                <select class="form-control control-color border-select" ng-model="dataSearch.pageSize"
+                        ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                </select>
+            </span>
+        </div>
+        <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+            <div class="row">
+                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="tipoDocumento">Tipo Documento: </label>
+                        <select class="form-control border-select" ng-model="dataSearch.pageSize"
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity" id="tipoDocumento" name="tipoDocumento">
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="nroDocumento">Buscar por Nro. Documento:</label>
+                        <div class="input-group">
+                            <input type="text" 
+                                class="form-control border-select" 
+                                id="nroDocumento" 
+                                name="tipoDocumento"
+                                placeholder="Ej: 12 o 12-10"
+                                ng-enter="getDocs()"
+                                ng-model="dataSearch.nroSecuencial"
+                                >
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-info btn-sm" ng-click="getDocs()">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>N°</th> 
+                    <th>Serie Comprobante</th>
+                    <th>Razon Social Comprador</th> 
+                    <th>Op.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in documentos">
+                    <td>{{$index +1}}</td> 
+                    <td>{{item.serieComprobante}}</td>
+                    <td>{{item.razonSocialComprador}}</td>
+                    <td>
+                        <button type="button" class="btn btn-success" ng-click="selectedDoc(item)">
+                            <i class="fas fa-arrow-circle-down"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                         <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">
+        &times; Cerrar
+    </button>
+</div>

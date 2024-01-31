@@ -5,255 +5,300 @@
     </div>
 
     <div class="modal-body">
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="card border border-info rounded">
+            <div class="card-header  bg-info text-white">
+                <span class="card-title">Datos de la Guía</span>
+                <i class="fas fa-eye" ng-click="mostrarDatosGuia()"></i>
+            </div>
+            <div class="mx-3 mt-1" ng-if="isShowDataGuia">
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
+                            <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
                             <select class="form-control border-select" ng-model="data.codEstab"
-                                ng-change="onChangeEstablecimiento()" ng-disabled="tipoRegistro===2">
+                                    ng-change="onChangeEstablecimiento()" ng-disabled="tipoRegistro===2">
                                 <option ng-value="item.codEstab" ng-repeat="item in  establecimientos">
-                                    {{item.nombreComercial}}</option>
+                                    {{item.nombreComercial}}
+                                </option>
                             </select>
                         </div>
                     </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="ptoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                             <select class="form-control border-select" ng-model="data.idPuntoEmision"
-                                ng-disabled="tipoRegistro===2">
+                                    ng-disabled="tipoRegistro===2">
                                 <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
-                                    {{item.ptoEmi}}</option>
+                                    {{item.ptoEmi}}
+                                </option>
                             </select>
                         </div>
                     </div>
-
-                    <div class="col-lg-3">
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <label for="fechaEmision">Fecha Emisión <span class="text-danger">*</span></label>
+                            <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
                             <input type="date" class="form-control  border-select" ng-model="data.fechaEmision">
                         </div>
                     </div>
-
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="EstDestino">Est. Destino: </label>
+                            <input type="text" mask="999" maxlength=3 class="form-control ssn-inputmask border-select"
+                                   ng-model="data.estableDestino">
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="docAduanero">Documento Aduanero: </label>
+                            <input type="text" class="form-control border-select" ng-model="data.docAduanero">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <label for="">Cliente <span class="text-danger">*</span></label>
-                            <search-cliente-custom selected-item-cliente="selectedItemCliente(item)"
-                                search-options="searchClienteOptions"
-                                cliente-data-param="cliente"></search-cliente-custom>
+                            <label for="">Fecha de Inicio: <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control border-select" ng-model="data.fechaInicio" required>
                         </div>
                     </div>
-
-                    <div class="col-lg-4">
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <label for="ruc">Ruc</label>
-                            <input type="text" class="form-control" ng-value="cliente.numeroIdentificacion"
-                                tabindex="-1" readonly>
+                            <label for="">Fecha de llegada: <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control border-select" ng-model="data.fechaFin" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="ptoPartida" class="">Punto de Partida: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control border-select" touppercase ng-model="data.ptoPartida">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="ptoPartida" class="">Punto de Destino: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control border-select" touppercase ng-model="data.ptoLlegada">
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="">Fecha Inicio <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control border-select" ng-model="data.fechaInicio" required>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="MotivoTraslado">Ruta <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control border-select" touppercase ng-model="data.ruta">
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="MotivoTraslado">Motivo Traslado <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control border-select" touppercase ng-model="data.motivo">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="">Fecha Fin <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control border-select" ng-model="data.fechaFin" required>
-                </div>
-            </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="ptoPartida" class="">Entrega A: </label>
+                            <input type="text" class="form-control border-select" touppercase ng-model="data.entregar">
+                        </div>
+                    </div>
 
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="transportista">Transportista <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <input type="text" autocomplete="off" class="form-control border-select"
-                            placeholder="Ingrese Descripción" ng-model="transportista.nombre"
-                            ng-keyup="onKeyupTransportistaSearch()"
-                            uib-typeahead="t as t.nombre for t in transporteSearch($viewValue)"
-                            typeahead-loading="transportista.loadingLocations"
-                            typeahead-no-results="transportista.noResults" typeahead-items="1" typeahead-wait-ms="10"
-                            typeahead-template-url="autocompleteTransport.html" typeahead-editable="false"
-                            typeahead-on-select="selectedTransportstaChange($item)" />
-                        <script type="text/ng-template" id="autocompleteTransport.html">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="empleado" class="">Empleado</label>
+                            <div class="input-group">
+                                <input type="text" autocomplete="off" class="form-control border-select"
+                                       placeholder="Ingrese Descripción" ng-model="empleado.nombreCompleto"
+                                       ng-keyup="onKeyupEmpleadoSearch()"
+                                       uib-typeahead="e as e.nombreCompleto for e in empleadoSearch($viewValue)"
+                                       typeahead-loading="empleado.loadingLocations" typeahead-items="1" typeahead-wait-ms="10"
+                                       typeahead-no-results="empleado.noResults" typeahead-template-url="autocompleteEmpleado.html"
+                                       typeahead-editable="false" typeahead-on-select="selectedEmpleadoChange($item)"
+                                       onClick="select();" />
+                                <script type="text/ng-template" id="autocompleteEmpleado.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title">
+                                            <strong>{{match.model.nroIdentificacion}}</strong> - {{match.model.nombreCompleto}}
+                                        </span>
+                                    </div>
+                                </script>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary btn-sm" btn-empleado tabindex="-1" type="button">
+                                        <i class="fa fa-plus fa-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="companyCustomerSearch">Cliente Destinatario: <span class="text-danger">*</span></label>
+                            <div class="input-group" ng-if="!(data.idFactura>0)">
+                                <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
+                                       class="form-control border-select" ng-model="cliente.nombreFiscal" customer-search-sale-drtv
+                                       on-select="onSelectedClienteChange(result)" on-keyup="onKeyupCustomer()"
+                                       function-trigger="receiveDataCustomerSRI(result)" autocomplete="off"
+                                       placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary btn-xs border-select"
+                                            id="btnNewCustomerDocument" btn-cliente result-modal="onSelectedClienteChange(result)">
+                                        <i class="fa fa-plus fa-xs"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0"
+                                            btn-cliente result-modal="onSelectedClienteChange(result)" params="cliente" tabindex="-1">
+                                        <i class="fa fa-edit fa-xs"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-xs" btn-cliente-lista
+                                            result-modal="onSelectedClienteChange(result)" tabindex="-1">
+                                        <i class="fa fa-search fa-xs"></i>
+                                    </button>
+
+                                    <button type="button" cliente-info-popover customer="cliente" popover-placement='top'
+                                            class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
+                                        <i class="fa fa-info fa-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <script type="text/ng-template" id="customerSearchSaleTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title">
-                                    {{match.model.nombre}}
-                                </span>
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
                         </script>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button"
-                                btn-transportista result-modal="resultModalTransportista(result)"><i
-                                    class="fa fa-plus fa-xs"></i></button>
-
-                            <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button"
-                                ng-if="transportista.idTransportista>0" btn-transportista
-                                result-modal="resultModalTransportista(result)" params="transportista">
-                                <i class="fas fa-pencil-alt fa-xs"></i>
-                            </button>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label>Identificador Comprador: </label>
+                            <input type="text" class="form-control" ng-value="cliente.numeroIdentificacion" readonly>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="vehiculo">Vehículo <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <input type="text" autocomplete="off" class="form-control border-select"
-                            placeholder="Ingrese Descripción" ng-model="vehiculo.placa"
-                            ng-keyup="onKeyupVehiculoSearch()"
-                            uib-typeahead="t as t.placa for t in vehiculoSearch($viewValue)"
-                            typeahead-loading="loadingLocations" typeahead-items="1" typeahead-wait-ms="10"
-                            typeahead-no-results="noResults" typeahead-template-url="autocompleteVehiculo.html"
-                            typeahead-editable="false" typeahead-on-select="selectedVehiculoChange($item)" />
-                        <script type="text/ng-template" id="autocompleteVehiculo.html">
-                            <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title">
-                                    {{match.model.placa}}
-                                </span>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="transportista">Transportista <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" autocomplete="off" class="form-control border-select"
+                                       placeholder="Ingrese Descripción" ng-model="transportista.nombre"
+                                       ng-keyup="onKeyupTransportistaSearch()"
+                                       uib-typeahead="t as t.nombre for t in transporteSearch($viewValue)"
+                                       typeahead-loading="transportista.loadingLocations"
+                                       typeahead-no-results="transportista.noResults" typeahead-items="1" typeahead-wait-ms="10"
+                                       typeahead-template-url="autocompleteTransport.html" typeahead-editable="false"
+                                       typeahead-on-select="selectedTransportstaChange($item)" />
+                                <script type="text/ng-template" id="autocompleteTransport.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title">
+                                            {{match.model.nombre}}
+                                        </span>
+                                    </div>
+                                </script>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button"
+                                            btn-transportista result-modal="resultModalTransportista(result)">
+                                        <i class="fa fa-plus fa-xs"></i>
+                                    </button>
+
+                                    <button class="btn btn-outline-secondary btn-sm" tabindex="-1" type="button"
+                                            ng-if="transportista.idTransportista>0" btn-transportista
+                                            result-modal="resultModalTransportista(result)" params="transportista">
+                                        <i class="fas fa-pencil-alt fa-xs"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </script>
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" btn-vehiculo
-                                result-modal="resultModalVehiculo(result)" tabindex="-1">
-                                <i class="fa fa-plus fa-xs"></i>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="vehiculo.idVehiculo>0"
-                                btn-vehiculo result-modal="resultModalVehiculo(result)" params="vehiculo" tabindex="-1">
-                                <i class="fas fa-pencil-alt fa-xs"></i>
-                            </button>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="ptoPartida" class="">Punto de Partida <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.ptoPartida">
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="ptoPartida" class="">Punto de Llegada <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.ptoLlegada">
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="EstDestino">Est. Destino: </label>
-                    <input type="text" mask="999" maxlength=3 class="form-control ssn-inputmask border-select"
-                        ng-model="data.estableDestino">
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="docAduanero">Doc. Aduanero </label>
-                    <input type="text" class="form-control border-select" ng-model="data.docAduanero">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="MotivoTraslado">Ruta <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.ruta">
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="MotivoTraslado">Motivo Traslado <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.motivo">
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="ptoPartida" class="">Entrega A: </label>
-                    <input type="text" class="form-control border-select" touppercase ng-model="data.entregar">
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="empleado" class="">Empleado</label>
-                    <div class="input-group">
-                        <input type="text" autocomplete="off" class="form-control border-select"
-                            placeholder="Ingrese Descripción" ng-model="empleado.nombreCompleto"
-                            ng-keyup="onKeyupEmpleadoSearch()"
-                            uib-typeahead="e as e.nombreCompleto for e in empleadoSearch($viewValue)"
-                            typeahead-loading="empleado.loadingLocations" typeahead-items="1" typeahead-wait-ms="10"
-                            typeahead-no-results="empleado.noResults" typeahead-template-url="autocompleteEmpleado.html"
-                            typeahead-editable="false" typeahead-on-select="selectedEmpleadoChange($item)"
-                            onClick="select();" />
-                        <script type="text/ng-template" id="autocompleteEmpleado.html">
-                            <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title">
-                                    <strong>{{match.model.nroIdentificacion}}</strong> - {{match.model.nombreCompleto}}
-                                </span>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label for="vehiculo">Vehículo <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" autocomplete="off" class="form-control border-select"
+                                       placeholder="Ingrese Descripción" ng-model="vehiculo.placa"
+                                       ng-keyup="onKeyupVehiculoSearch()"
+                                       uib-typeahead="t as t.placa for t in vehiculoSearch($viewValue)"
+                                       typeahead-loading="loadingLocations" typeahead-items="1" typeahead-wait-ms="10"
+                                       typeahead-no-results="noResults" typeahead-template-url="autocompleteVehiculo.html"
+                                       typeahead-editable="false" typeahead-on-select="selectedVehiculoChange($item)" />
+                                <script type="text/ng-template" id="autocompleteVehiculo.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title">
+                                            {{match.model.placa}}
+                                        </span>
+                                    </div>
+                                </script>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" btn-vehiculo
+                                            result-modal="resultModalVehiculo(result)" tabindex="-1">
+                                        <i class="fa fa-plus fa-xs"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="vehiculo.idVehiculo>0"
+                                            btn-vehiculo result-modal="resultModalVehiculo(result)" params="vehiculo" tabindex="-1">
+                                        <i class="fas fa-pencil-alt fa-xs"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </script>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary btn-sm" btn-empleado tabindex="-1" type="button">
-                                <i class="fa fa-plus fa-xs"></i>
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="card border border-info rounded">
+            <div class="card-header bg-info text-white">
+                <span class="card-title">Items de la guía</span>
+            </div>
+            <div class="mx-3 mb-2">
+                <div class="row justify-content-between">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="">Articulo <span class="text-danger">*</span></label>
+                            <md-autocomplete-articulo-component tipo-doc="tipoDoc"
+                                                                set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
+                            </md-autocomplete-articulo-component>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex align-items-center justify-content-between">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <button type="button" class="btn btn-cyan btn-block" ng-click="openModalDoc()">
+                                        <i class="fas fa-search"></i> Documentos de referencia
+                                    </button>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <p class="border border-danger px-3">
+                                        <span class="font-weight-bold">Serie Comprobante: </span>
+                                        <span>{{dataDocumentoReferenciado.serieComprobante}}</span>    
+                                    </p>                             
+                                </div>
+                            </div>
 
-        <div class="row justify-content-between">
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label for="">Articulo <span class="text-danger">*</span></label>
-                    <md-autocomplete-articulo-component tipo-doc="tipoDoc"
-                        set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
-                    </md-autocomplete-articulo-component>
+                        </div>
+                    </div>
+                </div>
+
+                <div ui-grid="gridOptionsDetalle" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+                     class="grid">
                 </div>
             </div>
-            <div class="col-lg-6"></div>
         </div>
-
-        <div ui-grid="gridOptionsDetalle" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
-            class="grid">
-        </div>
-
         <div class="row justify-content-end">
-            <div class="col-md-2">
-                <div class="mt-2">
-                    <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
                         open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento" is-view="false"
                         get-data-additional-document='resultModalInfoAdicional(result)'>
-                        <i class="fas fa-info-circle text-info"></i> Dato Adicional
-                    </button>
-                </div>
+                    <i class="fas fa-info-circle text-info"></i> Dato Adicional
+                </button>
             </div>
         </div>
-
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-success" ng-click="save()">
+        <button type="button" class="btn btn-success" ng-click="onSave()">
             <i ng-class="btnIconSave"></i> {{titleModal}}
         </button>
         <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
