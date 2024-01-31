@@ -16,7 +16,14 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
         ,gr.claveAcceso
         ,gr.emision
         ,gr.estado
+        ,gr.docAduanero
+		,gr.ptoPartida
+		,gr.ptoLlegada
         ,pt.ptoEmi
+        ,gr.ruta
+		,gr.estableDestino
+		,gr.entregar
+        ,gr.motivo
         ,es.idEstablecimiento
         ,es.codEstab
         ,es.nombreComercial
@@ -36,6 +43,6 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
     INNER JOIN dbo.Transportista   ts WITH (NOLOCK) ON ts.idTransportista = gr.idTransportista
     INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario       = gr.idUsuario
      LEFT JOIN dbo.Factura         fa WITH (NOLOCK) ON fa.idFactura       = gr.idFactura
-     LEFT JOIN dbo.PuntoEmision    pf WITH (NOLOCK) ON pf.idPuntoEmision  = fa.idFactura
+     LEFT JOIN dbo.PuntoEmision    pf WITH (NOLOCK) ON pf.idPuntoEmision  = fa.idPuntoEmision
      LEFT JOIN Sri.Establecimiento ef WITH (NOLOCK) ON ef.codEstab        = pf.codEstab
 )

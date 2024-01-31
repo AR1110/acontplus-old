@@ -23,6 +23,7 @@ CREATE OR ALTER VIEW Ventas.v_Factura WITH SCHEMABINDING AS (
 		  ,total
 		  ,ISNULL(fa.observacion, '')       as observacion
           ,fa.notaCredito
+          ,fa.guiaRemision
           ,fa.estado 
           ,fa.autorizada
           ,cl.nombreFiscal as razonSocialComprador
