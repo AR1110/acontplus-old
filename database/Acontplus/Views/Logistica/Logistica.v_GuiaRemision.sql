@@ -28,6 +28,7 @@ CREATE OR ALTER VIEW Logistica.v_GuiaRemision WITH SCHEMABINDING AS (
         ,es.codEstab
         ,es.nombreComercial
         ,es.estab
+        ,pt.ambiente
         ,cl.nombreFiscal         as razonSocialDestinatario
         ,cl.numeroIdentificacion as identificacionDestinatario
         ,(SELECT TOP 1 de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.codDoc = '06' AND de.idDocumento = gr.idGuiaRemision ) as codEstado
