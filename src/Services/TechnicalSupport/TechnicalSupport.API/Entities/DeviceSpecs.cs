@@ -4,8 +4,8 @@ using Common.Core.Entities;
 
 namespace TechnicalSupport.API.Entities
 {
-    [Table("TechSpec", Schema = "TechnicalSupport")]
-    public class TechSpec : BaseEntity
+    [Table("DeviceSpecs", Schema = "TechnicalSupport")]
+    public class DeviceSpecs : BaseEntity
     {
         public Device Device { get; set; }
         public int DeviceId { get; set; }
