@@ -16,7 +16,7 @@ namespace TechnicalSupport.API.Entities
         [MaxLength(300)]
         public string Serie { get; set; }
         [MaxLength(300)]
-        public string Marca { get; set; }
+        public string Brand { get; set; }
         [MaxLength(300)]
         public string Model { get; set; }
         public int? Year { get; set; }
@@ -25,5 +25,6 @@ namespace TechnicalSupport.API.Entities
         [MaxLength(100)]
         public string Color { get; set; }
         public string Specs { get; set; }
+        public List<DeviceCustomer> Customers { get; set; }
     }
 }
