@@ -3,10 +3,15 @@ export interface Device {
   categoryId: number;
   name: string;
   serie: string;
-  marca: string;
+  brand: string;
   model: string;
   year: number;
   warranty: number;
   color: string;
-  specs: string;
+  customers?: DeviceCustomer[];
+}
+
+export interface DeviceCustomer {
+  customerCompanyId: number;
+  deviceId?: number;
 }

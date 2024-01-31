@@ -1,12 +1,6 @@
-import { BaseEntity } from '@core/models/base-entity';
-import { Order } from './order.model';
-import { Device } from './device.model';
-
-export interface OrderDetail extends BaseEntity {
+export interface OrderDetail {
   uuid: string;
-  order: Order;
-  orderId: number;
-  device: Device;
+  orderId?: number;
   deviceId: number;
-  obs: string;
+  obs?: string;
 }

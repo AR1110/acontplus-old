@@ -58,6 +58,7 @@ namespace TechnicalSupport.API.Data
 
             builder.Entity<Device>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Device>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<Device>().HasMany(x => x.Customers).WithOne(x => x.Device).HasForeignKey(x => x.DeviceId);
 
             builder.Entity<DeviceCustomer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<DeviceCustomer>().Property(x => x.Enabled).HasDefaultValue(true);
