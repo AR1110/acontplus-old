@@ -22,13 +22,18 @@
         function getDataForm() {
             return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
                 if (!response) return {}
-                const { ptoEmision } = response;
+                const {
+                    ptoEmision,
+                    tipoDocumento
+                } = response;
+                console.log(response)
 
                 const estabs = fS.groupingEstab({
                     estabs: ptoEmision
                 })
                 return {
                     estabs: estabs || [],
+                    tiposDoc: tipoDocumento
                 }
             })
         }
@@ -52,7 +57,7 @@
                 if (!response) [];
 
                 let guiasRemision = response.guias || [];
-                
+
                 return guiasRemision.map(item => {
                     return {
                         idGuiaRemision: item.idGuiaRemision,
@@ -76,7 +81,40 @@
         }
 
         function getDocs(obj) {
-            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 5 }), null, true)
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj}), null, true).then(response=>{
+                let docs = [];
+                if(response!==null && typeof response==='object'){
+                    let tempData = [];
+                    if(obj.codDoc==="NE"){
+                        tempData = response.notas;
+                        docs = tempData.map(doc => {
+                            let detalles = JSON.parse(doc.detalles);
+                            return {
+                                idDocumento: doc.idDocumento,
+                                serieComprobante: doc.serieComprobante,
+                                razonSocialComprador: doc.razonSocialComprador,
+                                detalles,
+                                totalRecords: doc.totalRecords,
+                            }
+                        })
+
+                    }else{
+                        tempData = response.facturas;
+                    }
+
+                    docs = tempData.map(doc => {
+                        let detalles = JSON.parse(doc.detalles);
+                        return {
+                            idDocumento: doc.idFactura,
+                            serieComprobante: doc.serieComprobante,
+                            razonSocialComprador: doc.razonSocialComprador,
+                            detalles,
+                            totalRecords: doc.totalRecords,
+                        }
+                    }) 
+                }
+                return docs;
+            })
         }
 
         function mapperTo(obj) {
@@ -122,7 +160,7 @@
                     idArticulo: item.idArticulo,
                     cantidad: item.cantidad,
                     descripcion: item.descripcion,
-                    estado: item.estado                    
+                    estado: item.estado
                 }
             })
             return arr;
@@ -135,10 +173,10 @@
                 }
                 if (response.code == "1") {
                     let { cliente, detalles, empleado, guia, infoAdicional, transportista, vehiculo } = JSON.parse(response.payload);
-                                       
+
                     let comprobante = guia[0];
                     let resultComprobante = {
-                      
+
                         idGuiaRemision: comprobante.idGuiaRemision,
                         codEstab: comprobante.codEstab,
                         idPuntoEmision: comprobante.idPuntoEmision,
@@ -165,7 +203,7 @@
                             cantidad: item.cantidad,
                             descripcion: item.descripcion,
                             codigo: item.codigo,
-                            estado:  true
+                            estado: true
                         }
                     })
 

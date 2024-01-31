@@ -2,80 +2,36 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
-    <DataSource Name="ComprobanteLogistica">
-      <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
-      </ConnectionProperties>
-      <rd:SecurityType>None</rd:SecurityType>
-      <rd:DataSourceID>42168648-3d7b-4828-b694-14fb7652e4bf</rd:DataSourceID>
-    </DataSource>
-    <DataSource Name="ComprobantesElectronicos">
-      <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
-      </ConnectionProperties>
-      <rd:SecurityType>None</rd:SecurityType>
-      <rd:DataSourceID>c444d2a1-482c-4ea2-ab80-df5558ffcdbe</rd:DataSourceID>
-    </DataSource>
-    <DataSource Name="infoAdicionalDt">
+    <DataSource Name="mainDS">
       <ConnectionProperties>
         <DataProvider>SQL</DataProvider>
         <ConnectString />
       </ConnectionProperties>
       <rd:SecurityType>None</rd:SecurityType>
-      <rd:DataSourceID>14988da7-6fa6-43e7-b22f-ef89ff170b55</rd:DataSourceID>
+      <rd:DataSourceID>29d7f610-7b1e-4f38-8a74-18fc26ffb9bf</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="GuiaRemisionDs">
+    <DataSet Name="headerDs">
       <Query>
-        <DataSourceName>ComprobanteLogistica</DataSourceName>
+        <DataSourceName>mainDS</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="razonSocial">
-          <DataField>razonSocial</DataField>
+        <Field Name="serieComprobante">
+          <DataField>serieComprobante</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nombreComercial">
-          <DataField>nombreComercial</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="dirMatriz">
-          <DataField>dirMatriz</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="dirSucursal">
-          <DataField>dirSucursal</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="contibuyenteEpecial">
-          <DataField>contibuyenteEpecial</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="obligadoContabilidad">
-          <DataField>obligadoContabilidad</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ruc">
-          <DataField>ruc</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="tipoDoc">
-          <DataField>tipoDoc</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="nroDocumento">
-          <DataField>nroDocumento</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="codigoAutorizacion">
-          <DataField>codigoAutorizacion</DataField>
+        <Field Name="claveAcceso">
+          <DataField>claveAcceso</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="fechaAutorizacion">
           <DataField>fechaAutorizacion</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="tipoDoc">
+          <DataField>tipoDoc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ambiente">
@@ -86,32 +42,52 @@
           <DataField>emision</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="claveAcceso">
-          <DataField>claveAcceso</DataField>
+        <Field Name="razonSocial">
+          <DataField>razonSocial</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="fechaEmision">
-          <DataField>fechaEmision</DataField>
+        <Field Name="ruc">
+          <DataField>ruc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="direccion">
-          <DataField>direccion</DataField>
+        <Field Name="dirMatriz">
+          <DataField>dirMatriz</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="entidadTelefono">
-          <DataField>entidadTelefono</DataField>
+        <Field Name="telefono">
+          <DataField>telefono</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="entidadEmail">
-          <DataField>entidadEmail</DataField>
+        <Field Name="correo">
+          <DataField>correo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nroIdentificacionTransportista">
-          <DataField>nroIdentificacionTransportista</DataField>
+        <Field Name="contribuyenteEspecial">
+          <DataField>contribuyenteEspecial</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nombreTransportista">
-          <DataField>nombreTransportista</DataField>
+        <Field Name="obligadoContabilidad">
+          <DataField>obligadoContabilidad</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="establecimiento">
+          <DataField>nombreComercial</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="contribuyenteRimpe">
+          <DataField>contribuyenteRimpe</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="agenteRetencion">
+          <DataField>agenteRetencion</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="rucTransportista">
+          <DataField>rucTransportista</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="razonSocialTransportista">
+          <DataField>razonSocialTransportista</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="placa">
@@ -122,52 +98,48 @@
           <DataField>ptoPartida</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="fechaInicioTransporte">
-          <DataField>fechaInicioTransporte</DataField>
+        <Field Name="fechaInicio">
+          <DataField>fechaInicio</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="fechaFinTransporte">
-          <DataField>fechaFinTransporte</DataField>
+        <Field Name="fechaFin">
+          <DataField>fechaFin</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="motivoTraslado">
-          <DataField>motivoTraslado</DataField>
+        <Field Name="motivo">
+          <DataField>motivo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ptoLlegada">
           <DataField>ptoLlegada</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="razonSocialComprador">
-          <DataField>razonSocialComprador</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="docAduanero">
           <DataField>docAduanero</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="codEstablecimientoDestino">
-          <DataField>codEstablecimientoDestino</DataField>
+        <Field Name="estableDestino">
+          <DataField>estableDestino</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="ruta">
           <DataField>ruta</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="nroIdentificacionCliente">
-          <DataField>nroIdentificacionCliente</DataField>
+        <Field Name="razonSocialDestinatario">
+          <DataField>razonSocialDestinatario</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="tipoRegimen">
-          <DataField>tipoRegimen</DataField>
+        <Field Name="identificacionDestinatario">
+          <DataField>identificacionDestinatario</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="agenteRetencion">
-          <DataField>agenteRetencion</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
+        <Field Name="direccionDestinatario">
+          <DataField>direccionDestinatario</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="contribuyenteRimpe">
-          <DataField>contribuyenteRimpe</DataField>
+        <Field Name="fechaEmision">
+          <DataField>fechaEmision</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -180,9 +152,9 @@
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="DetalleGuiaRemisionDs">
+    <DataSet Name="detalleDs">
       <Query>
-        <DataSourceName>ComprobanteLogistica</DataSourceName>
+        <DataSourceName>mainDS</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -214,7 +186,7 @@
     </DataSet>
     <DataSet Name="infoAdicionalDs">
       <Query>
-        <DataSourceName>infoAdicionalDt</DataSourceName>
+        <DataSourceName>mainDS</DataSourceName>
         <CommandText />
       </Query>
       <Fields>
@@ -348,7 +320,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaEmision.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!fechaEmision.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -490,7 +462,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!motivoTraslado.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!motivo.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -741,7 +713,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ptoLlegada.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!ptoLlegada.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -776,7 +748,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!docAduanero.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!docAduanero.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -811,7 +783,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!codEstablecimientoDestino.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!estableDestino.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -846,7 +818,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ruta.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!ruta.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -881,7 +853,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!razonSocialComprador.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!razonSocialDestinatario.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -916,7 +888,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroIdentificacionCliente.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!identificacionDestinatario.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1100,7 +1072,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!codigoAutorizacion.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!claveAcceso.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1207,7 +1179,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ambiente.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!ambiente.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1278,7 +1250,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!emision.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!emision.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1348,7 +1320,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ruc.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!ruc.Value, "headerDs")</Value>
                         <Style />
                       </TextRun>
                     </TextRuns>
@@ -1378,7 +1350,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroDocumento.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!serieComprobante.Value, "headerDs")</Value>
                         <Style />
                       </TextRun>
                     </TextRuns>
@@ -1408,7 +1380,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaAutorizacion.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!fechaAutorizacion.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1443,7 +1415,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!claveAcceso.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!claveAcceso.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>7pt</FontSize>
                           <FontWeight>Bold</FontWeight>
@@ -1511,7 +1483,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!razonSocial.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!razonSocial.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                           <FontWeight>Bold</FontWeight>
@@ -1583,7 +1555,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!dirMatriz.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!dirMatriz.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1656,7 +1628,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!entidadTelefono.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!telefono.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1729,7 +1701,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!entidadEmail.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!correo.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1802,7 +1774,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!obligadoContabilidad.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!obligadoContabilidad.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1837,7 +1809,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nombreComercial.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!establecimiento.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1873,7 +1845,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!contribuyenteRimpe.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!contribuyenteRimpe.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1908,7 +1880,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!agenteRetencion.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!agenteRetencion.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -1993,7 +1965,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nroIdentificacionTransportista.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!rucTransportista.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -2064,7 +2036,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!nombreTransportista.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!razonSocialTransportista.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -2135,7 +2107,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!placa.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!placa.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -2206,7 +2178,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ptoPartida.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!ptoPartida.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -2277,7 +2249,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaInicioTransporte.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!fechaInicio.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -2348,7 +2320,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaFinTransporte.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!fechaFin.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -2420,7 +2392,7 @@
                                 <TextRun>
                                   <Value>Código</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2455,7 +2427,7 @@
                                 <TextRun>
                                   <Value>Código Auxiliar</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2490,7 +2462,7 @@
                                 <TextRun>
                                   <Value>Cantidad</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2525,7 +2497,7 @@
                                 <TextRun>
                                   <Value>Descripción</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2565,7 +2537,7 @@
                                 <TextRun>
                                   <Value>=Fields!codigo.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2599,7 +2571,7 @@
                                 <TextRun>
                                   <Value>=Fields!codigoAuxiliar.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2633,7 +2605,7 @@
                                 <TextRun>
                                   <Value>=Fields!cantidad.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2667,7 +2639,7 @@
                                 <TextRun>
                                   <Value>=Fields!descripcion.Value</Value>
                                   <Style>
-                                    <FontSize>7pt</FontSize>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2712,7 +2684,7 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>DetalleGuiaRemisionDs</DataSetName>
+            <DataSetName>detalleDs</DataSetName>
             <Top>18.04344cm</Top>
             <Left>0.26398cm</Left>
             <Height>1.2cm</Height>
@@ -2761,10 +2733,10 @@
                 <TablixBody>
                   <TablixColumns>
                     <TablixColumn>
-                      <Width>2.5cm</Width>
+                      <Width>2.90515cm</Width>
                     </TablixColumn>
                     <TablixColumn>
-                      <Width>2.5cm</Width>
+                      <Width>6.68042cm</Width>
                     </TablixColumn>
                   </TablixColumns>
                   <TablixRows>
@@ -2855,7 +2827,7 @@
                 <Top>0.77639cm</Top>
                 <Left>0.36306cm</Left>
                 <Height>0.6cm</Height>
-                <Width>5cm</Width>
+                <Width>9.58557cm</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
@@ -2928,10 +2900,10 @@
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
-        <LeftMargin>0.5cm</LeftMargin>
-        <RightMargin>0.5cm</RightMargin>
-        <TopMargin>1cm</TopMargin>
-        <BottomMargin>1cm</BottomMargin>
+        <LeftMargin>0.25cm</LeftMargin>
+        <RightMargin>0.25cm</RightMargin>
+        <TopMargin>0.25cm</TopMargin>
+        <BottomMargin>0.25cm</BottomMargin>
         <ColumnSpacing>0.13cm</ColumnSpacing>
         <Style />
       </Page>
