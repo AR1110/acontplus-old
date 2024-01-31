@@ -10,16 +10,14 @@ GO
 -- Create date: 2022-18-01
 -- Description:	SP para registra los comprobantes de ingreso con sus cobros y detalles 
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.ComprobanteIngreso_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.ComprobanteIngreso_Insert
-GO
-CREATE PROCEDURE Contabilidad.ComprobanteIngreso_Insert @idUsuarioRol INT ,@json VARCHAR(MAX) 
+CREATE OR ALTER PROCEDURE Contabilidad.ComprobanteIngreso_Insert @idUsuarioRol INT ,@json VARCHAR(MAX) 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
+
 	DECLARE @comprobante NVARCHAR(MAX)
 	DECLARE @cobros NVARCHAR(MAX)
 	DECLARE @cobroDetalle NVARCHAR(MAX)
@@ -54,7 +52,7 @@ BEGIN
 		,idBanco INT NULL
 		,idTipoDocumento INT NULL 
 		,idComprobante INT NULL
-		,fechaEmision DATETIME NOT NULL
+		,fechaEmision DATETIME2 NOT NULL
 		,valor NUMERIC (18,5) NOT NULL
 		,abono NUMERIC (18,5) NOT NULL
 		,posfechado BIT NOT NULL
@@ -139,7 +137,7 @@ BEGIN
 			 ,idCuentaBancaria       INT '$.idCuentaBancaria'
 			 ,idTipoDocumento        INT '$.idTipoDocumento'
 			 ,idComprobante          INT '$.idComprobante'
-			 ,fechaEmision      DATETIME '$.fechaEmision'
+			 ,fechaEmision     DATETIME2 '$.fechaEmision'
 			 ,valor        NUMERIC(15,5) '$.valor' 
 			 ,posfechado             BIT '$.posfechado'
 			 ,secuencial             INT '$.secuencial'
@@ -288,7 +286,10 @@ BEGIN
 			ROLLBACK TRAN; 
 		END
 		SELECT '0' code,'Info: Error en el procedimiento ' + ERROR_MESSAGE() as 'message'
-		RETURN
+		
+        INSERT INTO ErroresSistema
+		       (token,method,errorNumber,errorSeverity ,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/ComprobanteIngreso/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 	END CATCH 
 
 END
