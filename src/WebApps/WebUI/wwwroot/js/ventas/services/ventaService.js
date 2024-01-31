@@ -244,8 +244,7 @@
                     let notificacionVentaTemp = mainData[8];
                     notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
                     let tempEstabsAndPtosEmision = mainData[9];
-                    let tempBodegas = mainData[10];
-                    let tarifaImpuestoVigente = mainData[11][0];
+                    let tempBodegas = mainData[10]; 
                     let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
 
                     let dataToGroup = {
@@ -255,8 +254,7 @@
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
                     return {
-                        estabs,
-                        tarifaImpuestoVigente,
+                        estabs, 
                         tarifasImpuesto,
                         clienteDefault,
                         tiemposCredito,

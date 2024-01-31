@@ -66,23 +66,16 @@
                             <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <span for="clienteFiltro">Cliente</span>
-                                    <input type="text" id="clienteSearchFiltro" autocomplete="off"
-                                        name="clienteSearchFiltro" class="form-control border-select"
-                                        placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelTextSearch"
-                                        typeahead-wait-ms="10" ng-keyup="onKeyupClienteSearchFiltro()"
-                                        uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
-                                        typeahead-loading="clienteFiltro.loading"
-                                        typeahead-no-results="clienteFiltro.noResults"
-                                        typeahead-template-url="clienteSearchFiltro.html" typeahead-editable="false"
-                                        typeahead-on-select="selectedClienteSearchFiltro($item)" onClick="select();" />
+                                    <input type="text" id="customerInputSearch" class="form-control border-select"
+                                        ng-model="cliente.nombreCliente" cliente-search-drtv
+                                        on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                                        placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
-                                    <script type="text/ng-template" id="clienteSearchFiltro.html">
-                                <div class="autocomplete-suggestion-uib-typeahead">
-                                    <span class="item-title">
-                                        <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
-                                    </span>
-                                </div>
-                            </script>
+                                    <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                        </div>
+                                    </script>
                                 </div>
                             </div>
                             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
@@ -100,6 +93,7 @@
                     </div>
                 </div>
 
+
                 <div class="row justify-content-between" ng-if="moreSearchOptions">
                     <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                         <div class="form-gorup">
@@ -114,16 +108,13 @@
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
-                            <span for="usuario">Usuario</span>
-                            <input type="text" class="form-control border-select" ng-model="nombreCompleto"
-                                ng-keyup="onKeyupUsuarioSearch()"
-                                uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
-                                typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
-                                typeahead-template-url="usuarioSearchTemplate.html"
-                                typeahead-no-results="usuarioSearch.noResults"
-                                typeahead-on-select="selectedUsuarioSearch($item)">
+                            <span for="usuario">Usuario</span> 
+                                    <input type="text" id="userInputSearch" class="form-control border-select"
+                                        ng-model="usuario.nombreUsuario" user-search-drtv
+                                        on-select="selectedUsuarioSearch(result)" on-keyup="onKeyupUsuarioSearch()"
+                                        placeholder="..." onclick="select();">
 
-                            <script type="text/ng-template" id="usuarioSearchTemplate.html">
+                            <script type="text/ng-template" id="autocompleteUserTemplate.html">
                                 <div class="autocomplete-suggestion-uib-typeahead">
                                     <span class="item-title">
                                         {{match.model.nombreCompleto}}
@@ -171,10 +162,10 @@
                 </div>
 
                 <div class="col-6 d-flex justify-content-end">
-                    <form class="form-material">
+                    <!-- <form class="form-material">
                         <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter"
                             placeholder="Buscar">
-                    </form>
+                    </form> -->
                 </div>
             </div>
 
@@ -243,17 +234,28 @@
                                                 </md-button>
                                             </md-menu-item>
 
+                                            <md-menu-item>
+                                                <md-button btn-copy text="item.claveAcceso">
+                                                    <span md-menu-align-target>
+                                                        <i class="fas fa-copy"></i>
+                                                        Copiar Clave Acceso
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            
+
                                         </md-menu-content>
                                     </md-menu>
                                 </td>
                                 <td md-cell>{{item.fechaEmision}}</td>
-                                <td md-cell>{{item.nroDoc}}</td>
+                                <td md-cell>{{item.serieComprobante}}</td>
                                 <td md-cell>{{item.fechaInicio}}</td>
                                 <td md-cell>{{item.fechaFin}}</td>
-                                <td md-cell>{{item.cliente}}</td>
-                                <td md-cell>{{item.nroFactura}}</td>
-                                <td md-cell>{{item.estadoSri}}</td>
-                                <td md-cell>{{item.transportista}}</td>
+                                <td md-cell>{{item.razonSocialDestinatario}}</td>
+                                <td md-cell>{{item.serieFactura}}</td>
+                                <td md-cell>{{item.estado}}</td>
+                                <td md-cell>{{item.razonSocialTransportista}}</td>
                                 <td md-cell>{{item.usuario}}</td>
                             </tr>
                         </tbody>
@@ -261,6 +263,11 @@
                 </md-table-container>
 
             </div>
+              <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
+        </div>
         </div>
     </div>
 </div>
