@@ -6,7 +6,7 @@
     const URL_TEMPLATE = '~/Pages/FactElect/GuiaRemision/Shared/'
 
     let guiaRemisionSvc = {};
-    let commonSvc = {}; 
+    let commonSvc = {};
     let fS = {};
     let tS = {};
 
@@ -16,13 +16,13 @@
 
     function guiaRemisionCtrl($scope, $injector, $filter, modalSvc) {
 
-
         guiaRemisionSvc = $injector.get('guiaRemisionService');
-        commonSvc = $injector.get('commonService'); 
+        commonSvc = $injector.get('commonService');
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
+        const CODE_REPORT = $injector.get('CODE_REPORT');
 
-        $scope.cliente = {}; 
+        $scope.cliente = {};
 
         $scope.estadosDocumento = [
             { codigo: 'AUTH', descripcion: 'AUTORIZADO' },
@@ -67,7 +67,7 @@
             $scope.dataSearch.fechaInicio = item.startDate,
                 $scope.dataSearch.fechaFin = item.endDate
             $scope.getGuiasRemision();
-        } 
+        }
 
         $scope.onKeyupCliente = function () {
             if (!$scope.cliente.nombreCliente) {
@@ -81,7 +81,7 @@
             $scope.dataSearch.checkBoxDate = true;
             $scope.getGuiasRemision();
         }
- 
+
 
         $scope.usuario = {}
         $scope.onKeyupUsuarioSearch = function () {
@@ -215,15 +215,18 @@
         }
 
         $scope.openModalDetalle = async function (item) {
-            try {
-
-                showLoader();
-                await commonSvc.viewDetailDocument({
-                    id: item.idGuiaRemision,
-                    codigoDocumento: 'GR',
+            try { 
+                let modalRef = modalSvc.openModalCustom({
+                    controller: 'ModalGuiaRemisionCtrl',
+                    template: URL_TEMPLATE + '_ModalDetalle.cshtml',
+                    params: {
+                        tipoRegistro: 2,
+                        id: item.idGuiaRemision,
+                        serieComprobanteDocReferenciado: item.serieFactura
+                    },
+                    windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
-                })
-                hideLoader();
+                }) 
             } catch (error) {
                 hideLoader();
                 console.log(error);
@@ -231,45 +234,36 @@
         }
 
         $scope.askToDelete = async (item) => {
-
             try {
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-2'
-                    },
-                    buttonsStyling: false
-                })
-
-                let {
-                    isConfirmed
-                } = await swalWithBootstrapButtons.fire({
-                    title: '<small>Anular Documento?</small>',
-                    html: "<small>Este proceso no se puede revertir!</small>",
-                    icon: 'warning',
+                Swal.fire({
+                    title: '¿Esta seguro que desea anular este comprobante?',
+                    html: `Recuerde que tiene que acceder a la página del SRI -> <b>Facturación Electrónica</b> -> <b>Producción</b> -> <b>Anulación</b> -> <b>Solicitud de Anulación</b> para poder anular el comprobante y no tenga validez tributaria.`,
+                    icon: "warning",
+                    focusCancel: true,
                     showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
                     confirmButtonText: 'Si, anular!',
-                    cancelButtonText: 'No, cancelar!',
-                    reverseButtons: false,
-                })
-
-                if (isConfirmed) {
-                    showLoader();
-                    guiaRemisionSvc.anular(item.idGuiaRemision).then(response => {
-                        hideLoader()
-                        if (response.code === "0") {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
+                    cancelButtonText: 'Cancelar!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        showLoader();
+                        guiaRemisionSvc.anular(item.idGuiaRemision).then(response => {
                             hideLoader()
-                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                            $scope.getGuiasRemision();
-                        }
-                    }).catch(err => {
-                        hideLoader();
-                        console.log(err)
-                    })
-                }
+                            if (response.code === "0") {
+                                fS.sweetAlert('warning', response.message, response.titleSms);
+                            }
+                            if (response.code === "1") {
+                                hideLoader()
+                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                $scope.getGuiasRemision();
+                            }
+                        }).catch(err => {
+                            hideLoader();
+                            console.log(err)
+                        })
+                    }
+                });
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -289,7 +283,7 @@
                     }),
                     reportParams: JSON.stringify({
                         codEstab: item.codEstab,
-                        codigo: 'RGR',
+                        codigo: CODE_REPORT.RGR,
                         format,
                     }),
                     hasService: true,
@@ -458,6 +452,7 @@
         $scope.vehiculo = {};
         $scope.empleado = {};
         $scope.infoAdicionalDocumento = [];
+        let tiposDoc = [];
 
         initiload();
         async function initiload() {
@@ -466,7 +461,7 @@
                 guiaRemisionSvc.getDataForm().then(response => {
                     const { estabs } = response;
                     $scope.establecimientos = estabs;
-
+                    tiposDoc = response.tiposDoc;
                     //Nuevo 
                     if (params !== null && typeof params === "object" && params.tipoRegistro === 1) {
                         $scope.tipoRegistro = 1;
@@ -501,7 +496,7 @@
                                 infoAdicionalDocumento,
                                 transportista,
                                 vehiculo,
-                            } = response; 
+                            } = response;
 
                             $scope.data = comprobante;
                             $scope.cliente = cliente;
@@ -568,6 +563,7 @@
                     const dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi)).idPuntoEmision : 0;
+                    $scope.dataDocumentoReferenciado = {};
                     $scope.$apply();
                 } else {
                     $scope.data.codEstab = $scope.dataClone.codEstab;
@@ -681,16 +677,17 @@
                 }
                 const modalRef = modalSvc.openModalCustom({
                     controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
-                        const { cliente, codEstab } = params;
+                        const { cliente, codEstab, tiposDoc } = params;
 
-
+                        $scope.tiposDoc = tiposDoc;
                         $scope.recordsQuantity = [5, 10];
 
                         $scope.dataSearch = {
                             pageIndex: 1,
                             pageSize: 5,
                             maxSize: 5,
-                            totalRecords: 0
+                            totalRecords: 0,
+                            codDoc: $scope.tiposDoc.find(item => item.codigo === 'FE').codigo
                         };
                         $scope.documentos = [];
 
@@ -709,28 +706,13 @@
                                     pageSize: $scope.dataSearch.pageSize,
                                     idCliente: cliente.idCliente,
                                     codEstab,
-                                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
+                                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
+                                    codDoc: $scope.dataSearch.codDoc,
+                                    tipo: $scope.dataSearch.codDoc === 'NE' ? 6 : 5
                                 }
                                 showLoader();
                                 guiaRemisionSvc.getDocs(params).then(response => {
-                                    if (!response) {
-                                        console.log(response)
-                                        documentos = [];
-                                    }
-                                    let tempData = response.facturas;
-
-                                    let results = tempData.map(doc => {
-                                        let detalles = JSON.parse(doc.detalles);
-                                        return {
-                                            idDocumento: doc.idFactura,
-                                            serieComprobante: doc.serieComprobante,
-                                            razonSocialComprador: doc.razonSocialComprador,
-                                            detalles,
-                                            totalRecords: doc.totalRecords,
-                                        }
-                                    })
-
-                                    $scope.documentos = results;
+                                    $scope.documentos = response;
                                     $scope.dataSearch.totalRecords = $scope.documentos.length > 0 ? $scope.documentos[0].totalRecords : 0
 
                                     if ($scope.documentos.length === 0) {
@@ -756,10 +738,12 @@
                             $scope.getDocs();
                         };
 
-                        $scope.selectedDoc = function (item) {
-                            $uibModalInstance.close(item);
+                        $scope.onChangeTipoDoc = function () {
+                            console.log($scope.dataSearch.codDoc)
                         }
-
+                        $scope.selectedDoc = function (item) {
+                            $uibModalInstance.close({ data: item, codDoc: $scope.dataSearch.codDoc });
+                        }
                         $scope.closeModal = function () {
                             $uibModalInstance.close();
                         }
@@ -768,7 +752,8 @@
                     size: 'lg',
                     params: {
                         cliente: $scope.cliente,
-                        codEstab: $scope.data.codEstab
+                        codEstab: $scope.data.codEstab,
+                        tiposDoc
                     },
                     isRenderRazorPartial: true
                 })
@@ -783,8 +768,22 @@
             }
         }
         function setDataDocReferenciado(result) {
-            $scope.dataDocumentoReferenciado = result;
-            $scope.gridOptionsDetalle.data = result.detalles;
+            let { data, codDoc } = result;
+            if (codDoc === 'NE') {
+                let index = $scope.infoAdicionalDocumento.findIndex(item => item.valor === data.serieComprobante);
+                if (index === -1) {
+                    $scope.infoAdicionalDocumento = [{
+                        nombre: 'Comprobante',
+                        valor: data.serieComprobante
+                    }]
+                }
+                $scope.dataDocumentoReferenciado = {
+                    serieComprobante: data.serieComprobante
+                }
+            } else {
+                $scope.dataDocumentoReferenciado = data;
+            }
+            $scope.gridOptionsDetalle.data = data.detalles;
             focusColumnCantidad();
             tS.toastr('success', 'Agregado correctamente!');
         }
@@ -882,7 +881,6 @@
 
 
         $scope.deleteRow = async function (row) {
-            let index = $scope.gridOptionsDetalle.data.indexOf(row);
 
             let { isConfirmed } = await Swal.fire({
                 icon: 'warning',
@@ -895,6 +893,7 @@
             })
 
             if (isConfirmed) {
+                let index = $scope.gridOptionsDetalle.data.indexOf(row);
                 $scope.gridOptionsDetalle.data.splice(index, 1);
                 enumGridOptions();
                 $scope.$apply()
