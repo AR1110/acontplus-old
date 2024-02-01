@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -64,12 +65,11 @@ namespace TechnicalSupport.API.Data.Migrations
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     Serie = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
-                    Marca = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
+                    Brand = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     Model = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     Year = table.Column<int>(type: "int", nullable: true),
                     Warranty = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
                     Color = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
-                    Specs = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
@@ -153,7 +153,7 @@ namespace TechnicalSupport.API.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TechSpec",
+                name: "DeviceSpecs",
                 schema: "TechnicalSupport",
                 columns: table => new
                 {
@@ -169,9 +169,9 @@ namespace TechnicalSupport.API.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TechSpec", x => x.Id);
+                    table.PrimaryKey("PK_DeviceSpecs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TechSpec_Device_DeviceId",
+                        name: "FK_DeviceSpecs_Device_DeviceId",
                         column: x => x.DeviceId,
                         principalSchema: "TechnicalSupport",
                         principalTable: "Device",
@@ -188,17 +188,8 @@ namespace TechnicalSupport.API.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    TaxId = table.Column<int>(type: "int", nullable: true),
-                    TaxPercentId = table.Column<int>(type: "int", nullable: true),
-                    TaxValue = table.Column<decimal>(type: "numeric(18,5)", nullable: true),
-                    Quantity = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
-                    Cost = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
-                    Discount = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
-                    Total = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    DeviceId = table.Column<int>(type: "int", nullable: false),
                     Obs = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
-                    FeeId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
@@ -209,8 +200,8 @@ namespace TechnicalSupport.API.Data.Migrations
                 {
                     table.PrimaryKey("PK_OrderDetail", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderDetail_Device_ProductId",
-                        column: x => x.ProductId,
+                        name: "FK_OrderDetail_Device_DeviceId",
+                        column: x => x.DeviceId,
                         principalSchema: "TechnicalSupport",
                         principalTable: "Device",
                         principalColumn: "Id",
@@ -238,9 +229,16 @@ namespace TechnicalSupport.API.Data.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceCustomer_DeviceId",
+                name: "UI_TS_DC_DeviceId",
                 schema: "TechnicalSupport",
                 table: "DeviceCustomer",
+                column: "DeviceId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceSpecs_DeviceId",
+                schema: "TechnicalSupport",
+                table: "DeviceSpecs",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
@@ -250,16 +248,16 @@ namespace TechnicalSupport.API.Data.Migrations
                 column: "OrderStatusId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderDetail_DeviceId",
+                schema: "TechnicalSupport",
+                table: "OrderDetail",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderDetail_OrderId",
                 schema: "TechnicalSupport",
                 table: "OrderDetail",
                 column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderDetail_ProductId",
-                schema: "TechnicalSupport",
-                table: "OrderDetail",
-                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "UI_TS_OrderStatus",
@@ -267,12 +265,6 @@ namespace TechnicalSupport.API.Data.Migrations
                 table: "OrderStatus",
                 column: "Code",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TechSpec_DeviceId",
-                schema: "TechnicalSupport",
-                table: "TechSpec",
-                column: "DeviceId");
         }
 
         /// <inheritdoc />
@@ -283,15 +275,11 @@ namespace TechnicalSupport.API.Data.Migrations
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(
+                name: "DeviceSpecs",
+                schema: "TechnicalSupport");
+
+            migrationBuilder.DropTable(
                 name: "OrderDetail",
-                schema: "TechnicalSupport");
-
-            migrationBuilder.DropTable(
-                name: "TechSpec",
-                schema: "TechnicalSupport");
-
-            migrationBuilder.DropTable(
-                name: "Order",
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(
@@ -299,11 +287,15 @@ namespace TechnicalSupport.API.Data.Migrations
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(
-                name: "OrderStatus",
+                name: "Order",
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(
                 name: "Category",
+                schema: "TechnicalSupport");
+
+            migrationBuilder.DropTable(
+                name: "OrderStatus",
                 schema: "TechnicalSupport");
         }
     }

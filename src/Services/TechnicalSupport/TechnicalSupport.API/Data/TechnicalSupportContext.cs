@@ -17,7 +17,7 @@ namespace TechnicalSupport.API.Data
         public DbSet<Device> Products { get; set; }
         public DbSet<DeviceCustomer> ProductCustomers { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
-        public DbSet<TechSpec> TechSpecs { get; set; }
+        public DbSet<DeviceSpecs> DeviceSpecs { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
@@ -59,12 +59,14 @@ namespace TechnicalSupport.API.Data
             builder.Entity<Device>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Device>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Device>().HasMany(x => x.Customers).WithOne(x => x.Device).HasForeignKey(x => x.DeviceId);
+            builder.Entity<Device>().HasMany(x => x.Specs).WithOne(x => x.Device).HasForeignKey(x => x.DeviceId);
 
             builder.Entity<DeviceCustomer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<DeviceCustomer>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<DeviceCustomer>().HasIndex(x => x.DeviceId).HasDatabaseName("UI_TS_DC_DeviceId").IsUnique();
 
-            builder.Entity<TechSpec>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-            builder.Entity<TechSpec>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<DeviceSpecs>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<DeviceSpecs>().Property(x => x.Enabled).HasDefaultValue(true);
 
             builder.Entity<OrderStatus>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<OrderStatus>().Property(x => x.Enabled).HasDefaultValue(true);
