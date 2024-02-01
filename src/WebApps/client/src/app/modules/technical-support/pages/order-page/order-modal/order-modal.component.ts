@@ -1,5 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { IForm } from '@core/Types/form-types';
 import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -16,18 +21,19 @@ import { Device } from '@modules/technical-support/models/device.model';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-order-modal',
   standalone: true,
-  imports: [AppModule, CompanyCustomerSearchComponent],
+  imports: [AppModule, CompanyCustomerSearchComponent, NgbAccordionModule],
   templateUrl: './order-modal.component.html',
   styles: ``,
 })
 export class OrderModalComponent {
+  @ViewChild('inputNameSpec') inputNameSpec: any;
   private deviceService = inject(DeviceService);
   private fb = inject(FormBuilder);
   private modalRef = inject(NgbActiveModal);
@@ -40,6 +46,16 @@ export class OrderModalComponent {
   }
   categories: any = [];
   data: any = {};
+  establecimientos: Array<GroupedEstab> = [];
+  modalIcon: IconProp = 'plus';
+  modalTitle = 'Nueva Orden';
+  order: any = {};
+  orderDetails: OrderDetail[] = [];
+  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
+  specs: any = [];
+  specsTemp: any = [];
+  specsType: any = [];
+
   device: Device = {
     id: 0,
     categoryId: 0,
@@ -51,14 +67,6 @@ export class OrderModalComponent {
     warranty: 0,
     color: '',
   };
-
-  establecimientos: Array<GroupedEstab> = [];
-  modalIcon: IconProp = 'plus';
-  modalTitle = 'Nueva Orden';
-  order: any = {};
-  orderDetails: OrderDetail[] = [];
-  puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-
   deviceFormGroup: IForm<Device> = {
     categoryId: [0, Validators.required],
     name: ['', Validators.required],
@@ -81,8 +89,50 @@ export class OrderModalComponent {
     obs: [''],
   });
 
+  specForm = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    value: new FormControl('', [Validators.required, Validators.minLength(3)]),
+  });
+
+  specTypeForm = new FormGroup({
+    specName: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+    ]),
+  });
+
+  addSpecType() {
+    this.specsType.push({
+      uuid: uuidv4(),
+      name: this.specTypeForm.get('specName')?.value,
+    });
+    setTimeout(() => {
+      this.inputNameSpec.nativeElement.focus();
+    }, 0);
+    this.specTypeForm.patchValue({ specName: '' });
+  }
+
+  addSpec(uuid: string) {
+    this.specs.push({
+      uuid,
+      name: this.specForm.get('name')?.value,
+      value: this.specForm.get('value')?.value,
+    });
+    this.specsTemp = this.specs.filter((x: any) => x.uuid === uuid);
+    this.specForm.patchValue({ name: '', value: '' });
+    setTimeout(() => {
+      this.inputNameSpec.nativeElement.focus();
+    }, 0);
+  }
+
   closeModal() {
     this.modalRef.close();
+  }
+
+  filterAccordion(uuid: string) {
+    if (this.specs.length > 0) {
+      this.specsTemp = this.specs.filter((x: any) => x.uuid === uuid);
+    }
   }
 
   private get() {
@@ -168,7 +218,30 @@ export class OrderModalComponent {
       },
     ];
     this.device.customers = customers;
+    if (this.specs?.length > 0) {
+      let specsTemp = {},
+        specsToSave = [];
+      for (const item of this.specsType) {
+        if (this.specs.filter((x: any) => x.uuid === item.uuid).length === 0) {
+          this.tS.toastr({
+            type: 'warning',
+            message: `Debe de seleccionar los valores para la el tipo de specificación: ${item.name}}`,
+          });
+          return;
+        }
+      }
+      specsTemp = Object.fromEntries(
+        this.specsType.map(({ uuid, name }: any) => [
+          name,
+          this.specs.filter((x: any) => x.uuid == uuid),
+        ])
+      );
 
+      specsToSave.push({
+        specs: JSON.stringify(specsTemp),
+      });
+      this.device.specs = specsToSave;
+    }
     console.log(this.device);
     this.deviceService.post(this.device).subscribe({
       next(response) {
@@ -184,6 +257,7 @@ export class OrderModalComponent {
               type: 'success',
               message: response.message,
             });
+            self.specs = [];
             self.orderDetails.push({
               uuid: uuidv4(),
               deviceId: response.payload as number,
@@ -199,6 +273,10 @@ export class OrderModalComponent {
         console.log(err);
       },
     });
+  }
+
+  removeSpec(index: any) {
+    this.specs.splice(index, 1);
   }
 
   resetFormDevice() {}

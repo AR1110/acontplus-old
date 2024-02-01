@@ -24,7 +24,7 @@ namespace TechnicalSupport.API.Entities
         public decimal? Warranty { get; set; }
         [MaxLength(100)]
         public string Color { get; set; }
-        public string Specs { get; set; }
         public List<DeviceCustomer> Customers { get; set; }
+        public List<DeviceSpecs> Specs { get; set; }
     }
 }

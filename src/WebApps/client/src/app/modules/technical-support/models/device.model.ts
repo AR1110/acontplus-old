@@ -9,9 +9,15 @@ export interface Device {
   warranty: number;
   color: string;
   customers?: DeviceCustomer[];
+  specs?: DeviceSpecs[];
 }
 
 export interface DeviceCustomer {
   customerCompanyId: number;
   deviceId?: number;
+}
+
+export interface DeviceSpecs {
+  deviceId?: number;
+  specs: string;
 }

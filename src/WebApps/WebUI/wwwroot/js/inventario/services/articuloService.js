@@ -54,8 +54,7 @@
                         }
                     }
 
-                    if (params.tipo === 5) {
-                        console.log(mainData)
+                    if (params.tipo === 5) { 
                         console.log('data form')
                     }
 
@@ -407,8 +406,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let articulos = JSON.parse(response.payload) || [];
-                    console.log(articulos)
+                    let articulos = JSON.parse(response.payload) || []; 
                     return articulos.map(item => {
                         let priceSales = JSON.parse(item.priceSale) || [];
                         let warehouses = JSON.parse(item.warehouses) || [];
@@ -432,7 +430,8 @@
                                     precio: item.precio,
                                 }
                             }),
-                            warehouses
+                            warehouses, 
+                            totalRecords: item.totalRecords
                         }
                     })
                 }
