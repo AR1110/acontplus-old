@@ -970,3 +970,7 @@ go
 
 DROP PROCEDURE IF EXISTS [ReporteVentas].[NotaEntrega_Printer_Thermal]
 go
+
+
+DROP PROCEDURE IF EXISTS Almacen.Articulo_Get_Search
+go
