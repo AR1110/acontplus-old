@@ -1425,7 +1425,6 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
             }).then((result) => {
 
                 if (result.isConfirmed) {
-                    showLoader();
 
                     let historial = cobroSvc.getHistorialCobros($scope.selectedDocumentos);
 
@@ -1450,7 +1449,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                             idEntidadFinanciera: item.idEntidadFinanciera,
                             idBanco: item.idBanco,
                             idCuentaBancaria: 0,
-                            fechaEmision: fS.formatDateMoment(item.fechaEmision),
+                            fechaEmision: item.fechaEmision,
                             valor: item.valorAbono,
                             posfechado: item.posFechado,
                             secuencial: item.secuencial,

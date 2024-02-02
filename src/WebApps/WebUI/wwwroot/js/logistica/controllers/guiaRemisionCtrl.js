@@ -147,6 +147,7 @@
                     console.log(error)
                 }).finally(() => hideLoader())
 
+                guiaRemisionSvc.generateSerieComprobante({idPuntoEmision: 1})
             } catch (error) {
                 hideLoader();
                 console.log(error);
@@ -215,7 +216,7 @@
         }
 
         $scope.openModalDetalle = async function (item) {
-            try { 
+            try {
                 let modalRef = modalSvc.openModalCustom({
                     controller: 'ModalGuiaRemisionCtrl',
                     template: URL_TEMPLATE + '_ModalDetalle.cshtml',
@@ -226,7 +227,7 @@
                     },
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
-                }) 
+                })
             } catch (error) {
                 hideLoader();
                 console.log(error);
@@ -411,14 +412,14 @@
             type: 'string',
             width: '65%',
             minWidth: '150',
+            enableCellEdit: true,
             enableCellEditOnFocus: true,
             cellEditableCondition: function (scope) {
                 return scope.row.entity.llevaInventario !== true;
-
             },
             cellTooltip: function (row) {
-                return row.entity.descripcion
-            }
+                return row.entity.descripcion;
+            },
         },
         {
             name: "Cantidad",
@@ -785,6 +786,7 @@
             }
             $scope.gridOptionsDetalle.data = data.detalles;
             focusColumnCantidad();
+            enumGridOptions();
             tS.toastr('success', 'Agregado correctamente!');
         }
 
@@ -800,7 +802,7 @@
                 codigo: null,
                 descripcion: null,
                 llevaInventario: false,
-                cantidad: 0,
+                cantidad: 1,
                 estado: true
             })
         }
@@ -1012,18 +1014,23 @@
                     return
                 }
 
-                let nroDocSecuencial = null;
-                // if ($scope.data.idGuiaRemision > 0) {
-                //     nroDocSecuencial = $scope.data.serieComprobante;
-                // } else {
-                //     showLoader();
-                //     nroDocSecuencial = await commonSvc.generarNroDocumentoCompra({
-                //         idPuntoEmision: $scope.data.idPuntoEmision,
-                //         codigoDocumento: $scope.tipoDoc.codigo
-                //     })
-                //     hideLoader();
-                //     if (!nroDocSecuencial) throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL";
-                // }
+                let nroDocSecuencial = null, html = '', titleModal = '';
+                if (isUpdate()) {
+                    titleModal = 'Actualizar';
+                    html = `<small>Esta Ud. seguro de Actualizar este Documento</small>?`;
+                }
+
+                if (isRegister()) {
+                    showLoader();
+                    nroDocSecuencial = await guiaRemisionSvc.generateSerieComprobante({
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    })
+                    hideLoader();
+                    if (!nroDocSecuencial) throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL";
+
+                    titleModal = 'Guardar';
+                    html = `<small>Esta Ud. seguro de registrar este Documento Nro.: ${nroDocSecuencial}</small>?`;
+                }
 
                 const swalSave = Swal.mixin({
                     customClass: {
@@ -1034,12 +1041,12 @@
                 })
 
                 let { isConfirmed } = await swalSave.fire({
-                    title: `<small>${$scope.titleModal} Guía de Remisión</small>`,
-                    html: `<small>Esta Ud. seguro de ${$scope.titleModal} este <b> Documento</b> N° ${nroDocSecuencial}</small>?`,
+                    title: `<small>${titleModal} Guía de Remisión</small>`,
+                    html,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Si, guardar!',
-                    cancelButtonText: 'No, cancelar!',
+                    confirmButtonText: 'Si!',
+                    cancelButtonText: 'No!',
                     reverseButtons: false,
                     allowOutsideClick: false,
                     allowEscapeKey: false

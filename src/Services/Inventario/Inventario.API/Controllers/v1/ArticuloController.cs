@@ -190,7 +190,7 @@ namespace Inventario.API.Controllers.v1
                 {
                     return BadRequest("Caracteres de busqueda invalidos");
                 }
-                await _db.SPExecute("Almacen.Articulo_Get_Search");
+                await _db.SPExecute("Inventario.Articulo_Get_Search");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();

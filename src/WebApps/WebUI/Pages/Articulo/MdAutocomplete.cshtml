@@ -43,8 +43,20 @@
         word-break: break-all !important;
     }
 
+
+
     .rtable .suggestion-column {
         font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap !important;
+        word-break: break-all !important;
+    }
+
+    .rtable .suggestion-codigo { 
+         width: 100px;
+        min-width: 100px;
+        max-width: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap !important;
@@ -59,20 +71,28 @@
         max-width: 400px !important;
     }
 </style>
-
-
-
+ 
+ 
 @* <div ng-submit="$event.preventDefault()"> *@
+        <!-- md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)"  -->
 <div class="mb-1" id="">
-    <md-autocomplete id="mainContentMdAutocomplete" input-focus md-input-id="custom-template-md-autocomplete-articulo"
-        uib-tooltip="Buscar Artículo por descripción o Código " tooltip-placement="top" tooltip-trigger="'mouseenter'"
-        ng-enter="$ctrl.getDataArticuloByEnterCode();" md-no-cache="false" md-selected-item="$ctrl.selectedItem"
-        md-search-text-change="$ctrl.searchTextChange($ctrl.searchText)" md-search-text="$ctrl.searchText"
-        md-selected-item-change="$ctrl.selectArticleSearch(item)" md-items="item in $ctrl.getDynamicSearchArticles()"
+    <md-autocomplete id="mainContentMdAutocomplete" 
+    input-focus md-input-id="custom-template-md-autocomplete-articulo"
+        uib-tooltip="Buscar Artículo por descripción o Código " 
+        tooltip-placement="top" 
+        tooltip-trigger="'mouseenter'"
+        ng-enter="$ctrl.getDataArticuloByEnterCode();" 
+        md-no-cache="false"
+        md-selected-item="$ctrl.selectedItem"
+        md-search-text="$ctrl.searchText"
+        md-selected-item-change="$ctrl.selectArticleSearch(item)" 
+        md-items="item in $ctrl.searchTextChange($ctrl.searchText)"
         md-item-text="item.descripcion"
-        ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')" md-escape-options="clear"
+        ng-focus="$ctrl.focusDescripcionArticulo('#custom-template-md-autocomplete-articulo')" 
+        md-escape-options="clear"
         input-aria-label="Buscador Articulo" placeholder="{{$ctrl.placeholder}}"
-        md-menu-class="autocomplete-standard-template" md-menu-container-class="standard-container" md-mode="standard"
+        md-menu-class="autocomplete-standard-template" 
+        md-menu-container-class="standard-container" md-mode="standard"
         md-clear-button="false">
         <md-item-template>
             <div class="table-responsive">
