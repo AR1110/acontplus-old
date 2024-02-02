@@ -9,7 +9,8 @@ export const enum PATHS {
     ACCOUNTING = `${GATEWAY}Contabilidad/`,
     CONFIG = `${GATEWAY}Config/`,
     CONSULTA = `${GATEWAY}Consultas/`,
-    REPORT = `${GATEWAY}Reports/v2/Reporte/`
+    REPORT_V1 = `${GATEWAY}Reports/Reporte/`,
+    REPORT_V2 = `${GATEWAY}Reports/v2/Reporte/`
 }
 
 export const enum PERSIS_USER {
