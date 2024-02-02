@@ -1,0 +1,52 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    <fa-icon [icon]="'search'"></fa-icon> Buscar Dispositivo
+  </h5>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <label for="device">Dispositivo:</label>
+        <div class="input-group">
+          <input
+            id="typeahead-company-customers"
+            type="text"
+            class="form-control"
+            [(ngModel)]="textSearch"
+            [ngbTypeahead]="search"
+            [resultTemplate]="rt"
+            [class.is-invalid]="searchFailed"
+            (selectItem)="onSelect($event)"
+            onclick="select();"
+            (keyup)="onKeyupSearch()"
+            placeholder="Buscar Equipo"
+          />
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            (click)="openModal()"
+          >
+            <fa-icon [icon]="'plus'"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark btn-sm"
+      (click)="closeModal()"
+    >
+      &times; Cerrar
+    </button>
+  </div>
+</div>
+<ng-template #rt let-r="result" let-t="term">
+  <ngb-highlight
+    [result]="r.name + ' - ' + r.serie"
+    [term]="t"
+  />
+</ng-template>

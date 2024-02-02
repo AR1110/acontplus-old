@@ -21,3 +21,10 @@ export interface DeviceSpecs {
   deviceId?: number;
   specs: string;
 }
+
+export interface DeviceSearch {
+  model: string;
+  name: string;
+  serie?: string;
+  color?: string;
+}

@@ -12,11 +12,14 @@ import {
   GroupedEstab,
   GroupedEstabPuntoEmision,
 } from '@core/models/estab.model';
+import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { DeviceSearchModalComponent } from '@modules/technical-support/components/device-search-modal/device-search-modal.component';
+import { OrderDetailComponent } from '@modules/technical-support/components/order-detail/order-detail.component';
 import { Device } from '@modules/technical-support/models/device.model';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
 import { DeviceService } from '@modules/technical-support/services/device.service';
@@ -28,7 +31,12 @@ import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-order-modal',
   standalone: true,
-  imports: [AppModule, CompanyCustomerSearchComponent, NgbAccordionModule],
+  imports: [
+    AppModule,
+    CompanyCustomerSearchComponent,
+    NgbAccordionModule,
+    OrderDetailComponent,
+  ],
   templateUrl: './order-modal.component.html',
   styles: ``,
 })
@@ -37,6 +45,7 @@ export class OrderModalComponent {
   private deviceService = inject(DeviceService);
   private fb = inject(FormBuilder);
   private modalRef = inject(NgbActiveModal);
+  private modalService = inject(ModalService);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
 
@@ -129,6 +138,13 @@ export class OrderModalComponent {
     this.modalRef.close();
   }
 
+  searchDevice() {
+    const modalDevice = this.modalService.openModalCustom(
+      DeviceSearchModalComponent,
+      { size: 'sm' }
+    );
+  }
+
   filterAccordion(uuid: string) {
     if (this.specs.length > 0) {
       this.specsTemp = this.specs.filter((x: any) => x.uuid === uuid);
@@ -181,6 +197,13 @@ export class OrderModalComponent {
   }
   ngOnInit(): void {
     this.get();
+    this.orderDetails.push({
+      uuid: uuidv4(),
+      deviceId: 1,
+    });
+  }
+  onDeviceSelected($event: any) {
+    console.log($event);
   }
   onChangeEstab() {
     let establecimientoId = this.orderForm.get('establecimientoId')?.value;
