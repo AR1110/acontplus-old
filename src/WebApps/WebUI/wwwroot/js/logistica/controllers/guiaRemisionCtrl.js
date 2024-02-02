@@ -410,15 +410,15 @@
             field: 'descripcion',
             type: 'string',
             width: '65%',
-            minWidth: '150',
+            minWidth: '150',  
+            enableCellEdit: true,
             enableCellEditOnFocus: true,
             cellEditableCondition: function (scope) {
                 return scope.row.entity.llevaInventario !== true;
-
             },
             cellTooltip: function (row) {
-                return row.entity.descripcion
-            }
+                return row.entity.descripcion;
+            },
         },
         {
             name: "Cantidad",
@@ -785,6 +785,7 @@
             }
             $scope.gridOptionsDetalle.data = data.detalles;
             focusColumnCantidad();
+            enumGridOptions();
             tS.toastr('success', 'Agregado correctamente!');
         }
 

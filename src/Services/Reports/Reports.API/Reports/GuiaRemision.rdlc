@@ -98,12 +98,12 @@
           <DataField>ptoPartida</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="fechaInicio">
-          <DataField>fechaInicio</DataField>
+        <Field Name="fechaInicioTransporte">
+          <DataField>fechaIniTransporte</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="fechaFin">
-          <DataField>fechaFin</DataField>
+        <Field Name="fechaFinTransporte">
+          <DataField>fechaFinTransporte</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="motivo">
@@ -140,6 +140,10 @@
         </Field>
         <Field Name="fechaEmision">
           <DataField>fechaEmision</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="numDocSustento">
+          <DataField>numDocSustento</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -249,7 +253,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value />
+                        <Value>=First(Fields!numDocSustento.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -2249,7 +2253,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaInicio.Value, "headerDs")</Value>
+                        <Value>=First(Fields!fechaInicioTransporte.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
@@ -2320,7 +2324,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!fechaFin.Value, "headerDs")</Value>
+                        <Value>=First(Fields!fechaFinTransporte.Value, "headerDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
