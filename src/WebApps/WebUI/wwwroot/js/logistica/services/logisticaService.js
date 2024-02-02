@@ -12,6 +12,7 @@
             getDataFilter,
             getAll,
             getDocs,
+            generateSerieComprobante,
             mapperTo,
             getId,
             post,
@@ -25,8 +26,7 @@
                 const {
                     ptoEmision,
                     tipoDocumento
-                } = response;
-                console.log(response)
+                } = response; 
 
                 const estabs = fS.groupingEstab({
                     estabs: ptoEmision
@@ -114,6 +114,19 @@
                     }) 
                 }
                 return docs;
+            })
+        }
+
+        function generateSerieComprobante (query) {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+                let result = null;
+                if(response !== null && typeof response === 'object'){
+                    let {serieComprobante} = response;
+                    if (serieComprobante.length>0){
+                        result = serieComprobante[0].serieComprobante; 
+                    }
+                }
+                return result;
             })
         }
 
