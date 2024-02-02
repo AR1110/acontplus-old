@@ -201,7 +201,9 @@
         <tbody>
           @for (item of comprobantesIngreso; track $index) {
           <tr>
-            <td></td>
+            <td>
+              <button class="btn btn-success" (click)="sendMail()">Correo</button>
+            </td>
             <td>{{ $index + 1 }}</td>
             <td>{{ item.nroDoc }}</td>
             <td>{{ item.fechaRegistro }}</td>
