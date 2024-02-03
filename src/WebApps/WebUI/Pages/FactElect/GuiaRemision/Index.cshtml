@@ -153,21 +153,21 @@
                     </div>
                 </div>
                 <div class="row">
-                <div class="col-6 d-flex justify-content-start">
-                    <span class="form-group pull-left page-size form-inline">
-                        <select class="form-control control-color" ng-model="dataSearch.pageSize"
-                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
-                        </select>
-                    </span>
-                </div>
+                    <div class="col-6 d-flex justify-content-start">
+                        <span class="form-group pull-left page-size form-inline">
+                            <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            </select>
+                        </span>
+                    </div>
 
-                <div class="col-6 d-flex justify-content-end">
-                    <!-- <form class="form-material">
-                        <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter"
-                            placeholder="Buscar">
-                    </form> -->
+                    <div class="col-6 d-flex justify-content-end">
+                        <!-- <form class="form-material">
+                            <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter"
+                                placeholder="Buscar">
+                        </form> -->
+                    </div>
                 </div>
-            </div>
 
                 <md-table-container style=" max-height: 400px;">
                     <table resize master md-table>
@@ -274,5 +274,5 @@
 
 @section Scripts {
     <script src="~/js/logistica/services/logisticaService.min.js" asp-append-version="true"></script>
-    <script src="~/js/logistica/controllers/guiaRemisionCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/logistica/controllers/guiaRemisionCtrl.js" asp-append-version="true"></script>
 }
