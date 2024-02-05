@@ -661,6 +661,7 @@
             }
             $scope.cliente.idCliente = result.idCliente;
             $scope.cliente.nombreFiscal = result.nombreFiscal;
+            $scope.cliente.numeroIdentificacion = result.numeroIdentificacion;
         }
         //=====================End cliente========================================
 
@@ -1017,10 +1018,7 @@
                     tS.toastr('warning', 'Ingrese Fecha de Fin');
                     return
                 }
-                if (!(Date.parse(this.data.fechaFin) <= Date.parse($scope.data.fechaInicio))) {
-                    tS.toastr('warning', 'Fecha Fin no tiene que ser menor al Fecha de Inicio');
-                    return
-                }
+              
 
                 if (!fS.isValidField($scope.data.ptoPartida)) {
                     tS.toastr('warning', 'Ingrese el Punto de Partida');
