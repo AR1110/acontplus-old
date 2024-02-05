@@ -199,7 +199,7 @@ BEGIN
             SET @tableNames = 'cuentaPorCobrar,tiempoCredito,cuotas'
 
             SELECT @idCuentaPorCobrar = idCuentaPorCobrar FROM OPENJSON(@json) WITH (idCuentaPorCobrar INT)
-			
+
 		    SELECT TOP 1 cl.numeroIdentificacion
 						,cl.nombreFiscal
 						,fechaEmision     = FORMAT(cc.fechaEmision,'dd/MM/yyyy')
@@ -248,6 +248,8 @@ BEGIN
 
             SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
+            SELECT TOP 1 @idCliente = idCliente, @numeroIdentificacion = identificacionComprador FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+			
 			INSERT INTO @cobroDocuments (idComprobante,codDoc,codMov)
 			SELECT co.idComprobante,td.codigoSri,td.codigo 
 			FROM dbo.Cobro                    co WITH (NOLOCK)
