@@ -47,10 +47,11 @@ export class DeviceService {
     return this.http.get(`${this.url}?json=${JSON.stringify(query)}`).pipe(
       map((response) => {
         if (isApiResponse(response)) {
-          let devices =
+          let { devices } =
             (response.payload && JSON.parse(response.payload as string)) || [];
           return devices || [];
         }
+        return [];
       })
     );
   }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { DeviceSearch } from '@modules/technical-support/models/device.model';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,8 +21,10 @@ import { AppModule } from 'src/app/app.module';
   styles: ``,
 })
 export class DeviceSearchModalComponent {
-  @Output() onDeviceSelect = new EventEmitter<{ data: any }>();
+  @Output() onDeviceSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
+  @Input() textSearch = '';
+
   private deviceService = inject(DeviceService);
   private modalRef = inject(NgbActiveModal);
   device: DeviceSearch = {
@@ -31,7 +33,6 @@ export class DeviceSearchModalComponent {
     serie: '',
     color: '',
   };
-  textSearch: string = '';
   searching: boolean = false;
   searchFailed: boolean = false;
 
@@ -49,18 +50,15 @@ export class DeviceSearchModalComponent {
 
   onSelect($event: any) {
     this.device = $event.item;
-    this.onDeviceSelect.emit({
+    this.onDeviceSelected.emit({
       data: {
         ...this.device,
         deviceName: this.device.name,
         model: this.device.model,
       },
     });
-    setTimeout(() => {
-      this.textSearch = this.device.name;
-    });
+    this.modalRef.close(this.device);
   }
-
   search: OperatorFunction<string, Array<DeviceSearch>> = (
     text$: Observable<string>
   ) =>
@@ -68,7 +66,7 @@ export class DeviceSearchModalComponent {
       distinctUntilChanged(),
       tap(() => (this.searching = true)),
       switchMap((term) => {
-        if (!term || term.length < 3) {
+        if (!term || term.length < 2) {
           return of([]);
         }
         return this.deviceService.search({ textSearch: term }).pipe(
