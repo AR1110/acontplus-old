@@ -137,8 +137,8 @@
         }
 
         //sirve para traer datos para cobro por lote y por documento
-        function getDataForm(idCuentaPorCobrar) {
-            const params = JSON.stringify({ idCuentaPorCobrar, tipo: 3 });
+        function getDataForm(idCuentaPorCobrar, idCliente) {
+            const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 3 });
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 if (!response) return {};
 

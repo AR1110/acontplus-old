@@ -17,6 +17,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
     $scope.isDisableInputIdentificacion = false;
     $scope.isDisableSelectIdentificacion = false;
+    $scope.isDisableInput = false;
 
     $scope.onKeyupEmail = clienteSvc.onKeyupEmail
     $scope.transformChipEmail = clienteSvc.transformChipEmail;
@@ -83,7 +84,9 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                         estado
                     } = response;
 
-                    $scope.isDisableInputIdentificacion = false;
+                    $scope.isDisableInputIdentificacion = true;
+                    $scope.isDisableSelectIdentificacion = true;
+                    $scope.isDisableInput = true;
 
                     $scope.data = response;
                     $scope.tempIdTipoIdentificacion = $scope.data.idTipoIdentificacion;
@@ -105,9 +108,9 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
 
                     //Cuando actualizan desde factura o nota entrega realizar busqueda de dato del cliente a SRI 
-                    if (params.isUpdateDataCustomerFromSRI){
+                    if (params.isUpdateDataCustomerFromSRI) {
                         let dataIdentificacion = $scope.dataFindByIdTipoIdentificacion();
-                        $scope.consultaIdentificacionSRI(dataIdentificacion.codigo, params);                
+                        $scope.consultaIdentificacionSRI(dataIdentificacion.codigo, params);
                     }
 
                 }).catch(error => {
@@ -135,6 +138,27 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
     $scope.dataFindByIdTipoIdentificacion = function () {
         return $scope.tiposIdentificacion.find(item => item.idTipoIdentificacion === $scope.data.idTipoIdentificacion) || {}
+    }
+
+    $scope.getCompanyCustomerSri = function () {
+        if ($scope.data.idCliente > 0) {
+            Swal.fire({
+                title: "Validar datos al SRI",
+                html: `Esta seguro de validar datos del cliente desde el SRI?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si!",
+                cancelButtonText: 'No!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $scope.validarNumeroIdentificacion();
+                }
+            });
+        } else {
+            $scope.validarNumeroIdentificacion();
+        }
     }
 
     $scope.onChangeTipoIdentificacion = function () {
@@ -367,7 +391,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
             if (!($scope.data.idTiempoCredito > 0)) {
                 $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
-            } 
+            }
 
             $("#nombreComercial").focus();
 
@@ -379,6 +403,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
 
     $scope.copiarNombreComercial = function () {
+        
         $scope.data.nombreComercial = $scope.data.nombreFiscal;
     }
 
@@ -513,8 +538,14 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             hideLoader();
             tS.toastr('success', response.message);
 
-            let idCliente = $scope.tipoRegistro === 1 ? response.payload : $scope.data.idCliente;
-            let dataCliente = await clienteSvc.findById(idCliente) || {};
+
+            let idCliente = $scope.tipoRegistro === 1 ? JSON.parse(response.payload)[0].idCliente : $scope.data.idCliente;
+            let dataCliente = null;
+            if (idCliente > 0) {
+                dataCliente = await clienteSvc.findById(idCliente) || {};
+            } else {
+                dataCliente = response;
+            }
             $uibModalInstance.close(dataCliente);
         }
     }

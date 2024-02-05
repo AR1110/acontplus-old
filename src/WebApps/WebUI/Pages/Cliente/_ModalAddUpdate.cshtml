@@ -41,14 +41,11 @@
                                             ng-model="data.numeroIdentificacion"
                                             ng-disabled="isDisableInputIdentificacion" placeholder="Ej: EH123457">
 
-                                        @* <div class="input-group-append">
-                                        <div ng-if="data.codigoIdentificacion!=='P'" class="input-group-text"
-                                        uib-tooltip="Validar Nro. Identificación" tooltip-placement="top">
-                                        <input type="checkbox" aria-label="validationRucSRI"
-                                        ng-change="onChangeValidateIdentificacionSRI()"
-                                        ng-model="validationIdentificacionSri">
-                                        </div>
-                                        </div> *@
+                                        <div class="input-group-append"> 
+                                            <button type="button" class="btn btn-info btn-sm" ng-click="getCompanyCustomerSri()">
+                                                <i class=" fas fa-sync"></i>
+                                            </button>
+                                        </div>  
 
                                         <small class="invalid-feedback text-right">{{message}} </small>
                                         <small class="valid-feedback text-right">{{message}} </small>
@@ -60,7 +57,7 @@
                                     <label>Nombre Fiscal: <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control border-select" name="nombreFiscal"
                                         id="nombreComercial" ng-keyup="copiarNombreComercial()" touppercase
-                                        autocomplete="off" ng-model="data.nombreFiscal" 
+                                        autocomplete="off" ng-model="data.nombreFiscal" ng-disabled="isDisableInput"
                                         placeholder="Ej: TECNOMEGA" />
                                 </div>
                             </div>
@@ -140,7 +137,7 @@
                                 <div class="form-group">
                                     <label>Nombre Comercial: </label>
                                     <input type="text" class="form-control border-select" autocomplete="off"
-                                        ng-model="data.nombreComercial" touppercase placeholder="Ej: TECNOMEGA" />
+                                        ng-model="data.nombreComercial" touppercase placeholder="Ej: TECNOMEGA" ng-disabled="isDisableInput" />
                                 </div>
                             </div>
 

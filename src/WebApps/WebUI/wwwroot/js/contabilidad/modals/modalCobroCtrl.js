@@ -737,11 +737,15 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     function loadInitialData() {
         try {
             showLoader();
-            let idCuentaPorCobrar = null;
+            let idCuentaPorCobrar = null, idCliente = 0;
             if (Object.prototype.toString.call(data) === '[object Object]') {
                 idCuentaPorCobrar = data.idCuentaPorCobrar;
+                idCliente = data.idCliente;
             } 
-            cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar).then(response => {
+            if (selectedDocumentos !== null && Array.isArray(selectedDocumentos)){
+                idCliente = selectedDocumentos[0].idCliente;
+            }
+            cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
 
                 dataFormaCobro = response;
 

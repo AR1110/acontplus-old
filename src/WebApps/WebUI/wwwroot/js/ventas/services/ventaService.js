@@ -244,7 +244,7 @@
                     let notificacionVentaTemp = mainData[8];
                     notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
                     let tempEstabsAndPtosEmision = mainData[9];
-                    let tempBodegas = mainData[10]; 
+                    let tempBodegas = mainData[10];
                     let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
 
                     let dataToGroup = {
@@ -254,7 +254,7 @@
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
                     return {
-                        estabs, 
+                        estabs,
                         tarifasImpuesto,
                         clienteDefault,
                         tiemposCredito,
@@ -1364,7 +1364,7 @@
 
     //---------------------------------Cliente------------------------------------------
     app.factory('clienteService', function ($injector) {
-        let url = `${URL_API}Cliente/`;
+        let url = `Customer/CompanyCustomer/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         let tS = $injector.get('toastService');
@@ -1372,7 +1372,7 @@
         let service = {};
 
         service.getDataForm = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true)
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 2 }), null, true)
                 .then(response => {
                     if (response.code === '0') {
                         console.log('Status code 0: Get Data Form Customer')
@@ -1398,7 +1398,7 @@
 
         service.getAll = function (query) {
             query.tipo = 1;
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true)
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true)
                 .then(response => {
                     if (response.code == "0") {
                         throw response;
@@ -1430,32 +1430,49 @@
                 })
         }
 
+        service.mapperTo = function (data) {
+
+            return {
+                idCliente: fS.isValidField(data.idCliente),
+                idEmpleado: fS.isValidField(data.idEmpleado),
+                idTipoIdentificacion: data.idTipoIdentificacion,
+                idTipoClienteProveedor: fS.isValidField(data.idTipoClienteProveedor),
+                idTipoEntidad: fS.isValidField(data.idTipoEntidad),
+                idCiudad: fS.isValidField(data.idCiudad),
+                idSubContribuyente: fS.isValidField(data.idSubContribuyente),
+                idTiempoCredito: data.idTiempoCredito,
+                idEmpresa: fS.isValidField(data.idEmpresa),
+                idCargo: fS.isValidField(data.idCargo),
+                numeroIdentificacion: data.numeroIdentificacion,
+                nombreFiscal: data.nombreFiscal,
+                nombreComercial: data.nombreComercial,
+                direccion: fS.isValidField(data.direccion),
+                telefono: fS.isValidField(data.telefono),
+                correo: fS.isValidField(data.correo),
+                placa: fS.isValidField(data.placa),
+                montoCredito: fS.isValidField(data.montoCredito),
+                nota: fS.isValidField(data.nota),
+                validationSri: data.validationSri,
+            }
+
+        }
+
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true)
-                .catch(error => {
-                    console.log('Error service save customer: ' + error)
-                    throw error;
-                })
+            const params = service.mapperTo(data);
+            return mS.getData('post', url, { data: params }, true)
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true)
-                .catch(error => {
-                    console.log('Error service update customer: ' + error)
-                    throw error;
-                })
+            const params = service.mapperTo(data);
+            return mS.getData('put', url + id, { data: params }, true)
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true)
-                .catch(error => {
-                    console.log('Error service delete customer: ' + error)
-                    throw error;
-                })
+            return mS.getData('delete', url + id, null, true)
         }
 
         service.findById = function (id) {
-            return mS.getData('get', url + 'FindById/' + id, null, true)
+            return mS.getData('get', url + 'GetId/' + id, null, true)
                 .then(response => {
                     if (response.code === "0") {
                         throw response;
@@ -1486,9 +1503,9 @@
                             idCargo: dataRepository.idCargo,
                             placa: dataRepository.placa,
                             validationSri: dataRepository.validationSri,
-                            correos: dataRepository.correo ? dataRepository.correo.split(';') : [],
-                            telefonos: dataRepository.telefono ? dataRepository.telefono.split(';') : [],
-                            placas: dataRepository.placa !== '' ? dataRepository.placa.split(';') : []
+                            correos: dataRepository.correo ? dataRepository.correo.split('|') : [],
+                            telefonos: dataRepository.telefono ? dataRepository.telefono.split('|') : [],
+                            placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : []
                         }
                     }
                 })
@@ -1605,16 +1622,16 @@
 
 
             data.direccion = data.direccion ? fS.letterInline(data.direccion) : "";
-            data.telefono = data.telefonos.length > 0 ? data.telefonos.join(';') : "";
-            data.correo = data.correos.length > 0 ? data.correos.join(';') : "";
-            data.placa = data.placas.length > 0 ? data.placas.join(';') : "";
+            data.telefono = data.telefonos.length > 0 ? data.telefonos.join('|') : "";
+            data.correo = data.correos.length > 0 ? data.correos.join('|') : "";
+            data.placa = data.placas.length > 0 ? data.placas.join('|') : "";
 
 
             return true;
         }
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback, id) {
-            mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     callback(codigoIdentificacion)
                     // return response;

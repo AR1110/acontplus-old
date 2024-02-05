@@ -12,11 +12,11 @@ namespace Customer.API.Services
         {
             _repository = repository;
         }
-        public async Task<ApiResponse> AddAsync(Dictionary<string, object> data)
+        public async Task<string> AddAsync(Dictionary<string, object> data)
         {
             try
             {
-                return await _repository.DinamycObjectAsync<ApiResponse>("Ventas.Cliente_Insert", data);
+                return await _repository.SPExecuteAsync("Ventas.Cliente_Insert", data);                
             }
             catch (Exception)
             {
@@ -65,6 +65,23 @@ namespace Customer.API.Services
                     return new ApiResponse { code = "0", message = "No se encontraron clientes con estos datos" };
                 }
                 return new ApiResponse {  code = "1", payload = DataConverters.DataTableToJSON(dt) };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ApiResponse> GetIdAsync(Dictionary<string, object> parameters)
+        {
+            try
+            {
+                var dt = await _repository.GetDataTableAsync("Ventas.Cliente_Get_Id", parameters);
+                if (dt.Rows.Count == 0 || dt == null)
+                {
+                    return new ApiResponse { code = "0", message = "No se encontró datos del cliente" };
+                }
+                return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
             }
             catch (Exception)
             {
