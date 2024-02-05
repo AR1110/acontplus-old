@@ -100,18 +100,18 @@
 
                     }else{
                         tempData = response.facturas;
+                        docs = tempData.map(doc => {
+                            let detalles = JSON.parse(doc.detalles);
+                            return {
+                                idDocumento: doc.idFactura,
+                                serieComprobante: doc.serieComprobante,
+                                razonSocialComprador: doc.razonSocialComprador,
+                                detalles,
+                                totalRecords: doc.totalRecords,
+                            }
+                        }) 
                     }
 
-                    docs = tempData.map(doc => {
-                        let detalles = JSON.parse(doc.detalles);
-                        return {
-                            idDocumento: doc.idFactura,
-                            serieComprobante: doc.serieComprobante,
-                            razonSocialComprador: doc.razonSocialComprador,
-                            detalles,
-                            totalRecords: doc.totalRecords,
-                        }
-                    }) 
                 }
                 return docs;
             })

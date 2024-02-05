@@ -572,8 +572,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
     async function openModalTipoDocumento(item) {
         try {
-
-            console.log(item)
+ 
             if (("idDocumento" in item) && ("tipoDoc") in item) {
 
                 //Nota Entrega

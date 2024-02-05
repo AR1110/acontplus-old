@@ -1,0 +1,55 @@
+<div class="modal-header">
+  <h4 class="modal-title"><i class="mdi mdi-email"></i> Reenvío de Correo</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    ng-click="closeModal()"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <label
+      >Email:
+      <span
+        tooltip-placement="top"
+        ngbTooltip="Haz doble 'Click' sobre el correo para editar"
+      >
+        <fa-icon [icon]="'info-circle'"></fa-icon>
+      </span>
+    </label>
+    <mat-chip-grid #chipGrid aria-label="Enter emails">
+      @for (email of emails; track $index) {
+      <mat-chip-row
+        (removed)="remove(email)"
+        [editable]="true"
+        (edited)="edit(email, $event)"
+        [aria-description]="'press enter to edit ' + email"
+      >
+        {{ email }}
+        <button matChipRemove [attr.aria-label]="'remove ' + email">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip-row>
+      }
+      <input
+        placeholder="example@example.com,info@example.com"
+        [matChipInputFor]="chipGrid"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        [matChipInputAddOnBlur]="addOnBlur"
+        (matChipInputTokenEnd)="add($event)"
+        class="form-control"
+      />
+    </mat-chip-grid>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-success" type="button" ng-click="saveResendEmail()">
+    <i class="mdi mdi-send"></i> Sí, reenviar
+  </button>
+  <button class="btn btn-dark" type="button" ng-click="closeModal()">
+    No, cancelar
+  </button>
+</div>

@@ -31,11 +31,12 @@ class Shared {
         return resultAxios.data;
     }
 
-    async downloadExternal(parameters: object, returnData = false) {
+    async downloadExternal(parameters: object, returnData = false, oldVersion=false) {
+        const url = oldVersion? PATHS.REPORT_V1 : PATHS.REPORT_V2
 
         const resultAxios = await Http({
             method: 'post',
-            url: `${PATHS.REPORT}Download`,
+            url: `${url}Download`,
             data: JSON.stringify(parameters),
             responseType: 'blob'
         })

@@ -21,7 +21,7 @@ import {
 } from "@/core/components/IconsMaterial";
 import { orderService } from "@/core/services";
 import { useSaleStore } from "@/stores";
-import { PrivateRoutes } from "@/core/models";
+import { OrderReadDto, PrivateRoutes } from "@/core/models";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { SplitOrderProvider, useOrderContext } from "./context";
@@ -125,6 +125,26 @@ export default function OrderTable() {
             console.log(error)
         }
     }
+
+    const btnDivided = (order: OrderReadDto) => {
+        if (order.finished) return
+
+        if (order.divided && order.finished) return 
+        // if (order.divided && order.finished === false) return
+
+        return (
+            <Tooltip describeChild title="Completar Venta">
+                <Button variant="contained" size="large" color="inherit"
+                    aria-label="Dividir"
+                    onClick={() => dividerCuenta(order.orderId)}
+                >
+                    <PointOfSaleIcon />
+                </Button>
+            </Tooltip>
+        )
+
+
+    }
     return (
         <React.Fragment>
             <Box sx={{ width: "100%" }}>
@@ -185,18 +205,9 @@ export default function OrderTable() {
 
 
                                                 {
-                                                    (order.divided || order.finished) ? '' : (
-
-                                                        <Tooltip describeChild title="Completar Venta">
-                                                            <Button variant="contained" size="large" color="inherit"
-                                                                aria-label="Dividir"
-                                                                onClick={() => dividerCuenta(order.orderId)}
-                                                            >
-                                                                <PointOfSaleIcon />
-                                                            </Button>
-                                                        </Tooltip>
-                                                    )
+                                                    btnDivided(order)
                                                 }
+
                                                 {
                                                     (order.finished || order.divided) ? '' : (
                                                         <Tooltip describeChild title="Anular">

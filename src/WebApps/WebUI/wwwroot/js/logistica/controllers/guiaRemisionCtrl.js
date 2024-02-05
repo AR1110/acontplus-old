@@ -147,7 +147,7 @@
                     console.log(error)
                 }).finally(() => hideLoader())
 
-                guiaRemisionSvc.generateSerieComprobante({idPuntoEmision: 1})
+                guiaRemisionSvc.generateSerieComprobante({ idPuntoEmision: 1 })
             } catch (error) {
                 hideLoader();
                 console.log(error);
@@ -515,7 +515,8 @@
 
                             $scope.dataDocumentoReferenciado = {
                                 serieComprobante: params.serieComprobanteDocReferenciado,
-                                idDocumento: comprobante.idDocumento
+                                idDocumento: comprobante.idDocumento,
+                                labelName: comprobante.idDocumento > 0 ? `Factura: ${params.serieComprobanteDocReferenciado}`:  ``
                             }
 
                         })
@@ -660,6 +661,7 @@
             }
             $scope.cliente.idCliente = result.idCliente;
             $scope.cliente.nombreFiscal = result.nombreFiscal;
+            $scope.cliente.numeroIdentificacion = result.numeroIdentificacion;
         }
         //=====================End cliente========================================
 
@@ -677,78 +679,129 @@
                     return
                 }
                 const modalRef = modalSvc.openModalCustom({
-                    controller: ['$scope', '$uibModalInstance', 'params', function ($scope, $uibModalInstance, params) {
-                        const { cliente, codEstab, tiposDoc } = params;
+                    controller: [
+                        '$scope',
+                        '$uibModalInstance',
+                        'formulario',
+                        'DOC_TYPE',
+                        'modalService',
+                        'nombreModalVenta',
+                        'params', function ($scope, $uibModalInstance, fS, DOC_TYPE, modalSvc, nombreModalVenta, params) {
+                            const { cliente, codEstab, tiposDoc } = params;
 
-                        $scope.tiposDoc = tiposDoc;
-                        $scope.recordsQuantity = [5, 10];
+                            $scope.tiposDoc = tiposDoc;
+                            $scope.recordsQuantity = [5, 10];
 
-                        $scope.dataSearch = {
-                            pageIndex: 1,
-                            pageSize: 5,
-                            maxSize: 5,
-                            totalRecords: 0,
-                            codDoc: $scope.tiposDoc.find(item => item.codigo === 'FE').codigo
-                        };
-                        $scope.documentos = [];
+                            $scope.dataSearch = {
+                                pageIndex: 1,
+                                pageSize: 5,
+                                maxSize: 5,
+                                totalRecords: 0,
+                                codDoc: $scope.tiposDoc.find(item => item.codigo === 'FE').codigo,
+                                checkBoxDate: true,
+                                fechaInicio: new Date(),
+                                fechaFin: new Date()
+                            };
+                            $scope.documentos = [];
 
-                        $scope.getDocs = function () {
-                            try {
-
-                                if ($scope.dataSearch.nroSecuencial) {
-                                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
-                                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
-                                        return
-                                    }
-                                }
-
-                                const params = {
-                                    pageIndex: $scope.dataSearch.pageIndex,
-                                    pageSize: $scope.dataSearch.pageSize,
-                                    idCliente: cliente.idCliente,
-                                    codEstab,
-                                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
-                                    codDoc: $scope.dataSearch.codDoc,
-                                    tipo: $scope.dataSearch.codDoc === 'NE' ? 6 : 5
-                                }
-                                showLoader();
-                                guiaRemisionSvc.getDocs(params).then(response => {
-                                    $scope.documentos = response;
-                                    $scope.dataSearch.totalRecords = $scope.documentos.length > 0 ? $scope.documentos[0].totalRecords : 0
-
-                                    if ($scope.documentos.length === 0) {
-                                        tS.toastr('info', 'No se encontró los resultados!');
-                                    }
-                                }).catch(error => {
-                                    console.log(error)
-                                }).finally(() => hideLoader());
-                            } catch (error) {
-                                console.log(error)
+                            $scope.resultRangeFilter = function (item) {
+                                $scope.dataSearch.fechaInicio = item.startDate,
+                                    $scope.dataSearch.fechaFin = item.endDate
+                                $scope.getDocs();
                             }
-                        }
 
-                        $scope.getDocs();
+                            $scope.getDocs = function () {
+                                try {
 
+                                    if ($scope.dataSearch.nroSecuencial) {
+                                        if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
+                                            tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                                            return
+                                        }
+                                    }
 
-                        $scope.pagechanged = function () {
+                                    const params = {
+                                        pageIndex: $scope.dataSearch.pageIndex,
+                                        pageSize: $scope.dataSearch.pageSize,
+                                        idCliente: cliente.idCliente,
+                                        codEstab,
+                                        secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
+                                        codDoc: $scope.dataSearch.codDoc,
+                                        tipo: $scope.dataSearch.codDoc === 'NE' ? 6 : 5,
+                                        checkBoxDate: $scope.dataSearch.checkBoxDate,
+                                        fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio) || null,
+                                        fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin) || null,
+                                    }
+                                    showLoader();
+                                    $scope.documentos = [];
+                                    guiaRemisionSvc.getDocs(params).then(response => {
+                                        $scope.documentos = response;
+                                        $scope.dataSearch.totalRecords = $scope.documentos.length > 0 ? $scope.documentos[0].totalRecords : 0
+
+                                        if ($scope.documentos.length === 0) {
+                                            tS.toastr('info', 'No se encontró los resultados!');
+                                        }
+                                    }).catch(error => {
+                                        console.log(error)
+                                    }).finally(() => hideLoader());
+                                } catch (error) {
+                                    console.log(error)
+                                }
+                            }
+
                             $scope.getDocs();
-                        };
 
-                        $scope.changePageSize = function () {
-                            $scope.dataSearch.pageIndex = 1;
-                            $scope.getDocs();
-                        };
 
-                        $scope.onChangeTipoDoc = function () {
-                            console.log($scope.dataSearch.codDoc)
-                        }
-                        $scope.selectedDoc = function (item) {
-                            $uibModalInstance.close({ data: item, codDoc: $scope.dataSearch.codDoc });
-                        }
-                        $scope.closeModal = function () {
-                            $uibModalInstance.close();
-                        }
-                    }],
+                            $scope.pagechanged = function () {
+                                $scope.getDocs();
+                            };
+
+                            $scope.changePageSize = function () {
+                                $scope.dataSearch.pageIndex = 1;
+                                $scope.getDocs();
+                            };
+
+                            $scope.onChangeTipoDoc = function () {
+                                console.log($scope.dataSearch.codDoc)
+                            }
+                            $scope.selectedDoc = function (item) {
+                                $uibModalInstance.close({ data: item, codDoc: $scope.dataSearch.codDoc });
+                            }
+
+                            $scope.openModalPreview = async function (item) {
+                                try {
+                                    let codDoc = null, keyTemplate;
+                                    if ($scope.dataSearch.codDoc === "FE") {
+                                        codDoc = DOC_TYPE.FV_SRI;
+                                        keyTemplate = 'FV_SRI'
+                                    }
+                                    if ($scope.dataSearch.codDoc === "NE") {
+                                        codDoc = DOC_TYPE.NE;
+                                        keyTemplate = 'NE'
+                                    }
+                                    let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
+                                    let ctrl = (await import(fileCtrl))[controller];
+                                    let template = templates[keyTemplate];
+                                    modalSvc.openModalCustom({
+                                        controller: ctrl,
+                                        template: template,
+                                        size: 'xl',
+                                        params: {
+                                            codDoc,
+                                            id: item.idDocumento
+                                        },
+                                        windowClass: 'uibModalFullScreen',
+                                        isRenderRazorPartial: true
+                                    })
+                                } catch (error) {
+                                    console.log(error)
+                                }
+                            }
+
+                            $scope.closeModal = function () {
+                                $uibModalInstance.close();
+                            }
+                        }],
                     template: `${URL_TEMPLATE}_ModalDocs.cshtml`,
                     size: 'lg',
                     params: {
@@ -779,10 +832,16 @@
                     }]
                 }
                 $scope.dataDocumentoReferenciado = {
-                    serieComprobante: data.serieComprobante
+                    serieComprobante: data.serieComprobante,
+                    labelName: `Nota Entrega: ${data.serieComprobante}`
                 }
             } else {
-                $scope.dataDocumentoReferenciado = data;
+                $scope.dataDocumentoReferenciado = {
+                    idDocumento: data.idDocumento,
+                    serieComprobante: data.serieComprobante,
+                    labelName: `Factura: ${data.serieComprobante}`
+
+                };
             }
             $scope.gridOptionsDetalle.data = data.detalles;
             focusColumnCantidad();
@@ -959,10 +1018,7 @@
                     tS.toastr('warning', 'Ingrese Fecha de Fin');
                     return
                 }
-                if (!(Date.parse(this.data.fechaFin) <= Date.parse($scope.data.fechaInicio))) {
-                    tS.toastr('warning', 'Fecha Fin no tiene que ser menor al Fecha de Inicio');
-                    return
-                }
+              
 
                 if (!fS.isValidField($scope.data.ptoPartida)) {
                     tS.toastr('warning', 'Ingrese el Punto de Partida');

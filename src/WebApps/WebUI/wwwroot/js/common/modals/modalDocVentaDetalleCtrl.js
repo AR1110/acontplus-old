@@ -22,6 +22,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     const fS = $injector.get('formulario')
 
     let { id, codDoc } = params;
+    console.log(params)
     $scope.showHeader = true;
     $scope.infoAdicionalDocumento = [];
     $scope.tarifasImpuesto = [];

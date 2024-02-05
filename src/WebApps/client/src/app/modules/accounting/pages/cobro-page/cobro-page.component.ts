@@ -176,4 +176,8 @@ export class CobroPageComponent {
     this.companyCustomerSearchName = "";
   }
 
+
+  sendMail() {
+    this.sharedSvc.openModalSendMail({})
+  }
 }
