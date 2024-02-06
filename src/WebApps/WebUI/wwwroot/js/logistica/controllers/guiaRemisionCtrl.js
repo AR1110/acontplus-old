@@ -453,6 +453,8 @@
         $scope.vehiculo = {};
         $scope.empleado = {};
         $scope.infoAdicionalDocumento = [];
+
+        let deletedItems = [];
         let tiposDoc = [];
 
         initiload();
@@ -956,6 +958,12 @@
             if (isConfirmed) {
                 let index = $scope.gridOptionsDetalle.data.indexOf(row);
                 $scope.gridOptionsDetalle.data.splice(index, 1);
+                if(row.idGuiaRemisionDetalle>0){
+                    deletedItems.push({
+                        ...row,
+                        estado: false
+                    })
+                }
                 enumGridOptions();
                 $scope.$apply()
             }
@@ -1132,7 +1140,8 @@
                 data: structuredClone(data),
                 detalles: structuredClone($scope.gridOptionsDetalle.data),
                 infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                docReferenciado: $scope.dataDocumentoReferenciado
+                docReferenciado: $scope.dataDocumentoReferenciado,
+                deletedItems
             }
             let dataMapper = guiaRemisionSvc.mapperTo(params)
 

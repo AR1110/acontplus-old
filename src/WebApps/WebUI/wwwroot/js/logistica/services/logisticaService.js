@@ -131,14 +131,21 @@
         }
 
         function mapperTo(obj) {
-            const { data, detalles, infoAdicionalDocumento } = obj;
+            const { data, detalles, infoAdicionalDocumento, deletedItems } = obj;
 
 
             const infoGuiaRemision = infoComprobanteMapperTo(data);
-            const detallesResult = detalleMapperTo(detalles)
+            const detallesResult = detalleMapperTo(detalles);
+            const deletedItemsResult = detalleMapperTo(deletedItems);
+
+            const mergeItems = [
+                ...detallesResult,
+                ...deletedItemsResult
+            ]
+
             return {
                 infoGuiaRemision,
-                detalles: detallesResult,
+                detalles: mergeItems,
                 infoAdicional: infoAdicionalDocumento
             }
         }
