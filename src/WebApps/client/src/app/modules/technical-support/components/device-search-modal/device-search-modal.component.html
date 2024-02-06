@@ -10,7 +10,7 @@
         <label for="device">Dispositivo:</label>
         <div class="input-group">
           <input
-            id="typeahead-company-customers"
+            id="typeahead-devices"
             type="text"
             class="form-control"
             [(ngModel)]="textSearch"
@@ -44,9 +44,14 @@
     </button>
   </div>
 </div>
+
+@if (searching) {
+<small class="form-text text-muted">Buscando...</small>
+} @if (searchFailed) {
+<div class="invalid-feedback">
+  Lo sentimos, no se han podido cargar las sugerencias.
+</div>
+}
 <ng-template #rt let-r="result" let-t="term">
-  <ngb-highlight
-    [result]="r.name + ' - ' + r.serie"
-    [term]="t"
-  />
+  <ngb-highlight [result]="r.name + ' - ' + r.serie" [term]="t" />
 </ng-template>

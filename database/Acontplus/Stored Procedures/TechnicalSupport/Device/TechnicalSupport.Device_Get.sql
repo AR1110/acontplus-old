@@ -44,6 +44,7 @@ BEGIN
         END
      IF (@tipo = 3)
         BEGIN
+        	SET @tableNames = 'devices'
             SELECT * FROM TechnicalSupport.Device WITH (NOLOCK) WHERE [Name] LIKE '%' + @textSearch + '%'
             RETURN
         END

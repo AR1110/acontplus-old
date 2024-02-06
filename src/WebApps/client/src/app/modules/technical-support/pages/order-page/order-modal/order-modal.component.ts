@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { IForm } from '@core/Types/form-types';
 import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import {
   GroupedEstab,
@@ -19,7 +20,6 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { DeviceSearchModalComponent } from '@modules/technical-support/components/device-search-modal/device-search-modal.component';
-import { OrderDetailComponent } from '@modules/technical-support/components/order-detail/order-detail.component';
 import { Device } from '@modules/technical-support/models/device.model';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
 import { DeviceService } from '@modules/technical-support/services/device.service';
@@ -35,7 +35,7 @@ import { v4 as uuidv4 } from 'uuid';
     AppModule,
     CompanyCustomerSearchComponent,
     NgbAccordionModule,
-    OrderDetailComponent,
+    TabulatorComponent,
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
@@ -54,12 +54,19 @@ export class OrderModalComponent {
     console.log(test);
   }
   categories: any = [];
+  columnNames: any[] = [
+    { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
+    { title: 'Equipo', field: 'deviceName', width: 150 },
+    { title: 'Obs.', field: 'obs', width: 150, editor: true },
+  ];
   data: any = {};
+  deviceFound: any = {};
   establecimientos: Array<GroupedEstab> = [];
   modalIcon: IconProp = 'plus';
   modalTitle = 'Nueva Orden';
   order: any = {};
   orderDetails: OrderDetail[] = [];
+
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
   specs: any = [];
   specsTemp: any = [];
@@ -143,6 +150,9 @@ export class OrderModalComponent {
       DeviceSearchModalComponent,
       { size: 'sm' }
     );
+    modalDevice.result.then((response) => {
+      this.deviceFound = response;
+    });
   }
 
   filterAccordion(uuid: string) {
@@ -197,10 +207,6 @@ export class OrderModalComponent {
   }
   ngOnInit(): void {
     this.get();
-    this.orderDetails.push({
-      uuid: uuidv4(),
-      deviceId: 1,
-    });
   }
   onDeviceSelected($event: any) {
     console.log($event);
@@ -284,6 +290,8 @@ export class OrderModalComponent {
             self.orderDetails.push({
               uuid: uuidv4(),
               deviceId: response.payload as number,
+              deviceName: self.device.name,
+              obs: '',
             });
           }
         }
