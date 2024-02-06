@@ -62,7 +62,7 @@ BEGIN
 		,abono NUMERIC(18,5) NOT NULL
 	)
 
-	SELECT @idControlCaja = idControlCaja FROM OPENJSON(@json) WITH (idControlCaja INT '$.id', idUsuarioRol INT '$.idUsuarioRol') AS jsonValues
+	SELECT @idControlCaja = idControlCaja FROM OPENJSON(@json) WITH (idControlCaja INT '$.id') AS jsonValues
 
 
 	INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,saldo,pay,idEntidadFinanciera,cobro)

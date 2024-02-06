@@ -185,10 +185,10 @@ BEGIN
 							  ,CAST(ar.precioCosto AS NUMERIC(18,2)) as precioCosto
 							  ,ar.idBodega
 							  ,ar.bodega
-							  ,ar.cantidad as stock
+							  ,CAST(ar.cantidad as numeric(15, 2)) as stock
 							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad 
-							  ,CAST(ar.stock AS NUMERIC(18,2)) as stockTotal
-							  ,CAST(ar.stock * ar.precioCosto as numeric(15, 2)) as totalInventario
+							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) as numeric(15, 2)) as stockTotal
+							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) * ar.precioCosto as numeric(15, 2)) as totalInventario
                               ,ar.idEstablecimiento 
                               ,ar.nombreComercial
 						FROM Inventario.v_Articulo_Stock ar
