@@ -77,6 +77,8 @@ BEGIN
 	FROM GuiaRemisionDetalle gr WITH (NOLOCK)		
 	INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = gr.idArticulo 
 	WHERE gr.idGuiaRemision = @idGuiaRemision
+      AND gr.estado = 1
+    ORDER BY gr.idGuiaRemisionDetalle ASC
 
     SELECT nombre,valor
 	FROM dbo.InfoAdicionalDoc WITH (NOLOCK)
