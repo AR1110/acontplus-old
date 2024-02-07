@@ -339,6 +339,7 @@
 
                     let notaEntregas = notaEntregaRepos.map(item => {
                         return {
+                            idCliente: item.idCliente,
                             comprobante: 'Nota de Entrega',
                             idDocumento: item.idDocumento,
                             idNotaEntrega: item.idNotaEntrega,

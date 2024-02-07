@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Azure.Core;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
@@ -17,10 +18,15 @@ namespace Contabilidad.API.Controllers.v1
         private readonly ICuentaPorCobrarService _service;
         private readonly LogWriter _log;
 
-        public CuentaPorCobrarController(ICuentaPorCobrarService service, LogWriter log)
+        private readonly IConfiguration _configuration;
+        private readonly DbAccess _db;
+
+        public CuentaPorCobrarController(ICuentaPorCobrarService service, LogWriter log, IConfiguration configuration)
         {
             _service = service;
             _log = log;
+            _configuration = configuration;
+            _db = new DbAccess(configuration);
         }
 
         [HttpGet]
@@ -44,92 +50,98 @@ namespace Contabilidad.API.Controllers.v1
             }
         }
 
-        //private readonly IConfiguration _configuration;
-        //private readonly LogWriter _log;
-        //public CuentaPorCobrarController(IConfiguration configuration, LogWriter log)
-        //{
-        //    _configuration = configuration;
-        //    _log = log;
-        //}
-
-        //// GET: api/<CuentaPorCobrarController>
-        //[HttpGet]
-        //public async Task<IActionResult> Get(string json)
-        //{
-        //    var _dbAccess = new DbAccess(_configuration);
-
-        //    var _response = new ApiResponse();
-        //    try
-        //    {
-        //        var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-        //        await _dbAccess.SPExecute("Contabilidad.CuentaPorCobrar_Get");
-        //        _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-        //        _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-        //        _response = _dbAccess.GetDataSetAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _log.LogActivity("Error on Cuenta Por Cobrar -> Get: \n" + ex.ToString());
-        //        _response.Create(code: "0", message: "Error al traer las cuentas por cobrar");
-        //    }
-        //    finally
-        //    {
-        //        _dbAccess.Close();
-        //    }
-        //    return Ok(_response);
-        //}
-
         //[HttpPost("Insert/Cuota")]
         //public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
-        //{
-        //    var _dbAccess = new DbAccess(_configuration);
-
-        //    var _response = new ApiResponse();
+        //{ 
         //    try
-        //    {
-        //        var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-        //        await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Insert");
-        //        _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-        //        _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
-        //        _response = _dbAccess.GetDefault();
+        //    { 
+        //        var response = await _service.AddAsync(new Dictionary<string, object> {
+        //            { "idUsuarioRol", User.GetUserRoleId() },
+        //            { "json",  DataConverters.SerializeDictionary(paremeter.Data)
+        //            }
+        //        });
+        //        if (response == null) { return BadRequest("Cant Save"); }
+        //        return Ok(response);
         //    }
         //    catch (Exception ex)
         //    {
         //        _log.LogActivity("Error on Cuenta Por Cobrar -> Post: \n" + ex.ToString());
-        //        _response.Create(code: "0", message: "Error al Insertar las cuotas por cobrar");
-        //    }
-        //    finally
-        //    {
-        //        _dbAccess.Close();
-        //    }
-        //    return Ok(_response);
+        //        return BadRequest(ex.Message);
+        //    } 
         //}
 
         //[HttpPut("Update/Cuota")]
         //public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
-        //{
-        //    var _dbAccess = new DbAccess(_configuration);
-
-        //    var _response = new ApiResponse();
+        //{ 
         //    try
         //    {
-        //        var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-        //        await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Update");
-        //        _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-        //        _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
-        //        _response = _dbAccess.GetDefault();
+        //        var response = await _service.UpdateAsync(new Dictionary<string, object> {
+        //            { "idUsuarioRol", User.GetUserRoleId() },
+        //            { "json",  DataConverters.SerializeDictionary(paremeter.Data)
+        //            }
+        //        });
+        //        if (response == null) { return BadRequest("Cant Save"); }
+        //        return Ok(response); 
         //    }
         //    catch (Exception ex)
         //    {
         //        _log.LogActivity("Error on Cuenta Por Cobrar -> Put: \n" + ex.ToString());
-        //        _response.Create(code: "0", message: "Error al actualizar las Cuota por Cobrar");
-        //    }
-        //    finally
-        //    {
-        //        _dbAccess.Close();
-        //    }
-        //    return Ok(_response);
-        //}
+        //        return BadRequest(ex.Message);
+        //    } 
+        //} 
+
+        [HttpPost("Insert/Cuota")]
+        public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
+        {
+            var _dbAccess = new DbAccess(_configuration);
+
+            var _response = new ApiResponse();
+            try
+            {
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Insert");
+                _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
+                _response = _dbAccess.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on Cuenta Por Cobrar -> Post: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Insertar las cuotas por cobrar");
+            }
+            finally
+            {
+                _dbAccess.Close();
+            }
+            return Ok(_response);
+        }
+
+        [HttpPut("Update/Cuota")]
+        public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
+        {
+            var _dbAccess = new DbAccess(_configuration);
+
+            var _response = new ApiResponse();
+            try
+            {
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Update");
+                _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
+                _response = _dbAccess.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on Cuenta Por Cobrar -> Put: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar las Cuota por Cobrar");
+            }
+            finally
+            {
+                _dbAccess.Close();
+            }
+            return Ok(_response);
+        }
+
 
     }
 }

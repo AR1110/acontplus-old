@@ -103,7 +103,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, $injector, tS, fS, params) {
             totalCuota += Number(item.cuota);
             totalMora += item.mora;
             totalSaldo += item.saldo;
-            totalSaldoCta += item.saldoCta;
+            totalSaldoCta += item.saldoCta || item.saldo || 0;
             totalAbono += item.abono;
         }
         $scope.totalCuota = fS.roundNumber(totalCuota, MAX_ROUND_NUMBER);
