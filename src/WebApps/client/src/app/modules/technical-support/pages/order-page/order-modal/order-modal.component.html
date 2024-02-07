@@ -1,4 +1,4 @@
-<form [formGroup]="orderForm">
+<form [formGroup]="orderForm" (ngSubmit)="saveOrder()">
   <div class="modal-header">
     <h4 class="modal-title">
       <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
@@ -60,16 +60,18 @@
       </div>
       <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="form-group">
-          <label for="encargado">
+          <label for="userId">
             Responsable: <span class="text-danger">*</span>
           </label>
           <select
-            formControlName="encargado"
-            id="encargado"
-            class="form-control border-select"
+            formControlName="userId"
+            id="userId"
+            class="form-select border-select"
             required
           >
-            <option value=""></option>
+            @for (item of users; track $index) {
+            <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
+            }
           </select>
         </div>
       </div>
@@ -111,7 +113,6 @@
           </button>
         </div>
         <div class="card-body">
-
           <div class="row mb-2">
             <div class="col">
               <button

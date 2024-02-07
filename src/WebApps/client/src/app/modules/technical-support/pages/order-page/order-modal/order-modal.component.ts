@@ -71,6 +71,7 @@ export class OrderModalComponent {
   specs: any = [];
   specsTemp: any = [];
   specsType: any = [];
+  users: any = [];
 
   device: Device = {
     id: 0,
@@ -101,8 +102,9 @@ export class OrderModalComponent {
     puntoEmisionId: [0, Validators.required],
     customerCompanyId: [0, Validators.required],
     fechaEmision: '',
-    encargado: '',
+    userId: 0,
     obs: [''],
+    orderStatusId: 1,
   });
 
   specForm = new FormGroup({
@@ -168,7 +170,7 @@ export class OrderModalComponent {
       next(response) {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            let { puntosEmision, categories } = JSON.parse(
+            let { puntosEmision, categories, users } = JSON.parse(
               response.payload as string
             );
             self.establecimientos = groupEstabUtil({
@@ -193,6 +195,7 @@ export class OrderModalComponent {
               }
             }
             self.categories = categories;
+            self.users = users;
           }
         }
       },
@@ -221,7 +224,10 @@ export class OrderModalComponent {
       let puntoEmisionId =
         this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
           ?.idPuntoEmision || 0;
-      this.orderForm.patchValue({ puntoEmisionId: puntoEmisionId });
+      this.orderForm.patchValue({
+        establecimientoId: establecimientoId,
+        puntoEmisionId: puntoEmisionId,
+      });
     }
   }
   onCustomerSelected($event: any) {
@@ -305,6 +311,45 @@ export class OrderModalComponent {
       },
     });
   }
+
+  saveOrder() {
+    showLoader();
+    const data = {
+      ...this.orderForm.value,
+    };
+
+    if (this.orderDetails.length == 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Debe de añadir los detalles a la orden',
+      });
+    }
+    this.orderService.post(data).subscribe({
+      next: this.successResponse,
+      error(err) {
+        console.log(err);
+        hideLoader();
+      },
+    });
+  }
+
+  successResponse = (response: object) => {
+    hideLoader();
+    if (isApiResponse(response)) {
+      if (response.code === '0') {
+        this.tS.toastr({
+          type: 'warning',
+          message: response.message!,
+        });
+      }
+      if (response.code === '1') {
+        this.tS.toastr({
+          type: 'success',
+          message: response.message!,
+        });
+      }
+    }
+  };
 
   removeSpec(index: any) {
     this.specs.splice(index, 1);
