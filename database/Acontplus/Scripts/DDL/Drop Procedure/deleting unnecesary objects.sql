@@ -974,3 +974,6 @@ go
 
 DROP PROCEDURE IF EXISTS Almacen.Articulo_Get_Search
 go
+
+DROP PROCEDURE IF EXISTS Ventas.Cliente_Get_Data_Form
+go
