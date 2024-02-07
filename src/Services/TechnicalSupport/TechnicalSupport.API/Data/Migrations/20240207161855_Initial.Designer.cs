@@ -12,7 +12,7 @@ using TechnicalSupport.API.Data;
 namespace TechnicalSupport.API.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
-    [Migration("20240131180000_Initial")]
+    [Migration("20240207161855_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -283,7 +283,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<decimal?>("Tip")
                         .HasColumnType("numeric(18,5), null");
 
-                    b.Property<decimal>("Total")
+                    b.Property<decimal?>("Total")
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -350,6 +350,42 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetail", "TechnicalSupport");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderMaintenance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderDetailId");
+
+                    b.ToTable("OrderMaintenance", "TechnicalSupport");
                 });
 
             modelBuilder.Entity("TechnicalSupport.API.Entities.OrderStatus", b =>
@@ -466,6 +502,17 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderMaintenance", b =>
+                {
+                    b.HasOne("TechnicalSupport.API.Entities.OrderDetail", "OrderDetail")
+                        .WithMany("OrderMaintenances")
+                        .HasForeignKey("OrderDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderDetail");
+                });
+
             modelBuilder.Entity("TechnicalSupport.API.Entities.Device", b =>
                 {
                     b.Navigation("Customers");
@@ -476,6 +523,11 @@ namespace TechnicalSupport.API.Data.Migrations
             modelBuilder.Entity("TechnicalSupport.API.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDetail", b =>
+                {
+                    b.Navigation("OrderMaintenances");
                 });
 #pragma warning restore 612, 618
         }
