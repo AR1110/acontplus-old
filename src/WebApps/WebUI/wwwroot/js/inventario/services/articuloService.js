@@ -54,7 +54,7 @@
                         }
                     }
 
-                    if (params.tipo === 5) { 
+                    if (params.tipo === 5) {
                         console.log('data form')
                     }
 
@@ -406,7 +406,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let articulos = JSON.parse(response.payload) || []; 
+                    let articulos = JSON.parse(response.payload) || [];
                     return articulos.map(item => {
                         let priceSales = JSON.parse(item.priceSale) || [];
                         let warehouses = JSON.parse(item.warehouses) || [];
@@ -430,7 +430,7 @@
                                     precio: item.precio,
                                 }
                             }),
-                            warehouses, 
+                            warehouses,
                             totalRecords: item.totalRecords
                         }
                     })
@@ -812,7 +812,7 @@
                     }
                     if (response.code === "1") {
                         let [estabsTemp, subFamilias, marcas] = JSON.parse(response.payload);
-                        
+
                         const estabs = fS.groupEstabBodega(estabsTemp)
                         return {
                             estabs,
@@ -941,11 +941,24 @@
         function _delete(id) {
             return mS.getData('DELETE', `${url}${id}`, null, true);
         }
+
+        function getPhotos(id) {
+            return mS.getData('GET', `${url}${id}`, null, true).then(response => {
+                let photos = [];
+                if (response.code === "1"){
+                    photos = response.payload;
+                } 
+                return photos; 
+
+            })
+        }
         service.get = _get;
         service.post = _post;
         service.setDefault = _setDefault;
         service.update = _update;
         service.delete = _delete;
+
+        service.getPhotos = getPhotos
         return service;
     }
 })(window.angular)
