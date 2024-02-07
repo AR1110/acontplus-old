@@ -18,8 +18,9 @@ BEGIN
 	SET NOCOUNT ON;
 
     DECLARE @tipo INT
+        ,@textSearch VARCHAR(100)
     
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT '$.tipo')
+    SELECT @tipo = tipo, @textSearch = textSearch FROM OPENJSON(@json) WITH(tipo INT '$.tipo', textSearch VARCHAR(100) '$.textSearch')
 
     IF (@tipo = 1)
         BEGIN
@@ -39,6 +40,12 @@ BEGIN
         BEGIN
 	        SET @tableNames = 'devices'
 	        SELECT * FROM TechnicalSupport.Device
+            RETURN
+        END
+     IF (@tipo = 3)
+        BEGIN
+        	SET @tableNames = 'devices'
+            SELECT * FROM TechnicalSupport.Device WITH (NOLOCK) WHERE [Name] LIKE '%' + @textSearch + '%'
             RETURN
         END
 END

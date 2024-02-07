@@ -103,12 +103,26 @@
     <form [formGroup]="deviceForm">
       <div class="card rounded border border-success">
         <div class="card-header d-flex justify-content-between">
-          <span>Datos Equipo:</span>
+          <h5 class="card-title">
+            <fa-icon [icon]="'laptop'"></fa-icon> Datos Equipo:
+          </h5>
           <button type="button" class="btn btn-outline-info btn-sm">
             Historial
           </button>
         </div>
         <div class="card-body">
+
+          <div class="row mb-2">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="searchDevice()"
+              >
+                <fa-icon [icon]="'search'"></fa-icon> Buscar Equipo
+              </button>
+            </div>
+          </div>
           <div class="row">
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12 col-12">
               <div class="form-group">
@@ -235,7 +249,7 @@
                           <div class="form-group">
                             <label for="specName">Categoría:</label>
                             <div class="input-group">
-                              <input 
+                              <input
                                 type="text"
                                 formControlName="specName"
                                 id="specName"
@@ -374,7 +388,16 @@
         </div>
       </div>
     </form>
-
+    @if (orderDetails.length > 0) {
+    <div class="row">
+      <div class="col">
+        <app-tabulator
+          [columnNames]="columnNames"
+          [tableData]="orderDetails"
+        ></app-tabulator>
+      </div>
+    </div>
+    }
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">

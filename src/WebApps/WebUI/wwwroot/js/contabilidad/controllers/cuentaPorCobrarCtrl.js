@@ -49,17 +49,23 @@
         function initiload() {
             try {
                 showLoader();
-                cuentaPorCobrarSvc.getDataFilter().then(response => {
-                    console.log(response)
+                cuentaPorCobrarSvc.getDataFilter().then(response => { 
                     const { estabs, estadosDoc, tiposDoc } = response;
                     $scope.establecimientos = estabs;
                     $scope.estadosDoc = estadosDoc;
                     $scope.tiposDoc = tiposDoc;
+
+                    if ($scope.estadosDoc.length > 0) {
+                        let dataEstado = $scope.estadosDoc.find(e => e.codigo === "NCBR");
+                        $scope.dataSearch.codEstado = dataEstado.codigo;
+                    }
+
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
                         $scope.dataSearch.codEstab = dataEstab.codEstab;
                         getCuentasPorCobrar();
                     }
+                  
                 }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader());
@@ -96,7 +102,7 @@
             showLoader();
             cuentaPorCobrarSvc.getAll(params).then(response => {
                 const { cuentasPorCobrar, totalRecords, totalVenta, totalAbono, totalSaldo } = response;
-                console.log(response)
+                
                 $scope.cuentasPorCobrar = cuentasPorCobrar;
                 $scope.dataSearch.totalRecords = totalRecords;
                 $scope.dataSearch.totalVenta = totalVenta;

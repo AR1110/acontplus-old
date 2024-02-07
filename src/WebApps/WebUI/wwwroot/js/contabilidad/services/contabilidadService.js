@@ -1,12 +1,14 @@
 (function () {
 
     'use strict';
-    const PATH_API = 'Contabilidad/' 
+    const PATH_API = 'Contabilidad/'
 
     app.factory('comprobanteIngresoService', ['mainService', function (mS) {
         const url = `Contabilidad/ComprobanteIngreso/`
         return {
-            getAll
+            getAll,
+            post,
+            mapperTo
         }
 
         function getAll(obj) {
@@ -43,6 +45,77 @@
                     return results;
                 }
             })
+        }
+
+        function mapperTo(obj) {
+            const {
+                comprobante,
+                cobros,
+                cobroDetalle,
+                historialCobros,
+            } = obj;
+
+            let comprobanteMappeado = {
+                idCliente: comprobante.idCliente,
+                total: comprobante.valorAbono,
+                abono: comprobante.abono,
+                codEstab: comprobante.codEstab,
+                numeroIdentificacion: comprobante.identificacionComprador,
+                nombreFiscal: comprobante.razonSocialComprador
+            }
+
+
+            let comprosMappeado = cobros.map(cobro => {
+                return {
+                    idSubEntidadFinanciera: cobro.idSubEntidadFinanciera,
+                    idEntidadFinanciera: cobro.idEntidadFinanciera,
+                    idBanco: cobro.idBanco,
+                    idCuentaBancaria: cobro.idCuentaBancaria,
+                    fechaEmision: cobro.fechaEmision,
+                    valor: cobro.valorAbono,
+                    posfechado: cobro.posFechado,
+                    secuencial: cobro.secuencial,
+                    infoCobro: cobro.infoCobro,
+                    abono: cobro.abono,
+                    controlCaja: cobro.controlCaja,
+                }
+            })
+
+            const cobroDetalleMappeado = cobroDetalle.map(detalle => {
+                return {
+                    idCuentaPorCobrar: detalle.idCuentaPorCobrar,
+                    idCuotaPorCobrar: detalle.idCuotaPorCobrar,
+                    abono: detalle.abono,
+                    interes: detalle.interes,
+                    diasMora: detalle.diasMora,
+                    mora: detalle.mora,
+                    cuota: detalle.cuota,
+                    saldo: detalle.saldoOriginal,
+                    secuencial: detalle.secuencial,
+                }
+            })
+
+            const historialCobrosMappeado = historialCobros.map(hc => {
+                return {
+                    idCuentaPorCobrar: hc.idCuentaPorCobrar,
+                    abono: hc.abono,
+                    diasMora: hc.diasMora,
+                    mora: hc.mora,
+                    saldo: hc.saldoOriginal,
+                }
+            })
+
+            const objComprobanteIngreso = {
+                comprobante: comprobanteMappeado,
+                cobros: comprosMappeado,
+                cobroDetalle: cobroDetalleMappeado,
+                historial: historialCobrosMappeado,
+            }
+            return objComprobanteIngreso;
+        }
+
+        function post(data) {
+            return mS.getData('post', url + 'Insert', { data }, true)
         }
     }]);
 
@@ -130,15 +203,31 @@
             const params = JSON.stringify({ idCuentaPorCobrar: id, tipo: 8 });
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 if (response) {
-                    return response.cuotas;
+
+                    return response.cuotas.map(cuota => {
+                        return {
+                            idCuotaPorCobrar: cuota.idCuotaPorCobrar,
+                            idCuentaPorCobrar: cuota.idCuentaPorCobrar,
+                            nroCuota: cuota.nroCuota,
+                            cuota: cuota.cuota,
+                            mora: cuota.mora,
+                            interes: cuota.interes,
+                            diasMora: cuota.diasMora,
+                            abono: cuota.abono,
+                            saldoCta: cuota.saldoCta,
+                            saldo: cuota.saldo,
+                            estado: cuota.estado,
+                            saldoOriginal: cuota.saldo
+                        }
+                    })
                 }
                 return []
             })
         }
 
         //sirve para traer datos para cobro por lote y por documento
-        function getDataForm(idCuentaPorCobrar) {
-            const params = JSON.stringify({ idCuentaPorCobrar, tipo: 3 });
+        function getDataForm(idCuentaPorCobrar, idCliente) {
+            const params = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 3 });
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 if (!response) return {};
 
@@ -161,6 +250,22 @@
                     cuentaPorCobrar = response.cuentaPorCobrar;
                     cuentaPorCobrar = cuentaPorCobrar.map(cxc => {
                         let cuotas = JSON.parse(cxc.cuotas);
+                        let resultsCuotas = cuotas.map(cuota => {
+                            return {
+                                idCuotaPorCobrar: cuota.idCuotaPorCobrar,
+                                idCuentaPorCobrar: cuota.idCuentaPorCobrar,
+                                nroCuota: cuota.nroCuota,
+                                cuota: cuota.cuota,
+                                mora: cuota.mora,
+                                interes: cuota.interes,
+                                diasMora: cuota.diasMora,
+                                abono: cuota.abono,
+                                saldoCta: cuota.saldoCta,
+                                saldo: cuota.saldo,
+                                estado: cuota.estado,
+                                saldoOriginal: cuota.saldo
+                            }
+                        })
                         return {
                             codEstab: cxc.codEstab,
                             idCliente: cxc.idCliente,
@@ -177,8 +282,8 @@
                             abono: cxc.abono,
                             saldo: cxc.saldo,
                             descripcion: cxc.descripcion,
-                            cuotas: structuredClone(cuotas),
-                            cuotasOriginal: structuredClone(cuotas)
+                            cuotas: structuredClone(resultsCuotas),
+                            cuotasOriginal: structuredClone(resultsCuotas)
                         }
                     })
                 }
@@ -250,25 +355,25 @@
             })
         }
 
-        function saveCuota(data){
+        function saveCuota(data) {
             return mS.getData('post', `${url}Insert/Cuota`, { data }, true)
         }
 
-        function applyMora (obj){
+        function applyMora(obj) {
             const params = JSON.stringify({ ...obj, tipo: 4 });
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
-                if(!response) throw "No se completo el proceso!";
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                if (!response) throw "No se completo el proceso!";
 
-                let {cuotas} = response;
+                let { cuotas } = response;
                 return cuotas || [];
             })
         }
 
-        function updateCuota(data){
+        function updateCuota(data) {
             return mS.getData('put', `${url}Update/Cuota`, { data }, true)
         }
 
-        function getEstadisticas  (params) {
+        function getEstadisticas(params) {
             return mS.getData('get', `/EstadisticaVenta/Get?json=${JSON.stringify(params)}`).then(response => {
                 if (response.code === "0") return []
                 return response;

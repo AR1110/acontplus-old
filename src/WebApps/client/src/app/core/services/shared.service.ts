@@ -8,6 +8,8 @@ import Swal from 'sweetalert2';
 import { ToasterService } from './toaster.service';
 import { map } from 'rxjs';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';
+import { ModalService } from './modal.service';
+import { SendMailModalComponent } from '@shared/components/send-mail-modal/send-mail-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +17,7 @@ import { customUrl } from '@core/interceptors/inject-session.interceptor';
 export class SharedService {
   private http = inject(HttpClient);
   private tS = inject(ToasterService);
+  private modalSvc = inject(ModalService)
 
   getReport<T>(
     data: T,
@@ -211,4 +214,11 @@ export class SharedService {
         })
       );
   }
+
+
+  async openModalSendMail<T>(params: T){
+    const modalRef = this.modalSvc.openModalCustom(SendMailModalComponent);
+    modalRef.componentInstance.params = params || {};
+  }
+
 }

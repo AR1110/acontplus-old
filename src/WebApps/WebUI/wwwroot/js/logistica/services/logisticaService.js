@@ -12,6 +12,7 @@
             getDataFilter,
             getAll,
             getDocs,
+            generateSerieComprobante,
             mapperTo,
             getId,
             post,
@@ -25,8 +26,7 @@
                 const {
                     ptoEmision,
                     tipoDocumento
-                } = response;
-                console.log(response)
+                } = response; 
 
                 const estabs = fS.groupingEstab({
                     estabs: ptoEmision
@@ -100,32 +100,52 @@
 
                     }else{
                         tempData = response.facturas;
+                        docs = tempData.map(doc => {
+                            let detalles = JSON.parse(doc.detalles);
+                            return {
+                                idDocumento: doc.idFactura,
+                                serieComprobante: doc.serieComprobante,
+                                razonSocialComprador: doc.razonSocialComprador,
+                                detalles,
+                                totalRecords: doc.totalRecords,
+                            }
+                        }) 
                     }
 
-                    docs = tempData.map(doc => {
-                        let detalles = JSON.parse(doc.detalles);
-                        return {
-                            idDocumento: doc.idFactura,
-                            serieComprobante: doc.serieComprobante,
-                            razonSocialComprador: doc.razonSocialComprador,
-                            detalles,
-                            totalRecords: doc.totalRecords,
-                        }
-                    }) 
                 }
                 return docs;
             })
         }
 
+        function generateSerieComprobante (query) {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+                let result = null;
+                if(response !== null && typeof response === 'object'){
+                    let {serieComprobante} = response;
+                    if (serieComprobante.length>0){
+                        result = serieComprobante[0].serieComprobante; 
+                    }
+                }
+                return result;
+            })
+        }
+
         function mapperTo(obj) {
-            const { data, detalles, infoAdicionalDocumento } = obj;
+            const { data, detalles, infoAdicionalDocumento, deletedItems } = obj;
 
 
             const infoGuiaRemision = infoComprobanteMapperTo(data);
-            const detallesResult = detalleMapperTo(detalles)
+            const detallesResult = detalleMapperTo(detalles);
+            const deletedItemsResult = detalleMapperTo(deletedItems);
+
+            const mergeItems = [
+                ...detallesResult,
+                ...deletedItemsResult
+            ]
+
             return {
                 infoGuiaRemision,
-                detalles: detallesResult,
+                detalles: mergeItems,
                 infoAdicional: infoAdicionalDocumento
             }
         }

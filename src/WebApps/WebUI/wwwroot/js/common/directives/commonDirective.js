@@ -1712,8 +1712,12 @@
             link: function (scope, element) {
                 let tS = toastService
                 element.on('click', async function () {
-                    navigator.clipboard.writeText(scope.text);
-                    tS.toastr('info', 'Copiado: ' + scope.text)
+                    if (navigator.clipboard){
+                        navigator.clipboard.writeText(scope.text);
+                        tS.toastr('info', 'Copiado: ' + scope.text)
+                    }else{
+                        console.log('API clipboard no soportado')
+                    }
                 });
             }
         }

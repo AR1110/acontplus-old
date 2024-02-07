@@ -280,7 +280,7 @@
                 codRol: 'AD'
             }
 
-            mS.getData('post', 'Cofnfig/Usuario/' + JSON.stringify(data), null, true).then(response => {
+            mS.getData('post', 'Config/Usuario/' + JSON.stringify(data), null, true).then(response => {
                 if (response.code == "0" || response.id == "0") {
                     tS.toastr('warning', response.message, response.titleSms);
                 }

@@ -131,7 +131,9 @@ class CobroService {
                     idCuentaPorCobrar: item.idCuentaPorCobrar,
                     abono: totalAbono,
                     diasMora: item.diasMora,
-                    mora: item.mora
+                    mora: item.mora,
+                    saldo: item.saldo,
+                    saldoOriginal: item.saldoOriginal
                 })
             } else break;
         }
@@ -275,8 +277,26 @@ class CobroService {
      * @param {number} abono 
      * @returns void
      */
-    addCobroDetalle(item, abono, saldo) {
+    addCobroDetalle(item, abono, saldo, tieneAbono) {
         if (item.cuota == 0) return;
+
+        console.log(item)
+        console.log(abono)
+        console.log(saldo)
+        let valorMovimientoSaldo = 0;
+        let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => (
+            cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar && 
+            cd.idCuotaPorCobrar === item.idCuotaPorCobrar
+            ))
+
+        let dataUltimoCobroDetalle = cobrosDetalleFiltered.pop();
+        if(dataUltimoCobroDetalle){
+            valorMovimientoSaldo = dataUltimoCobroDetalle.saldoOriginal - dataUltimoCobroDetalle.abono;
+        }else{
+            valorMovimientoSaldo = item.saldoOriginal;
+        }
+
+
 
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
@@ -287,9 +307,12 @@ class CobroService {
             mora: item.mora,
             cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND),
             saldo,
-            secuencial: this.indexDatoCobro
+            secuencial: this.indexDatoCobro,
+            saldoOriginal: valorMovimientoSaldo
         })
-        item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND)
+        item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
+        item.saldoOriginal = item.saldoOriginal - abono;
+        console.log(this.cobrosDetalle)
     }
 
     /**
@@ -352,7 +375,7 @@ ModalCobroRapidoCtrl.$inject = [
     '$scope',
     '$uibModalInstance',
     '$injector',
-    'mainService', 
+    'mainService',
     'modalService',
     'nombreModalContabilidad',
     'toastService',
@@ -364,6 +387,7 @@ ModalCobroRapidoCtrl.$inject = [
 function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, nombreModalContabilidad, tS, fS, params) {
 
     const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
+    const comprobanteIngresoSvc = $injector.get('comprobanteIngresoService')
 
     let { data } = params;
     let { idCuentaPorCobrar } = data;
@@ -396,7 +420,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
 
 
 
-    function resetData () {
+    function resetData() {
         $scope.cobro.valorAbono = $scope.comprobante.saldo;
         $scope.cobro.valorCambio = 0;
 
@@ -418,9 +442,9 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
     $scope.findSubEntidad = function (id) {
         $scope.entidadFinanciera = $scope.entidadesFinancieras.find(item => item.idEntidadFinanciera === id);
         $scope.subEntidadesFinancieras = $scope.entidadFinanciera.subEntidadesFinanciera;
-        if ($scope.subEntidadesFinancieras.length>0){
+        if ($scope.subEntidadesFinancieras.length > 0) {
             $scope.cobro.idSubEntidadFinanciera = $scope.subEntidadesFinancieras[0].idSubEntidadFinanciera;
-        }else{
+        } else {
             tS.toastr('warning', 'No posee SubEntidades financieras!');
         }
         resetData();
@@ -433,14 +457,14 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
             cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar).then(response => {
                 let {
                     entidadesFinanciera,
-                    bancos,                    
+                    bancos,
                     ciudades,
                     cuentaPorCobrar
                 } = response;
                 $scope.entidadesFinancieras = entidadesFinanciera;
                 let dataEntidadFinanciera = $scope.entidadesFinancieras.find(val => val.codigo === 'EFE');
-                
-         
+
+
                 $scope.bancos = bancos;
 
                 $scope.ciudades = ciudades;
@@ -474,12 +498,12 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                     $scope.findSubEntidad(dataEntidadFinanciera.idEntidadFinanciera);
                 } else {
                     tS.toastr('warning', 'Entidad Financiera Efectivo no posee subentidad financiera');
-                }  
+                }
             }).catch(error => {
                 console.log(error)
-            }).finally(() => hideLoader()); 
+            }).finally(() => hideLoader());
         } catch (error) {
-            hideLoader(); 
+            hideLoader();
             console.log(error)
         }
     }
@@ -513,7 +537,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
 
     $scope.setValorEfectivo = function () {
         let valorCambio = 0, saldo = 0;
-        if($scope.entidadFinanciera.codigo!=="EFE") return
+        if ($scope.entidadFinanciera.codigo !== "EFE") return
 
         if (!(typeof $scope.cobro.valorAbono === 'number')) {
             $scope.cobro.valorCambio = 0
@@ -595,7 +619,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                     cobroSvc.indexDatoCobro = 0;
 
                     cobroSvc.addFormaCobro();
-                    let historial = cobroSvc.getHistorialCobros(cobroSvc.selectedDocumentos);
+                    let historialCobros = cobroSvc.getHistorialCobros(cobroSvc.selectedDocumentos);
 
                     if (cobroSvc.cobrosDetalle.length === 0) {
                         fS.sweetAlert('warning', 'Cobro detalle vacio')
@@ -606,11 +630,13 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                         comprobante,
                         cobros,
                         cobroDetalle: cobroSvc.cobrosDetalle.filter(item => (item.abono > 0)),
-                        historial,
+                        historialCobros,
                     }
 
+                    const params = comprobanteIngresoSvc.mapperTo(data);
+
                     showLoader();
-                    cobroSvc.save(data).then(response => {
+                    comprobanteIngresoSvc.save(params).then(response => {
                         hideLoader();
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message)
@@ -660,8 +686,10 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 
     let cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
 
+    const comprobanteIngresoSvc = $injector.get('comprobanteIngresoService');
+
     let cobroSvc = new CobroService(tS, mS, fS);
-    let { data, selectedDocumentos } = params; 
+    let { data, selectedDocumentos } = params;
 
     //const NUM_MAX_ROUND = 4;
     //Cobro Lote
@@ -737,11 +765,15 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     function loadInitialData() {
         try {
             showLoader();
-            let idCuentaPorCobrar = null;
+            let idCuentaPorCobrar = null, idCliente = 0;
             if (Object.prototype.toString.call(data) === '[object Object]') {
                 idCuentaPorCobrar = data.idCuentaPorCobrar;
-            } 
-            cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar).then(response => {
+                idCliente = data.idCliente;
+            }
+            if (selectedDocumentos !== null && Array.isArray(selectedDocumentos)) {
+                idCliente = selectedDocumentos[0].idCliente;
+            }
+            cuentaPorCobrarSvc.getDataForm(idCuentaPorCobrar, idCliente).then(response => {
 
                 dataFormaCobro = response;
 
@@ -768,7 +800,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                 }
 
                 //Cobro por documento 
-                if(idCuentaPorCobrar > 0){
+                if (idCuentaPorCobrar > 0) {
                     let cuentaPorCobrar = response.cuentaPorCobrar;
                     if (cuentaPorCobrar.some(item => [null, undefined].includes(item.cuotas))) {
                         fS.sweetAlert('warning', 'No posee cuotas');
@@ -828,7 +860,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     //             }
     //             let mainDataRepository = JSON.parse(response.payload);
     //             initDataForm(mainDataRepository);
- 
+
     //             let selectedDocumentos = mainDataRepository[5].map(item => ({
     //                 ...item,
     //                 cuotas: JSON.parse(item.cuotas),
@@ -861,7 +893,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     //         $scope.cloneCodEstab = codEstab;
     //     })
     // }
-  
+
 
     // function resetDataStepCuota() {
     //     $scope.selectedDocumentos = [];
@@ -1326,7 +1358,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 
         if (totalValorAbonoEfectivo >= $scope.comprobante.saldo) {
             valorCambio = totalValorAbonoEfectivo - $scope.comprobante.saldo
-        } 
+        }
 
         $scope.data.valorCambio = fS.roundNumber(valorCambio, 5);
 
@@ -1467,11 +1499,13 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         comprobante,
                         cobros,
                         cobroDetalle: $scope.cobrosDetalle.filter(item => (item.abono > 0)),
-                        historial,
+                        historialCobros: historial,
                     }
 
+                    let params = comprobanteIngresoSvc.mapperTo(data)
+
                     showLoader();
-                    cobroSvc.save(data).then(response => {
+                    comprobanteIngresoSvc.post(params).then(response => {
                         hideLoader();
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message)
@@ -1506,9 +1540,12 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 //====================================================FORMA COBRO=====================================
 //=====================================================================================================
 
-ModalFormaCobroCtrl.$inject = ['$scope', '$uibModalInstance', 'formulario', 'toastService', 'params']
+ModalFormaCobroCtrl.$inject = ['$scope', '$uibModalInstance', '$injector', 'params']
 
-function ModalFormaCobroCtrl($scope, $uibModalInstance, fS, tS, params) {
+function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
+    const fS = $injector.get('formulario');
+    const tS = $injector.get('toastService');
+
     let { dataFormaCobro, comprobante, saldo, datosCobro } = params;
     let { documentos, entidadesFinanciera, bancos, ciudades } = dataFormaCobro;
 
@@ -1654,7 +1691,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, fS, tS, params) {
                 codEntidadFinanciera: entidadFinanciera.codigo,
                 idBanco: $scope.data.idBanco,
                 idCiudad: $scope.data.idCiudad,
-                fechaEmision: new Date(formattedDateTime),
+                fechaEmision: formattedDateTime,
                 posFechado: $scope.data.posFechado,
                 referencia: $scope.data.referencia,
                 aprobacion: $scope.data.aprobacion,
