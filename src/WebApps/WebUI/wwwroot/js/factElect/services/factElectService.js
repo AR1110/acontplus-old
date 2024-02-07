@@ -234,6 +234,7 @@
                         return {
                             codigoTipoDoc: 'FV',//📛
                             comprobante: 'Factura',
+                            idCliente: item.idCliente,
                             idDocumento: item.idDocumento,
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
                             codEstab: item.codEstab,
