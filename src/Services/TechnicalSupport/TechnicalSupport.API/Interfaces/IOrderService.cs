@@ -1,4 +1,5 @@
 ﻿using Common.Core.Models;
+using TechnicalSupport.API.Entities;
 
 namespace TechnicalSupport.API.Interfaces
 {

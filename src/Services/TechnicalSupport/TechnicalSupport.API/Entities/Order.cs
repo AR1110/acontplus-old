@@ -22,7 +22,7 @@ namespace TechnicalSupport.API.Entities
         [Column(TypeName = "numeric(18,5), null")]
         public decimal? Tip { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Total { get; set; }
+        public decimal? Total { get; set; }
         [MaxLength(500)]
         public string Obs { get; set; }
         public OrderStatus OrderStatus { get; set; }

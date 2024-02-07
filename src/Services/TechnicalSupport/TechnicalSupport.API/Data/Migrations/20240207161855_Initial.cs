@@ -104,7 +104,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     Tax = table.Column<decimal>(type: "numeric(18,5)", nullable: true),
                     Discount = table.Column<decimal>(type: "numeric(18,5)", nullable: true),
                     Tip = table.Column<decimal>(type: "numeric(18,5)", nullable: true),
-                    Total = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Total = table.Column<decimal>(type: "numeric(18,5)", nullable: true),
                     Obs = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     OrderStatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -215,6 +215,33 @@ namespace TechnicalSupport.API.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "OrderMaintenance",
+                schema: "TechnicalSupport",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderDetailId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderMaintenance", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderMaintenance_OrderDetail_OrderDetailId",
+                        column: x => x.OrderDetailId,
+                        principalSchema: "TechnicalSupport",
+                        principalTable: "OrderDetail",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "UI_TS_Category",
                 schema: "TechnicalSupport",
@@ -260,6 +287,12 @@ namespace TechnicalSupport.API.Data.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderMaintenance_OrderDetailId",
+                schema: "TechnicalSupport",
+                table: "OrderMaintenance",
+                column: "OrderDetailId");
+
+            migrationBuilder.CreateIndex(
                 name: "UI_TS_OrderStatus",
                 schema: "TechnicalSupport",
                 table: "OrderStatus",
@@ -276,6 +309,10 @@ namespace TechnicalSupport.API.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "DeviceSpecs",
+                schema: "TechnicalSupport");
+
+            migrationBuilder.DropTable(
+                name: "OrderMaintenance",
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(

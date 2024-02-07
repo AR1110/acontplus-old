@@ -2,6 +2,7 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using TechnicalSupport.API.Data;
+using TechnicalSupport.API.Entities;
 using TechnicalSupport.API.Interfaces;
 namespace TechnicalSupport.API.Services
 {
@@ -28,7 +29,15 @@ namespace TechnicalSupport.API.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("TechnicalSupport.Order_Insert", parameters);
+            try
+            {
+                return await _repository.SPExecuteAsync("TechnicalSupport.Order_Insert", parameters);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
