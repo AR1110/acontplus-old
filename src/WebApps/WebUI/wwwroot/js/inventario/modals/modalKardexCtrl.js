@@ -443,7 +443,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
     $scope.articuloSearch = function (textSearch) {
         if (textSearch.length < 2) return;
-        return articuloSvc.search({ busqueda: textSearch })
+        return articuloSvc.search({ busqueda: textSearch, pageIndex: 1, pageSize: 15})
             .catch(error => {
                 console.log(error)
             })
