@@ -128,6 +128,7 @@ export class OrderModalComponent {
   deviceForm = this.fb.group(this.deviceFormGroup);
 
   orderForm = this.fb.group({
+    uuid: uuidv4(),
     establecimientoId: [0, Validators.required],
     puntoEmisionId: [0, Validators.required],
     customerCompanyId: [0, Validators.required],
@@ -135,6 +136,7 @@ export class OrderModalComponent {
     userId: 0,
     obs: [''],
     orderStatusId: 1,
+    orderDetails: [],
   });
 
   specForm = new FormGroup({
@@ -373,6 +375,7 @@ export class OrderModalComponent {
     showLoader();
     const data = {
       ...this.orderForm.value,
+      orderDetails: this.orderDetails
     };
 
     if (this.orderDetails.length == 0) {
@@ -381,6 +384,7 @@ export class OrderModalComponent {
         message: 'Debe de añadir los detalles a la orden',
       });
     }
+    console.log(data);
     this.orderService.post(data).subscribe({
       next: this.successResponse,
       error(err) {
