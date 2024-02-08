@@ -24,6 +24,7 @@ import {
   icon,
 } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchModalComponent } from '@modules/technical-support/components/device-search-modal/device-search-modal.component';
 import { Device } from '@modules/technical-support/models/device.model';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
@@ -246,22 +247,19 @@ export class OrderModalComponent {
   }
 
   getDevices() {
-    this.deviceService
-      .get(
-        JSON.stringify({
-          tipo: 4,
-          customerCompanyId: this.order.customerCompanyId,
-        })
-      )
-      .subscribe({
-        next: (response) => {
-          if (isApiResponse(response)) {
-            let { devices } = JSON.parse(response.payload as string) || [];
-            this.devices = devices;
-            console.log(this.devices);
-          }
-        },
-      });
+    const modalRef = this.modalService.openModalCustom(
+      DeviceListModalComponent,
+      { size: 'lg', centered: true }
+    );
+    modalRef.componentInstance.data = {
+      customerCompanyId: this.order.customerCompanyId,
+    };
+    modalRef.result.then((result) => {
+      this.device = result;
+      console.log(this.device);
+      this.deviceForm.patchValue(this.device);
+      this.addDetail({ deviceId: this.device.id, name: this.device.name });
+    });
   }
 
   ngOnInit(): void {

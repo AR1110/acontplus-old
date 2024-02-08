@@ -14,7 +14,22 @@
     <div class="col">
       <div class="table-responsive">
         <table class="table">
-          
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Serie</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of devices; track $index) {
+            <tr>
+              <td>{{ item.name }}</td>
+              <td>{{ item.serie }}</td>
+              <td><button type="button" class="btn btn-outline-purple btn-sm" (click)="select(item)"><fa-icon [icon]="'hand-point-right'"></fa-icon></button></td>
+            </tr>
+            }
+          </tbody>
         </table>
       </div>
     </div>
