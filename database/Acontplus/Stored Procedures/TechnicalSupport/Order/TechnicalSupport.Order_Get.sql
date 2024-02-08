@@ -18,8 +18,14 @@ BEGIN
 	SET NOCOUNT ON; 
 	DECLARE @tipo INT
     ,@companyId INT
+    ,@orderStatusCode VARCHAR(2)
 
-	SELECT @tipo = tipo FROM OPENJSON (@json) WITH (tipo INT '$.tipo')
+	SELECT @tipo = tipo, @orderStatusCode = orderStatusCode
+    FROM OPENJSON (@json) WITH 
+    (
+        tipo            INT         '$.tipo',
+        orderStatusCode VARCHAR(2)  '$.orderStatusCode'
+    )
 	
     SET @companyId = (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
@@ -32,5 +38,26 @@ BEGIN
             SELECT * FROM v_usuario WHERE idEntidad = @companyId AND estadoUsuario = 1 
 		END
 
+   IF @tipo = 2
+    BEGIN
+        SET @tableNames = 'orders'
+        
+        SELECT tor.Id
+            ,tor.Uuid
+            ,tor.Sequence
+            ,tor.Serie
+            ,ISNULL(tor.Tax, 0.0)       AS Tax
+            ,ISNULL(tor.Discount, 0.0)  AS Discount
+            ,ISNULL(tor.Tip, 0.0)       AS Tip
+            ,ISNULL(tor.Total, 0.0)     AS Total
+            ,ISNULL(tor.Obs, '')        AS obs
+            ,tor.Enabled
+            ,tor.CustomerCompanyId
+            ,c.nombreFiscal
+        FROM TechnicalSupport.[Order] tor
+        INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId
+        INNER JOIN TechnicalSupport.OrderStatus sc  ON sc.Id = tor.OrderStatusId
+        WHERE sc.Code = @orderStatusCode
+    END
 END
 GO

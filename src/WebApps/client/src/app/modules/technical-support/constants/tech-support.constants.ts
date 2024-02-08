@@ -7,4 +7,15 @@ export enum TYPE_CATEGORY {
 export enum TECH_SUPPORT_PATHS {
   DEVICE = 'Device/',
   ORDER = 'Order/',
-} 
+}
+
+export enum ORDER_STATUS_CODE {
+  PA = 2,
+  EP = 3,
+  PE = 4,
+  E = 5,
+  R = 6,
+  SS = 7,
+  G = 8,
+}
+

@@ -43,7 +43,6 @@ export class TabulatorComponent implements OnChanges, OnInit {
   }
 
   private drawTable(): void {
-    console.log(this.columnNames);
     new Tabulator(this.tab, {
       data: this.tableData,
       reactiveData: true, //enable data reactivity

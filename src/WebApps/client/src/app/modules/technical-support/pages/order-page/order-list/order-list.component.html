@@ -3,6 +3,7 @@
     <thead>
       <tr>
         <th scope="col">#</th>
+        <th scope="col">Opciones</th>
         <th scope="col">Cliente</th>
         <th scope="col">Secuencia</th>
         <th scope="col">Serie</th>
@@ -14,47 +15,34 @@
       </tr>
     </thead>
     <tbody>
-      <!-- @for (item of orders; track $index) {
-        <tr>
-          <td>{{item.bussinesName}}</td>
-        </tr>
-      } -->
+      <!-- fOR (item of orders; track $index)-->
+      @for (item of orders; track $index) {
       <tr>
         <th scope="row">
-          <button type="button" class="btn btn-outline-primary btn-sm"></button>
-          <button type="button" class="btn btn-outline-secondary btn-sm"></button>
+          {{ $index + 1 }}
         </th>
-        <td>Ivan Paz Fernando</td>
-        <td>ea8b2532-fb70</td>
-        <td>4e87b14a-c596</td>
-        <td>$78.9 usd</td>
-        <td>$0.9 usd</td>
-        <td>$3.9 usd</td>
-        <td>Probando esta vainilla</td>
-        <td><span class="badge bg-success">Success</span></td>
+        <td>
+          <button type="button" class="btn btn-outline-success btn-sm">
+            <fa-icon [icon]="'edit'"></fa-icon>
+          </button>
+          <button type="button" class="btn btn-outline-danger btn-sm">
+            <fa-icon [icon]="'trash'"></fa-icon>
+          </button>
+        </td>
+        <td>{{ item.nombreFiscal }}</td>
+        <td>{{ item.sequence }}</td>
+        <td>$ {{ item.serie }}</td>
+        <td>$ {{ item.tax }}</td>
+        <td>$ {{ item.discount }}</td>
+        <td>{{ item.total }}</td>
+        <td>{{ item.obs }}</td>
+        <td>
+          <span class="badge bg-success"
+            >{{ item.enabled == 1 ? "Activo" : "Inactivo" }}
+          </span>
+        </td>
       </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Emilio Yankuam</td>
-        <td>5ab52f1b-8cd5</td>
-        <td>5f1ae9c6-158d</td>
-        <td>$78.9 usd</td>
-        <td>$0.9 usd</td>
-        <td>$3.9 usd</td>
-        <td>Parace que es dibujando</td>
-        <td><span class="badge bg-danger">Danger</span></td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Manchu Tumink Danis</td>
-        <td>09c1b5d3-ba47</td>
-        <td>6be1c15f-f6fd</td>
-        <td>$78.9 usd</td>
-        <td>$0.9 usd</td>
-        <td>$3.9 usd</td>
-        <td>Excelente</td>
-        <td><span class="badge bg-primary">Primary</span></td>
-      </tr>
+      }
     </tbody>
   </table>
 </div>

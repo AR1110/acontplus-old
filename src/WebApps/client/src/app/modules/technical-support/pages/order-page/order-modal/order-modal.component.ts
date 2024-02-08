@@ -18,7 +18,13 @@ import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import {
+  IconDefinition,
+  IconProp,
+  icon,
+} from '@fortawesome/fontawesome-svg-core';
+import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchModalComponent } from '@modules/technical-support/components/device-search-modal/device-search-modal.component';
 import { Device } from '@modules/technical-support/models/device.model';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
@@ -53,14 +59,38 @@ export class OrderModalComponent {
     console.log(accion);
     console.log(test);
   }
+  deleteButton(cell: any, formatterParams: any) {
+    //cell - the cell component
+    //formatterParams - parameters set for the column
+
+    //get the row data
+    let data = cell.getRow().getData();
+
+    //return the HTML code for the button, using Bootstrap classes and Angular routerLink
+    return `<button class='btn btn-danger'>${icon(faTrashAlt).html.join(
+      ''
+    )}</button>`;
+  }
   categories: any = [];
   columnNames: any[] = [
     { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
     { title: 'Equipo', field: 'deviceName', width: 150 },
     { title: 'Obs.', field: 'obs', width: 150, editor: true },
+    {
+      cellClick: (e: any, cell: any) => {
+        this.removeFromList(cell.getData().deviceId);
+        cell.getRow().delete();
+      },
+      formatter: this.deleteButton,
+      hozAlign: 'center',
+      resizable: false,
+      title: 'Opción',
+      width: 100,
+    },
   ];
   data: any = {};
   deviceFound: any = {};
+  devices: any = [];
   establecimientos: Array<GroupedEstab> = [];
   modalIcon: IconProp = 'plus';
   modalTitle = 'Nueva Orden';
@@ -98,6 +128,7 @@ export class OrderModalComponent {
   deviceForm = this.fb.group(this.deviceFormGroup);
 
   orderForm = this.fb.group({
+    uuid: uuidv4(),
     establecimientoId: [0, Validators.required],
     puntoEmisionId: [0, Validators.required],
     customerCompanyId: [0, Validators.required],
@@ -105,6 +136,7 @@ export class OrderModalComponent {
     userId: 0,
     obs: [''],
     orderStatusId: 1,
+    orderDetails: [],
   });
 
   specForm = new FormGroup({
@@ -118,6 +150,14 @@ export class OrderModalComponent {
       Validators.minLength(3),
     ]),
   });
+
+  addDetail(device: any) {
+    device.deviceName = !device.devicName ? device.name : device.deviceName;
+    device.uuid = uuidv4();
+    device.obs = '';
+    console.log(device);
+    this.orderDetails.push(device);
+  }
 
   addSpecType() {
     this.specsType.push({
@@ -153,7 +193,7 @@ export class OrderModalComponent {
       { size: 'sm' }
     );
     modalDevice.result.then((response) => {
-      this.deviceFound = response;
+      this.addDetail(response);
     });
   }
 
@@ -164,38 +204,37 @@ export class OrderModalComponent {
   }
 
   private get() {
-    const self = this;
     showLoader();
     this.orderService.get(JSON.stringify({ tipo: 1 })).subscribe({
-      next(response) {
+      next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
             let { puntosEmision, categories, users } = JSON.parse(
               response.payload as string
             );
-            self.establecimientos = groupEstabUtil({
+            this.establecimientos = groupEstabUtil({
               estabs: puntosEmision,
             });
-            const dataEstab = self.establecimientos.find(
+            const dataEstab = this.establecimientos.find(
               (estab) => estab.defaultEstab
             );
             if (dataEstab) {
-              self.orderForm.patchValue({
+              this.orderForm.patchValue({
                 establecimientoId: dataEstab.idEstablecimiento,
               });
-              self.order.codEstab = dataEstab.codEstab;
-              self.puntosEmision = dataEstab.puntosEmision;
-              const dataPuntoEmision = self.puntosEmision.find(
+              this.order.codEstab = dataEstab.codEstab;
+              this.puntosEmision = dataEstab.puntosEmision;
+              const dataPuntoEmision = this.puntosEmision.find(
                 (ptoEmi) => ptoEmi.defaultPtoEmi
               );
               if (dataPuntoEmision) {
-                self.orderForm.patchValue({
+                this.orderForm.patchValue({
                   puntoEmisionId: dataPuntoEmision.idPuntoEmision,
                 });
               }
             }
-            self.categories = categories;
-            self.users = users;
+            this.categories = categories;
+            this.users = users;
           }
         }
       },
@@ -208,6 +247,23 @@ export class OrderModalComponent {
       },
     });
   }
+
+  getDevices() {
+    const modalRef = this.modalService.openModalCustom(
+      DeviceListModalComponent,
+      { size: 'lg', centered: true }
+    );
+    modalRef.componentInstance.data = {
+      customerCompanyId: this.order.customerCompanyId,
+    };
+    modalRef.result.then((result) => {
+      this.device = result;
+      console.log(this.device);
+      this.deviceForm.patchValue(this.device);
+      this.addDetail({ deviceId: this.device.id, name: this.device.name });
+    });
+  }
+
   ngOnInit(): void {
     this.get();
   }
@@ -232,11 +288,16 @@ export class OrderModalComponent {
   }
   onCustomerSelected($event: any) {
     let { data } = $event;
-    console.log(data.idCliente);
+    this.order.customerCompanyId = data.idCliente;
     this.orderForm.patchValue({ customerCompanyId: data.idCliente });
   }
+
+  removeFromList(deviceId: number) {
+    let newArray = this.orderDetails.filter((x) => x.deviceId !== deviceId);
+    this.orderDetails = newArray;
+  }
+
   saveDevice() {
-    const self = this;
     Object.assign(this.device, this.deviceForm.value);
     debugger;
     let customerCompanyId = this.orderForm.get('customerCompanyId')?.value;
@@ -279,25 +340,23 @@ export class OrderModalComponent {
     }
     console.log(this.device);
     this.deviceService.post(this.device).subscribe({
-      next(response) {
+      next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
-            self.tS.toastr({
+            this.tS.toastr({
               type: 'warning',
               message: response.message,
             });
           }
           if (response.code == '1') {
-            self.tS.toastr({
+            this.tS.toastr({
               type: 'success',
               message: response.message,
             });
-            self.specs = [];
-            self.orderDetails.push({
-              uuid: uuidv4(),
+            this.specs = [];
+            this.addDetail({
               deviceId: response.payload as number,
-              deviceName: self.device.name,
-              obs: '',
+              deviceName: this.device.name,
             });
           }
         }
@@ -316,6 +375,7 @@ export class OrderModalComponent {
     showLoader();
     const data = {
       ...this.orderForm.value,
+      orderDetails: this.orderDetails
     };
 
     if (this.orderDetails.length == 0) {
@@ -324,6 +384,7 @@ export class OrderModalComponent {
         message: 'Debe de añadir los detalles a la orden',
       });
     }
+    console.log(data);
     this.orderService.post(data).subscribe({
       next: this.successResponse,
       error(err) {

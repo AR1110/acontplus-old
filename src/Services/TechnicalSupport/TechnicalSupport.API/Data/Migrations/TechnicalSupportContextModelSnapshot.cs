@@ -254,6 +254,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("FechaEmision")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
                         .IsUnicode(false)
