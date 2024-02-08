@@ -19,8 +19,17 @@ BEGIN
 
     DECLARE @tipo INT
         ,@textSearch VARCHAR(100)
+        ,@customerCompanyId INT
     
-    SELECT @tipo = tipo, @textSearch = textSearch FROM OPENJSON(@json) WITH(tipo INT '$.tipo', textSearch VARCHAR(100) '$.textSearch')
+    SELECT @tipo = tipo
+        ,@textSearch = textSearch
+        ,@customerCompanyId = customerCompanyId
+    FROM OPENJSON(@json)
+        WITH (
+                tipo INT '$.tipo',
+                textSearch VARCHAR(100) '$.textSearch',
+                customerCompanyId INT '$.customerCompanyId'
+              )
 
     IF (@tipo = 1)
         BEGIN
@@ -46,6 +55,14 @@ BEGIN
         BEGIN
         	SET @tableNames = 'devices'
             SELECT * FROM TechnicalSupport.Device WITH (NOLOCK) WHERE [Name] LIKE '%' + @textSearch + '%'
+            RETURN
+        END
+    IF (@tipo = 4)
+        BEGIN
+        	SET @tableNames = 'devices'
+            SELECT * FROM TechnicalSupport.Device de  WITH (NOLOCK)
+                    INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON de.Id = dc.DeviceId
+            WHERE dc.CustomerCompanyId = @customerCompanyId
             RETURN
         END
 END
