@@ -81,7 +81,7 @@ BEGIN
 	)
 
 	BEGIN TRY 
-
+        
   	    --====================================obtener Datos de los Json============================================
 		SELECT @comprobante  = comprobante
               ,@cobros       = cobros
@@ -95,6 +95,9 @@ BEGIN
 		   ,historial    NVARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS '$.historial'     AS JSON
 
 		) as dt 
+
+        SELECT '0'code,'pagos: '+ISNULL(@cobroDetalle,'Sin Dato') as 'message'
+		RETURN
 
 
 		INSERT INTO @documento(idTipoPersona,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal)
