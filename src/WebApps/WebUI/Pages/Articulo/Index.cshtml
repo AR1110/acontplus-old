@@ -276,7 +276,7 @@
                             </td>
                             <td md-cell>{{$index+1}}</td>
                             <td md-cell style="vertical-align: middle">
-                                <img class="img-fluid img-thumbnail" ng-class="{thumbnail: a.s3ObjectUrl.length > 0}"
+                                <img class="img-fluid img-thumbnail" ng-click="previewImg(a)" ng-class="{thumbnail: a.s3ObjectUrl.length > 0}"
                                      width="50" src="{{a.s3ObjectUrl}}" />
                             </td>
                             <td md-cell>{{a.codigo}}</td>

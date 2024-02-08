@@ -9,6 +9,26 @@
 
         let service = {};
 
+        service.getDataFilter = function () {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 11 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    return {
+                        subFamilias: mainData[0],
+                        medidas: mainData[1],
+                        marcas: mainData[2],
+                        modelos: mainData[3],
+                        tiposIva: mainData[4]
+                    }
+
+                }
+            })
+        }
+
         /**
          * 
          * @param {*} params 
@@ -252,6 +272,7 @@
 
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
+
                     let articulos = mainData[0];
                     let totalRecords = mainData[0][0].totalRecords;
 
@@ -265,6 +286,7 @@
                                 code_unique: item.code_unique,
                                 codigo: item.codigo,
                                 descripcion: item.descripcion,
+                                codigoBarra: item.codigoBarra,
                                 precioCosto: item.precioCosto,
                                 estado: item.estado,
                                 stock: item.stock,
@@ -281,6 +303,8 @@
                                 stockMinimo: item.stockMinimo,
                                 tarifas,
                                 color: item.color,
+                                s3ObjectKey: item.s3ObjectKey,
+                                s3ObjectUrl: item.s3ObjectUrl
                             }
                         })
 
@@ -823,6 +847,9 @@
                 }
             )
         }
+
+
+
         return service;
 
     }])
@@ -945,13 +972,72 @@
         function getPhotos(id) {
             return mS.getData('GET', `${url}${id}`, null, true).then(response => {
                 let photos = [];
-                if (response.code === "1"){
+                if (response.code === "1") {
                     photos = response.payload;
-                } 
-                return photos; 
+                }
+                return photos;
 
             })
         }
+
+        function previewImg(id) {
+            try {
+                showLoader();
+                getPhotos(id).then(photos => {
+                    hideLoader();
+                    if (photos.length === 0) {
+                        Swal.fire({
+                            icon: 'warning',
+                            html: '<small> El artículo no posee imágenes.</small> '
+                        })
+                        return
+                    }
+
+                    let sliderContent = `<div id="carouselPhotosProductControls" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner">`;
+                    let index = 0;
+                    for (const photo of photos) {
+                        sliderContent += `
+                                <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                    <img class="d-block w-100" src="${photo.s3ObjectUrl}" alt="First slide">
+                                </div>   
+                                `;
+                        index++;
+                    }
+
+                    sliderContent += `</div>
+                                    <a class="carousel-control-prev" href="javascript:void(0);" role="button" data-slide="prev" id="prevSlide">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="javascript:void(0);" role="button" data-slide="next" id="nextSlide">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>`
+
+                    Swal.fire({
+                        html: sliderContent,
+                        showConfirmButton: true,
+                        width: '50em'
+                    });
+
+                    document.getElementById('nextSlide').addEventListener('click', () => {
+                        $('#carouselPhotosProductControls').carousel('next');
+                    })
+                    document.getElementById('prevSlide').addEventListener('click', () => {
+                        $('#carouselPhotosProductControls').carousel('prev');
+                    })
+
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader())
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
+        }
+
         service.get = _get;
         service.post = _post;
         service.setDefault = _setDefault;
@@ -959,6 +1045,7 @@
         service.delete = _delete;
 
         service.getPhotos = getPhotos
+        service.previewImg = previewImg;
         return service;
     }
 })(window.angular)
