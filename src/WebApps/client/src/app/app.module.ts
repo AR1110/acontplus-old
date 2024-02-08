@@ -33,7 +33,7 @@ import { NgxFileDropModule } from "ngx-file-drop";
     NgbDropdownModule,
     NgbTooltipModule,
     NgOptimizedImage,
-    NgxFileDropModule, 
+    NgxFileDropModule,
   ]
 })
 

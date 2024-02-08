@@ -108,9 +108,15 @@
           <h5 class="card-title">
             <fa-icon [icon]="'laptop'"></fa-icon> Datos Equipo:
           </h5>
-          <button type="button" class="btn btn-outline-info btn-sm">
-            Historial
+          @if (order.customerCompanyId > 0) {
+          <button
+            type="button"
+            class="btn btn-outline-info btn-sm"
+            (click)="getDevices()"
+          >
+            <fa-icon [icon]="'history'"></fa-icon> Historial
           </button>
+          }
         </div>
         <div class="card-body">
           <div class="row mb-2">
