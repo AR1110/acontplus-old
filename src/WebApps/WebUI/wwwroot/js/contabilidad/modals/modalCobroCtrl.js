@@ -125,7 +125,7 @@ class CobroService {
         let historialCobros = [];
         for (let item of selectedDocumentos) {
             let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
- 
+
 
             let totalAbono = cobrosDetalleFiltered.reduce((prev, curr) => prev + curr.abono, 0);
 
@@ -136,7 +136,7 @@ class CobroService {
                     diasMora: item.diasMora,
                     mora: item.mora,
                     saldo: item.saldo,
-                //   saldoOriginal: item.saldoOriginal
+                    //   saldoOriginal: item.saldoOriginal
                 })
             } else break;
         }
@@ -281,22 +281,22 @@ class CobroService {
      * @returns void
      */
     addCobroDetalle(item, abono, saldo) {
-        if (item.cuota == 0) return; 
+        if (item.cuota == 0) return;
 
         let valorMovimientoSaldo = 0;
         let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => (
-            cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar && 
+            cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar &&
             cd.idCuotaPorCobrar === item.idCuotaPorCobrar
-            ))
+        ))
 
         let dataUltimoCobroDetalle = cobrosDetalleFiltered.pop();
-        if(dataUltimoCobroDetalle){
+        if (dataUltimoCobroDetalle) {
             valorMovimientoSaldo = dataUltimoCobroDetalle.saldoOriginal - dataUltimoCobroDetalle.abono;
-        }else{
+        } else {
             valorMovimientoSaldo = item.saldoOriginal;
         }
 
- 
+
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
@@ -307,10 +307,10 @@ class CobroService {
             cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND),
             saldo,
             secuencial: this.indexDatoCobro,
-            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND) 
+            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND)
         })
         item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
-        item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND); 
+        item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
     }
 
     /**
@@ -1500,7 +1500,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         historialCobros: historial,
                     }
 
-                    
+
 
                     let params = comprobanteIngresoSvc.mapperTo(data);
 
@@ -1757,11 +1757,9 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
 
 
 //======================================================DETALLE COBRO====================================
-ModalCobroDetalleCtrl.$inject = ['$scope', '$mdDialog', 'mainService', 'toastService', 'formulario', 'params']
+ModalCobroDetalleCtrl.$inject = ['$scope', '$uibModalInstance', 'comprobanteIngresoService', 'params']
 
-function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params) {
-    // let cobroSvc = new CobroService(tS, mS, fS);
-
+function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc, params) { 
     $scope.showDetalleCompIngreso = false;
     $scope.showDetalleCompIngresoByDoc = false;
 
@@ -1773,76 +1771,39 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params) {
     initialLoad();
     function initialLoad() {
         try {
-            showLoader();
             if (params && params.idComprobanteIngreso > 0) {
                 $scope.showDetalleCompIngreso = true;
-                let query = {
-                    tipo: 2,
-                    idComprobanteIngreso: params.idComprobanteIngreso
-                }
-                mS.getData('get', 'Contabilidad/ComprobanteIngreso/?json=' + JSON.stringify(query), null, true).then(response => {
-                    hideLoader();
-                    if (response.code === '0') {
-                        throw response;
-                    }
-                    let mainDataRepository = JSON.parse(response.payload);
 
-                    $scope.comprobante = mainDataRepository[0][0],
-                        $scope.cobros = mainDataRepository[1],
-                        $scope.cobroDetalles = mainDataRepository[2]
+                showLoader();
+                comprobanteIngresoSvc.getHistorialCobrosById(params.idComprobanteIngreso).then(response => {
+                    const {
+                        comprobante,
+                        cobros,
+                        cobroDetalles
+                    } = response;
 
-                    for (let item of $scope.cobros) {
-                        item.infoCobro = JSON.parse(item.infoCobro)
-                        item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
-                        item.showInfoCobro = item.codPago !== 'EFE'
-                    }
+                    $scope.comprobante = comprobante;
+                    $scope.cobros = cobros;
+                    $scope.cobroDetalles = cobroDetalles;
                 }).catch(error => {
-                    hideLoader();
                     console.log(error)
-                })
+                }).finally(() => hideLoader())
             } else if (params && params.idCuentaPorCobrar > 0) {
                 $scope.showDetalleCompIngresoByDoc = true;
+                showLoader();
+                comprobanteIngresoSvc.getHistorialCobrosByDoc(params.idCuentaPorCobrar).then(response => {
+                    const {
+                        comprobante,
+                        cobroDetalles,
+                        comprobanteIngresos
+                    } = response;
 
-                let query = {
-                    tipo: 3,
-                    idCuentaPorCobrar: params.idCuentaPorCobrar
-                }
-                mS.getData('get', 'Contabilidad/ComprobanteIngreso/?json=' + JSON.stringify(query), null, true).then(response => {
-                    hideLoader();
-                    if (response.code === '0') {
-                        throw response;
-                    }
-
-                    let mainDataRepository = JSON.parse(response.payload);
-                    $scope.comprobante = mainDataRepository[0][0];
-                    let comprobanteIngresos = mainDataRepository[1];
-
-                    let cobros = mainDataRepository[2];
-                    $scope.cobroDetalles = mainDataRepository[3];
-
-
-
-                    for (let item of $scope.cobros) {
-                        item.infoCobro = JSON.parse(item.infoCobro)
-                        item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
-
-                    }
-
-                    $scope.comprobanteIngresos = comprobanteIngresos.map(item => {
-                        item.cobros = cobros.filter(cc => cc.idComprobanteIngreso === item.idComprobanteIngreso)
-                            .map(cobro => {
-                                cobro.infoCobro = JSON.parse(cobro.infoCobro)
-                                cobro.showInfoCobro = cobro.codPago !== 'EFE'
-                                return cobro;
-                            })
-                        return item;
-                    })
-
-
-                }).catch(error => {
-                    hideLoader();
+                    $scope.comprobante = comprobante;
+                    $scope.cobroDetalles = cobroDetalles; 
+                    $scope.comprobanteIngresos = comprobanteIngresos; 
+                }).catch(error => { 
                     console.log(error)
-                })
+                }).finally(() => hideLoader())
             }
 
         } catch (error) {
@@ -1925,13 +1886,13 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params) {
             title: '<small>Detalle Cobro</small>',
             icon: 'info',
             html,
-            with: 700
+            width: 700
         })
 
     }
 
-    $scope.closeDialog = function () {
-        $mdDialog.cancel();
+    $scope.closeModal = function () {
+        $uibModalInstance.close();
     };
 }
 

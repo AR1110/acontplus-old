@@ -323,19 +323,16 @@
                 let templateUrl = nombreModalContabilidad.COBRO.templates['CD']; 
                 let controller = (await import(fileCtrl))[ctrl];                
               
+
                 let config = {
                     controller,
-                    templateUrl,
-                    // Appending dialog to document.body to cover sidenav in docs app
-                    // Modal dialogs should fully cover application to prevent interaction outside of dialog
-                    parent: angular.element(document.body),
-                    targetEvent: ev,
-                    clickOutsideToClose: false, 
-                    fullscreen: true,    
-                    params: Object.assign({}, item)                                     
+                    template: templateUrl,
+                    size: 'lg',
+                    params: Object.assign({}, item),
+                    isRenderRazorPartial: true
                 }
 
-                _modalSvc.openMdDialog(config)              
+                _modalSvc.openModalCustom(config)              
             } catch (error) {
                 hideLoader();
                 console.log(error)

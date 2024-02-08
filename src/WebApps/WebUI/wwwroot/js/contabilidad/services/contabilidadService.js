@@ -8,7 +8,9 @@
         return {
             getAll,
             post,
-            mapperTo
+            mapperTo,
+            getHistorialCobrosById,
+            getHistorialCobrosByDoc
         }
 
         function getAll(obj) {
@@ -117,6 +119,73 @@
 
         function post(data) {
             return mS.getData('post', url + 'Insert', { data }, true)
+        }
+
+        function getHistorialCobrosById(idComprobanteIngreso){
+            let params = JSON.stringify({ idComprobanteIngreso, tipo: 2 })
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{ 
+                if (response.code === '0') {
+                    throw response;
+                }
+                let mainDataRepository = JSON.parse(response.payload);
+
+                let comprobante = mainDataRepository[0][0];
+                let cobros = mainDataRepository[1];
+                let cobroDetalles = mainDataRepository[2];
+
+                for (let item of cobros) {
+                    item.infoCobro = JSON.parse(item.infoCobro)
+                    item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
+                    item.showInfoCobro = item.codPago !== 'EFE'
+                }
+
+                return {
+                    comprobante,
+                    cobros,
+                    cobroDetalles
+                }
+            })
+        }
+        function getHistorialCobrosByDoc(idCuentaPorCobrar){
+            let params = JSON.stringify({ idCuentaPorCobrar, tipo: 3 })
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
+                if (response.code === '0') {
+                    throw response;
+                }
+
+
+                let mainDataRepository = JSON.parse(response.payload);
+
+                let comprobante = mainDataRepository[0][0];
+                let comprobanteIngresos = mainDataRepository[1];
+
+                let cobros = mainDataRepository[2];
+                let cobroDetalles = mainDataRepository[3];
+
+
+
+                for (let item of cobros) {
+                    item.infoCobro = JSON.parse(item.infoCobro)
+                    item.cobroDetalles = cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
+
+                }
+
+                comprobanteIngresos = comprobanteIngresos.map(item => {
+                    item.cobros = cobros.filter(cc => cc.idComprobanteIngreso === item.idComprobanteIngreso)
+                        .map(cobro => {
+                            cobro.infoCobro = cobro.infoCobro
+                            cobro.showInfoCobro = cobro.codPago !== 'EFE'
+                            return cobro;
+                        })
+                    return item;
+                })
+
+                return {
+                    comprobante,
+                    cobroDetalles,
+                    comprobanteIngresos
+                }
+            })
         }
     }]);
 
