@@ -58,6 +58,7 @@ BEGIN
         INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId
         INNER JOIN TechnicalSupport.OrderStatus sc  ON sc.Id = tor.OrderStatusId
         WHERE sc.Code = @orderStatusCode
+        ORDER BY tor.CreatedAt DESC
     END
 END
 GO
