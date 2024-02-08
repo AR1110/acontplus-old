@@ -54,14 +54,15 @@
                 cobroDetalle,
                 historialCobros,
             } = obj;
+            console.log(obj)
 
             let comprobanteMappeado = {
                 idCliente: comprobante.idCliente,
-                total: comprobante.valorAbono,
+                total: comprobante.total,
                 abono: comprobante.abono,
                 codEstab: comprobante.codEstab,
-                numeroIdentificacion: comprobante.identificacionComprador,
-                nombreFiscal: comprobante.razonSocialComprador
+                numeroIdentificacion: comprobante.numeroIdentificacion,
+                nombreFiscal: comprobante.nombreFiscal
             }
 
 
@@ -72,8 +73,8 @@
                     idBanco: cobro.idBanco,
                     idCuentaBancaria: cobro.idCuentaBancaria,
                     fechaEmision: cobro.fechaEmision,
-                    valor: cobro.valorAbono,
-                    posfechado: cobro.posFechado,
+                    valor: cobro.valor,
+                    posfechado: cobro.posfechado,
                     secuencial: cobro.secuencial,
                     infoCobro: cobro.infoCobro,
                     abono: cobro.abono,
@@ -101,7 +102,7 @@
                     abono: hc.abono,
                     diasMora: hc.diasMora,
                     mora: hc.mora,
-                    saldo: hc.saldoOriginal,
+                    saldo: hc.saldo,
                 }
             })
 
