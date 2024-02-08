@@ -1020,8 +1020,7 @@
             $scope.permisoDetalleVenta = permisoVenta.detalle;
             $scope.notificacionVenta = notificacionVenta;
             $scope.decimal = decimal;
-            $scope.config = config;
-            console.log($scope.config)
+            $scope.config = config; 
 
 
             if ($scope.bodegas.length > 0) {
