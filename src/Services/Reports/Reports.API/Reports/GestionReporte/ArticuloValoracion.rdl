@@ -802,14 +802,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="stock1">
+                        <Textbox Name="stockTotal">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!stock.Value)</Value>
+                                  <Value>=Fields!stockTotal.Value</Value>
                                   <Style>
                                     <FontSize>7pt</FontSize>
                                     <Format>n1</Format>
@@ -821,7 +821,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>stock1</rd:DefaultName>
+                          <rd:DefaultName>stockTotal</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -837,7 +837,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="totalInventario2">
+                        <Textbox Name="totalInventario">
                           <CanGrow>true</CanGrow>
                           <UserSort>
                             <SortExpression>=Fields!codigo.Value</SortExpression>
@@ -848,7 +848,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!stock.Value) *  Fields!precioCosto.Value</Value>
+                                  <Value>=Fields!totalInventario.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -861,7 +861,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>totalInventario2</rd:DefaultName>
+                          <rd:DefaultName>totalInventario</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -991,7 +991,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox36">
+                        <Textbox Name="totalInventario1">
                           <CanGrow>true</CanGrow>
                           <UserSort>
                             <SortExpression>=Fields!idArticulo.Value</SortExpression>
@@ -1002,7 +1002,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!stock.Value *  Fields!precioCosto.Value)</Value>
+                                  <Value>=Sum(Fields!totalInventario.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -1016,7 +1016,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox36</rd:DefaultName>
+                          <rd:DefaultName>totalInventario1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1306,12 +1306,14 @@
                 <TablixMember>
                   <Group Name="Item">
                     <GroupExpressions>
+                      <GroupExpression>=Fields!idArticulo.Value</GroupExpression>
                       <GroupExpression>=Fields!codigo.Value</GroupExpression>
+                      <GroupExpression>=Fields!descripcion.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!descripcion.Value</Value>
+                      <Value>=Fields!idArticulo.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>

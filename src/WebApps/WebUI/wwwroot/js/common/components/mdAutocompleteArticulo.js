@@ -242,19 +242,20 @@ class BaseSearchArticulo {
 class MdArticuloCtrl extends BaseSearchArticulo {
 
     static $inject = [
-        'articuloService', 
-        'mainService', 
-        '$rootScope', 
-        '$scope', 
-        '$timeout', 
-        '$q',  
-        'commonService', 
-        'modalService', 
-        'nombreModal', 
-        'nombreModalInventario', 
+        'articuloService',
+        'productPhotoService',
+        'mainService',
+        '$rootScope',
+        '$scope',
+        '$timeout',
+        '$q',
+        'commonService',
+        'modalService',
+        'nombreModal',
+        'nombreModalInventario',
         'toastService'
     ]
-    constructor(articuloSvc, _mS, $rootScope, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, nombreModalInventario, tS) {
+    constructor(articuloSvc, productPhotoSvc, _mS, $rootScope, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, nombreModalInventario, tS) {
         super({
             _mS,
             $rootScope,
@@ -268,6 +269,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         })
 
         this.articuloSvc = articuloSvc;
+        this.productPhotoSvc = productPhotoSvc;
         this.placeholder = this.placeholder || "Buscar articulo"
 
         this.nombreModalInventario = nombreModalInventario;
@@ -296,25 +298,25 @@ class MdArticuloCtrl extends BaseSearchArticulo {
             })
 
             const autocompleteImput = document.getElementsByClassName('md-autocomplete-suggestions-container')[0]
-      
-            autocompleteImput.addEventListener('scroll', () => {  
+
+            autocompleteImput.addEventListener('scroll', () => {
                 var scrollTop = autocompleteImput.scrollTop;
                 var scrollHeight = autocompleteImput.scrollHeight;
                 var clientHeight = autocompleteImput.clientHeight;
 
                 // Verificar si se ha llegado al principio (top)
                 if (scrollTop === 0) {
-                    
+
                 }
 
                 // Verificar si se ha llegado al final (bottom)
                 if (scrollTop + clientHeight === scrollHeight) {
-                    this.getProductPaginationSearch() 
-                    
+                    this.getProductPaginationSearch()
+
                 }
             });
 
-        }, 500) 
+        }, 500)
 
     }
 
@@ -330,21 +332,21 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         this.dataSearch.pageIndex = 1;
         this.dataSearch.pageSize = 15;
 
- 
+
         if (json.busqueda.length < 2) return [];
 
         // this.productsFound = Promise.resolve([]); 
         this.productsFound = []
-       return this.articuloSvc.search(json).then(articulos => {
+        return this.articuloSvc.search(json).then(articulos => {
             let results = this.formatProduct(articulos)
-            this.productsFound = results; 
+            this.productsFound = results;
             return results
         }).catch(error => {
             hideLoader();
             console.log(error)
             return []
-        }) 
-    } 
+        })
+    }
 
     formatProduct(products) {
         let results = [];
@@ -367,12 +369,12 @@ class MdArticuloCtrl extends BaseSearchArticulo {
     }
 
     getProductPaginationSearch() {
-        
+
 
         let cloneProductsFound = [...this.productsFound]
-        if (cloneProductsFound.length>0){
-            cloneProductsFound.shift(); 
-            if (cloneProductsFound[0].totalRecords === cloneProductsFound.length) return 
+        if (cloneProductsFound.length > 0) {
+            cloneProductsFound.shift();
+            if (cloneProductsFound[0].totalRecords === cloneProductsFound.length) return
         }
 
         showLoader();
@@ -398,7 +400,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
                 // console.log(autocompleteCtrl);
                 this.productsFound.push.apply(this.productsFound, resultProducts);
-               
+
             }
         }).catch(error => {
             console.log(error)
@@ -521,14 +523,56 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
     }
 
-    previewImg($event, data) {
+    async previewImg($event, data) {
         $event.stopPropagation();
-        Swal.fire({
-            imageUrl: data.s3ObjectUrl,
-            imageWidth: 500,
-            imageHeight: 500,
-            imageAlt: "Custom image"
-        });
+        showLoader();
+        this.productPhotoSvc.getPhotos(data.idArticulo).then(photos => {
+
+            let sliderContent = `<div id="carouselPhotosProductControls" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner">`;
+            let index = 0;
+            for (const photo of photos) {
+                sliderContent += `
+                                <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                    <img class="d-block w-100" src="${photo.s3ObjectUrl}" alt="First slide">
+                                </div>   
+                                `;
+                index++;
+            }
+
+            sliderContent += `</div>
+                                    <a class="carousel-control-prev" href="javascript:void(0);" role="button" data-slide="prev" id="prevSlide">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="javascript:void(0);" role="button" data-slide="next" id="nextSlide">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>`
+
+            Swal.fire({
+                html: sliderContent,
+                showConfirmButton: true,
+                width: '50em'
+            });
+
+            document.getElementById('nextSlide').addEventListener('click', () => {
+                $('#carouselPhotosProductControls').carousel('next');
+            })
+            document.getElementById('prevSlide').addEventListener('click', () => {
+                $('#carouselPhotosProductControls').carousel('prev');
+            })
+
+        }).catch(error => {
+            console.log(error)
+        }).finally(() => hideLoader())
+        // Swal.fire({
+        //     imageUrl: data.s3ObjectUrl,
+        //     imageWidth: 500,
+        //     imageHeight: 500,
+        //     imageAlt: "Custom image"
+        // });
 
     }
 

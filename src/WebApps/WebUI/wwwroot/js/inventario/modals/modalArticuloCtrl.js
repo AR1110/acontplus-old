@@ -571,6 +571,18 @@ function modalArticuloCtrl(
         }
     };
 
+    $scope.refreshSubFamilia = async function(){
+        try {
+            showLoader();
+            const { subFamilias } = await articuloSvc.getDataForForm();
+            $scope.subFamilias = subFamilias; 
+            hideLoader();
+        } catch (error) {
+            console.log(error)
+            hideLoader();
+        }
+    }
+
     $scope.resultModalMarca = async function (result) {
         try {
             if (typeof result !== "object") return;
@@ -742,8 +754,7 @@ function modalArticuloCtrl(
             tS.toastr("warning", "Ingrese un número válido");
             return;
         }
-
-        console.log(opcionCalculate)
+ 
         if ($scope.data.precioCosto === 0) {
             tS.toastr("warning", "El valor mínimo en el precio de costo es 0.01");
             return;

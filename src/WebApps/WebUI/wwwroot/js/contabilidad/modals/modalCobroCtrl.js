@@ -124,8 +124,11 @@ class CobroService {
     getHistorialCobros(selectedDocumentos) {
         let historialCobros = [];
         for (let item of selectedDocumentos) {
-            let totalAbono = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
-                .reduce((prev, curr) => prev + curr.abono, 0);
+            let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
+ 
+
+            let totalAbono = cobrosDetalleFiltered.reduce((prev, curr) => prev + curr.abono, 0);
+
             if (totalAbono > 0) {
                 historialCobros.push({
                     idCuentaPorCobrar: item.idCuentaPorCobrar,
@@ -133,7 +136,7 @@ class CobroService {
                     diasMora: item.diasMora,
                     mora: item.mora,
                     saldo: item.saldo,
-                    saldoOriginal: item.saldoOriginal
+                //   saldoOriginal: item.saldoOriginal
                 })
             } else break;
         }
@@ -277,12 +280,9 @@ class CobroService {
      * @param {number} abono 
      * @returns void
      */
-    addCobroDetalle(item, abono, saldo, tieneAbono) {
-        if (item.cuota == 0) return;
+    addCobroDetalle(item, abono, saldo) {
+        if (item.cuota == 0) return; 
 
-        console.log(item)
-        console.log(abono)
-        console.log(saldo)
         let valorMovimientoSaldo = 0;
         let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => (
             cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar && 
@@ -296,8 +296,7 @@ class CobroService {
             valorMovimientoSaldo = item.saldoOriginal;
         }
 
-
-
+ 
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
@@ -308,11 +307,10 @@ class CobroService {
             cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND),
             saldo,
             secuencial: this.indexDatoCobro,
-            saldoOriginal: valorMovimientoSaldo
+            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND) 
         })
         item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
-        item.saldoOriginal = item.saldoOriginal - abono;
-        console.log(this.cobrosDetalle)
+        item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND); 
     }
 
     /**
@@ -1502,7 +1500,9 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         historialCobros: historial,
                     }
 
-                    let params = comprobanteIngresoSvc.mapperTo(data)
+                    
+
+                    let params = comprobanteIngresoSvc.mapperTo(data);
 
                     showLoader();
                     comprobanteIngresoSvc.post(params).then(response => {
@@ -1735,7 +1735,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
             if (result.isConfirmed) {
 
 
-                $uibModalInstance.close($scope.getDataPago(item))
+                $uibModalInstance.close(getDataPago(item))
             } else {
                 $scope.selectedDocElectronico = [];
                 $scope.$apply();
