@@ -13,6 +13,7 @@ namespace TechnicalSupport.API.Dtos
         [MaxLength(500)]
         public string Obs { get; set; }
         public int OrderStatusId { get; set; }
+        public int UserId { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
     }
 }
