@@ -13,6 +13,8 @@ namespace TechnicalSupport.API.Extensions
 
             services.AddScoped<IDeviceService, DeviceService>();
             services.AddScoped<IOrderService, OrderService>();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             return services;
         }
     }
