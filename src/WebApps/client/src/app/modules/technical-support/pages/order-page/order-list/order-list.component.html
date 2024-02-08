@@ -36,7 +36,11 @@
         <td>$ {{ item.discount }}</td>
         <td>{{ item.total }}</td>
         <td>{{ item.obs }}</td>
-        <td><span class="badge bg-success">Success</span></td>
+        <td>
+          <span class="badge bg-success"
+            >{{ item.enabled == 1 ? "Activo" : "Inactivo" }}
+          </span>
+        </td>
       </tr>
       }
     </tbody>
