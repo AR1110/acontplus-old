@@ -96,6 +96,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FechaEmision = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EstablecimientoId = table.Column<int>(type: "int", nullable: false),
                     PuntoEmisionId = table.Column<int>(type: "int", nullable: false),
                     Sequence = table.Column<int>(type: "int", nullable: false),
