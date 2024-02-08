@@ -146,7 +146,7 @@
                             <th md-column md-numeric></th>
                         </tr>
                         <tr md-row>
-                            <!-- <th md-column>Op.</th> -->
+                            <th md-column>Op.</th> 
                             <th md-column>N°.</th>
                             <th md-column>Cod. Doc</th>
                             <th md-column md-order-by="serieComprobante">Serie Comprobante</th>
@@ -169,28 +169,23 @@
                             md-select-id="idCuentaPorCobrar"
                             md-auto-select
                             ng-repeat="item in cuentasPorCobrar | orderBy: tableOptions.sortBy track by $index" ng-style="{'background-color': item.colorRow}">
-                            <!-- <td md-cell>
-                                <md-menu>
-                                    <md-button aria-label="Open demo menu" class="md-icon-button"
-                                               ng-click="$mdMenu.open($event)">
-                                        <i class="mdi mdi-menu"></i>
-                                    </md-button>
-                                    <md-menu-content class="md-dense">
-                                        <md-menu-item>
-                                            <md-button ng-click="openModalCuota(item)">
-                                                <span md-menu-align-target>Cuotas</span>
-                                            </md-button>
-                                        </md-menu-item>
-
-                                        <md-menu-item>
-                                            <md-button ng-click="openModalHistorialMov(item)" ng-disabled="(item.codPago==='PE')">
-                                                <span md-menu-align-target>Hist. Movimiento</span>
-                                            </md-button>
-                                        </md-menu-item>
-
-                                    </md-menu-content>
-                                </md-menu>
-                            </td> -->
+                            <td md-cell>
+                                <!-- <div class="btn-group" uib-dropdown dropdown-append-to-body>
+                                    <button id="btn-append-to-body" type="button" class="btn btn-primary" uib-dropdown-toggle>
+                                        Hola
+                                    </button> 
+                                    <div class="dropdown-menu"  uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-body">
+                                        <a class="dropdown-item" href="#">Regular link</a>
+                                        <a class="dropdown-item disabled" href="#">Disabled link</a>
+                                        <a class="dropdown-item" href="#">Another link</a>
+                                    </div>
+                                </div> -->
+                                <div class="btn-group">
+                                    <button class="btn btn-success btn-sm" ng-click="openModalHistory(item)">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                </div>
+                            </td> 
                             <td md-cell>{{$index+1}}</td>
                             <td md-cell>{{item.codDoc}}</td>
                             <td md-cell>{{item.serieComprobante}}</td>
