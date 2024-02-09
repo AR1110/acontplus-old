@@ -1,6 +1,6 @@
 
 import Swal from "sweetalert2"
-import { PATHS } from "../constants"
+import { PATHS_API } from "../constants"
 import { ApiResponse, CustomerCedulaSRI, CustomerRucSRI } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
 import FileSaver from "file-saver"
@@ -12,7 +12,7 @@ class Shared {
     async checkClientSRIByRUC(identificacion: string): Promise<CustomerRucSRI> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.CONSULTA}GetRucSRI`,
+            url: `${PATHS_API.CONSULTA}GetRucSRI`,
             params: {
                 Ruc: identificacion
             }
@@ -23,7 +23,7 @@ class Shared {
     async checkClientSRIByCedula(identificacion: string): Promise<CustomerCedulaSRI> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.CONSULTA}GetCedulaSri`,
+            url: `${PATHS_API.CONSULTA}GetCedulaSri`,
             params: {
                 Ruc: identificacion
             }
@@ -32,7 +32,7 @@ class Shared {
     }
 
     async downloadExternal(parameters: object, returnData = false, oldVersion=false) {
-        const url = oldVersion? PATHS.REPORT_V1 : PATHS.REPORT_V2
+        const url = oldVersion? PATHS_API.REPORT_V1 : PATHS_API.REPORT_V2
 
         const resultAxios = await Http({
             method: 'post',
@@ -83,7 +83,7 @@ class Shared {
     async getPrinter(obj: ParamsPrint) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.PRIVATE}Order/Print/${JSON.stringify(obj)}`,
+            url: `${PATHS_API.PRIVATE}Order/Print/${JSON.stringify(obj)}`,
         })
 
         const response: ApiResponse = resultAxios.data;

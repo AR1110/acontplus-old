@@ -8,3 +8,10 @@ export function formatDateLong(date: Date): string {
     return date.toLocaleDateString('en-US', options);
 }
  
+
+
+export const isValidField = <T>(field: T): T | null => {
+    const invalidValues: ReadonlyArray<T | null | undefined | "" | 0> = ["", null, undefined, 0];
+
+    return invalidValues.includes(field) ? null : field;
+};

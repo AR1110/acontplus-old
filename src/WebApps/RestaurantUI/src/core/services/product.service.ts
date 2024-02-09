@@ -1,4 +1,4 @@
-import { PATHS } from '@/core/constants';
+import { PATHS_API } from '@/core/constants';
 import { Http, loadAbort } from '@/core/utilities';
 import { ApiResponse, ConsolidacionFecha, Measure, ProductSaleReadDto } from '../models';
 import { productSaleRateReadAdapter, productSaleReadAdapter } from '../adapters';
@@ -16,7 +16,7 @@ export const productService = {
 
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.INVENTARIO}${URL}Get`,
+            url: `${PATHS_API.INVENTARIO}${URL}Get`,
             params: {
                 json 
             }
@@ -90,7 +90,7 @@ export const productService = {
     async checkNotificationStock(obj: {idArticulo: number, cantidad: number, idBodega: number}):Promise<ApiResponse>{
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.INVENTARIO}${URL}Get`,
+            url: `${PATHS_API.INVENTARIO}${URL}Get`,
             params: {
                 json: JSON.stringify(Object.assign(obj, { tipo: 7 }))
             }
@@ -110,7 +110,7 @@ export const productService = {
         return {
             call: Http({
                 method: 'get',
-                url: `${PATHS.INVENTARIO}${URL}Search`,
+                url: `${PATHS_API.INVENTARIO}${URL}Search`,
                 params: {
                     json: JSON.stringify(obj)
                 },
