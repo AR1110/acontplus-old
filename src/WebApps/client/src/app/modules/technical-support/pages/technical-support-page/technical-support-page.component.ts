@@ -24,11 +24,11 @@ export class TechnicalSupportPageComponent {
   @ViewChild(OrderListComponent) child!: OrderListComponent;
   private modalRef = inject(ModalService);
   active = 2;
-  
+
   openOrderModal() {
     const modalResp = this.modalRef.openModalCustom(OrderModalComponent, {
       centered: true,
-      size: 'xl',
+      size: 'xl', 
     });
     modalResp.result.then((response) => {
       this.child.get();
