@@ -16,21 +16,37 @@ import { AppModule } from 'src/app/app.module';
 })
 export class DeviceListComponent implements OnInit {
   private deviceService = inject(DeviceService);
-  // devices: Device[] = [];
   devices: any = [];
+  categories: any = [];
 
+  getCustomers(id: number) {}
   askToDelete(item: any) {}
   edit(item: any) {}
 
+  getDataForm() {
+    this.deviceService.get(JSON.stringify({ tipo: 1 })).subscribe({
+      next: (response) => {
+        if (isApiResponse(response)) {
+          const tempArray = JSON.parse(response.payload as string);
+          this.categories = tempArray.categorias;
+        }
+      },
+      complete() {
+        hideLoader();
+      },
+      error(error) {
+        console.log(error);
+        hideLoader();
+      },
+    })
+  }
+
   get() {
-    const self = this;
     this.deviceService.get(JSON.stringify({ tipo: 2 })).subscribe({
-      next(response) {
+      next: (response) => {
         if (isApiResponse(response)) {
           let tempArray = JSON.parse(response.payload as string);
-          console.log(tempArray);
-          self.devices = tempArray.devices;
-          // devices.update(tempArray['devices']);
+          this.devices = tempArray.devices;
         }
       },
       complete() {
@@ -42,8 +58,9 @@ export class DeviceListComponent implements OnInit {
       },
     });
   }
-  getCustomers(id: number) {}
+
   ngOnInit(): void {
+    this.getDataForm();
     this.get();
   }
 }
