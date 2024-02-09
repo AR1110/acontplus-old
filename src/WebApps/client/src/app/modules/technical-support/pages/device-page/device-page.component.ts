@@ -8,7 +8,11 @@ import { ModalService } from '@core/services/modal.service';
 @Component({
   selector: 'app-device-page',
   standalone: true,
-  imports: [BreadcrumbComponent, TechSupportModule, DeviceListComponent],
+  imports: [
+    BreadcrumbComponent,
+    TechSupportModule,
+    DeviceListComponent,
+  ],
   templateUrl: './device-page.component.html',
   styles: ``,
 })
