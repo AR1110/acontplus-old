@@ -36,7 +36,7 @@
 
 
         $scope.initiload = function () {
-
+            showLoader();
             articuloSvc.getDataFormReport().then(response => {
                 const { estabs, subFamilias, marcas} = response;
                 $scope.establecimientos = estabs;
@@ -72,7 +72,7 @@
 
                 $scope.marcas = marcas;
 
-            })
+            }).finally(()=>hideLoader())
         }
         $scope.initiload();
 
@@ -279,7 +279,7 @@
 
             const parameters = {
                 reportParams: JSON.stringify({
-                    codigo: 'CDA',
+                    codigo: $scope.dataSearch.checkboxAgruparArticulo? 'CDAA': 'CDA',
                     format: $scope.dataSearch.byTipoFormato,
                     aditionalParams: []
                 }),
