@@ -1,4 +1,4 @@
-import { PATHS } from "../constants"
+import { PATHS_API } from "../constants"
 import { Http, loadAbort } from "../utilities"
 
 const URL = 'Promotion/'
@@ -10,7 +10,7 @@ export const promotionService = {
         return {
             call: Http({
                 method: 'get',
-                url: `${PATHS.PRIVATE}${URL}`,
+                url: `${PATHS_API.PRIVATE}${URL}`,
                 params: {
                     json: query
                 },

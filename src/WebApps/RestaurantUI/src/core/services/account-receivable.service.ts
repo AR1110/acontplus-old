@@ -6,7 +6,7 @@ import {
     comprobanteAdpater
 } from "../adapters"
 import { cityAdapter } from "../adapters/account-receivable.adapter"
-import { PATHS } from "../constants"
+import { PATHS_API } from "../constants"
 import { Http } from "../utilities"
 
 const URL = 'CuentaPorCobrar'
@@ -14,7 +14,7 @@ export const accountReceivableService = {
     async get<T extends { idCuentaPorCobrar?: number}>(data: T, cancelToken?: any) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.ACCOUNTING}${URL}`,
+            url: `${PATHS_API.ACCOUNTING}${URL}`,
             params: {
                 json: JSON.stringify(data)
             },
@@ -102,7 +102,7 @@ export const accountReceivableService = {
     async post(data: object) {
         const resultAxios = await Http({
             method: 'post',
-            url: `${PATHS.ACCOUNTING}ComprobanteIngreso/Insert`,
+            url: `${PATHS_API.ACCOUNTING}ComprobanteIngreso/Insert`,
             data: {
                 data
             }
