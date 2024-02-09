@@ -41,10 +41,9 @@
                 const { estabs, subFamilias, marcas} = response;
                 $scope.establecimientos = estabs;
                 let dataEstab = $scope.establecimientos.find(item => (item.defaultEstab))
-                console.log(dataEstab)
+            
                 $scope.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
-
-                console.log(dataEstab.idEstablecimiento)
+ 
                 $scope.bodegas = dataEstab.bodegas;
                 $scope.dataSearch.idBodega = $scope.bodegas.find(item => (item.defaultBodega)).idBodega;
                 $scope.subFamilias = subFamilias.reduce(function (acc, obj) {
@@ -265,6 +264,7 @@
 
         // REPORTE DE CONSUMO DIARIO DE ARTICULOS
         function getReportConsumoDiario() {
+         
             let dataSearch = {
                 tipo: 4,
                 checkBoxFecha: true,
@@ -272,7 +272,9 @@
                 idArticulo: $scope.dataSearch.idArticulo,
                 codTransaccion: $scope.dataSearch.codTransaccion,
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin)
+                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                codEstab: fS.isValidField($scope.dataSearch.codEstab),
+                idBodega: fS.isValidField($scope.dataSearch.idBodega)
             }
 
             const parameters = {
