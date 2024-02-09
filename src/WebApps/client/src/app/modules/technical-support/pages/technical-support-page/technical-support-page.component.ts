@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, inject } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
 import { TechSupportModule } from '@modules/technical-support/tech-support.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
@@ -21,17 +21,17 @@ import { AppModule } from 'src/app/app.module';
   styles: ``,
 })
 export class TechnicalSupportPageComponent {
-  @Output() clicked = new EventEmitter<void>();
-  active = 2;
+  @ViewChild(OrderListComponent) child!: OrderListComponent;
   private modalRef = inject(ModalService);
-
+  active = 2;
+  
   openOrderModal() {
     const modalResp = this.modalRef.openModalCustom(OrderModalComponent, {
       centered: true,
       size: 'xl',
     });
     modalResp.result.then((response) => {
-      this.clicked.emit();
+      this.child.get();
     });
   }
 }
