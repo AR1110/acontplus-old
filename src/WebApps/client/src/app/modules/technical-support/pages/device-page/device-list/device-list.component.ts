@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { isApiResponse } from '@core/models/api-response';
-import { hideLoader } from '@core/utils/loader';
-import { Device } from '@modules/technical-support/models/device.model';
-import { DeviceService } from '@modules/technical-support/services/device.service';
 import { AppModule } from 'src/app/app.module';
-// import { devices } from '@modules/technical-support/store/device.store';
+import { Component, OnInit, inject } from '@angular/core';
+import { Device } from '@modules/technical-support/models/device.model';
+import { DeviceModalComponent } from '../device-modal/device-modal.component';
+import { DeviceService } from '@modules/technical-support/services/device.service';
+import { hideLoader } from '@core/utils/loader';
+import { isApiResponse } from '@core/models/api-response';
+import { ModalService } from '@core/services/modal.service';
 
 @Component({
   selector: 'app-device-list',
@@ -15,30 +15,26 @@ import { AppModule } from 'src/app/app.module';
   styles: ``,
 })
 export class DeviceListComponent implements OnInit {
+  private modalSvc = inject(ModalService);
   private deviceService = inject(DeviceService);
+
   devices: any = [];
-  categories: any = [];
 
   getCustomers(id: number) {}
   askToDelete(item: any) {}
-  edit(item: any) {}
 
-  getDataForm() {
-    this.deviceService.get(JSON.stringify({ tipo: 1 })).subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          const tempArray = JSON.parse(response.payload as string);
-          this.categories = tempArray.categorias;
-        }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(error) {
-        console.log(error);
-        hideLoader();
-      },
-    })
+  edit(item: Device) {
+    console.log(item);
+    const modalRef = this.modalSvc.openModalCustom(
+      DeviceModalComponent,
+      { size: 'lg', centered: true }
+    );
+    modalRef.componentInstance.params = item || {};
+    modalRef.result.then((result) => {
+      if (result) {
+        console.log(result);
+      }
+    });
   }
 
   get() {
@@ -60,7 +56,6 @@ export class DeviceListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDataForm();
     this.get();
   }
 }
