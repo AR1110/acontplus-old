@@ -60,8 +60,9 @@ BEGIN
     IF (@tipo = 4)
         BEGIN
         	SET @tableNames = 'devices'
-            SELECT * FROM TechnicalSupport.Device de  WITH (NOLOCK)
-                    INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON de.Id = dc.DeviceId
+            SELECT d.*, dc.CustomerCompanyId, ISNULL(ds.Specs, '{}') Specs FROM TechnicalSupport.Device d  WITH (NOLOCK)
+                    INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
+                    LEFT JOIN TechnicalSupport.DeviceSpecs ds WITH(NOLOCK) ON d.id = ds.DeviceId
             WHERE dc.CustomerCompanyId = @customerCompanyId
             RETURN
         END

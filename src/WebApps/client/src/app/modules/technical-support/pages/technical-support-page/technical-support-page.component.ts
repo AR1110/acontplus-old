@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, inject } from '@angular/core';
 import { ModalService } from '@core/services/modal.service';
 import { TechSupportModule } from '@modules/technical-support/tech-support.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
@@ -21,17 +21,17 @@ import { AppModule } from 'src/app/app.module';
   styles: ``,
 })
 export class TechnicalSupportPageComponent {
-  active = 2;
+  @ViewChild(OrderListComponent) child!: OrderListComponent;
   private modalRef = inject(ModalService);
-
+  active = 2;
+  
   openOrderModal() {
-    this.modalRef.openModalCustom(OrderModalComponent, {
+    const modalResp = this.modalRef.openModalCustom(OrderModalComponent, {
       centered: true,
       size: 'xl',
     });
-  }
-
-  onTapClicked() {
-    
+    modalResp.result.then((response) => {
+      this.child.get();
+    });
   }
 }
