@@ -15,18 +15,20 @@
       </tr>
     </thead>
     <tbody>
-      <!-- fOR (item of orders; track $index)-->
       @for (item of orders; track $index) {
       <tr>
-        <th scope="row">
-          {{ $index + 1 }}
-        </th>
+        <td scope="row">{{ $index + 1 }}</td>
         <td>
-          <button type="button" class="btn btn-outline-success btn-sm">
+          <button type="button" class="btn btn-outline-success btn-sm mx-1">
             <fa-icon [icon]="'edit'"></fa-icon>
           </button>
-          <button type="button" class="btn btn-outline-danger btn-sm">
+
+          <button type="button" class="btn btn-outline-danger btn-sm mx-1">
             <fa-icon [icon]="'trash'"></fa-icon>
+          </button>
+
+          <button type="button" class="btn btn-outline-primary btn-sm mx-1">
+            Iniciar <fa-icon [icon]="'cogs'"></fa-icon>
           </button>
         </td>
         <td>{{ item.nombreFiscal }}</td>
@@ -37,8 +39,14 @@
         <td>{{ item.total }}</td>
         <td>{{ item.obs }}</td>
         <td>
-          <span class="badge bg-success"
-            >{{ item.enabled == 1 ? "Activo" : "Inactivo" }}
+          <span
+            [ngClass]="{
+              badge: true,
+              'bg-success': item.enabled == 1,
+              'bg-danger': item.enabled == 0
+            }"
+          >
+            {{ item.enabled == 1 ? "Activo" : "Inactivo" }}
           </span>
         </td>
       </tr>
