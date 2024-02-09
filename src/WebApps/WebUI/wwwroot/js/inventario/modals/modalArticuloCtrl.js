@@ -1828,6 +1828,7 @@ ModalArticuloGeneralCtrl.$inject = [
     "$scope",
     "$uibModalInstance",
     "articuloService",
+    "productPhotoService",
     "modalService",
     "nombreModal",
 ];
@@ -1836,6 +1837,7 @@ function ModalArticuloGeneralCtrl(
     $scope,
     $uibModalInstance,
     artSvc,
+    productPhotoSvc,
     modalSvc,
     nombreModal
 ) {
@@ -1961,19 +1963,9 @@ function ModalArticuloGeneralCtrl(
         $uibModalInstance.close(data);
     };
 
-    //   //Presentacion del imagen
-    $scope.getImagen = async function (item) {
-        const { MODAL_CTRL, MODAL_IMAGEN_DETALLE_CSHTML } = nombreModal.articulo;
-        const { ModalArticuloImagenDetalleCtrl } = await import(
-            "./../modal/" + MODAL_CTRL
-        );
-        modalSvc.openModalCustom({
-            controller: ModalArticuloImagenDetalleCtrl,
-            template: `Articulo/${MODAL_IMAGEN_DETALLE_CSHTML}`,
-            size: "xl",
-            params: item,
-        });
-    };
+    $scope.previewImg = function (item) {
+        productPhotoSvc.previewImg(item.idArticulo)
+    }
 
     $scope.closeModal = function () {
         $uibModalInstance.close();

@@ -706,6 +706,8 @@
                             };
                             $scope.documentos = [];
 
+                            $scope.tipoDoc = ''
+
                             $scope.resultRangeFilter = function (item) {
                                 $scope.dataSearch.fechaInicio = item.startDate,
                                     $scope.dataSearch.fechaFin = item.endDate
@@ -736,6 +738,7 @@
                                     }
                                     showLoader();
                                     $scope.documentos = [];
+                                    $scope.tipoDoc = $scope.dataSearch.codDoc==='NE'? 'Nota Entrega': 'Factura';
                                     guiaRemisionSvc.getDocs(params).then(response => {
                                         $scope.documentos = response;
                                         $scope.dataSearch.totalRecords = $scope.documentos.length > 0 ? $scope.documentos[0].totalRecords : 0

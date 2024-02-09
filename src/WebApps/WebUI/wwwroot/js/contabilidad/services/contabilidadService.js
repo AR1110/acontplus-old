@@ -55,8 +55,7 @@
                 cobros,
                 cobroDetalle,
                 historialCobros,
-            } = obj;
-            console.log(obj)
+            } = obj; 
 
             let comprobanteMappeado = {
                 idCliente: comprobante.idCliente,

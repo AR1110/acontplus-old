@@ -151,6 +151,19 @@ class CheckoutUtility {
     private addPaymentDetail(item: Quota, abono: number, saldo: number) {
         if (item.cuota == 0) return;
 
+        let valorMovimientoSaldo = 0;
+        const cobrosDetalleFiltered = this.paymentDetails.filter(cd => (
+            cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar &&
+            cd.idCuotaPorCobrar === item.idCuotaPorCobrar
+        ))
+
+        const dataUltimoCobroDetalle = cobrosDetalleFiltered.pop();
+        if (dataUltimoCobroDetalle) {
+            valorMovimientoSaldo = dataUltimoCobroDetalle.saldoOriginal - dataUltimoCobroDetalle.abono;
+        } else {
+            valorMovimientoSaldo = item.saldoOriginal;
+        }
+
         this.paymentDetails.push({
             idCuentaPorCobrar: this.voucher.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
@@ -161,8 +174,10 @@ class CheckoutUtility {
             cuota: RoundNumber(item.cuota, this.MAX_NUMBER_ROUND),
             saldo,
             secuencial: this.sequencia,
+            saldoOriginal: RoundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND)
         });
         item.saldo = RoundNumber(item.saldo, this.MAX_NUMBER_ROUND);
+        item.saldoOriginal = RoundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
     }
 
     getHistoryPayments(voucherQuotas: Array<VoucherQuota>, paymentDetails: Array<PaymentDetail>): Array<PaymentHistory> {
@@ -182,8 +197,9 @@ class CheckoutUtility {
                     idCuentaPorCobrar: item.idCuentaPorCobrar,
                     abono: totalAbono,
                     diasMora: item.diasMora,
-                    mora: item.mora
-                })
+                    mora: item.mora,
+                    saldo: item.saldo,
+                }) 
             } else break;
         }
         return historialCobros;

@@ -78,6 +78,7 @@
             <thead>
                 <tr>
                     <th>N°</th> 
+                    <th>Tipo doc.</th>
                     <th>Serie Comprobante</th>
                     <th>Razon Social Comprador</th> 
                     <th>Op.</th>
@@ -86,6 +87,7 @@
             <tbody>
                 <tr ng-repeat="item in documentos">
                     <td>{{$index +1}}</td> 
+                    <td>{{tipoDoc}}</td> 
                     <td>{{item.serieComprobante}}</td>
                     <td>{{item.razonSocialComprador}}</td>
                     <td>

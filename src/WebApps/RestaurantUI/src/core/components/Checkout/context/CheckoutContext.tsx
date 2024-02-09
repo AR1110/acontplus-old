@@ -512,11 +512,36 @@ export const CheckoutProvider = ({ children }: Props) => {
                 return obj;
             })
 
+            const cobroDetalle = paymentDetails.filter(item => (item.abono > 0))
+            const cobroDetalleMappeado = cobroDetalle.map(detalle => {
+                return {
+                    idCuentaPorCobrar: detalle.idCuentaPorCobrar,
+                    idCuotaPorCobrar: detalle.idCuotaPorCobrar,
+                    abono: detalle.abono,
+                    interes: detalle.interes,
+                    diasMora: detalle.diasMora,
+                    mora: detalle.mora,
+                    cuota: detalle.cuota,
+                    saldo: detalle.saldoOriginal,
+                    secuencial: detalle.secuencial,
+                }
+            })
+
+            const historialCobrosMappeado = historyPayments.map(hc => {
+                return {
+                    idCuentaPorCobrar: hc.idCuentaPorCobrar,
+                    abono: hc.abono,
+                    diasMora: hc.diasMora,
+                    mora: hc.mora,
+                    saldo: hc.saldo,
+                }
+            })
+
             const data = {
                 comprobante,
                 cobros,
-                cobroDetalle: paymentDetails.filter(item => (item.abono > 0)),
-                historial: historyPayments,
+                cobroDetalle: cobroDetalleMappeado,
+                historial: historialCobrosMappeado,
             } 
 
             showLoader();

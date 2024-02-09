@@ -10,7 +10,8 @@ export interface Quota {
     saldoCta: number
     saldo: number
     estado: string    
-    abonoPosfechado: number
+    abonoPosfechado: number,
+    saldoOriginal: number
 }
 export interface VoucherQuota {
     idCuentaPorCobrar: number

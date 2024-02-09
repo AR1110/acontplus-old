@@ -524,55 +524,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
     }
 
     async previewImg($event, data) {
-        $event.stopPropagation();
-        showLoader();
-        this.productPhotoSvc.getPhotos(data.idArticulo).then(photos => {
-
-            let sliderContent = `<div id="carouselPhotosProductControls" class="carousel slide" data-ride="carousel">
-                                    <div class="carousel-inner">`;
-            let index = 0;
-            for (const photo of photos) {
-                sliderContent += `
-                                <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                    <img class="d-block w-100" src="${photo.s3ObjectUrl}" alt="First slide">
-                                </div>   
-                                `;
-                index++;
-            }
-
-            sliderContent += `</div>
-                                    <a class="carousel-control-prev" href="javascript:void(0);" role="button" data-slide="prev" id="prevSlide">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                    <a class="carousel-control-next" href="javascript:void(0);" role="button" data-slide="next" id="nextSlide">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-                                </div>`
-
-            Swal.fire({
-                html: sliderContent,
-                showConfirmButton: true,
-                width: '50em'
-            });
-
-            document.getElementById('nextSlide').addEventListener('click', () => {
-                $('#carouselPhotosProductControls').carousel('next');
-            })
-            document.getElementById('prevSlide').addEventListener('click', () => {
-                $('#carouselPhotosProductControls').carousel('prev');
-            })
-
-        }).catch(error => {
-            console.log(error)
-        }).finally(() => hideLoader())
-        // Swal.fire({
-        //     imageUrl: data.s3ObjectUrl,
-        //     imageWidth: 500,
-        //     imageHeight: 500,
-        //     imageAlt: "Custom image"
-        // });
+        $event.stopPropagation(); 
+        this.productPhotoSvc.previewImg(data.idArticulo)
 
     }
 
