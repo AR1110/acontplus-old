@@ -3,13 +3,13 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 type PropsModal = {
-  size?: 'sm' | 'lg' | 'xl';
-  backdropClass?: 'backdrop-custom-modal';
-  fullscreen?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | boolean | string;
-  centered?: boolean;
-  scrollable?: boolean;
-  windowClass?: string;
   backdrop?: boolean | 'static';
+  centered?: boolean;
+  fullscreen?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | boolean | string;
+  keyboard?: boolean;
+  scrollable?: boolean;
+  size?: 'sm' | 'lg' | 'xl';
+  windowClass?: string;
 };
 
 @Injectable({
@@ -22,28 +22,30 @@ export class ModalService {
     this.ngbModal.activeInstances
       .pipe(takeUntilDestroyed())
       .subscribe((list) => {
-        this.modalNumbers = list.length; 
+        this.modalNumbers = list.length;
       });
   }
 
   openModalCustom(
     theComponent: any,
     {
-      size,
-      fullscreen,
+      backdrop,
       centered,
+      fullscreen,
+      keyboard,
+      size,
       scrollable,
       windowClass = '',
-      backdrop,
     }: Partial<PropsModal> = {}
   ) {
     const modalRef = this.ngbModal.open(theComponent, {
-      backdrop: backdrop ? backdrop : true,
-      windowClass,
-      size,
-      fullscreen,
+      backdrop: !backdrop ? 'static' : true,
       centered,
+      fullscreen,
+      keyboard: this.getKeyboard(backdrop, keyboard),
       scrollable,
+      size,
+      windowClass,
     });
 
     // this.openModals.push(modalRef);
@@ -54,6 +56,14 @@ export class ModalService {
 
     return modalRef;
   }
+
+  getKeyboard = (backdrop: any, keyboard: any) => {
+    if (backdrop && !keyboard) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   getActiveInstances() {}
 
