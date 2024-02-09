@@ -1,4 +1,4 @@
-import { PATHS } from "../constants"
+import { PATHS_API } from "../constants"
 import { Http, loadAbort } from "../utilities"
 
 // type tableSearch = {
@@ -14,7 +14,7 @@ export const tableService = {
         return {
             call: Http({
                 method: 'get',
-                url: `${PATHS.PRIVATE}${URL}Get`,
+                url: `${PATHS_API.PRIVATE}${URL}Get`,
                 params: {
                     json: query
                 },
@@ -26,7 +26,7 @@ export const tableService = {
     async putStateAssigned(id:number, data: object){
         const responseAxios = await Http({
             method: 'put',
-            url: `${PATHS.PRIVATE}${url}${id}`,
+            url: `${PATHS_API.PRIVATE}${url}${id}`,
             data, 
         })        
         return responseAxios;

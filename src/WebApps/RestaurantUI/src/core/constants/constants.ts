@@ -1,8 +1,8 @@
 const GATEWAY = "gateway/"
-export const enum PATHS {
+export const enum PATHS_API {
     //For Prd
     ACCOUNT = `${GATEWAY}Seguridad/v3/Account/login`,
-    CREATE_TOKEN = `${GATEWAY}Seguridad/v3/Account/createToken`, 
+    CREATE_TOKEN = `${GATEWAY}Seguridad/v3/Account/createToken`,
     PRIVATE = `${GATEWAY}Restaurant/`,
     INVENTARIO = `${GATEWAY}Inventario/`,
     SALE = `${GATEWAY}Venta/`,
@@ -10,7 +10,12 @@ export const enum PATHS {
     CONFIG = `${GATEWAY}Config/`,
     CONSULTA = `${GATEWAY}Consultas/`,
     REPORT_V1 = `${GATEWAY}Reports/Reporte/`,
-    REPORT_V2 = `${GATEWAY}Reports/v2/Reporte/`
+    REPORT_V2 = `${GATEWAY}Reports/v2/Reporte/`,
+    CUSTOMER = `${GATEWAY}Customer/`
+}
+
+export const enum PATHS {
+    COMPANY_CUSTOMER = 'CompanyCustomer/'
 }
 
 export const enum PERSIS_USER {

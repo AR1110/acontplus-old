@@ -1,16 +1,16 @@
- 
-import { PATHS } from "@/core/constants"
+
+import { PATHS, PATHS_API } from "@/core/constants"
 import { Http, searchFetch } from "@/core/utilities"
-import { ApiResponse, CustomerReadDto} from "@/core/models"
+import { ApiResponse, CustomerReadDto } from "@/core/models"
 import { customerReadAdapter, dataFormReadAdapter } from "../adapters"
 import Swal from "sweetalert2"
 
-const URL = 'Cliente/'
+const url = `${PATHS_API.CUSTOMER}${PATHS.COMPANY_CUSTOMER}`
 const customerService = {
     async getDataForm() {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.SALE}${URL}Get`,
+            url: `${url}`,
             params: {
                 json: JSON.stringify({ tipo: 2 })
             }
@@ -30,10 +30,10 @@ const customerService = {
     async getId(id: number) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.SALE}${URL}FindById/` + id
+            url: `${url}GetId/` + id
         })
         const response: ApiResponse = resultAxios.data;
-        const mainDataRepository = JSON.parse(response.payload)[0]; 
+        const mainDataRepository = JSON.parse(response.payload)[0];
         const resultData = customerReadAdapter(mainDataRepository);
         return resultData;
 
@@ -41,8 +41,8 @@ const customerService = {
     async post(data: object) {
         const resultAxios = await Http({
             method: 'post',
-            url: `${PATHS.SALE}${URL}Insert`,
-            data
+            url: `${url}`,
+            data: { data }
         })
         const response: ApiResponse = resultAxios.data;
 
@@ -51,22 +51,22 @@ const customerService = {
     async put(id: number, data: object) {
         const resultAxios = await Http({
             method: 'put',
-            url: `${PATHS.SALE}${URL}Update/${id}`,            
-            data
-        }) 
+            url: `${url}${id}`,
+            data: { data }
+        })
         const response: ApiResponse = resultAxios.data;
         return response;
     },
     search: async (textSearch: string) => {
         try {
             const resultAxios = await searchFetch(
-                `${PATHS.SALE}${URL}Search`,
+                `${url}Search`,
                 {
                     json: JSON.stringify({ textSearch })
                 }
-            ) 
-            const response: ApiResponse = resultAxios?.data;     
-            const dataApi = response?.payload ? JSON.parse(response.payload) as [] : []      
+            )
+            const response: ApiResponse = resultAxios?.data;
+            const dataApi = response?.payload ? JSON.parse(response.payload) as [] : []
             return customerReadAdapter(dataApi)
         } catch (error) {
             console.log('')
@@ -85,7 +85,7 @@ const customerService = {
         let isRegistered = false;
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.SALE}${URL}Get`,
+            url: `${url}`,
             params: {
                 json: JSON.stringify(Object.assign({ tipo: 3 }, query))
             }
@@ -120,16 +120,16 @@ const customerService = {
      * @param query {tipo: 3, textSearch: '}
      * @returns devuelve true si el cliente esta registrado y sino false 
      */
-    async getByICard<T extends {textSearch: string}>(query: T): Promise<CustomerReadDto> { 
+    async getByICard<T extends { textSearch: string }>(query: T): Promise<CustomerReadDto> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.SALE}${URL}Get`,
+            url: `${url}`,
             params: {
                 json: JSON.stringify(Object.assign({ tipo: 3 }, query))
             }
         })
         const response: ApiResponse = resultAxios.data;
-        if(response.code==="0"){ 
+        if (response.code === "0") {
             const data: CustomerReadDto = {
                 customerCompanyId: 0,
                 fiscalName: "",
@@ -140,9 +140,9 @@ const customerService = {
                 direccion: ""
             }
             return data;
-        } 
+        }
         const clienteRepository = JSON.parse(response.payload)[0][0]
-        return customerReadAdapter(clienteRepository)   
+        return customerReadAdapter(clienteRepository)
     }
 
 

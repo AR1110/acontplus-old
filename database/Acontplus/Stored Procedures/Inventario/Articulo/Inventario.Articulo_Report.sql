@@ -241,8 +241,10 @@ BEGIN
 	IF @tipo = 4
 		BEGIN 
 			
+            
 			SET @params =  '@idArticulo INT
 	                       ,@idUsuario INT
+                           ,@codEstab VARCHAR(100)
                            ,@idBodega INT
 						   ,@fechaInicio DATETIME
 						   ,@fechaFin DATETIME
@@ -265,6 +267,9 @@ BEGIN
 							  ,fechaRegistro           = FORMAT(tt.fechaRegistro, ''dd/MM/yyyy HH:mm'')
 							  ,tt.codDoc
 							  ,serieComprobante = tt.nroDocumento
+                              ,tt.usuario
+                              ,tt.bodega
+                              ,tt.medidaSalida
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
 						WHERE tt.idEntidad = @idEntidad AND tt.estado = 1 '
 
@@ -277,6 +282,7 @@ BEGIN
 				  ,@fechaFin            = fechaFin
 				  ,@fechaInicio         = fechaInicio
                   ,@idBodega            = idBodega
+                  ,@codEstab            = codEstab 
 			FROM OPENJSON(@json) WITH 
 				(
 				 checkBoxArticulo      BIT '$.checkBoxArticulo'
@@ -287,6 +293,7 @@ BEGIN
 				,fechaInicio      DATETIME '$.fechaInicio'
 				,fechaFin         DATETIME '$.fechaFin'
                 ,idBodega              INT '$.idBodega' 
+                ,codEstab         VARCHAR(100)
 				)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -311,6 +318,11 @@ BEGIN
 					SET @sql = @sql + 'AND tt.idUsuario = @idUsuario '
 				END
 
+             IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + ' AND tt.codEstab = @codEstab '
+                END 
+
             IF @idBodega > 0 
                 BEGIN
                     SET @sql = @sql + 'AND tt.idBodega = @idBodega '
@@ -333,6 +345,7 @@ BEGIN
 			EXEC sp_executesql @sql
 							  ,@params
 							  ,@idArticulo     = @idArticulo
+                              ,@codEstab       = @codEstab
                               ,@idBodega       = @idBodega
 							  ,@idEntidad      = @idEntidad
 							  ,@idUsuario      = @idUsuario
