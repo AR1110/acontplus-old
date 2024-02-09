@@ -15,6 +15,7 @@ namespace Identity.API.Extensions
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }
