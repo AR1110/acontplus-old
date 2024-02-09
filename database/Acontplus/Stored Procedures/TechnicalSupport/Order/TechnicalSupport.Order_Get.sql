@@ -19,12 +19,19 @@ BEGIN
 	DECLARE @tipo INT
     ,@companyId INT
     ,@orderStatusCode VARCHAR(2)
+    ,@pageSize INT
+    ,@pageIndex INT
 
-	SELECT @tipo = tipo, @orderStatusCode = orderStatusCode
+	SELECT @tipo = tipo
+        ,@orderStatusCode = orderStatusCode
+        ,@pageIndex = pageIndex
+        ,@pageSize = pageSize
     FROM OPENJSON (@json) WITH 
     (
         tipo            INT         '$.tipo',
-        orderStatusCode VARCHAR(2)  '$.orderStatusCode'
+        orderStatusCode VARCHAR(2)  '$.orderStatusCode',
+        pageSize        INT '$.pageSize',
+        pageIndex       INT '$.pageIndex'
     )
 	
     SET @companyId = (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
@@ -54,11 +61,13 @@ BEGIN
             ,tor.Enabled
             ,tor.CustomerCompanyId
             ,c.nombreFiscal
+            ,totalRecords       = COUNT(*) OVER()
         FROM TechnicalSupport.[Order] tor
         INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId
         INNER JOIN TechnicalSupport.OrderStatus sc  ON sc.Id = tor.OrderStatusId
         WHERE sc.Code = @orderStatusCode
-        ORDER BY tor.CreatedAt DESC
+        ORDER BY tor.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY   
+        RETURN
     END
 END
 GO
