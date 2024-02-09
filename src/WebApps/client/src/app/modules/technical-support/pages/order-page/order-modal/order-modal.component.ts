@@ -18,12 +18,8 @@ import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
-import {
-  IconDefinition,
-  IconProp,
-  icon,
-} from '@fortawesome/fontawesome-svg-core';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { IconProp, icon } from '@fortawesome/fontawesome-svg-core';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchModalComponent } from '@modules/technical-support/components/device-search-modal/device-search-modal.component';
 import { Device } from '@modules/technical-support/models/device.model';
@@ -152,7 +148,7 @@ export class OrderModalComponent {
   });
 
   addDetail(device: any) {
-    device.deviceName = !device.devicName ? device.name : device.deviceName;
+    device.deviceName = !device.deviceName ? device.name : device.deviceName;
     device.uuid = uuidv4();
     device.obs = '';
     console.log(device);
@@ -183,6 +179,12 @@ export class OrderModalComponent {
     }, 0);
   }
 
+  filterAccordion(uuid: string) {
+    if (this.specs.length > 0) {
+      this.specsTemp = this.specs.filter((x: any) => x.uuid === uuid);
+    }
+  }
+
   closeModal() {
     this.modalRef.close();
   }
@@ -197,13 +199,7 @@ export class OrderModalComponent {
     });
   }
 
-  filterAccordion(uuid: string) {
-    if (this.specs.length > 0) {
-      this.specsTemp = this.specs.filter((x: any) => x.uuid === uuid);
-    }
-  }
-
-  private get() {
+  get() {
     showLoader();
     this.orderService.get(JSON.stringify({ tipo: 1 })).subscribe({
       next: (response) => {
@@ -375,7 +371,7 @@ export class OrderModalComponent {
     showLoader();
     const data = {
       ...this.orderForm.value,
-      orderDetails: this.orderDetails
+      orderDetails: this.orderDetails,
     };
 
     if (this.orderDetails.length == 0) {
@@ -404,10 +400,14 @@ export class OrderModalComponent {
         });
       }
       if (response.code === '1') {
+        this.orderForm.patchValue({});
+        this.orderDetails = [];
+        this.order = {};
         this.tS.toastr({
           type: 'success',
           message: response.message!,
         });
+        this.modalRef.close();
       }
     }
   };
