@@ -142,6 +142,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
     $scope.getCompanyCustomerSri = function () {
         if ($scope.data.idCliente > 0) {
+            let codigoIdentificacion = $scope.dataFindByIdTipoIdentificacion().codigo;
             Swal.fire({
                 title: "Validar datos al SRI",
                 html: `Esta seguro de validar datos del cliente desde el SRI?`,
@@ -153,7 +154,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 cancelButtonText: 'No!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $scope.validarNumeroIdentificacion();
+                    $scope.consultaIdentificacionSRI(codigoIdentificacion, $scope.data) 
                 }
             });
         } else {
@@ -372,7 +373,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 estado
             } = response;
 
-            $scope.isDisableInputIdentificacion = false;
+            $scope.isDisableInputIdentificacion = $scope.data.idCliente> 0;
 
             $scope.data = Object.assign($scope.data, {
                 nombreComercial: dataSRI.razonSocial,
