@@ -94,13 +94,15 @@ export interface PaymentDetail {
     cuota: number
     saldo: number
     secuencial: number
+    saldoOriginal: number
 }
 
 export interface PaymentHistory {
     idCuentaPorCobrar: number
     abono: number,
     diasMora: number
-    mora: number
+    mora: number,
+    saldo: number
 }
 
 //Context Checkout

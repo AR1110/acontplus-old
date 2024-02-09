@@ -7,8 +7,7 @@ import {
 } from "../adapters"
 import { cityAdapter } from "../adapters/account-receivable.adapter"
 import { PATHS } from "../constants"
-import { ApiResponse } from "../models"
-import { Http, SnackbarUtility } from "../utilities"
+import { Http } from "../utilities"
 
 const URL = 'CuentaPorCobrar'
 export const accountReceivableService = {
@@ -32,8 +31,26 @@ export const accountReceivableService = {
         //cuando el cobro es por documento 
         if (data.idCuentaPorCobrar && data.idCuentaPorCobrar > 0 && response.cuentaPorCobrar) {
             cuentaPorCobrar = response.cuentaPorCobrar;
-            cuentaPorCobrar = cuentaPorCobrar.map((cxc:any) => {
+            cuentaPorCobrar = cuentaPorCobrar.map((cxc:any) => { 
+
                 const cuotas = JSON.parse(cxc.cuotas);
+                const resultsCuotas = cuotas.map((cuota:any) => {
+                    return {
+                        idCuotaPorCobrar: cuota.idCuotaPorCobrar,
+                        idCuentaPorCobrar: cuota.idCuentaPorCobrar,
+                        nroCuota: cuota.nroCuota,
+                        cuota: cuota.cuota,
+                        mora: cuota.mora,
+                        interes: cuota.interes,
+                        diasMora: cuota.diasMora,
+                        abono: cuota.abono,
+                        saldoCta: cuota.saldoCta,
+                        saldo: cuota.saldo,
+                        estado: cuota.estado,
+                        saldoOriginal: cuota.saldo
+                    }
+                })
+
                 return {
                     codEstab: cxc.codEstab,
                     idCliente: cxc.idCliente,
@@ -51,8 +68,8 @@ export const accountReceivableService = {
                     saldo: cxc.saldo,
                     saldoDoc: cxc.saldo,
                     descripcion: cxc.descripcion,
-                    cuotas: structuredClone(cuotas),
-                    cuotasOriginal: structuredClone(cuotas)
+                    cuotas: structuredClone(resultsCuotas),
+                    cuotasOriginal: structuredClone(resultsCuotas)
                 }
             }) 
         }
