@@ -7,15 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\GestionFinanciera\**" />
+    <Compile Remove="ViewModels\Logistica\**" />
+    <EmbeddedResource Remove="Models\GestionFinanciera\**" />
+    <EmbeddedResource Remove="ViewModels\Logistica\**" />
+    <None Remove="Models\GestionFinanciera\**" />
+    <None Remove="ViewModels\Logistica\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="BarcodeLib" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Newtonsoft.Json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\GestionFinanciera\" />
-    <Folder Include="ViewModels\Logistica\" />
   </ItemGroup>
 </Project>
