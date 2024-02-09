@@ -25,13 +25,14 @@ export class DeviceListComponent implements OnInit {
 
   edit(item: Device) {
     console.log(item);
-    const modalRef = this.modalSvc.openModalCustom(
-      DeviceModalComponent,
-      { size: 'lg', centered: true }
-    );
+    const modalRef = this.modalSvc.openModalCustom(DeviceModalComponent, {
+      size: 'lg',
+      centered: true,
+    });
     modalRef.componentInstance.params = item || {};
     modalRef.result.then((result) => {
       if (result) {
+        console.log('result result');
         console.log(result);
       }
     });

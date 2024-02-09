@@ -98,7 +98,7 @@ namespace TechnicalSupport.API.Services
                 productFounded.Year = device.Year;
                 _context.Update(productFounded);
                 await _context.SaveChangesAsync();
-                return new ApiResponse { code = "0", message = "Actualizado Exitosamente" };
+                return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
             }
             catch (Exception)
             {

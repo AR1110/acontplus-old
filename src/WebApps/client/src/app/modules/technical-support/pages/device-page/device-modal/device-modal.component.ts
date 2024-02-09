@@ -17,7 +17,6 @@ import { AppModule } from 'src/app/app.module';
   templateUrl: './device-modal.component.html',
   styles: ``,
 })
-
 export class DeviceModalComponent implements OnInit {
   @ViewChild('inputNameSpec') inputNameSpec: any;
   @Input() params = {} as Device;
@@ -103,10 +102,11 @@ export class DeviceModalComponent implements OnInit {
               type: 'warning',
               message: response.message,
             });
+            return;
           }
           this.tS.toastr({
             type: 'success',
-            message: 'Debe seleccionar el cliente',
+            message: response.message,
           });
           this.closeModal();
         }
@@ -131,10 +131,11 @@ export class DeviceModalComponent implements OnInit {
               type: 'warning',
               message: response.message,
             });
+            return;
           }
           this.tS.toastr({
             type: 'success',
-            message: 'Debe seleccionar el cliente',
+            message: response.message,
           });
           this.closeModal();
         }
