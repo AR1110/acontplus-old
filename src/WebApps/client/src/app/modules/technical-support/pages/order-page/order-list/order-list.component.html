@@ -35,16 +35,31 @@
         <tr>
           <td scope="row" class="text-center">{{ $index + 1 }}</td>
           <td>
-            <button type="button" class="btn btn-outline-success btn-sm mx-1">
+            <button
+              type="button"
+              class="btn btn-outline-success btn-sm mx-1"
+              title="Editar"
+              (click)="edit(item)"
+            >
               <fa-icon [icon]="'edit'"></fa-icon>
             </button>
 
-            <button type="button" class="btn btn-outline-danger btn-sm mx-1">
+            <button
+              type="button"
+              class="btn btn-outline-danger btn-sm mx-1"
+              title="Eliminar"
+              (click)="askToDelete(item)"
+            >
               <fa-icon [icon]="'trash'"></fa-icon>
             </button>
 
-            <button type="button" class="btn btn-outline-primary btn-sm mx-1">
-              Iniciar <fa-icon [icon]="'cogs'"></fa-icon>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm mx-1"
+              title="Iniciar Reparaciones"
+              (click)="openModalMaintenance(item.id)"
+            >
+              <fa-icon [icon]="'cogs'"></fa-icon>
             </button>
           </td>
           <td>{{ item.nombreFiscal }}</td>

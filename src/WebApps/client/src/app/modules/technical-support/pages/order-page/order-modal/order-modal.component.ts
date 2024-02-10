@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -41,6 +41,7 @@ import { v4 as uuidv4 } from 'uuid';
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
+  encapsulation: ViewEncapsulation.None,
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
@@ -51,22 +52,6 @@ export class OrderModalComponent {
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
 
-  activeShowForm(accion: any, test: any) {
-    console.log(accion);
-    console.log(test);
-  }
-  deleteButton(cell: any, formatterParams: any) {
-    //cell - the cell component
-    //formatterParams - parameters set for the column
-
-    //get the row data
-    let data = cell.getRow().getData();
-
-    //return the HTML code for the button, using Bootstrap classes and Angular routerLink
-    return `<button class='btn btn-danger'>${icon(faTrashAlt).html.join(
-      ''
-    )}</button>`;
-  }
   categories: any = [];
   columnNames: any[] = [
     { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
@@ -189,14 +174,17 @@ export class OrderModalComponent {
     this.modalRef.close();
   }
 
-  searchDevice() {
-    const modalDevice = this.modalService.openModalCustom(
-      DeviceSearchModalComponent,
-      { size: 'sm' }
-    );
-    modalDevice.result.then((response) => {
-      this.addDetail(response);
-    });
+  deleteButton(cell: any, formatterParams: any) {
+    //cell - the cell component
+    //formatterParams - parameters set for the column
+
+    //get the row data
+    let data = cell.getRow().getData();
+
+    //return the HTML code for the button, using Bootstrap classes and Angular routerLink
+    return `<button class='btn btn-danger'>${icon(faTrashAlt).html.join(
+      ''
+    )}</button>`;
   }
 
   get() {
@@ -262,6 +250,9 @@ export class OrderModalComponent {
 
   ngOnInit(): void {
     this.get();
+    if (this.data.id > 0) {
+      this.orderForm.patchValue(this.data);
+    }
   }
   onDeviceSelected($event: any) {
     console.log($event);
@@ -387,6 +378,16 @@ export class OrderModalComponent {
         console.log(err);
         hideLoader();
       },
+    });
+  }
+
+  searchDevice() {
+    const modalDevice = this.modalService.openModalCustom(
+      DeviceSearchModalComponent,
+      { size: 'sm' }
+    );
+    modalDevice.result.then((response) => {
+      this.addDetail(response);
     });
   }
 

@@ -4,6 +4,11 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { ORDER_STATUS_CODE } from '@modules/technical-support/constants/tech-support.constants';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { AppModule } from 'src/app/app.module';
+import { OrderModalComponent } from '../order-modal/order-modal.component';
+import { ModalService } from '@core/services/modal.service';
+import swal from 'sweetalert2';
+import { ToasterService } from '@core/services/toaster.service';
+import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 
 @Component({
   selector: 'app-order-list',
@@ -14,7 +19,9 @@ import { AppModule } from 'src/app/app.module';
 })
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
+  private modalService = inject(ModalService);
   private orderService = inject(OrderService);
+  private tS = inject(ToasterService);
   dataSearch: any = {
     maxSize: 5,
     pageIndex: 1,
@@ -23,6 +30,55 @@ export class OrderListComponent implements OnInit {
   };
   orders: any = [];
   recordsQuantity = [5, 10, 25, 50, 100];
+
+  async askToDelete(item: any) {
+    const result = await swal.fire({
+      icon: 'warning',
+      text: 'Esta seguro de eliminar esta orden?',
+      title: 'Aviso',
+      showConfirmButton: true,
+      showDenyButton: true,
+      confirmButtonText: 'Si',
+      denyButtonText: 'No',
+    });
+    if (result.isConfirmed) {
+      showLoader();
+      this.orderService.delete(item.id).subscribe({
+        next: (response) => {
+          if (isApiResponse(response)) {
+            if (response.code == '0') {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code == '1') {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message,
+              });
+              this.get();
+            }
+          }
+        },
+        complete() {
+          hideLoader();
+        },
+        error(err) {
+          console.log(err);
+          hideLoader();
+        },
+      });
+    }
+  }
+
+  edit(item: any) {
+    const modalRef = this.modalService.openModalCustom(OrderModalComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.data = item;
+  }
 
   get() {
     showLoader();
@@ -61,5 +117,12 @@ export class OrderListComponent implements OnInit {
   }
   onPageChanged() {
     this.get();
+  }
+  openModalMaintenance(id: number) {
+    const modalRef = this.modalService.openModalCustom(
+      OrderMaintenanceModalComponent,
+      { centered: true, size: 'lg' }
+    );
+    modalRef.componentInstance.params = { id };
   }
 }
