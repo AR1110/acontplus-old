@@ -96,10 +96,6 @@ BEGIN
 
 		) as dt 
 
-        SELECT '0'code,'pagos: '+ISNULL(@cobroDetalle,'Sin Dato') as 'message'
-		RETURN
-
-
 		INSERT INTO @documento(idTipoPersona,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal)
 		SELECT idTipoPersona = (SELECT TOP 1 idTipoPersona FROM TipoPersona tp WITH (NOLOCK) WHERE tp.codigo = 'CL')
 		     ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal
@@ -269,6 +265,7 @@ BEGIN
             FROM @paymentDetail dt 
             INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = dt.secuencial 
             WHERE c.idComprobanteIngreso = @idComprobanteIngreso
+            ORDER BY idCuotaPorCobrar,saldo DESC
 
 			INSERT INTO Contabilidad.Historial_Cobro WITH(ROWLOCK)
                    (idComprobanteIngreso,idCuentaPorCobrar,saldo,abono,diasMora,mora) 
