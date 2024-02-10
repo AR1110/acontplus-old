@@ -60,6 +60,7 @@
     <None Remove="Reports\Inventario\ArticuloFraccionado.rdl" />
     <None Remove="Reports\Inventario\ConsolidacionInventario.rdlc" />
     <None Remove="Reports\Inventario\ConsumoDiario.rdl" />
+    <None Remove="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl" />
     <None Remove="Reports\Inventario\Kardex.rdlc" />
     <None Remove="Reports\Inventario\TransferenciaBodega.rdl" />
     <None Remove="Reports\NotaCredito.rdlc" />
@@ -92,6 +93,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Compras\ReporteCompras.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
 
