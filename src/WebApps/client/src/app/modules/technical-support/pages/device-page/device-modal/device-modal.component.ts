@@ -22,6 +22,7 @@ export class DeviceModalComponent implements OnInit {
   @Input() params = {} as Device;
 
   private deviceService = inject(DeviceService);
+  private activeModal = inject(NgbActiveModal);
   private fb = inject(FormBuilder);
   private modalRef = inject(NgbActiveModal);
   private tS = inject(ToasterService);
@@ -110,7 +111,7 @@ export class DeviceModalComponent implements OnInit {
             type: 'success',
             message: response.message,
           });
-          this.closeModal();
+          this.activeModal.close(response);
         }
       },
       complete() {
@@ -140,7 +141,7 @@ export class DeviceModalComponent implements OnInit {
             type: 'success',
             message: response.message,
           });
-          this.closeModal();
+          this.activeModal.close(response);
         }
       },
       complete() {

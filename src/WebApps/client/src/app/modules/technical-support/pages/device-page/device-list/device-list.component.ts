@@ -32,7 +32,7 @@ export class DeviceListComponent implements OnInit {
     });
     modalRef.componentInstance.params = item || {};
     modalRef.result.then((result) => {
-      if (result) {
+      if (result.code == '1') {
         this.get();
       }
     });
