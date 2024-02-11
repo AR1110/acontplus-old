@@ -95,7 +95,7 @@
 
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                                     <div class="form-group">
-                                        <label for="">U. Medida</label>
+                                        <label for="medida">Medida: <span class="text-danger">*</span> </label>
                                         <div class="input-group">
                                             <select class="form-control border-select medida"
                                                     ng-model="data.idMedida" ng-focus="delayFocus('.medida')">
@@ -107,6 +107,9 @@
                                                 <button class="btn btn-outline-secondary btn-sm" btn-add-update-medida results="resultModalMedida(item)" tabindex="-1">
                                                     <i class="fa fa-plus fa-xs"></i>
                                                 </button>
+                                                <button class="btn btn-outline-secondary btn-sm" ng-click="refreshMedida()" type="button" tabindex="-1">
+                                            <i class="fa fa-redo fa-xs"></i>
+                                        </button>
                                             </div>
                                         </div>
                                     </div>
@@ -224,6 +227,9 @@
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary btn-sm" btn-add-update-medida results="resultModalMedida(item)" tabindex="-1">
                                             <i class="fa fa-plus fa-xs"></i>
+                                        </button>
+                                         <button class="btn btn-outline-secondary btn-sm" ng-click="refreshMedida()" type="button" tabindex="-1">
+                                            <i class="fa fa-redo fa-xs"></i>
                                         </button>
                                     </div>
                                 </div>
