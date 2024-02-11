@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { IForm } from '@core/Types/form-types';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader } from '@core/utils/loader';
+import { hideLoader, showLoader } from '@core/utils/loader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Device } from '@modules/technical-support/models/device.model';
 import { DeviceService } from '@modules/technical-support/services/device.service';
@@ -59,6 +59,7 @@ export class DeviceModalComponent implements OnInit {
 
   // --> Functions
   setDataFormModal() {
+    console.log(this.params);
     this.device = this.params;
     this.deviceForm.patchValue(this.params);
 
@@ -74,6 +75,7 @@ export class DeviceModalComponent implements OnInit {
   }
 
   getDataForm() {
+    showLoader();
     this.deviceService.get(JSON.stringify({ tipo: 1 })).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -92,8 +94,8 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onSave() {
+    showLoader();
     Object.assign(this.device, this.deviceForm.value);
-
     this.deviceService.post(this.device).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -122,6 +124,7 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onUpdate() {
+    showLoader();
     Object.assign(this.device, this.deviceForm.value);
     this.deviceService.put(this.device.id, this.device).subscribe({
       next: (response) => {
