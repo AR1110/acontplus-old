@@ -274,7 +274,8 @@
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                 codEstab: fS.isValidField($scope.dataSearch.codEstab),
-                idBodega: fS.isValidField($scope.dataSearch.idBodega)
+                idBodega: fS.isValidField($scope.dataSearch.idBodega),
+                idSubFamilia: fS.isValidField($scope.dataSearch.bySubFamilia)
             }
 
             const parameters = {

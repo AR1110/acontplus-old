@@ -113,6 +113,22 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label for="subFamilia">SubFamilia</label>
+                                        <select id="subFamilia" name="subFamilia" class="form-control border-select"
+                                            ng-model="dataSearch.bySubFamilia">
+                                            <option value="0">Todos</option> 
+                                            <optgroup ng-repeat="group in subFamilias" label="{{ group.familia }}">
+                                                <option ng-repeat="sf in group.subFamilias" ng-value="sf.idSubFamilia">
+                                                    {{ sf.subFamilia }}
+                                                </option>
+                                            </optgroup>
+                                        </select>
+
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="row">
