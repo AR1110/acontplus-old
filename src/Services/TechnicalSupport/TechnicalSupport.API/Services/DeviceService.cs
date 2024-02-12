@@ -21,7 +21,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                if (_context.Products.Any(p => p.Serie == device.Serie))
+                if (_context.Products.Any(p => p.Name == device.Name && p.Model == device.Model))
                 {
                     return new ApiResponse { code = "0", message = "El equipo ya existe en la base de datos" };
                 }
@@ -94,8 +94,6 @@ namespace TechnicalSupport.API.Services
                 productFounded.Enabled = device.Enabled;
                 productFounded.Model = device.Model;
                 productFounded.Name = device.Name;
-                productFounded.Serie = device.Serie;
-                productFounded.Warranty = device.Warranty;
                 productFounded.Year = device.Year;
                 _context.Update(productFounded);
                 await _context.SaveChangesAsync();

@@ -64,11 +64,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
-                    Serie = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     Brand = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     Model = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     Year = table.Column<int>(type: "int", nullable: true),
-                    Warranty = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
                     Color = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -135,6 +133,8 @@ namespace TechnicalSupport.API.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
                     CustomerCompanyId = table.Column<int>(type: "int", nullable: false),
+                    SerialNumber = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    Warranty = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
@@ -264,10 +264,11 @@ namespace TechnicalSupport.API.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceSpecs_DeviceId",
+                name: "UI_TS_DS_DeviceId",
                 schema: "TechnicalSupport",
                 table: "DeviceSpecs",
-                column: "DeviceId");
+                column: "DeviceId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_OrderStatusId",

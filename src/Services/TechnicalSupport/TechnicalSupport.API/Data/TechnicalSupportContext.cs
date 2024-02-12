@@ -61,7 +61,7 @@ namespace TechnicalSupport.API.Data
             builder.Entity<Device>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Device>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Device>().HasMany(x => x.Customers).WithOne(x => x.Device).HasForeignKey(x => x.DeviceId);
-            builder.Entity<Device>().HasMany(x => x.Specs).WithOne(x => x.Device).HasForeignKey(x => x.DeviceId);
+            builder.Entity<Device>().HasOne(x => x.Specs).WithOne(x => x.Device).HasForeignKey<DeviceSpecs>(x => x.DeviceId).IsRequired();
 
             builder.Entity<DeviceCustomer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<DeviceCustomer>().Property(x => x.Enabled).HasDefaultValue(true);
@@ -69,6 +69,7 @@ namespace TechnicalSupport.API.Data
 
             builder.Entity<DeviceSpecs>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<DeviceSpecs>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<DeviceSpecs>().HasIndex(x => x.DeviceId).HasDatabaseName("UI_TS_DS_DeviceId").IsUnique();
 
             builder.Entity<OrderStatus>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<OrderStatus>().Property(x => x.Enabled).HasDefaultValue(true);
