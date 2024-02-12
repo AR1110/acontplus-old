@@ -9,7 +9,7 @@ export interface Device {
   warranty: number;
   color: string;
   customers?: DeviceCustomer[];
-  specs?: DeviceSpecs[];
+  specs?: DeviceSpecs;
 }
 
 export interface DeviceCustomer {

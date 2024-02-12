@@ -25,6 +25,8 @@ namespace TechnicalSupport.API.Services
                 {
                     return new ApiResponse { code = "0", message = "El equipo ya existe en la base de datos" };
                 }
+                foreach (var product in device.Customers) { product.UserId = device.UserId; };
+                device.Specs.UserId = device.Id;
                 _context.Products.Add(device);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = device.Id };
