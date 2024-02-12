@@ -170,7 +170,7 @@
                         bodegas: tempBodegas, // Establecimientos con bodegas
                         isGroupBodega: true
                     }
-                    let estabs = fS.groupingEstab(dataToGroup); 
+                    let estabs = fS.groupingEstab(dataToGroup);
 
                     // Devuelve los datos finales estructurados
                     return {
@@ -206,7 +206,7 @@
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision 
                     }
-                    let estabs = fS.groupingEstab(dataToGroup);  
+                    let estabs = fS.groupingEstab(dataToGroup);
                     return {
                         estabs,
                         estadosDoc
@@ -339,10 +339,19 @@
                         fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                         fechaVencimientoEscrita: fS.getFechaEscrita(fS.formatDate(fechaVencimiento))
                     }
+
+                    let resultsItems = items.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
+
                     return {
                         data,
                         cliente,
-                        items,
+                        items: resultsItems,
                         infoAdicionalDocumento: infoAdicionalDocumento || [],
                         tarifasImpuesto
                     }
@@ -522,7 +531,8 @@
                             }))
                         }
 
-                        let precioConIva = itemPrincipal.precioUnitario + itemPrincipal.valorImpuesto;
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+ 
                         let precioTotalSinImpuesto = ((itemPrincipal.precioUnitario * itemPrincipal.cantidad)) - itemPrincipal.valorDescuento;
                         let total = precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
 

@@ -782,7 +782,7 @@
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaVencimiento: fS.formatDate(fechaVencimiento),
                     }
-                    let resultsItems = items.map(item=>{
+                    let resultsItems = items.map(item => {
                         let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
                         return {
                             ...item,
@@ -809,7 +809,7 @@
                 }
                 if (response.code === "1") {
                     let [itemsApi] = JSON.parse(response.payload);
-                    let items = itemsApi.map((itemPrincipal, index) => { 
+                    let items = itemsApi.map((itemPrincipal, index) => {
 
                         const { fraccionado, principal, ...restItem } = itemPrincipal;
 

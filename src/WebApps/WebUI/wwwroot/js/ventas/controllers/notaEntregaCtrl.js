@@ -1003,7 +1003,7 @@
 
 
         function calculateTotalItems(items) {
-            return items.map(item => { 
+            return items.map(item => {
                 let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
                 let total = precioTotalSinImpuesto + item.valorImpuesto;
                 return {
