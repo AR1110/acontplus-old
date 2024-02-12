@@ -1,0 +1,17 @@
+<input
+  type="text"
+  name="productSearch"
+  id="productSearch"
+  class="form-control"
+  [class.is-invalid]="searchFailed"
+  (keyup)="onKeyupSearch()"
+  [ngbTypeahead]="search"
+  [(ngModel)]="textSearch"
+  onclick="select()"
+  placeholder="Buscar producto o servicio"
+  [resultTemplate]="rt"
+  (selectItem)="onSelect($event)"
+/>
+<ng-template #rt let-r="result" let-t="term">
+  <ngb-highlight [result]="r.descripcion" [term]="t" />
+</ng-template>
