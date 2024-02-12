@@ -55,8 +55,8 @@ export class OrderModalComponent {
   categories: any = [];
   columnNames: any[] = [
     { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
-    { title: 'Equipo', field: 'deviceName', width: 150 },
-    { title: 'Obs.', field: 'obs', width: 150, editor: true },
+    { title: 'Equipo', field: 'deviceName', width: 200 },
+    { title: 'Obs.', field: 'obs', width: 300, editor: true },
     {
       cellClick: (e: any, cell: any) => {
         this.removeFromList(cell.getData().deviceId);
