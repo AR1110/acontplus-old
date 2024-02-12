@@ -171,6 +171,8 @@ BEGIN
                   ,@codEstab     = codEstab
                   ,@codEstado    = codEstado
                   ,@codDoc       = codDoc
+                  ,@ckCxcVencida = ckCxcVencida
+                  ,@ckCuotas     = ckCuotas
             FROM OPENJSON(@json) WITH 
             (
                 idProveedor  INT         
@@ -180,10 +182,12 @@ BEGIN
                ,codEstab     VARCHAR(25) 
                ,codEstado    VARCHAR(15) 
                ,codDoc       VARCHAR(10) 
+               ,ckCxcVencida BIT         
+               ,ckCuotas     BIT
             )
 
             SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
-                              ,razonSocialComprador
+                              ,razonSocialProveedor
                               ,serieComprobante
                               ,FORMAT(cc.fechaEmision,''dd/MM/yyyy'')     as fechaEmision
                               ,FORMAT(cc.fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
@@ -191,15 +195,15 @@ BEGIN
                               ,CAST(abono as numeric(18,2))               as abono
                               ,CAST(saldo as numeric(18,2))               as saldo
                               ,estado 
-                        FROM v_CuentaPorCobrar cc WITH (NOLOCK)
-                        WHERE idCuentaPorCobrar > 0 '
+                        FROM v_CuentaPorPagar cc WITH (NOLOCK)
+                        WHERE idCuentaPorPagar > 0 '
 
-            SET @params = '@idCliente         INT
-                          ,@codEstab  VARCHAR(25)
-                          ,@fechaInicio  DATETIME
-                          ,@fechaFin     DATETIME
-                          ,@codEstado VARCHAR(15)
-                          ,@codDoc    VARCHAR(10)'
+            SET @params = '@idProveedor INT
+                          ,@codEstab    VARCHAR(25)
+                          ,@fechaInicio DATETIME2
+                          ,@fechaFin    DATETIME2
+                          ,@codEstado   VARCHAR(15)
+                          ,@codDoc      VARCHAR(10)'
 
 
             IF @ckCuotas = 1
@@ -214,7 +218,7 @@ BEGIN
                                       ,CAST(cc.abono as numeric(18,2))            as abono
                                       ,CAST(cc.saldo as numeric(18,2))            as saldo
                                       ,cc.estado 
-                                      ,cp.idCuotaPorCobrar
+                                      ,cp.idCuotaPorPagar
 		                              ,cp.nroCuota
 		                              ,CAST(cp.cuota as numeric(8,2))              as cuota
 		                              ,FORMAT(cp.fechaVencimiento,''dd/MM/yyyy'')  as fechaVencimientoCuota
@@ -222,9 +226,9 @@ BEGIN
 		                              ,CAST(cp.abono as numeric(8,2))              as abonoCuota
 		                              ,CAST(cp.saldo as numeric(8,2))              as saldoCuota
 		                              ,ep.descripcion                              as estadoCuota
-                                FROM v_CuentaPorPagar                  cc WITH (NOLOCK) 
-                                INNER JOIN Contabilidad.CuotaPorPagar  cp WITH (NOLOCK) ON cp.idCuentaPorPagar = cc.idCuentaPorPagar
-                                INNER JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago     = cp.idEstadoPago
+                                FROM v_CuentaPorPagar                 cc WITH (NOLOCK) 
+                                LEFT JOIN Contabilidad.CuotaPorPagar  cp WITH (NOLOCK) ON cp.idCuentaPorPagar = cc.idCuentaPorPagar
+                                LEFT JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago     = cp.idEstadoPago
                                 WHERE cc.codEstab = @codEstab '
 
                     IF @ckCxcVencida = 1 
@@ -253,12 +257,12 @@ BEGIN
 
             IF @idProveedor > 0 
                 BEGIN
-                    SET @sql = @sql + 'AND cc.idProveedor = @idCliente '
+                    SET @sql = @sql + 'AND cc.idProveedor = @idProveedor '
                 END 
 
             IF @codEstado IS NOT NULL
                 BEGIN
-                    IF @codEstado = 'NCBR'
+                    IF @codEstado = 'NPA'
                         BEGIN 
                             SET @sql = @sql + 'AND cc.codEstado IN (''PE'',''PP'') '
                         END 
@@ -268,13 +272,12 @@ BEGIN
                         END 
                 END 
 
-            SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idCliente,cc.codDoc ASC '
+            SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idProveedor,cc.codDoc ASC '
 
             EXEC sp_executesql @sql
 						      ,@params 
                               ,@codEstab    = @codEstab
                               ,@idProveedor = @idProveedor
-                              ,@idEntidad   = @idEntidad
                               ,@fechaInicio = @fechaInicio
                               ,@fechaFin    = @fechaFin
                               ,@codEstado   = @codEstado
