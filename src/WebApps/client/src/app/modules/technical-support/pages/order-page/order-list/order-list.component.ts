@@ -121,7 +121,7 @@ export class OrderListComponent implements OnInit {
   openModalMaintenance(id: number) {
     const modalRef = this.modalService.openModalCustom(
       OrderMaintenanceModalComponent,
-      { centered: true, size: 'lg' }
+      { centered: true, size: 'xl' }
     );
     modalRef.componentInstance.params = { id };
   }
