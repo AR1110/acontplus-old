@@ -209,6 +209,7 @@
         let url = `${URL_API}NotaEntrega/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
+        const pricingUtils = $injector.get('pricingUtils')
 
         let service = {
             data: {}
@@ -682,6 +683,9 @@
                             }))
                         }
 
+
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+
                         let obj = {
                             n: index + 1,
                             idNotaEntregaDetalle: itemPrincipal.idNotaEntregaDetalle,
@@ -703,6 +707,7 @@
                             precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
                             precioCosto: itemPrincipal.precioCosto,
                             precioUnitario: itemPrincipal.precioUnitario,
+                            precioConIva,
                             tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
@@ -777,10 +782,17 @@
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaVencimiento: fS.formatDate(fechaVencimiento),
                     }
+                    let resultsItems = items.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
                     return {
                         data,
                         cliente,
-                        items,
+                        items: resultsItems,
                         infoAdicionalDocumento,
                         tarifasImpuesto
                     }
@@ -798,7 +810,6 @@
                 if (response.code === "1") {
                     let [itemsApi] = JSON.parse(response.payload);
                     let items = itemsApi.map((itemPrincipal, index) => {
-                        console.log(itemPrincipal)
 
                         const { fraccionado, principal, ...restItem } = itemPrincipal;
 
