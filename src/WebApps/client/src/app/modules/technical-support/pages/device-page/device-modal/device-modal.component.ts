@@ -45,6 +45,9 @@ export class DeviceModalComponent implements OnInit {
     color: '',
   };
 
+  validations = [null, "", undefined]
+  validationsNumbers = [0, "", null, undefined]
+
   deviceFormGroup: IForm<Device> = {
     categoryId: [0, Validators.required],
     name: ['', Validators.required],
@@ -60,7 +63,6 @@ export class DeviceModalComponent implements OnInit {
 
   // --> Functions
   setDataFormModal() {
-    console.log(this.params);
     this.device = this.params;
     this.deviceForm.patchValue(this.params);
 
@@ -95,9 +97,11 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onSave() {
+    const deviceUpdate = Object.assign(this.device, this.deviceForm.value);   
+    if (!this.onValidate(deviceUpdate)) return;
+
     showLoader();
-    Object.assign(this.device, this.deviceForm.value);
-    this.deviceService.post(this.device).subscribe({
+    this.deviceService.post(deviceUpdate).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
@@ -125,9 +129,11 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onUpdate() {
+    const deviceUpdate = Object.assign(this.device, this.deviceForm.value);   
+    if (!this.onValidate(deviceUpdate)) return;
+
     showLoader();
-    Object.assign(this.device, this.deviceForm.value);
-    this.deviceService.put(this.device.id, this.device).subscribe({
+    this.deviceService.put(this.device.id, deviceUpdate).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
@@ -152,6 +158,52 @@ export class DeviceModalComponent implements OnInit {
         hideLoader();
       },
     });
+  }
+
+  onValidate(device: Device) {
+    let isValid = true;
+
+    try {
+      if (this.validationsNumbers.includes(device.categoryId)) {
+        this.tS.toastr({type: 'warning', message: `La categoría es requerida`});
+        isValid = false;
+      }
+
+      if (this.validations.includes(device.name)) {
+        this.tS.toastr({type: 'warning', message: `El nombre es requerido`});
+        isValid = false;
+      }
+
+      if (this.validations.includes(device.serie)) {
+        this.tS.toastr({type: 'warning', message: `La IMEI/Serie es requerido`});
+        isValid = false;
+      }
+      
+      if (this.validations.includes(device.brand)) {
+        this.tS.toastr({type: 'warning', message: `La marca es requerido`});
+        isValid = false;
+      }
+      
+      if (this.validations.includes(device.model)) {
+        this.tS.toastr({type: 'warning', message: `El model es requerido`});
+        isValid = false;
+      }
+
+      if (this.validationsNumbers.includes(device.year)) {
+        this.tS.toastr({type: 'warning', message: `El año es requerido`});
+        isValid = false;
+      }
+
+      if (this.validations.includes(device.color)) {
+        this.tS.toastr({type: 'warning', message: `El color es requerido`});
+        isValid = false;
+      }
+      return isValid;      
+    } catch (error) {
+      isValid = false;
+      this.tS.toastr({ type: 'success', message: `Error ${error}` });
+    }
+    return isValid;
   }
 
   closeModal() {
