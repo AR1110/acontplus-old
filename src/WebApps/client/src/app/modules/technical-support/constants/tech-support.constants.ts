@@ -6,6 +6,7 @@ export enum TYPE_CATEGORY {
 
 export enum TECH_SUPPORT_PATHS {
   DEVICE = 'Device/',
+  DEVICE_CUSTOMER = 'DeviceCustomer/',
   ORDER = 'Order/',
 }
 
