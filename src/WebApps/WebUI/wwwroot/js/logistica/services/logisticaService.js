@@ -94,6 +94,7 @@
                                 serieComprobante: doc.serieComprobante,
                                 razonSocialComprador: doc.razonSocialComprador,
                                 fechaEmision: doc.fechaEmision,
+                                importeTotal: doc.importeTotal,
                                 detalles,
                                 totalRecords: doc.totalRecords,
                             }
@@ -108,6 +109,7 @@
                                 serieComprobante: doc.serieComprobante,
                                 razonSocialComprador: doc.razonSocialComprador,
                                 fechaEmision: doc.fechaEmision,
+                                importeTotal: doc.importeTotal,
                                 detalles,
                                 totalRecords: doc.totalRecords,
                             }

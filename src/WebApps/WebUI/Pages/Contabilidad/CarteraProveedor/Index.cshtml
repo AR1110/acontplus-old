@@ -65,7 +65,7 @@
                         <label>Estado:</label>
                         <select class="form-control" ng-model="dataSearch.byEstado">
                             <option ng-value="">Todos</option>
-                            <option ng-value="item.idEstadoPago" ng-repeat="item in estadoDocumentos">
+                            <option ng-value="item.idEstado" ng-repeat="item in estadoDocumentos">
                                 {{item.descripcion}}
                             </option>
                         </select>
@@ -105,5 +105,5 @@
 </div> 
 
 @section Scripts {
-    <script src="~/js/contabilidad/controllers/carteraProveedorCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/contabilidad/reports/carteraProveedorCtrl.min.js" asp-append-version="true"></script>
 } 
