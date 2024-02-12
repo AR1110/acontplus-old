@@ -11,16 +11,13 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { SupplierSearchComponent } from '@modules/purchase/components/supplier-search/supplier-search.component';
-import { TestComponent } from '../test/test.component';
+import { hideLoader, showLoader } from '@core/utils/loader'; 
 import { formatDateMoment } from '@core/utils/format-date-moment';
 
 @Component({
   selector: 'app-reports-page',
   standalone: true,
-  imports: [AppModule, PurchaseModule, SupplierSearchComponent, DateRangeSelectionComponent, TestComponent],
+  imports: [AppModule, PurchaseModule],
   templateUrl: './reports-page.component.html',
   styleUrl: './reports-page.component.scss'
 })
