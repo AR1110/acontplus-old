@@ -22,7 +22,10 @@ import { IconProp, icon } from '@fortawesome/fontawesome-svg-core';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchModalComponent } from '@modules/technical-support/components/device-search-modal/device-search-modal.component';
-import { Device } from '@modules/technical-support/models/device.model';
+import {
+  Device,
+  DeviceSpecs,
+} from '@modules/technical-support/models/device.model';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
@@ -55,8 +58,8 @@ export class OrderModalComponent {
   categories: any = [];
   columnNames: any[] = [
     { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
-    { title: 'Equipo', field: 'deviceName', width: 150 },
-    { title: 'Obs.', field: 'obs', width: 150, editor: true },
+    { title: 'Equipo', field: 'deviceName', width: 200 },
+    { title: 'Obs.', field: 'obs', width: 300, editor: true },
     {
       cellClick: (e: any, cell: any) => {
         this.removeFromList(cell.getData().deviceId);
@@ -107,6 +110,10 @@ export class OrderModalComponent {
   };
 
   deviceForm = this.fb.group(this.deviceFormGroup);
+
+  deviceSpecs: DeviceSpecs = {
+    specs: '',
+  };
 
   orderForm = this.fb.group({
     uuid: uuidv4(),
@@ -298,12 +305,13 @@ export class OrderModalComponent {
     let customers = [
       {
         customerCompanyId,
+        serialNumber: this.device.serie,
+        warranty: this.device.warranty,
       },
     ];
     this.device.customers = customers;
     if (this.specs?.length > 0) {
-      let specsTemp = {},
-        specsToSave = [];
+      let specsTemp = {};
       for (const item of this.specsType) {
         if (this.specs.filter((x: any) => x.uuid === item.uuid).length === 0) {
           this.tS.toastr({
@@ -319,13 +327,10 @@ export class OrderModalComponent {
           this.specs.filter((x: any) => x.uuid == uuid),
         ])
       );
-
-      specsToSave.push({
+      this.device.specs = Object.assign(this.deviceSpecs, {
         specs: JSON.stringify(specsTemp),
       });
-      this.device.specs = specsToSave;
     }
-    console.log(this.device);
     this.deviceService.post(this.device).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {

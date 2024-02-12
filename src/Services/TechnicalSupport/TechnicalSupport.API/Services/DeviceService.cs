@@ -21,10 +21,15 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                if (_context.Products.Any(p => p.Serie == device.Serie))
+                if (_context.Products.Any(p => p.Name == device.Name && p.Model == device.Model))
                 {
                     return new ApiResponse { code = "0", message = "El equipo ya existe en la base de datos" };
                 }
+                if (device.Customers.Count > 0)
+                {
+                    foreach (var product in device.Customers) { product.UserId = device.UserId; };
+                }
+                device.Specs.UserId = device.UserId;
                 _context.Products.Add(device);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = device.Id };
@@ -94,8 +99,6 @@ namespace TechnicalSupport.API.Services
                 productFounded.Enabled = device.Enabled;
                 productFounded.Model = device.Model;
                 productFounded.Name = device.Name;
-                productFounded.Serie = device.Serie;
-                productFounded.Warranty = device.Warranty;
                 productFounded.Year = device.Year;
                 _context.Update(productFounded);
                 await _context.SaveChangesAsync();

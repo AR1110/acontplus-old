@@ -11,6 +11,7 @@ SELECT t.idTransaccion
 	,t.idTipoDocumento
 	,t.idDocumento
 	,t.idTarifa
+    ,a.idSubFamilia
 	,t.cantidad
 	,t.precioUnitario
 	,t.precioCosto
@@ -29,6 +30,7 @@ SELECT t.idTransaccion
 	,a.codigoAuxiliar
 	,a.codigoBarra
 	,a.descripcion articulo
+    ,sf.descripcion as subFamilia
 	,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN t.cantidad END, 0) cantidadEntrada
 	,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.cantidad END, 0) cantidadSalida
 	,u.nombreUsuario usuario
@@ -245,6 +247,7 @@ INNER JOIN Inventario.TipoDocumento   td WITH (NOLOCK) ON t.idTipoDocumento   = 
 INNER JOIN dbo.Bodega                  b WITH (NOLOCK) ON t.idBodega          = b.idBodega
 INNER JOIN Sri.Establecimiento         e WITH (NOLOCK) ON b.codEstab          = e.codEstab
 INNER JOIN dbo.Articulo                a WITH (NOLOCK) ON t.idArticulo        = a.idArticulo
+ LEFT JOIN dbo.SubFamilia             sf WITH (NOLOCK) ON sf.idSubFamilia     = a.idSubFamilia
  LEFT JOIN dbo.Medida                  m WITH (NOLOCK) ON a.idMedida          = m.idMedida
  LEFT JOIN dbo.Usuario                 u WITH (NOLOCK) ON t.idUsuario         = u.idUsuario
  LEFT JOIN dbo.Tarifa                 ta WITH (NOLOCK) ON ta.idTarifa         = t.idTarifa
