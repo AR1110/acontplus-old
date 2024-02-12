@@ -16,22 +16,26 @@ CREATE OR ALTER PROCEDURE TechnicalSupport.Order_Get @userRoleId INT
 AS
 BEGIN
 	SET NOCOUNT ON; 
-	DECLARE @tipo INT
-    ,@companyId INT
+	DECLARE @companyId INT
+    ,@id INT
     ,@orderStatusCode VARCHAR(2)
-    ,@pageSize INT
     ,@pageIndex INT
+    ,@pageSize INT
+    ,@tipo INT
 
-	SELECT @tipo = tipo
+	SELECT @id = id
         ,@orderStatusCode = orderStatusCode
         ,@pageIndex = pageIndex
         ,@pageSize = pageSize
+        ,@tipo = tipo
     FROM OPENJSON (@json) WITH 
     (
+        id              INT '$.id',
+        orderStatusCode VARCHAR(2)  '$.orderStatusCode',
         tipo            INT         '$.tipo',
         orderStatusCode VARCHAR(2)  '$.orderStatusCode',
-        pageSize        INT '$.pageSize',
-        pageIndex       INT '$.pageIndex'
+        pageIndex       INT '$.pageIndex',
+        pageSize        INT '$.pageSize'
     )
 	
     SET @companyId = (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
@@ -70,5 +74,36 @@ BEGIN
         ORDER BY tor.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY   
         RETURN
     END
+    IF @tipo = 4
+        BEGIN
+            SET @tableNames = 'order,orderDetails,orderMaintenances'
+        
+            SELECT tor.Id
+                ,tor.Uuid
+                ,tor.Sequence
+                ,tor.Serie
+                ,ISNULL(tor.Tax, 0.0)       AS Tax
+                ,ISNULL(tor.Discount, 0.0)  AS Discount
+                ,ISNULL(tor.Tip, 0.0)       AS Tip
+                ,ISNULL(tor.Total, 0.0)     AS Total
+                ,ISNULL(tor.Obs, '')        AS obs
+                ,tor.Enabled
+                ,tor.CustomerCompanyId
+                ,c.nombreFiscal RazonSocial
+            FROM TechnicalSupport.[Order] tor
+            INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId
+            INNER JOIN TechnicalSupport.OrderStatus sc  ON sc.Id = tor.OrderStatusId
+            WHERE tor.Id = @id
+
+            SELECT o.*, d.Id DeviceId, d.[Name] DeviceName FROM TechnicalSupport.[OrderDetail] o WITH (NOLOCK) 
+                INNER JOIN TechnicalSupport.Device d WITH (NOLOCK) ON o.DeviceId = d.Id
+            WHERE OrderId = @id
+
+            SELECT om.*, a.descripcion ProductName FROM TechnicalSupport.[OrderMaintenance] om WITH (NOLOCK)
+                    INNER JOIN TechnicalSupport.[OrderDetail] od WITH (NOLOCK) ON om.OrderDetailId = od.Id
+                    INNER JOIN dbo.Articulo a ON om.ProductId = a.idArticulo
+            WHERE od.OrderId = @id
+            RETURN
+        END
 END
 GO
