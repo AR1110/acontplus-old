@@ -82,10 +82,10 @@ BEGIN
 																			ELSE ''''
 															END 
 										FROM Contabilidad.CuentaPorPagar pp WITH (NOLOCK)
-										INNER JOIN dbo.Proveedor      p WITH (NOLOCK) ON p.idProveedor      = pp.idProveedor
-										INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.idEstablecimiento = pp.idEstablecimiento
-   										LEFT JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
-										INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
+										INNER JOIN dbo.Proveedor          p WITH (NOLOCK) ON p.idProveedor        = pp.idProveedor
+										INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = pp.idEstablecimiento
+   										 LEFT JOIN dbo.TiempoCredito     tc WITH (NOLOCK) ON tc.idTiempoCredito   = pp.idTiempoCredito
+										INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago      = pp.idEstadoPago
 										WHERE pp.idEntidad = @idEntidad '
 
 			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT,
@@ -93,8 +93,8 @@ BEGIN
 												@codDoc VARCHAR(5),
 												@codEstado VARCHAR(10),
 												@idProveedor INT,
-												@dateStart DATETIME,
-												@dateEnd DATETIME'
+												@dateStart DATETIME2,
+												@dateEnd DATETIME2'
 
 			SELECT 
 				@checkboxFecha = checkboxFecha,
@@ -160,6 +160,8 @@ BEGIN
 				 ,@idProveedor  = @idProveedor
 				 ,@dateStart    = @dateStart
 				 ,@dateEnd      = @dateEnd
+
+            RETURN 
 		END 
 
 	IF @tipo = 2
@@ -379,7 +381,6 @@ BEGIN
             
             RETURN 
         END 
-
     
 END
 GO
