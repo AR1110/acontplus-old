@@ -113,6 +113,8 @@
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
+        const pricingUtils = $injector.get('pricingUtils')
+
         let service = {
             data: {}
         }
@@ -409,6 +411,7 @@
                             }))
                         }
 
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
                         let obj = {
                             n: index + 1,
                             idFacturaDetalle: restItem.idFacturaDetalle,
@@ -430,6 +433,7 @@
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
                             precioCosto: restItem.precioCosto,
                             precioUnitario: restItem.precioUnitario,
+                            precioConIva: precioConIva || 0,
                             tarifa: restItem.tarifa,//✅
                             valorDescuento: restItem.valorDescuento,
                             valorImpuesto: restItem.valorImpuesto,//✅
