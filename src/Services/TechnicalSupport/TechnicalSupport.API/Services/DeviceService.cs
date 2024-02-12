@@ -46,9 +46,9 @@ namespace TechnicalSupport.API.Services
                     return new ApiResponse { code = "0", message = "No existe el equipo" };
                 }
                 device.Enabled = false;
-                device.Deleted = true; 
+                device.Deleted = true;
                 _context.Update(device);
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Eliminado Exitosamente" };
             }
             catch (Exception)
@@ -88,6 +88,7 @@ namespace TechnicalSupport.API.Services
                     return new ApiResponse { code = "0", message = "El id no coincide" };
                 }
                 var productFounded = await _context.Products.FindAsync(id);
+                productFounded.CategoryId = device.CategoryId;
                 productFounded.Brand = device.Brand;
                 productFounded.Color = device.Color;
                 productFounded.Enabled = device.Enabled;
