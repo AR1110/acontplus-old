@@ -449,4 +449,80 @@
             });
         }
     }])
+
+
+    app.factory('cuentaPorPagarService', ['$injector', 'formulario', function ($injector, fS) {
+        const mS = $injector.get('mainService');
+        const URL = 'Contabilidad/CuentaPorPagar/'; 
+
+        return {
+            get,
+            getDataFilter
+        }
+
+        function get(obj) {
+            let params = {
+                ...obj,
+                tipo: ('tipo' in obj) ? obj.tipo : 1
+            }
+            return mS.getData('get', `${URL}?json=${JSON.stringify(params)}`, null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload) || [];
+
+                    if (params.tipo === 1) {
+                        return mainData[0]
+                    }
+
+                    if (params.tipo === 2) {
+                        return {
+                            cuotas: mainData[0]
+                        }
+                    }
+
+                    if (params.tipo === 4) {
+                        console.log(mainData)
+                    }
+
+                    if (params.tipo === 5) {
+                        return {
+                            tiemposCredito: mainData[0]
+                        }
+                    }
+                }
+            })
+        }
+        
+        function getDataFilter(){
+            return mS.getData('get', `${URL}?json=${JSON.stringify({tipo: 6})}`, null, true).then(response=>{
+                if(response.code==="0") {
+                    console.log(response)
+                    return {}
+                }
+                const [tempEstabs, tempEstados] = JSON.parse(response.payload)
+                
+                let dataToGroup = {
+                    estabs: tempEstabs, //Establecimientos con puntos de emision 
+                }
+                let estabs = fS.groupingEstab(dataToGroup);
+
+                let estadosDoc = tempEstados.map(estado=>{
+                    return {
+                        idEstado: estado.idEstadoPago,
+                        descripcion: estado.descripcion,
+                        codigo: estado.codigo,
+                    }
+                })
+
+                return {
+                    estabs,
+                    estadosDoc
+                }
+
+            })
+        }
+    }])
+
 })(window.angular)
