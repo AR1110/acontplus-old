@@ -1004,13 +1004,12 @@
 
         function calculateTotalItems(items) {
             return items.map(item => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
                 let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
                 let total = precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
                     idNotaEntregaDetalle: params.action === "DUPLICAR" ? 0 : item.idNotaEntregaDetalle,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
                 }

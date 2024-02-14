@@ -79,8 +79,10 @@
                 <tr>
                     <th>N°</th> 
                     <th>Tipo doc.</th>
+                    <th>Fecha Emisión.</th>
                     <th>Serie Comprobante</th>
                     <th>Razon Social Comprador</th> 
+                    <th>Total</th>
                     <th>Op.</th>
                 </tr>
             </thead>
@@ -88,8 +90,10 @@
                 <tr ng-repeat="item in documentos">
                     <td>{{$index +1}}</td> 
                     <td>{{tipoDoc}}</td> 
+                    <td>{{item.fechaEmision}}</td> 
                     <td>{{item.serieComprobante}}</td>
                     <td>{{item.razonSocialComprador}}</td>
+                    <td>{{item.importeTotal}}</td>
                     <td>
                         <div class="btn-group">
                             <button type="button" class="btn btn-success btn-sm" ng-click="selectedDoc(item)">

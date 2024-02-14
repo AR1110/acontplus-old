@@ -14,11 +14,7 @@ export class DeviceService {
   private http = inject(HttpClient);
 
   delete(id: number) {
-    return this.http.delete(`${this.url}${id}`).pipe(
-      map((response) => {
-        response;
-      })
-    );
+    return this.http.delete(`${this.url}${id}`).pipe(map((response) => response));
   }
 
   get(params: any) {

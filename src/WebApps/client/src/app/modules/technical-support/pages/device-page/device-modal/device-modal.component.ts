@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { IForm } from '@core/Types/form-types';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader } from '@core/utils/loader';
+import { hideLoader, showLoader } from '@core/utils/loader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Device } from '@modules/technical-support/models/device.model';
 import { DeviceService } from '@modules/technical-support/services/device.service';
@@ -22,6 +22,7 @@ export class DeviceModalComponent implements OnInit {
   @Input() params = {} as Device;
 
   private deviceService = inject(DeviceService);
+  private activeModal = inject(NgbActiveModal);
   private fb = inject(FormBuilder);
   private modalRef = inject(NgbActiveModal);
   private tS = inject(ToasterService);
@@ -59,6 +60,7 @@ export class DeviceModalComponent implements OnInit {
 
   // --> Functions
   setDataFormModal() {
+    console.log(this.params);
     this.device = this.params;
     this.deviceForm.patchValue(this.params);
 
@@ -74,6 +76,7 @@ export class DeviceModalComponent implements OnInit {
   }
 
   getDataForm() {
+    showLoader();
     this.deviceService.get(JSON.stringify({ tipo: 1 })).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -92,8 +95,8 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onSave() {
+    showLoader();
     Object.assign(this.device, this.deviceForm.value);
-
     this.deviceService.post(this.device).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -108,7 +111,7 @@ export class DeviceModalComponent implements OnInit {
             type: 'success',
             message: response.message,
           });
-          this.closeModal();
+          this.activeModal.close(response);
         }
       },
       complete() {
@@ -122,6 +125,7 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onUpdate() {
+    showLoader();
     Object.assign(this.device, this.deviceForm.value);
     this.deviceService.put(this.device.id, this.device).subscribe({
       next: (response) => {
@@ -137,7 +141,7 @@ export class DeviceModalComponent implements OnInit {
             type: 'success',
             message: response.message,
           });
-          this.closeModal();
+          this.activeModal.close(response);
         }
       },
       complete() {

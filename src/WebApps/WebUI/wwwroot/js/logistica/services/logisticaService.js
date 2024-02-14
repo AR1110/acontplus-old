@@ -93,6 +93,8 @@
                                 idDocumento: doc.idDocumento,
                                 serieComprobante: doc.serieComprobante,
                                 razonSocialComprador: doc.razonSocialComprador,
+                                fechaEmision: doc.fechaEmision,
+                                importeTotal: doc.importeTotal,
                                 detalles,
                                 totalRecords: doc.totalRecords,
                             }
@@ -106,6 +108,8 @@
                                 idDocumento: doc.idFactura,
                                 serieComprobante: doc.serieComprobante,
                                 razonSocialComprador: doc.razonSocialComprador,
+                                fechaEmision: doc.fechaEmision,
+                                importeTotal: doc.importeTotal,
                                 detalles,
                                 totalRecords: doc.totalRecords,
                             }

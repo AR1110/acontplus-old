@@ -27,6 +27,7 @@
     <None Remove="Reports\ConsumoEmpresaTpv.rdl" />
     <None Remove="Reports\ConsumoGeneralTpv.rdl" />
     <None Remove="Reports\ConsumoIndividualTpv.rdl" />
+    <None Remove="Reports\Contabilidad\CarteraProveedor.rdl" />
     <None Remove="Reports\Contabilidad\GestionCaja.rdl" />
     <None Remove="Reports\FactElect\ComprobanteRetencion.rdl" />
     <None Remove="Reports\FactElect\Factura.rdl" />
@@ -60,6 +61,7 @@
     <None Remove="Reports\Inventario\ArticuloFraccionado.rdl" />
     <None Remove="Reports\Inventario\ConsolidacionInventario.rdlc" />
     <None Remove="Reports\Inventario\ConsumoDiario.rdl" />
+    <None Remove="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl" />
     <None Remove="Reports\Inventario\Kardex.rdlc" />
     <None Remove="Reports\Inventario\TransferenciaBodega.rdl" />
     <None Remove="Reports\NotaCredito.rdlc" />
@@ -94,14 +96,17 @@
     <Content Include="Reports\Compras\ReporteCompras.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\Contabilidad\CarteraProveedor.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
 
     <Content Include="Reports\Restaurant\Order.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Cartera\CarteraCliente.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Cartera\CarteraProveedor.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Compras\CompraDetalle.rdl">

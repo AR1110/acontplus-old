@@ -9,6 +9,8 @@
         const commonSvc = $injector.get('commonService');
         const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
+        const cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
+        console.log(cuentaPorPagarSvc)
 
 
 
@@ -24,23 +26,22 @@
         function initLoad(){
             try {
                 showLoader();
-                commonSvc.getEstabAsign().then(response => {
-                    $scope.establecimientos = response;
+                cuentaPorPagarSvc.getDataFilter().then(response=>{
+                    $scope.establecimientos = response.estabs;
+                    $scope.estadoDocumentos = response.estadosDoc;
                     if ($scope.establecimientos.length > 0) {
-                        let dataEstab = $scope.establecimientos.find(estab => estab.predeterminado);
+                        let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
                         if (dataEstab) {
                             $scope.dataSearch.codEstab = dataEstab.codEstab;
                         }
                     } else {
                         tS.taostr('warning', 'No tienes establecimientos asignadas');
                     } 
+
+                    console.log(response)
                 }).catch(error => {
                     console.log(error)
-                }).finally(() => hideLoader());
-
-                commonSvc.getEstadoDocByCodDoc('CPR').then(response => {
-                    $scope.estadoDocumentos = response;
-                })
+                }).finally(() => hideLoader()); 
             } catch (error) {
                 console.log(error)
             }
@@ -90,7 +91,7 @@
         function getParameterReport(format){
 
             const dataParams = {
-                byProveedor: $scope.dataSearch.idProveedor,
+                byProveedor: fS.isValidField($scope.dataSearch.idProveedor),
                 checkBoxProveedor: $scope.dataSearch.checkboxSupplier,
                 checkBoxFecha: $scope.dataSearch.checkboxRangeDate,
                 checkBoxEstado: $scope.dataSearch.byEstado > 0, 

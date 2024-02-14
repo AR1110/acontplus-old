@@ -207,8 +207,8 @@
                         let totalIce = rowEntity.cantidad * rowEntity.ice;
 
                         //   rowEntity.totalDescuento = fS.roundNumber(totalDescuento, decimal.nroDescuentoDetalle)
-                        rowEntity.precioTotalSinImpuesto = fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle);
-                        rowEntity.valorImpuesto = fS.roundNumber(valorImpuesto, decimal.nroIva)
+                        rowEntity.precioTotalSinImpuesto = fS.roundNumber(precioTotalSinImpuesto, decimal.nroPrecio);
+                        rowEntity.valorImpuesto = fS.roundNumber(valorImpuesto, decimal.nroPrecio)
                         rowEntity.total = fS.roundNumber(total, decimal.nroTotalDetalle);
                         rowEntity.totalIce = fS.roundNumber(totalIce, decimal.nroIce)
                         // this.getTotales();
@@ -246,7 +246,8 @@
             let { totalPrecioTotalSinImpuesto, totalIce, totalDescuento, totalSinImpuesto } = items.reduce((acc, prev) => {
                 // Calcular el total neto con descuentos y el total de ICE
                 let totalSinImpuesto = prev.cantidad * prev.precioUnitario;
-                let precioTotalSinImpuesto = (prev.cantidad * prev.precioUnitario) - prev.valorDescuento;
+                let precioTotalSinImpuesto = ((prev.cantidad * prev.precioUnitario) - prev.valorDescuento);
+
                 let totalIce = prev.cantidad * prev.ice;
 
                 // Acumular totales generales
@@ -314,7 +315,7 @@
                                 </tr>`
                 }
             }
-          
+        
             const importeTotal = totalPrecioTotalSinImpuesto + sumTotalIva;
             if (totalSinImpuesto > 0) {
                 totalPorcentajeDescuento = ((totalSinImpuesto - totalPrecioTotalSinImpuesto) * 100) / totalSinImpuesto;

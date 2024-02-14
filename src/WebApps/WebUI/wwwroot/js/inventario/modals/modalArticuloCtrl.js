@@ -619,6 +619,14 @@ function modalArticuloCtrl(
         }
     }
 
+    $scope.refreshMedida = async function(){
+        try { 
+            const { medidas } = await articuloSvc.getDataForForm();
+            $scope.medidas = medidas; 
+        } catch (error) {
+            console.log(error);
+        }
+    }
     $scope.getBarcode = function () {
         // console.log(item)
         if (!$scope.data.codigoBarra || !$scope.data.descripcion) {

@@ -22,7 +22,7 @@ function layoutCtrl($scope, $rootScope, $window, decodeToken) {
     let { latestVersion } = $scope.userData;
 
     if (!latestVersion) {
-        $scope.logout();
+      //  $scope.logout();
     } else {
         //consume from bd
     }
