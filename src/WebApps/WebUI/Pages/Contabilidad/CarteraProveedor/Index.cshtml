@@ -6,104 +6,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div ng-controller="carteraProveedorCtrl">
-    <div class="row page-titles">
-        <div class="col-md-5 align-self-center">
-            <h4 class="text-themecolor">Cartera de Proveedores</h4>
-        </div>
-        <div class="col-md-7 align-self-center text-right">
-            <div class="d-flex justify-content-end align-items-center">
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="icheck-primary">
-                        <input type="checkbox" id="checkboxRangeDate" name="checkboxRangeDate" ng-model="dataSearch.checkboxRangeDate">
-                        <label for="checkboxRangeDate">Rango de fecha</label>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="icheck-primary">
-                        <input type="checkbox" id="checkboxSupplier" name="checkboxSupplier" ng-model="dataSearch.checkboxSupplier">
-                        <label for="checkboxSupplier">Proveedor</label>
-                    </div>
-                </div>
-                <!-- <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="icheck-primary">
-                        <input type="checkbox" id="checkboxFechaVencida" name="checkboxFechaVencida" ng-model="dataSearch.checkboxFechaVencida">
-                        <label for="checkboxFechaVencida">Vencidas</label>
-                    </div>
-                </div> -->
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-xl-4 col-lg- col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                        <label for="establecimiento">Establecimiento: </label>
-                        <select class="form-control border-select" ng-model="dataSearch.codEstab">
-                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                                {{item.nombreComercial}}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg- col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                        <label>Rango de fechas: </label>
-                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                                           end-date="dataSearch.fechaFin"
-                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg- col-md-6 col-sm-6 col-12">
-                    <div class="form-group">
-                        <label>Estado:</label>
-                        <select class="form-control" ng-model="dataSearch.byEstado">
-                            <option ng-value="">Todos</option>
-                            <option ng-value="item.idEstado" ng-repeat="item in estadoDocumentos">
-                                {{item.descripcion}}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="proveedorFiltro">Proveedor:</span>
-                        <input type="text" id="providerInputSearch" class="form-control border-select"
-                               ng-model="proveedor.nombreProveedor" provider-search-drtv
-                               on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
-                               placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
-
-                        <script type="text/ng-template" id="autocompleteProviderTemplate.html">
-                            <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
-                            </div>
-                        </script>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card-footer">
-            <div class="btn-group">
-                <button type="button" class="btn btn-success" ng-click="getReportPdf()">
-                    PDF
-                </button>
-                <button type="button" class="btn btn-info" ng-click="getReportExcel()">
-                    EXCEL
-                </button>
-            </div>
-        </div>
-    </div>
-</div> 
-
+<input type="text" id="frontend" value="@ViewData["FrontEnd"]" hidden />
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
 @section Scripts {
-    <script src="~/js/contabilidad/reports/carteraProveedorCtrl.min.js" asp-append-version="true"></script>
-} 
+    <script src="~/js/controllers/iframeAngularCtrl.min.js" asp-append-version="true"></script>
+}
+
+
+
+ 
