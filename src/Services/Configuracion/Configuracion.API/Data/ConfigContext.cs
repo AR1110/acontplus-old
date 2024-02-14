@@ -14,7 +14,7 @@ namespace Configuracion.API.Data
         public DbSet<Printer> Printers { get; set; }
         public DbSet<PrinterDocument> PrinterDocuments { get; set; }
         public DbSet<PrinterType> PrinterTypes { get; set; }
-        public DbSet<EstablecimientoLogo> EstablecimientoLogos {  get; set; }
+        public DbSet<EstablecimientoLogo> EstablecimientoLogos { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

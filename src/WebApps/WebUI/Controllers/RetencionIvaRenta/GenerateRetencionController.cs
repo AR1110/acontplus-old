@@ -17,7 +17,7 @@ namespace WebUI.Controllers.RetencionIvaRenta
         {
             return View();
         }
-         
+
 
         //Generar Retencion Venta Automatica 
         public async Task<IActionResult> GetGenerateRetencionVenta(int idTipoDoc, int idComprobante)
@@ -26,7 +26,7 @@ namespace WebUI.Controllers.RetencionIvaRenta
             var res = await _gr.GetSaleAsync(idRol, idTipoDoc, idComprobante);
             return Ok(res);
 
-        } 
+        }
 
 
     }

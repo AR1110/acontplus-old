@@ -3,8 +3,8 @@ using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
 using Services.Common;
+using Services.Common.Logs;
 using Ventas.API.Interfaces;
 
 namespace Ventas.API.Controllers.v2

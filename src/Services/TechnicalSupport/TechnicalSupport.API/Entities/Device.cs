@@ -11,7 +11,7 @@ namespace TechnicalSupport.API.Entities
         public int CategoryId { get; set; }
         [Required]
         [MaxLength(300)]
-        public string Name { get; set; } 
+        public string Name { get; set; }
         [MaxLength(300)]
         public string Brand { get; set; }
         [MaxLength(300)]

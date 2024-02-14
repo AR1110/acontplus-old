@@ -1,7 +1,4 @@
-﻿using Identity.API.Dtos;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Identity.API.Controllers.v1
+﻿namespace Identity.API.Controllers.v1
 {
     public class ForgotPasswordController : BaseApiController
     {

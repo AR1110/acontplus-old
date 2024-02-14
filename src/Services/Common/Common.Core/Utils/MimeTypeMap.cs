@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Common.Core.Utils
+﻿namespace Common.Core.Utils
 {
     public static class MimeTypeMap
     {

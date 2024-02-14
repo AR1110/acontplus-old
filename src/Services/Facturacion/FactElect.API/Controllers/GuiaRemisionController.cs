@@ -1,9 +1,6 @@
-﻿using Autofac.Core;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Common.Infrastructure.Repository;
 using FactElect.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -12,7 +9,7 @@ namespace FactElect.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GuiaRemisionController: BaseApiController
+    public class GuiaRemisionController : BaseApiController
     {
         private readonly IConfiguration _configuration;
         private readonly IGuiaRemisionService _svc;

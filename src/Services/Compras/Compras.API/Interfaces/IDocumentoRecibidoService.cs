@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 
 namespace Compras.API.Interfaces
 {

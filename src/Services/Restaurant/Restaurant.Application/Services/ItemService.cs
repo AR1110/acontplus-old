@@ -3,7 +3,6 @@ using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Restaurant.Core.Interfaces;
-using Restaurant.Infrastructure.Data;
 
 namespace Restaurant.Application.Services
 {

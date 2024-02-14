@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-ConfigHelper.AddJsonFiles(builder.Configuration); 
+ConfigHelper.AddJsonFiles(builder.Configuration);
 builder.Services.AddControllers()
                          .AddNewtonsoftJson(x =>
                          {

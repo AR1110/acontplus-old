@@ -18,7 +18,7 @@ namespace Common.Core.Utils
                     compressArray = memoryStream.ToArray();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -37,7 +37,7 @@ namespace Common.Core.Utils
                 }
                 decompressedArray = decompressedStream.ToArray();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

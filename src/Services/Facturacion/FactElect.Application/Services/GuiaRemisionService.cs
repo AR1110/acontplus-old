@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.Core.Interfaces;
+﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
 using FactElect.Core.Interfaces;
 
