@@ -60,7 +60,12 @@ BEGIN
     IF (@tipo = 2)
         BEGIN
 	        SET @tableNames = 'devices'
-	        SELECT * FROM TechnicalSupport.Device
+	        SELECT d.*
+                ,dc.CustomerCompanyId
+                ,ISNULL(ds.Specs, '{}') Specs
+            FROM TechnicalSupport.Device d
+            LEFT JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
+            LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
             RETURN
         END
      IF (@tipo = 3)
@@ -75,7 +80,7 @@ BEGIN
     IF (@tipo = 4)
         BEGIN
         	SET @tableNames = 'devices'
-            SELECT d.*, dc.CustomerCompanyId, ISNULL(ds.Specs, '{}') Specs 
+            SELECT d.*, dc.CustomerCompanyId, ISNULL(ds.Specs, '{}') Specs
             
             FROM TechnicalSupport.Device d  WITH (NOLOCK)
             INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
