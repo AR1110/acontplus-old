@@ -62,7 +62,9 @@ BEGIN
 	        SET @tableNames = 'devices'
 	        SELECT d.*
                 ,dc.CustomerCompanyId
-                ,ISNULL(ds.Specs, '{}') Specs
+                ,dc.SerialNumber        AS Serie
+                ,dc.Warranty
+                ,ISNULL(ds.Specs, '{}') AS Specs
             FROM TechnicalSupport.Device d
             LEFT JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
             LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
