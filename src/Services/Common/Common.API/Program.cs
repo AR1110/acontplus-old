@@ -1,10 +1,10 @@
 ﻿
-using Common.Core.Utils;
-using Services.Common;
-using Common.API.Extensions;
-using Autofac.Extensions.DependencyInjection;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.API.Extensions;
+using Common.Core.Utils;
 using Newtonsoft.Json.Serialization;
+using Services.Common;
 
 namespace Common.API
 {
@@ -33,7 +33,7 @@ namespace Common.API
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
             builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
-            var app = builder.Build(); 
+            var app = builder.Build();
 
             app.UseSwaggerDocumentation();
 

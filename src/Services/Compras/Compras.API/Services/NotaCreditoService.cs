@@ -5,7 +5,7 @@ using Compras.API.Interfaces;
 
 namespace Compras.API.Services
 {
-    public class NotaCreditoService: INotaCreditoService
+    public class NotaCreditoService : INotaCreditoService
     {
         private readonly IADORepository _repository;
         public NotaCreditoService(IADORepository repository)

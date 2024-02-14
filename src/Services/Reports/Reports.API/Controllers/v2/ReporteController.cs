@@ -1,11 +1,11 @@
-﻿using Common.Core.Utils;
+﻿using System.Data;
+using Asp.Versioning;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Reports.API.Dtos;
+using Reports.Core.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
-using System.Data;
-using Asp.Versioning;
-using Reports.Core.Interfaces;
 
 namespace Reports.API.Controllers.v2
 {
@@ -39,7 +39,7 @@ namespace Reports.API.Controllers.v2
                     return BadRequest("Can't get report params");
                 }
 
-                storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure"); 
+                storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure");
 
                 var dataParams = new Dictionary<string, object>();
                 if (!data.hasService)

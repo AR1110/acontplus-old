@@ -96,8 +96,8 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-
-                return Ok();
+                var response = await _orderService.DeleteAsync(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {

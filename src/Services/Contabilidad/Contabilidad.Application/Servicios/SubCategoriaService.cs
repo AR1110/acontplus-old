@@ -19,7 +19,7 @@ namespace Contabilidad.Application.Servicios
             _context = context;
             _response = new ApiResponse();
         }
-        public async Task<object?> GetAsync(Dictionary<string, object> parameters)
+        public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
             DataSet ds = await _repository.GetDataSetAsync("Contabilidad.SubCategoria_Get", parameters);
 

@@ -46,7 +46,7 @@ namespace TechnicalSupport.API.Data
                            p => p.ClrType == typeof(string)    // Entity is a string
                         && p.GetColumnType() == null           // No column type is set
                                                                // Next line only required if using ASP.Net Identity:
-                        && !p.DeclaringEntityType.GetTableName().StartsWith("AspNet")
+                        && p.DeclaringType.GetTableName().StartsWith("AspNet")
                     ))
                 {
                     property.SetIsUnicode(false);

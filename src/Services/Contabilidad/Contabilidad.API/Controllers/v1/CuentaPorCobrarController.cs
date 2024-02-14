@@ -1,5 +1,4 @@
 ﻿using Asp.Versioning;
-using Azure.Core;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;

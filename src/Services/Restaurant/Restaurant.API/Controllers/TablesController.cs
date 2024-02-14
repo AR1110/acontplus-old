@@ -99,7 +99,7 @@ namespace Restaurant.API.Controllers
                 var table = await _context.Tables.FindAsync(id);
                 table.Deleted = true;
                 table.Enabled = false;
-                table.UserId = User.GetUserId(); 
+                table.UserId = User.GetUserId();
                 _context.Update(table);
                 await _context.SaveChangesAsync();
                 return Ok("Eliminado exitosamente");

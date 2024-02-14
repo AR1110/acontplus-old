@@ -47,7 +47,7 @@ namespace Compras.API
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", context =>
+                _ = endpoints.MapGet("/", context =>
                 {
                     context.Response.Redirect("swagger");
                     return Task.CompletedTask;

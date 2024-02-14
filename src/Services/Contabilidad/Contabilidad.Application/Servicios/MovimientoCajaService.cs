@@ -1,4 +1,4 @@
-﻿ 
+﻿
 using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
@@ -7,7 +7,7 @@ using Contabilidad.Infrastructure.Data;
 
 namespace Contabilidad.Application.Servicios
 {
-    public class MovimientoCajaService: IMovimientoCajaService
+    public class MovimientoCajaService : IMovimientoCajaService
     {
         private readonly IADORepository _repository;
         private readonly ContabilidadContext _context;

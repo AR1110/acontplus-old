@@ -1,12 +1,12 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Inventario.Core.Entities;
 using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Services.Common.Logs;
 using Services.Common;
-using Inventario.Core.Entities;
+using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
 {

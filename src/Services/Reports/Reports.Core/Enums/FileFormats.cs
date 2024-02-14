@@ -27,7 +27,7 @@ namespace Reports.Core.Enums
             [Description(".xls")]
             EXCEL,
             [Description(".xlsx")]
-            EXCELOPENXML, 
+            EXCELOPENXML,
             [Description(".docx")]
             WORDOPENXML,
             [Description(".html")]

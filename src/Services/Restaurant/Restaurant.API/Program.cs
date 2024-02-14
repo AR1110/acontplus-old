@@ -6,7 +6,6 @@ using Newtonsoft.Json.Serialization;
 using Restaurant.API.Extensions;
 using Restaurant.Infrastructure.Data;
 using Services.Common;
-using Services.Common.Logs;
 using Services.Common.Middleware;
 
 internal class Program
