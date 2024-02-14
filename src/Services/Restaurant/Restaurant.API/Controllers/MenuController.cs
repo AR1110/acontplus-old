@@ -31,19 +31,6 @@ namespace Restaurant.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(string json)
-        {
-            try
-            {
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Error on put: " + ex.Message);
-            }
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
@@ -53,19 +40,6 @@ namespace Restaurant.API.Controllers
                 var response = await _menuService.PutAsync(id, data);
                 if (response == null) { return NoContent(); }
                 return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                return Ok();
             }
             catch (Exception ex)
             {

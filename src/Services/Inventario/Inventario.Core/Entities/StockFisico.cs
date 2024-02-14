@@ -21,8 +21,7 @@ namespace Inventario.Core.Entities
         public string Responsable { get; set; }
         [MaxLength(500)]
         public string Obs { get; set; }
-        public DateTime? FechaRevision { get; set; }
-        public int? UserId { get; set; }
+        public DateTime? FechaRevision { get; set; } 
         public List<StockFisicoDetalle> StockFisicoDetalles { get; set; }
     }
 }
