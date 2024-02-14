@@ -12,7 +12,7 @@ using TechnicalSupport.API.Data;
 namespace TechnicalSupport.API.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
-    [Migration("20240208163343_Initial")]
+    [Migration("20240212162937_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -118,20 +118,11 @@ namespace TechnicalSupport.API.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<string>("Serie")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("Warranty")
-                        .HasColumnType("numeric(18,2), not null");
 
                     b.Property<int?>("Year")
                         .HasColumnType("int");
@@ -170,11 +161,20 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("Warranty")
+                        .HasColumnType("numeric(18,2), not null");
 
                     b.HasKey("Id");
 
@@ -222,7 +222,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId");
+                    b.HasIndex("DeviceId")
+                        .IsUnique()
+                        .HasDatabaseName("UI_TS_DS_DeviceId");
 
                     b.ToTable("DeviceSpecs", "TechnicalSupport");
                 });
@@ -467,8 +469,8 @@ namespace TechnicalSupport.API.Data.Migrations
             modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceSpecs", b =>
                 {
                     b.HasOne("TechnicalSupport.API.Entities.Device", "Device")
-                        .WithMany("Specs")
-                        .HasForeignKey("DeviceId")
+                        .WithOne("Specs")
+                        .HasForeignKey("TechnicalSupport.API.Entities.DeviceSpecs", "DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

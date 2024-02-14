@@ -127,6 +127,140 @@
         </div>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <form [formGroup]="specForm">
+          <div class="card rounded border border-success">
+            <div class="card-header">
+              <h5 class="card-title">Especificaciones</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <form [formGroup]="specTypeForm">
+                    <div class="form-group">
+                      <label for="specName">Categoría:</label>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          formControlName="specName"
+                          id="specName"
+                          class="form-control"
+                          (keydown.enter)="addSpecType()"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-success btn-sm"
+                          (click)="addSpecType()"
+                        >
+                          <fa-icon [icon]="'plus'"></fa-icon>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              @if(specsType.length > 0){
+              <div ngbAccordion [closeOthers]="true">
+                @for (item of specsType; track $index) {
+                <div ngbAccordionItem [collapsed]="$index !== 0">
+                  <h2 ngbAccordionHeader>
+                    <button
+                      ngbAccordionButton
+                      (click)="filterAccordion(item.uuid)"
+                    >
+                      {{ item.name }}
+                    </button>
+                  </h2>
+                  <div ngbAccordionCollapse>
+                    <div ngbAccordionBody>
+                      <ng-template>
+                        <div class="row">
+                          <div class="col-md-6 col-12">
+                            <div class="form-group">
+                              <label for="name">Nombre:</label>
+                              <input
+                                #inputNameSpec
+                                type="text"
+                                id="name"
+                                formControlName="name"
+                                class="form-control"
+                              />
+                            </div>
+                          </div>
+                          <div class="col-md-6 col-12">
+                            <div class="form-group">
+                              <label for="value">Valor:</label>
+                              <div class="input-group">
+                                <input
+                                  type="tex"
+                                  formControlName="value"
+                                  id="value"
+                                  class="form-control"
+                                  (keydown.enter)="addSpec(item.uuid)"
+                                />
+                                <button
+                                  type="button"
+                                  class="btn btn-success btn-sm"
+                                  (click)="addSpec(item.uuid)"
+                                  [disabled]="!specForm.valid"
+                                >
+                                  <fa-icon [icon]="'plus'"></fa-icon>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        @if (specsTemp.length > 0){
+                        <div class="row">
+                          <div class="col">
+                            <div class="table-responsive">
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th>Nombre</th>
+                                    <th>Valor</th>
+                                    <th></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @for (spec of specsTemp; track $index){
+                                  <tr>
+                                    <td>{{ spec.name }}</td>
+                                    <td>{{ spec.value }}</td>
+                                    <th>
+                                      <button
+                                        type="button"
+                                        class="btn btn-outline-danger btn-sm"
+                                        (click)="removeSpec($index)"
+                                      >
+                                        <fa-icon
+                                          [icon]="'trash'"
+                                        ></fa-icon>
+                                      </button>
+                                    </th>
+                                  </tr>
+                                  }
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                        }
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
   <div class="modal-footer">
     <button type="submit" class="btn btn-outline-success btn-lg">

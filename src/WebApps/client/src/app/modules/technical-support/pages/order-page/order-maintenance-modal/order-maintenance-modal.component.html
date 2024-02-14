@@ -3,9 +3,47 @@
   <button type="button" class="btn-close" (click)="closeModal()"></button>
 </div>
 <div class="modal-body">
-  
+  <div ngbAccordion [closeOthers]="true">
+    @for (item of orderDetails; track $index) {
+    <div ngbAccordionItem [collapsed]="$index !== 0">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          {{ item.deviceName }}
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <div class="row">
+              <div class="col-6">
+                <input
+                  type="text"
+                  name="product"
+                  id="product"
+                  class="form-control"
+                  placeholder="Buscar producto"
+                />
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col">
+                <app-tabulator
+                  [columnNames]="columnNames"
+                  [tableData]="orderMaintenances"
+                ></app-tabulator>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
 </div>
 <div class="modal-footer">
+  <button type="button" class="btn btn-outline-success" (click)="save()">
+    <fa-icon [icon]="'save'"></fa-icon> Guardar
+  </button>
   <button type="button" class="btn btn-outline-dark" (click)="closeModal()">
     &times; Cancelar
   </button>

@@ -95,7 +95,9 @@ export class OrderListComponent implements OnInit {
           if (isApiResponse(response)) {
             const { orders } = JSON.parse(response.payload as string);
             this.orders = orders;
-            this.dataSearch.totalRecords = this.orders[0].totalRecords;
+            if (this.orders.length > 0) {
+              this.dataSearch.totalRecords = this.orders[0].totalRecords;
+            }
           }
         },
         complete() {
@@ -121,7 +123,7 @@ export class OrderListComponent implements OnInit {
   openModalMaintenance(id: number) {
     const modalRef = this.modalService.openModalCustom(
       OrderMaintenanceModalComponent,
-      { centered: true, size: 'lg' }
+      { centered: true, size: 'xl' }
     );
     modalRef.componentInstance.params = { id };
   }
