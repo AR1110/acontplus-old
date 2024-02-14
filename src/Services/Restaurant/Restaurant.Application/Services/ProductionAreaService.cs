@@ -3,20 +3,16 @@ using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Restaurant.Core.Interfaces;
-using Restaurant.Infrastructure.Data;
 
 namespace Restaurant.Application.Services
 {
     public class ProductionAreaService : IProductionAreaService
     {
         private readonly IADORepository _repository;
-        private readonly RestaurantContext _context;
-        private readonly ApiResponse _response;
 
         public ProductionAreaService(IADORepository repository)
         {
             _repository = repository;
-            _response = new ApiResponse();
         }
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)

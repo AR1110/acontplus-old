@@ -89,7 +89,7 @@ namespace Inventario.API.Controllers.v1
 
             ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
-            var data = JsonConvert.DeserializeObject<ApiRequest>(json); 
+            var data = JsonConvert.DeserializeObject<ApiRequest>(json);
 
             try
             {
@@ -113,7 +113,7 @@ namespace Inventario.API.Controllers.v1
 
                 _log.LogActivity("Error al insertar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar articulo");
-                
+
             }
             finally
             {
@@ -132,7 +132,7 @@ namespace Inventario.API.Controllers.v1
             ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<ApiRequest>(json);
-            
+
             try
             {
                 await _db.SPExecute("Inventario.Articulo_Update");

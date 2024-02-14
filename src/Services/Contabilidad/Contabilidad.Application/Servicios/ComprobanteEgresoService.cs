@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Core.Interfaces;
+﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Contabilidad.Core.Interfaces;
@@ -11,7 +6,7 @@ using Contabilidad.Infrastructure.Data;
 
 namespace Contabilidad.Application.Servicios
 {
-    public class ComprobanteEgresoService: IComprobanteEgresoService
+    public class ComprobanteEgresoService : IComprobanteEgresoService
     {
         private readonly IADORepository _repository;
         private readonly ContabilidadContext _context;
@@ -42,7 +37,7 @@ namespace Contabilidad.Application.Servicios
         {
             return await _repository.SPExecuteAsync("GestFinanc.ComprobanteEgreso_Insert", parameters);
         }
-         
+
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {

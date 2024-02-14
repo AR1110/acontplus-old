@@ -1,10 +1,9 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace Contabilidad.API.Controllers
 {
@@ -63,7 +62,7 @@ namespace Contabilidad.API.Controllers
             }
         }
 
-  
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Cancel(int id, string observacion)

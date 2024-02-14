@@ -49,7 +49,7 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
-            
+
             try
             {
                 if (file != null)
@@ -71,7 +71,7 @@ namespace Restaurant.API.Controllers
                 dynamic decode = JsonConvert.DeserializeObject(response);
 
                 if (decode.code == "1" && file != null)
-                { 
+                {
                     var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                     _s3ObjectCustom.Dispose();
                 }
@@ -90,7 +90,7 @@ namespace Restaurant.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json, IFormFile file)
         {
-            
+
             try
             {
                 if (file != null)

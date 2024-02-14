@@ -13,7 +13,7 @@ namespace Common.API.Extensions
             IConfiguration configuration)
         {
             services.AddDbContextPool<CommonContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))); 
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<INotificacionService, NotificacionService>();
             services.AddSingleton<LogWriter>();
             return services;

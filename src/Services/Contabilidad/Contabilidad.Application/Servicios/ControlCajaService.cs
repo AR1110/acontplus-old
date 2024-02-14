@@ -37,7 +37,7 @@ namespace Contabilidad.Application.Servicios
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-        {            
+        {
             return await _repository.SPExecuteAsync("", parameters);
         }
     }

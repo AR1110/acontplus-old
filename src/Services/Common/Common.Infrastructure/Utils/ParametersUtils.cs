@@ -1,7 +1,7 @@
-﻿using System.Data.Common;
-using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using System.Data;
+using System.Data.Common;
 using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
 
 namespace Common.Infrastructure.Utils
 {

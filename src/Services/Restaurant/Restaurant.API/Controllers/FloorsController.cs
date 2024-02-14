@@ -90,7 +90,7 @@ namespace Restaurant.API.Controllers
 
             floor.Deleted = true;
             floor.Enabled = false;
-            floor.UserId = User.GetUserId(); 
+            floor.UserId = User.GetUserId();
             try
             {
                 _context.Update(floor);

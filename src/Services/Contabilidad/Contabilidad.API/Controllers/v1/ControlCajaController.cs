@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Contabilidad.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
 using Services.Common;
-using Common.Core.Models;
+using Services.Common.Logs;
 
 namespace Contabilidad.API.Controllers.v1
 {

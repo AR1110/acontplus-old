@@ -2,10 +2,8 @@
 using Common.Core.Utils;
 using Customer.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Customer.API.Controllers
 {
@@ -39,9 +37,9 @@ namespace Customer.API.Controllers
             try
             {
                 var response = await _companyCustomer.AddAsync(new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() }, 
+                    { "userRoleId", User.GetUserRoleId() },
                     { "json",  DataConverters.SerializeDictionary(request.Data)
-                    } 
+                    }
                 });
                 if (response == null) { return BadRequest("Cant Save"); }
                 return Ok(response);
@@ -54,14 +52,14 @@ namespace Customer.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,ApiRequest request)
+        public async Task<IActionResult> Put(int id, ApiRequest request)
         {
             try
             {
-                var response = await _companyCustomer.UpdateAsync(new Dictionary<string, object> { 
-                    { "userRoleId", User.GetUserRoleId() }, 
-                    { "id", id }, 
-                    { "json",  DataConverters.SerializeDictionary(request.Data) } 
+                var response = await _companyCustomer.UpdateAsync(new Dictionary<string, object> {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "id", id },
+                    { "json",  DataConverters.SerializeDictionary(request.Data) }
                 });
                 if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("Cant Save"); }
                 return Ok(response);
@@ -94,8 +92,8 @@ namespace Customer.API.Controllers
         {
             try
             {
-                var response = await _companyCustomer.GetIdAsync(new Dictionary<string, object> { 
-                    { "id", id } 
+                var response = await _companyCustomer.GetIdAsync(new Dictionary<string, object> {
+                    { "id", id }
                 });
                 return Ok(response);
             }

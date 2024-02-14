@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Contabilidad.Core.Interfaces
+﻿namespace Contabilidad.Core.Interfaces
 {
     public interface IAnticipoService
     {

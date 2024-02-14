@@ -2,7 +2,6 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Entities;
 using TechnicalSupport.API.Interfaces;
 namespace TechnicalSupport.API.Services
 {

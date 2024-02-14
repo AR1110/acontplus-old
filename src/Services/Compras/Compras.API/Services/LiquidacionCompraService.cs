@@ -5,7 +5,7 @@ using Compras.API.Interfaces;
 
 namespace Compras.API.Services
 {
-    public class LiquidacionCompraService: ILiquidacionCompraService
+    public class LiquidacionCompraService : ILiquidacionCompraService
     {
         private readonly IADORepository _repository;
         public LiquidacionCompraService(IADORepository repository)
