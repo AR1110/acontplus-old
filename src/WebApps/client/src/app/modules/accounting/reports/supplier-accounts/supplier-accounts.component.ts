@@ -43,7 +43,8 @@ export class SupplierAccountsComponent {
     supplierChecked: false,
     supplierName: '',
     ckCxcVencida: false,
-    ckCuotas: false
+    ckCuotas: false,
+    ckFecha: true
   }
 
   isSearchSupplierSimple = true;
@@ -170,7 +171,7 @@ export class SupplierAccountsComponent {
     const dataParms = {
       tipo: 2,
       format,
-      ckFecha: true,
+      ckFecha: this.dataSearch.ckFecha,
       codEstab: isValidField(this.dataSearch.codEstab),
       codDoc: isValidField(this.dataSearch.codDoc),
       idProveedor: this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor) || null,

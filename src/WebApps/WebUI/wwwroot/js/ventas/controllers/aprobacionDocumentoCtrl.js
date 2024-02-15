@@ -2034,13 +2034,12 @@
         }
 
         function calculateTotalItems(items) {
-            return items.map(item => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
+            return items.map(item => { 
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.valorDescuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle),
                     porcentajeDescuento: fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje)
                 }
@@ -2985,13 +2984,12 @@
         }
 
         function calculateTotalItems(items) {
-            return items.map(item => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
+            return items.map(item => { 
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.valorDescuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle),
                     porcentajeDescuento: fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje)
                 }
@@ -3945,14 +3943,13 @@
         }
 
         function calculateTotalItems(items) {
-            return items.map((item, index) => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
+            return items.map((item, index) => { 
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.descuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     n: index + 1,
                     ...item,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle),
                     porcentajeDescuento: fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje),
                     valorDescuento: item.descuento,
