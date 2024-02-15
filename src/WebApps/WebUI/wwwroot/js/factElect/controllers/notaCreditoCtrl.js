@@ -432,13 +432,12 @@
 
 
         function calculateTotalItems(items) {
-            return items.map(item => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
+            return items.map(item => { 
                 let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
                 let total = precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
                 }
