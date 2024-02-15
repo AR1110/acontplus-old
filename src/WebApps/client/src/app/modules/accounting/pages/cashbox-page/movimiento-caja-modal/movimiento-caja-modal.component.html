@@ -20,7 +20,11 @@
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="estado">Estado: </label>
-        <select class="form-select" [(ngModel)]="dataSearch.statusMovement" (change)="getMovimientosCaja()">
+        <select
+          class="form-select"
+          [(ngModel)]="dataSearch.statusMovement"
+          (change)="getMovimientosCaja()"
+        >
           <option value="">Todos</option>
           @for (item of estadosMovimiento; track $index) {
           <option [ngValue]="item.estado">{{ item.descripcion }}</option>
@@ -48,7 +52,11 @@
     </div>
     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
       <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-success btn-sm" (click)="refresh()">
+        <button
+          type="button"
+          class="btn btn-success btn-sm"
+          (click)="refresh()"
+        >
           <fa-icon [icon]="'redo'"></fa-icon>
         </button>
         <!-- <form class="form-material">
@@ -101,13 +109,25 @@
                 <fa-icon [icon]="['far', 'file-pdf']"></fa-icon>
               </button>
               }
+              <button
+                type="button"
+                class="btn btn-success btn-sm btn-circle text-white ml-5"
+                [ngbPopover]="popContentReporteTransaccionPendiente"
+                [autoClose]="'outside'"
+                [popoverTitle]="'Reporte Transacciones pendientes'"
+                (shown)="recordShownTransactionPending(item)"
+              >
+                <fa-icon [icon]="['fas', 'money-bill-transfer']"></fa-icon>
+              </button>
 
-              <!-- <button
-                  type="button"
-                  class="btn btn-success btn-sm btn-circle text-white"
-                >
-                  <i class="icons-Box-Full"></i>
-                </button> -->
+              <button
+                type="button"
+                class="btn btn-warning btn-sm btn-circle text-white ml-5"
+                ngbTooltip="Reporte Detalle Control Caja"
+                (click)="openModalReporteFiltroDetalleCaja(item)"
+              >
+                <fa-icon [icon]="['fas', 'table-list']"></fa-icon>
+              </button>
             </div>
           </td>
           <td>{{ $index + 1 }}</td>
@@ -148,6 +168,27 @@
       </tfoot>
     </table>
   </div>
+
+  <ng-template #popContentReporteTransaccionPendiente>
+    <div class="d-grid gap-2 d-md-flex justify-content-center">
+      <button
+        class="btn btn-warning me-md-2"
+        type="button"
+        (click)="getReportTransactionPending('pdf')"
+      >
+        <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
+        PDF
+      </button>
+      <button
+        class="btn btn-success"
+        type="button"
+        (click)="getReportTransactionPending('excel')"
+      >
+        <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
+        EXCEL
+      </button>
+    </div>
+  </ng-template>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-dark" (click)="closeModal()">
