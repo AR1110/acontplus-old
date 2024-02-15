@@ -22,7 +22,8 @@
             checkBoxFecha: true,
             fechaInicio: new Date(),
             fechaFin: new Date(),
-            codEstado: 0
+            codEstado: 0,
+            ckCxcVencida: false
         }
         $scope.cliente = {};
 
@@ -94,7 +95,8 @@
                 fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                 codEstado: fS.isValidField($scope.dataSearch.codEstado),
                 idCliente: fS.isValidField($scope.dataSearch.idCliente),
-                codDoc: fS.isValidField(getCodigoTipoDoc())
+                codDoc: fS.isValidField(getCodigoTipoDoc()),
+                ckCxcVencida: $scope.dataSearch.ckCxcVencida
             }
             $scope.selectedDocumentos = [];
             $scope.cuentasPorCobrar = [];
