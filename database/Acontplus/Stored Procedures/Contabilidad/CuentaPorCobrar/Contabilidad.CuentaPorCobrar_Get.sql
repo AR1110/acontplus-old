@@ -202,7 +202,8 @@ BEGIN
 
 		    SELECT TOP 1 cl.numeroIdentificacion
 						,cl.nombreFiscal
-						,fechaEmision     = FORMAT(cc.fechaEmision,'dd/MM/yyyy')
+						,fechaEmision
+                        ,fechaVencimiento
 						,serieComprobante = cc.serieComprobante 
 						,importeTotal     = cc.importeTotal
 						,cc.idTiempoCredito
