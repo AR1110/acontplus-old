@@ -14,8 +14,28 @@
           <label for="supplierChecked">Proveedor</label>
         </div>
       </div>
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-primary">
+          <input
+            type="checkbox"
+            id="ckCxcVencida"
+            [(ngModel)]="dataSearch.ckCxcVencida"
+            name="ckCxcVencida"
+          />
+          <label for="ckCxcVencida">Vencidas</label>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-primary">
+          <input
+            type="checkbox"
+            id="ckCuotas"
+            [(ngModel)]="dataSearch.ckCuotas"
+            name="ckCuotas"
+          />
+          <label for="ckCuotas">Cuotas</label>
+        </div>
+      </div>
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
     </div>
     <hr />

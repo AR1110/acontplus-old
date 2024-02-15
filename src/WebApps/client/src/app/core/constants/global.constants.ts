@@ -67,7 +67,8 @@ export enum CODE_REPORT {
   RRF = 'RRF', //Reporte Recepcion Factura
   RRNC = 'RRNC', //Recepcion Nota Credito
   RRG = 'RRG', //Recepcion Retencion General
-  CCP ='CCP' //Contabilidad Cartera Proveedor
+  CCP ='CCP', //Contabilidad Cartera Proveedor
+  CCPC='CCPC' //Contabilidad Cartera Proveedor Cuota
 }
 
 // Example usage:
