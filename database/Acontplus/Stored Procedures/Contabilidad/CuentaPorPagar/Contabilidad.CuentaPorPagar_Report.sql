@@ -31,7 +31,7 @@ BEGIN
     SET LANGUAGE SPANISH;
 
     --> Globales
-	DECLARE @idEntidad INT ,@tipo INT
+	DECLARE @idEntidad INT ,@tipo INT ,@usuario VARCHAR(150) 
 
     --> Sql 
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
@@ -42,7 +42,7 @@ BEGIN
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-    SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+    SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
     
     --> Reporte De compras
     IF @tipo = 1
@@ -273,6 +273,18 @@ BEGIN
                 END 
 
             SET @sql = @sql + 'ORDER BY cc.fechaEmision,cc.idProveedor,cc.codDoc ASC '
+
+             SELECT en.razonSocial
+                  ,es.nombreComercial
+                  ,es.ruc
+                  ,es.telefono
+                  ,es.dirEstablecimiento
+                  ,@usuario             as usuario 
+                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFechas
+                  ,'Cartera de Proveedor' as nombreReporte
+            FROM Sri.Establecimiento es WITH (NOLOCK)
+            INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.ruc = es.ruc
+            WHERE codEstab = @codEstab
 
             EXEC sp_executesql @sql
 						      ,@params 
