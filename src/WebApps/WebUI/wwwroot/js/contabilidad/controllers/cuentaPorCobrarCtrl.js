@@ -23,7 +23,7 @@
             fechaInicio: new Date(),
             fechaFin: new Date(),
             codEstado: 0,
-            ckCxcVencida: false
+            ckCxcVencida: false, 
         }
         $scope.cliente = {};
 
@@ -96,7 +96,7 @@
                 codEstado: fS.isValidField($scope.dataSearch.codEstado),
                 idCliente: fS.isValidField($scope.dataSearch.idCliente),
                 codDoc: fS.isValidField(getCodigoTipoDoc()),
-                ckCxcVencida: $scope.dataSearch.ckCxcVencida
+                ckCxcVencida: fS.isValidField($scope.dataSearch.ckCxcVencida)
             }
             $scope.selectedDocumentos = [];
             $scope.cuentasPorCobrar = [];

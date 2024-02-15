@@ -6,6 +6,21 @@
 @import "ngx-toastr/toastr";
 @import "perfect-scrollbar";
 
+body {
+  font-family: "Poppins", sans-serif !important;
+}
+
+button, html, input, select, textarea {
+  font-family: Roboto,Helvetica Neue,sans-serif !important;
+}
+
+.form-control  {
+  font-size: 0.875rem !important;
+}
+.form-select {
+  font-size: 0.875rem !important;
+
+}
 table {
   width: 100%;
 }
