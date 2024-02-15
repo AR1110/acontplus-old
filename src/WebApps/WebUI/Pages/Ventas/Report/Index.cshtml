@@ -10,7 +10,7 @@
 <div ng-controller="reporteContabilidadCtrl">
     <div class="row page-titles">
 	<div class="col-md-5 align-self-center">
-		<h5 class="text-themecolor">Reporte Cartera Clientes</h5>
+		<h5 class="text-themecolor">Cartera de Clientes</h5>
 	</div> 
     <div class="col-md-7 align-self-center text-right">
         <div class="d-flex justify-content-end align-items-center">
@@ -20,11 +20,51 @@
 </div> 
 
 <div class="card">
-	<div class="card-body">
+	<div class="card-body"> 
+        <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="icheck-primary">
+                <input
+                    type="checkbox"
+                    id="ckFecha"
+                    ng-model="dataSearch.ckFecha"
+                    name="ckFecha"
+                />
+                <label for="ckFecha">Rango Fecha</label>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="icheck-primary">
+                <input
+                    type="checkbox"
+                    id="checkboxCompanyCustomer"
+                    ng-model="dataSearch.checkboxCompanyCustomer"
+                    name="checkboxCompanyCustomer"
+                />
+                <label for="checkboxCompanyCustomer">Cliente</label>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="icheck-primary">
+                    <input type="checkbox" id="ckCxcVencida" ng-model="dataSearch.ckCxcVencida" />
+                        <label for="ckCxcVencida">Vencidas</label>
+                </div> 
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="icheck-primary">
+                        <input type="checkbox" id="ckCuotas" ng-model="dataSearch.ckCuotas" />
+                        <label for="ckCuotas">Cuotas</label>
+                    </div> 
+            </div>
+            <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+            </div>
+            <hr />
+            
 		<div class="row">
 			<div class="col-lg-3 col-md-3 col-sm-6 col-12">
 				<div class="form-group">
-					<span for="estabs">Estab: <span class="text-danger">*</span></span>
+					<label for="estabs">Estab: <span class="text-danger">*</span></label>
 					<select
 						name="estabs"
 						id="estabs"
@@ -42,7 +82,7 @@
 			</div>
 			<div class="col-lg-2 col-md-2 col-sm-6 col-12">
 				<div class="form-group">
-					<span for="estabs">Pto. emisión: <span class="text-danger">*</span></span>
+					<label for="estabs">Pto. emisión: <span class="text-danger">*</span></label>
 					<select
 						name="estabs"
 						id="estabs"
@@ -56,28 +96,14 @@
 				</div>
 			</div>
 			<div class="col-lg-4 col-md-4 col-sm-6 col-12">
-                <span for="date-range-filter">Rango Fechas: </span>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <div class="custom-control custom-checkbox mr-sm-2">
-                                            <input type="checkbox"
-                                                   ng-model="dataSearch.ckFecha" 
-                                                   class="custom-control-input"
-                                                   id="ckFecha">
-                                            <label class="custom-control-label" for="ckFecha"></label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <date-range-filter current-date="dataSearch.fechaInicio"
-                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
-                            </div>
+                <label for="date-range-filter">Rango Fechas: </label>  
+                <date-range-filter current-date="dataSearch.fechaInicio"
+                                    start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                    result-range-date="resultRangeFilter(result)"></date-range-filter> 
 			</div>
 			<div class="col-lg-3 col-md-3 col-sm-6 col-12">
 				<div class="form-group">
-					<span for="estadosDoc">Estado:</span>
+					<label for="estadosDoc">Estado:</label>
 					<select
 						name="estadosDoc"
 						id="estadosDoc"
@@ -93,9 +119,9 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
+			<div class="col-lg-3 col-md-3 col-sm-12 col-12">
 				<div class="form-group">
-					<span for="tipoDoc">Tipo Doc.</span>
+					<label for="tipoDoc">Tipo Doc.</label>
 					<select
 						name="tipoDoc"
 						id="tipoDoc"
@@ -109,9 +135,9 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-lg-4 col-md-4 col-sm-12 col-12">
+			<div class="col-lg-6 col-md-6 col-sm-12 col-12">
                  <div class="form-group">
-                                <span for="clienteFiltro">Cliente</span>
+                                <label for="clienteFiltro">Cliente</label>
                                 <input type="text" id="customerInputSearch" class="form-control border-select"
                                        ng-model="cliente.nombreCliente" cliente-search-drtv
                                        on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
@@ -124,29 +150,14 @@
                                 </script>
                             </div>
 			</div>
-			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
-				<div class="form-group mt-4">
-                    <div class="icheck-primary">
-                        <input type="checkbox" id="ckCuotas" ng-model="dataSearch.ckCuotas" />
-                        <label for="ckCuotas">Cuotas</label>
-                    </div> 
-				</div>  
-			</div>
-			<div class="col-lg-2 col-md-2 col-sm-12 col-12">
-                <div class="form-group mt-4">
-                    <div class="icheck-primary">
-                        <input type="checkbox" id="ckCxcVencida" ng-model="dataSearch.ckCxcVencida" />
-                            <label for="ckCxcVencida">Vencidas</label>
-                    </div> 
-				</div>     
-			</div>
+			 
 		</div>
 	</div>
 	<div class="card-footer">
-		<button class="btn btn-success" ng-click="getReport('pdf')">
+		<button class="btn btn-danger" ng-click="getReport('pdf')">
 			PDF 
 		</button>
-		<button class="btn btn-info" ng-click="getReport('excel')">
+		<button class="btn btn-success" ng-click="getReport('excel')">
 			 
 			Excel
 		</button>
@@ -154,7 +165,6 @@
 </div>
 
 </div>
-@section Scripts {
-    <script src="~/js/contabilidad/services/contabilidadService.js" asp-append-version="true"></script>
+@section Scripts { 
     <script src="~/js/contabilidad/controllers/reporteContabilidadCtrl.js" asp-append-version="true"></script>
 }
