@@ -64,6 +64,7 @@ BEGIN
                 ,dc.CustomerCompanyId
                 ,dc.SerialNumber        AS Serie
                 ,dc.Warranty
+                ,ds.Id                  AS DeviceSpecId
                 ,ISNULL(ds.Specs, '{}') AS Specs
             FROM TechnicalSupport.Device d
             LEFT JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId

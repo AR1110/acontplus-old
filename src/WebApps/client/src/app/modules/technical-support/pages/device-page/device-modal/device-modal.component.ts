@@ -7,6 +7,7 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Device, DeviceSpecs } from '@modules/technical-support/models/device.model';
 import { DeviceService } from '@modules/technical-support/services/device.service';
+import { DeviceSpecsService } from '@modules/technical-support/services/device.spec.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,6 +24,7 @@ export class DeviceModalComponent implements OnInit {
   @Input() params = {} as Device;
 
   private deviceService = inject(DeviceService);
+  private deviceSepcsService = inject(DeviceSpecsService);
   private activeModal = inject(NgbActiveModal);
   private fb = inject(FormBuilder);
   private modalRef = inject(NgbActiveModal);
@@ -37,6 +39,9 @@ export class DeviceModalComponent implements OnInit {
   specsType: any = [];
   isUpdate = false;
 
+  validations = [null, '', undefined];
+  validationsNumbers = [0, '', null, undefined];
+
   device: Device = {
     id: 0,
     categoryId: 0,
@@ -48,14 +53,13 @@ export class DeviceModalComponent implements OnInit {
     warranty: 0,
     color: '',
     customers: [],
+    deviceSpecId: 0,
   };
 
   deviceSpecs: DeviceSpecs = {
+    deviceId: 0,
     specs: '',
   };
-
-  validations = [null, '', undefined];
-  validationsNumbers = [0, '', null, undefined];
 
   deviceFormGroup: IForm<Device> = {
     categoryId: [0, Validators.required],
@@ -67,14 +71,12 @@ export class DeviceModalComponent implements OnInit {
     warranty: [''],
     color: ['', Validators.required],
   };
-
   deviceForm = this.fb.group(this.deviceFormGroup);
 
   specForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
     value: new FormControl('', [Validators.required, Validators.minLength(3)]),
   });
-
   specTypeForm = new FormGroup({
     specName: new FormControl('', [
       Validators.required,
@@ -91,21 +93,24 @@ export class DeviceModalComponent implements OnInit {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Equipo';
       this.isUpdate = true;
-      this.setDataSpecs(this.params.specs);
+      this.setDataSpecs(this.device);
     } else {
-      this.isUpdate = false;
       this.modalIcon = 'plus';
       this.modalTitle = 'Nuevo Equipo';
+      this.isUpdate = false;
     }
   }
 
-  setDataSpecs(specs: any) {
-    for (const item in specs) {
+  setDataSpecs(device: Device) {
+    this.deviceSpecs.deviceId = device.id;
+    let specsTemp: any = device.specs;
+
+    for (const item in specsTemp) {
       this.specsType.push({
-        uuid: specs[item][0].uuid,
+        uuid: specsTemp[item][0].uuid,
         name: item,
       });
-      this.specs = this.specs.concat(specs[item]);
+      this.specs = this.specs.concat(specsTemp[item]);
     }
   }
 
@@ -176,24 +181,12 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onUpdate() {
-    let specsTemp = {};
-    if (!this.onValidate(Object.assign(this.device, this.deviceForm.value))) {
-      return;
-    }
+    const deviceUpdate = Object.assign(this.device, this.deviceForm.value);
+
+    if (!this.onValidate(deviceUpdate)) return;
     if (!this.onValidateSpecs()) return;
 
-    this.device.customers = [];
-    specsTemp = Object.fromEntries(
-      this.specsType.map(({ uuid, name }: any) => [
-        name,
-        this.specs.filter((x: any) => x.uuid == uuid),
-      ])
-    );
-
-    this.device.specs = Object.assign(this.deviceSpecs, {
-      specs: JSON.stringify(specsTemp),
-    });
-    const deviceUpdate = Object.assign(this.device, this.deviceForm.value);
+    this.onUpdateSpecs();
 
     showLoader();
     this.deviceService.put(this.device.id, deviceUpdate).subscribe({
@@ -223,6 +216,42 @@ export class DeviceModalComponent implements OnInit {
     });
   }
 
+  onUpdateSpecs() {
+    let specsTemp = {};
+
+    specsTemp = Object.fromEntries(
+      this.specsType.map(({ uuid, name }: any) => [
+        name,
+        this.specs.filter((x: any) => x.uuid == uuid),
+      ])
+    );
+
+    this.device.specs = Object.assign(this.deviceSpecs, {
+      specs: JSON.stringify(specsTemp),
+    });
+
+    this.deviceSepcsService.put(this.device.deviceSpecId!, this.device.specs).subscribe({
+      next: (response) => {
+        if (isApiResponse(response)) {
+          if (response.code == '0') {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message,
+            });
+            return;
+          }
+          this.tS.toastr({
+            type: 'success',
+            message: response.message,
+          });
+        }
+      },
+      error(error) {
+        console.log(error);
+      },
+    });
+  }
+
   onValidate(device: Device) {
     let isValid = true;
 
@@ -237,14 +266,6 @@ export class DeviceModalComponent implements OnInit {
 
       if (this.validations.includes(device.name)) {
         this.tS.toastr({ type: 'warning', message: `El nombre es requerido` });
-        isValid = false;
-      }
-
-      if (this.validations.includes(device.serie)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: `La IMEI/Serie es requerido`,
-        });
         isValid = false;
       }
       if (this.validations.includes(device.brand)) {
@@ -325,7 +346,7 @@ export class DeviceModalComponent implements OnInit {
   }
 
   removeSpec(index: any) {
-    this.specs.splice(index, 1);
+    this.specsTemp.splice(index, 1);
   }
 
   filterAccordion(uuid: string) {

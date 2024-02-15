@@ -47,23 +47,6 @@
 
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
         <div class="form-group">
-          <label for="serie"
-            >IMEI/Serie:
-            <span class="text-danger">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="serie"
-            id="serie"
-            class="form-control border-select"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
-        <div class="form-group">
           <label for="brand"
             >Marca:
             <span class="text-danger">*</span>
@@ -76,6 +59,9 @@
           />
         </div>
       </div>
+    </div>
+
+    <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
         <div class="form-group">
           <label for="model">Modelo: </label>
@@ -99,22 +85,6 @@
           />
         </div>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
-        <div class="form-group">
-          <label for="warranty">Garantía: </label>
-          <input
-            type="number"
-            formControlName="warranty"
-            id="warranty"
-            class="form-control border-select"
-            step="any"
-            maxlength="4"
-          />
-        </div>
-      </div>
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
         <div class="form-group">
           <label for="color">Color: </label>
@@ -127,7 +97,6 @@
         </div>
       </div>
     </div>
-
     <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <form [formGroup]="specForm">

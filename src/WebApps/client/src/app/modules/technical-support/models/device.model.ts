@@ -10,6 +10,7 @@ export interface Device {
   color: string;
   customers?: DeviceCustomer[];
   specs?: DeviceSpecs;
+  deviceSpecId?: number;
 }
 
 export interface DeviceCustomer {
