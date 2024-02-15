@@ -116,12 +116,12 @@
                           formControlName="specName"
                           id="specName"
                           class="form-control"
-                          (keydown.enter)="addSpecType()"
+                          (keydown.enter)="addSpecTypeDevice()"
                         />
                         <button
                           type="button"
                           class="btn btn-success btn-sm"
-                          (click)="addSpecType()"
+                          (click)="addSpecTypeDevice()"
                         >
                           <fa-icon [icon]="'plus'"></fa-icon>
                         </button>
@@ -131,9 +131,9 @@
                 </div>
               </div>
 
-              @if(specsType.length > 0){
+              @if(deviceSpec.length > 0){
               <div ngbAccordion [closeOthers]="true">
-                @for (item of specsType; track $index) {
+                @for (item of deviceSpec; track $index) {
                 <div ngbAccordionItem [collapsed]="$index !== 0">
                   <h2 ngbAccordionHeader>
                     <button
@@ -168,12 +168,12 @@
                                   formControlName="value"
                                   id="value"
                                   class="form-control"
-                                  (keydown.enter)="addSpec(item.uuid)"
+                                  (keydown.enter)="addSpecsDevice(item.uuid)"
                                 />
                                 <button
                                   type="button"
                                   class="btn btn-success btn-sm"
-                                  (click)="addSpec(item.uuid)"
+                                  (click)="addSpecsDevice(item.uuid)"
                                   [disabled]="!specForm.valid"
                                 >
                                   <fa-icon [icon]="'plus'"></fa-icon>
@@ -182,7 +182,7 @@
                             </div>
                           </div>
                         </div>
-                        @if (specsTemp.length > 0){
+                        @if (item.specs.length > 0){
                         <div class="row">
                           <div class="col">
                             <div class="table-responsive">
@@ -195,7 +195,7 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  @for (spec of specsTemp; track $index){
+                                  @for (spec of item.specs; track $index){
                                   <tr>
                                     <td>{{ spec.name }}</td>
                                     <td>{{ spec.value }}</td>
@@ -203,7 +203,7 @@
                                       <button
                                         type="button"
                                         class="btn btn-outline-danger btn-sm"
-                                        (click)="removeSpec($index)"
+                                        (click)="removeSpec($index, item.uuid)"
                                       >
                                         <fa-icon
                                           [icon]="'trash'"
