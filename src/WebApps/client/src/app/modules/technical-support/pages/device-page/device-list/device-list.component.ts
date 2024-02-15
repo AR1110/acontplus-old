@@ -61,6 +61,10 @@ export class DeviceListComponent implements OnInit {
       next: (response) => {
         if (isApiResponse(response)) {
           let tempArray = JSON.parse(response.payload as string);
+
+          tempArray.devices.forEach((device: any) => {
+            device.specs = JSON.parse(device.specs);
+          });
           this.devices = tempArray.devices;
         }
       },
