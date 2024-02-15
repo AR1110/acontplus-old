@@ -119,7 +119,7 @@ BEGIN
 			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
 			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                                  AND di.CodePercentage IN (''2'',''8'')
+			                                  AND di.CodePercentage IN (''2'',''8'',''3'')
 	                                  ),0) as subTotalIva
 
 	                                  ,ISNULL

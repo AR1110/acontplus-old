@@ -194,7 +194,7 @@ BEGIN
 						END
                     ELSE 
                         BEGIN
-                            SELECT @idProveedor = @idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)) 
+                            SELECT @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)) 
                         END 
 				END
 				--> Contabilidad
