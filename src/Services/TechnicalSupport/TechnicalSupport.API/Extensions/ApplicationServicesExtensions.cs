@@ -11,6 +11,7 @@ namespace TechnicalSupport.API.Extensions
             services.AddDbContextPool<TechnicalSupportContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddScoped<IDeviceSpecService, DeviceSpecService>();
             services.AddScoped<IDeviceService, DeviceService>();
             services.AddScoped<IOrderService, OrderService>();
 
