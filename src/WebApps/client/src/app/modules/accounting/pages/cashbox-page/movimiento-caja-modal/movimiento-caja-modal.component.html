@@ -103,10 +103,13 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm btn-circle text-white"
-                ngbTooltip="Reporte PDF"
-                (click)="getReport(item.id)"
+                [ngbPopover]="popContentReporteControlCaja"
+                [autoClose]="'outside'"
+                [popoverTitle]="'Reporte Control Caja'"
+                (shown)="recordShownTransactionPending(item)"
+
               >
-                <fa-icon [icon]="['far', 'file-pdf']"></fa-icon>
+                <fa-icon [icon]="['far', 'file']"></fa-icon>
               </button>
               }
               <button
@@ -189,6 +192,28 @@
       </button>
     </div>
   </ng-template>
+
+  <ng-template #popContentReporteControlCaja>
+    <div class="d-grid gap-2 d-md-flex justify-content-center">
+      <button
+        class="btn btn-warning me-md-2"
+        type="button"
+        (click)="getReportControlCajaPDF()"
+      >
+        <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
+        PDF
+      </button>
+      <button
+        class="btn btn-success"
+        type="button"
+        (click)="getReportControlCajaEXCEL()"
+      >
+        <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
+        EXCEL
+      </button>
+    </div>
+  </ng-template>
+
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-dark" (click)="closeModal()">
