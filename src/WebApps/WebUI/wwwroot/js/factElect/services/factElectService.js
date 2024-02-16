@@ -532,7 +532,7 @@
                         }
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
- 
+
                         let precioTotalSinImpuesto = ((itemPrincipal.precioUnitario * itemPrincipal.cantidad)) - itemPrincipal.valorDescuento;
                         let total = precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
 
@@ -786,6 +786,8 @@
     app.factory('notaCreditoService', function ($injector) {
         const mS = $injector.get('mainService');
         const fS = $injector.get('formulario');
+        const pricingUtils = $injector.get('pricingUtils')
+
         const URL = 'FactElect/NotaCredito/'
         const service = {};
 
@@ -930,11 +932,19 @@
                         fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                     }
 
+                    let resultsItems = mainDetalle.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
+
                     return {
                         data: comprobante,
                         factura: mainDataFactura.length > 0 ? mainDataFactura[0] : {},
                         cliente: mainDataCliente[0],
-                        items: mainDetalle,
+                        items: resultsItems,
                         infoAdicionalDocumento: mainInfoAdicional
                     }
 
@@ -983,6 +993,7 @@
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
                         let obj = {
                             n: index + 1,
@@ -1002,7 +1013,7 @@
                             llevaInventario: itemPrincipal.llevaInventario,
                             nota: itemPrincipal.nota,
                             porcentajeDescuento: itemPrincipal.porcentajeDescuento,
-                            precioConIva: itemPrincipal.precioConIva,
+                            precioConIva: precioConIva || 0,
                             precioCosto: itemPrincipal.precioCosto,
                             precioUnitario: itemPrincipal.precioUnitario,
                             tarifa: itemPrincipal.tarifa,//✅

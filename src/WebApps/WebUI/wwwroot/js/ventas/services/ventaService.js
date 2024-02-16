@@ -916,7 +916,8 @@
     app.factory('proformaService', function ($injector) {
         let url = `${URL_API}Proforma/`;
         let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario')
+        let fS = $injector.get('formulario');
+        const pricingUtils = $injector.get('pricingUtils')
 
         let service = {};
 
@@ -1104,6 +1105,7 @@
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
                         let obj = {
                             n: index + 1,
                             idProformaDetalle: restItem.idProformaDetalle,
@@ -1125,6 +1127,7 @@
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
                             precioCosto: 0,
                             precioUnitario: restItem.precioUnitario,
+                            precioConIva: precioConIva || 0,
                             tarifa: restItem.tarifa,//✅
                             valorDescuento: restItem.valorDescuento,
                             valorImpuesto: restItem.valorImpuesto,//✅
@@ -1182,10 +1185,19 @@
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                     }
+
+                    let resultsItems = items.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
+
                     return {
                         data,
                         cliente,
-                        items,
+                        items: resultsItems,
                         tarifasImpuesto
                     }
 
@@ -1208,6 +1220,9 @@
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+
                         let obj = {
                             n: index + 1,
                             idProformaDetalle: itemPrincipal.idProformaDetalle,
@@ -1229,6 +1244,7 @@
                             precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
                             precioCosto: 0,
                             precioUnitario: itemPrincipal.precioUnitario,
+                            precioConIva: precioConIva || 0,
                             tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅

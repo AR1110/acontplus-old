@@ -823,7 +823,7 @@
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', `${url}${id}`, null, true);
+            return mS.getData('delete', `${url}Delete/${id}`, null, true);
         }
 
 

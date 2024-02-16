@@ -3,7 +3,7 @@ import { CommonModule, NgOptimizedImage } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NgbDropdownModule, NgbModule, NgbPaginationModule, NgbTooltipModule, NgbTypeaheadModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbDropdownModule, NgbModule, NgbPaginationModule, NgbPopoverModule, NgbTooltipModule, NgbTypeaheadModule } from "@ng-bootstrap/ng-bootstrap";
 import { NgxFileDropModule } from "ngx-file-drop";
 
 
@@ -21,6 +21,7 @@ import { NgxFileDropModule } from "ngx-file-drop";
     NgbTooltipModule,
     NgOptimizedImage,
     NgxFileDropModule,
+    NgbPopoverModule
   ],
   exports: [
     CommonModule,
@@ -34,6 +35,7 @@ import { NgxFileDropModule } from "ngx-file-drop";
     NgbTooltipModule,
     NgOptimizedImage,
     NgxFileDropModule,
+    NgbPopoverModule
   ]
 })
 

@@ -7,6 +7,8 @@
         let url = 'Venta/AprobacionDocumento/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
+        const pricingUtils = $injector.get('pricingUtils')
+
         let service = {}
 
         service.getDataFilter = function () {
@@ -190,6 +192,8 @@
                             }))
                         }
 
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+
                         let obj = {
                             n: index + 1,
                             idAprob_Document_Detailt: restItem.idAprob_Document_Detailt,
@@ -211,6 +215,7 @@
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
                             precioCosto: restItem.precioCosto,
                             precioUnitario: restItem.precioUnitario,
+                            precioConIva: precioConIva || 0,
                             tarifa: restItem.tarifa,//✅
                             valorDescuento: restItem.descuento,
                             valorImpuesto: restItem.valorImpuesto,//✅
@@ -300,10 +305,20 @@
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                     }
+
+
+                    let resultsItems = itemsTemp.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
+
                     return {
                         comprobante: data,
                         cliente,
-                        items: itemsTemp,
+                        items: resultsItems,
                         historial: historialRepository || [],
                         tarifasImpuesto
                     }

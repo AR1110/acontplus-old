@@ -66,7 +66,7 @@ export class CashboxCloseModalComponent {
         Swal.fire({
           icon: 'warning',
           title: '<small>Cierre de Caja</small>',
-          html: `<small>Ingrese los valores validos</small>`
+          html: `<small>Ingrese los valores válidos</small>`
         });
         return
       }
@@ -138,8 +138,7 @@ export class CashboxCloseModalComponent {
   sendEmail<T extends { receptor: string, codEstab: string }>(dataMail: T) {
     try {
       const data = {
-        subject: 'Movimiento Caja',
-        //  idUsuarioRol: this.decodeToken.idUsuarioRol,
+        subject: 'Movimiento Caja', 
         receptor: dataMail.receptor,
         params: {
           hasFile: true,
@@ -151,7 +150,7 @@ export class CashboxCloseModalComponent {
             format: "pdf"
           },
           spParams: {
-            //    idUsuarioRol: this.decodeToken.idUsuarioRol,
+            tipo: 1,
             id: this.params.id
           }
         }
