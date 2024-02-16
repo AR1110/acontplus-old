@@ -27,6 +27,7 @@
     <None Remove="Reports\ConsumoIndividualTpv.rdl" />
     <None Remove="Reports\Contabilidad\CarteraProveedor.rdl" />
     <None Remove="Reports\Contabilidad\CarteraProveedorCuota.rdl" />
+    <None Remove="Reports\Contabilidad\DetalleControlCaja.rdl" />
     <None Remove="Reports\Contabilidad\GestionCaja.rdl" />
     <None Remove="Reports\FactElect\ComprobanteRetencion.rdl" />
     <None Remove="Reports\FactElect\Factura.rdl" />
@@ -99,6 +100,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Contabilidad\CarteraProveedorCuota.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Contabilidad\DetalleControlCaja.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl">
