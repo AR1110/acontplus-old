@@ -389,7 +389,7 @@ export class OrderModalComponent {
   searchDevice() {
     const modalDevice = this.modalService.openModalCustom(
       DeviceSearchModalComponent,
-      { size: 'sm' }
+      { size: 'lg' }
     );
     modalDevice.result.then((response) => {
       this.addDetail(response);
