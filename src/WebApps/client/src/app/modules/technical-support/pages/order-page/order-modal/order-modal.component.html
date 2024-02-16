@@ -78,25 +78,11 @@
     </div>
     <div class="row">
       <div class="col-6">
-        <div class="card rounded border border-info">
-          <div class="card-header">Datos cliente:</div>
-          <div class="card-body">
-            <!--Start section customer -->
-            <div class="form-group">
-              <label for="customerSearch"
-                >Cliente:
-                <span class="text-danger">*</span>
-              </label>
-              <app-company-customer-search
-                (onCustomerSelected)="onCustomerSelected($event)"
-              ></app-company-customer-search>
-            </div>
-
-            <!--Start Form register-update customer-->
-            <!-- @if(showForm){
-                <CustomerFormFast />
-                } -->
-          </div>
+        <div class="form-group">
+          <label for="customerSearch">Cliente: </label>
+          <app-company-customer-search
+            (onCustomerSelected)="onCustomerSelected($event)"
+          ></app-company-customer-search>
         </div>
       </div>
     </div>
@@ -119,17 +105,19 @@
           }
         </div>
         <div class="card-body">
+          @if (order.customerCompanyId > 0) {
           <div class="row mb-2">
             <div class="col">
-              <!-- <button
+              <button
                 type="button"
-                class="btn btn-outline-primary"
+                class="btn btn-outline-primary btn-sm"
                 (click)="searchDevice()"
               >
-                <fa-icon [icon]="'search'"></fa-icon> Buscar Equipo
-              </button> -->
+                <fa-icon [icon]="'search'"></fa-icon> Asignar Equipo
+              </button>
             </div>
           </div>
+          }
           <div class="row">
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12 col-12">
               <div class="form-group">
@@ -162,7 +150,6 @@
                 />
               </div>
             </div>
-
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12">
               <div class="form-group">
                 <label for="serie"
@@ -420,12 +407,13 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-success btn-lg">
+    <button type="submit" class="btn btn-outline-success" title="Guardar Orden">
       <fa-icon [icon]="'save'"></fa-icon> Guardar
     </button>
     <button
       type="button"
-      class="btn btn-outline-dark btn-lg"
+      class="btn btn-outline-dark"
+      title="Cancelar Orden"
       (click)="closeModal()"
     >
       &times; Cancelar

@@ -53,5 +53,8 @@
 </div>
 }
 <ng-template #rt let-r="result" let-t="term">
-  <ngb-highlight [result]="r.name + ' - ' + r.serie" [term]="t" />
+  <ngb-highlight
+    [result]="r.name + ' - ' + r.year + ' - ' + r.model"
+    [term]="t"
+  />
 </ng-template>
