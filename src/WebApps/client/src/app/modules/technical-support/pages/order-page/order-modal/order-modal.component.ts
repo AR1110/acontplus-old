@@ -21,7 +21,7 @@ import { isValidField } from '@core/utils/utils';
 import { IconProp, icon } from '@fortawesome/fontawesome-svg-core';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
-import { DeviceSearchModalComponent } from '@modules/technical-support/components/device-search-modal/device-search-modal.component';
+import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
 import {
   Device,
   DeviceSpecs,
@@ -39,6 +39,7 @@ import { v4 as uuidv4 } from 'uuid';
   imports: [
     AppModule,
     CompanyCustomerSearchComponent,
+    DeviceSearchComponent,
     NgbAccordionModule,
     TabulatorComponent,
   ],
@@ -48,17 +49,24 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
-  private deviceService = inject(DeviceService);
   private fb = inject(FormBuilder);
   private modalRef = inject(NgbActiveModal);
   private modalService = inject(ModalService);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
 
-  categories: any = [];
   columnNames: any[] = [
     { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
+    { title: 'deviceCustomerId', field: 'deviceCustomerId', width: 150, visible: false },
     { title: 'Equipo', field: 'deviceName', width: 200 },
+    { title: 'Serie', field: 'deviceSerie', width: 180, editor: true },
+    {
+      title: 'Garantia',
+      field: 'deviceWarranty',
+      width: 150,
+      validator: ['numeric', 'min:0'],
+      editor: true,
+    },
     { title: 'Obs.', field: 'obs', width: 300, editor: true },
     {
       cellClick: (e: any, cell: any) => {
@@ -80,40 +88,8 @@ export class OrderModalComponent {
   modalTitle = 'Nueva Orden';
   order: any = {};
   orderDetails: OrderDetail[] = [];
-
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
-  specs: any = [];
-  specsTemp: any = [];
-  specsType: any = [];
   users: any = [];
-
-  device: Device = {
-    id: 0,
-    categoryId: 0,
-    name: '',
-    serie: '',
-    brand: '',
-    model: '',
-    year: 0,
-    warranty: 0,
-    color: '',
-  };
-  deviceFormGroup: IForm<Device> = {
-    categoryId: [0, Validators.required],
-    name: ['', Validators.required],
-    serie: ['', Validators.required],
-    brand: ['', Validators.required],
-    model: ['', Validators.required],
-    year: [0, Validators.required],
-    warranty: [''],
-    color: ['', Validators.required],
-  };
-
-  deviceForm = this.fb.group(this.deviceFormGroup);
-
-  deviceSpecs: DeviceSpecs = {
-    specs: '',
-  };
 
   orderForm = this.fb.group({
     uuid: uuidv4(),
@@ -127,54 +103,21 @@ export class OrderModalComponent {
     orderDetails: [],
   });
 
-  specForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    value: new FormControl('', [Validators.required, Validators.minLength(3)]),
-  });
-
-  specTypeForm = new FormGroup({
-    specName: new FormControl('', [
-      Validators.required,
-      Validators.minLength(3),
-    ]),
-  });
-
   addDetail(device: any) {
+    device.deviceCustomerId = !device.deviceCustomerId
+      ? 0
+      : device.deviceCustomerId;
     device.deviceName = !device.deviceName ? device.name : device.deviceName;
-    device.uuid = uuidv4();
+    device.deviceSerie = !device.deviceSerie
+      ? device.serie
+      : device.deviceSerie;
+    device.deviceWarranty = !device.deviceWarranty
+      ? device.warranty
+      : device.deviceWarranty;
     device.obs = '';
+    device.uuid = uuidv4();
     console.log(device);
     this.orderDetails.push(device);
-  }
-
-  addSpecType() {
-    this.specsType.push({
-      uuid: uuidv4(),
-      name: this.specTypeForm.get('specName')?.value,
-    });
-    setTimeout(() => {
-      this.inputNameSpec.nativeElement.focus();
-    }, 0);
-    this.specTypeForm.patchValue({ specName: '' });
-  }
-
-  addSpec(uuid: string) {
-    this.specs.push({
-      uuid,
-      name: this.specForm.get('name')?.value,
-      value: this.specForm.get('value')?.value,
-    });
-    this.specsTemp = this.specs.filter((x: any) => x.uuid === uuid);
-    this.specForm.patchValue({ name: '', value: '' });
-    setTimeout(() => {
-      this.inputNameSpec.nativeElement.focus();
-    }, 0);
-  }
-
-  filterAccordion(uuid: string) {
-    if (this.specs.length > 0) {
-      this.specsTemp = this.specs.filter((x: any) => x.uuid === uuid);
-    }
   }
 
   closeModal() {
@@ -224,7 +167,6 @@ export class OrderModalComponent {
                 });
               }
             }
-            this.categories = categories;
             this.users = users;
           }
         }
@@ -242,16 +184,15 @@ export class OrderModalComponent {
   getDevices() {
     const modalRef = this.modalService.openModalCustom(
       DeviceListModalComponent,
-      { size: 'lg', centered: true }
+      { size: 'lg', centered: true, backdrop: true }
     );
     modalRef.componentInstance.data = {
       customerCompanyId: this.order.customerCompanyId,
     };
     modalRef.result.then((result) => {
-      this.device = result;
-      console.log(this.device);
-      this.deviceForm.patchValue(this.device);
-      this.addDetail({ deviceId: this.device.id, name: this.device.name });
+      if (result) {
+        this.addDetail({ deviceId: result.id, name: result.name });
+      }
     });
   }
 
@@ -260,9 +201,6 @@ export class OrderModalComponent {
     if (this.data.id > 0) {
       this.orderForm.patchValue(this.data);
     }
-  }
-  onDeviceSelected($event: any) {
-    console.log($event);
   }
   onChangeEstab() {
     let establecimientoId = this.orderForm.get('establecimientoId')?.value;
@@ -285,82 +223,14 @@ export class OrderModalComponent {
     this.order.customerCompanyId = data.idCliente;
     this.orderForm.patchValue({ customerCompanyId: data.idCliente });
   }
+  onDeviceSelected($event: any) {
+    console.log($event);
+    this.addDetail($event.data);
+  }
 
   removeFromList(deviceId: number) {
     let newArray = this.orderDetails.filter((x) => x.deviceId !== deviceId);
     this.orderDetails = newArray;
-  }
-
-  saveDevice() {
-    Object.assign(this.device, this.deviceForm.value);
-    debugger;
-    let customerCompanyId = this.orderForm.get('customerCompanyId')?.value;
-    if (!customerCompanyId) {
-      this.tS.toastr({
-        type: 'warning',
-        message: 'Debe seleccionar el cliente',
-      });
-      return;
-    }
-    let customers = [
-      {
-        customerCompanyId,
-        serialNumber: this.device.serie,
-        warranty: this.device.warranty,
-      },
-    ];
-    this.device.customers = customers;
-    if (this.specs?.length > 0) {
-      let specsTemp = {};
-      for (const item of this.specsType) {
-        if (this.specs.filter((x: any) => x.uuid === item.uuid).length === 0) {
-          this.tS.toastr({
-            type: 'warning',
-            message: `Debe de seleccionar los valores para la el tipo de specificación: ${item.name}}`,
-          });
-          return;
-        }
-      }
-      specsTemp = Object.fromEntries(
-        this.specsType.map(({ uuid, name }: any) => [
-          name,
-          this.specs.filter((x: any) => x.uuid == uuid),
-        ])
-      );
-      this.device.specs = Object.assign(this.deviceSpecs, {
-        specs: JSON.stringify(specsTemp),
-      });
-    }
-    this.deviceService.post(this.device).subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          if (response.code == '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-          }
-          if (response.code == '1') {
-            this.tS.toastr({
-              type: 'success',
-              message: response.message,
-            });
-            this.specs = [];
-            this.addDetail({
-              deviceId: response.payload as number,
-              deviceName: this.device.name,
-            });
-          }
-        }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(err) {
-        hideLoader();
-        console.log(err);
-      },
-    });
   }
 
   saveOrder() {
@@ -378,49 +248,33 @@ export class OrderModalComponent {
     }
     console.log(data);
     this.orderService.post(data).subscribe({
-      next: this.successResponse,
+      next: (response) => {
+        if (isApiResponse(response)) {
+          if (response.code === '0') {
+            this.tS.toastr({
+              type: 'warning',
+              message: response.message!,
+            });
+          }
+          if (response.code === '1') {
+            this.orderForm.patchValue({});
+            this.orderDetails = [];
+            this.order = {};
+            this.tS.toastr({
+              type: 'success',
+              message: response.message!,
+            });
+            this.modalRef.close();
+          }
+        }
+      },
+      complete() {
+        hideLoader();
+      },
       error(err) {
         console.log(err);
         hideLoader();
       },
     });
   }
-
-  searchDevice() {
-    const modalDevice = this.modalService.openModalCustom(
-      DeviceSearchModalComponent,
-      { size: 'lg' }
-    );
-    modalDevice.result.then((response) => {
-      this.addDetail(response);
-    });
-  }
-
-  successResponse = (response: object) => {
-    hideLoader();
-    if (isApiResponse(response)) {
-      if (response.code === '0') {
-        this.tS.toastr({
-          type: 'warning',
-          message: response.message!,
-        });
-      }
-      if (response.code === '1') {
-        this.orderForm.patchValue({});
-        this.orderDetails = [];
-        this.order = {};
-        this.tS.toastr({
-          type: 'success',
-          message: response.message!,
-        });
-        this.modalRef.close();
-      }
-    }
-  };
-
-  removeSpec(index: any) {
-    this.specs.splice(index, 1);
-  }
-
-  resetFormDevice() {}
 }

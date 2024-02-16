@@ -17,7 +17,8 @@
           <thead>
             <tr>
               <th>Nombre</th>
-              <th>Serie</th>
+              <th>Modelo</th>
+              <th>Año</th>
               <th></th>
             </tr>
           </thead>
@@ -25,8 +26,18 @@
             @for (item of devices; track $index) {
             <tr>
               <td>{{ item.name }}</td>
-              <td>{{ item.serie }}</td>
-              <td><button type="button" class="btn btn-outline-purple btn-sm" (click)="select(item)"><fa-icon [icon]="'hand-point-right'"></fa-icon></button></td>
+              <td>{{ item.model }}</td>
+              <td>{{ item.year }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-outline-info btn-sm"
+                  title="Seleccionar Equipo"
+                  (click)="select(item)"
+                >
+                  <fa-icon [icon]="'hand-point-right'"></fa-icon>
+                </button>
+              </td>
             </tr>
             }
           </tbody>
@@ -36,7 +47,11 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="closeModal()">
+  <button
+    type="button"
+    class="btn btn-outline-dark btn-sm"
+    (click)="closeModal()"
+  >
     &times; Cerrar
   </button>
 </div>
