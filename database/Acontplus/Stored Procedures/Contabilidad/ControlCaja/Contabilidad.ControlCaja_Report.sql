@@ -30,10 +30,10 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Sql Server
-    DECLARE @tipo INT ,@sql NVARCHAR(MAX) ,@params NVARCHAR(MAX) ,@horaInicio TIME , @horaFin TIME
+    DECLARE @tipo INT ,@sql NVARCHAR(MAX) ,@params NVARCHAR(MAX) 
 
     --> Filters
-    DECLARE @idEntidadFinanciera INT
+    DECLARE @idEntidadFinanciera INT ,@horaInicio TIME , @horaFin TIME ,@ckHora BIT
 
 	DECLARE @idControlCaja INT 
 	DECLARE @color VARCHAR(200) = '#000000'
@@ -358,26 +358,30 @@ BEGIN
             SELECT TOP 1 @idEntidadFinanciera = idEntidadFinanciera
                         ,@horaInicio          = horaInicio
                         ,@horaFin             = horaFin
+                        ,@ckHora              = ckHora
             FROM OPENJSON(@json) WITH 
             (
                 idEntidadFinanciera INT
                ,horaInicio TIME
                ,horaFin TIME
+               ,ckHora  BIT
             )
 
             SET @params = '@idControlCaja       INT
-                          ,@idEntidadFinanciera INT'
+                          ,@idEntidadFinanciera INT
+                          ,@horaInicio          TIME
+                          ,@horaFin             TIME'
 
             SET @sql = 'SELECT * FROM 
                         (
                             SELECT nroComprobante  = ''CI'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(ci.nroDocumento)
 		                          ,doc             = IIF(cc.codDoc = ''01'',''FV'',cc.codDoc)
 		                          ,nroDoc          = cc.serieComprobante 
-		                          ,fechaEmision    = cc.fechaEmision
+		                          ,fechaEmision    = FORMAT(cc.fechaEmision, ''dd/MM/yyyy HH:mm'')
 		                          ,agenteEconomico = cl.nombreFiscal
-		                          ,total           = cc.importeTotal
-		                          ,abono           = CASE WHEN co.cobro = 1 THEN cd.abono ELSE 0 END
-		                          ,saldo           = cd.saldo - cd.abono     
+		                          ,total           = CAST(cc.importeTotal as numeric(18,2))
+		                          ,abono           = CASE WHEN co.cobro = 1 THEN CAST(cd.abono as numeric(18,2)) ELSE 0 END
+		                          ,saldo           = CAST(cd.saldo - cd.abono as numeric(18,2))     
 		                          ,pay             = ISNULL(sf.descripcion,'''') + '' '' +  IIF(co.posfechado = 1,''POSFECHADO'','''')
 		                          ,co.idEntidadFinanciera
 	                        FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
@@ -409,10 +413,10 @@ BEGIN
 														                          )
 						                          END 
 		                        ,fechaEmsion =    CASE td.codigo WHEN ''A''  THEN (
-														                            SELECT an.fechaEmision FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
+														                            SELECT FORMAT(an.fechaEmision, ''dd/MM/yyyy HH:mm'') FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
 														                          )  
 										                         WHEN ''IC'' THEN (
-														                            SELECT mc.fechaEmision FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
+														                            SELECT FORMAT(mc.fechaEmision, ''dd/MM/yyyy HH:mm'') FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
 														                          )
 						                           END 
 		                        ,agenteEconomico = CASE td.codigo WHEN ''A'' THEN (
@@ -430,15 +434,15 @@ BEGIN
 							                        END
 		                        ,total            = CASE td.codigo WHEN ''A''  THEN 
 														                        (
-														                        SELECT an.valor FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
+														                        SELECT CAST(an.valor as numeric(18,2)) FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
 														                        )  
 										                           WHEN ''IC'' THEN 
 														                        (
-														                        SELECT mc.valor FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
+														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
 														                        )
 							                        END 
-		                        ,cd.abono 
-		                        ,CAST(0 as NUMERIC(18,5)) as saldo
+		                        ,CAST(cd.abono as numeric(18,2)) as abono 
+		                        ,CAST(0 as NUMERIC(18,2))        as saldo
                                 ,pay              = CASE td.codigo WHEN ''A''  THEN 
 														                        (
 														                        SELECT sf.descripcion
@@ -491,7 +495,7 @@ BEGIN
 						                           END 
 		                        ,fechaEmsion     = CASE td.codigo WHEN ''EC'' THEN 
 														                        (
-														                        SELECT mc.fechaEmision FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
+														                        SELECT FORMAT(mc.fechaEmision, ''dd/MM/yyyy HH:mm'') FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
 														                        )
 						                           END 
 		                        ,agenteEconomico = CASE td.codigo WHEN ''EC'' THEN 
@@ -504,11 +508,11 @@ BEGIN
 							                        END
 		                        ,total            = CASE td.codigo WHEN ''EC'' THEN 
 														                        (
-														                        SELECT mc.valor FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
+														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
 														                        )
 							                        END * -1
-		                        ,pd.abono * -1
-                                ,CAST(0 as NUMERIC(18,5)) as saldo
+		                        ,CAST(pd.abono * -1 as numeric(18,2))
+                                ,CAST(0 as NUMERIC(18,2)) as saldo
 		                        ,pay              = CASE td.codigo WHEN ''EC'' THEN 
 														                        (
 														                        SELECT sf.descripcion
@@ -540,12 +544,31 @@ BEGIN
                     SET @sql = @sql + 'AND cd.idEntidadFinanciera = @idEntidadFinanciera '
                 END 
 
+            IF @ckHora = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(cd.fechaEmision as time) BETWEEN CAST(@horaInicio as time) AND CAST(@horaFin as time) '
+                END 
+
             SET @sql = @sql + 'ORDER BY cd.pay DESC '
                 
+            SELECT nroControl = cc.idControlCaja
+		          ,caja       = ca.descripcion
+		          ,apertura   = FORMAT(cc.fechaApertura, 'dd/MM/yyyy HH:mm')
+		          ,cierre     = FORMAT(cc.fechaCierre, 'dd/MM/yyyy HH:mm') 
+		          ,usuario    = us.nombreCompleto
+		          ,estado     = CASE WHEN cc.estado = 1 THEN 'ABIERTA' ELSE 'CERRADA' END
+	         FROM dbo.ControlCaja          cc WITH (NOLOCK)
+	         INNER JOIN dbo.Caja           ca WITH (NOLOCK) ON ca.idCaja    = cc.idCaja
+	         INNER JOIN dbo.AsignacionCaja ac WITH (NOLOCK) ON ac.idCaja    = ca.idCaja
+	         INNER JOIN dbo.Usuario        us WITH (NOLOCK) ON us.idUsuario = ac.idUsuario
+	         WHERE cc.idControlCaja = @idControlCaja
+
             EXEC sp_executesql @sql
 						      ,@params 
                               ,@idControlCaja       = @idControlCaja
                               ,@idEntidadFinanciera = @idEntidadFinanciera
+                              ,@horaInicio          = @horaInicio
+                              ,@horaFin             = @horaFin
 
             RETURN 
         END 
