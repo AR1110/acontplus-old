@@ -38,7 +38,7 @@ BEGIN
 
     -->Filters
     DECLARE @idCliente INT ,@codEstab VARCHAR(50) ,@idCuentaPorCobrar INT ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@codDoc VARCHAR(10) ,@codEstado VARCHAR(5)
-	       ,@numeroIdentificacion VARCHAR(15) ,@identificacionReceptor VARCHAR(50)
+	       ,@numeroIdentificacion VARCHAR(15) ,@identificacionReceptor VARCHAR(50) ,@ckCxcVencida BIT
 
 	-- ==== PARAMETER CONFIG ==========
 	DECLARE @configInteres AS BIT
@@ -87,15 +87,16 @@ BEGIN
             
             SET @tableNames = 'cuentasPorCobrar'
 
-            SELECT @idCliente   = idCliente  
-                  ,@ckFecha     = ckFecha
-                  ,@fechaInicio = fechaInicio
-                  ,@fechaFin    = fechaFin
-                  ,@codEstab    = codEstab
-                  ,@codEstado   = codEstado
-                  ,@codDoc      = codDoc
-                  ,@pageSize    = pageSize
-				  ,@pageIndex   = pageIndex
+            SELECT @idCliente    = idCliente  
+                  ,@ckFecha      = ckFecha
+                  ,@fechaInicio  = fechaInicio
+                  ,@fechaFin     = fechaFin
+                  ,@codEstab     = codEstab
+                  ,@codEstado    = codEstado
+                  ,@codDoc       = codDoc
+                  ,@pageSize     = pageSize
+				  ,@pageIndex    = pageIndex
+                  ,@ckCxcVencida = ckCxcVencida
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         
@@ -107,6 +108,7 @@ BEGIN
                ,codDoc       VARCHAR(10)
                ,pageSize     INT
                ,pageIndex    INT
+               ,ckCxcVencida BIT
             )
 
             SET @params = '@idCliente   INT
@@ -173,6 +175,18 @@ BEGIN
                         BEGIN
                             SET @sql = @sql + 'AND cc.codEstado = @codEstado '
                         END 
+                END 
+
+            IF @ckCxcVencida = 1
+                BEGIN
+                    SET @sql = @sql + 'AND cc.idCuentaPorCobrar IN (
+                                                                     SELECT cc.idCuentaPorCobrar 
+                                                                     FROM Contabilidad.CuotaPorCobrar        cu WITH (NOLOCK)
+                                                                     INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar = cu.idCuentaPorCobrar
+                                                                     WHERE cc.idEntidad = @idEntidad 
+                                                                       AND cu.estado = 1
+                                                                       AND DATEDIFF(DAY,cu.fechaVencimiento,GETDATE()) > 0                             
+                                                                   ) '
                 END 
 
             SET @sql = @sql + 'ORDER BY cc.idCuentaPorCobrar DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '

@@ -295,7 +295,7 @@ BEGIN
 				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'dd/MM/yyyy')
 				  ,cx.cuota
 				  ,cx.saldo
-				  ,cx.abono
+				  ,cc.abono
 			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso   = hc.idComprobanteIngreso
 			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso

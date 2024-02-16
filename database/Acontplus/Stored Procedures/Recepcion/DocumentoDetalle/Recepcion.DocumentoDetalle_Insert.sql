@@ -172,7 +172,7 @@ BEGIN
                            ,@idTipoDocumento
                            ,@idDocumento
                            ,idMedida
-                           ,ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af WITH (NOLOCK) WHERE af.idArticulo = td.idArticulo AND af.idMedida = td.idMedida ),1) * td.cantidad
+                           ,(ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af WITH (NOLOCK) WHERE af.idArticulo = td.idArticulo AND af.idMedida = td.idMedida ),1) * td.cantidad) * @multiplier
                            ,precioUnitario
                            ,precioUnitario
                            ,precioTotalSimImpuestos
