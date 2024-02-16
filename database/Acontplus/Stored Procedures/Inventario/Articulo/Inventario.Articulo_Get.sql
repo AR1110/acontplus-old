@@ -252,6 +252,8 @@ BEGIN
 											        LEFT JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa =  ap.idTarifa
 											        WHERE ap.idArticulo = a.idArticulo FOR JSON PATH)
 							   ,totalRecords = COUNT(*) OVER()
+                               ,a.s3ObjectKey
+							   ,a.s3ObjectUrl
 						FROM Inventario.v_Articulo a
 						WHERE a.idEntidad = @idEntidad AND a.estado = 1  '
 
