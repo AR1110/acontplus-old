@@ -89,49 +89,46 @@
         @for (item of movimientosCaja; track $index) {
         <tr>
           <td>
-            <div class="button-group">
-              @if (cerrarCaja(item.estado)) {
-              <button
-                type="button"
-                class="btn btn-info btn-sm btn-circle text-white"
-                ngbTooltip="Cerrar Caja"
-                (click)="openModalCashboxClose(item)"
-              >
-                <fa-icon [icon]="'money-bill-alt'"></fa-icon>
-              </button>
-              } @if (verReporteMovimientoCaja(item.estado)) {
-              <button
-                type="button"
-                class="btn btn-primary btn-sm btn-circle text-white"
-                [ngbPopover]="popContentReporteControlCaja"
-                [autoClose]="'outside'"
-                [popoverTitle]="'Reporte Control Caja'"
-                (shown)="recordShownTransactionPending(item)"
+            <div ngbDropdown container="body">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm"
+                  ngbDropdownToggle
+                >
+                  Acciones
+                </button>
+                <div ngbDropdownMenu>
+                  @if (cerrarCaja(item.estado)) {
+                  <button
+                    ngbDropdownItem
+                    (click)="openModalCashboxClose(item)"
+                  >
+                    <fa-icon [icon]="'money-bill-alt'"></fa-icon> Cerrar caja
+                  </button>
+                  }
 
-              >
-                <fa-icon [icon]="['far', 'file']"></fa-icon>
-              </button>
-              }
-              <button
-                type="button"
-                class="btn btn-success btn-sm btn-circle text-white ml-5"
-                [ngbPopover]="popContentReporteTransaccionPendiente"
-                [autoClose]="'outside'"
-                [popoverTitle]="'Reporte Transacciones pendientes'"
-                (shown)="recordShownTransactionPending(item)"
-              >
-                <fa-icon [icon]="['fas', 'money-bill-transfer']"></fa-icon>
-              </button>
+                  @if (verReporteMovimientoCaja(item.estado)) {
+                    <button ngbDropdownItem
+                      (click)="askToReportType(item)"
+                    >
+                      <fa-icon [icon]="['far', 'file']"></fa-icon> Reporte Control Caja
+                    </button>
+                  }
 
-              <button
-                type="button"
-                class="btn btn-warning btn-sm btn-circle text-white ml-5"
-                ngbTooltip="Reporte Detalle Control Caja"
-                (click)="openModalReporteFiltroDetalleCaja(item)"
-              >
-                <fa-icon [icon]="['fas', 'table-list']"></fa-icon>
-              </button>
-            </div>
+
+                  <button ngbDropdownItem
+                    (click)="askToReportType(item, BUTTON_TRANSACTION_PENDING)"
+                  >
+                    <fa-icon [icon]="['fas', 'money-bill-transfer']"></fa-icon> Reporte Transacciones pendientes
+                  </button>
+
+                  <button ngbDropdownItem
+                    (click)="openModalReporteFiltroDetalleCaja(item)"
+                  >
+                    <fa-icon [icon]="['fas', 'table-list']"></fa-icon> Reporte Detalle Control Caja
+                  </button>
+                </div>
+              </div>
           </td>
           <td>{{ $index + 1 }}</td>
           <td>{{ item.fechaApertura }}</td>
@@ -186,27 +183,6 @@
         class="btn btn-success"
         type="button"
         (click)="getReportTransactionPending('excel')"
-      >
-        <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
-        EXCEL
-      </button>
-    </div>
-  </ng-template>
-
-  <ng-template #popContentReporteControlCaja>
-    <div class="d-grid gap-2 d-md-flex justify-content-center">
-      <button
-        class="btn btn-warning me-md-2"
-        type="button"
-        (click)="getReportControlCajaPDF()"
-      >
-        <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
-        PDF
-      </button>
-      <button
-        class="btn btn-success"
-        type="button"
-        (click)="getReportControlCajaEXCEL()"
       >
         <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
         EXCEL

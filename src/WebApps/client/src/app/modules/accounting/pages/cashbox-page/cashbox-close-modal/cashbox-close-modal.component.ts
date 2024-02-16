@@ -20,8 +20,7 @@ type Modeda = {
   selector: 'app-cashbox-close-modal',
   standalone: true,
   imports: [AppModule],
-  templateUrl: './cashbox-close-modal.component.html',
-  styleUrl: './cashbox-close-modal.component.scss',
+  templateUrl: './cashbox-close-modal.component.html', 
   encapsulation: ViewEncapsulation.None,
 })
 export class CashboxCloseModalComponent {
@@ -138,7 +137,7 @@ export class CashboxCloseModalComponent {
   sendEmail<T extends { receptor: string, codEstab: string }>(dataMail: T) {
     try {
       const data = {
-        subject: 'Movimiento Caja', 
+        subject: 'Reporte Control Caja',
         receptor: dataMail.receptor,
         params: {
           hasFile: true,
