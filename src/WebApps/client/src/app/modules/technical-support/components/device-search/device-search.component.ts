@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ModalService } from '@core/services/modal.service';
 import { DeviceSearch } from '@modules/technical-support/models/device.model';
+import { DeviceModalComponent } from '@modules/technical-support/pages/device-page/device-modal/device-modal.component';
 import { DeviceService } from '@modules/technical-support/services/device.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   Observable,
   OperatorFunction,
@@ -14,30 +15,40 @@ import {
 import { AppModule } from 'src/app/app.module';
 
 @Component({
-  selector: 'app-device-search-modal',
+  selector: 'app-device-search',
   standalone: true,
   imports: [AppModule],
-  templateUrl: './device-search-modal.component.html',
+  templateUrl: './device-search.component.html',
   styles: ``,
 })
-export class DeviceSearchModalComponent {
+export class DeviceSearchComponent {
   @Output() onDeviceSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
   @Input() textSearch = '';
+  private modalService = inject(ModalService);
 
   private deviceService = inject(DeviceService);
-  private modalRef = inject(NgbActiveModal);
   device: DeviceSearch = {
     model: '',
     name: '',
     serie: '',
     color: '',
+    id: 0,
   };
   searching: boolean = false;
   searchFailed: boolean = false;
 
-  closeModal() {
-    this.modalRef.close();
+  onDataSelected(item: any) {
+    this.onDeviceSelected.emit({
+      data: {
+        ...item,
+        deviceName: item.name,
+        model: item.model,
+      },
+    });
+    setTimeout(() => {
+      this.textSearch = this.device.name;
+    });
   }
 
   onKeyupSearch() {
@@ -46,19 +57,23 @@ export class DeviceSearchModalComponent {
     }
   }
 
-  openModal() {}
+  openModal() {
+    const modalRef = this.modalService.openModalCustom(DeviceModalComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.data = this.device;
+    modalRef.result.then((response) => {
+      console.log(response);
+      this.onDataSelected(response);
+    });
+  }
 
   onSelect($event: any) {
     this.device = $event.item;
-    this.onDeviceSelected.emit({
-      data: {
-        ...this.device,
-        deviceName: this.device.name,
-        model: this.device.model,
-      },
-    });
-    this.modalRef.close(this.device);
+    this.onDataSelected(this.device);
   }
+
   search: OperatorFunction<string, Array<DeviceSearch>> = (
     text$: Observable<string>
   ) =>
