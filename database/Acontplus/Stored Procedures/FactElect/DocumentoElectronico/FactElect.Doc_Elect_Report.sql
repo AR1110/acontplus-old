@@ -155,6 +155,7 @@ BEGIN
 
                                         FROM Ventas.v_Factura f WITH (NOLOCK)
                                         WHERE f.idEntidad = @idEntidad
+                                          AND f.estado = 1
 
                                       )as dt WHERE dt.idFactura > 0 '
 
@@ -205,7 +206,7 @@ BEGIN
                     SET @sql = @sql + 'AND dt.nroRetencion IS NOT NULL '
                 END 
 
-            SET @sql = @sql + 'ORDER BY dt.rucEmisor,dt.fechaEmision DESC '
+            SET @sql = @sql + 'ORDER BY dt.fechaEmision,dt.identificacionComprador DESC '
 
             SELECT entidad as razonSocial 
                   ,rucEmpresa as ruc
@@ -226,7 +227,8 @@ BEGIN
                               ,@codEstado      = @codEstado
                               ,@identificacion = @identificacion
                               ,@idUsuario      = @idUsuario
-            RETURN 
+           
+           RETURN 
         END 
     
     --> Nota Credito
