@@ -71,6 +71,9 @@ export enum CODE_REPORT {
   CCPC='CCPC' //Contabilidad Cartera Proveedor Cuota
 }
 
+export enum CODE_ESTADO {
+  NCBR = 'NCBR'
+}
 // Example usage:
 // const reportType: CODE_REPORT = CODE_REPORT.RF;
 // console.log(reportType);

@@ -6,7 +6,8 @@ import {
   OnDestroy,
   Output,
   EventEmitter,
-  inject
+  inject,
+  Input
 } from "@angular/core";
 import { NgbDate, NgbCalendar, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { FormControl } from "@angular/forms";
@@ -26,6 +27,12 @@ import { isDatesEqual } from "@core/utils/is-dates-equal";
   templateUrl: './date-range-selection.component.html',
 })
 export class DateRangeSelectionComponent {
+
+  @Input() options = {
+    timePicker: false,
+    format: "YYYY-MM-DD"
+  }
+
   @Output() onChangeDateRange = new EventEmitter<{ from: string, to: string }>();
 
   @ViewChild('dateRangeInput', { static: false }) dateRangeInput!: ElementRef;
@@ -46,7 +53,7 @@ export class DateRangeSelectionComponent {
           //maxYear: 2022,
           //showWeekNumbers: true,
           //showISOWeekNumbers: true,
-          timePicker: false,
+          timePicker: self.options.timePicker,
           //timePickerIncrement: 10,
           //timePicker24Hour: true,
           //timePickerSeconds: true,
@@ -79,7 +86,7 @@ export class DateRangeSelectionComponent {
             cancelLabel: 'Cancelar',
             customRangeLabel: 'Rango Personalizado',
             separator: ' - ',
-            format: "YYYY-MM-DD",
+            format: self.options.format,
           }
         },
         function (start: any, end: any) {
