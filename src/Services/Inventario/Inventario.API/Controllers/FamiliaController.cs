@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using Common.Core.Models;
-using Common.Core.Models.Almacen;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +52,7 @@ namespace Inventario.API.Controllers
             {
                 int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Almacen.Familia_Insert");
-                _db.AddDynamicParam("userRoleId", userRoleId); 
+                _db.AddDynamicParam("userRoleId", userRoleId);
                 _db.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
                 _response = _db.GetDefault();
             }

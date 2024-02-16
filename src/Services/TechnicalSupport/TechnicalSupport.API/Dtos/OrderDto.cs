@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using TechnicalSupport.API.Entities;
 
 namespace TechnicalSupport.API.Dtos
@@ -9,7 +8,7 @@ namespace TechnicalSupport.API.Dtos
         public Guid Uuid { get; set; }
         public int EstablecimientoId { get; set; }
         public int PuntoEmisionId { get; set; }
-        public int CustomerCompanyId { get; set; }  
+        public int CustomerCompanyId { get; set; }
         [MaxLength(500)]
         public string Obs { get; set; }
         public int OrderStatusId { get; set; }

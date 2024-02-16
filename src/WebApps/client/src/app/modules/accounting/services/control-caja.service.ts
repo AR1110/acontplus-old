@@ -35,6 +35,19 @@ export class ControlCajaService {
       )
   }
 
+  getDataFilter() {
+    let paramsStr = JSON.stringify({ tipo: 5 })
+    return this.http.get(`${this.url}?json=${paramsStr}`)
+      .pipe(
+        map((response:any) => {
+          const {estadoPago} = response;
+          return {
+            estados: estadoPago
+          }
+        })
+      )
+  }
+
 
   getDataFormCashboxClose() {
     let paramsStr = JSON.stringify({ tipo: 3 })

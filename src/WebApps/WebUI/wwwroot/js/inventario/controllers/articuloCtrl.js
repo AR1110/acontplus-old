@@ -202,8 +202,7 @@
                     showLoader();
                     articuloSvc.delete(item.idArticulo).then(
                         response => {
-                            if (response.code === "0") {
-                                hideLoader();
+                            if (response.code === "0") { 
                                 form.sweetAlert('warning', response.message, response.titleSms);
                             }
                             if (response.code === "1") {
@@ -213,10 +212,9 @@
                             }
 
                         }
-                    ).catch(error => {
-                        hideLoader()
+                    ).catch(error => { 
                         console.log(error);
-                    })
+                    }).finally(()=>hideLoader())
                 }
             } catch (error) {
                 hideLoader()

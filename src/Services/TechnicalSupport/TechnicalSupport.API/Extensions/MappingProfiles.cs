@@ -4,7 +4,7 @@ using TechnicalSupport.API.Entities;
 
 namespace TechnicalSupport.API.Extensions
 {
-    public class MappingProfiles:Profile
+    public class MappingProfiles : Profile
     {
         public MappingProfiles()
         {

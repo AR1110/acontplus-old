@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Core.Interfaces;
+﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Contabilidad.Core.Interfaces;
@@ -11,7 +6,7 @@ using Contabilidad.Infrastructure.Data;
 
 namespace Contabilidad.Application.Servicios
 {
-    public class AnticipoService: IAnticipoService
+    public class AnticipoService : IAnticipoService
     {
         private readonly IADORepository _repository;
         private readonly ContabilidadContext _context;

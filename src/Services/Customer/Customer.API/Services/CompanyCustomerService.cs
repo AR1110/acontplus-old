@@ -16,7 +16,7 @@ namespace Customer.API.Services
         {
             try
             {
-                return await _repository.SPExecuteAsync("Ventas.Cliente_Insert", data);                
+                return await _repository.SPExecuteAsync("Ventas.Cliente_Insert", data);
             }
             catch (Exception)
             {
@@ -64,7 +64,7 @@ namespace Customer.API.Services
                 {
                     return new ApiResponse { code = "0", message = "No se encontraron clientes con estos datos" };
                 }
-                return new ApiResponse {  code = "1", payload = DataConverters.DataTableToJSON(dt) };
+                return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
             }
             catch (Exception)
             {

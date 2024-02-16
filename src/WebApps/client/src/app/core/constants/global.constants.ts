@@ -67,9 +67,13 @@ export enum CODE_REPORT {
   RRF = 'RRF', //Reporte Recepcion Factura
   RRNC = 'RRNC', //Recepcion Nota Credito
   RRG = 'RRG', //Recepcion Retencion General
-  CCP ='CCP' //Contabilidad Cartera Proveedor
+  CCP ='CCP', //Contabilidad Cartera Proveedor
+  CCPC='CCPC' //Contabilidad Cartera Proveedor Cuota
 }
 
+export enum CODE_ESTADO {
+  NCBR = 'NCBR'
+}
 // Example usage:
 // const reportType: CODE_REPORT = CODE_REPORT.RF;
 // console.log(reportType);

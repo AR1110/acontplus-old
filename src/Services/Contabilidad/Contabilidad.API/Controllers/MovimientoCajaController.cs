@@ -1,22 +1,21 @@
-﻿using Asp.Versioning;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-using Services.Common;
 using Contabilidad.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Services.Common;
+using Services.Common.Logs;
 
 namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class MovimientoCajaController : ControllerBase
-    { 
+    {
         private IMovimientoCajaService _movSvc;
         private LogWriter _log;
 
         public MovimientoCajaController(IMovimientoCajaService movSvc, LogWriter log)
-        { 
+        {
             _movSvc = movSvc;
             _log = log;
 
@@ -44,7 +43,7 @@ namespace Contabilidad.API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Post(ApiRequest request)
-        { 
+        {
             try
             {
                 var parameters = new Dictionary<string, object>{
@@ -61,7 +60,7 @@ namespace Contabilidad.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-         
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

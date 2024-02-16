@@ -47,6 +47,7 @@ export class DeviceModalComponent implements OnInit {
     year: 0,
     warranty: 0,
     color: '',
+    customers: [],
   };
 
   deviceSpecs: DeviceSpecs = {
@@ -90,10 +91,21 @@ export class DeviceModalComponent implements OnInit {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Equipo';
       this.isUpdate = true;
+      this.setDataSpecs(this.params.specs);
     } else {
       this.isUpdate = false;
       this.modalIcon = 'plus';
       this.modalTitle = 'Nuevo Equipo';
+    }
+  }
+
+  setDataSpecs(specs: any) {
+    for (const item in specs) {
+      this.specsType.push({
+        uuid: specs[item][0].uuid,
+        name: item,
+      });
+      this.specs = this.specs.concat(specs[item]);
     }
   }
 
@@ -118,10 +130,12 @@ export class DeviceModalComponent implements OnInit {
 
   onSave() {
     let specsTemp = {};
-    if (!this.onValidate(Object.assign(this.device, this.deviceForm.value)))
+    if (!this.onValidate(Object.assign(this.device, this.deviceForm.value))) {
       return;
+    }
     if (!this.onValidateSpecs()) return;
 
+    this.device.customers = [];
     specsTemp = Object.fromEntries(
       this.specsType.map(({ uuid, name }: any) => [
         name,
@@ -131,10 +145,10 @@ export class DeviceModalComponent implements OnInit {
     this.device.specs = Object.assign(this.deviceSpecs, {
       specs: JSON.stringify(specsTemp),
     });
+    const deviceInsert = Object.assign(this.device, this.deviceForm.value);
 
-    const deviceUpdate = Object.assign(this.device, this.deviceForm.value);
     showLoader();
-    this.deviceService.post(deviceUpdate).subscribe({
+    this.deviceService.post(deviceInsert).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
@@ -162,8 +176,24 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onUpdate() {
+    let specsTemp = {};
+    if (!this.onValidate(Object.assign(this.device, this.deviceForm.value))) {
+      return;
+    }
+    if (!this.onValidateSpecs()) return;
+
+    this.device.customers = [];
+    specsTemp = Object.fromEntries(
+      this.specsType.map(({ uuid, name }: any) => [
+        name,
+        this.specs.filter((x: any) => x.uuid == uuid),
+      ])
+    );
+
+    this.device.specs = Object.assign(this.deviceSpecs, {
+      specs: JSON.stringify(specsTemp),
+    });
     const deviceUpdate = Object.assign(this.device, this.deviceForm.value);
-    if (!this.onValidate(deviceUpdate)) return;
 
     showLoader();
     this.deviceService.put(this.device.id, deviceUpdate).subscribe({
@@ -245,7 +275,6 @@ export class DeviceModalComponent implements OnInit {
 
   onValidateSpecs() {
     let isValid = true;
-    let specsTemp = {};
     try {
       if (this.specs?.length > 0) {
         for (const item of this.specsType) {

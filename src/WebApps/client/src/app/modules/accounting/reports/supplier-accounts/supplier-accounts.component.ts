@@ -41,7 +41,10 @@ export class SupplierAccountsComponent {
     fromDate: formatDateMoment(new Date()),
     toDate: formatDateMoment(new Date()),
     supplierChecked: false,
-    supplierName: ''
+    supplierName: '',
+    ckCxcVencida: false,
+    ckCuotas: false,
+    ckFecha: true
   }
 
   isSearchSupplierSimple = true;
@@ -168,19 +171,21 @@ export class SupplierAccountsComponent {
     const dataParms = {
       tipo: 2,
       format,
-      ckFecha: true,
+      ckFecha: this.dataSearch.ckFecha,
       codEstab: isValidField(this.dataSearch.codEstab),
       codDoc: isValidField(this.dataSearch.codDoc),
       idProveedor: this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor) || null,
       codEstado: isValidField(this.dataSearch.codEstado),
       fechaInicio: this.dataSearch.fromDate,
-      fechaFin: this.dataSearch.toDate
+      fechaFin: this.dataSearch.toDate,
+      ckCxcVencida: this.dataSearch.ckCxcVencida,
+      ckCuotas: this.dataSearch.ckCuotas
     }
 
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: CODE_REPORT.CCP,
+        codigo: this.dataSearch.ckCuotas ? CODE_REPORT.CCPC : CODE_REPORT.CCP,
         codEstab: this.dataSearch.codEstab,
         format,
         aditionalParams: []

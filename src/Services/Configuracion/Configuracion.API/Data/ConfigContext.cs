@@ -14,7 +14,7 @@ namespace Configuracion.API.Data
         public DbSet<Printer> Printers { get; set; }
         public DbSet<PrinterDocument> PrinterDocuments { get; set; }
         public DbSet<PrinterType> PrinterTypes { get; set; }
-        public DbSet<EstablecimientoLogo> EstablecimientoLogos {  get; set; }
+        public DbSet<EstablecimientoLogo> EstablecimientoLogos { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -38,7 +38,7 @@ namespace Configuracion.API.Data
                            p => p.ClrType == typeof(string)    // Entity is a string
                         && p.GetColumnType() == null           // No column type is set
                                                                // Next line only required if using ASP.Net Identity:
-                        && !p.DeclaringEntityType.GetTableName().StartsWith("AspNet")
+                        && p.DeclaringType.GetTableName().StartsWith("AspNet")
                     ))
                 {
                     property.SetIsUnicode(false);

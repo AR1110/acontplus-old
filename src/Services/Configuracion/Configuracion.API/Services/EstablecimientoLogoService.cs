@@ -27,7 +27,7 @@ namespace Configuracion.API.Services
             {
                 throw;
             }
-            
+
         }
 
         public async Task<object> DeleteAsync(int id)
@@ -76,7 +76,7 @@ namespace Configuracion.API.Services
             catch (Exception)
             {
                 throw;
-            }  
+            }
         }
     }
 }

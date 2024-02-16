@@ -224,10 +224,10 @@ namespace Compras.API.Controllers
                 return Ok(response);
             }
             catch (Exception ex)
-            { 
+            {
                 _log.LogActivity("Error al importar el archivo: " + ex.ToString());
                 return BadRequest(ex.Message);
-            } 
+            }
         }
 
         [HttpPost("UploadXml")]

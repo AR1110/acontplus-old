@@ -31,10 +31,10 @@ namespace Contabilidad.Application.Servicios
                 return DataConverters.DataSetToJSON(ds);
             }
         }
-         
+
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
-        {   
+        {
             return await _repository.SPExecuteAsync("Contabilidad.Caja_Insert", parameters);
         }
 
@@ -44,7 +44,7 @@ namespace Contabilidad.Application.Servicios
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-        { 
+        {
             return await _repository.SPExecuteAsync("Contabilidad.Caja_Delete", parameters);
         }
     }

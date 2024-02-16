@@ -571,12 +571,15 @@ function modalArticuloCtrl(
         }
     };
 
-    $scope.refreshSubFamilia = async function(){
+    $scope.refreshSubFamilia = function(){
         try {
-            showLoader();
-            const { subFamilias } = await articuloSvc.getDataForForm();
-            $scope.subFamilias = subFamilias; 
-            hideLoader();
+            showLoader();  
+            articuloSvc.getDataForForm().then(response=>{
+
+                $scope.subFamilias = response.subFamilias; 
+            }).catch(error=>{
+                console.log(error)
+            }).finally(()=>hideLoader())            
         } catch (error) {
             console.log(error)
             hideLoader();
@@ -621,8 +624,12 @@ function modalArticuloCtrl(
 
     $scope.refreshMedida = async function(){
         try { 
-            const { medidas } = await articuloSvc.getDataForForm();
-            $scope.medidas = medidas; 
+            showLoader();
+            articuloSvc.getDataForForm().then(response => {
+                $scope.medidas = response.medidas;  
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())  
         } catch (error) {
             console.log(error);
         }

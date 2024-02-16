@@ -89,6 +89,13 @@
         }
         
         $scope.getReport = (format) => {
+
+            if ($scope.dataSearch.checkboxCompanyCustomer){
+                if (!($scope.dataSearch.idCliente>0)){
+                    tS.toastr('warning', 'Seleccione el Cliente');
+                    return
+                }
+            }
             let dataParams = {
                 tipo: 1,
                 ckFecha: $scope.dataSearch.ckFecha,

@@ -3,7 +3,19 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12">
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-primary">
+          <input
+            type="checkbox"
+            id="ckFecha"
+            [(ngModel)]="dataSearch.ckFecha"
+            name="ckFecha"
+          />
+          <label for="ckFecha">Rango Fecha</label>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="icheck-primary">
           <input
             type="checkbox"
@@ -14,30 +26,33 @@
           <label for="supplierChecked">Proveedor</label>
         </div>
       </div>
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
-      <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-primary">
+          <input
+            type="checkbox"
+            id="ckCxcVencida"
+            [(ngModel)]="dataSearch.ckCxcVencida"
+            name="ckCxcVencida"
+          />
+          <label for="ckCxcVencida">Vencidas</label>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-primary">
+          <input
+            type="checkbox"
+            id="ckCuotas"
+            [(ngModel)]="dataSearch.ckCuotas"
+            name="ckCuotas"
+          />
+          <label for="ckCuotas">Cuotas</label>
+        </div>
+      </div>
       <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
     </div>
     <hr />
     <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="tipoDoc">Tipo Doc.:</label>
-          <select
-            name="tipoDoc"
-            id="tipoDoc"
-            class="form-select form-control-border"
-            [(ngModel)]="dataSearch.codDoc"
-          >
-          <option value="">Todos</option>
-            @for (item of tiposDoc; track $index) {
-            <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
         <div class="form-group">
           <label>Establecimiento: </label>
           <select
@@ -54,6 +69,34 @@
           </select>
         </div>
       </div>
+
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label>Punto emisión: </label>
+          <select
+            class="form-select form-control-border"
+            [(ngModel)]="dataSearch.idPuntoEmision"
+          >
+            <option [ngValue]="0">Todos</option>
+            @for(ptoEmi of puntosEmision; track $index ){
+            <option [ngValue]="ptoEmi.idPuntoEmision">
+              {{ ptoEmi.ptoEmi }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="dateRangeSelect">Rango Fechas</label>
+
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
+        </div>
+      </div>
+
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="estado">Estado.:</label>
@@ -70,27 +113,29 @@
           </select>
         </div>
       </div>
+
+
     </div>
 
     <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label>Punto emisión: </label>
+          <label for="tipoDoc">Tipo Doc.:</label>
           <select
+            name="tipoDoc"
+            id="tipoDoc"
             class="form-select form-control-border"
-            [(ngModel)]="dataSearch.idPuntoEmision"
+            [(ngModel)]="dataSearch.codDoc"
           >
-            <option [ngValue]="0">Todos</option>
-            @for(ptoEmi of puntosEmision; track $index ){
-            <option [ngValue]="ptoEmi.idPuntoEmision">
-              {{ ptoEmi.ptoEmi }}
-            </option>
+            <option value="">Todos</option>
+            @for (item of tiposDoc; track $index) {
+            <option [ngValue]="item.codDoc">{{ item.descripcion }}</option>
             }
           </select>
         </div>
       </div>
-      @if (dataSearch.supplierChecked) {
-      <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+
+      <div class="col-xl-6 col-lg-6 col-md-12 col-12">
         <div class="form-group">
           <label for="supplierSearch">Proveedor</label>
           <app-supplier-search
@@ -101,16 +146,7 @@
           ></app-supplier-search>
         </div>
       </div>
-      }
-      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="dateRangeSelect">Rango Fechas</label>
-           
-          <app-date-range-selection
-            (onChangeDateRange)="onDateRangeSelection($event)"
-          />
-        </div>
-      </div>
+
     </div>
   </div>
   <div class="card-body">
@@ -128,4 +164,3 @@
     </div>
   </div>
 </div>
-

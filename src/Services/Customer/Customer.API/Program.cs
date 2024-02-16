@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-ConfigHelper.AddJsonFiles(builder.Configuration); 
+ConfigHelper.AddJsonFiles(builder.Configuration);
 builder.Services.AddControllers()
                          .AddNewtonsoftJson(x =>
                          {
@@ -45,7 +45,7 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
            {
-               endpoints.MapGet("/", context =>
+               _ = endpoints.MapGet("/", context =>
                {
                    context.Response.Redirect("swagger");
                    return Task.CompletedTask;
