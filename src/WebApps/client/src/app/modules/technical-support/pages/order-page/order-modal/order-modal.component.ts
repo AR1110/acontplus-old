@@ -57,7 +57,12 @@ export class OrderModalComponent {
 
   columnNames: any[] = [
     { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
-    { title: 'deviceCustomerId', field: 'deviceCustomerId', width: 150, visible: false },
+    {
+      title: 'deviceCustomerId',
+      field: 'deviceCustomerId',
+      width: 150,
+      visible: false,
+    },
     { title: 'Equipo', field: 'deviceName', width: 200 },
     { title: 'Serie', field: 'deviceSerie', width: 180, editor: true },
     {
@@ -104,9 +109,8 @@ export class OrderModalComponent {
   });
 
   addDetail(device: any) {
-    device.deviceCustomerId = !device.deviceCustomerId
-      ? 0
-      : device.deviceCustomerId;
+    (device.deviceId = device.id),
+      (device.deviceCustomerId = device.deviceCustomerId);
     device.deviceName = !device.deviceName ? device.name : device.deviceName;
     device.deviceSerie = !device.deviceSerie
       ? device.serie
@@ -116,7 +120,6 @@ export class OrderModalComponent {
       : device.deviceWarranty;
     device.obs = '';
     device.uuid = uuidv4();
-    console.log(device);
     this.orderDetails.push(device);
   }
 
@@ -191,7 +194,13 @@ export class OrderModalComponent {
     };
     modalRef.result.then((result) => {
       if (result) {
-        this.addDetail({ deviceId: result.id, name: result.name });
+        this.addDetail({
+          deviceCustomerId: result.deviceCustomerId,
+          deviceSerie: result.deviceSerie,
+          deviceWarranty: result.deviceWarranty,
+          id: result.id,
+          name: result.name,
+        });
       }
     });
   }
@@ -233,7 +242,7 @@ export class OrderModalComponent {
     this.orderDetails = newArray;
   }
 
-  saveOrder() {
+  save() {
     showLoader();
     const data = {
       ...this.orderForm.value,
