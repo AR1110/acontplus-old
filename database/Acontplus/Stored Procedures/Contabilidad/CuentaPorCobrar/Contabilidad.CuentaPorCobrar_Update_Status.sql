@@ -57,7 +57,7 @@ BEGIN
 
 	IF ISNULL(@posfechado,0) <= 0
 		BEGIN 
-			IF @residuo = 0  
+			IF @residuo <= 0  
 				BEGIN
 					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'CBR'
 				END 
