@@ -13,6 +13,6 @@ namespace TechnicalSupport.API.Dtos
         public string Obs { get; set; }
         public int OrderStatusId { get; set; }
         public int UserId { get; set; }
-        public List<OrderDetail> OrderDetails { get; set; }
+        public List<OrderDetailDto> OrderDetails { get; set; }
     }
 }
