@@ -143,12 +143,12 @@ BEGIN
             SELECT uuid, @orderId, deviceId, obs, @datetime, @enabled, @userId
             FROM @tbDetails
 
-            IF EXISTS (SELECT 1 FROM @tbDetails d WHERE deviceCustomerId = 0)
-                BEGIN
-                    INSERT INTO TechnicalSupport.DeviceCustomer(CustomerCompanyId, DeviceId)
-                    SELECT (SELECT TOP 1 o.customerCompanyId FROM @tbOrder o), deviceId FROM @tbDetails WHERE deviceCustomerId = 0
-                END
-
+        
+            INSERT INTO TechnicalSupport.DeviceCustomer(CustomerCompanyId, DeviceId, SerialNumber, Warranty)
+            SELECT (SELECT TOP 1 o.customerCompanyId FROM @tbOrder o), deviceId, deviceSerie, deviceWarranty
+            FROM @tbDetails 
+            WHERE deviceCustomerId = 0
+        
             UPDATE cf 
             SET cf.ultimaSecuencia = vcf.secuencial + 1 
             FROM ConfiguracionDocumento cf WITH (ROWLOCK)

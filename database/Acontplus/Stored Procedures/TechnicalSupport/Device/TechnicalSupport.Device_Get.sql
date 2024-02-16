@@ -83,7 +83,7 @@ BEGIN
     IF (@tipo = 4)
         BEGIN
         	SET @tableNames = 'devices'
-            SELECT d.*, dc.Id DeviceCustomerId, dc.CustomerCompanyId, ISNULL(ds.Specs, '{}') Specs
+            SELECT d.*, dc.Id DeviceCustomerId, dc.CustomerCompanyId, dc.SerialNumber DeviceSerie, dc.Warranty DeviceWarranty, ISNULL(ds.Specs, '{}') Specs
             
             FROM TechnicalSupport.Device d  WITH (NOLOCK)
             INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
