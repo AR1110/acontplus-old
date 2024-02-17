@@ -73,6 +73,7 @@ BEGIN
 				END 
 		END
 
+
 	UPDATE Contabilidad.CuentaPorCobrar SET idEstadoPago = @idEstadoPago, abono = ISNULL(@abono,0) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 		
 
