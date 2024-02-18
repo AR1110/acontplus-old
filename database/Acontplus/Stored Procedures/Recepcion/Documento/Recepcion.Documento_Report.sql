@@ -40,11 +40,12 @@ BEGIN
 
     -->Filter
     DECLARE @codEstab VARCHAR(100) ,@ckFecha BIT ,@fechaInicio DATETIME2 ,@fechaFin DATETIME2 ,@ckRetencion BIT ,@identificacion VARCHAR(20) ,@idUsuario INT
+           ,@identificacionReceptor VARCHAR(20)
 
     --> Recuperar Datos
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-    SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+    SELECT TOP 1 @idEntidad = idEntidad, @identificacionReceptor = rucEmpresa FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     --> Factura
     IF @tipo = 2
@@ -70,12 +71,13 @@ BEGIN
                ,idUsuario      INT
             )
 
-            SET @params = '@idEntidad       INT
-                          ,@codEstab        VARCHAR(100)
-                          ,@fechaInicio     DATETIME2
-                          ,@fechaFin        DATETIME2
-                          ,@identificacion  VARCHAR(20)
-                          ,@idUsuario       INT'
+            SET @params = '@idEntidad              INT
+                          ,@identificacionReceptor VARCHAR(20)
+                          ,@codEstab               VARCHAR(100)
+                          ,@fechaInicio            DATETIME2
+                          ,@fechaFin               DATETIME2
+                          ,@identificacion         VARCHAR(20)
+                          ,@idUsuario              INT'
 
             SET @sql = 'SELECT * FROM 
                         (
@@ -90,6 +92,7 @@ BEGIN
 	                                  ,dr.fechaEmision
 	                                  ,dr.rucEmisor
 	                                  ,dr.razonSocialEmisior as razonSocialEmisor
+                                      ,''FE'' as tipoDoc
 	                                  ,ISNULL
 	                                  ((
 			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
@@ -180,12 +183,13 @@ BEGIN
 
 		                                ),0) as retIva
                                         ,us.nombreUsuario as usuario
+                                        ,dr.identificacionReceptor
                                 FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
                                 INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab  = dr.codEstab
                                 INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
                                 WHERE dr.codDoc = ''01''
                                   AND dr.xmlCompressed IS NOT NULL
-                                  AND dr.codEstab = @codEstab
+                                  AND dr.identificacionReceptor = @identificacionReceptor
 
                                 UNION ALL
 
@@ -199,6 +203,7 @@ BEGIN
 	                                  ,Format(fc.fechaEmision,''dd/MM/yyyy'') 
 	                                  ,pr.numeroIdentificacion
 	                                  ,pr.nombreFiscal
+                                      ,''FF'' as tipoDoc
 	                                  ,ISNULL
 	                                  ((
 			                                SELECT CAST(SUM(fi.TaxBase)as numeric(18,2)) 
@@ -295,12 +300,13 @@ BEGIN
 
 		                                ),0) as retIva
                                         ,us.nombreUsuario as usuario
+                                        ,@identificacionReceptor 
                                 FROM dbo.FacturaCompra         fc WITH (NOLOCK) 
                                 INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab    = fc.codEstab
                                 INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor = fc.idProveedor
                                 INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario   = fc.idUsuario
-                                WHERE fc.codEstab = @codEstab
-                                  AND fc.estado =  1
+                                WHERE fc.estado =  1
+                                  AND fc.idEntidad = @idEntidad
 
                         ) as dt WHERE dt.idDocumento > 0 '
 
@@ -312,6 +318,11 @@ BEGIN
             IF @identificacion IS NOT NULL
                 BEGIN
                     SET @sql = @sql + 'AND dt.rucEmisor = @identificacion '
+                END 
+
+            IF LEN(@codEstab) > 6
+                BEGIN
+                    SET @sql = @sql + 'AND dt.codEstab = @codEstab '
                 END 
 
             IF @idUsuario IS NOT NULL
@@ -342,12 +353,13 @@ BEGIN
 
             EXEC sp_executesql @sql
 							  ,@params 
-							  ,@idEntidad      = @idEntidad
-                              ,@codEstab       = @codEstab
-                              ,@fechaInicio    = @fechaInicio
-                              ,@fechaFin       = @fechaFin
-                              ,@identificacion = @identificacion
-                              ,@idUsuario      = @idUsuario
+							  ,@idEntidad              = @idEntidad
+                              ,@identificacionReceptor = @identificacionReceptor
+                              ,@codEstab               = @codEstab
+                              ,@fechaInicio            = @fechaInicio
+                              ,@fechaFin               = @fechaFin
+                              ,@identificacion         = @identificacion
+                              ,@idUsuario              = @idUsuario
 
             RETURN 
         END 
@@ -376,12 +388,13 @@ BEGIN
                ,idUsuario      INT
             )
 
-            SET @params = '@idEntidad       INT
-                          ,@codEstab        VARCHAR(100)
-                          ,@fechaInicio     DATETIME2
-                          ,@fechaFin        DATETIME2
-                          ,@identificacion  VARCHAR(20)
-                          ,@idUsuario       INT'
+            SET @params = '@idEntidad              INT
+                          ,@identificacionReceptor VARCHAR(20)
+                          ,@codEstab               VARCHAR(100)
+                          ,@fechaInicio            DATETIME2
+                          ,@fechaFin               DATETIME2
+                          ,@identificacion         VARCHAR(20)
+                          ,@idUsuario              INT'
 
             SET @sql = '  SELECT es.idEstablecimiento
                                 ,es.nombreComercial
@@ -457,9 +470,10 @@ BEGIN
                         INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab = dr.codEstab
                         INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = dr.idUsuario
                         WHERE dr.codDoc = ''04''
-                            AND dr.xmlCompressed IS NOT NULL '
+                          AND dr.xmlCompressed IS NOT NULL
+                          AND dr.identificacionReceptor = @identificacionReceptor '
 
-            IF @codEstab IS NOT NULL
+            IF LEN(@codEstab) > 6 
                 BEGIN
                     SET @sql = @sql + 'AND dr.codEstab = @codEstab '
                 END 
@@ -497,14 +511,13 @@ BEGIN
 
             EXEC sp_executesql @sql
 							  ,@params 
-							  ,@idEntidad      = @idEntidad
-                              ,@codEstab       = @codEstab
-                              ,@fechaInicio    = @fechaInicio
-                              ,@fechaFin       = @fechaFin
-                              ,@identificacion = @identificacion
-                              ,@idUsuario      = @idUsuario
-
-            RETURN  
+							  ,@idEntidad              = @idEntidad
+                              ,@identificacionReceptor = @identificacionReceptor 
+                              ,@codEstab               = @codEstab
+                              ,@fechaInicio            = @fechaInicio
+                              ,@fechaFin               = @fechaFin
+                              ,@identificacion         = @identificacion
+                              ,@idUsuario              = @idUsuario
 
             RETURN 
         END 
