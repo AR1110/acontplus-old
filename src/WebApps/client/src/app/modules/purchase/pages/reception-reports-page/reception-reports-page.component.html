@@ -55,7 +55,7 @@
             class="form-select"
             [(ngModel)]="dataSearch.codEstab"
           >
-            <option [ngValue]="">Todos</option>
+            <option value="">Todos</option>
             @for (item of establecimientos; track $index) {
             <option [ngValue]="item.codEstab">
               {{ item.nombreComercial }}

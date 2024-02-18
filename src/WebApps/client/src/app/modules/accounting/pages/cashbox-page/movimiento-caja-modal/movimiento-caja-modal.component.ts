@@ -11,12 +11,15 @@ import Swal from 'sweetalert2';
 import { UserPermissionService } from '@modules/config/services/user-permission.service';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
-import { CODE_ESTADO, CODE_REPORT, FORMAT_REPORT } from '@core/constants/global.constants';
+import { CODE_ESTADO, CODE_REPORT, FORMAT_REPORT, FORMAT_TYPE } from '@core/constants/global.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { ToasterService } from '@core/services/toaster.service';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
+
+
+
 @Component({
   selector: 'app-movimiento-caja-modal',
   standalone: true,
@@ -73,6 +76,11 @@ export class MovimientoCajaModalComponent {
 
 
   dataMovientoControCaja = {} as ControlCaja;
+
+
+  BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING'
+  private format = FORMAT_REPORT.PDF;
+
 
   getMovimientosCaja() {
 
@@ -240,7 +248,6 @@ export class MovimientoCajaModalComponent {
   }
 
 
-
   getReport(idControlCaja: number) {
     try {
       if (this.dataPermisosCaja.enterKey) {
@@ -280,11 +287,11 @@ export class MovimientoCajaModalComponent {
           allowOutsideClick: () => Swal.isLoading(),
         }).then((result) => {
           if (result.isConfirmed) {
-            this.generateReport(idControlCaja);
+            this.generateReport(idControlCaja, this.format);
           }
         })
       } else {
-        this.generateReport(idControlCaja)
+        this.generateReport(idControlCaja, this.format)
       }
     } catch (error) {
       console.log(error)
@@ -293,11 +300,10 @@ export class MovimientoCajaModalComponent {
   }
 
 
+  generateReport(idControlCaja: number, format: FORMAT_TYPE) {
 
-
-  generateReport(idControlCaja: number) {
-    let format = 'pdf'
     let dataParms = {
+      tipo: 1,
       id: idControlCaja,
     }
     const parameters = {
@@ -309,15 +315,48 @@ export class MovimientoCajaModalComponent {
       }),
       dataParams: JSON.stringify(dataParms)
     }
-    this.sharedSvc.getReport(parameters, "pdf", true)
+    this.sharedSvc.getReport(parameters, format, true)
 
   }
 
+  async askToReportType(data: ControlCaja, buttonType?: string) {
+    const { isConfirmed, value } = await Swal.fire({
+      title: "Seleccione el formato de reporte",
+      input: "radio",
+      inputOptions: {
+        "pdf": "PDF",
+        "excel": "EXCEL",
+      },
+      confirmButtonText: `Continuar&nbsp;<i class="fa fa-arrow-right"></i>`,
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return "Seleccione el formato de reporte!";
+        }
+        return null;
+      },
 
-  recordShownTransactionPending<T extends ControlCaja>(data: T) {
-    this.dataMovientoControCaja = data;
+    });
 
+    if (isConfirmed) {
+      this.dataMovientoControCaja = data;
+      if (value === "pdf") {
+        this.format = FORMAT_REPORT.PDF;
+      }
+      if (value === 'excel') {
+        this.format = FORMAT_REPORT.EXCEL;
+      }
+
+      if (buttonType === this.BUTTON_TRANSACTION_PENDING){
+        this.getReportTransactionPending(value)
+      }else{
+        this.getReport(this.dataMovientoControCaja.id)
+      }
+    }
   }
+
+
   getReportTransactionPending(format: 'pdf' | 'excel') {
     try {
       if (!(this.params.idUsuario > 0)) {
@@ -333,16 +372,20 @@ export class MovimientoCajaModalComponent {
       } else {
         toDate = new Date()
       }
+ 
+      let parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
+      let dateParts: number[] = parts[0].split('/').map(part => parseInt(part, 10));
+      let timeParts: number[] = parts[1].split(':').map(part => parseInt(part, 10));
 
+      let convertedFromDate: Date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1]);
 
-      let fromDate = new Date(this.dataMovientoControCaja.fechaApertura)
       let dataParams = {
         tipo: 2,
         ckFecha: true,
         codDoc: null,
         codEstab: null,
         codEstado: this.dataSearch.codEstado,
-        fechaInicio: formatDateMoment(fromDate),
+        fechaInicio: formatDateMoment(convertedFromDate),
         fechaFin: formatDateMoment(toDate),
         identificacion: null,
         idUsuario: this.params.idUsuario,
@@ -395,6 +438,7 @@ export class MovimientoCajaModalComponent {
         <div class="form-group">
           <label for="entidadFinanciera">Entidad Financiera</label>
           <select name="entidadFinanciera" id="entidadFinanciera" class="form-select" [(ngModel)]="dataSearch.idEntidadFinanciera">
+          <option value="">Todos</option>
             @for(item of entidadesFinanciera; track $index){
               <option [ngValue]="item.idEntidadFinanciera">{{item.descripcion}}</option>
             }
@@ -406,17 +450,25 @@ export class MovimientoCajaModalComponent {
             (onChangeDateRange)="onDateRangeSelection($event)"
             [options]="dateRangeOptions"
           />
-      </div>
-      <div class="d-grid gap-2 col-12 mx-auto">
-  <button class="btn btn-warning" type="button" (click)="getReport('pdf')">
-    <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
-        PDF
-  </button>
-  <button class="btn btn-success" type="button" (click)="getReport('excel')">
-     <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
-        EXCEL
-  </button>
-</div>
+        </div>
+
+        <div class="form-group">
+          <div class="icheck-primary">
+              <input type="checkbox" [(ngModel)]="dataSearch.ckHora" id="ckHora" />
+              <label for="ckHora">Hora</label>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2 col-12 mx-auto">
+          <button class="btn btn-warning" type="button" (click)="getReport('pdf')">
+            <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
+                PDF
+          </button>
+          <button class="btn btn-success" type="button" (click)="getReport('excel')">
+            <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
+                EXCEL
+          </button>
+        </div>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">&times; Cerrar</button>
@@ -439,6 +491,7 @@ export class ReporteFiltroDetalleCajaModal {
     idEntidadFinanciera: 0,
     fromDate: formatDateMoment(new Date()),
     toDate: formatDateMoment(new Date()),
+    ckHora: true
   }
 
   entidadesFinanciera: Array<EntidadFinanciera> = [];
@@ -482,43 +535,27 @@ export class ReporteFiltroDetalleCajaModal {
         return
       }
 
-      // Extract components
-      const [year, month, day, time] = this.dataSearch.fromDate.match(/\d+/g) as any;
-      const [hour, minute, second] = time.split(':');
-
-      // Create a new Date object
-      const dateObject = new Date(year, month - 1, day, hour, minute, second);
-
-      // Extract time
-      const hours = dateObject.getHours();
-      const minutes = dateObject.getMinutes();
-      const seconds = dateObject.getSeconds();
-
-      // Format the time
-      const formattedTime = `${hours}:${minutes}:${seconds}`;
-
-      console.log(formattedTime);
-
 
       let dataParams = {
         tipo: 2,
-        idEntidadFinanciera: this.dataSearch.idEntidadFinanciera,
+        idEntidadFinanciera: isValidField(this.dataSearch.idEntidadFinanciera),
         id: this.params.id,
-        horaInicio: 0,
-        horaFin: 0
-      }
-      const parameters = {
-        hasIdUsuarioRol: true,
-        reportParams: JSON.stringify({
-          hasParams: false,
-          codigo: CODE_REPORT.FG,
-          format,
-          aditionalParams: [],
-        }),
-        dataParams: JSON.stringify(dataParams),
+        horaInicio: this.dataSearch.fromDate,
+        horaFin: this.dataSearch.toDate,
+        ckHora: this.dataSearch.ckHora
       }
 
-      //this.sharedSvc.getReport(parameters, format, true)
+      const parameters = {
+        hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
+        reportParams: JSON.stringify({
+          codigo: CODE_REPORT.CDCC,
+          format,
+          aditionalParams: []
+        }),
+        dataParams: JSON.stringify(dataParams)
+      }
+
+      this.sharedSvc.getReport(parameters, format, true)
     } catch (error) {
       console.log(error)
     }
