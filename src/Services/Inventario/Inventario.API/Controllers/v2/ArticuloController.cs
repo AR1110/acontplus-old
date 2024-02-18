@@ -51,6 +51,35 @@ namespace Inventario.API.Controllers.v2
             return Ok(_response);
         }
 
+        [HttpGet("Search")]
+
+        public async Task<IActionResult> Search(string json)
+        {
+            ApiResponse _response = new ApiResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                if (!DataValidation.IsValidJson(json))
+                {
+                    return BadRequest("Caracteres de busqueda invalidos");
+                }
+                await _db.SPExecute("Inventario.Articulo_Get_Search");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on Get Search: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al obtener las bodegas");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
         {
