@@ -78,7 +78,9 @@ export class MovimientoCajaModalComponent {
   dataMovientoControCaja = {} as ControlCaja;
 
 
+  BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING'
   private format = FORMAT_REPORT.PDF;
+
 
   getMovimientosCaja() {
 
@@ -246,17 +248,6 @@ export class MovimientoCajaModalComponent {
   }
 
 
-  getReportControlCajaPDF() {
-    this.format = FORMAT_REPORT.PDF;
-    this.getReport(this.dataMovientoControCaja.id)
-  }
-  getReportControlCajaEXCEL() {
-    this.format = FORMAT_REPORT.EXCEL;
-    this.getReport(this.dataMovientoControCaja.id)
-  }
-
-
-
   getReport(idControlCaja: number) {
     try {
       if (this.dataPermisosCaja.enterKey) {
@@ -308,7 +299,7 @@ export class MovimientoCajaModalComponent {
 
   }
 
- 
+
   generateReport(idControlCaja: number, format: FORMAT_TYPE) {
 
     let dataParms = {
@@ -328,11 +319,44 @@ export class MovimientoCajaModalComponent {
 
   }
 
+  async askToReportType(data: ControlCaja, buttonType?: string) {
+    const { isConfirmed, value } = await Swal.fire({
+      title: "Seleccione el formato de reporte",
+      input: "radio",
+      inputOptions: {
+        "pdf": "PDF",
+        "excel": "EXCEL",
+      },
+      confirmButtonText: `Continuar&nbsp;<i class="fa fa-arrow-right"></i>`,
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return "Seleccione el formato de reporte!";
+        }
+        return null;
+      },
 
-  recordShownTransactionPending<T extends ControlCaja>(data: T) {
-    this.dataMovientoControCaja = data;
+    });
 
+    if (isConfirmed) {
+      this.dataMovientoControCaja = data;
+      if (value === "pdf") {
+        this.format = FORMAT_REPORT.PDF;
+      }
+      if (value === 'excel') {
+        this.format = FORMAT_REPORT.EXCEL;
+      }
+
+      if (buttonType === this.BUTTON_TRANSACTION_PENDING){
+        this.getReportTransactionPending(value)
+      }else{
+        this.getReport(this.dataMovientoControCaja.id)
+      }
+    }
   }
+
+
   getReportTransactionPending(format: 'pdf' | 'excel') {
     try {
       if (!(this.params.idUsuario > 0)) {
@@ -348,16 +372,20 @@ export class MovimientoCajaModalComponent {
       } else {
         toDate = new Date()
       }
+ 
+      let parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
+      let dateParts: number[] = parts[0].split('/').map(part => parseInt(part, 10));
+      let timeParts: number[] = parts[1].split(':').map(part => parseInt(part, 10));
 
+      let convertedFromDate: Date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1]);
 
-      let fromDate = new Date(this.dataMovientoControCaja.fechaApertura)
       let dataParams = {
         tipo: 2,
         ckFecha: true,
         codDoc: null,
         codEstab: null,
         codEstado: this.dataSearch.codEstado,
-        fechaInicio: formatDateMoment(fromDate),
+        fechaInicio: formatDateMoment(convertedFromDate),
         fechaFin: formatDateMoment(toDate),
         identificacion: null,
         idUsuario: this.params.idUsuario,

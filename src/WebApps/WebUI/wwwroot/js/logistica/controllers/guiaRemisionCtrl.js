@@ -691,6 +691,7 @@
                         'params', function ($scope, $uibModalInstance, fS, DOC_TYPE, modalSvc, nombreModalVenta, params) {
                             const { cliente, codEstab, tiposDoc } = params;
 
+                            $scope.cliente = cliente;
                             $scope.tiposDoc = tiposDoc;
                             $scope.recordsQuantity = [5, 10];
 
