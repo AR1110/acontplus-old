@@ -42,11 +42,11 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                var order = _mapper.Map<Order>(orderDto);
+                //var order = _mapper.Map<Order>(orderDto);
                 var response = await _orderService.AddAsync(new Dictionary<string, object>
                 {
                     { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(order,
+                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(orderDto,
                                                                                         new JsonSerializerSettings
                                                                                         {
                                                                                             ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () },
