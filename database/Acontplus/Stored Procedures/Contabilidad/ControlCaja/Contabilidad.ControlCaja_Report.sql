@@ -80,8 +80,8 @@ BEGIN
 		          ,fechaEmision    = cc.fechaEmision
 		          ,agenteEconomico = cl.nombreFiscal
 		          ,total           = cc.importeTotal
-		          ,abono           = CASE WHEN co.cobro = 1 THEN cd.abono ELSE 0 END
-		          ,saldo           = cd.saldo - cd.abono     
+		          ,abono           = CASE WHEN co.cobro = 1 THEN SUM(CAST(cd.abono as numeric(18,2))) ELSE 0 END
+		          ,saldo           = CAST(SUM(cd.saldo - cd.abono) as numeric(18,2))      
 		          ,pay             = ISNULL(sf.descripcion,'') + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','')
 		          ,co.idEntidadFinanciera
 		          ,co.cobro
@@ -95,6 +95,17 @@ BEGIN
 	        INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			  = cc.idCliente
 	        WHERE ci.idControlCaja = @idControlCaja 
               AND ci.estado = 1
+            GROUP BY es.estab
+					,ci.nroDocumento
+					,cc.codDoc
+		            ,cc.serieComprobante 
+		            ,cc.fechaEmision
+		            ,cl.nombreFiscal
+		            ,cc.importeTotal
+		            ,sf.descripcion
+					,co.posfechado 
+					,co.cobro
+		            ,co.idEntidadFinanciera
 	
 	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
 	        SELECT nroComprobante = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
@@ -380,8 +391,8 @@ BEGIN
 		                          ,fechaEmision    = FORMAT(cc.fechaEmision, ''dd/MM/yyyy HH:mm'')
 		                          ,agenteEconomico = cl.nombreFiscal
 		                          ,total           = CAST(cc.importeTotal as numeric(18,2))
-		                          ,abono           = CASE WHEN co.cobro = 1 THEN CAST(cd.abono as numeric(18,2)) ELSE 0 END
-		                          ,saldo           = CAST(cd.saldo - cd.abono as numeric(18,2))     
+		                          ,abono           = CASE WHEN co.cobro = 1 THEN SUM(CAST(cd.abono as numeric(18,2))) ELSE 0 END
+		                          ,saldo           = CAST(SUM(cd.saldo - cd.abono) as numeric(18,2))      
 		                          ,pay             = ISNULL(sf.descripcion,'''') + '' '' +  IIF(co.posfechado = 1,''POSFECHADO'','''')
 		                          ,co.idEntidadFinanciera
 	                        FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
@@ -394,6 +405,17 @@ BEGIN
 	                        INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			  = cc.idCliente
 	                        WHERE ci.idControlCaja = @idControlCaja 
                               AND ci.estado = 1
+                            GROUP BY es.estab
+					                ,ci.nroDocumento
+					                ,cc.codDoc
+		                            ,cc.serieComprobante 
+		                            ,cc.fechaEmision
+		                            ,cl.nombreFiscal
+		                            ,cc.importeTotal
+		                            ,sf.descripcion
+					                ,co.posfechado 
+					                ,co.cobro
+		                            ,co.idEntidadFinanciera
 
                             UNION ALL 
 
@@ -549,7 +571,7 @@ BEGIN
                     SET @sql = @sql + 'AND CAST(cd.fechaEmision as time) BETWEEN CAST(@horaInicio as time) AND CAST(@horaFin as time) '
                 END 
 
-            SET @sql = @sql + 'ORDER BY cd.pay DESC '
+            SET @sql = @sql + 'ORDER BY nroComprobante,cd.nroDoc,cd.doc ASC '
                 
             SELECT nroControl = cc.idControlCaja
 		          ,caja       = ca.descripcion
