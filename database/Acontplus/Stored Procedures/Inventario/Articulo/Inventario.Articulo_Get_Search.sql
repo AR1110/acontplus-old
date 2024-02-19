@@ -76,6 +76,7 @@ BEGIN
                         END as style
 			            ,(
 				            SELECT t.descripcion  as tarifa
+                                    ,p.precioVenta as precioVenta
 					                ,p.precioConIva as precio
 				            FROM dbo.ArticuloPvP p WITH (NOLOCK)
 				            INNER JOIN dbo.Tarifa t WITH (NOLOCK) ON t.idTarifa = p.idTarifa

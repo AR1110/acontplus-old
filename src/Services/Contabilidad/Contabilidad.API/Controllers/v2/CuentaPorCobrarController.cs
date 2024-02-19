@@ -55,7 +55,7 @@ namespace Contabilidad.API.Controllers.v2
                     {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
 
-                var response = await _service.GetAsync(parameters);
+                var response = await _service.AddAsync(parameters);
                 if (response == null) { return NoContent(); };
                 return Ok(response);
             }
@@ -77,7 +77,7 @@ namespace Contabilidad.API.Controllers.v2
                     {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
 
-                var response = await _service.GetAsync(parameters);
+                var response = await _service.UpdateAsync(parameters);
                 if (response == null) { return NoContent(); };
                 return Ok(response);
             }

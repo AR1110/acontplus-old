@@ -44,6 +44,8 @@ export enum FORMAT_REPORT {
   EXCEL = 'excel',
 }
 
+export type FORMAT_TYPE = FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL
+
 export enum CODE_REPORT {
   RF = 'RF', // Reporte Factura
   FG = 'FG', // Ventas -> Factura General
@@ -68,7 +70,8 @@ export enum CODE_REPORT {
   RRNC = 'RRNC', //Recepcion Nota Credito
   RRG = 'RRG', //Recepcion Retencion General
   CCP ='CCP', //Contabilidad Cartera Proveedor
-  CCPC='CCPC' //Contabilidad Cartera Proveedor Cuota
+  CCPC='CCPC', //Contabilidad Cartera Proveedor Cuota
+  CDCC ='CDCC' //Contabilidad Detalle Control Caja
 }
 
 export enum CODE_ESTADO {
