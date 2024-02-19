@@ -76,7 +76,7 @@ BEGIN
 		 idCuentaPorCobrar INT NOT NULL UNIQUE
 		,saldo NUMERIC(18,5) NOT NULL
         ,abono NUMERIC(18,5) NOT NULL
-		,mora NUMERIC(15,5) NOT NULL
+		,mora NUMERIC(18,5) NOT NULL
 		,diasMora INT NOT NULL
 	)
 
@@ -155,16 +155,16 @@ BEGIN
 
 		INSERT INTO @paymentDetail
               (idCuotaPorCobrar,saldo,abono,interes,diasMora,mora,secuencial)
-	    SELECT idCuotaPorCobrar,saldo,abono,interes,diasMora,mora,secuencial 
+	    SELECT idCuotaPorCobrar,100,100,interes,diasMora,mora,secuencial 
         FROM OPENJSON(@cobroDetalle) WITH 
         (                          
-             idCuotaPorCobrar INT           '$.idCuotaPorCobrar'
-		    ,saldo            NUMERIC(15,5) '$.saldo'
-		    ,abono            NUMERIC(15,5) '$.abono'
-		    ,interes          NUMERIC(15,5) '$.interes'
-		    ,diasMora         INT           '$.diasMora'
-		    ,mora             NUMERIC(15,5) '$.mora'
-		    ,secuencial       INT           '$.secuencial'
+             idCuotaPorCobrar INT           
+		    ,saldo            NUMERIC(15,5) 
+		    ,abono            NUMERIC(15,5) 
+		    ,interes          NUMERIC(15,5) 
+		    ,diasMora         INT           
+		    ,mora             NUMERIC(15,5) 
+		    ,secuencial       INT           
 
         ) AS dt
 		
@@ -200,25 +200,25 @@ BEGIN
 		--======================================Validacion de datos============================================================
 		IF (SELECT COUNT(*) FROM @documento) = 0
 			BEGIN
-				SELECT '0'code,'Error en la informacion del comprobante de ingreso: '+ISNULL(@comprobante,'Sin Dato') as 'message'
+				SELECT '0'code,'Error en la informacion del comprobante de ingreso ' as 'message'
 				RETURN 
 			END 
 
 		IF (SELECT COUNT(*) FROM @payment) = 0
 			BEGIN
-				SELECT '0'code,'Error en la informacion de los pagos: '+ISNULL(@cobros,'Sin Dato') as 'message'
+				SELECT '0'code,'Error en la informacion de los pagos ' as 'message'
 				RETURN 
 			END
 
 		IF (SELECT COUNT(*) FROM @paymentDetail) = 0
 			BEGIN
-				SELECT '0'code,'Error en la informacion en los detalles de los pagos: '+ISNULL(@cobroDetalle,'Sin Dato') as 'message'
+				SELECT '0'code,'Error en la informacion en los detalles de los pagos' as 'message'
 				RETURN 
 			END
 
 		IF (SELECT COUNT(*) FROM @history) = 0
 			BEGIN
-				SELECT '0'code,'Error en la informacion del historial del pago : '+ISNULL(@historial,'Sin Dato') as 'message'
+				SELECT '0'code,'Error en la informacion del historial del pago ' as 'message'
 				RETURN 
 			END
 

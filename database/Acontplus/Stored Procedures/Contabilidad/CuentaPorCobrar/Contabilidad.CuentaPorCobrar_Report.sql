@@ -28,7 +28,7 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Global
-    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) 
+    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) ,@idUsuario INT
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
@@ -192,6 +192,7 @@ BEGIN
             
             SELECT @codDoc         = codDoc 
                   ,@idCliente      = idCliente
+                  ,@idUsuario      = idUsuario
                   ,@codEstab       = codEstab
                   ,@idPuntoEmision = idPuntoEmision
                   ,@codEstado      = codEstado
@@ -200,20 +201,22 @@ BEGIN
                   ,@fechaFin       = fechaFin
             FROM OPENJSON(@json) WITH 
             ( 
-                codDoc     VARCHAR(10)
-               ,idCliente          INT
-               ,codEstab  VARCHAR(100)
-               ,idPuntoEmision     INT
-               ,codEstado   VARCHAR(10)
-               ,ckFecha            BIT
-               ,fechaInicio  DATETIME2
-               ,fechaFin     DATETIME2
+                codDoc         VARCHAR(10)
+               ,idCliente      INT
+               ,idUsuario      INT
+               ,codEstab       VARCHAR(100)
+               ,idPuntoEmision INT
+               ,codEstado      VARCHAR(10)
+               ,ckFecha        BIT
+               ,fechaInicio    DATETIME2
+               ,fechaFin       DATETIME2
             )
             
             SET @params = '@idEntidad      INT
                           ,@codEstab       VARCHAR(100)
                           ,@idPuntoEmision INT
                           ,@idCliente      INT
+                          ,@idUsuario      INT
                           ,@codEstado      VARCHAR(10)
                           ,@fechaInicio    DATETIME2
                           ,@fechaFin       DATETIME2
@@ -259,6 +262,11 @@ BEGIN
                     SET @sql = @sql + 'AND CAST(fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
                 END 
 
+            IF @idUsuario > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND idUsuario = @idUsuario '
+                END 
+
             IF @codEstado IS NOT NULL
                 BEGIN
                     IF @codEstado = 'NCBR'
@@ -292,6 +300,7 @@ BEGIN
                                    ,@fechaInicio    = @fechaInicio
                                    ,@fechaFin       = @fechaFin
                                    ,@codEstado      = @codEstado
+                                   ,@idUsuario      = @idUsuario
 
             RETURN 
         END 

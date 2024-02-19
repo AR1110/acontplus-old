@@ -196,9 +196,10 @@ BEGIN
                               ,CAST(saldo as numeric(18,2))               as saldo
                               ,estado 
                         FROM v_CuentaPorPagar cc WITH (NOLOCK)
-                        WHERE idCuentaPorPagar > 0 '
+                        WHERE idEntidad = @idEntidad '
 
             SET @params = '@idProveedor INT
+                          ,@idEntidad   INT
                           ,@codEstab    VARCHAR(25)
                           ,@fechaInicio DATETIME2
                           ,@fechaFin    DATETIME2
@@ -294,7 +295,7 @@ BEGIN
                               ,@fechaFin    = @fechaFin
                               ,@codEstado   = @codEstado
                               ,@codDoc      = @codDoc
-
+                              ,@idEntidad   = @idEntidad
             RETURN
         END 
 
