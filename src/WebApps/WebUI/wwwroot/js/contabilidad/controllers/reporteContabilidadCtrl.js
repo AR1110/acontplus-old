@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
     'use strict';
 
@@ -6,7 +6,7 @@
 
     reporteContabilidadCtrl.$inject = ['$scope', '$injector'];
 
-    function reporteContabilidadCtrl($scope, $injector)    {
+    function reporteContabilidadCtrl($scope, $injector) {
         let cuentaPorCobrarSvc = $injector.get("cuentaPorCobrarService");
         let tS = $injector.get("toastService");
         let fS = $injector.get("formulario");
@@ -16,7 +16,7 @@
         $scope.dataSearch = {
             codEstab: '',
             idPuntoEmision: 0,
-            ckFecha: true,  
+            ckFecha: true,
             idCliente: 0,
             codEstado: '',
             codDoc: '',
@@ -53,7 +53,7 @@
             if ($scope.puntosEmision.length > 0) {
                 dataSearch.idPuntoEmision = $scope.puntosEmision.find((pto) => pto.defaultPtoEmi).idPuntoEmision;
             } else {
-                tS.toastr('warning', 'No tienes asignados puntos de emisión!') 
+                tS.toastr('warning', 'No tienes asignados puntos de emisión!')
                 $scope.dataSearch.idPuntoEmision = 0;
             }
         };
@@ -61,18 +61,18 @@
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
-            $scope.dataSearch.fechaFin = item.endDate;
+                $scope.dataSearch.fechaFin = item.endDate;
         }
 
 
-        $scope.onKeyupCliente = function () { 
+        $scope.onKeyupCliente = function () {
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.identificacion = null;
 
             }
         }
 
-        $scope.onSelectCliente = function (data) { 
+        $scope.onSelectCliente = function (data) {
             $scope.dataSearch.identificacion = data.numeroIdentificacion;
             $scope.dataSearch.idCliente = data.idCliente;
 
@@ -87,11 +87,11 @@
             }
             return $scope.dataSearch.codDoc
         }
-        
+
         $scope.getReport = (format) => {
 
-            if ($scope.dataSearch.checkboxCompanyCustomer){
-                if (!($scope.dataSearch.idCliente>0)){
+            if ($scope.dataSearch.checkboxCompanyCustomer) {
+                if (!($scope.dataSearch.idCliente > 0)) {
                     tS.toastr('warning', 'Seleccione el Cliente');
                     return
                 }
@@ -100,7 +100,7 @@
                 tipo: 1,
                 ckFecha: $scope.dataSearch.ckFecha,
                 codEstab: $scope.dataSearch.codEstab,
-                idCliente: fS.isValidField($scope.dataSearch.idCliente),
+                idCliente: $scope.dataSearch.checkboxCompanyCustomer ? fS.isValidField($scope.dataSearch.idCliente) : null,
                 codEstado: fS.isValidField($scope.dataSearch.codEstado),
                 fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
@@ -119,7 +119,7 @@
                 }),
                 dataParams: JSON.stringify(dataParams)
             };
-            
+
             commonSvc.getReport({
                 parameters,
                 formatType: format

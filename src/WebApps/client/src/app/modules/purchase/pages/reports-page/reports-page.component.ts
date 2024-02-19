@@ -180,8 +180,7 @@ export class ReportsPageComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: CODE_REPORT.RCP,
-        codEstab: this.dataSearch.codEstab,
+        codigo: CODE_REPORT.RCP, 
         format,
         aditionalParams: []
       }),
