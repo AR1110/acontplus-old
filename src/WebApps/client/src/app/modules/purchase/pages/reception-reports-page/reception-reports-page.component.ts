@@ -176,8 +176,7 @@ export class ReceptionReportsPageComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo,
-        codEstab: this.dataSearch.codEstab,
+        codigo, 
         format,
         aditionalParams: []
       }),

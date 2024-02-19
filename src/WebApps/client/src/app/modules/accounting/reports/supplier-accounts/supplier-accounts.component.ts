@@ -185,8 +185,7 @@ export class SupplierAccountsComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: this.dataSearch.ckCuotas ? CODE_REPORT.CCPC : CODE_REPORT.CCP,
-        codEstab: this.dataSearch.codEstab,
+        codigo: this.dataSearch.ckCuotas ? CODE_REPORT.CCPC : CODE_REPORT.CCP, 
         format,
         aditionalParams: []
       }),

@@ -575,7 +575,8 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                 cancelButtonText: 'No, cancelar!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    let comprobante = {
+                    try{
+                        let comprobante = {
                         idCliente: $scope.comprobante.idCliente,
                         total: $scope.cobro.valorAbono,
                         abono: $scope.cobro.abono,
@@ -634,7 +635,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                     const params = comprobanteIngresoSvc.mapperTo(data);
 
                     showLoader();
-                    comprobanteIngresoSvc.save(params).then(response => {
+                    comprobanteIngresoSvc.post(params).then(response => {
                         hideLoader();
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message)
@@ -647,6 +648,10 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                         hideLoader();
                         console.log(error)
                     })
+                    }catch(error){
+                        hideLoader();
+                        console.log(error)
+                    }
 
                 }
             })

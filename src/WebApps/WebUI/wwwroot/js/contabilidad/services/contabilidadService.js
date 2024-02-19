@@ -3,7 +3,7 @@
     'use strict';
     const PATH_API = 'Contabilidad/'
 
-    app.factory('comprobanteIngresoService', ['mainService', function (mS) {
+    app.factory('comprobanteIngresoService', ['mainService', 'formulario', function (mS, fS) {
         const url = `Contabilidad/ComprobanteIngreso/`
         return {
             getAll,
@@ -87,12 +87,12 @@
                 return {
                     idCuentaPorCobrar: detalle.idCuentaPorCobrar,
                     idCuotaPorCobrar: detalle.idCuotaPorCobrar,
-                    abono: detalle.abono,
+                    abono: fS.roundNumber(detalle.abono,5),
                     interes: detalle.interes,
                     diasMora: detalle.diasMora,
                     mora: detalle.mora,
-                    cuota: detalle.cuota,
-                    saldo: detalle.saldoOriginal,
+                    cuota: fS.roundNumber(detalle.cuota,5),
+                    saldo: fS.roundNumber(detalle.saldoOriginal,5),
                     secuencial: detalle.secuencial,
                 }
             })
@@ -100,10 +100,10 @@
             const historialCobrosMappeado = historialCobros.map(hc => {
                 return {
                     idCuentaPorCobrar: hc.idCuentaPorCobrar,
-                    abono: hc.abono,
+                    abono: fS.roundNumber(hc.abono,5),
                     diasMora: hc.diasMora,
                     mora: hc.mora,
-                    saldo: hc.saldo,
+                    saldo: fS.roundNumber(hc.saldo,5)
                 }
             })
 
