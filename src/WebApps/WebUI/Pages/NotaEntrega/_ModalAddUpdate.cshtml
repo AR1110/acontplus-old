@@ -92,9 +92,15 @@
                     <label>Cliente: <span class="text-danger">*</span></label>
                     <!--Start Nuevo - duplicar-->
                     <div class="input-group" ng-if="!(data.idNotaEntrega>0)">
-                        <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
-                            class="form-control border-select" ng-model="cliente.nombreFiscal" customer-search-sale-drtv
-                            on-select="onSelectedClienteChange(result)" on-keyup="onKeyupCustomer()"
+                        <input type="text" 
+                            id="clienteSearchInvoice" 
+                            name="clienteSearchInvoice"
+                            class="form-control border-select" 
+                            ng-model="cliente.nombreFiscal" 
+                            customer-search-sale-drtv
+                            on-select="onSelectedClienteChange(result)" 
+                            on-keyup="onKeyupCustomer()"
+                             tipos-identificacion="tiposIdentificacion"
                             function-trigger="receiveDataCustomerSRI(result)"
                             placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
@@ -310,11 +316,10 @@
             ui-grid-validate ui-grid-save-state class="grid">
         </div>
 
-        <div class="row">
-            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-                <md-divider></md-divider>
+        <div class="row mt-1">
+            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12"> 
                 <div class="row mt-2">
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
@@ -323,6 +328,7 @@
                                     decimal class="form-control border-select" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm"
+                                    ng-disabled="!permisoComprobanteVenta.porcentajeDescuento || gridOptions.data.length==0"
                                         ng-click="calcularPorcentajeDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>
                                     </button>
@@ -331,7 +337,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
@@ -340,31 +346,16 @@
                                     decimal placeholder="0.00" class="form-control border-select" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm"
+                                        ng-disabled="!permisoComprobanteVenta.descuento || gridOptions.data.length==0"
                                         ng-click="calcularDescuento()">
                                         <i class="fa fa-calculator fa-xs"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
 
-                    @* <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label>Transporte</label>
-                            <input type="text" decimal ng-model="data.transporte" class="form-control border-select"
-                                placeholder="0.00" />
-                        </div>
-                    </div>
-
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label>Rercargo</label>
-                            <input type="text" decimal ng-model="data.recargo" class="form-control border-select"
-                                placeholder="0.00" />
-                        </div>
-                    </div> *@
-
-                    <div class="col-lg-4">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Observacion</label>
                             <textarea class="form-control border-select" ng-model="data.observacion" touppercase
@@ -372,6 +363,49 @@
                         </div>
                     </div>
                 </div>
+
+
+                <div class="row" ng-if="!(data.idNotaEntrega>0)">
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                        <div class="card border">
+                            <!-- <div class="card-header">
+                                <span class="card-title">FORMA DE PAGO</span>
+                            </div> -->
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Forma de Pago</th>
+                                                <th>Plazo</th>
+                                                <th>Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <select ng-model="dataFormaPago.idFormaPagoSri" id="formadepago" class="form-control border-select" name="formadepago"> 
+                                                        <option ng-value="item.idFormaPagoSri" ng-repeat="item in formasPago">
+                                                            {{item.descripcion}}
+                                                        </option> 
+                                                    </select>
+                                                </td>
+                                                <td width="100px">
+                                                    {{dataFormaPago.plazo}} {{dataFormaPago.plazo>1?'Días': 'Día'}}
+                                                </td>
+                                                <td width="100px">
+                                                    ${{dataFormaPago.total}}
+                                                </td> 
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    </div>
+                </div> 
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">

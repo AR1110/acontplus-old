@@ -751,6 +751,13 @@
             total: 0,
         }
         $scope.dataClone = {};
+        
+        $scope.dataFormaPago = {
+            idFormaPagoSri: 0,
+            idTiempoCredito: 0,
+            plazo: 1,
+            total: 0
+        }
 
         $scope.cliente = {};
         $scope.newCustomer = false;
@@ -759,6 +766,8 @@
         $scope.puntosEmision = [];
         $scope.bodegas = [];
         $scope.tarifasImpuesto = [];
+        $scope.formasPago = [];
+        $scope.tiposIdentificacion = [];
 
         $scope.datosAdicionalesArticulo = [];
         $scope.historyDatosAdicionales = [];
@@ -840,78 +849,6 @@
         }
 
         $scope.gridOptionsItemsDeleted = [];
-
-        // /**
-        //  * Combina elementos en base a propiedades específicas del objeto rowEntity.
-        //  * @param {*} items - Conjunto de elementos a fusionar.
-        //  * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
-        //  * @returns {*} - Objeto resultante de la fusión.
-        //  */
-        // function mergeItem(items, rowEntity) {
-        //     // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
-        //     let foundItemByArticuloAndBodega = items.filter(item => (
-        //         item.idArticulo === rowEntity.idArticulo &&
-        //         item.idBodega === rowEntity.idBodega
-        //     ))
-
-        //     let totalCantidadFraccionada = foundItemByArticuloAndBodega.reduce((total, item) => {
-        //         let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO')
-        //         if (dataMedida) {
-        //             let conversionSum = item.cantidad * dataMedida.conversion;
-        //             total += conversionSum;
-        //         }
-        //         return total;
-        //     }, 0);
-
-        //     let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
-        //         let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
-        //         if (dataMedida) {
-        //             let conversionSum = item.cantidad * dataMedida.conversion;
-        //             total += conversionSum;
-        //         }
-        //         return total;
-        //     }, 0)
-
-        //     let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
-        //         itemPrevious.cantidad += itemCurrent.cantidad;
-        //         return itemPrevious;
-        //     }, {
-        //         // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
-        //         ...rowEntity,
-        //         cantidad: 0,
-        //     });
-
-        //     // Devuelve el objeto resultante de la fusión. 
-        //     return {
-        //         idBodega: dataItemMerge.idBodega,
-        //         cantidad: dataItemMerge.cantidad,
-        //         consolidacionesFecha: dataItemMerge.consolidacionesFecha,
-        //         cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
-        //     };
-        // }
-
-        // function getCantidadStock(rowEntity) {
-        //     try {
-        //         let fechaEmisionValidate = $scope.data.fechaEmision;
-        //         let cantidadStock = rowEntity.cantidadStock;
-
-        //         let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
-        //             cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
-        //         )
-
-        //         if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-        //             if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
-        //                 return 0;
-        //             }
-        //         }
-
-        //         let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-        //         return resultCantStock;
-        //     } catch (error) {
-        //         console.log(error)
-        //     }
-        // }
-
         /**
          * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
          * @param {string} field - Campo modificado.
@@ -1031,16 +968,18 @@
                 decimal,
                 config,
                 vendedores,
-                clienteDefault
+                clienteDefault,
+                formasPago,
+                tiposIdentificacion
             } = structuredClone(mainDataForm);
-
-            $scope.establecimientos = estabs;
             let dataEstab = {};
 
+            $scope.establecimientos = estabs;
+            $scope.formasPago = formasPago;
+            $scope.tiposIdentificacion = tiposIdentificacion;
+
             if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
-                const {
-                    comprobante,
-                } = params.data;
+                const { comprobante } = params.data;
                 dataEstab = $scope.establecimientos.find(estab => estab.codEstab === comprobante.codEstab);
             } else {
                 dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
@@ -1066,9 +1005,22 @@
                     $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                 }
                 if ($scope.tiemposCredito.length > 0) {
-                    $scope.data.idTiempoCredito = $scope.tiemposCredito[0].idTiempoCredito;
+                    let dataTiempoCredito = $scope.tiemposCredito[0];
+
+                    $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+
+                    //Formas Pago 
+                    $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito; 
                 }
+
+                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
+                if ($scope.formasPago.length > 0) {
+                    let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
+                    $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+                }
+
 
                 if ($scope.vendedores.length > 0) {
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
@@ -1077,8 +1029,7 @@
                 }
                 //Cliente Predeterminado 
                 if (clienteDefault.idCliente > 0) {
-                    $scope.cliente = clienteDefault;
-                    console.log($scope.cliente)
+                    $scope.cliente = clienteDefault; 
 
                 }
                 getFechaVencimiento();
@@ -1259,6 +1210,10 @@
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
                 $scope.data.irbpnr = irbpnr
                 $scope.data.propina = propina;
+
+                //Forma Pago
+                $scope.dataFormaPago.total = importeTotal;
+
             } catch (error) {
                 console.log(error);
             }
@@ -1287,6 +1242,10 @@
                 //Variables temporales
                 $scope.dataClone.fechaEmision = fechaEmision;
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+
+                //Formas pago
+                $scope.dataFormaPago.idTiempoCredito = $scope.data.idTiempoCredito;
+                $scope.dataFormaPago.plazo = diasCredito;
             }
         }
 
@@ -2190,6 +2149,7 @@
             let recargo = Number($scope.data.recargo);
             let importeTotal = total + transporte + recargo;
             $scope.data.total = importeTotal;
+            $scope.dataFormaPago.total = fS.roundNumber(importeTotal, $scope.decimal.importeTotal)
             return fS.roundNumber(importeTotal, $scope.decimal.importeTotal);
         }
 
@@ -2231,6 +2191,10 @@
                 return
             }
             if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
+                if (!($scope.cliente.idTipoIdentificacion > 0)) {
+                    tS.toastr('warning', `idTipoIdentificacion no proporcionada: ${$scope.cliente.idTipoIdentificacion} `);
+                    return
+                }
                 if (!$scope.cliente.razonSocialComprador || !$scope.cliente.nombreComercial) {
                     tS.toastr('warning', 'Seleccione el Cliente');
                     return
@@ -2446,6 +2410,7 @@
                     data: $scope.data,
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
+                    dataFormaPago: $scope.dataFormaPago,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
                     infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                     historyDatosAdicionales: $scope.historyDatosAdicionales

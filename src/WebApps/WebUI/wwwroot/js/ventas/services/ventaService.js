@@ -227,11 +227,7 @@
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
                     let tiemposCredito = mainData[3];
-                    // let articuloDefaultTemp = mainData[6];
-                    // let articuloDefault = {}
-                    // if(articuloDefaultTemp && articuloDefaultTemp.length>0){
-                    //     articuloDefault = articuloDefaultTemp[0];
-                    // }
+
                     let clienteDefaultTemp = mainData[5];
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
@@ -246,7 +242,7 @@
                     notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
                     let tempEstabsAndPtosEmision = mainData[9];
                     let tempBodegas = mainData[10];
-                    let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
+                    let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
 
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
@@ -254,6 +250,10 @@
                         isGroupBodega: true
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
+
+                    let formasPago = mainData[11];
+                    let tiposIdentificacion = mainData[12];
+
                     return {
                         estabs,
                         tarifasImpuesto,
@@ -265,7 +265,10 @@
                         decimal,
                         config,
                         vendedores,
-                        permisonEditarDoc
+                        permisoEditarDoc,
+                        formasPago,
+                        tiposIdentificacion
+
                     }
                 }
             })
@@ -404,6 +407,7 @@
                 throw new Error("Datos de cliente no proporcionados")
             }
 
+            notaEntrega.idTipoIdentificacion = cliente.idTipoIdentificacion;
             notaEntrega.idCliente = cliente.idCliente;
             notaEntrega.identificacionComprador = cliente.identificacionComprador;
             notaEntrega.razonSocialComprador = cliente.razonSocialComprador;
@@ -449,6 +453,7 @@
                 total: data.total,
                 observacion: data.observacion,
                 placa: data.placa,
+                idTipoIdentificacion: data.idTipoIdentificacion,
                 identificacionComprador: data.identificacionComprador,
                 razonSocialComprador: data.razonSocialComprador,
                 direccionComprador: data.direccionComprador,
@@ -1500,47 +1505,44 @@
         }
 
         service.findById = function (id) {
-            return mS.getData('get', url + 'GetId/' + id, null, true)
-                .then(response => {
-                    if (response.code === "0") {
-                        throw response;
-                    }
-                    if (response.code === "1") {
-                        let dataRepository = JSON.parse(response.payload)[0];
+            return mS.getData('get', url + 'GetId/' + id, null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let dataRepository = JSON.parse(response.payload)[0];
 
-                        return {
-                            idCliente: dataRepository.idCliente,
-                            idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
-                            idTipoEntidad: dataRepository.idTipoEntidad,
-                            idSubContribuyente: dataRepository.idSubContribuyente,
-                            idTiempoCredito: dataRepository.idTiempoCredito,
-                            idTipoIdentificacion: dataRepository.idTipoIdentificacion,
-                            idCiudad: dataRepository.idCiudad,
-                            numeroIdentificacion: dataRepository.numeroIdentificacion,
-                            nombreFiscal: dataRepository.nombreFiscal,
-                            montoCredito: dataRepository.montoCredito,
-                            nombreComercial: dataRepository.nombreComercial,
-                            direccion: dataRepository.direccion,
-                            telefono: dataRepository.telefono,
-                            correo: dataRepository.correo,
-                            estado: dataRepository.estado,
-                            idEmpleado: dataRepository.idEmpleado,
-                            diasCredito: dataRepository.diasCredito,
-                            empleado: dataRepository.empleado,
-                            idEmpresa: dataRepository.idEmpresa,
-                            idCargo: dataRepository.idCargo,
-                            placa: dataRepository.placa,
-                            validationSri: dataRepository.validationSri,
-                            correos: dataRepository.correo ? dataRepository.correo.split('|') : [],
-                            telefonos: dataRepository.telefono ? dataRepository.telefono.split('|') : [],
-                            placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : []
-                        }
+                    return {
+                        idCliente: dataRepository.idCliente,
+                        idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
+                        idTipoEntidad: dataRepository.idTipoEntidad,
+                        idSubContribuyente: dataRepository.idSubContribuyente,
+                        idTiempoCredito: dataRepository.idTiempoCredito,
+                        idTipoIdentificacion: dataRepository.idTipoIdentificacion,
+                        idCiudad: dataRepository.idCiudad,
+                        numeroIdentificacion: dataRepository.numeroIdentificacion,
+                        identificacionComprador: dataRepository.numeroIdentificacion,
+                        razonSocialComprador: dataRepository.nombreFiscal,
+                        nombreFiscal: dataRepository.nombreFiscal,
+                        montoCredito: dataRepository.montoCredito,
+                        nombreComercial: dataRepository.nombreComercial,
+                        direccion: dataRepository.direccion,
+                        telefono: dataRepository.telefono,
+                        correo: dataRepository.correo,
+                        estado: dataRepository.estado,
+                        idEmpleado: dataRepository.idEmpleado,
+                        diasCredito: dataRepository.diasCredito,
+                        empleado: dataRepository.empleado,
+                        idEmpresa: dataRepository.idEmpresa,
+                        idCargo: dataRepository.idCargo,
+                        placa: dataRepository.placa,
+                        validationSri: dataRepository.validationSri,
+                        correos: dataRepository.correo ? dataRepository.correo.split('|') : [],
+                        telefonos: dataRepository.telefono ? dataRepository.telefono.split('|') : [],
+                        placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : []
                     }
-                })
-                .catch(error => {
-                    console.log('Error service get customer Find by Id: ' + error)
-                    throw error;
-                })
+                }
+            })
         }
 
         /**
@@ -1808,10 +1810,6 @@
                         }))
                     }
                 })
-                .catch(error => {
-                    console.log(error)
-                    throw error;
-                })
         }
 
         function deleteEmployee(id) {
@@ -1820,18 +1818,10 @@
 
         function save(data) {
             return mS.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true)
-                .catch(error => {
-                    console.log(error)
-                    throw error;
-                })
         }
 
         function update(id, data) {
             return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data), null, true)
-                .catch(error => {
-                    console.log(error)
-                    throw error;
-                })
         }
 
     })

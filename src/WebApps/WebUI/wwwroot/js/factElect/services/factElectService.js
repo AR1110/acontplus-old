@@ -128,6 +128,7 @@
 
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
+
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -172,6 +173,8 @@
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
 
+                    let formasPago = mainData[11];
+                    let tiposIdentificacion = mainData[12]
                     // Devuelve los datos finales estructurados
                     return {
                         estabs,
@@ -185,7 +188,9 @@
                         vendedores,
                         articuloDefault,
                         clienteDefault,
-                        permisoEditarDoc
+                        permisoEditarDoc,
+                        formasPago,
+                        tiposIdentificacion
                     };
 
                 }
@@ -323,13 +328,15 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainDataApi = JSON.parse(response.payload);
+                    let mainDataApi = JSON.parse(response.payload); 
 
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
                     let items = mainDataApi[2];
                     let infoAdicionalDocumento = mainDataApi[3];
                     let tarifasImpuesto = mainDataApi[4];
+                    let formasPago = mainDataApi[5];
+
                     let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -353,7 +360,8 @@
                         cliente,
                         items: resultsItems,
                         infoAdicionalDocumento: infoAdicionalDocumento || [],
-                        tarifasImpuesto
+                        tarifasImpuesto,
+                        formasPago
                     }
 
                 }
@@ -386,8 +394,10 @@
                         clienteTempApi,
                         itemsApi,
                         infoAdicionalDocumento,
-                        datosAdicionalesArticuloTemp
+                        datosAdicionalesArticuloTemp,
+                        formasPagoTemp
                     ] = mainDataApi;
+                     
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
 
@@ -479,12 +489,24 @@
                         estado: item.estado
                     }))
 
+                    let formasPago = formasPagoTemp.map(fp => {
+                        return {
+                            idFormaPagoFactura: fp.idFormaPagoFactura,
+                            idFormaPagoSri: fp.idFormaPagoSri,
+                            idFactura: fp.idFactura,
+                            idTiempoCredito: fp.idTiempoCredito,
+                            total: fp.total,
+                            plazo: fp.plazo
+                        }
+                    });
+
                     return {
                         comprobante,
                         cliente,
                         items,
                         infoAdicionalDocumento,
-                        datosAdicionalesArticulo
+                        datosAdicionalesArticulo,
+                        formasPago
                     }
                 }
             })
@@ -631,6 +653,7 @@
             const {
                 data,
                 cliente,
+                dataFormaPago,
                 detalles,
                 itemsDeleted,
                 infoAdicionalDocumento,
@@ -648,6 +671,7 @@
             }
 
             factura.idCliente = cliente.idCliente;
+            factura.idTipoIdentificacion = cliente.idTipoIdentificacion;
             factura.fechaEmision = fS.formatDateTimeZone(data.fechaEmision);
             factura.fechaVencimiento = fS.formatDateTimeZone(data.fechaVencimiento);
             factura.identificacionComprador = cliente.identificacionComprador;
@@ -671,7 +695,8 @@
                 detalles: mergeItems,
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumento || [],
-                infoAdicionalArticulo: historyDatosAdicionales
+                infoAdicionalArticulo: historyDatosAdicionales,
+                formaPago: dataFormaPago
             }
         }
 
@@ -694,6 +719,7 @@
                 total: data.total,
                 observacion: data.observacion,
                 placa: data.placa,
+                idTipoIdentificacion: data.idTipoIdentificacion,
                 identificacionComprador: data.identificacionComprador,
                 razonSocialComprador: data.razonSocialComprador,
                 direccionComprador: data.direccionComprador,
