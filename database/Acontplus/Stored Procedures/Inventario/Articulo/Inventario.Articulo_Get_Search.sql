@@ -50,21 +50,6 @@ BEGIN
 	   ,pageSize    INT
     )
 
-	--DECLARE @tblResult AS TABLE (
-	--	idArticulo INT
-	--	,codigo VARCHAR(100)
-	--	,descripcion VARCHAR(300)
-	--	,iva VARCHAR(10)
-	--	,stock DECIMAL(15, 2)
-	--	,stockMinimo DECIMAL(15, 2)
-	--	,subFamilia VARCHAR(100)
-	--	,marca VARCHAR(100)
-	--	,medida VARCHAR(100)
-	--	,porcentaje DECIMAL(4, 0)
-	--	,fraccionado BIT NULL
-	--	,s3ObjectUrl NVARCHAR(300) NULL
-	--	,s3ObjectKey NVARCHAR(300) NULL
-	--	)
 	
     --> Search
     SET @params  = '@idEntidad  INT
@@ -129,22 +114,6 @@ BEGIN
 
     SET @sql = @sql + 'ORDER BY a.descripcion,a.codigo ASC OFFSET @pageSize * (@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
-	----SET @sql = @sql + 'ORDER BY a.descripcion ASC'
-	--INSERT INTO @tblResult (
-	--	 idArticulo
-	--	,codigo
-	--	,descripcion
-	--	,iva
-	--	,stock
-	--	,stockMinimo
-	--	,subfamilia
-	--	,marca
-	--	,medida
-	--	,porcentaje
-	--	,fraccionado
-	--	,s3ObjectUrl
-	--	,s3ObjectKey
-	--	)
 	EXEC SP_EXECUTESQL @sql
 		              ,@params
 		              ,@idEntidad = @byEntidad
@@ -153,48 +122,4 @@ BEGIN
                       ,@pageIndex = @pageIndex
 				      ,@pageSize  = @pageSize
                       
-	--	,@busqueda = @bySearch
-
-	--IF EXISTS (SELECT 1 FROM @tblResult)
-	--    BEGIN
-	--	    SELECT a.idArticulo
-	--		      ,IIF(a.porcentaje > 0, '*', '') + a.codigo as codigo
-	--		      ,a.descripcion
-	--		      ,CAST(CAST(a.iva as decimal(15,0)) AS varchar)+'%' as iva
-	--		      ,a.stock
-	--		      ,a.stockMinimo
-	--		      ,ISNULL(a.subfamilia, 'N/A') as subFamilia
-	--		      ,ISNULL(a.marca, 'N/A')      as marca
-	--		      ,ISNULL(a.medida, 'N/A')     as medida
-	--		      ,CASE WHEN a.fraccionado = 1 THEN 'badge badge-danger' 
- --                                              ELSE '' 
- --                  END as fraccionado
-
-	--		      ,CASE WHEN a.stock <= 0                            THEN 'badge badge-danger' 
- --                       WHEN a.stock > 0 AND a.stock < a.stockMinimo THEN 'badge badge-warning' 
- --                                                                    ELSE '' 
- --                  END as style
-	--		      ,(
-	--			        SELECT t.descripcion  as tarifa
-	--				          ,p.precioConIva as precio
-	--			        FROM dbo.ArticuloPvP p WITH (NOLOCK)
-	--			        INNER JOIN dbo.Tarifa t WITH (NOLOCK) ON t.idTarifa = p.idTarifa
-	--			        WHERE p.idArticulo = a.idArticulo
-	--			        ORDER BY t.codigo ASC
-	--			        FOR JSON PATH
-
-	--		       ) as priceSale
-	--		      ,(
-	--			        SELECT Helper.IsNullOrEmpty(au.ubicacion) as ubicacion
-	--			        FROM dbo.ArticuloUbicacion au WITH (NOLOCK)
-	--			        WHERE au.idArticulo = a.idArticulo
-	--				        AND au.idBodega = @idBodega
-	--			        FOR JSON PATH
-
-	--		       ) as warehouses
-	--		      ,0 as precioSinSubsidio
-	--		      ,s3ObjectUrl
-	--		      ,s3ObjectKey
-	--	    FROM @tblResult a
-	--    END
 END
