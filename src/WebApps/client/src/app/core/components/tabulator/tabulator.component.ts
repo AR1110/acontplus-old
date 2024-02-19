@@ -44,11 +44,12 @@ export class TabulatorComponent implements OnChanges, OnInit {
 
   private drawTable(): void {
     new Tabulator(this.tab, {
-      data: this.tableData,
-      reactiveData: true, //enable data reactivity
       columns: this.columnNames,
+      data: this.tableData,
+      //height: this.height,
       layout: 'fitColumns',
-      height: this.height,
+      reactiveData: true, //enable data reactivity
+      responsiveLayout: true,
     });
     let table = document.getElementById('tabulatorTable');
     if (table) {

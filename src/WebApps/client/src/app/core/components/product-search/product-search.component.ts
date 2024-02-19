@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { ProductSearch } from '@modules/inventory/models/product.model';
 import { ProductService } from '@modules/inventory/services/product.service';
 import {
@@ -29,7 +23,7 @@ export class ProductSearchComponent {
   @Input() textSearch: any = '';
   @Output() onProductSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
-  
+
   private productService = inject(ProductService);
 
   product: any = {};

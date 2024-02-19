@@ -38,6 +38,7 @@ export interface DeviceSpec01 {
 }
 
 export interface DeviceSearch {
+  id: number;
   model: string;
   name: string;
   serie?: string;

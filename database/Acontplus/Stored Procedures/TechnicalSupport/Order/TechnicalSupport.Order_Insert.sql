@@ -50,12 +50,15 @@ BEGIN
 
     DECLARE @tbDetails AS TABLE(
         uuid VARCHAR(100) NOT NULL
+       ,deviceCustomerId INT NOT NULL
        ,deviceId INT NOT NULL
+       ,deviceSerie VARCHAR(300)
+       ,deviceWarranty NUMERIC(18,2)
        ,obs VARCHAR(500) NULL
     )
         
     --> Data Json 
-    SELECT @details = orderDetails FROM OPENJSON(@json) WITH ( orderDetails  NVARCHAR(MAX) AS JSON )
+    SELECT @details = orderDetails FROM OPENJSON(@json) WITH (orderDetails  NVARCHAR(MAX) AS JSON )
 
     --> Insert to temp Table
     INSERT INTO @tbOrder
@@ -81,12 +84,15 @@ BEGIN
         END
 
     --> Insert to temp Table
-    INSERT INTO @tbDetails(uuid, deviceId, obs)
-                    SELECT uuid, deviceId, obs
+    INSERT INTO @tbDetails(uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs)
+    SELECT uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs
                     FROM OPENJSON(@details) WITH
                     (
                         uuid         VARCHAR(100)    '$.uuid'
+                        ,deviceCustomerId INT       '$.deviceCustomerId'
                         ,deviceId    INT             '$.deviceId'
+                        ,deviceSerie    VARCHAR(300)             '$.deviceSerie'
+                        ,deviceWarranty    NUMERIC(18,2)             '$.deviceWarranty'
                         ,obs         VARCHAR(100)    '$.obs'
                     )
 
@@ -137,6 +143,12 @@ BEGIN
             SELECT uuid, @orderId, deviceId, obs, @datetime, @enabled, @userId
             FROM @tbDetails
 
+        
+            INSERT INTO TechnicalSupport.DeviceCustomer(CustomerCompanyId, DeviceId, SerialNumber, Warranty)
+            SELECT (SELECT TOP 1 o.customerCompanyId FROM @tbOrder o), deviceId, deviceSerie, deviceWarranty
+            FROM @tbDetails 
+            WHERE deviceCustomerId = 0
+        
             UPDATE cf 
             SET cf.ultimaSecuencia = vcf.secuencial + 1 
             FROM ConfiguracionDocumento cf WITH (ROWLOCK)
