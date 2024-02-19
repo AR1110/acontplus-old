@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuotaPorCobrar_Update_Status', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuotaPorCobrar_Update_Status
-GO
-CREATE PROCEDURE Contabilidad.CuotaPorCobrar_Update_Status @idCuotaPorCobrar AS INT
+CREATE OR ALTER PROCEDURE Contabilidad.CuotaPorCobrar_Update_Status @idCuotaPorCobrar AS INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -45,7 +42,7 @@ BEGIN
 	SELECT @residuo = ISNULL(@cuota,0) - ISNULL(@abono,0)
 
 
-	IF @residuo = 0  
+	IF @residuo <= 0  
 		BEGIN
 			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'CBR'
 		END 
