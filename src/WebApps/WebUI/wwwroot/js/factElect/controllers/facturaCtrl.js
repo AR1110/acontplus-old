@@ -1111,7 +1111,6 @@
                 }
                 $scope.data.fechaEmision = new Date();
                 $scope.data.idFactura = 0;
-                getFechaVencimiento();
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
                 $scope.gridOptions.data = calculateTotalItems(items);
@@ -1130,6 +1129,8 @@
 
                 //Formas pagos 
                 $scope.dataFormaPago = formasPago[0];
+
+           //     getFechaVencimiento();
 
                 counterGridOptions();
             }
