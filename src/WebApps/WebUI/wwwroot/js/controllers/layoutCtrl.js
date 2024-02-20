@@ -165,8 +165,9 @@
                     location.reload();
                 }
             })
-        }
-        if (userData && (tempUserData.username !== userData.username)) {
+            return 
+        } 
+        if (Object.keys(userData).length > 0 && (tempUserData.username !== userData.username)) {
             userData = tempUserData;
             location.reload();
         }
