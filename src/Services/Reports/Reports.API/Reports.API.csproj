@@ -306,10 +306,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Reports\Ventas\FacturaGeneral.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
