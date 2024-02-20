@@ -227,7 +227,6 @@
             try {
                 showLoader();
                 $scope.aprobComprobantes = [];
-                console.log($scope.dataSearch.byEstado)
                 let dataSearch = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
@@ -272,11 +271,11 @@
                 showLoader();
                 aprobacionDocSvc.getDataFilter().then(response => {
                     $scope.establecimientos = response.estabs;
-                    $scope.estadoDocumentos = response.estadoDocs; 
-                    if($scope.establecimientos.length>0){
+                    $scope.estadoDocumentos = response.estadoDocs;
+                    if ($scope.establecimientos.length > 0) {
                         $scope.dataSearch.codEstab = $scope.establecimientos.find(item => (item.defaultEstab)).codEstab;
                         $scope.getAprobComprobantes();
-                    }else{
+                    } else {
                         tS.toastr('warning', 'No tienes asignado Establecimiento!')
                     }
                 })
@@ -1862,11 +1861,11 @@
                 let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
                 let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
                 if (dataMedidaFraccionado) {
-                    let conversionFraccionadaSum = item.cantidad * dataMedida.conversion;
+                    let conversionFraccionadaSum = item.cantidad * dataMedidaFraccionado.conversion;
                     total.totalCantidadFraccionada += conversionFraccionadaSum;
                 }
                 if (dataMedidaPrincipal) {
-                    let conversionPrincipalSum = item.cantidad * dataMedida.conversion;
+                    let conversionPrincipalSum = item.cantidad * dataMedidaPrincipal.conversion;
                     total.totalCantidadPrincipal += conversionPrincipalSum;
                 }
                 return total;
@@ -2034,7 +2033,7 @@
         }
 
         function calculateTotalItems(items) {
-            return items.map(item => { 
+            return items.map(item => {
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.valorDescuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
@@ -2710,12 +2709,15 @@
 
     function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
         let { docOrigenDesc, docDestinoDesc, data } = params
-        let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
+        let { comprobante, cliente, detalles, datosAdicionalesArticulo, formasPago } = data;
 
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
 
         $scope.data = comprobante;
+        
+        $scope.mostrarFormasPago = $scope.data.docDestino === DOC_TYPE.FV_SRI;
+
         $scope.cliente = cliente;
 
         $scope.dataClone = {};
@@ -2739,6 +2741,14 @@
         }))
 
         $scope.infoAdicionalDocumento = [];
+
+        $scope.formasPago = formasPago;
+        $scope.dataFormaPago = {
+            idFormaPagoSri: 0,
+            idTiempoCredito: 0,
+            plazo: 1,
+            total: 0
+        }
 
         //GridOptions Invoice 
         $scope.gridOptionsDetalle = {
@@ -2978,13 +2988,16 @@
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
                 $scope.data.irbpnr = irbpnr
                 $scope.data.propina = propina;
+
+                //Formas pago 
+                $scope.dataFormaPago.total = importeTotal;
             } catch (error) {
                 console.log(error);
             }
         }
 
         function calculateTotalItems(items) {
-            return items.map(item => { 
+            return items.map(item => {
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.valorDescuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
@@ -3018,8 +3031,7 @@
                  * Establecimiento - Impuesto Tarifa 
                  */
                 $scope.establecimientos = estabs;
-                const codEstab = $scope.establecimientos.flatMap((dt) => dt.puntosEmision)
-                    .find((dt) => dt.idPuntoEmision === $scope.data.idPuntoEmision).codEstab;
+                const codEstab = $scope.establecimientos.flatMap((dt) => dt.puntosEmision).find((dt) => dt.idPuntoEmision === $scope.data.idPuntoEmision).codEstab;
 
                 let dataEstab = $scope.establecimientos.find(item => (item.codEstab === codEstab))
 
@@ -3050,8 +3062,19 @@
 
                 $scope.tiempoCreditos = tiemposCredito;
                 if ($scope.tiempoCreditos.length > 0) {
-                    $scope.data.idTiempoCredito = $scope.tiempoCreditos[0].idTiempoCredito;
+                    let dataTiempoCredito = $scope.tiempoCreditos[0];
+                    $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+
+                    //Formas Pago 
+                    $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
+                }
+
+                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
+                if ($scope.formasPago.length > 0) {
+                    let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
+                    $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
                 }
 
                 //Permisos para detalle y documento    
@@ -3060,6 +3083,8 @@
 
                 //Vendedores-usuarios
                 $scope.vendedores = vendedores;
+
+
 
                 setColumnDefs();
                 $scope.gridOptionsDetalle.data = calculateTotalItems(detalles);
@@ -3339,15 +3364,19 @@
                     fechaVencimientoEscrita
                 } = fS.sumarDiasAFecha(fechaEmision, diasCredito);
 
-                var formattedDateTime = moment(fechaVencimiento).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
+                // var formattedDateTime = moment(fechaVencimiento).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
 
-                $scope.data.fechaVencimiento = new Date(formattedDateTime);
+                $scope.data.fechaVencimiento = new Date(fechaVencimiento);
                 $scope.data.fechaEmisionEscrita = fechaEmisionEscrita;
                 $scope.data.fechaVencimientoEscrita = fechaVencimientoEscrita;
 
                 //Variables temporales
                 $scope.dataClone.fechaEmision = fechaEmision;
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+
+                //Formas pago
+                $scope.dataFormaPago.idTiempoCredito = $scope.data.idTiempoCredito;
+                $scope.dataFormaPago.plazo = diasCredito;
             }
         }
 
@@ -3799,10 +3828,9 @@
                         let detalles = checkStockDetalle($scope.gridOptionsDetalle.data)
                         let query = facturaSvc.queryMapper({
                             data: $scope.data,
-                            cliente: {
-                                idCliente: $scope.cliente.idCliente
-                            },
+                            cliente: $scope.cliente,
                             detalles,
+                            dataFormaPago: $scope.dataFormaPago,
                             itemsDeleted: [],
                             infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                             historyDatosAdicionales: $scope.historyDatosAdicionales,
@@ -3943,7 +3971,7 @@
         }
 
         function calculateTotalItems(items) {
-            return items.map((item, index) => { 
+            return items.map((item, index) => {
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.descuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {

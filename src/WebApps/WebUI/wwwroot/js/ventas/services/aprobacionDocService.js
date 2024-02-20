@@ -21,7 +21,7 @@
                 }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
-            
+
                     let tempEstabsAndPtosEmision = mainData[0];
                     let estadoDocs = mainData[1];
                     let dataToGroup = {
@@ -48,7 +48,7 @@
                 }
                 if (response.code === "1") {
                     const mainData = JSON.parse(response.payload);
-         
+
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -135,7 +135,8 @@
                     let historialRepository = dataRepository[3];
                     let infoAdicionalDocumento = dataRepository[4];
                     let datosAdicionalesArticulo = dataRepository[5];
-
+                    let formasPago = dataRepository[6];
+                    
                     let compMapper = {
                         idAprob_Document: compRepository.idAprob_Document,
                         uniqueId: compRepository.uniqueId,
@@ -163,7 +164,12 @@
                         nombreComercial: clienteRepository.nombreComercial,
                         nombreFiscal: clienteRepository.nombreFiscal,
                         numeroIdentificacion: clienteRepository.numeroIdentificacion,
-                        direccion: clienteRepository.direccion
+                        direccion: clienteRepository.direccion,
+                        
+                        idTipoIdentificacion: clienteRepository.idTipoIdentificacion,
+                        codigoSriTipoIdentificacion: clienteRepository.tipoIdentificacion,
+                        identificacionComprador: clienteRepository.numeroIdentificacion,
+                        razonSocialComprador: clienteRepository.nombreFiscal
                     }
 
                     let items = detalleRepository.map((itemPrincipal, index) => {
@@ -248,7 +254,8 @@
                             jsonAdicional: JSON.parse(item.jsonAdicional),
                             selected: item.selected,
                             estado: item.estado
-                        }))
+                        })),
+                        formasPago
                     }
                 }
             }).catch(error => {
