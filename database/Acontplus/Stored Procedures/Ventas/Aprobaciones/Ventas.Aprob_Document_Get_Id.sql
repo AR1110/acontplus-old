@@ -51,6 +51,7 @@ BEGIN
 		  ,cl.numeroIdentificacion
 		  ,direccion = ISNULL(cl.direccion,'')
 	      ,tipoIdentificacion = ti.codigoSri 
+          ,cl.idTipoIdentificacion
 	FROM Ventas.Aprob_Document    ad
 	INNER JOIN Cliente            cl WITH(NOLOCK) ON cl.idCliente            = ad.idCliente
 	 LEFT JOIN TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
@@ -131,6 +132,8 @@ BEGIN
 	SELECT h.idDocumento, h.idHistoryInfoAdicional, selected = CAST(1 as BIT), i.* FROM Ventas.HistoryInfoAdicional h WITH(NOLOCK)
 	INNER JOIN Compra.InfoAdicional i WITH(NOLOCK) ON i.idInfoAdicional = h.idInfoAdicional
 	WHERE h.codDoc='APR' AND h.idDocumento = @id
+
+     SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
 
 END
 

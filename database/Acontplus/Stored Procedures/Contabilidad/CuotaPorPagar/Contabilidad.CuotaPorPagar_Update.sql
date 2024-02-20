@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuotaPorPagar_Update', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuotaPorPagar_Update
-GO
-CREATE PROCEDURE Contabilidad.CuotaPorPagar_Update @idCuotaPorPagar INT, @cuota NUMERIC(18,5)
+CREATE OR ALTER PROCEDURE Contabilidad.CuotaPorPagar_Update @idCuotaPorPagar INT, @cuota NUMERIC(18,5)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -41,7 +38,7 @@ BEGIN
 
 	SELECT @residuo = ISNULL(@cuota,0) - ISNULL(@abono,0)
 
-	IF @residuo = 0  
+	IF @residuo <= 0  
 		BEGIN
 			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PA'
 		END 
