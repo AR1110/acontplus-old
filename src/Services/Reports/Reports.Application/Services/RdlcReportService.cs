@@ -17,13 +17,11 @@ namespace Reports.Application.Services
         {
             _configuration = configuration;
         }
-        public ReportResponse GetReport(DataSet dsParams, DataSet ds, bool offline)
+        public ReportResponse GetReport(DataSet dsParams, DataSet ds, bool offline = false)
         {
-            var reportProps = new ReportProps();
-            reportProps = DataTableMapper.BindData<ReportProps>(dsParams.Tables["ReportProps"]);
+            var reportProps = DataTableMapper.BindData<ReportProps>(dsParams.Tables["ReportProps"]);
             using (var lr = new LocalReport())
             {
-
                 if (offline)
                 {
                     lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString()));
@@ -49,7 +47,7 @@ namespace Reports.Application.Services
                 }
                 if (dsParams.Tables.Contains("DataSources"))
                 {
-                    //Recorremos los datatbles con sus respectivas posiciones,para llenar la información
+                    //Recorremos los datatables con sus respectivas posiciones,para llenar la información
                     var dataSources = dsParams.Tables["DataSources"];
                     foreach (DataRow row in dataSources.Rows)
                     {
@@ -73,38 +71,30 @@ namespace Reports.Application.Services
                     lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
                 }
 
-                if (dsParams.Tables.Contains("ReportParams"))
+                if (dsParams.Tables.Contains("ReportParams") && dsParams.Tables["ReportParams"].Rows.Count > 0)
                 {
-                    var rdlcParams = dsParams.Tables["ReportParams"];
-                    //Recorremos los parametros del reporte como logos, textos, etc
-                    if (rdlcParams.Rows.Count > 0)
+                    foreach (DataRow item in dsParams.Tables["ReportParams"].Rows)
                     {
-                        //ReportParameterInfoCollection parameters = lr.GetParameters(); 
-                        foreach (DataRow item in rdlcParams.Rows)
+                        string paramValue = "";
+                        if (Convert.ToBoolean(item["isPicture"]))
                         {
-                            var paramValue = "";
-                            if (Convert.ToBoolean(item["isPicture"]))
+                            if (item.Field<bool>("isCompressed"))
                             {
-                                if (item.Field<bool>("isCompressed"))
-                                {
-                                    paramValue = FileExtensions.GetBase64FromByte(CompressionHelper.Decompress((byte[])item["paramValue"]));
-                                }
-                                else
-                                {
-                                    paramValue = FileExtensions.GetBase64FromByte((byte[])item["paramValue"]);
-                                }
-                                lr.SetParameters(new ReportParameter(item["paramName"].ToString(), paramValue));
+                                paramValue = FileExtensions.GetBase64FromByte(CompressionHelper.Decompress((byte[])item["paramValue"]));
                             }
                             else
                             {
-                                paramValue = Encoding.UTF8.GetString(item.Field<byte[]>("paramValue"));
-                                lr.SetParameters(new ReportParameter(item.Field<string>("paramName"), paramValue));
+                                paramValue = FileExtensions.GetBase64FromByte((byte[])item["paramValue"]);
                             }
+                            lr.SetParameters(new ReportParameter(item["paramName"].ToString(), paramValue));
+                        }
+                        else
+                        {
+                            paramValue = Encoding.UTF8.GetString(item.Field<byte[]>("paramValue"));
+                            lr.SetParameters(new ReportParameter(item.Field<string>("paramName"), paramValue));
                         }
                     }
                 }
-
-                //return lr.Render(format, null, out _, out _, out _, out _, out _);
                 byte[] fileReport = lr.Render(reportProps.ReportFormat, null, out _, out _, out _, out _, out _);
                 Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileContentType fc);
                 Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileExtension fe);
@@ -113,9 +103,7 @@ namespace Reports.Application.Services
         }
         public async Task<ReportResponse> GetErrorAsync()
         {
-            var errorFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "NotFound.pdf");
-            var bytes = await File.ReadAllBytesAsync(errorFilePath);
-            return new ReportResponse { FileContents = bytes, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
+            return new ReportResponse { FileContents = await File.ReadAllBytesAsync(Path.Combine(Directory.GetCurrentDirectory(), "Reports", "NotFound.pdf")), ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
         }
     }
 }

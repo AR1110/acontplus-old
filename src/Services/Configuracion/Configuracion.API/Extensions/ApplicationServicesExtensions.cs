@@ -21,7 +21,7 @@ namespace Configuracion.API.Extensions
 
             services.AddSingleton<LogWriter>();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(typeof(MappingProfiles));
             return services;
         }
     }
