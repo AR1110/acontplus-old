@@ -868,7 +868,7 @@
 
 
         //Merge Item Detalle Documento Venta 
-        formSvc.mergeItemStock = function (items, rowEntity){
+        formSvc.mergeItemStock = function (items, rowEntity) {
             // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
             let foundItemByArticuloAndBodega = items.filter(item => (
                 item.idArticulo === rowEntity.idArticulo &&
@@ -910,7 +910,7 @@
             };
         }
 
-        formSvc.getCantidadStock = function(rowEntity, fechaEmision) {
+        formSvc.getCantidadStock = function (rowEntity, fechaEmision) {
             try {
                 let fechaEmisionValidate = fechaEmision;
                 let cantidadStock = rowEntity.cantidadStock;
@@ -932,6 +932,25 @@
             }
         }
 
+
+        formSvc.mapperFromFormaPago = function (formasPago) {
+            let results = formasPago.map(item => {
+                let infoReferencia = '';
+                if (item.codigo === "01") {
+                    infoReferencia = 'Ref.: EFECTIVO'
+                }
+                if (item.codigo === "20") {
+                    infoReferencia = 'Ref.: TRANSFERENCIAS, CHEQUES'
+                }
+                return {
+                    idFormaPagoSri: item.idFormaPagoSri,
+                    descripcion: item.descripcion,
+                    codigo: item.codigo,
+                    infoReferencia
+                }
+            })
+            return results;
+        }
 
 
 

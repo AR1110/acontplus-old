@@ -1076,6 +1076,8 @@
                 if ($scope.formasPago.length > 0) {
                     let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
                     $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+                    $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+
                 }
 
                 //Cliente Predeterminado 
@@ -1103,6 +1105,7 @@
                     cliente,
                     items,
                     infoAdicionalDocumento,
+                    formasPago
                 } = params.data;
 
                 $scope.data = {
@@ -1666,7 +1669,9 @@
                 tS.toastr('warning', 'No tienes permiso para realizar esta acción');
                 return
             }
+            
             getFechaVencimiento();
+
         }
 
         $scope.onChangeFechaEmision = function () {
@@ -2236,6 +2241,12 @@
             } catch (error) {
                 console.log(error);
             }
+        }
+
+
+        $scope.onChangeFormaPago = function(){
+            let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
+            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
         }
 
 

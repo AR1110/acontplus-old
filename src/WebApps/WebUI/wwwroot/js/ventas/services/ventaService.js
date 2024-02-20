@@ -266,7 +266,7 @@
                         config,
                         vendedores,
                         permisoEditarDoc,
-                        formasPago,
+                        formasPago: fS.mapperFromFormaPago(formasPago),
                         tiposIdentificacion
 
                     }

@@ -1068,9 +1068,9 @@
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
 
 
-                if($scope.data.idTiempoCredito>0){
-                    let dataTiempoCredito = $scope.tiemposCredito.find(tc=>tc.idTiempoCredito===$scope.data.idTiempoCredito);
-                    if(dataTiempoCredito){
+                if ($scope.data.idTiempoCredito > 0) {
+                    let dataTiempoCredito = $scope.tiemposCredito.find(tc => tc.idTiempoCredito === $scope.data.idTiempoCredito);
+                    if (dataTiempoCredito) {
                         //Formas Pago 
                         $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                         $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
@@ -2363,6 +2363,11 @@
             }
         }
 
+
+        function setDataChangeFormaPago() {
+            let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
+            document.getElementById('infoReferenciaFormaPago').innerHTML = dataFormaPago.infoReferencia;
+        }
         $scope.onSaveInvoice = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
@@ -2398,6 +2403,7 @@
                                                 </option>`)}
                                                 
                                             </select>
+                                            <span class="d-flex justify-content-center text-info" id="infoReferenciaFormaPago"></span> 
                                         </td>
                                         <td width="100px">
                                             ${$scope.dataFormaPago.plazo} ${$scope.dataFormaPago.plazo > 1 ? 'Días' : 'Día'}
@@ -2411,15 +2417,21 @@
                         </div>  
                     `,
                     didOpen: () => {
-                        document.getElementById('formaDePago').value = $scope.dataFormaPago.idFormaPagoSri;
+                        let el = document.getElementById('formaDePago');
+                        el.value = $scope.dataFormaPago.idFormaPagoSri;
+                        setDataChangeFormaPago();
+
+                        el.addEventListener('change', () => { 
+                            $scope.dataFormaPago.idFormaPagoSri = Number(el.value);
+                            setDataChangeFormaPago();
+                        })
                     },
                     preConfirm: () => {
                         let idFormaPagoSri = document.getElementById('formaDePago').value;
                         if (!(idFormaPagoSri > 0)) {
                             tS.toastr('warning', 'Seleccione la forma de pago!')
                             return false;
-                        }
-                        $scope.dataFormaPago.idFormaPagoSri = idFormaPagoSri;
+                        } 
                     },
                     allowOutsideClick: false,
                     allowEscapeKey: false,
