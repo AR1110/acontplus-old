@@ -32,7 +32,8 @@ namespace TechnicalSupport.API.Services
                 device.Specs.UserId = device.UserId;
                 _context.Products.Add(device);
                 await _context.SaveChangesAsync();
-                return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = device.Id };
+                device.Id = device.Id;
+                return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = device };
             }
             catch (Exception)
             {
