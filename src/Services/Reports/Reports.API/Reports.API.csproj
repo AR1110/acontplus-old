@@ -11,12 +11,9 @@
   <ItemGroup>
     <None Remove="Order.rdl" />
     <None Remove="Reports\Compras\CompraDetalle.rdl" />
-    <None Remove="Reports\Compras\FacturaCompra.rdlc" />
-    <None Remove="Reports\Compras\FacturaCompraDetalle.rdlc" />
     <None Remove="Reports\Compras\IngresoBodega.rdlc" />
     <None Remove="Reports\Compras\LiquidacionCompra.rdlc" />
     <None Remove="Reports\Compras\NotaCreditoProveedor.rdlc" />
-    <None Remove="Reports\Compras\OrdenCompra.rdlc" />
     <None Remove="Reports\Compras\RecepcionFactura.rdl" />
     <None Remove="Reports\Compras\RecepcionNotaCredito.rdl" />
     <None Remove="Reports\Compras\RecepcionRetencion.rdl" />
@@ -34,7 +31,6 @@
     <None Remove="Reports\FactElect\FacturaGeneral.rdl" />
     <None Remove="Reports\FactElect\NotaCreditoRG.rdl" />
     <None Remove="Reports\Factura.rdlc" />
-    <None Remove="Reports\FacturaAutomatica.rdlc" />
     <None Remove="Reports\GestionFinanciera\Anticipo.rdl" />
     <None Remove="Reports\GestionFinanciera\Cheque.rdlc" />
     <None Remove="Reports\GestionFinanciera\ComprobanteEgreso.rdlc" />
@@ -44,19 +40,7 @@
     <None Remove="Reports\GestionReporte\ArticuloTarifa.rdl" />
     <None Remove="Reports\GestionReporte\ArticuloValoracion.rdl" />
     <None Remove="Reports\GestionReporte\ConsolidadoVenta.rdl" />
-    <None Remove="Reports\GestionReporte\ConsumoClienteRG.rdlc" />
-    <None Remove="Reports\GestionReporte\FacturaCompraRG.rdlc" />
-    <None Remove="Reports\GestionReporte\FacturaVentaRG.rdlc" />
-    <None Remove="Reports\GestionReporte\IngresoBodegaRG.rdlc" />
     <None Remove="Reports\GestionReporte\KardexRG.rdl" />
-    <None Remove="Reports\GestionReporte\LiquidacionCompraRG.rdlc" />
-    <None Remove="Reports\GestionReporte\NotaCreditoProveedorRG.rdlc" />
-    <None Remove="Reports\GestionReporte\NotaCreditoRG.rdlc" />
-    <None Remove="Reports\GestionReporte\NotaEntregaRG.rdlc" />
-    <None Remove="Reports\GestionReporte\OrdenCompraRG.rdlc" />
-    <None Remove="Reports\GestionReporte\ProformaRG.rdlc" />
-    <None Remove="Reports\GestionReporte\RetencionCompraRG.rdlc" />
-    <None Remove="Reports\GestionReporte\RetencionVentaRG.rdlc" />
     <None Remove="Reports\GuiaRemision.rdlc" />
     <None Remove="Reports\Inventario\ArticuloFraccionado.rdl" />
     <None Remove="Reports\Inventario\ConsolidacionInventario.rdlc" />
@@ -67,7 +51,6 @@
     <None Remove="Reports\NotaCredito.rdlc" />
     <None Remove="Reports\NotFound.pdf" />
     <None Remove="Reports\OpenMoneyBox.rdl" />
-    <None Remove="Reports\OrdenCompra.rdlc" />
     <None Remove="Reports\Restaurant\ItemIngredient.rdl" />
     <None Remove="Reports\Retencion.rdlc" />
     <None Remove="Reports\Ventas\Clientes.rdl" />
@@ -115,12 +98,6 @@
     <Content Include="Reports\Compras\CompraDetalle.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\Compras\FacturaCompra.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Compras\FacturaCompraDetalle.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\Compras\IngresoBodega.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -128,9 +105,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Compras\NotaCreditoProveedor.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Compras\OrdenCompra.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Compras\RetencionCompra.rdlc">
@@ -163,9 +137,6 @@
     <Content Include="Reports\Factura.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\FacturaAutomatica.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\GestionFinanciera\Anticipo.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -193,43 +164,7 @@
     <Content Include="Reports\GestionReporte\ConsolidadoVenta.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GestionReporte\ConsumoClienteRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\FacturaCompraRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\FacturaVentaRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\IngresoBodegaRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\GestionReporte\KardexRG.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\LiquidacionCompraRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\NotaCreditoProveedorRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\NotaCreditoRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\NotaEntregaRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\OrdenCompraRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\ProformaRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\RetencionCompraRG.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\GestionReporte\RetencionVentaRG.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GuiaRemision.rdlc">
@@ -257,9 +192,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\OpenMoneyBox.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\OrdenCompra.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Restaurant\ItemIngredient.rdl">

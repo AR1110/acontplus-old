@@ -773,6 +773,15 @@
             totalDescuento: 0,
             total: 0,
         }
+
+        $scope.dataFormaPago = {
+            idFormaPagoSri: 0,
+            idTiempoCredito: 0,
+            plazo: 1,
+            total: 0
+        }
+
+
         $scope.dataClone = {};
 
         $scope.cliente = {};
@@ -782,6 +791,8 @@
         $scope.puntosEmision = [];
         $scope.bodegas = [];
         $scope.tarifasImpuesto = [];
+        $scope.formasPago = [];
+        $scope.tiposIdentificacion = [];
 
         $scope.datosAdicionalesArticulo = []
         $scope.historyDatosAdicionales = [];
@@ -990,23 +1001,28 @@
                 config,
                 vendedores,
                 clienteDefault,
-                articuloDefault
+                articuloDefault,
+                formasPago,
+                tiposIdentificacion
             } = structuredClone(mainDataForm);
 
             $scope.establecimientos = estabs;
+            $scope.formasPago = formasPago;
+            $scope.tiposIdentificacion = tiposIdentificacion;
 
             let dataEstab = {};
 
             if (params && ["EDITAR", "DUPLICAR"].includes(params.action)) {
-                const {
-                    comprobante,
-                } = params.data;
+                const { comprobante } = params.data;
                 dataEstab = $scope.establecimientos.find(estab => estab.codEstab === comprobante.codEstab);
             } else {
                 dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
             }
 
             $scope.data.codEstab = dataEstab.codEstab;
+
+
+
             $scope.dataClone.codEstab = dataEstab.codEstab;
 
             $scope.puntosEmision = dataEstab.puntosEmision;
@@ -1041,14 +1057,25 @@
                     $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                 }
                 if ($scope.tiemposCredito.length > 0) {
-                    $scope.data.idTiempoCredito = $scope.tiemposCredito[0].idTiempoCredito;
+                    let dataTiempoCredito = $scope.tiemposCredito[0];
+                    $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+
+                    //Formas Pago 
+                    $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito; 
                 }
 
                 if ($scope.vendedores.length > 0) {
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
+                }
+
+                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
+                if ($scope.formasPago.length > 0) {
+                    let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
+                    $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
                 }
 
                 //Cliente Predeterminado 
@@ -1100,6 +1127,10 @@
 
                 $scope.cliente = cliente;
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+
+                //Formas pagos 
+                $scope.dataFormaPago = formasPago[0];
+
                 counterGridOptions();
             }
 
@@ -1111,6 +1142,7 @@
                     cliente,
                     items,
                     infoAdicionalDocumento,
+                    formasPago
                 } = params.data;
 
                 $scope.data = {
@@ -1142,6 +1174,10 @@
                 }))
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
+
+
+                //Formas pagos 
+                $scope.dataFormaPago = formasPago[0];
             }
 
             $uibModalInstance.rendered.then(() => {
@@ -1198,6 +1234,10 @@
                 //Variables temporales
                 $scope.dataClone.fechaEmision = fechaEmision;
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+
+                //Formas pago
+                $scope.dataFormaPago.idTiempoCredito = $scope.data.idTiempoCredito;
+                $scope.dataFormaPago.plazo = diasCredito;
             }
         }
 
@@ -1723,8 +1763,9 @@
 
 
         $scope.receiveDataCustomerSRI = function (result) {
-            $scope.newCustomer = result.idCliente === 0 ? true : false
+            $scope.newCustomer = !(result.idCliente > 0);
             $scope.cliente = result;
+
         }
 
         //=================================END CUSTOMER============================
@@ -2113,6 +2154,7 @@
             let recargo = Number($scope.data.recargo);
             let importeTotal = total + transporte + recargo;
             $scope.data.total = importeTotal;
+            $scope.dataFormaPago.total = fS.roundNumber(importeTotal, $scope.decimal.importeTotal)
             return fS.roundNumber(importeTotal, $scope.decimal.importeTotal);
         }
 
@@ -2188,15 +2230,8 @@
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
                 $scope.data.irbpnr = irbpnr
                 $scope.data.propina = propina;
-                // <tr>
-                //     <td class="left">
-                //         <div class="custom-control custom-switch">
-                //             <input type="checkbox" class="custom-control-input" id="switchPropina">
-                //                 <label class="custom-control-label" for="switchPropina">Propina 10%</label>
-                //         </div>
-                //     </td>
-                //     <td class="right">$${importeTotal}</td>
-                // </tr>
+
+                $scope.dataFormaPago.total = importeTotal; 
             } catch (error) {
                 console.log(error);
             }
@@ -2240,7 +2275,14 @@
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
             }
+
+            //===================Start customer validate ============================
             if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
+                if (!($scope.cliente.idTipoIdentificacion > 0)) {
+                    tS.toastr('warning', `idTipoIdentificacion no proporcionada: ${$scope.cliente.idTipoIdentificacion} `);
+                    return
+                }
+
                 if (!$scope.cliente.razonSocialComprador || !$scope.cliente.nombreComercial) {
                     tS.toastr('warning', 'Seleccione el Cliente');
                     return
@@ -2249,6 +2291,9 @@
                 tS.toastr('warning', 'Seleccione el Cliente');
                 return
             }
+
+
+            //===================End customer validate ============================
 
             if ($scope.gridOptions.data.length === 0) {
                 tS.toastr('warning', 'Ingrese al menon un artículo en el detalle');
@@ -2350,6 +2395,7 @@
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = facturaSvc.queryMapper({
                     data: $scope.data,
+                    dataFormaPago: $scope.dataFormaPago,
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,

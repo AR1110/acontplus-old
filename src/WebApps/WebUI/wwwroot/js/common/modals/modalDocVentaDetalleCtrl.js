@@ -21,8 +21,7 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
     let gridOptionsSvc = $injector.get('gridOptionsService');
     const fS = $injector.get('formulario')
 
-    let { id, codDoc } = params;
-    console.log(params)
+    let { id, codDoc } = params; 
     $scope.showHeader = true;
     $scope.infoAdicionalDocumento = [];
     $scope.tarifasImpuesto = [];
@@ -32,6 +31,8 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         showGridFooter: false,
         data: []
     }
+    $scope.dataFormaPago = {};
+
     $scope.gridOptions.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
         if ($scope.gridApi) {
@@ -93,12 +94,13 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         try {
             showLoader();
             facturaSvc.getIdForInfo(id).then(response => {
-                let { data, cliente, items, infoAdicionalDocumento, tarifasImpuesto } = response;
+                let { data, cliente, items, infoAdicionalDocumento, tarifasImpuesto, formasPago } = response;
                 $scope.data = data;
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = calculateTotalItems(items);
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento || [];
                 $scope.tarifasImpuesto = tarifasImpuesto;
+                $scope.dataFormaPago = formasPago[0];
                 renderedModal();
             }).catch(error => {
                 console.error(error)

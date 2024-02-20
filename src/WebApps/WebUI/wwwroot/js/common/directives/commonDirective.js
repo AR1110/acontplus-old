@@ -592,7 +592,8 @@
                 onSelect: '&',
                 onKeyup: '&',
                 ngModel: '<',
-                functionTrigger: '&'
+                functionTrigger: '&',
+                tiposIdentificacion: '<'
             },
             require: 'ngModel',
             link: function (scope, element) {
@@ -612,6 +613,17 @@
                     if (numero.length === 13 && numero.slice(-3) !== "001") return;
 
                     return true;
+                }
+
+                function getIdTipoIdentificacion(codigo) {
+                    let idTipoIdentificacion = 0;
+                    if (Array.isArray(scope.tiposIdentificacion)) {
+                        let dataTipoIdentificacion = scope.tiposIdentificacion.find(ti => ti.codigoSri === codigo);
+                        if (dataTipoIdentificacion){
+                            idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
+                        }
+                    }
+                    return idTipoIdentificacion;
                 }
 
 
@@ -642,6 +654,7 @@
                                 return
                             }
 
+                            let codigoTipoIdentificacion = '04';
 
                             //retornamos datos al controlador principal donde llamamos la directiva
                             scope.functionTrigger({
@@ -654,7 +667,9 @@
                                     direccionComprador: direccion || null,
                                     telefono: telefono || null,
                                     email: email || null,
-                                    idCliente: 0
+                                    idCliente: 0,
+                                    codigoTipoIdentificacion,
+                                    idTipoIdentificacion: getIdTipoIdentificacion(codigoTipoIdentificacion)
                                 }
                             })
                             scope.$apply();
@@ -681,6 +696,7 @@
                             }
 
 
+                            let codigoTipoIdentificacion = '05';
                             scope.functionTrigger({
                                 result: {
                                     nombreFiscal: textSearch,
@@ -691,7 +707,9 @@
                                     direccionComprador: direccion || null,
                                     telefono: telefono || null,
                                     email: email || null,
-                                    idCliente: 0
+                                    idCliente: 0,
+                                    codigoTipoIdentificacion,
+                                    idTipoIdentificacion: getIdTipoIdentificacion(codigoTipoIdentificacion)
                                 }
                             })
                             scope.$apply();
@@ -1712,10 +1730,10 @@
             link: function (scope, element) {
                 let tS = toastService
                 element.on('click', async function () {
-                    if (navigator.clipboard){
+                    if (navigator.clipboard) {
                         navigator.clipboard.writeText(scope.text);
                         tS.toastr('info', 'Copiado: ' + scope.text)
-                    }else{
+                    } else {
                         console.log('API clipboard no soportado')
                     }
                 });
