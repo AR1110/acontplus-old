@@ -2598,6 +2598,7 @@
         }
 
 
+
         $scope.askToSave = async function () {
             try {
 
@@ -2715,7 +2716,7 @@
         $scope.docDestinoDesc = docDestinoDesc;
 
         $scope.data = comprobante;
-        
+
         $scope.mostrarFormasPago = $scope.data.docDestino === DOC_TYPE.FV_SRI;
 
         $scope.cliente = cliente;
@@ -3075,6 +3076,7 @@
                 if ($scope.formasPago.length > 0) {
                     let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
                     $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+                    $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
                 }
 
                 //Permisos para detalle y documento    
@@ -3694,6 +3696,11 @@
 
         $scope.resultModalInfoAdicional = function (result) {
             $scope.infoAdicionalDocumento = result;
+        }
+
+        $scope.onChangeFormaPago = function () {
+            let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
+            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
         }
 
 

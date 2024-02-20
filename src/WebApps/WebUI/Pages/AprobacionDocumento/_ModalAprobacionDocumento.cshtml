@@ -185,11 +185,18 @@
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                        <select ng-model="dataFormaPago.idFormaPagoSri" id="formadepago" class="form-control border-select" name="formadepago"> 
+                                                        <select 
+                                                        ng-model="dataFormaPago.idFormaPagoSri" 
+                                                        id="formadepago" 
+                                                        class="form-control border-select" 
+                                                        ng-change="onChangeFormaPago()"
+                                                        name="formadepago"> 
                                                             <option ng-value="item.idFormaPagoSri" ng-repeat="item in formasPago">
                                                                 {{item.descripcion}}
                                                             </option> 
                                                         </select>
+                                                <span class="d-flex justify-content-center text-info">{{dataFormaPago.infoReferencia}}</span> 
+
                                                     </td>
                                                     <td width="100px">
                                                         {{dataFormaPago.plazo}} {{dataFormaPago.plazo>1?'Días': 'Día'}}
