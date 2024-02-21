@@ -255,7 +255,7 @@
                             selected: item.selected,
                             estado: item.estado
                         })),
-                        formasPago
+                        formasPago: fS.mapperFromFormaPago(formasPago)
                     }
                 }
             }).catch(error => {

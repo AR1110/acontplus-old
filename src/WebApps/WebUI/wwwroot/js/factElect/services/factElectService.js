@@ -173,7 +173,7 @@
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
 
-                    let formasPago = mainData[11];
+                    let formasPago = mainData[11]; 
                     let tiposIdentificacion = mainData[12]
                     // Devuelve los datos finales estructurados
                     return {
@@ -189,7 +189,7 @@
                         articuloDefault,
                         clienteDefault,
                         permisoEditarDoc,
-                        formasPago,
+                        formasPago: fS.mapperFromFormaPago(formasPago),
                         tiposIdentificacion
                     };
 
@@ -400,6 +400,11 @@
                      
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
+                    cliente = {
+                        ...cliente,
+                        identificacionComprador: cliente.numeroIdentificacion,
+                        razonSocialComprador: cliente.nombreFiscal
+                    }
 
 
                     let items = itemsApi.map((itemPrincipal, index) => {

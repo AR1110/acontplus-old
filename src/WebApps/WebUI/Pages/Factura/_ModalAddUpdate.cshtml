@@ -368,7 +368,7 @@
                         <!-- <div class="card-header">
                             <span class="card-title">FORMA DE PAGO</span>
                         </div> -->
-                        <div class="card-body">
+                        <div class="card-body"> 
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
@@ -380,12 +380,18 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>
-                                                <select ng-model="dataFormaPago.idFormaPagoSri" id="formadepago" class="form-control border-select" name="formadepago"> 
-                                                    <option ng-value="item.idFormaPagoSri" ng-repeat="item in formasPago">
+                                            <td> 
+                                                <select 
+                                                ng-model="dataFormaPago.idFormaPagoSri" 
+                                                id="formadepago"  
+                                                ng-change="onChangeFormaPago()"
+                                                class="form-control border-select" 
+                                                name="formadepago"> 
+                                                    <option ng-value="item.idFormaPagoSri" ng-repeat="item in formasPago" >
                                                         {{item.descripcion}}
                                                     </option> 
-                                                </select>
+                                                </select> 
+                                                <span class="d-flex justify-content-center text-info">{{dataFormaPago.infoReferencia}}</span> 
                                             </td>
                                             <td width="100px">
                                                 {{dataFormaPago.plazo}} {{dataFormaPago.plazo>1?'Días': 'Día'}}

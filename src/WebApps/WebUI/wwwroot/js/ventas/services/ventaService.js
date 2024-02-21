@@ -139,7 +139,7 @@
                     if (!response) return true;
 
                     const { deuda } = response;
-                    let pendientAccounts = deuda[0];
+                    let pendientAccounts = deuda;
 
                     if (pendientAccounts.length === 0) return false;
 
@@ -266,7 +266,7 @@
                         config,
                         vendedores,
                         permisoEditarDoc,
-                        formasPago,
+                        formasPago: fS.mapperFromFormaPago(formasPago),
                         tiposIdentificacion
 
                     }
@@ -661,6 +661,11 @@
 
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
+                    cliente = {
+                        ...cliente,
+                        razonSocialComprador: cliente.nombreFiscal,
+                        identificacionComprador: cliente.numeroIdentificacion,                        
+                    }
 
                     let items = itemsApi.map((itemPrincipal, index) => {
 

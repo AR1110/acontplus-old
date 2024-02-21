@@ -751,7 +751,7 @@
             total: 0,
         }
         $scope.dataClone = {};
-        
+
         $scope.dataFormaPago = {
             idFormaPagoSri: 0,
             idTiempoCredito: 0,
@@ -1012,13 +1012,15 @@
 
                     //Formas Pago 
                     $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
-                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito; 
+                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                 }
 
                 //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
                 if ($scope.formasPago.length > 0) {
                     let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
-                    $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+                    if (dataFormaPago) {
+                        $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+                    }
                 }
 
 
@@ -1029,9 +1031,10 @@
                 }
                 //Cliente Predeterminado 
                 if (clienteDefault.idCliente > 0) {
-                    $scope.cliente = clienteDefault; 
+                    $scope.cliente = clienteDefault;
 
                 }
+
                 getFechaVencimiento();
             }
 
@@ -1063,6 +1066,17 @@
 
                 $scope.cliente = cliente;
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+
+
+                if ($scope.data.idTiempoCredito > 0) {
+                    let dataTiempoCredito = $scope.tiemposCredito.find(tc => tc.idTiempoCredito === $scope.data.idTiempoCredito);
+                    if (dataTiempoCredito) {
+                        //Formas Pago 
+                        $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+                        $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
+                    }
+                }
+
                 counterGridOptions();
             }
 
@@ -2349,6 +2363,11 @@
             }
         }
 
+
+        function setDataChangeFormaPago() {
+            let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
+            document.getElementById('infoReferenciaFormaPago').innerHTML = dataFormaPago.infoReferencia;
+        }
         $scope.onSaveInvoice = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
@@ -2363,79 +2382,143 @@
                     return
                 }
 
-                if (isRegister()) {
-                    showLoader();
-                    serieComprobante = await facturaSvc.generateSerieComprobante({
-                        idPuntoEmision: $scope.data.idPuntoEmision,
-                    });
-                    hideLoader();
-                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+                Swal.fire({
+                    title: '<small>Seleccionar forma de pago: </small>',
+                    html: ` 
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Forma de Pago</th>
+                                        <th>Plazo</th>
+                                        <th>Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select ng-model="dataFormaPago.idFormaPagoSri" id="formaDePago" class="form-control border-select" name="formaDePago">
+                                                ${$scope.formasPago.map((item) => `<option value="${item.idFormaPagoSri}">
+                                                    ${item.descripcion}
+                                                </option>`)}
+                                                
+                                            </select>
+                                            <span class="d-flex justify-content-center text-info" id="infoReferenciaFormaPago"></span> 
+                                        </td>
+                                        <td width="100px">
+                                            ${$scope.dataFormaPago.plazo} ${$scope.dataFormaPago.plazo > 1 ? 'Días' : 'Día'}
+                                        </td>
+                                        <td width="100px">
+                                            $${$scope.dataFormaPago.total}
+                                        </td> 
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>  
+                    `,
+                    didOpen: () => {
+                        let el = document.getElementById('formaDePago');
+                        el.value = $scope.dataFormaPago.idFormaPagoSri;
+                        setDataChangeFormaPago();
 
-                    titleSwal = '<small>Guardar Factura</small>';
-                    confirmButtonText = 'Guardar';
-                    htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
-
-                } else if (isUpdate()) {
-                    serieComprobante = $scope.data.serieComprobante;
-                    titleSwal = '<small>Actualizar Factura</small>';
-                    confirmButtonText = 'Actualizar';
-                    htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
-                }
-
-
-                const customSwal = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger ml-2'
+                        el.addEventListener('change', () => { 
+                            $scope.dataFormaPago.idFormaPagoSri = Number(el.value);
+                            setDataChangeFormaPago();
+                        })
                     },
-                    buttonsStyling: false
-                })
-
-                let { isConfirmed } = await customSwal.fire({
-                    title: titleSwal,
-                    html: htmlSwal,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText,
-                    cancelButtonText: 'No, cancelar!',
-                    reverseButtons: false,
+                    preConfirm: () => {
+                        let idFormaPagoSri = document.getElementById('formaDePago').value;
+                        if (!(idFormaPagoSri > 0)) {
+                            tS.toastr('warning', 'Seleccione la forma de pago!')
+                            return false;
+                        } 
+                    },
                     allowOutsideClick: false,
-                    allowEscapeKey: false
-                })
+                    allowEscapeKey: false,
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Continuar!',
+                    cancelButtonText: 'Cancelar!'
+                }).then(async result => {
+                    if (result.isConfirmed) {
 
-                if (!isConfirmed) return
+                        try {
 
-                //Mappeamos todo el objecto necesario para guardar factura.
-                let params = facturaSvc.queryMapper({
-                    data: $scope.data,
-                    cliente: $scope.cliente,
-                    detalles: $scope.gridOptions.data,
-                    dataFormaPago: $scope.dataFormaPago,
-                    itemsDeleted: $scope.gridOptionsItemsDeleted,
-                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    historyDatosAdicionales: $scope.historyDatosAdicionales
-                })
+                            if (isRegister()) {
+                                showLoader();
+                                serieComprobante = await facturaSvc.generateSerieComprobante({
+                                    idPuntoEmision: $scope.data.idPuntoEmision,
+                                });
+                                hideLoader();
+                                if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
 
+                                titleSwal = '<small>Guardar Factura</small>';
+                                confirmButtonText = 'Guardar';
+                                htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
 
-                //Registar Doc 
-                if (isRegister()) {
-                    showLoader();
-                    facturaSvc.save(params).then(response => {
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {
-                            fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
-                            let mainData = {
-                                isRegister: true,
-                                data: response.dataResponse
                             }
-                            $uibModalInstance.close(mainData)
+
+
+                            const customSwal = Swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success',
+                                    cancelButton: 'btn btn-danger ml-2'
+                                },
+                                buttonsStyling: false
+                            })
+
+                            let { isConfirmed } = await customSwal.fire({
+                                title: titleSwal,
+                                html: htmlSwal,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText,
+                                cancelButtonText: 'No, cancelar!',
+                                reverseButtons: false,
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            })
+
+                            if (!isConfirmed) return
+
+                            //Mappeamos todo el objecto necesario para guardar factura.
+                            let params = facturaSvc.queryMapper({
+                                data: $scope.data,
+                                cliente: $scope.cliente,
+                                detalles: $scope.gridOptions.data,
+                                dataFormaPago: $scope.dataFormaPago,
+                                itemsDeleted: $scope.gridOptionsItemsDeleted,
+                                infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                                historyDatosAdicionales: $scope.historyDatosAdicionales
+                            })
+
+
+                            //Registar Doc 
+                            if (isRegister()) {
+                                showLoader();
+                                facturaSvc.save(params).then(response => {
+                                    if (response.code === '0') {
+                                        fS.sweetAlert('warning', response.message, response.titleSms);
+                                    }
+                                    if (response.code === "1") {
+                                        fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
+                                        let mainData = {
+                                            isRegister: true,
+                                            data: response.dataResponse
+                                        }
+                                        $uibModalInstance.close(mainData)
+                                    }
+                                }).catch(error => {
+                                    console.error(error);
+                                }).finally(() => hideLoader())
+                            }
+
+                        } catch (error) {
+                            console.log(error)
                         }
-                    }).catch(error => {
-                        console.error(error);
-                    }).finally(() => hideLoader())
-                }
+
+                    }
+                })
             } catch (error) {
                 hideLoader();
                 console.warn(error)
