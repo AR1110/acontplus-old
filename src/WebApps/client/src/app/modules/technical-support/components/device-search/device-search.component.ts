@@ -64,7 +64,6 @@ export class DeviceSearchComponent {
     });
     modalRef.componentInstance.data = this.device;
     modalRef.result.then((response) => {
-      console.log(response);
       this.onDataSelected(response);
     });
   }

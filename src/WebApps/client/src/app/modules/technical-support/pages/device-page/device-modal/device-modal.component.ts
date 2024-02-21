@@ -1,11 +1,20 @@
 import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { IForm } from '@core/Types/form-types';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { Device, DeviceTypeSpec, DeviceSpecs } from '@modules/technical-support/models/device.model';
+import {
+  Device,
+  DeviceTypeSpec,
+  DeviceSpecs,
+} from '@modules/technical-support/models/device.model';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import { DeviceSpecsService } from '@modules/technical-support/services/device.spec.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -38,7 +47,7 @@ export class DeviceModalComponent implements OnInit {
 
   // By Danis.
   specsType01: any = [];
-  specs02 = []
+  specs02 = [];
 
   validations = [null, '', undefined];
   validationsNumbers = [0, '', null, undefined];
@@ -170,7 +179,7 @@ export class DeviceModalComponent implements OnInit {
             type: 'success',
             message: response.message,
           });
-          this.activeModal.close(response);
+          this.activeModal.close(response.payload);
         }
       },
       complete() {
@@ -223,35 +232,37 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onUpdateSpecs() {
-    this.deviceSepcsService.put(this.device.deviceSpecId!, this.device.specs!).subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          if (response.code == '0') {
+    this.deviceSepcsService
+      .put(this.device.deviceSpecId!, this.device.specs!)
+      .subscribe({
+        next: (response) => {
+          if (isApiResponse(response)) {
+            if (response.code == '0') {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message,
+              });
+              return;
+            }
             this.tS.toastr({
-              type: 'warning',
+              type: 'success',
               message: response.message,
             });
-            return;
           }
-          this.tS.toastr({
-            type: 'success',
-            message: response.message,
-          });
-        }
-      },
-      error(error) {
-        console.log(error);
-      },
-    });
+        },
+        error(error) {
+          console.log(error);
+        },
+      });
   }
 
   convertirFormato(arrayObjetos: Array<DeviceTypeSpec>) {
     const objetoResultado: any = {};
     for (const item of arrayObjetos) {
-      objetoResultado[item.name] = item.specs.map(spec => ({
+      objetoResultado[item.name] = item.specs.map((spec) => ({
         uuid: spec.uuid,
         name: spec.name,
-        value: spec.value
+        value: spec.value,
       }));
     }
     return objetoResultado;
@@ -306,7 +317,7 @@ export class DeviceModalComponent implements OnInit {
         if (item.specs.filter((x: any) => x.uuid === item.uuid).length === 0) {
           this.tS.toastr({
             type: 'warning',
-            message: `Debe de agregar los valores para el tipo de especificación: ${item.name}}`
+            message: `Debe de agregar los valores para el tipo de especificación: ${item.name}}`,
           });
           isValid = false;
         }
@@ -342,7 +353,7 @@ export class DeviceModalComponent implements OnInit {
           name: this.specForm.get('name')?.value,
           value: this.specForm.get('value')?.value,
         };
-        console.log("object");
+        console.log('object');
         console.log(object);
         item.specs.push(object);
       }
