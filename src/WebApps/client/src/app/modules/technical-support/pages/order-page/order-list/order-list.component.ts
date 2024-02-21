@@ -9,6 +9,8 @@ import { ModalService } from '@core/services/modal.service';
 import swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
+import { SharedService } from '@core/services/shared.service';
+import { CODE_REPORT } from '@core/constants/global.constants';
 
 @Component({
   selector: 'app-order-list',
@@ -21,6 +23,7 @@ export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
   private modalService = inject(ModalService);
   private orderService = inject(OrderService);
+  private sharedService = inject(SharedService);
   private tS = inject(ToasterService);
   dataSearch: any = {
     maxSize: 5,
@@ -108,6 +111,17 @@ export class OrderListComponent implements OnInit {
           hideLoader();
         },
       });
+  }
+  getReport(item: any) {
+    const parameters = {
+      reportParams: JSON.stringify({
+        codEstab: item.codEstab,
+        codigo: CODE_REPORT.RTS,
+        format: 'pdf',
+      }),
+      dataParams: JSON.stringify(item),
+    };
+    this.sharedService.getReport(parameters, 'pdf');
   }
 
   ngOnInit(): void {

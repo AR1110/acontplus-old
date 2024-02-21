@@ -13,5 +13,5 @@
   (selectItem)="onSelect($event)"
 />
 <ng-template #rt let-r="result" let-t="term">
-  <ngb-highlight [result]="r.descripcion" [term]="t" />
+  <ngb-highlight [result]="r.codigo + ' - ' + r.descripcion" [term]="t" />
 </ng-template>
