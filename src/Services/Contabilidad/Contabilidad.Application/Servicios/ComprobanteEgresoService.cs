@@ -38,10 +38,17 @@ namespace Contabilidad.Application.Servicios
             return await _repository.SPExecuteAsync("GestFinanc.ComprobanteEgreso_Insert", parameters);
         }
 
+        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+        {
+            return await _repository.SPExecuteAsync("Contabilidad.ComprobanteEgreso_Update", parameters);
+        }
+
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
             return await _repository.SPExecuteAsync("Contabilidad.ComprobanteEgreso_Update_Cancel", parameters);
         }
+
+       
     }
 }

@@ -11,7 +11,8 @@
         return {
             getDataFilter,
             getAll,
-            anular
+            anular,
+            update
         }
 
         function getDataFilter() {
@@ -67,6 +68,10 @@
         }
 
 
+        function update(data) {
+            return mS.getData('put', `${url}`, { data }, true)
+        }
+
 
 
     }])
@@ -78,7 +83,8 @@
             post,
             mapperTo,
             getHistorialCobrosById,
-            getHistorialCobrosByDoc
+            getHistorialCobrosByDoc,
+            update
         }
 
         function getAll(obj) {
@@ -253,6 +259,11 @@
                     comprobanteIngresos
                 }
             })
+        }
+
+        //==================SE USA EN CHEQUE===========
+        function update(data) {
+            return mS.getData('put', `${url}`, { data }, true)
         }
     }]);
 
