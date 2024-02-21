@@ -83,5 +83,26 @@ namespace Contabilidad.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        //===========SE USA EN CHEQUE============
+        [HttpPut]
+        public async Task<IActionResult> Put(ApiRequest request)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>{
+                {"userRoleId", User.GetUserRoleId()},
+                {"json", DataConverters.SerializeDictionary(request.Data)}
+            };
+
+                var response = await _svc.UpdateAsync(parameters);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error al actualizar comprobante ingreso desde cheque: " + ex.ToString());
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
