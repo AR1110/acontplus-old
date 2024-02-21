@@ -21,7 +21,7 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("GestFinanc.ComprobanteEgreso_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("Contabilidad.ComprobanteEgreso_Get", parameters);
             if (ds.Tables.Count == 0)
             {
                 return null;
@@ -41,7 +41,7 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("GestFinanc.ComprobanteEgreso_Update_Cancel", parameters);
+            return await _repository.SPExecuteAsync("Contabilidad.ComprobanteEgreso_Update_Cancel", parameters);
         }
     }
 }

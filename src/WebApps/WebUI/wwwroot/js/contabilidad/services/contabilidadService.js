@@ -3,6 +3,74 @@
     'use strict';
     const PATH_API = 'Contabilidad/'
 
+    //Contabilidad Pagos 
+
+    app.factory('comprobanteEgresoService', ['mainService', 'formulario', function (mS, fS) {
+        const url = `${PATH_API}ComprobanteEgreso/`
+
+        return {
+            getDataFilter,
+            getAll,
+            anular
+        }
+
+        function getDataFilter() {
+            let params = JSON.stringify({
+                tipo: 2
+            })
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                let estabs = [];
+                if (response !== null && typeof response === 'object') {
+                    let tempEstabs = response.estabs;
+                    let dataToGroup = {
+                        estabs: tempEstabs, //Establecimientos con puntos de emision 
+                    }
+                    estabs = fS.groupingEstab(dataToGroup);
+                }
+                return {
+                    estabs
+                }
+            })
+        }
+
+        function getAll(obj) {
+            let params = JSON.stringify({
+                ...obj,
+                tipo: 1
+            })
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                let comprobantesEgreso = [];
+                if (response !== null && typeof response === 'object') {
+                    const items = response.comprobantesEgreso;
+                    comprobantesEgreso = items.map(item => {
+                        return {
+                            idComprobanteEgreso: item.idComprobanteEgreso,
+                            total: item.total,
+                            fechaRegistro: item.fechaRegistro,
+                            nroDoc: item.nroDoc,
+                            persona: item.persona,
+                            nroIdentificacion: item.nroIdentificacion,
+                            caja: item.caja,
+                            color: item.color,
+                            estado: item.estado,
+                            usuario: item.usuario,
+                            totalRecords: item.totalRecords
+                        }
+                    })
+                }
+                return comprobantesEgreso;
+            })
+        }
+
+        function anular(id, observacion) {
+            return mS.getData('delete', `${url}${id}?observacion=${observacion}`, null, true)
+        }
+
+
+
+
+    }])
+
     app.factory('comprobanteIngresoService', ['mainService', 'formulario', function (mS, fS) {
         const url = `Contabilidad/ComprobanteIngreso/`
         return {
@@ -55,7 +123,7 @@
                 cobros,
                 cobroDetalle,
                 historialCobros,
-            } = obj; 
+            } = obj;
 
             let comprobanteMappeado = {
                 idCliente: comprobante.idCliente,
@@ -87,12 +155,12 @@
                 return {
                     idCuentaPorCobrar: detalle.idCuentaPorCobrar,
                     idCuotaPorCobrar: detalle.idCuotaPorCobrar,
-                    abono: fS.roundNumber(detalle.abono,5),
+                    abono: fS.roundNumber(detalle.abono, 5),
                     interes: detalle.interes,
                     diasMora: detalle.diasMora,
                     mora: detalle.mora,
-                    cuota: fS.roundNumber(detalle.cuota,5),
-                    saldo: fS.roundNumber(detalle.saldoOriginal,5),
+                    cuota: fS.roundNumber(detalle.cuota, 5),
+                    saldo: fS.roundNumber(detalle.saldoOriginal, 5),
                     secuencial: detalle.secuencial,
                 }
             })
@@ -100,10 +168,10 @@
             const historialCobrosMappeado = historialCobros.map(hc => {
                 return {
                     idCuentaPorCobrar: hc.idCuentaPorCobrar,
-                    abono: fS.roundNumber(hc.abono,5),
+                    abono: fS.roundNumber(hc.abono, 5),
                     diasMora: hc.diasMora,
                     mora: hc.mora,
-                    saldo: fS.roundNumber(hc.saldo,5)
+                    saldo: fS.roundNumber(hc.saldo, 5)
                 }
             })
 
@@ -120,9 +188,9 @@
             return mS.getData('post', url + 'Insert', { data }, true)
         }
 
-        function getHistorialCobrosById(idComprobanteIngreso){
+        function getHistorialCobrosById(idComprobanteIngreso) {
             let params = JSON.stringify({ idComprobanteIngreso, tipo: 2 })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{ 
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -145,9 +213,9 @@
                 }
             })
         }
-        function getHistorialCobrosByDoc(idCuentaPorCobrar){
+        function getHistorialCobrosByDoc(idCuentaPorCobrar) {
             let params = JSON.stringify({ idCuentaPorCobrar, tipo: 3 })
-            return mS.getData('get', `${url}?json=${params}`, null, true).then(response=>{
+            return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -453,7 +521,7 @@
 
     app.factory('cuentaPorPagarService', ['$injector', 'formulario', function ($injector, fS) {
         const mS = $injector.get('mainService');
-        const URL = 'Contabilidad/CuentaPorPagar/'; 
+        const URL = 'Contabilidad/CuentaPorPagar/';
 
         return {
             get,
@@ -494,21 +562,21 @@
                 }
             })
         }
-        
-        function getDataFilter(){
-            return mS.getData('get', `${URL}?json=${JSON.stringify({tipo: 6})}`, null, true).then(response=>{
-                if(response.code==="0") {
+
+        function getDataFilter() {
+            return mS.getData('get', `${URL}?json=${JSON.stringify({ tipo: 6 })}`, null, true).then(response => {
+                if (response.code === "0") {
                     console.log(response)
                     return {}
                 }
                 const [tempEstabs, tempEstados] = JSON.parse(response.payload)
-                
+
                 let dataToGroup = {
                     estabs: tempEstabs, //Establecimientos con puntos de emision 
                 }
                 let estabs = fS.groupingEstab(dataToGroup);
 
-                let estadosDoc = tempEstados.map(estado=>{
+                let estadosDoc = tempEstados.map(estado => {
                     return {
                         idEstado: estado.idEstadoPago,
                         descripcion: estado.descripcion,
