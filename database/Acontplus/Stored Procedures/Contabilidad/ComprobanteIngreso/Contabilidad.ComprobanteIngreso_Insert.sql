@@ -155,7 +155,7 @@ BEGIN
 
 		INSERT INTO @paymentDetail
               (idCuotaPorCobrar,saldo,abono,interes,diasMora,mora,secuencial)
-	    SELECT idCuotaPorCobrar,100,100,interes,diasMora,mora,secuencial 
+	    SELECT idCuotaPorCobrar,saldo,abono,interes,diasMora,mora,secuencial 
         FROM OPENJSON(@cobroDetalle) WITH 
         (                          
              idCuotaPorCobrar INT           

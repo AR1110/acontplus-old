@@ -33,7 +33,7 @@ BEGIN
     DECLARE @tipo INT ,@sql NVARCHAR(MAX) ,@params NVARCHAR(MAX) 
 
     --> Filters
-    DECLARE @idEntidadFinanciera INT ,@horaInicio TIME , @horaFin TIME ,@ckHora BIT
+    DECLARE @idEntidadFinanciera INT ,@fechaInicio TIME , @fechaFin TIME ,@ckHora BIT
 
 	DECLARE @idControlCaja INT 
 	DECLARE @color VARCHAR(200) = '#000000'
@@ -371,21 +371,21 @@ BEGIN
         BEGIN
             
             SELECT TOP 1 @idEntidadFinanciera = idEntidadFinanciera
-                        ,@horaInicio          = horaInicio
-                        ,@horaFin             = horaFin
+                        ,@fechaInicio         = horaInicio
+                        ,@fechaFin            = horaFin
                         ,@ckHora              = ckHora
             FROM OPENJSON(@json) WITH 
             (
                 idEntidadFinanciera INT
-               ,horaInicio TIME
-               ,horaFin TIME
-               ,ckHora  BIT
+               ,horaInicio          DATETIME2
+               ,horaFin             DATETIME2
+               ,ckHora              BIT
             )
 
             SET @params = '@idControlCaja       INT
                           ,@idEntidadFinanciera INT
-                          ,@horaInicio          TIME
-                          ,@horaFin             TIME'
+                          ,@fechaInicio         DATETIME2
+                          ,@fechaFin            DATETIME2'
 
             SET @sql = 'SELECT * FROM 
                         (
@@ -576,7 +576,7 @@ BEGIN
 
             IF @ckHora = 1
                 BEGIN
-                    SET @sql = @sql + 'AND CAST(cd.fechaEmision as time) BETWEEN CAST(@horaInicio as time) AND CAST(@horaFin as time) '
+                    SET @sql = @sql + 'AND CAST(cd.fechaEmision as time) BETWEEN CAST(@fechaInicio as time) AND CAST(@fechaFin as time) '
                 END 
 
             SET @sql = @sql + 'ORDER BY nroComprobante,cd.nroDoc,cd.doc ASC '
@@ -597,8 +597,8 @@ BEGIN
 						      ,@params 
                               ,@idControlCaja       = @idControlCaja
                               ,@idEntidadFinanciera = @idEntidadFinanciera
-                              ,@horaInicio          = @horaInicio
-                              ,@horaFin             = @horaFin
+                              ,@fechaInicio         = @fechaInicio
+                              ,@fechaFin            = @fechaFin
 
             RETURN 
         END 
