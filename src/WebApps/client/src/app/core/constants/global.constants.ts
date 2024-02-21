@@ -44,7 +44,7 @@ export enum FORMAT_REPORT {
   EXCEL = 'excel',
 }
 
-export type FORMAT_TYPE = FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL
+export type FORMAT_TYPE = FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL;
 
 export enum CODE_REPORT {
   RF = 'RF', // Reporte Factura
@@ -69,13 +69,14 @@ export enum CODE_REPORT {
   RRF = 'RRF', //Reporte Recepcion Factura
   RRNC = 'RRNC', //Recepcion Nota Credito
   RRG = 'RRG', //Recepcion Retencion General
-  CCP ='CCP', //Contabilidad Cartera Proveedor
-  CCPC='CCPC', //Contabilidad Cartera Proveedor Cuota
-  CDCC ='CDCC' //Contabilidad Detalle Control Caja
+  CCP = 'CCP', //Contabilidad Cartera Proveedor
+  CCPC = 'CCPC', //Contabilidad Cartera Proveedor Cuota
+  CDCC = 'CDCC', //Contabilidad Detalle Control Caja
+  RTS = 'RTS',
 }
 
 export enum CODE_ESTADO {
-  NCBR = 'NCBR'
+  NCBR = 'NCBR',
 }
 // Example usage:
 // const reportType: CODE_REPORT = CODE_REPORT.RF;
