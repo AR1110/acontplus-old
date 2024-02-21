@@ -13,11 +13,19 @@ export class ProductService {
   private http = inject(HttpClient);
   private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT}`;
 
+  get(params: any) {
+    return this.http
+      .get(`${this.url}Get?json=${params}`)
+      .pipe(map((response) => response));
+  }
+
   search<T extends { textSearch: string }>(
     data: T
   ): Observable<Array<ProductSearch>> {
-    let query = {
-      textSearch: data.textSearch,
+    let query = { 
+      pageIndex: 1,
+      pageSize: 15,
+      busqueda: data.textSearch,
     };
     return this.http
       .get(`${this.url}Search?json=${JSON.stringify(query)}`)
