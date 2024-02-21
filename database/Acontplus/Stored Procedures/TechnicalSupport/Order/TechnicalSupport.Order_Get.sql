@@ -65,10 +65,12 @@ BEGIN
             ,tor.Enabled
             ,tor.CustomerCompanyId
             ,c.nombreFiscal
+            ,e.codEstab
             ,totalRecords       = COUNT(*) OVER()
-        FROM TechnicalSupport.[Order] tor
-        INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId
-        INNER JOIN TechnicalSupport.OrderStatus sc  ON sc.Id = tor.OrderStatusId
+        FROM TechnicalSupport.[Order] tor WITH (NOLOCK)
+        INNER JOIN Cliente c               WITH (NOLOCK)         ON c.idCliente = tor.CustomerCompanyId
+        INNER JOIN TechnicalSupport.OrderStatus sc WITH (NOLOCK)  ON sc.Id = tor.OrderStatusId
+        INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON tor.EstablecimientoId = e.idEstablecimiento
         WHERE sc.Code = @orderStatusCode
             AND tor.Deleted IS NULL
         ORDER BY tor.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY   
