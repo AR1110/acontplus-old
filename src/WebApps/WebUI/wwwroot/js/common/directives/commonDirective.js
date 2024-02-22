@@ -1289,7 +1289,9 @@
                         let json = {
                             busqueda: textSearch,
                             condicion: false,
-                            fraccionado: false
+                            fraccionado: false,
+                            pageIndex: 1,
+                            pageSize: 50
                         }
                         return articuloService.search(json)
                             .catch(error => {
