@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ProductSearchComponent } from '@core/components/product-search/product-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -17,6 +18,7 @@ import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     FontAwesomeModule,
     NgbAccordionModule,
     ProductSearchComponent,
+    ReactiveFormsModule,
     TabulatorComponent,
   ],
   templateUrl: './order-maintenance-modal.component.html',
@@ -26,6 +28,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
   private modalRef = inject(NgbActiveModal);
   private orderService = inject(OrderService);
   private productService = inject(ProductService);
+
+  bodegas: any = [];
   columnNames = [
     {
       field: 'id',
@@ -38,6 +42,24 @@ export class OrderMaintenanceModalComponent implements OnInit {
       editor: true,
     },
     {
+      editor: this.selectBodega,
+      formatter: this.formatterBodega,
+      field: 'idBodega',
+      hozAlign: 'center',
+      title: 'Bodega',
+      width: '250',
+    },
+    {
+      editor: this.selectFee,
+      formatter: this.formatterFee,
+      cellEdited: this.calculateTotal,
+      field: 'idTarifa',
+      hozAlign: 'center',
+      title: 'Tarifa',
+      typeNumber: true,
+      width: '250',
+    },
+    {
       title: 'Cantidad',
       field: 'quantity',
       width: '250',
@@ -45,7 +67,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     },
     {
       title: 'Precio',
-      field: 'cost',
+      field: 'price',
       width: '150',
     },
     {
@@ -71,10 +93,33 @@ export class OrderMaintenanceModalComponent implements OnInit {
       width: 100,
     },
   ];
-
+  establecimientos: any = [];
+  medidas: any = [];
   orderDetails: any = [];
   orderMaintenances: any = [];
   params: any = {};
+
+  calculateTotal(cell: any) {
+    let row = cell.getRow().getData();
+    let column = cell.getColumn()._column.field;
+
+    if (column == 'idTarifa') {
+      let tarifa = row.tarifas.find((x: any) => x.idTarifa == row.idTarifa);
+
+      cell.getRow().update({ priceIva: tarifa.precioConIva });
+    }
+
+    if (column == 'quantity') {
+      if (row.quantity >= 0) {
+        cell.getRow().update({ quantity: row.quantity });
+      } else {
+        let oldQuantity = cell.getOldValue();
+        cell.getRow().update({ quantity: oldQuantity });
+      }
+    }
+    let total = row.priceIva * row.quantity;
+    cell.getRow().update({ total: total });
+  }
   closeModal() {
     this.modalRef.close();
   }
@@ -93,6 +138,32 @@ export class OrderMaintenanceModalComponent implements OnInit {
       faEdit
     ).html.join('')}</button>`;
   }
+
+  formatterBodega(cell: any) {
+    let bodegas = [];
+    let row = cell.getRow().getData();
+    let value = cell.getValue();
+
+    if (row.bodegas != undefined && value != undefined) {
+      bodegas = row.bodegas;
+
+      return bodegas.find((x: any) => x.idBodega == value).bodega;
+    }
+    return 'SELECCIONE';
+  }
+
+  formatterFee(cell: any) {
+    let fees = [];
+    let row = cell.getRow().getData();
+    let value = cell.getValue();
+
+    if (row.fees != undefined && value != undefined) {
+      fees = row.fees;
+
+      return fees.find((x: any) => x.idTarifa == value).tarifa;
+    }
+    return '';
+  }
   get() {
     showLoader();
     this.orderService
@@ -100,17 +171,15 @@ export class OrderMaintenanceModalComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
-            let { orderDetails, orderMaintenances } = JSON.parse(
-              response.payload as string
-            );
-            this.orderDetails = orderDetails;
-            this.orderMaintenances = orderMaintenances;
-            // if (this.orderMaintenances.length == 0) {
-            //   this.orderMaintenances.push({
-            //     id: 0,
-            //     productName: 'test',
-            //   });
-            // }
+            let dataTemp = JSON.parse(response.payload as string);
+            console.log(dataTemp);
+            this.orderDetails = dataTemp['orderDetails'];
+            this.orderMaintenances = dataTemp['orderMaintenances'] || [];
+            this.establecimientos = dataTemp['estabs'] || [];
+            this.bodegas = dataTemp['bodegas'] || [];
+            if (this.orderMaintenances.length > 0) {
+              this.orderMaintenances = [...this.orderMaintenances];
+            }
           }
         },
         complete() {
@@ -134,7 +203,17 @@ export class OrderMaintenanceModalComponent implements OnInit {
         .subscribe({
           next: (response) => {
             if (isApiResponse(response)) {
-              console.log(JSON.parse(response.payload as string));
+              let productData = JSON.parse(response.payload as string);
+              console.log(productData);
+              let fees =
+              this.orderMaintenances.push({
+                productId: data.idArticulo,
+                productName: data.descripcion,
+                quantity: 1,
+                bodegas: this.bodegas,
+                fees: JSON.parse(productData[2][0]['tarifas']),
+                price: 0,
+              });
             }
           },
         });
@@ -149,6 +228,94 @@ export class OrderMaintenanceModalComponent implements OnInit {
       (x: { deviceId: number }) => x.deviceId !== deviceId
     );
     this.orderMaintenances = newArray;
+  }
+
+  selectBodega(cell: any, onRendered: any, success: any, cancel: any) {
+    let bodegas = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.bodegas != undefined || rows.bodegas != null) {
+      bodegas = rows.bodegas;
+    }
+
+    let selectList = document.createElement('select');
+    selectList.style.width = '100%';
+    selectList.style.boxSizing = 'border-box';
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = '100%';
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.bodega = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idBodega =
+          selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener('blur', onChange);
+
+    for (let i = 0; i < bodegas.length; i++) {
+      let option = document.createElement('option');
+
+      option.value = bodegas[i].idBodega.toString();
+      option.text = bodegas[i].bodega;
+      if (bodegas[i].idBodega === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    console.log(selectList);
+    return selectList;
+  }
+
+  selectFee(cell: any, onRendered: any, success: any, cancel: any) {
+    let fees = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.tarifas != undefined || rows.tarifas != null) {
+      fees = rows.tarifas;
+    }
+
+    let selectList = document.createElement('select');
+    selectList.style.width = '100%';
+    selectList.style.boxSizing = 'border-box';
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = '100%';
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.tarifa = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.feeId = selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener('blur', onChange);
+
+    for (let i = 0; i < fees.length; i++) {
+      let option = document.createElement('option');
+
+      option.value = fees[i].idTarifa.toString();
+      option.text = fees[i].tarifa;
+      if (fees[i].idTarifa === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
   }
   save() {}
 }

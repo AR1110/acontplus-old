@@ -44,7 +44,7 @@ export class ProductSearchComponent {
       },
     });
     setTimeout(() => {
-      this.textSearch = this.product.descripcion;
+      this.textSearch = '';
     });
   }
 
