@@ -15,16 +15,38 @@
         <div ngbAccordionBody>
           <ng-template>
             <div class="row">
-              <div class="col-6">
-                <app-product-search (onProductSelected)="onProductSelected($event)" />
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
+                <div class="form-group">
+                  <label for="estab-{{ item.id }}">Establecimiento:</label>
+                  <select
+                    name="estab-{{ item.id }}"
+                    id="estab-{{ item.id }}"
+                    class="form-select"
+                  >
+                    @for (estab of establecimientos; track $index) {
+                    <option [ngValue]="estab.idEstablecimiento">
+                      {{ estab.estab }}
+                    </option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <app-product-search
+                  (onProductSelected)="onProductSelected($event)"
+                />
               </div>
             </div>
             <div class="row mt-2">
               <div class="col">
-                <app-tabulator
-                  [columnNames]="columnNames"
-                  [tableData]="orderMaintenances"
-                ></app-tabulator>
+                <div class="table-responsive">
+                  <app-tabulator
+                    [columnNames]="columnNames"
+                    [tableData]="orderMaintenances"
+                  ></app-tabulator>
+                </div>
               </div>
             </div>
           </ng-template>

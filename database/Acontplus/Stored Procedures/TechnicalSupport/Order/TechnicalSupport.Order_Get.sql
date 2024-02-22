@@ -78,7 +78,7 @@ BEGIN
     END
     IF @tipo = 4
         BEGIN
-            SET @tableNames = 'order,orderDetails,orderMaintenances'
+            SET @tableNames = 'order,orderDetails,orderMaintenances,feeds,estabs,puntosEmision,bodegas,taxes,taxPercents,decimalsConfig'
         
             SELECT tor.Id
                 ,tor.Uuid
@@ -101,10 +101,144 @@ BEGIN
                 INNER JOIN TechnicalSupport.Device d WITH (NOLOCK) ON o.DeviceId = d.Id
             WHERE OrderId = @id
 
-            SELECT om.*, a.descripcion ProductName FROM TechnicalSupport.[OrderMaintenance] om WITH (NOLOCK)
-                    INNER JOIN TechnicalSupport.[OrderDetail] od WITH (NOLOCK) ON om.OrderDetailId = od.Id
-                    INNER JOIN dbo.Articulo a ON om.ProductId = a.idArticulo
-            WHERE od.OrderId = @id
+            SELECT om.Id
+                  ,om.ProductId
+                  ,om.BodegaId
+                  ,om.FeeId
+                  ,om.MedidaId
+                  ,om.Quantity
+                  ,om.Price
+                  ,om.Price
+                  ,om.Cost
+                  ,om.TaxId
+                  ,om.TaxPercentId
+                  ,om.TaxValue
+                  ,bo.codEstab
+                  ,om.Total 
+                  ,a.descripcion productName
+                  ,a.llevaInventario
+                  ,a.idTipoIva
+                  ,a.iva
+                  ,a.stockMinimo
+                  ,a.stock
+                  ,a.precioSinSubsidio
+                  ,a.codigo            AS codigoArticulo
+                  ,a.codigoAuxiliar    AS codigoAuxiliar
+                  ,0                    AS valorDescuento
+                  ,om.[Enabled]         AS estado
+                  ,ISNULL((SELECT idMedida     = m.idMedida 
+			        ,descripcion  = m.descripcion
+			        ,tarifas      = (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor
+								     FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								     INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								     WHERE afs.idArticuloFraccionado =af.idArticuloFraccionado
+								     ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			        ,orden = IIF(af.gestionVenta = 1,1,3)
+                    ,af.conversion
+			      FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			      INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			      WHERE af.idArticulo = om.ProductId AND af.estado = 1 FOR JSON PATH),'[]') as fraccionado
+                 ,(
+                    SELECT m.idMedida
+			              ,m.descripcion
+			              ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor 
+								            FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								            INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								            WHERE ap.idArticulo = a.idArticulo
+								            ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			              ,orden = 2
+                          ,1 as conversion
+			        FROM dbo.Articulo     a WITH (NOLOCK)
+			        INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			        WHERE a.idArticulo = om.ProductId AND a.estado = 1 FOR JSON PATH
+                 ) as principal
+                 ,(
+                    SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = om.ProductId AND st.idBodega = om.BodegaId FOR JSON PATH
+                 ) as consolidacion
+            FROM TechnicalSupport.[OrderMaintenance] om    WITH (NOLOCK)
+            INNER JOIN TechnicalSupport.[OrderDetail] od ON om.OrderDetailId = od.Id
+            INNER JOIN dbo.Bodega bo            WITH (NOLOCK) ON bo.idBodega   = om.BodegaId
+            INNER JOIN Inventario.v_Articulo a WITH (NOLOCK) ON a.idArticulo = om.ProductId
+            WHERE od.Id = @Id
+            
+            SELECT 
+			    af.idArticulo
+               ,af.idMedida
+			   ,descripcion 
+			   ,tarifas		 = (SELECT afs.idTarifa
+                                      ,afs.precioVenta
+                                      ,afs.precioConIva
+                                      ,UPPER(ta.descripcion) as tarifa
+                                      ,ta.ventaPorMayor
+								FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
+								ORDER BY ta.predeterminada DESC FOR JSON PATH
+                                )
+			   ,orden = IIF(af.gestionVenta = 1,1,3)
+               ,af.conversion
+			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			WHERE af.idArticulo IN (SELECT ProductId FROM TechnicalSupport.OrderMaintenance om WITH (NOLOCK)
+                                                          INNER JOIN TechnicalSupport.OrderDetail od WITH (NOLOCK) ON om.OrderDetailId = od.Id  WHERE od.OrderId = @Id)
+		
+			UNION ALL
+
+			SELECT 
+			    a.idArticulo
+               ,m.idMedida
+			   ,m.descripcion
+			   ,tarifas		 = (SELECT ap.idTarifa
+                                      ,ap.precioVenta
+                                      ,ap.precioConIva
+                                      ,UPPER(ta.descripcion) as tarifa
+                                      ,ta.ventaPorMayor
+								FROM v_ArticuloPvp ap WITH (NOLOCK)
+								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								WHERE ap.idArticulo = a.idArticulo
+								ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			  ,orden = 2
+              ,conversion = 0
+			FROM dbo.Articulo     a WITH (NOLOCK)
+			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			WHERE a.idArticulo IN (SELECT ProductId FROM TechnicalSupport.OrderMaintenance om WITH (NOLOCK)
+                                                          INNER JOIN TechnicalSupport.OrderDetail od WITH (NOLOCK) ON om.OrderDetailId = od.Id  WHERE od.OrderId = @Id)
+			ORDER BY orden ASC
+                       
+            SELECT idEstablecimiento
+                    , codEstab
+                    , predeterminado
+                    , nombreComercial
+                    , estab
+                    , tarifasImpuestos = (
+					    SELECT
+						    'IVA ' + descripcion AS descripcion,
+						    'IVA' AS codigo,
+						    codigo AS codigoPorcentaje,
+						    porcentaje AS tarifa
+					    FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
+					    WHERE ti.estado = 1 
+                        AND ((e.actividad = '01' AND ti.codigo IN ('2', '8')) OR (e.actividad <> '01' AND codigo = '2') )
+					    ORDER BY codigoPorcentaje DESC
+					    FOR JSON PATH
+				    )
+            FROM v_Estab_Asign e
+            WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
+            ORDER BY predeterminado DESC
+
+            SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
+	        FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
+	        INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
+	        INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
+ 	        WHERE ea.idUsuarioRol = @userRoleId
+
+            SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+            SELECT * FROM Sri.Impuesto WITH (NOLOCK)
+
+	        SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)
+
+            SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @companyId AND codTrasaccion = 'V'
             RETURN
         END
 END

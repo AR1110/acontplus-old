@@ -49,7 +49,7 @@ export class TabulatorComponent implements OnChanges, OnInit {
       //height: this.height,
       layout: 'fitColumns',
       reactiveData: true, //enable data reactivity
-      responsiveLayout: true,
+      //responsiveLayout: true,
     });
     let table = document.getElementById('tabulatorTable');
     if (table) {
