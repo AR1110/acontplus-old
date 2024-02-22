@@ -356,7 +356,7 @@
 
         $scope.articuloSearch = (item) => {
             if (item.length >= 3) {
-                return _articleSvc.search({ busqueda: item })
+                return _articleSvc.search({ busqueda: item, pageIndex: 1, pageSize: 20 })
             }
         }
 

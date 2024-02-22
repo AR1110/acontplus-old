@@ -279,7 +279,7 @@ BEGIN
                         END 
                 END 
 
-            SET @sql = @sql + 'ORDER BY fechaEmision ASC '
+            SET @sql = @sql + 'ORDER BY  CAST(fechaEmision AS DATE) ASC '
 
             SELECT razonSocial
                   ,ruc
