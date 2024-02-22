@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuentaPorCobrar_Update_Status', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuentaPorCobrar_Update_Status
-GO
-CREATE PROCEDURE Contabilidad.CuentaPorCobrar_Update_Status @idCuentaPorCobrar INT
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Update_Status @idCuentaPorCobrar INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -60,6 +57,11 @@ BEGIN
 			IF @residuo <= 0  
 				BEGIN
 					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'CBR'
+
+                    IF @residuo < 0 
+                        BEGIN
+                            SET @abono = @importeTotal
+                        END
 				END 
 
 			IF @residuo > 0 

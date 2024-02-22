@@ -33,9 +33,9 @@ BEGIN
 
 	SELECT @posfechado = SUM(pd.abono)
 	FROM dbo.PagoDetalle pd WITH (NOLOCK)
-	INNER JOIN Contabilidad.CuotaPorPagar pp WITH (NOLOCK) ON pp.idCuotaPorPagar = pd.idCuotaPorPagar
-	INNER JOIN dbo.Pago pa WITH (NOLOCK) ON pa.idPago = pd.idPago
-	INNER JOIN dbo.ComprobanteEgreso ce WITH (NOLOCK) ON ce.idComprobanteEgreso = pa.idComprobanteEgreso
+	INNER JOIN Contabilidad.CuotaPorPagar pp WITH (NOLOCK) ON pp.idCuotaPorPagar     = pd.idCuotaPorPagar
+	INNER JOIN dbo.Pago                   pa WITH (NOLOCK) ON pa.idPago              = pd.idPago
+	INNER JOIN dbo.ComprobanteEgreso      ce WITH (NOLOCK) ON ce.idComprobanteEgreso = pa.idComprobanteEgreso
 	WHERE pp.idCuentaPorPagar = @idCuentaPorPagar  AND ce.estado = 1 AND cobro = 0
 	
 	SELECT @abono = SUM(abono) FROM Contabilidad.CuotaPorPagar WHERE idCuentaPorPagar = @idCuentaPorPagar AND estado = 1
@@ -52,6 +52,11 @@ BEGIN
 			IF @residuo <= 0  
 				BEGIN
 					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PA'
+
+                    IF @residuo < 0 
+                        BEGIN
+                            SET @abono = @importeTotal
+                        END 
 				END 
 
 			IF @residuo > 0 
