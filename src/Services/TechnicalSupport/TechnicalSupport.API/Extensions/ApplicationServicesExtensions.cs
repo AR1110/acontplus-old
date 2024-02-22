@@ -14,6 +14,12 @@ namespace TechnicalSupport.API.Extensions
             services.AddScoped<IDeviceSpecService, DeviceSpecService>();
             services.AddScoped<IDeviceService, DeviceService>();
             services.AddScoped<IOrderService, OrderService>();
+            //var config = new AutoMapper.MapperConfiguration(cfg =>
+            //{
+            //    cfg.AddProfile(new MappingProfiles());
+            //});
+            //var mapper = config.CreateMapper();
+            //services.AddSingleton(mapper);
             services.AddAutoMapper(typeof(MappingProfiles));
             return services;
         }
