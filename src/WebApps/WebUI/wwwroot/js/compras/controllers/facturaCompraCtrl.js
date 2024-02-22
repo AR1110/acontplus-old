@@ -150,7 +150,7 @@
             $scope.getFacturas();
         };
 
-        //====================Cliente===========
+        //====================Proveedor===========
         $scope.onKeyupProveedor = function () {
             if (!$scope.proveedor.nombreProveedor) {
                 $scope.dataSearch.idProveedor = 0;
