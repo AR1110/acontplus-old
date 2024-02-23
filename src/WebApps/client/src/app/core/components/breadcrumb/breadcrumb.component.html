@@ -10,11 +10,12 @@
           <li class="breadcrumb-item active">{{childData.breadcrumb}}</li>
         </ol>
       }
-      @if (childData.buttonAction && crear) {
-        <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" (click)="onClick()">
+
+        <!-- <button type="button" class="btn btn-info d-none d-lg-block m-l-15 text-white" (click)="onClick()">
           <fa-icon [icon]="'plus'"></fa-icon>
-          {{childData.buttonAction}}</button>
-      }
+          {{childData.buttonAction}}</button> -->
+          <ng-content></ng-content>
+      
     </div>
   </div>
 </div>

@@ -1,9 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
-import { INVENTORY_PATHS } from "../constants/inventory.constants";
 import { map } from "rxjs";
 import { isApiResponse } from "@core/models/api-response";
+import { INVENTORY_PATHS } from "../enums/inventory.enum";
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class SubCategoryService {
               throw response;
             }
             if (response.code === "1") {
-              const subCategorias = JSON.parse(response.payload as string) || [] 
+              const subCategorias = JSON.parse(response.payload as string) || []
               const results = subCategorias.map((category: any) => {
                 return {
                   idSubFamilia: category.idSubFamilia,

@@ -152,7 +152,10 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
     });
 
     const onLoad = async () => {
-        showLoader()
+        let idTipoIdentificacion = 0;
+        let idSubContribuyente = 0;
+        let idTiempoCredito = 0;
+        showLoader(); 
         await customerService.getDataForm().then(response => {
             setTiposIdentificacion(() => response.tipoIdentificacion)
             setTipoContribuyentes(response.tipoContribuyentes)
@@ -163,25 +166,29 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
 
 
                 if (response.tipoIdentificacion.length > 0) {
-                    // formik.setValues() 
-                    formik.setFieldValue(
-                        "idTipoIdentificacion",
-                        response.tipoIdentificacion.find(obj => obj.codigoSri === "04")?.idTipoIdentificacion
-                    )
+                    // formik.setValues()  
+                    idTipoIdentificacion = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.RUC)?.idTipoIdentificacion || 0
                 }
                 if (response.tipoContribuyentes.length > 0) {
-                    formik.setFieldValue(
-                        "idSubContribuyente",
-                        response.tipoContribuyentes.find(obj => obj.codigo === "06")?.idSubContribuyente
-                    )
+                    idSubContribuyente = response.tipoContribuyentes.find(obj => obj.codigo === SRI_IDENTIFITION_CODE.LICENSE)?.idSubContribuyente || 0;
                 }
 
                 if (response.tiempoCreditos.length > 0) {
-                    formik.setFieldValue(
-                        "idTiempoCredito",
-                        response.tiempoCreditos[0]?.idTiempoCredito
-                    )
+                    const dataTiempoCredito = response.tiempoCreditos[0];
+
+                    if (dataTiempoCredito) {
+                        idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+
+                    }
                 }
+                formik.setValues(state => {
+                    return {
+                        ...state,
+                        idTipoIdentificacion,
+                        idSubContribuyente,
+                        idTiempoCredito
+                    }
+                })
 
             }
 
@@ -216,13 +223,15 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
                     return {
                         ...state,
                         direccion: direccion,
-                        idCliente: 0,
-                        idTipoIdentificacion: idTipoIdentificacion,
+                        idCliente: 0, 
                         numeroIdentificacion: numeroRuc,
                         nombreFiscal: razonSocial,
                         nombreComercial: razonSocial,
                         emails: email ? email.split(';') : [],
                         telefonos: telefono ? telefono.split(';') : [],
+                        idTipoIdentificacion,
+                        idSubContribuyente,
+                        idTiempoCredito
                     }
                 })
             }

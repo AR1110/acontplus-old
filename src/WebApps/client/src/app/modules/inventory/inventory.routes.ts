@@ -1,6 +1,7 @@
 import { Route } from "@angular/router";
 import { CategoryPageComponent } from "./pages/category-page/category-page.component";
 import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
+import { ProductPageComponent } from "./pages/product-page/product-page.component"; 
 
 
 export const routes: Route[] = [
@@ -19,6 +20,15 @@ export const routes: Route[] = [
     data: {
       breadcrumb: 'Reporte Compras'
     }
+  },
+
+  {
+    path: 'product-page',
+    title: 'Productos',
+    component: ProductPageComponent,
+    data: {
+      breadcrumb: 'Productos'
+    },
   },
 
 

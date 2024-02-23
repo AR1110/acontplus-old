@@ -17,3 +17,6 @@ export interface SubCategoryRead extends SubCategory {
   nombreFamilia: string
   totalRecords: number
 }
+
+
+export interface SubCategorySelectHtmlOnly extends Pick<SubCategory, 'idSubFamilia' | 'descripcion'> { }
