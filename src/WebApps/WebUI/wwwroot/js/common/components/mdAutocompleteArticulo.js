@@ -446,7 +446,9 @@ class MdArticuloCtrl extends BaseSearchArticulo {
     async getDynamicSearchArticlesSimple(textSearch) {
         let results = await this.articuloSvc.search({
             textSearch,
-            condicion: false
+            condicion: false,
+            pageIndex: 1,
+            pageSize: 25
         })
 
 

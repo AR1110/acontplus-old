@@ -1648,6 +1648,8 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         let query = {
             checkBoxFraccionado: true,
             bySearch: textSearch,
+            pageIndex: 1,
+            pageSize: 25
         };
         let articulos = articuloSvc.searchForFraccionado(query);
         return articulos;
