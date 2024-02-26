@@ -852,7 +852,9 @@ app.constant('DOC_TYPE', {
     LC: 'LC',
     FC: 'FC',
     CNH: 'CNH',
-    OC: 'OC'
+    OC: 'OC',
+    GR_SRI: '06',
+    R_SRI: '07'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",
@@ -877,5 +879,6 @@ app.constant('CODE_REPORT', {
     RFC: 'RFC', //Reporte Factura Compra
     RCNH: 'RCNH', //PDF compra no habitual
     ROC: 'ROC', //Orden Compra 
-    RGR: 'RGR'
+    RGR: 'RGR', //Reporte Guia Remision 
+    FCRRG: 'FCRRG' //Facturación Retención Reporte General
 })
