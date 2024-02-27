@@ -677,7 +677,12 @@ BEGIN
 
             SELECT idMedida     = m.idMedida 
 			      ,descripcion  = m.descripcion
-			      ,tarifas		= (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor
+			      ,tarifas		= (SELECT afs.idTarifa
+                                        ,afs.precioVenta
+                                        ,afs.precioConIva
+                                        ,tarifa = UPPER(ta.descripcion)
+                                        ,ta.ventaPorMayor
+                                        ,ta.predeterminada
 								   FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
 								   INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
 								   WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
@@ -690,7 +695,12 @@ BEGIN
 
 			SELECT m.idMedida
 			   ,m.descripcion
-			   ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor 
+			   ,tarifas		 = (SELECT ap.idTarifa
+                                    ,ap.precioVenta
+                                    ,ap.precioConIva
+                                    ,tarifa = UPPER(ta.descripcion)
+                                    ,ta.ventaPorMayor 
+                                    ,ta.predeterminada
 								FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 								WHERE ap.idArticulo = a.idArticulo
