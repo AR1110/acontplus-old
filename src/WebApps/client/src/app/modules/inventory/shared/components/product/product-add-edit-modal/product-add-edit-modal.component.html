@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <h5 class="modal-title"></h5>
+  	<h4 class="modal-title">Nuevo Producto</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
 </div>
 
 <div class="modal-body">
@@ -19,13 +20,13 @@
           <div class="colxl-6 col-lg-6 col-md-6 col-12">
             <div class="form-group">
               <label for="subcategoría"
-                >Subcategoría: <span class="text-danger">*</span></label
+                >SubCategoría: <span class="text-danger">*</span></label
               >
 
               <div class="input-group">
                 <select
                   id="subcategoría"
-                  class="form-control"
+                  class="form-select"
                   name="subcategoría"
                 >
                   <!-- @for (group of groupedArrayCategories; track $index) {
@@ -106,7 +107,7 @@
                   <label for=""
                     >Tipo Artículo: <span class="text-danger">*</span>
                   </label>
-                  <select class="form-control" formControlName="idTipoArticulo">
+                  <select class="form-select" formControlName="idTipoArticulo">
                     <!-- @for (item of tipoArticulos; track $index) {
                       <option [value]="item.idTipoArticulo">
                         {{ item.descripcion }}
@@ -120,7 +121,7 @@
                 <div class="form-group">
                   <label for="medida">Medida</label>
                   <div class="input-group">
-                    <select class="form-control" formControlName="idMedida">
+                    <select class="form-select" formControlName="idMedida">
                       <!-- @for (item of medidas; track $index) {
                         <option [value]="item.idMedida">
                           {{ item.descripcion }}
@@ -145,9 +146,9 @@
 
         <div class="row" ng-show="tipoRegistro === 1">
           <div class="form-group col-lg-2 col-md-6 col-sm-6 col-12">
-            <label for="tipoIVA">Tipo Iva: </label>
+            <label for="tipoIVA">Tipo Iva: <span class="text-danger">*</span> </label>
             <select
-              class="form-control"
+              class="form-select"
               ng-change="recalculateTarifaAdd()"
               ng-disabled="!articlePermission.isUpdatePrice"
               formControlName="idTipoIva"

@@ -31,9 +31,19 @@
       "@modules/*": [
         "src/app/modules/*"
       ],
+      "@inventory/*": [
+        "src/app/modules/inventory/*",
+        "src/app/modules/inventory/shared/*"
+      ],
+      "@purchase/*": [
+        "src/app/modules/purchase/*"
+      ],
+      "@sale/*": [
+        "src/app/modules/sale/*"
+      ],
       "@shared/*": [
         "src/app/shared/*"
-      ]
+      ],
     },
   },
   "angularCompilerOptions": {

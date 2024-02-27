@@ -6,12 +6,12 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { SubCategoryRead } from '@modules/inventory/models/sub-category.model';
 import { SubCategoryService } from '@modules/inventory/services/sub-category.service';
 import { ModalService } from '@core/services/modal.service';
-import { SubCategoryModalComponent } from './sub-category-modal/sub-category-modal.component';
+import {SubCategoryModalDirective} from '@inventory/directives/sub-category.directive'
 
 @Component({
   selector: 'app-subcategory-page',
   standalone: true,
-  imports: [AppModule, InventoryModule],
+  imports: [AppModule, InventoryModule, SubCategoryModalDirective],
   templateUrl: './sub-category-page.component.html',
   
 })
@@ -61,14 +61,5 @@ export class SubCategoryPageComponent {
   changePageSize(): void {
     this.dataSearch.pageIndex = 1;
     this.getSubcategories();
-  }
-
-  openModalAddEdit<T>(data?: T) {
-    const modalRef = this.modalSvc.openModalCustom(SubCategoryModalComponent)
-    modalRef.result.then(result => {
-      if (typeof result === 'object') {
-        console.log('this')
-      }
-    })
-  }
+  } 
 }

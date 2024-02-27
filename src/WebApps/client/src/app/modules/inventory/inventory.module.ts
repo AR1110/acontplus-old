@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe";
-import { ProductAddEditDirective } from "./directives";
+import { PrimaryStatusPipe } from "@shared/pipe/primary-status.pipe"; 
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 @NgModule({
   imports: [
@@ -16,7 +15,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     BreadcrumbComponent,
     PrimaryStatusPipe,
 
-    //Directives 
+    //Directives
   ]
 })
 
