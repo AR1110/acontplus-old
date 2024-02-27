@@ -515,7 +515,7 @@ export class ReporteFiltroDetalleCajaModal {
   activeModal = inject(NgbActiveModal);
 
   dataSearch = {
-    idEntidadFinanciera: 0,
+    idEntidadFinanciera: null,
     fromDate: new Date(),
     toDate: new Date(),
     ckHora: true

@@ -1,17 +1,17 @@
 import { Directive, HostListener, Input } from "@angular/core";
-import { SubCategoryModalComponent } from "../pages/sub-category-page/sub-category-modal/sub-category-modal.component";
+import { ModelAddEditComponent } from "../pages/model-page/model-add-edit-modal/model-add-edit.component";
 import { ModalService } from "@core/services/modal.service";
 
+
 @Directive({
-  selector: '[appSubCategoryModal]',
+  selector: '[appModelAddEdit]',
   standalone: true
 })
-export class SubCategoryModalDirective {
+export class ModelAddEditDirective {
   @Input() resultModalHandler!: Function;
   @Input() params = {};
-
   @HostListener('click') onClick() {
-    const modalRef = this.modalSvc.openModalCustom(SubCategoryModalComponent);
+    const modalRef = this.modalSvc.openModalCustom(ModelAddEditComponent);
     modalRef.componentInstance.params = this.params || {};
     modalRef.result.then((result: unknown) => {
       if (this.resultModalHandler && typeof result === 'object') {
@@ -21,3 +21,4 @@ export class SubCategoryModalDirective {
   }
   constructor(private modalSvc: ModalService) { }
 }
+

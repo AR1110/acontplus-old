@@ -21,7 +21,7 @@ export class ProductService {
           subCategorias: [],
           medidas: [],
           marcas: [],
-          modelos:[],
+          modelos: [],
           tarifasImpuesto: []
         };
         if (isApiResponse(response)) {
@@ -40,9 +40,9 @@ export class ProductService {
   }
 
 
-  getAll<T extends {pageIndex: number, pageSize: number}>(obj: T) {
+  getAll<T extends { pageIndex: number, pageSize: number }>(obj: T) {
     let params = {
-      json: JSON.stringify({...obj, tipo: 1})
+      json: JSON.stringify({ ...obj, tipo: 1 })
     }
     return this.http.get(`${this.url}Get`, {
       params
@@ -68,9 +68,8 @@ export class ProductService {
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            let products =
-              (response.payload && JSON.parse(response.payload as string)) ||
-              [];
+            let products = response.payload && JSON.parse(response.payload as string) || [];
+            console.log(products)
             return products;
           }
           return [];

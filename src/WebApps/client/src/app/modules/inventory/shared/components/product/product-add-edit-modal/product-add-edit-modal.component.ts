@@ -1,9 +1,8 @@
 
-import { Component, Input } from '@angular/core'
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SubCategoryModalDirective } from '@modules/inventory/directives/sub-category.directive';
-
-import { NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, inject } from '@angular/core'
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'; 
+import { NgbNavChangeEvent, NgbNavModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import {SubCategoryModalDirective} from '@inventory/directives/sub-category.directive'
 
 @Component({
   selector: 'app-product-add-edit-modal',
@@ -13,9 +12,10 @@ import { NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class ProductAddEditModalComponent {
-
-
   @Input() params: any = {}
+
+  //Inject Services
+   private activeModal = inject(NgbActiveModal);
   activeTab = 1;
 
   onNavChange(changeEvent: NgbNavChangeEvent) {
@@ -29,4 +29,7 @@ export class ProductAddEditModalComponent {
   }
 
 
+  closeModal(){
+    this.activeModal.close();
+  }
 }
