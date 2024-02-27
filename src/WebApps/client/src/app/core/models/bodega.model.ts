@@ -1,5 +1,5 @@
 
-export interface IBodega {
+export interface Bodega {
     idBodega: number
     bodega: string,
     codEstab: string,
@@ -7,7 +7,7 @@ export interface IBodega {
     defaultBodega: boolean,
 }
 
-export interface IBodegaEstablecimiento {
+export interface BodegaEstablecimiento {
     idEstablecimiento: number
     nombreComercial: string
     codEstab: string

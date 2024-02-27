@@ -728,9 +728,18 @@ BEGIN
                  ,sf.descripcion as subFamilia
                  ,sf.codigo
                  ,fa.descripcion as familia
+                 ,fa.idFamilia
            FROM dbo.SubFamilia    sf WITH (NOLOCK) 
            INNER JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
            WHERE idEntidad = @idEntidad
+
+           SELECT idMarca, descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad
+
+            SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
+
+            SELECT idTarifa, descripcion FROM dbo.Tarifa WHERE idEntidad = @idEntidad
+
+
 
            RETURN 
         END 

@@ -47,7 +47,7 @@ export class UserSearchComponent {
     let user: UserSearch = $event.item;
     this.onUserSelected.emit({ data: user });
     setTimeout(() => {
-      this.textSearch = user.nombreUsuario;
+      this.textSearch = user.nombreCompleto;
     });
   }
 

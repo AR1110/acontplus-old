@@ -11,7 +11,7 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader'; 
+import { hideLoader, showLoader } from '@core/utils/loader';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 
 @Component({
@@ -64,7 +64,8 @@ export class ReportsPageComponent {
             const [estabs, estadosDoc, tiposDoc] = JSON.parse(response.payload as string);
 
             this.establecimientos = groupEstabUtil({
-              estabs
+              estabs,
+              isGroupPuntoEmision: true
             })
             const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
             if (dataEstab) {
@@ -180,7 +181,7 @@ export class ReportsPageComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: CODE_REPORT.RCP, 
+        codigo: CODE_REPORT.RCP,
         format,
         aditionalParams: []
       }),

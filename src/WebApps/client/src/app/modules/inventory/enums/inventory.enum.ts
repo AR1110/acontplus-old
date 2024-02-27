@@ -3,3 +3,5 @@ export const enum INVENTORY_PATHS {
   CATEGORY = 'Familia/',
   SUBCATEGORY = 'SubFamilia/'
 }
+
+

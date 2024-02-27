@@ -20,3 +20,8 @@ export interface SubCategoryRead extends SubCategory {
 
 
 export interface SubCategorySelectHtmlOnly extends Pick<SubCategory, 'idSubFamilia' | 'descripcion'> { }
+
+export interface GroupedSubFamilia {
+  familia: string;
+  subFamilias: SubCategorySelectHtmlOnly[];
+}
