@@ -154,6 +154,10 @@
           <DataField>tipoIva</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="nota">
+          <DataField>nota</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesElectronicosVentas</rd:DataSetName>
@@ -516,7 +520,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>0.49445cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -588,36 +592,104 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="descripcion">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!descripcion.Value</Value>
+                        <Rectangle Name="Rectangle3">
+                          <ReportItems>
+                            <Textbox Name="descripcion">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!descripcion.Value</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <TextAlign>Center</TextAlign>
                                   </Style>
-                                </TextRun>
-                              </TextRuns>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>descripcion</rd:DefaultName>
+                              <Height>0.3332cm</Height>
+                              <Width>9.19106cm</Width>
                               <Style>
-                                <TextAlign>Center</TextAlign>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
                               </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>descripcion</rd:DefaultName>
+                            </Textbox>
+                            <Textbox Name="Textbox14">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!nota.Value</Value>
+                                      <Style>
+                                        <FontStyle>Italic</FontStyle>
+                                        <FontSize>7pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox13</rd:DefaultName>
+                              <Top>0.36847cm</Top>
+                              <Height>0.02646cm</Height>
+                              <Width>9.19106cm</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                              </Style>
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
                             </Border>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
                           </Style>
-                        </Textbox>
+                        </Rectangle>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -819,7 +891,7 @@
             <DataSetName>detalleDs</DataSetName>
             <Top>7.25717cm</Top>
             <Left>0.18208cm</Left>
-            <Height>1.2cm</Height>
+            <Height>1.09445cm</Height>
             <Width>20.01847cm</Width>
             <Style>
               <Border>
@@ -881,7 +953,7 @@
                 <Top>0.25123cm</Top>
                 <Left>4.74067cm</Left>
                 <Height>0.54227cm</Height>
-                <Width>5.96604cm</Width>
+                <Width>7.2625cm</Width>
                 <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
@@ -895,10 +967,10 @@
               </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>8.59829cm</Top>
+            <Top>8.49273cm</Top>
             <Left>0.18208cm</Left>
             <Height>1.2cm</Height>
-            <Width>10.9806cm</Width>
+            <Width>12.35934cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -1862,10 +1934,10 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>4.52122cm</Width>
+                  <Width>4.6626cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.55617cm</Width>
+                  <Width>1.41476cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -2272,10 +2344,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>impuestoTotalDs</DataSetName>
-            <Top>8.59829cm</Top>
-            <Left>14.12319cm</Left>
+            <Top>8.49273cm</Top>
+            <Left>14.12318cm</Left>
             <Height>2.4cm</Height>
-            <Width>6.0774cm</Width>
+            <Width>6.07736cm</Width>
             <ZIndex>8</ZIndex>
             <Style>
               <Border>
@@ -2307,10 +2379,10 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>4.52122cm</Width>
+                  <Width>4.6626cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.55612cm</Width>
+                  <Width>1.41476cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -2788,10 +2860,10 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>impuestoIvaTotalDs</DataSetName>
-            <Top>10.99829cm</Top>
-            <Left>14.12319cm</Left>
+            <Top>10.89273cm</Top>
+            <Left>14.12318cm</Left>
             <Height>2.4cm</Height>
-            <Width>6.07735cm</Width>
+            <Width>6.07736cm</Width>
             <ZIndex>9</ZIndex>
             <Style>
               <Border>
@@ -2820,10 +2892,10 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>5.27492in</Height>
+        <Height>5.23336in</Height>
         <Style />
       </Body>
-      <Width>7.95299in</Width>
+      <Width>7.95297in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
