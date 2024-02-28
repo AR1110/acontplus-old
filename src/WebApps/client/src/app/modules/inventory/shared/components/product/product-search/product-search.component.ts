@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { startWith, map, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ProductService } from '@modules/inventory/services/product.service';
 import { MatTableModule } from '@angular/material/table';
+import { ProductSearch } from '@modules/inventory/models/product.model';
 
 
 type ProductSearchProps = {
@@ -28,6 +29,9 @@ export class ProductSearchComponent {
     isSearchSimple: false,
     isSearchAdvanced: false
   }
+
+  @Output() onProductSelected = new EventEmitter<{ data: any }>();
+  @Output() emptyInput = new EventEmitter();
 
   private productSvc = inject(ProductService)
   control = new FormControl('');
@@ -317,6 +321,7 @@ export class ProductSearchComponent {
           return this._filter(val)
           // return this.products as any[]
         }
+        this.emptyInput.emit({ data: {} })
         return []
       })
     );
@@ -334,5 +339,9 @@ export class ProductSearchComponent {
 
   private _normalizeValue(value: string): string {
     return value.toLowerCase().replace(/\s/g, '');
+  }
+
+  onSelectionChange(product: ProductSearch) {
+    this.onProductSelected.emit({ data: product });
   }
 }

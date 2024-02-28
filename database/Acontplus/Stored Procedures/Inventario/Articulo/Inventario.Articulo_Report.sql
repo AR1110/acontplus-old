@@ -486,6 +486,8 @@ BEGIN
 		BEGIN 
 			
             DECLARE @codDoc VARCHAR(2)
+            DECLARE @subFamiliasChecked VARCHAR(150)
+            DECLARE @idTarifa INT
             
 			SET @params =  '@idArticulo     INT
 	                       ,@idUsuario      INT
@@ -495,7 +497,9 @@ BEGIN
 						   ,@fechaInicio    DATETIME2
 						   ,@fechaFin       DATETIME2
 						   ,@idEntidad      INT
-                           ,@codDoc         VARCHAR(2)'
+                           ,@codDoc         VARCHAR(2)
+                           ,@subFamiliasChecked VARCHAR(150)
+                           ,@idTarifa      INT'
 
 			SET @sql = 'SELECT tt.articulo
 							  ,tt.codArticulo
@@ -524,7 +528,7 @@ BEGIN
                               ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCosto) as numeric(18,2))
                               ,totalValorRentabilidad      = CAST( (tt.cantidad * (tt.precioUnitario - tt.precioCosto)) as numeric(18,2))
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
-						WHERE tt.idEntidad = @idEntidad AND tt.estado = 1 AND tt.codTransaccion=''S'' '
+						WHERE tt.idEntidad = @idEntidad AND tt.estado = 1 AND tt.codTransaccion=''S'' AND tt.codDoc IN(''FE'', ''NE'') '
 
 			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
@@ -537,6 +541,8 @@ BEGIN
                   ,@idBodega       = idBodega
                   ,@codEstab       = codEstab 
                   ,@codDoc         = codDoc
+                  ,@subFamiliasChecked = subFamiliasChecked
+                  ,@idTarifa       = idTarifa
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo BIT 
@@ -549,6 +555,8 @@ BEGIN
                ,idBodega         INT  
                ,codEstab         VARCHAR(100)
                ,codDoc           VARCHAR(2)
+               ,subFamiliasChecked VARCHAR(150) 
+               ,idTarifa         INT 
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -585,9 +593,15 @@ BEGIN
                 END 
 
             IF @codDoc IS NOT NULL
-                SET @sql = @sql + ' and tt.codDoc = @codDoc'
+                SET @sql = @sql + ' and tt.codDoc = @codDoc '
 
-			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
+            IF @subFamiliasChecked IS NOT NULL
+                 SET @sql = @sql + ' and tt.idSubFamilia IN(SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+
+             IF @idTarifa IS NOT NULL
+                 SET @sql = @sql + ' and tt.idTarifa = @idTarifa '
+
+			SET @sql = @sql + ' ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
 			--Entidad 
 			SELECT e.ruc
@@ -612,6 +626,8 @@ BEGIN
 							  ,@fechaInicio    = @fechaInicio
 							  ,@fechaFin       = @fechaFin
                               ,@codDoc         = @codDoc
+                              ,@subFamiliasChecked = @subFamiliasChecked
+                              ,@idTarifa       = @idTarifa
 
 			RETURN 
 

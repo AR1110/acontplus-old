@@ -72,7 +72,7 @@
 
 <mat-autocomplete #autoProductSearchSimple="matAutocomplete">
   @for (state of filteredProducts | async; track state) {
-  <mat-option [value]="state.name">
+  <mat-option [value]="state.descripcion" (onSelectionChange)="onSelectionChange(state)">
      <div class="item-container">
         <div class="left-column">
           <img class="img-fluid img-thumbnail" [src]="state.s3ObjectUrl" alt="" width="30" height="30" />

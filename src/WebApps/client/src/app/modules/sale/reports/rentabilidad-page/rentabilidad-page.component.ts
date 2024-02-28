@@ -1,5 +1,8 @@
 import { Component, inject } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { GroupedEstab, GroupedEstabBodega } from "@core/models/estab.model";
 import { ProductService } from "@modules/inventory/services/product.service";
@@ -13,12 +16,18 @@ import { SharedService } from "@core/services/shared.service";
 import { isValidField } from "@core/utils/utils";
 import { ToasterService } from "@core/services/toaster.service";
 import { SALE_CODE_REPORT } from "@modules/sale/enums/sale.enum";
+import { GroupedSubFamilia } from "@modules/inventory/models/sub-category.model";
+import { formatDateMoment } from "@core/utils/format-date-moment";
+import { DOC_TYPE } from "@core/constants/global.constants";
 
 @Component({
   selector: 'app-rentabilidad-page',
   standalone: true,
   imports: [
+    MatFormFieldModule,
+    MatSelectModule,
     FormsModule,
+    ReactiveFormsModule,
     BreadcrumbComponent,
     ProductSearchComponent,
     UserSearchComponent,
@@ -37,6 +46,10 @@ export class RentabilidadPageComponent {
   bodegas: Array<GroupedEstabBodega> = [];
   tarifas: Array<TarifaSelectHtmlOnly> = [];
   tiposDoc: Array<TipoDoc> = [];
+  subCategorias: Array<GroupedSubFamilia> = [];
+
+
+  checkedSubCategorias = new FormControl('');
 
   dataSearch = {
     codEstab: '',
@@ -44,13 +57,14 @@ export class RentabilidadPageComponent {
     idTarifa: 0,
     idArticulo: 0,
     userName: '',
-    fromDate: '',
-    toDate: '',
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date()),
     codDoc: '',
     idUsuario: 0,
     productChecked: false,
     userChecked: false,
-    ckFecha: true
+    ckFecha: true,
+    subCategoriaChecked: false
   }
 
   productSearchProps = {
@@ -61,10 +75,12 @@ export class RentabilidadPageComponent {
 
     this.productSvc.getDataReport().subscribe({
       next: (response) => {
-        let { estabs, tarifas, tiposDoc } = response;
+        let { estabs, tarifas, tiposDoc, subCategorias } = response;
         this.estalecimientos = estabs;
         this.tarifas = tarifas;
         this.tiposDoc = tiposDoc;
+        this.subCategorias = subCategorias;
+        console.log(subCategorias)
         let dataEstab = this.estalecimientos.find(estab => estab.defaultEstab);
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
@@ -85,10 +101,23 @@ export class RentabilidadPageComponent {
 
 
   onChangeEstab() {
-
+    if (isValidField(this.dataSearch.codEstab)) {
+      let dataEstab = this.estalecimientos.find(estab => estab.codEstab === this.dataSearch.codEstab);
+      if (dataEstab) {
+        this.bodegas = dataEstab.bodegas;
+        let dataBodega = this.bodegas.find(b => b.defaultBodega);
+        if (dataBodega) {
+          this.dataSearch.idBodega = dataBodega.idBodega;
+        }
+      }
+    } else {
+      this.bodegas = [];
+      this.dataSearch.idBodega = 0;
+    }
   }
 
   onUserSelected(event: any) {
+    console.log(event)
     let { data } = event;
     this.dataSearch.idUsuario = data.idUsuario;
   }
@@ -103,7 +132,17 @@ export class RentabilidadPageComponent {
 
 
 
+  onProductSelected(event: any) {
+    let data = event.data;
+    this.dataSearch.idArticulo = data.idArticulo;
+  }
+  productResultEmptyInput(data: any) {
+    this.dataSearch.idArticulo = 0;
+  }
+
+
   getReport(format: 'pdf' | 'excel') {
+    let checkedSubCategorias = this.checkedSubCategorias.value;
 
     if (!isValidField(this.dataSearch.fromDate)) {
       this.tS.toastr({
@@ -131,6 +170,17 @@ export class RentabilidadPageComponent {
       }
     }
 
+
+    if (this.dataSearch.subCategoriaChecked) {
+      if (checkedSubCategorias && Array.isArray(checkedSubCategorias) && checkedSubCategorias.length === 0) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione al menos una SubFamilia'
+        })
+        return
+      }
+    }
+
     if (this.dataSearch.userChecked) {
       if (!isValidField(this.dataSearch.idUsuario)) {
         this.tS.toastr({
@@ -141,35 +191,43 @@ export class RentabilidadPageComponent {
       }
     }
 
-
-
-
-
-
-
+    let subCategoriasChecked = Array.isArray(checkedSubCategorias) && checkedSubCategorias.join(',');
     const dataParms = {
       tipo: 6,
       format,
-      ckFecha: this.dataSearch.ckFecha,
+      checkBoxFecha: this.dataSearch.ckFecha,
       codEstab: isValidField(this.dataSearch.codEstab),
-      codDoc: isValidField(this.dataSearch.codDoc),
+      idBodega: isValidField(this.dataSearch.idBodega),
+      codDoc: isValidField(this.getDataCodDoc()),
       idUsuario: this.dataSearch.userChecked && isValidField(this.dataSearch.idUsuario) || null,
       idArticulo: this.dataSearch.productChecked && isValidField(this.dataSearch.idArticulo) || null,
+      idTarifa: isValidField(this.dataSearch.idTarifa),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
+      subFamiliasChecked: this.dataSearch.subCategoriaChecked && subCategoriasChecked || null
     }
 
     const parameters = {
-      reportParams: JSON.stringify({ 
+      reportParams: JSON.stringify({
         codigo: SALE_CODE_REPORT.SRR,
         format,
         aditionalParams: []
       }),
       dataParams: JSON.stringify(dataParms)
-    } 
+    }
 
     this.sharedSvc.getReport(parameters, format, true)
   }
 
+  private getDataCodDoc() {
+    let codDoc = null;
+    if (this.dataSearch.codDoc === DOC_TYPE.NE) {
+      codDoc = this.dataSearch.codDoc
+    }
+    if (this.dataSearch.codDoc === DOC_TYPE.FV) {
+      codDoc = DOC_TYPE.FE
+    }
+    return codDoc;
+  }
 
 }
