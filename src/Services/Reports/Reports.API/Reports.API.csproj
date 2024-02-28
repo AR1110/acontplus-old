@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\FactElect\ComprobanteRetencionRG.rdl" />
+    <None Remove="Reports\FactElect\RecepcionRetencion.rdl" />
+    <None Remove="Reports\Ventas\ReporteRentabilidad.rdl" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Reports\Compras\RecepcionFactura.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -31,6 +37,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Contabilidad\DetalleControlCaja.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FactElect\ComprobanteRetencionRG.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl">
@@ -161,6 +170,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\Proforma.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\ReporteRentabilidad.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Vet\MedicalHistory.rdl">

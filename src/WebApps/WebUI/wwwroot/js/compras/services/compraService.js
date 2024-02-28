@@ -18,7 +18,7 @@
                     if (response.code === "0") {
                         throw response;
                     }
-                    if (response.code === "1") {
+                    if (response.code === "1") { 
                         let { proveedores } = JSON.parse(response.payload);
 
                         return proveedores.map(proveedor => (

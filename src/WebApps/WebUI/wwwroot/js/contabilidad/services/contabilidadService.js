@@ -140,7 +140,6 @@
                 nombreFiscal: comprobante.nombreFiscal
             }
 
-
             let comprosMappeado = cobros.map(cobro => {
                 return {
                     idSubEntidadFinanciera: cobro.idSubEntidadFinanciera,
@@ -154,6 +153,8 @@
                     infoCobro: cobro.infoCobro,
                     abono: cobro.abono,
                     controlCaja: cobro.controlCaja,
+                    idComprobante: cobro.idComprobante,
+                    idTipoDocumento: cobro.idTipoDocumento
                 }
             })
 

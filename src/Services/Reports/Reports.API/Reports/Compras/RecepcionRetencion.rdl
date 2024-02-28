@@ -2155,7 +2155,7 @@
                   <Width>3.70713cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>12.09007cm</Width>
+                  <Width>20.42656cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>3.49226cm</Width>
@@ -2844,7 +2844,7 @@
             <DataSetName>dataEntidad</DataSetName>
             <Top>0.50159cm</Top>
             <Height>2.13543cm</Height>
-            <Width>30.59836cm</Width>
+            <Width>38.93485cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>

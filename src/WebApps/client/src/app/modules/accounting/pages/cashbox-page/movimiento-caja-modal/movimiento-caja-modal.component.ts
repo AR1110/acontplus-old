@@ -1,7 +1,7 @@
-import { Component, Input, ViewEncapsulation, inject } from '@angular/core';
+import { Component, Input, ViewEncapsulation, inject, input } from '@angular/core';
 import { ControlCaja } from '@modules/accounting/models/cashbox.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ModalService } from '@core/services/modal.service';
@@ -17,7 +17,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { ToasterService } from '@core/services/toaster.service';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
-
+import { stringToDate } from '@core/utils/string-to-date';
 
 
 @Component({
@@ -348,9 +348,9 @@ export class MovimientoCajaModalComponent {
         this.format = FORMAT_REPORT.EXCEL;
       }
 
-      if (buttonType === this.BUTTON_TRANSACTION_PENDING){
+      if (buttonType === this.BUTTON_TRANSACTION_PENDING) {
         this.getReportTransactionPending(value)
-      }else{
+      } else {
         this.getReport(this.dataMovientoControCaja.id)
       }
     }
@@ -372,7 +372,7 @@ export class MovimientoCajaModalComponent {
       } else {
         toDate = new Date()
       }
- 
+
       let parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
       let dateParts: number[] = parts[0].split('/').map(part => parseInt(part, 10));
       let timeParts: number[] = parts[1].split(':').map(part => parseInt(part, 10));
@@ -411,7 +411,7 @@ export class MovimientoCajaModalComponent {
   //Modal Filtro Reporte Detalle Caja
   openModalReporteFiltroDetalleCaja(params: ControlCaja) {
     try {
-      const modalRef = this.modalSvc.openModalCustom(ReporteFiltroDetalleCajaModal, { size: 'sm' });
+      const modalRef = this.modalSvc.openModalCustom(ReporteFiltroDetalleCajaModal);
       modalRef.componentInstance.params = params || {};
 
     } catch (error) {
@@ -428,13 +428,16 @@ export class MovimientoCajaModalComponent {
 @Component({
   selector: 'app-reporte-filtro-detalle-caja-modal',
   standalone: true,
-  imports: [AppModule, AccountingModule, DateRangeSelectionComponent],
+  imports: [AppModule, AccountingModule, NgbTimepickerModule, DateRangeSelectionComponent],
   template: `
 		<div class="modal-header">
 			<h4 class="modal-title">Reporte Detalle Caja</h4>
 			<button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 		</div>
 		<div class="modal-body">
+
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="form-group">
           <label for="entidadFinanciera">Entidad Financiera</label>
           <select name="entidadFinanciera" id="entidadFinanciera" class="form-select" [(ngModel)]="dataSearch.idEntidadFinanciera">
@@ -444,13 +447,34 @@ export class MovimientoCajaModalComponent {
             }
           </select>
         </div>
-        <div class="form-group">
-          <label for="dateRangeSelection">Rango Fechas: </label>
-          <app-date-range-selection
-            (onChangeDateRange)="onDateRangeSelection($event)"
-            [options]="dateRangeOptions"
-          />
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+             <div class="form-group">
+        <label for="fromDate" class="form-label">Fecha de inicio</label>
+        <div class="input-group">
+          <input type="date" disabled [ngModel] ="dataSearch.fromDate | date:'yyyy-MM-dd'" class="form-control" >
+
+          <input type="time" [value]="dataSearch.fromDate | date:'HH:mm'" class="form-control" (change)="onTimeChange($event, true)">
         </div>
+          </div>
+      </div>
+
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+            <label for="toDate" class="form-label">Fecha de fin</label>
+        <div class="input-group">
+          <input type="date" disabled [ngModel] ="dataSearch.toDate | date:'yyyy-MM-dd'" class="form-control" >
+
+          <input type="time" [value]="dataSearch.toDate | date:'HH:mm'" class="form-control" (change)="onTimeChange($event, false)">
+        </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+
 
         <div class="form-group">
           <div class="icheck-primary">
@@ -478,7 +502,10 @@ export class MovimientoCajaModalComponent {
 export class ReporteFiltroDetalleCajaModal {
   @Input("params") params = {
     id: 0,
+    fechaApertura: '',
+    fechaCierre: ''
   }
+
 
   private controlCajaSvc = inject(ControlCajaService);
   private tS = inject(ToasterService);
@@ -488,9 +515,9 @@ export class ReporteFiltroDetalleCajaModal {
   activeModal = inject(NgbActiveModal);
 
   dataSearch = {
-    idEntidadFinanciera: 0,
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    idEntidadFinanciera: null,
+    fromDate: new Date(),
+    toDate: new Date(),
     ckHora: true
   }
 
@@ -501,7 +528,14 @@ export class ReporteFiltroDetalleCajaModal {
     format: 'YYYY-MM-DD HH:mm'
   }
 
+
   ngOnInit() {
+    let fromDate = stringToDate(this.params.fechaApertura, "dd/MM/yyyy HH:ii", "/");
+    let toDate = this.params.fechaCierre && stringToDate(this.params.fechaCierre, "dd/MM/yyyy HH:ii", "/");
+
+    this.dataSearch.fromDate = fromDate || new Date()
+    this.dataSearch.toDate = toDate || new Date();
+
     try {
       this.controlCajaSvc.getDataForm().subscribe({
         next: (response) => {
@@ -519,14 +553,30 @@ export class ReporteFiltroDetalleCajaModal {
     }
   }
 
-  onDateRangeSelection(range: { from: string, to: string }) {
+  onTimeChange(event: Event, fromDate: boolean): void {
+    const inputElement = event.target as HTMLInputElement;
+    const timeString = inputElement.value;
+    const [hours, minutes] = timeString.split(':').map(Number);
 
-    this.dataSearch.fromDate = range.from;
-    this.dataSearch.toDate = range.to;
+    // Actualiza solo la hora y el minuto manteniendo la fecha actual
+    if (fromDate) {
+      this.dataSearch.fromDate.setHours(hours);
+      this.dataSearch.fromDate.setMinutes(minutes);
+    } else {
+      this.dataSearch.toDate.setHours(hours);
+      this.dataSearch.toDate.setMinutes(minutes);
+    }
   }
+
+  // onDateRangeSelection(range: { from: string, to: string }) {
+
+  //   this.dataSearch.fromDate = range.from;
+  //   this.dataSearch.toDate = range.to;
+  // }
 
   getReport(format: 'pdf' | 'excel') {
     try {
+
       if (!(this.params.id > 0)) {
         this.tS.toastr({
           type: 'warning',
@@ -540,8 +590,8 @@ export class ReporteFiltroDetalleCajaModal {
         tipo: 2,
         idEntidadFinanciera: isValidField(this.dataSearch.idEntidadFinanciera),
         id: this.params.id,
-        horaInicio: this.dataSearch.fromDate,
-        horaFin: this.dataSearch.toDate,
+        horaInicio: formatDateMoment(this.dataSearch.fromDate),
+        horaFin: formatDateMoment(this.dataSearch.toDate),
         ckHora: this.dataSearch.ckHora
       }
 

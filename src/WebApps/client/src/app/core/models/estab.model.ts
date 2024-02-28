@@ -1,5 +1,5 @@
-import { IBodegaEstablecimiento } from "./bodega.model"
-import { IPuntoEmisionEstablecimiento } from "./punto-emision.model"
+import { BodegaEstablecimiento } from "./bodega.model"
+import { PuntoEmisionEstablecimiento } from "./punto-emision.model"
 
 
 
@@ -28,12 +28,15 @@ export interface Establecimiento {
   rucEmpresa: string
 }
 
-export interface GroupedEstabPuntoEmision extends Pick<IPuntoEmisionEstablecimiento, "idPuntoEmision" | "ptoEmi" | "defaultPtoEmi"> { }
-export interface GroupedEstabBodega extends Pick<IBodegaEstablecimiento, "idBodega" | "bodega" | "defaultBodega"> { }
+export interface GroupedEstabPuntoEmision extends Pick<PuntoEmisionEstablecimiento, "idPuntoEmision" | "ptoEmi" | "defaultPtoEmi"> { };
+
+export interface GroupedEstabBodega extends Pick<BodegaEstablecimiento, "idBodega" | "defaultBodega"> {
+  descripcion: string
+};
 
 export interface GroupedEstab extends Pick<Establecimiento, "idEstablecimiento" | "codEstab" | "nombreComercial" | "defaultEstab"> {
   puntosEmision: Array<GroupedEstabPuntoEmision>
-  bodegas?: Array<GroupedEstabBodega>
+  bodegas: Array<GroupedEstabBodega>
 }
 
 export interface EstablecimientoSelectHtmlOnly extends Pick<Establecimiento, 'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'predeterminado'> { }

@@ -6,12 +6,14 @@ import { OrderListComponent } from '../order-page/order-list/order-list.componen
 import { OrderModalComponent } from '../order-page/order-modal/order-modal.component';
 import { AppModule } from 'src/app/app.module';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-technical-support-page',
   standalone: true,
   imports: [
     AppModule,
+    RouterLink,
     BreadcrumbComponent,
     DashboardComponent,
     NgbNavModule,

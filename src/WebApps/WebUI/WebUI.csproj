@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Pages\Compras\DocumentoRecibido\Shared\" />
+    <Folder Include="Pages\Inventario\Product\" />
   </ItemGroup>
 
 </Project>

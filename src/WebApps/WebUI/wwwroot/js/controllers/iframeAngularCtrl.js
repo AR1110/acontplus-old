@@ -21,11 +21,15 @@
         let urlObj = new URL(url);
         let { pathname } = urlObj
         /*  console.log(pathname);*/
-        let totalRoutes = pathname.split('/');
+        let totalRoutes = pathname.split('/'); 
         let route;
         if (totalRoutes.length === 4) {
             route = totalRoutes[1] + totalRoutes[2]
-        } else {
+        } 
+        else if (totalRoutes.length === 5){
+            route = totalRoutes[1] + totalRoutes[2] + totalRoutes[3];
+        }
+        else {
             route = pathname.split('/')[1]
         }
         async function getSrc() {

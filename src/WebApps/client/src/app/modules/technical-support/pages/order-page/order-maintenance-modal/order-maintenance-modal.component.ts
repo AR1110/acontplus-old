@@ -192,7 +192,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       });
   }
   ngOnInit(): void {
-    this.get();
+    // this.get();
   }
   onProductSelected($event: any) {
     let { data } = $event;

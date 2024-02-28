@@ -1,4 +1,15 @@
-<app-breadcrumb [crear]="acciones.crear" (clicked)="openModalAddUpdate()" />
+<app-breadcrumb >
+
+  @if (acciones.crear) {
+    <button
+      type="button"
+      class="btn btn-info d-none d-lg-block m-l-15 text-white"
+      (clicked)="openModalAddUpdate()"
+    >
+      <fa-icon [icon]="'plus'"></fa-icon> Nuevo
+    </button>
+  }
+</app-breadcrumb>
 
 <div class="card">
   <div class="card-body">

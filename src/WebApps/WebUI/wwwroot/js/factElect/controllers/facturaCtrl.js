@@ -1057,7 +1057,7 @@
                     $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                 }
                 if ($scope.tiemposCredito.length > 0) {
-                    let dataTiempoCredito = $scope.tiemposCredito[0];
+                    let dataTiempoCredito = $scope.tiemposCredito.find(item=>item.diasCredito ===0 && item.numeroCuota===1)
                     $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
 
@@ -2287,7 +2287,7 @@
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
             }
-
+ 
             //===================Start customer validate ============================
             if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
                 if (!($scope.cliente.idTipoIdentificacion > 0)) {

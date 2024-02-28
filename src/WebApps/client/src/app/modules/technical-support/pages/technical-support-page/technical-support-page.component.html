@@ -1,6 +1,9 @@
 <app-breadcrumb />
 <div class="card">
   <div class="card-body">
+
+    <a [routerLink]="['/inventory/product-page']"   >to produc</a>
+
     <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
       <li [ngbNavItem]="1">
         <button ngbNavLink>Dashboard</button>

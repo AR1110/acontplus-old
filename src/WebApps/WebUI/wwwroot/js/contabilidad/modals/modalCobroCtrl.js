@@ -535,7 +535,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
 
     $scope.setValorEfectivo = function () {
         let valorCambio = 0, saldo = 0;
-        if ($scope.entidadFinanciera.codigo !== "EFE") return
+        // if ($scope.entidadFinanciera.codigo !== "EFE") return
 
         if (!(typeof $scope.cobro.valorAbono === 'number')) {
             $scope.cobro.valorCambio = 0
@@ -563,7 +563,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
     $scope.save = function () {
         try {
             if (!cobroSvc.isValidForm($scope.cobro, $scope.entidadFinanciera.codigo)) throw 'Form invalid'
-
+ 
             Swal.fire({
                 // title: 'Guardar Cobro?',
                 text: "Esta seguro de guardar este cobro?",
@@ -575,80 +575,80 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                 cancelButtonText: 'No, cancelar!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    try{
+                    try {
                         let comprobante = {
-                        idCliente: $scope.comprobante.idCliente,
-                        total: $scope.cobro.valorAbono,
-                        abono: $scope.cobro.abono,
-                        codEstab: $scope.comprobante.codEstab,
-                        numeroIdentificacion: $scope.comprobante.identificacionComprador,
-                        nombreFiscal: $scope.comprobante.razonSocialComprador
-                    }
-
-                    let infoCobro = [{
-                        nro: $scope.cobro.nro,
-                        lote: $scope.cobro.lote,
-                        aprobacion: $scope.cobro.aprobacion,
-                        referencia: $scope.cobro.referencia
-                    }]
-                    let cobros = [{
-                        idSubEntidadFinanciera: $scope.cobro.idSubEntidadFinanciera,
-                        idEntidadFinanciera: $scope.entidadFinanciera.idEntidadFinanciera,
-                        idBanco: $scope.cobro.idBanco,
-                        idCuentaBancaria: 0,
-                        fechaEmision: fS.formatDateTimeZone($scope.cobro.fechaEmision),
-                        valor: $scope.cobro.valorAbono,
-                        posfechado: $scope.cobro.posFechado,
-                        secuencial: 0,
-                        infoCobro: $scope.entidadFinanciera.codigo === 'EFE' ? undefined : JSON.stringify(infoCobro),
-                        abono: $scope.cobro.abono,
-                        controlCaja: $scope.subEntidadesFinancieras.find(item => item.idSubEntidadFinanciera === $scope.cobro.idSubEntidadFinanciera).controlCaja,
-                    }]
-
-                    cobroSvc.valorAbono = $scope.cobro.valorAbono;
-
-                    for (let item of $scope.selectedDocumentos) {
-                        item.cuotas = JSON.parse(JSON.stringify(item.cuotasOriginal))
-                    }
-
-
-                    cobroSvc.cobrosDetalle = [];
-                    cobroSvc.selectedDocumentos = $scope.selectedDocumentos;
-                    cobroSvc.esAbonoPosfechado = $scope.cobro.posFechado;
-                    cobroSvc.indexDatoCobro = 0;
-
-                    cobroSvc.addFormaCobro();
-                    let historialCobros = cobroSvc.getHistorialCobros(cobroSvc.selectedDocumentos);
-
-                    if (cobroSvc.cobrosDetalle.length === 0) {
-                        fS.sweetAlert('warning', 'Cobro detalle vacio')
-                        throw 'Cobro detalle vacio';
-                    }
-
-                    let data = {
-                        comprobante,
-                        cobros,
-                        cobroDetalle: cobroSvc.cobrosDetalle.filter(item => (item.abono > 0)),
-                        historialCobros,
-                    }
-
-                    const params = comprobanteIngresoSvc.mapperTo(data);
-
-                    showLoader();
-                    comprobanteIngresoSvc.post(params).then(response => {
-                        hideLoader();
-                        if (response.code === '0') {
-                            fS.sweetAlert('warning', response.message)
+                            idCliente: $scope.comprobante.idCliente,
+                            total: $scope.cobro.valorAbono,
+                            abono: $scope.cobro.abono,
+                            codEstab: $scope.comprobante.codEstab,
+                            numeroIdentificacion: $scope.comprobante.identificacionComprador,
+                            nombreFiscal: $scope.comprobante.razonSocialComprador
                         }
-                        if (response.code === '1') {
-                            fS.sweetAlert('success', response.message, '', 1000)
-                            $uibModalInstance.close(response)
+
+                        let infoCobro = [{
+                            nro: $scope.cobro.nro,
+                            lote: $scope.cobro.lote,
+                            aprobacion: $scope.cobro.aprobacion,
+                            referencia: $scope.cobro.referencia
+                        }]
+                        let cobros = [{
+                            idSubEntidadFinanciera: $scope.cobro.idSubEntidadFinanciera,
+                            idEntidadFinanciera: $scope.entidadFinanciera.idEntidadFinanciera,
+                            idBanco: $scope.cobro.idBanco,
+                            idCuentaBancaria: 0,
+                            fechaEmision: fS.formatDateTimeZone($scope.cobro.fechaEmision),
+                            valor: $scope.cobro.valorAbono,
+                            posfechado: $scope.cobro.posFechado,
+                            secuencial: 0,
+                            infoCobro: $scope.entidadFinanciera.codigo === 'EFE' ? undefined : JSON.stringify(infoCobro),
+                            abono: $scope.cobro.abono,
+                            controlCaja: $scope.subEntidadesFinancieras.find(item => item.idSubEntidadFinanciera === $scope.cobro.idSubEntidadFinanciera).controlCaja,
+                        }]
+
+                        cobroSvc.valorAbono = $scope.cobro.valorAbono;
+
+                        for (let item of $scope.selectedDocumentos) {
+                            item.cuotas = JSON.parse(JSON.stringify(item.cuotasOriginal))
                         }
-                    }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    })
-                    }catch(error){
+
+
+                        cobroSvc.cobrosDetalle = [];
+                        cobroSvc.selectedDocumentos = $scope.selectedDocumentos;
+                        cobroSvc.esAbonoPosfechado = $scope.cobro.posFechado;
+                        cobroSvc.indexDatoCobro = 0;
+
+                        cobroSvc.addFormaCobro();
+                        let historialCobros = cobroSvc.getHistorialCobros(cobroSvc.selectedDocumentos);
+
+                        if (cobroSvc.cobrosDetalle.length === 0) {
+                            fS.sweetAlert('warning', 'Cobro detalle vacio')
+                            throw 'Cobro detalle vacio';
+                        }
+
+                        let data = {
+                            comprobante,
+                            cobros,
+                            cobroDetalle: cobroSvc.cobrosDetalle.filter(item => (item.abono > 0)),
+                            historialCobros,
+                        }
+
+                        const params = comprobanteIngresoSvc.mapperTo(data);
+                 
+                        showLoader();
+                        comprobanteIngresoSvc.post(params).then(response => {
+                            hideLoader();
+                            if (response.code === '0') {
+                                fS.sweetAlert('warning', response.message)
+                            }
+                            if (response.code === '1') {
+                                fS.sweetAlert('success', response.message, '', 1000)
+                                $uibModalInstance.close(response)
+                            }
+                        }).catch(error => {
+                            hideLoader();
+                            console.log(error)
+                        })
+                    } catch (error) {
                         hideLoader();
                         console.log(error)
                     }
@@ -1504,11 +1504,9 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         cobroDetalle: $scope.cobrosDetalle.filter(item => (item.abono > 0)),
                         historialCobros: historial,
                     }
-
-
-
+ 
                     let params = comprobanteIngresoSvc.mapperTo(data);
-
+                
                     showLoader();
                     comprobanteIngresoSvc.post(params).then(response => {
                         hideLoader();
@@ -1764,7 +1762,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
 //======================================================DETALLE COBRO====================================
 ModalCobroDetalleCtrl.$inject = ['$scope', '$uibModalInstance', 'comprobanteIngresoService', 'params']
 
-function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc, params) { 
+function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc, params) {
     $scope.showDetalleCompIngreso = false;
     $scope.showDetalleCompIngresoByDoc = false;
 
@@ -1804,9 +1802,9 @@ function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,
                     } = response;
 
                     $scope.comprobante = comprobante;
-                    $scope.cobroDetalles = cobroDetalles; 
-                    $scope.comprobanteIngresos = comprobanteIngresos; 
-                }).catch(error => { 
+                    $scope.cobroDetalles = cobroDetalles;
+                    $scope.comprobanteIngresos = comprobanteIngresos;
+                }).catch(error => {
                     console.log(error)
                 }).finally(() => hideLoader())
             }
