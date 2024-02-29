@@ -54,7 +54,8 @@ BEGIN
 	   ,fechaEmision DATETIME NOT NULL
 	   ,persona VARCHAR(200) NOT NULL
 	   ,total NUMERIC(18,5) NOT NULL
-	   ,abono NUMERIC(18,5) NOT NULL
+	   ,totalAnterior NUMERIC(18,5) NOT NULL DEFAULT 0
+       ,abono NUMERIC(18,5) NOT NULL
 	   ,saldo NUMERIC(18,5) DEFAULT 0 NOT NULL
 	   ,pay  VARCHAR(150) NOT NULL
 	   ,cobro BIT NOT NULL DEFAULT 1 
@@ -73,13 +74,14 @@ BEGIN
     --> Reporte Control Caja
     IF @tipo = 1 
         BEGIN 
-	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,saldo,pay,idEntidadFinanciera,cobro)
+	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro)
 	        SELECT nroComprobante  = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
 		          ,doc             = IIF(cc.codDoc = '01','FV',cc.codDoc)
 		          ,nroDoc          = cc.serieComprobante 
 		          ,fechaEmision    = cc.fechaEmision
 		          ,agenteEconomico = cl.nombreFiscal
 		          ,total           = cc.importeTotal
+                  ,CAST(hc.saldo as numeric(18,2)) 
 		          ,abono           = CASE WHEN co.cobro = 1 THEN CAST(hc.abono as numeric(18,2)) ELSE 0 END
 		          ,saldo           = CAST(hc.saldo - hc.abono as numeric(18,2)) 
 		          ,pay             = ISNULL(sf.descripcion,'') + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','')
@@ -252,7 +254,7 @@ BEGIN
               AND ce.idControlCaja = @idControlCaja
 
 	        INSERT INTO @tbDocuments (serieComprobante,tipDoc,abono,total)
-	        SELECT nroDoc,tipDoc,SUM(abono),total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,total,nroDoc
+	        SELECT nroDoc,tipDoc,SUM(abono),totalAnterior FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,totalAnterior,nroDoc
 
 	        -- ================================ FORMAS DE PAGOS TOTALIZADAS ========================================
 	        SELECT @chequesPosf     = SUM(td.total)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
@@ -576,10 +578,11 @@ BEGIN
 
             IF @ckHora = 1
                 BEGIN
-                    SET @sql = @sql + 'AND CAST(cd.fechaEmision as time) BETWEEN CAST(@fechaInicio as time) AND CAST(@fechaFin as time) '
+                    SET @sql = @sql + 'AND CAST(cd.fechaEmision as time) BETWEEN CAST(@fechaInicio as time) AND CAST(@fechaFin as time)'
+                                       
                 END 
 
-            SET @sql = @sql + 'ORDER BY nroComprobante,cd.nroDoc,cd.doc ASC '
+            SET @sql = @sql + 'ORDER BY cd.pay,cd.doc,cd.fechaEmision ASC '
                 
             SELECT nroControl = cc.idControlCaja
 		          ,caja       = ca.descripcion
