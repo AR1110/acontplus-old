@@ -96,9 +96,11 @@ BEGIN
 
 		) as dt 
 
-		INSERT INTO @documento(idTipoPersona,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal)
+		INSERT INTO @documento
+              (idTipoPersona
+              ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal)
 		SELECT idTipoPersona = (SELECT TOP 1 idTipoPersona FROM TipoPersona tp WITH (NOLOCK) WHERE tp.codigo = 'CL')
-		     ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal
+		      ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal
 		FROM OPENJSON(@comprobante)
 		WITH (idCliente                 INT '$.idCliente'
 			 ,total           NUMERIC(18,5) '$.total'
