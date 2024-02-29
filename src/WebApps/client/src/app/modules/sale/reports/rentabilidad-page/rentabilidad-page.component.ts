@@ -19,6 +19,7 @@ import { SALE_CODE_REPORT } from "@modules/sale/enums/sale.enum";
 import { GroupedSubFamilia } from "@modules/inventory/models/sub-category.model";
 import { formatDateMoment } from "@core/utils/format-date-moment";
 import { DOC_TYPE } from "@core/constants/global.constants";
+import { hideLoader, showLoader } from "@core/utils/loader";
 
 @Component({
   selector: 'app-rentabilidad-page',
@@ -73,14 +74,16 @@ export class RentabilidadPageComponent {
   ngOnInit() {
 
 
+    showLoader();
     this.productSvc.getDataReport().subscribe({
       next: (response) => {
+        hideLoader();
         let { estabs, tarifas, tiposDoc, subCategorias } = response;
         this.estalecimientos = estabs;
         this.tarifas = tarifas;
         this.tiposDoc = tiposDoc;
         this.subCategorias = subCategorias;
-        console.log(subCategorias)
+
         let dataEstab = this.estalecimientos.find(estab => estab.defaultEstab);
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
@@ -91,10 +94,17 @@ export class RentabilidadPageComponent {
           }
         }
 
-      }
+        if(this.tarifas.length>0){
+          let dataTarifa = this.tarifas.find(t=>t.predeterminada);
+          if(dataTarifa){
+            this.dataSearch.idTarifa = dataTarifa.idTarifa;
+          }
+        }
+      }, error(err) {
+        hideLoader();
+        console.log(err)
+      },
     })
-
-
   }
 
 
@@ -117,7 +127,6 @@ export class RentabilidadPageComponent {
   }
 
   onUserSelected(event: any) {
-    console.log(event)
     let { data } = event;
     this.dataSearch.idUsuario = data.idUsuario;
   }

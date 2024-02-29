@@ -136,7 +136,7 @@
                     let infoAdicionalDocumento = dataRepository[4];
                     let datosAdicionalesArticulo = dataRepository[5];
                     let formasPago = dataRepository[6];
-                    
+
                     let compMapper = {
                         idAprob_Document: compRepository.idAprob_Document,
                         uniqueId: compRepository.uniqueId,
@@ -165,7 +165,7 @@
                         nombreFiscal: clienteRepository.nombreFiscal,
                         numeroIdentificacion: clienteRepository.numeroIdentificacion,
                         direccion: clienteRepository.direccion,
-                        
+
                         idTipoIdentificacion: clienteRepository.idTipoIdentificacion,
                         codigoSriTipoIdentificacion: clienteRepository.tipoIdentificacion,
                         identificacionComprador: clienteRepository.numeroIdentificacion,
@@ -233,7 +233,8 @@
                             estado: 1,
                             datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
                             fechaEmision: fechaEmision && fS.formatDate(fechaEmision) || null,
-                            datosAdicionales: restItem.datosAdicionales
+                            datosAdicionales: restItem.datosAdicionales,
+                            nota: restItem.nota || null
                         }
 
                         return obj;
@@ -404,7 +405,8 @@
                     valorImpuesto: item.valorImpuesto,//✅
                     llevaInventario: item.llevaInventario,
                     idBodega: item.idBodega,
-                    fechaEmision: fS.formatDateTimeZone(item.fechaEmision)
+                    fechaEmision: fS.formatDateTimeZone(item.fechaEmision),
+                    nota: item.nota
                 }
                 tempDetail.push(obj);
             }
@@ -433,7 +435,7 @@
                 ice: 0,
                 idBodega: 0,
                 total: 0,
-                nota: "S/N",
+                nota: null,
                 llevaInventario: false,
                 datosAdicionales: false,
                 estado: 1

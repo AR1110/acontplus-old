@@ -107,6 +107,7 @@ BEGIN
             ,a.llevaInventario
             ,a.precioCosto
             ,dt.fechaEmision
+            ,dt.nota
 	FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK)
 	INNER JOIN dbo.Articulo             a WITH (NOLOCK) ON a.idArticulo = dt.idArticulo
 	INNER JOIN dbo.Medida               m WITH (NOLOCK) ON m.idMedida   = dt.idMedida

@@ -279,6 +279,7 @@ BEGIN
                    ,ta.descripcion as pvp
                    ,me.descripcion as medida
                    ,ti.descripcion as tipoIva
+                   ,dt.nota
              FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK) 
              INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
              INNER JOIN dbo.Bodega              bo WITH (NOLOCK) ON bo.idBodega   = dt.idBodega
