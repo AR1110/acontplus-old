@@ -66,6 +66,7 @@ BEGIN
 		,tarifa NUMERIC(18,5) NOT NULL
         ,valorImpuesto NUMERIC(18,5) NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
+        ,nota VARCHAR(200) NULL
 	)
 
     DECLARE @tbTaxes AS TABLE (
@@ -121,8 +122,8 @@ BEGIN
 		     )
 
 		INSERT INTO @tbDetalle 
-			  (orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision)
-		SELECT orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision
+			  (orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota)
+		SELECT orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota
 		FROM OPENJSON(@detalles)
 		WITH (
 				orderIndex                       INT '$.orderIndex',
@@ -140,6 +141,7 @@ BEGIN
 		       ,tarifa                 NUMERIC(18,5) '$.tarifa'
                ,valorImpuesto          NUMERIC(18,5) '$.valorImpuesto'
                ,fechaEmision               DATETIME2 '$.fechaEmision'
+               ,nota                    VARCHAR(200) '$.nota'
 		 )
 
          INSERT INTO @tbTaxes
@@ -227,8 +229,8 @@ BEGIN
 			DELETE FROM Ventas.Aprob_Document_Detailt WHERE uniqueId = @uniqueId
 
 			INSERT INTO Ventas.Aprob_Document_Detailt
-                   (uniqueId,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision)
-			SELECT @uniqueId,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision
+                   (uniqueId,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota)
+			SELECT @uniqueId,idArticulo,idTarifa,idBodega,idTipoIva,idMedida,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,fechaEmision, nota
 			FROM @tbDetalle 
 			ORDER BY orderIndex ASC
 
