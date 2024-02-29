@@ -83,7 +83,7 @@ export class RentabilidadPageComponent {
         this.tarifas = tarifas;
         this.tiposDoc = tiposDoc;
         this.subCategorias = subCategorias;
-        
+
         let dataEstab = this.estalecimientos.find(estab => estab.defaultEstab);
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
@@ -94,11 +94,17 @@ export class RentabilidadPageComponent {
           }
         }
 
+        if(this.tarifas.length>0){
+          let dataTarifa = this.tarifas.find(t=>t.predeterminada);
+          if(dataTarifa){
+            this.dataSearch.idTarifa = dataTarifa.idTarifa;
+          }
+        }
       }, error(err) {
         hideLoader();
         console.log(err)
       },
-    }) 
+    })
   }
 
 
@@ -120,7 +126,7 @@ export class RentabilidadPageComponent {
     }
   }
 
-  onUserSelected(event: any) { 
+  onUserSelected(event: any) {
     let { data } = event;
     this.dataSearch.idUsuario = data.idUsuario;
   }

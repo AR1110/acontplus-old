@@ -1,6 +1,7 @@
 export interface Tarifa {
   idTarifa: number
   descripcion: string
+  predeterminada: boolean
 }
 export interface TarifaProductSearch {
   tarifa: string
@@ -9,4 +10,4 @@ export interface TarifaProductSearch {
 }
 
 
-export interface TarifaSelectHtmlOnly extends Pick<Tarifa, 'idTarifa' | 'descripcion'> { }
+export interface TarifaSelectHtmlOnly extends Pick<Tarifa, 'idTarifa' | 'descripcion' | 'predeterminada'> { }

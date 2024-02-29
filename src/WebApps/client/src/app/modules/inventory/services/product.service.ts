@@ -103,7 +103,6 @@ export class ProductService {
         if (isApiResponse(response)) {
           let [tempEstabs, tempSubCategorias, marcas, tempTipoDocumento, tarifas] = JSON.parse(response.payload as string);
 
-          console.log(JSON.parse(response.payload as string))
           let estabs = groupEstabUtil({
             bodegas: tempEstabs,
             isGroupBodega: true
