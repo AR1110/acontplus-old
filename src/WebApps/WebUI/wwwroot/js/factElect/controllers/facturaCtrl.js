@@ -2287,7 +2287,7 @@
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
             }
-
+ 
             //===================Start customer validate ============================
             if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
                 if (!($scope.cliente.idTipoIdentificacion > 0)) {

@@ -148,6 +148,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
             const params = Object.assign($scope.dataSearch, {
                 checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                 checkBoxMovement: $scope.dataSearch.movement ? true : false,
+                movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement 
             })
 
             getDataKardex(params)
@@ -509,8 +510,8 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
         if ($scope.dataSearch.checkBoxMovement) {
             if ($scope.dataSearch.movement === null || $scope.dataSearch.movement === undefined || $scope.dataSearch.movement === "") {
-                tS.toastr('warning', 'Seleccione el Movimiento', tituloToast);
-                return
+                // tS.toastr('warning', 'Seleccione el Movimiento');
+                // return
             }
         }
         $scope.dataSearch.isSearch = true;
@@ -559,7 +560,8 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
             }),
 
             dataParams: JSON.stringify(Object.assign($scope.dataSearch, {
-                checkBoxFecha: $scope.dataSearch.checkBoxFecha
+                checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement 
             }))
         }
 

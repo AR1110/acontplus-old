@@ -1,5 +1,5 @@
 
-export interface IPuntoEmision {
+export interface PuntoEmision {
     idPuntoEmision: number,
     ptoEmi: string,
     idPtoEmi_asig?: number,
@@ -7,7 +7,7 @@ export interface IPuntoEmision {
     defaultPtoEmi: boolean
 }
 
-export interface IPuntoEmisionEstablecimiento {
+export interface PuntoEmisionEstablecimiento {
     idEstablecimiento: number
     nombreComercial: string
     codEstab: string

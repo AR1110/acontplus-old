@@ -1,5 +1,5 @@
 import { Directive, HostListener, Input } from "@angular/core";
-import { SubCategoryModalComponent } from "@inventory/components/sub-category-modal/sub-category-modal.component";
+import { SubCategoryModalComponent } from "@modules/inventory/shared/components/sub-category/sub-category-modal/sub-category-modal.component";
 import { ModalService } from "@core/services/modal.service";
 
 @Directive({

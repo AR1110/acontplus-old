@@ -67,7 +67,8 @@ export class SupplierAccountsComponent {
             const [estabs, estadosDoc, tiposDoc] = JSON.parse(response.payload as string);
 
             this.establecimientos = groupEstabUtil({
-              estabs
+              estabs,
+              isGroupPuntoEmision: true
             })
             const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
             if (dataEstab) {
@@ -185,7 +186,7 @@ export class SupplierAccountsComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: this.dataSearch.ckCuotas ? CODE_REPORT.CCPC : CODE_REPORT.CCP, 
+        codigo: this.dataSearch.ckCuotas ? CODE_REPORT.CCPC : CODE_REPORT.CCP,
         format,
         aditionalParams: []
       }),

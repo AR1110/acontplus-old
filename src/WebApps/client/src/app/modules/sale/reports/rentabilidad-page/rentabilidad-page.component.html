@@ -1,0 +1,154 @@
+<app-breadcrumb />
+
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-info">
+          <input type="checkbox" name="checkboxProduct" id="checkboxProduct" [(ngModel)]="dataSearch.productChecked" />
+          <label for="checkboxProduct">Artículo:</label>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-info">
+          <input type="checkbox" name="checkboxUser" id="checkboxUser" [(ngModel)]="dataSearch.userChecked" />
+          <label for="checkboxUser">Usuario:</label>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-info">
+          <input type="checkbox" name="checkboxSubCategoria" id="checkboxSubCategoria"
+            [(ngModel)]="dataSearch.subCategoriaChecked" />
+          <label for="checkboxSubCategoria">SubFamilia:</label>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+    </div>
+    <hr />
+
+    <div class="row">
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="estab">Establecimiento.:</label>
+          <select name="estab" id="estab" class="form-select" [(ngModel)]="dataSearch.codEstab"
+            (change)="onChangeEstab()">
+            <option value="">Todos</option>
+            @for (item of estalecimientos; track $index) {
+            <option [ngValue]="item.codEstab">
+              {{ item.nombreComercial }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="bodega"> Bodega.:</label>
+          <select name="bodega" id="bodega" class="form-select" [(ngModel)]="dataSearch.idBodega">
+            <option [ngValue]="0">Todos</option>
+            @for (item of bodegas; track $index) {
+            <option [ngValue]="item.idBodega">
+              {{ item.descripcion }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="col-xl-6 col-lg-6 col-md-4 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="dateRangeSelect">Rango Fechas</label>
+
+          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
+        </div>
+
+      </div>
+
+
+    </div>
+
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="subFamilias">SubFamilias</label>
+          <mat-select matNativeControl [formControl]="checkedSubCategorias" multiple class="form-select">
+            @for (item of subCategorias; track $index) {
+            <mat-optgroup [label]="item.familia" style="font-weight: bold;">
+              @for (sf of item.subFamilias; track $index) {
+              <mat-option [value]="sf.idSubFamilia">{{sf.subFamilia}}</mat-option>
+              }
+            </mat-optgroup>
+            }
+
+          </mat-select>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label>Artículo: </label>
+          <app-product-search [props]="productSearchProps" (onProductSelected)="onProductSelected($event)"
+            (emptyInput)="productResultEmptyInput($event)" />
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="userSearch">Usuario: </label>
+          <app-user-search (onUserSelected)="onUserSelected($event)" [textSearch]="dataSearch.userName"
+            (emptyInput)="userResultEmptyInput($event)" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="tarifas">Tarifa: </label>
+          <select class="form-select" name="tarifas" id="tarifas" [(ngModel)]="dataSearch.idTarifa">
+            @for(item of tarifas; track $index){
+            <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="tipoDoc">Tipo Doc.:</label>
+          <select name="tipoDoc" id="tipoDoc" class="form-select" [(ngModel)]="dataSearch.codDoc">
+            <option value="">Todos</option>
+            @for (item of tiposDoc; track $index) {
+            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+      <button class="btn btn-danger" type="button" (click)="getReport('pdf')">
+        PDF
+      </button>
+      <button class="btn btn-success" type="button" (click)="getReport('excel')">
+        EXCEL
+      </button>
+    </div>
+  </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>

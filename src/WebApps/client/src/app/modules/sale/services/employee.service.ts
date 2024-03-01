@@ -1,8 +1,9 @@
 import { Injectable, inject } from "@angular/core";
-import { SALE_PATHS } from "../constants/sale.constants";
-import { PATHS_API } from "@core/constants/global.constants";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
+
+import { SALE_PATHS } from "../enums/sale.enum"; 
+import { PATHS_API } from "@core/constants/global.constants";
 import { isApiResponse } from "@core/models/api-response";
 
 

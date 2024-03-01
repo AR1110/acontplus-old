@@ -151,6 +151,7 @@ export class OrderModalComponent {
             );
             this.establecimientos = groupEstabUtil({
               estabs: puntosEmision,
+              isGroupPuntoEmision: true
             });
             const dataEstab = this.establecimientos.find(
               (estab) => estab.defaultEstab

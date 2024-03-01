@@ -1,52 +1,103 @@
-.mat-autocomplete {
-  width: 100%;
+.table-container {
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto; /* Enable horizontal scrolling on smaller screens */
 }
 
-.autocomplete-options {
-  position: relative;
+.header-row, .data-container {
+  display: flex;
 }
 
-.table {
-  display: grid;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.sticky-header {
-  display: grid;
-  grid-template-columns: 1fr 2fr 3fr 3fr; /* Columna 'Código' y 'Name' fijo, resto distribuido por igual */
-  background-color: #f5f5f5;
+.header-row {
   position: sticky;
   top: 0;
+  background-color: #f0f0f0;
   z-index: 1;
 }
 
-.column,
-.cell {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 14px; /* Tamaño de fuente para las celdas del cuerpo de opciones */
-  max-width: 150px; /* Ancho máximo para evitar que las celdas sean demasiado anchas */
-}
-
 .column {
-  font-weight: bold; /* Negrita para las columnas del encabezado */
+  /* flex: 1; */
+  padding: 10px;
+  border: 1px solid #ccc;
 }
 
-.cell.codigo {
-  width: 50px; /* Ancho fijo para la celda 'Código' */
+.cell {
+  flex: 1;
+  /* padding: 10px; */
+  /* border: 1px solid #ccc; */
 }
 
-.cell.name {
-  width: 100px; /* Ancho fijo para la celda 'Name' */
-  white-space: normal;
-  font-weight: normal; /* Establecer la fuente normal para la columna 'Name' */
+.data-row {
+  display: flex!important;
+  align-items: center; /* Align content vertically centered */
+  border-bottom: 1px solid #349034;
+  font-size:12px;
 }
 
-.option:hover {
-  background-color: #f5f5f5;
-  font-size: 12px; /* Tamaño de fuente para las opciones al pasar el ratón */
+/* Add any additional styles for mat-option or other elements as needed */
+/* Establece anchos fijos para cada columna */
+.column-codigo {
+  width: 9rem; /* ajusta el valor según sea necesario */
+  /* flex:1 */
+}
+
+.column-descripcion {
+  width: 250px; /* ajusta el valor según sea necesario */
+  flex:1
+}
+
+.column-stock {
+  width: 20px; /* ajusta el valor según sea necesario */
+  text-align:center;
+  flex:1;
+}
+
+.column-medida {
+  width: 250px; /* ajusta el valor según sea necesario */
+}
+
+.cell-codigo {
+  width: 9rem; /* ajusta el valor según sea necesario */
+  /* flex:1 */
+}
+
+.cell-descripcion {
+  width: 250px; /* ajusta el valor según sea necesario */
+  flex:1
+}
+
+.cell-stock {
+  width: 20px; /* ajusta el valor según sea necesario */
+  text-align:center;
+  flex:1;
+}
+
+.cell-medida {
+  width: 250px; /* ajusta el valor según sea necesario */
+}
+ 
+
+/* app.component.css */
+
+.item-container {
+  display: flex;
+  align-items: center;
+  font-size: 12px; 
+}
+
+.left-column {
+  margin-right: 10px;
+  /* Adjust spacing between image and text */
+}
+
+.right-column {
+  flex-grow: 1;
+  /* Allow the right column to grow and take available space */
+}
+
+.right-container {
+  display: flex;
+
+  flex-direction: column;
+  gap:1;
 }

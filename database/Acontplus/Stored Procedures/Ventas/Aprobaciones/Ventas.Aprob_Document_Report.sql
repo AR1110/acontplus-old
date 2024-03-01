@@ -79,7 +79,7 @@ BEGIN
 		          ,CAST(av.importeTotal as numeric(18,2))                              as importeTotal		
 		          ,CAST(0 as numeric(18,2))                                            as totalIce
                   ,CAST(0 as numeric(18,2))                                            as irbpnr
-		          ,av.observacion
+		          ,av.observacion 
 	        FROM Ventas.Aprob_Document        av WITH (NOLOCK)
             INNER JOIN dbo.Entidad            en WITH (NOLOCK) ON en.idEntidad      = av.idEntidad
 	        INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision = av.idPuntoEmision 
@@ -98,6 +98,7 @@ BEGIN
 		  ,CAST(ad.descuento as numeric(18,2))           as valorDescuento
 		  ,CAST(precioTotalSinImpuesto as numeric(18,2)) as precioTotal
 		  ,me.descripcion                                as medida
+          ,ad.nota
 	FROM Ventas.Aprob_Document_Detailt ad WITH (NOLOCK)
 	INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.idMedida   = ad.idMedida
 	INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.idArticulo = ad.idArticulo 

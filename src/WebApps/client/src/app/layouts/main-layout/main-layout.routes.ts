@@ -24,6 +24,11 @@ export const routes: Routes = [
         path: 'inventory',
         title: 'App - Inventario',
         loadChildren: () => import('@modules/inventory/inventory.routes').then(r => r.routes)
+      },
+      {
+        path: 'sale',
+        title: 'App - Venta',
+        loadChildren: () => import('@sale/sale.routes').then(r => r.routes)
       }
     ]
   }

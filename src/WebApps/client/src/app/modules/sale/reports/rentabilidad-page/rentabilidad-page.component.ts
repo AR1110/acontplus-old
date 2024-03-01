@@ -1,0 +1,242 @@
+import { Component, inject } from "@angular/core";
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
+import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
+import { GroupedEstab, GroupedEstabBodega } from "@core/models/estab.model";
+import { ProductService } from "@modules/inventory/services/product.service";
+import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
+import { UserSearchComponent } from '@core/components/user-search/user-search.component';
+import { TarifaSelectHtmlOnly } from '@inventory/models/tarifa.model';
+import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
+
+import { TipoDoc } from '@core/models/tipo-doc.model'
+import { SharedService } from "@core/services/shared.service";
+import { isValidField } from "@core/utils/utils";
+import { ToasterService } from "@core/services/toaster.service";
+import { SALE_CODE_REPORT } from "@modules/sale/enums/sale.enum";
+import { GroupedSubFamilia } from "@modules/inventory/models/sub-category.model";
+import { formatDateMoment } from "@core/utils/format-date-moment";
+import { DOC_TYPE } from "@core/constants/global.constants";
+import { hideLoader, showLoader } from "@core/utils/loader";
+
+@Component({
+  selector: 'app-rentabilidad-page',
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BreadcrumbComponent,
+    ProductSearchComponent,
+    UserSearchComponent,
+    DateRangeSelectionComponent
+  ],
+  templateUrl: './rentabilidad-page.component.html'
+})
+
+export class RentabilidadPageComponent {
+
+  private productSvc = inject(ProductService);
+  private sharedSvc = inject(SharedService);
+  private tS = inject(ToasterService);
+
+  estalecimientos: Array<GroupedEstab> = [];
+  bodegas: Array<GroupedEstabBodega> = [];
+  tarifas: Array<TarifaSelectHtmlOnly> = [];
+  tiposDoc: Array<TipoDoc> = [];
+  subCategorias: Array<GroupedSubFamilia> = [];
+
+
+  checkedSubCategorias = new FormControl('');
+
+  dataSearch = {
+    codEstab: '',
+    idBodega: 0,
+    idTarifa: 0,
+    idArticulo: 0,
+    userName: '',
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date()),
+    codDoc: '',
+    idUsuario: 0,
+    productChecked: false,
+    userChecked: false,
+    ckFecha: true,
+    subCategoriaChecked: false
+  }
+
+  productSearchProps = {
+    isSearchSimple: true
+  }
+  ngOnInit() {
+
+
+    showLoader();
+    this.productSvc.getDataReport().subscribe({
+      next: (response) => {
+        hideLoader();
+        let { estabs, tarifas, tiposDoc, subCategorias } = response;
+        this.estalecimientos = estabs;
+        this.tarifas = tarifas;
+        this.tiposDoc = tiposDoc;
+        this.subCategorias = subCategorias;
+
+        let dataEstab = this.estalecimientos.find(estab => estab.defaultEstab);
+        if (dataEstab) {
+          this.dataSearch.codEstab = dataEstab.codEstab;
+          this.bodegas = dataEstab.bodegas;
+          let dataBodega = this.bodegas.find(bodega => bodega.defaultBodega);
+          if (dataBodega) {
+            this.dataSearch.idBodega = dataBodega.idBodega;
+          }
+        }
+
+        if(this.tarifas.length>0){
+          let dataTarifa = this.tarifas.find(t=>t.predeterminada);
+          if(dataTarifa){
+            this.dataSearch.idTarifa = dataTarifa.idTarifa;
+          }
+        }
+      }, error(err) {
+        hideLoader();
+        console.log(err)
+      },
+    })
+  }
+
+
+
+
+  onChangeEstab() {
+    if (isValidField(this.dataSearch.codEstab)) {
+      let dataEstab = this.estalecimientos.find(estab => estab.codEstab === this.dataSearch.codEstab);
+      if (dataEstab) {
+        this.bodegas = dataEstab.bodegas;
+        let dataBodega = this.bodegas.find(b => b.defaultBodega);
+        if (dataBodega) {
+          this.dataSearch.idBodega = dataBodega.idBodega;
+        }
+      }
+    } else {
+      this.bodegas = [];
+      this.dataSearch.idBodega = 0;
+    }
+  }
+
+  onUserSelected(event: any) {
+    let { data } = event;
+    this.dataSearch.idUsuario = data.idUsuario;
+  }
+  userResultEmptyInput(event: any) {
+    this.dataSearch.idUsuario = 0;
+  }
+
+  onDateRangeSelection(range: { from: string, to: string }) {
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
+  }
+
+
+
+  onProductSelected(event: any) {
+    let data = event.data;
+    this.dataSearch.idArticulo = data.idArticulo;
+  }
+  productResultEmptyInput(data: any) {
+    this.dataSearch.idArticulo = 0;
+  }
+
+
+  getReport(format: 'pdf' | 'excel') {
+    let checkedSubCategorias = this.checkedSubCategorias.value;
+
+    if (!isValidField(this.dataSearch.fromDate)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese fecha inicio'
+      })
+      return
+    }
+
+    if (!isValidField(this.dataSearch.toDate)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese fecha fin'
+      })
+      return
+    }
+
+    if (this.dataSearch.productChecked) {
+      if (!isValidField(this.dataSearch.idArticulo)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el Artículo'
+        })
+        return
+      }
+    }
+
+
+    if (this.dataSearch.subCategoriaChecked) {
+      if (checkedSubCategorias && Array.isArray(checkedSubCategorias) && checkedSubCategorias.length === 0) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione al menos una SubFamilia'
+        })
+        return
+      }
+    }
+
+    if (this.dataSearch.userChecked) {
+      if (!isValidField(this.dataSearch.idUsuario)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el Usuario'
+        })
+        return
+      }
+    }
+
+    let subCategoriasChecked = Array.isArray(checkedSubCategorias) && checkedSubCategorias.join(',');
+    const dataParms = {
+      tipo: 6,
+      format,
+      checkBoxFecha: this.dataSearch.ckFecha,
+      codEstab: isValidField(this.dataSearch.codEstab),
+      idBodega: isValidField(this.dataSearch.idBodega),
+      codDoc: isValidField(this.getDataCodDoc()),
+      idUsuario: this.dataSearch.userChecked && isValidField(this.dataSearch.idUsuario) || null,
+      idArticulo: this.dataSearch.productChecked && isValidField(this.dataSearch.idArticulo) || null,
+      idTarifa: isValidField(this.dataSearch.idTarifa),
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate,
+      subFamiliasChecked: this.dataSearch.subCategoriaChecked && subCategoriasChecked || null
+    }
+
+    const parameters = {
+      reportParams: JSON.stringify({
+        codigo: SALE_CODE_REPORT.SRR,
+        format,
+        aditionalParams: []
+      }),
+      dataParams: JSON.stringify(dataParms)
+    }
+
+    this.sharedSvc.getReport(parameters, format, true)
+  }
+
+  private getDataCodDoc() {
+    let codDoc = null;
+    if (this.dataSearch.codDoc === DOC_TYPE.NE) {
+      codDoc = this.dataSearch.codDoc
+    }
+    if (this.dataSearch.codDoc === DOC_TYPE.FV) {
+      codDoc = DOC_TYPE.FE
+    }
+    return codDoc;
+  }
+
+}
