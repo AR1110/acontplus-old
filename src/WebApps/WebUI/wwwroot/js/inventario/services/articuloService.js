@@ -855,22 +855,22 @@
     }])
 
     app.factory('articuloCodigoBarraService', function ($injector) {
-        const URL = '/CodigoBarraArticulo/';
+        const URL = 'Inventario/ArticuloCodigoBarra/';
 
         const mS = $injector.get('mainService');
         const service = {};
 
         service.post = function (data) {
-            return mS.getData("post", `${URL}Post`, data);
+            return mS.getData("post", `${URL}`, { data }, true);
         }
 
 
         service.put = function (id, data) {
-            return mS.getData("post", `${URL}Put?idArticuloCodigoBarra=${id}`, data);
+            return mS.getData("put", `${URL}${id}`, { data }, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', `${URL}Delete?idArticuloCodigoBarra=${id}`);
+            return mS.getData('delete', `${URL}${id}`, null, true);
         }
 
         return service;
