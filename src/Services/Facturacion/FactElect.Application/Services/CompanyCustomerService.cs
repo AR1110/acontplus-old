@@ -1,9 +1,9 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
-using Customer.API.Interfaces;
+using FactElect.Core.Interfaces;
 
-namespace Customer.API.Services
+namespace FactElect.Application.Services
 {
     public class CompanyCustomerService : ICompanyCustomerService
     {

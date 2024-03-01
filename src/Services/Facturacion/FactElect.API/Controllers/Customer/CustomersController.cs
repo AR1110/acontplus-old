@@ -1,15 +1,15 @@
-﻿using Customer.API.Data;
-using Customer.API.Entities;
+﻿using FactElect.Core.Entities;
+using FactElect.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Customer.API.Controllers
+namespace FactElect.API.Controllers.Customer
 {
     public class CustomersController : BaseApiController
     {
-        private readonly CustomerContext _context;
+        private readonly FactElectContext _context;
 
-        public CustomersController(CustomerContext context)
+        public CustomersController(FactElectContext context)
         {
             _context = context;
         }
@@ -23,10 +23,10 @@ namespace Customer.API.Controllers
                 return NotFound();
             }
             // Get the current page number
-            int pageNumber = 1;
+            var pageNumber = 1;
 
             // Get the number of products per page
-            int pageSize = 50;
+            var pageSize = 50;
 
             // Get the products for the current page
 
@@ -90,7 +90,7 @@ namespace Customer.API.Controllers
         {
             if (_context.Customers == null)
             {
-                return Problem("Entity set 'CustomerContext.Customers'  is null.");
+                return Problem("Entity set 'FactElectContext.Customers'  is null.");
             }
             _context.Customers.Add(appCustomer);
             await _context.SaveChangesAsync();

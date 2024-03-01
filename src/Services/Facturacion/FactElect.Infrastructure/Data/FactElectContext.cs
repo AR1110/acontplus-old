@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using Common.Core.Entities;
 using Common.Infrastructure.Data;
+using FactElect.Core.Entities;
+using FactElect.Infrastructure.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,6 +17,7 @@ namespace FactElect.Infrastructure.Data
 
         }
 
+        public DbSet<AppCustomer> Customers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -46,7 +49,7 @@ namespace FactElect.Infrastructure.Data
             {
                 property.SetIsUnicode(false);
             }
-
+            builder.ApplyConfiguration(new CustomerConfiguration());
             builder.ApplyUtcDateTimeConverter();
 
         }

@@ -1,4 +1,4 @@
-﻿namespace Customer.API.Dtos
+﻿namespace FactElect.Core.Models
 {
     public class ClasificacionMiPyme
     {

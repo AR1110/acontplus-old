@@ -1,28 +1,28 @@
 ﻿using System.Data;
 using System.Net;
 using Common.Core.Utils;
-using Customer.API.Data;
-using Customer.API.Dtos;
-using Customer.API.Services;
+using FactElect.Application.Services;
+using FactElect.Core.Models;
+using FactElect.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
 
-namespace Customer.API.Controllers
+namespace FactElect.API.Controllers.Customer
 {
     public class ConsultasController : BaseApiController
     {
         private readonly IConfiguration _configuration;
         private readonly RucService _cConsultaSri;
         private readonly CedulaService _cedulasSri;
-        private readonly CustomerContext _customerContext;
+        private readonly FactElectContext _customerContext;
         private readonly LogWriter _log;
         public ConsultasController(RucService cConsultaSri,
             CedulaService cedulasSri,
             IConfiguration configuration,
-            CustomerContext customerContext,
+            FactElectContext customerContext,
             LogWriter log
             )
         {
@@ -40,21 +40,21 @@ namespace Customer.API.Controllers
         {
 
 
-            DatosPersonaSriUpdate _response = new DatosPersonaSriUpdate();
+            var _response = new DatosPersonaSriUpdate();
             try
             {
                 if (!rUCSriDTo.SriOnly)
                 {
-                    DataTable dt = new DataTable();
+                    var dt = new DataTable();
                     using (var command = _customerContext.Database.GetDbConnection().CreateCommand())
                     {
                         command.CommandText = "Customer.Customer_IDCard_Get";
-                        SqlParameter paramId = new SqlParameter("@id", SqlDbType.VarChar);
+                        var paramId = new SqlParameter("@id", SqlDbType.VarChar);
                         paramId.Value = rUCSriDTo.Ruc;
                         command.Parameters.Add(paramId);
                         command.CommandType = CommandType.StoredProcedure;
                         _customerContext.Database.OpenConnection();
-                        using (SqlDataAdapter adapter = new SqlDataAdapter())
+                        using (var adapter = new SqlDataAdapter())
                         {
                             adapter.SelectCommand = (SqlCommand)command;
                             adapter.Fill(dt);
@@ -72,9 +72,9 @@ namespace Customer.API.Controllers
                     return _response;
                 }
 
-                string htmlResponse = string.Empty;
+                var htmlResponse = string.Empty;
 
-                CookieContainer cookieContainer = new CookieContainer();
+                var cookieContainer = new CookieContainer();
 
                 cookieContainer = _cConsultaSri.GetCookie(ref htmlResponse);
 
@@ -120,24 +120,24 @@ namespace Customer.API.Controllers
         public ActionResult<CCedulaSriDto> GetCedulaSri([FromQuery] RUCSriDTo rUCSriDTo)
         {
 
-            CCedulaSriDto _response = new CCedulaSriDto();
+            var _response = new CCedulaSriDto();
             try
             {
                 if (!rUCSriDTo.SriOnly)
                 {
-                    DataTable dt = new DataTable();
+                    var dt = new DataTable();
                     using (var command = _customerContext.Database.GetDbConnection().CreateCommand())
                     {
                         command.CommandText = "Customer.Customer_IDCard_Get";
-                        SqlParameter paramId = new SqlParameter("id", SqlDbType.VarChar);
+                        var paramId = new SqlParameter("id", SqlDbType.VarChar);
                         paramId.Value = rUCSriDTo.Ruc;
                         command.Parameters.Add(paramId);
-                        SqlParameter pIdT = new SqlParameter("IDType", SqlDbType.VarChar);
+                        var pIdT = new SqlParameter("IDType", SqlDbType.VarChar);
                         pIdT.Value = "05";
                         command.Parameters.Add(pIdT);
                         command.CommandType = CommandType.StoredProcedure;
                         _customerContext.Database.OpenConnection();
-                        using (SqlDataAdapter adapter = new SqlDataAdapter())
+                        using (var adapter = new SqlDataAdapter())
                         {
                             adapter.SelectCommand = (SqlCommand)command;
                             adapter.Fill(dt);
@@ -156,9 +156,9 @@ namespace Customer.API.Controllers
                     return _response;
                 }
 
-                string htmlResponse = string.Empty;
+                var htmlResponse = string.Empty;
 
-                CookieContainer cookieContainer = new CookieContainer();
+                var cookieContainer = new CookieContainer();
 
                 cookieContainer = _cedulasSri.GetCookie(ref htmlResponse);
 

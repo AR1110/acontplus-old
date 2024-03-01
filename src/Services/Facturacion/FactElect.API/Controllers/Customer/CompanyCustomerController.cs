@@ -1,11 +1,11 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Customer.API.Interfaces;
+using FactElect.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
 
-namespace Customer.API.Controllers
+namespace FactElect.API.Controllers.Customer
 {
     public class CompanyCustomerController : BaseApiController
     {

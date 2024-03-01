@@ -1,6 +1,6 @@
 ﻿using Common.Core.Models;
 
-namespace Customer.API.Interfaces
+namespace FactElect.Core.Interfaces
 {
     public interface ICompanyCustomerService
     {
