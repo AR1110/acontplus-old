@@ -1,7 +1,7 @@
 (function () {
 
     'use strict';
-    app.factory('politicaService', function ($injector) {
+    app.factory('politicaService', ['$injector', function ($injector) {
         const mS = $injector.get('mainService');
         const URL = 'Config/Politica/';
         const URL_ACCESO = 'Config/Acceso/'
@@ -54,5 +54,5 @@
         }
 
         return service;
-    })
+    }])
 })(window.angular)
