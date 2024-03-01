@@ -715,9 +715,12 @@
                 ...medida,
                 defaultMedida: false
             }));
+            orderMedidaArray = orderMedidaArray || []
 
             // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
-            orderMedidaArray[0].defaultMedida = true;
+            if (orderMedidaArray[0]) {
+                orderMedidaArray[0].defaultMedida = true;
+            }
 
 
             // Crear un nuevo array de medidas con un formato específico
