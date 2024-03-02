@@ -26,7 +26,7 @@
         let { latestVersion } = $scope.userData;
 
         if (latestVersion != '20240301') {
-            $scope.logout();
+            // $scope.logout();
         } else {
             //consume from bd
         }

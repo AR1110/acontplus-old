@@ -11,6 +11,7 @@
     <None Remove="Reports\FactElect\ComprobanteRetencionRG.rdl" />
     <None Remove="Reports\FactElect\RecepcionRetencion.rdl" />
     <None Remove="Reports\Ventas\ReporteRentabilidad.rdl" />
+    <None Remove="Reports\Ventas\ReportRentabCustom.rdl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -173,6 +174,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\ReporteRentabilidad.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\ReportRentabCustom.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Vet\MedicalHistory.rdl">
