@@ -1402,7 +1402,7 @@
 
     //---------------------------------Cliente------------------------------------------
     app.factory('clienteService', function ($injector) {
-        let url = `Customer/CompanyCustomer/`;
+        let url = `FactElect/CompanyCustomer/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         let tS = $injector.get('toastService');

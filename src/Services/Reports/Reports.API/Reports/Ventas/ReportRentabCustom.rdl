@@ -2378,8 +2378,6 @@
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
-                                    <Format>'$'0.00</Format>
-                                    <rd:FormatSymbolCulture>es-EC</rd:FormatSymbolCulture>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -4227,7 +4225,7 @@
       <Width>537.66652mm</Width>
       <Page>
         <PageFooter>
-          <Height>6.35278mm</Height>
+          <Height>6.3528mm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
