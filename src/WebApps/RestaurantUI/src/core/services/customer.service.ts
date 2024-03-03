@@ -5,7 +5,7 @@ import { ApiResponse, CustomerReadDto } from "@/core/models"
 import { customerReadAdapter, dataFormReadAdapter } from "../adapters"
 import Swal from "sweetalert2"
 
-const url = `${PATHS_API.CUSTOMER}${PATHS.COMPANY_CUSTOMER}`
+const url = `${PATHS_API.FACT_ELECT}${PATHS.COMPANY_CUSTOMER}`
 const customerService = {
     async getDataForm() {
         const resultAxios = await Http({

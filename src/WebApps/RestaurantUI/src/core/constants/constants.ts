@@ -11,7 +11,7 @@ export const enum PATHS_API {
     CONSULTA = `${GATEWAY}Consultas/`,
     REPORT_V1 = `${GATEWAY}Reports/Reporte/`,
     REPORT_V2 = `${GATEWAY}Reports/v2/Reporte/`,
-    CUSTOMER = `${GATEWAY}Customer/`
+    FACT_ELECT = `${GATEWAY}FactElect/`
 }
 
 export const enum PATHS {
