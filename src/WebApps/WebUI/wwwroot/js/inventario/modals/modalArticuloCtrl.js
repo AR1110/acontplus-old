@@ -1162,8 +1162,8 @@ function modalArticuloCtrl(
         }
         $scope.dataCodigoBarra.idArticulo = params.idArticulo;
         if ($scope.dataCodigoBarra.idArticuloCodigoBarra > 0) {
-            showLoader();
-            articuloCodigoBarraSvc.put($scope.data.idArticuloCodigoBarra, $scope.dataCodigoBarra)
+            showLoader(); 
+            articuloCodigoBarraSvc.put($scope.dataCodigoBarra.idArticuloCodigoBarra, $scope.dataCodigoBarra)
                 .then($scope.successReponseCodigoBarra)
                 .catch(err => {
                     console.log(err);
@@ -1177,10 +1177,10 @@ function modalArticuloCtrl(
     }
 
     $scope.successReponseCodigoBarra = function (response) {
-        if (response.id === '0') {
+        if (response.code === '0') {
             tS.toastr('warning', response.message, response.titleSms);
         }
-        if (response.id === '1') {
+        if (response.code === '1') {
             tS.toastr('success', response.message, response.titleSms);
             getCodigoBarraArticulo();
             $scope.dataCodigoBarra = {
@@ -1216,10 +1216,10 @@ function modalArticuloCtrl(
         if (isConfirmed) {
             showLoader();
             articuloCodigoBarraSvc.delete(item.idArticuloCodigoBarra).then((response) => {
-                if (response.id == "0") {
+                if (response.code == "0") {
                     tS.toastr('warning', response.message, response.titleSms);
                 }
-                if (response.id == "1") {
+                if (response.code == "1") {
                     tS.toastr('success', response.message, response.titleSms);
                     getCodigoBarraArticulo();
                     $scope.dataCodigoBarra = {};

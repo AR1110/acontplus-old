@@ -265,6 +265,7 @@ BEGIN
 																				ELSE ''''
 														 END 
 							  ,tt.clienteProveedor
+                              ,tt.rucClienteProveedor
 							  ,fechaRegistro           = FORMAT(tt.fechaRegistro, ''dd/MM/yyyy HH:mm'')
 							  ,tt.codDoc
 							  ,serieComprobante = tt.nroDocumento

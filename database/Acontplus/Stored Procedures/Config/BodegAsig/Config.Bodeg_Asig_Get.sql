@@ -21,7 +21,7 @@ GO
 IF OBJECT_ID(N'Config.Bodeg_Asig_Get ', N'P') IS NOT NULL
 DROP PROCEDURE Config.Bodeg_Asig_Get 
 GO
-CREATE PROCEDURE Config.Bodeg_Asig_Get @idRol INT, @json VARCHAR(MAX)
+CREATE PROCEDURE Config.Bodeg_Asig_Get @userRoleId INT, @json VARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -34,6 +34,7 @@ BEGIN
 
 	SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE codEstab_Asig = @codEstab_Asig
 
+    SET @tableNames = 'bodegasAsignadas'
 	SELECT 
 		ab.idBodeg_Asig
 	   ,ab.codEstab_Asig

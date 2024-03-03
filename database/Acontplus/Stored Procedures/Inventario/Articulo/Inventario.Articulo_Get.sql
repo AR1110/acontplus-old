@@ -737,7 +737,7 @@ BEGIN
 
             SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
 
-            SELECT idTarifa, descripcion FROM dbo.Tarifa WHERE idEntidad = @idEntidad
+            SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
 
 
 

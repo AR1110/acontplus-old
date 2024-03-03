@@ -1,10 +1,10 @@
 ﻿(() => {
 
     const MODAL_PATH_PARTIAL = {
-        modal_nuevo: '~/Pages/Usuario/_ModalNuevo.cshtml',
-        modal_editar: '~/Pages/Usuario/_ModalEditar.cshtml',
-        modal_user_config: "~/Pages/Usuario/_ModalUserConfig.cshtml",
-        modal_asign_punto_emision_bodega: '~/Pages/Usuario/_ModalAsignPtoEmisionBodega.cshtml'
+        modal_nuevo: '~/Pages/Config/Usuario/Shared/_ModalNuevo.cshtml',
+        modal_editar: '~/Pages/Config/Usuario/Shared/_ModalEditar.cshtml',
+        modal_user_config: "~/Pages/Config/Usuario/Shared/_ModalUserConfig.cshtml",
+        modal_asign_punto_emision_bodega: '~/Pages/Config/Usuario/Shared/_ModalAsignPtoEmisionBodega.cshtml'
     }
 
     let Id_Usuario_Rol = 0;
@@ -41,11 +41,11 @@
 
                 showLoader();
                 $scope.usuarios = [];
-                userSvc.getAll($scope.dataSearch).then(response => {                
+                userSvc.getAll($scope.dataSearch).then(response => {
                     $scope.usuarios = response;
-                }).catch(error => { 
+                }).catch(error => {
                     console.log(error);
-                }).finally(()=>hideLoader())
+                }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -95,7 +95,7 @@
             template,
             size = 'lg',
             params,
-            
+
         }) => {
             _modalSvc.openModalCustom({
                 controller,
@@ -387,7 +387,7 @@
                         $scope.usuarioRoles = JSON.parse(response.payload) || [];
                         hideLoader();
                     }
-                }).catch(error=>{
+                }).catch(error => {
                     console.log(error)
                 })
 
@@ -401,7 +401,7 @@
 
 
         $scope.isRoleMain = function () {
-            return ['RT', 'ADM', 'BS', 'ALT', 'ADMFREE', 'SU', 'ADM_V','ADM_POS'].includes($scope.role)
+            return ['RT', 'ADM', 'BS', 'ALT', 'ADMFREE', 'SU', 'ADM_V', 'ADM_POS'].includes($scope.role)
         }
 
 
@@ -415,9 +415,9 @@
 
             $scope.establecimientos = [];
             mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {
-                if(response){
-                    $scope.establecimientos = response; 
-                } 
+                if (response) {
+                    $scope.establecimientos = response;
+                }
             })
         }
 
@@ -495,7 +495,7 @@
 
         $scope.onChangePredeterminada = (item) => {
             try {
-                mS.getData('put', `Config/EstabAsig/${item.idEstab_Asig}`, null, true ).then(response => {
+                mS.getData('put', `Config/EstabAsig/${item.idEstab_Asig}`, null, true).then(response => {
                     if (response.code === '0') {
                         tS.toastr('warning', response.message, response.titleSms);
                         $scope.getEstablecimientos($scope.dataEntidadRol)
@@ -561,10 +561,10 @@
                             $scope.getEstablecimientos($scope.dataEntidadRol);
                             hideLoader();
                         }
-                    }).catch(error => { 
+                    }).catch(error => {
                         $scope.getEstablecimientos($scope.dataEntidadRol)
                         console.log(error)
-                    }).finally(()=>hideLoader())
+                    }).finally(() => hideLoader())
                 } else {
                     $scope.getEstablecimientos($scope.dataEntidadRol)
                 }
@@ -716,9 +716,12 @@
     //-------------------------------START ASIGNACIÓN DE PUNTO DE EMISIÓN Y BODEGA------------------------------------------------------
     app.controller("modalAsignPtoEmisionAndBodegaCtrl", modalAsignPtoEmisionAndBodegaCtrl)
 
-    modalAsignPtoEmisionAndBodegaCtrl.$inject = ["$scope", "$q", "$uibModalInstance", "mainService", "toastService", "params"];
+    modalAsignPtoEmisionAndBodegaCtrl.$inject = ["$scope", "$uibModalInstance", "$injector", "params"];
 
-    function modalAsignPtoEmisionAndBodegaCtrl($scope, $q, $uibModalInstance, mS, tS, params) {
+    function modalAsignPtoEmisionAndBodegaCtrl($scope, $uibModalInstance, $injector, params) {
+        const bodegaAsignacionSvc = $injector.get('bodegaAsignacionService');
+        const puntoEmisionAsignacionSvc = $injector.get('puntoEmisionAsignacionService') 
+        const tS = $injector.get('toastService');
 
         $scope.sucursal = Object.assign({}, params.sucursal)
         $scope.puntosEmisiones = []
@@ -726,29 +729,25 @@
 
         let json = {
             codEstab_Asig: $scope.sucursal.codEstab_Asig
-        }
-        const URL_PTO_EMISION = '/PtoEmiAsig/Get?json=' + JSON.stringify(json);
-        const URL_BODEGA = '/BodegAsig/Get?json=' + JSON.stringify(json);
+        } 
 
         $scope.initiload = () => {
             try {
                 showLoader();
-                $q.all([
-                    mS.getData('get', URL_PTO_EMISION),
-                    mS.getData('get', URL_BODEGA),
-                ]).then(results => {
+                Promise.all([
+                    bodegaAsignacionSvc.get(json),
+                    puntoEmisionAsignacionSvc.get(json)
+                ]).then(response => {
+                    let [bodegasAsignadas, puntosEmisionAsignadas] = response;
 
-                    if (results[0].code == "1") {
-                        $scope.puntosEmisiones = JSON.parse(results[0].payload) || [];
-                    }
-                    if (results[1].code === "1") {
-                        $scope.bodegas = JSON.parse(results[1].payload) || [];
-                    }
-                    hideLoader();
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error);
+                    $scope.bodegas = bodegasAsignadas;
+                    $scope.puntosEmisiones = puntosEmisionAsignadas;
+                    $scope.$apply();
                 })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader());
 
             } catch (error) {
                 hideLoader();
@@ -760,15 +759,24 @@
 
 
         $scope.getPuntoEmision = () => {
-            mS.getData('get', URL_PTO_EMISION).then(response => {
-                $scope.puntosEmisiones = JSON.parse(response.payload) || [];
-            })
+            try {
+                showLoader();
+                puntoEmisionAsignacionSvc.get(json).then(response => {
+                    $scope.puntosEmisiones = response;
+                })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader());
+            } catch (error) {
+                console.log(error)
+            }
         }
 
         $scope.onChangePuntoEmisionPredeterminada = (item) => {
             try {
                 showLoader();
-                mS.getData('put', '/PtoEmiAsig/Update?id=' + item.idPtoEmi_Asig).then(response => {
+                puntoEmisionAsignacionSvc.put(item.idPtoEmi_Asig).then(response => {
                     if (response.code === '0') {
                         hideLoader();
                         tS.toastr('warning', response.message, response.titleSms);
@@ -779,7 +787,9 @@
                         tS.toastr('success', response.message, response.titleSms);
                         $scope.getPuntoEmision()
                     }
-                })
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader());
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -809,19 +819,20 @@
                 })
 
                 if (isConfirmed) {
-                    item.codEstab_Asig = $scope.sucursal.codEstab_Asig
-                    mS.getData('post', '/PtoEmiAsig/Insert', item).then(response => {
+                    item.codEstab_Asig = $scope.sucursal.codEstab_Asig;
+                    showLoader();
+                    puntoEmisionAsignacionSvc.post(item).then(response => {
                         if (response.code === '0') {
-                            hideLoader();
                             tS.toastr('warning', response.message, response.titleSms);
                             $scope.getPuntoEmision()
                         }
                         if (response.code === '1') {
-                            hideLoader();
                             tS.toastr('success', response.message, response.titleSms);
                             $scope.getPuntoEmision()
                         }
-                    })
+                    }).catch(error => {
+                        console.log(error)
+                    }).finally(() => hideLoader())
                 } else {
                     hideLoader();
                     $scope.getPuntoEmision()
@@ -835,9 +846,17 @@
 
 
         $scope.getAsignacionBodega = () => {
-            mS.getData('get', URL_BODEGA).then(response => {
-                $scope.bodegas = JSON.parse(response.payload) || [];
-            })
+            try {
+                showLoader();
+                bodegaAsignacionSvc.get(json).then(response => {
+                    $scope.bodegas = response;
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader());
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
         }
 
 
@@ -845,18 +864,18 @@
         $scope.onChangePredeterminadaBodega = (item) => {
             try {
                 showLoader();
-                mS.getData('put', '/BodegAsig/Update?id=' + item.idBodeg_Asig).then(response => {
-                    if (response.code === '0') {
-                        hideLoader();
+                bodegaAsignacionSvc.put(item.idBodeg_Asig).then(response => {
+                    if (response.code === '0') { 
                         tS.toastr('warning', response.message, response.titleSms);
                         $scope.getAsignacionBodega()
                     }
-                    if (response.code === '1') {
-                        hideLoader();
+                    if (response.code === '1') { 
                         tS.toastr('success', response.message, response.titleSms);
                         $scope.getAsignacionBodega()
                     }
-                })
+                }).catch(error=>{
+                    console.log(error)
+                }).finally(()=>hideLoader());
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -887,19 +906,19 @@
 
                 if (isConfirmed) {
                     showLoader();
-                    item.codEstab_Asig = $scope.sucursal.codEstab_Asig
-                    mS.getData('post', '/BodegAsig/Insert', item).then(response => {
-                        if (response.code === '0') {
-                            hideLoader();
+                    item.codEstab_Asig = $scope.sucursal.codEstab_Asig;
+                    bodegaAsignacionSvc.post(item).then(response => {
+                        if (response.code === '0') { 
                             tS.toastr('warning', response.message, response.titleSms);
                             $scope.getAsignacionBodega()
                         }
-                        if (response.code === '1') {
-                            hideLoader();
+                        if (response.code === '1') { 
                             tS.toastr('success', response.message, response.titleSms);
                             $scope.getAsignacionBodega()
                         }
-                    })
+                    }).catch(error => {
+                        console.log(error)
+                    }).finally(() => hideLoader());
                 } else {
                     hideLoader();
                     $scope.getAsignacionBodega()
