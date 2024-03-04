@@ -73,7 +73,8 @@ BEGIN
 	)
 
 	DECLARE @history AS TABLE (
-		 idCuentaPorCobrar INT NOT NULL UNIQUE
+		 idCuentaPorCobrar INT NOT NULL
+        ,secuencial INT NOT NULL
 		,saldo NUMERIC(18,5) NOT NULL
         ,abono NUMERIC(18,5) NOT NULL
 		,mora NUMERIC(18,5) NOT NULL
@@ -112,33 +113,12 @@ BEGIN
 		AS dt 
 		
 		INSERT INTO @payment
-			(idSubEntidadFinanciera
-			,idEntidadFinanciera
-			,idBanco
-			,idTipoDocumento
-			,idComprobante
-			,fechaEmision
-			,valor
-			,posfechado
-			,secuencial
-			,cobro
-			,infoCobro
-			,abono
-			,controlCaja)
-		SELECT 
-			 CASE WHEN  idSubEntidadFinanciera = 0 THEN NULL ELSE idSubEntidadFinanciera END 
-			,idEntidadFinanciera
-			,CASE WHEN idBanco = 0 THEN NULL ELSE idBanco END
-			,CASE WHEN idTipoDocumento = 0 THEN NULL ELSE idTipoDocumento END
-			,CASE WHEN idComprobante = 0 THEN NULL ELSE idComprobante END
-			,fechaEmision
-			,valor
-			,posfechado
-			,secuencial 
+			  (idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial
+            ,cobro
+            ,infoCobro,abono,controlCaja)
+		SELECT idSubEntidadFinanciera,idEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,posfechado,secuencial 
 			,CASE WHEN posfechado = 1 THEN  0 ELSE 1 END 
-			,infoCobro
-			,abono
-			,controlCaja
+			,infoCobro,abono,controlCaja
 		FROM OPENJSON(@cobros)	
 		WITH (idSubEntidadFinanciera INT '$.idSubEntidadFinanciera'
 			 ,idEntidadFinanciera    INT '$.idEntidadFinanciera'
@@ -166,21 +146,22 @@ BEGIN
 		    ,interes          NUMERIC(15,5) 
 		    ,diasMora         INT           
 		    ,mora             NUMERIC(15,5) 
-		    ,secuencial       INT           
+		    ,secuencial       INT          
 
         ) AS dt
 		
 
 		INSERT INTO @history
-              (idCuentaPorCobrar,saldo,abono,diasMora,mora)
-		SELECT idCuentaPorCobrar,saldo,abono,diasMora,mora 
+              (idCuentaPorCobrar,saldo,abono,diasMora,mora,secuencial)
+		SELECT idCuentaPorCobrar,saldo,abono,diasMora,mora,secuencial 
         FROM OPENJSON(@historial) WITH 
         (                    
-             idCuentaPorCobrar INT           '$.idCuentaPorCobrar'
-            ,saldo             NUMERIC(18,5) '$.saldo'
-            ,abono             NUMERIC(18,5) '$.abono'
-            ,diasMora          INT           '$.diasMora'
-            ,mora              NUMERIC(15,5) '$.mora'
+             idCuentaPorCobrar INT           
+            ,saldo             NUMERIC(18,5) 
+            ,abono             NUMERIC(18,5) 
+            ,diasMora          INT           
+            ,mora              NUMERIC(15,5) 
+            ,secuencial        INT
 
         ) AS dt
 
@@ -220,7 +201,7 @@ BEGIN
 
 		IF (SELECT COUNT(*) FROM @history) = 0
 			BEGIN
-				SELECT '0'code,'Error en la informacion del historial del pago ' as 'message'
+				SELECT '0'code,'Error en la informacion del historial del pago' as 'message'
 				RETURN 
 			END
 
@@ -261,7 +242,7 @@ BEGIN
 			SELECT @idComprobanteIngreso,idEntidadFinanciera,idSubEntidadFinanciera,idBanco,idTipoDocumento,idComprobante,fechaEmision,valor,abono,posfechado,secuencial,cobro,infoCobro,controlCaja
 			FROM @payment
 
-			INSERT INTO dbo.CobroDetalle WITH(ROWLOCK) 
+			INSERT INTO dbo.CobroDetalle WITH (ROWLOCK) 
                   (idCobro,idCuotaPorCobrar,saldo,abono,interes,diasMora,mora)
 			SELECT idCobro,idCuotaPorCobrar,saldo,dt.abono,interes,diasMora,mora 
             FROM @paymentDetail dt 
@@ -269,9 +250,13 @@ BEGIN
             WHERE c.idComprobanteIngreso = @idComprobanteIngreso
             ORDER BY idCuotaPorCobrar,saldo DESC
 
-			INSERT INTO Contabilidad.Historial_Cobro WITH(ROWLOCK)
-                   (idComprobanteIngreso,idCuentaPorCobrar,saldo,abono,diasMora,mora) 
-			SELECT @idComprobanteIngreso,idCuentaPorCobrar,saldo,abono,diasMora,mora FROM @history
+			INSERT INTO Contabilidad.Historial_Cobro WITH (ROWLOCK)
+                   (idComprobanteIngreso,idCuentaPorCobrar,idCobro,saldo,abono,diasMora,mora) 
+			SELECT @idComprobanteIngreso,idCuentaPorCobrar,idCobro,saldo,h.abono,diasMora,mora 
+            FROM @history h 
+            INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = h.secuencial 
+            WHERE c.idComprobanteIngreso = @idComprobanteIngreso
+            ORDER BY idCuentaPorCobrar,saldo DESC
 
 			DECLARE cursor_Cuotas CURSOR LOCAL FOR
 			SELECT idCuotaPorCobrar FROM @paymentDetail

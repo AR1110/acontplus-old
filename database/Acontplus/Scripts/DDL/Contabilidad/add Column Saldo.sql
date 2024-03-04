@@ -76,12 +76,12 @@ go
 
 --update Contabilidad.Historial_Cobro set saldo = abono + saldo
 
-select hc.idCuentaPorCobrar,hc.saldo as importeTotal , hc.abono , hc.saldo - hc.abono as saldo 
-from Contabilidad.Historial_Cobro hc
-INNER JOIN Contabilidad.CuentaPorCobrar cc ON cc.idCuentaPorCobrar = hc.idCuentaPorCobrar
-inner join dbo.ComprobanteIngreso ci ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
-WHERE ci.estado = 1
-ORDER BY hc.idCuentaPorCobrar,hc.idComprobanteIngreso  
+--select hc.idCuentaPorCobrar,hc.saldo as importeTotal , hc.abono , hc.saldo - hc.abono as saldo 
+--from Contabilidad.Historial_Cobro hc
+--INNER JOIN Contabilidad.CuentaPorCobrar cc ON cc.idCuentaPorCobrar = hc.idCuentaPorCobrar
+--inner join dbo.ComprobanteIngreso ci ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
+--WHERE ci.estado = 1
+--ORDER BY hc.idCuentaPorCobrar,hc.idComprobanteIngreso  
 
 --select * from Contabilidad.CuentaPorCobrar where idCuentaPorCobrar = 25
 
