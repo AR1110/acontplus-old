@@ -896,7 +896,7 @@
                     return
                 }
 
-                let ajusteFechaEmision = fS.ajustarFechaEmision(null, $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
+                let ajusteFechaEmision = fS.ajustarFechaEmisionConsolidacion(null, $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
 
                 if (ajusteFechaEmision) {
                     $scope.data.fechaEmision = ajusteFechaEmision;
