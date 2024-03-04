@@ -78,7 +78,7 @@ namespace FactElect.API
 
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
             {
-                app.Urls.Add("http://*:5005"); // 👈 Add the URL
+                app.Urls.Add("http://*:5006"); // 👈 Add the URL
             }
             else
             {
