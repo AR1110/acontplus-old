@@ -656,6 +656,32 @@
             return fechaEmisionModificada;
         }
 
+        formSvc.ajustarFechaEmisionConsolidacion = function (isActualizacion, fechaEmision, fechaEmisionDocCreado) {
+            let fechaEmisionModificada = new Date(fechaEmision);
+            let fechaActual = new Date();
+
+            let dataFechaAnterior = formSvc.sonFechasIguales(fechaEmisionModificada, fechaEmisionDocCreado);
+
+            if (isActualizacion && dataFechaAnterior.esMismaFecha) {
+                return fechaEmisionDocCreado;
+            }
+
+            let dataFechaActual = formSvc.sonFechasIguales(fechaEmisionModificada, fechaActual);
+
+            if ((isActualizacion || !isActualizacion) && dataFechaActual.esMismaFecha) {
+                fechaEmisionModificada.setHours(
+                    fechaActual.getHours(),
+                    fechaActual.getMinutes(),
+                    fechaActual.getSeconds(),
+                    fechaActual.getMilliseconds()
+                );
+            } else {
+                fechaEmisionModificada.setHours(23, 59, 0, 0);
+            }
+
+            return fechaEmisionModificada;
+        }
+
 
         /**
          * 
@@ -690,7 +716,7 @@
             }))
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
-                precioCosto: medidaFraccionado.precioCostoFraccionado || 0,
+                precioCosto: medidaFraccionado.precioCosto ? medidaFraccionado.precioCosto : medidaFraccionado.precioCostoFraccionado || 0,
                 tipo: 'FRACCIONADO'
             }))
 

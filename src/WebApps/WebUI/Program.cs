@@ -63,7 +63,10 @@ namespace WebUI
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseStaticFiles();
 

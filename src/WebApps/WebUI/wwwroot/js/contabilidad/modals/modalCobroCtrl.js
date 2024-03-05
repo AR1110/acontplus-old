@@ -18,7 +18,7 @@ class CobroService {
 
         this.url = 'Contabilidad/ComprobanteIngreso/'
 
-        this.MAX_NUMBER_ROUND = 5;
+        this.MAX_NUMBER_ROUND = 3;
     }
 
     isDateValid(dateString) {
@@ -117,31 +117,7 @@ class CobroService {
         return true;
     }
 
-    /**
-     * 
-     * @param {Array} selectedDocumentos 
-     */
-    getHistorialCobros(selectedDocumentos) {
-        let historialCobros = [];
-        for (let item of selectedDocumentos) {
-            let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
 
-
-            let totalAbono = cobrosDetalleFiltered.reduce((prev, curr) => prev + curr.abono, 0);
-
-            if (totalAbono > 0) {
-                historialCobros.push({
-                    idCuentaPorCobrar: item.idCuentaPorCobrar,
-                    abono: totalAbono,
-                    diasMora: item.diasMora,
-                    mora: item.mora,
-                    saldo: item.saldo,
-                    //   saldoOriginal: item.saldoOriginal
-                })
-            } else break;
-        }
-        return historialCobros;
-    }
 
 
     //--------------
@@ -281,8 +257,8 @@ class CobroService {
      * @returns void
      */
     addCobroDetalle(item, abono, saldo) {
-        if (item.cuota == 0) return;
-
+        if (item.cuota === 0 || abono === 0) return;
+      
         let valorMovimientoSaldo = 0;
         let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => (
             cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar &&
@@ -312,6 +288,77 @@ class CobroService {
         item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
         item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
     }
+
+    /**
+    * 
+    * @param {Array} selectedDocumentos 
+    */
+    getHistorialCobros(selectedDocumentos) {
+        let historialCobros = [], valorMovimientoSaldo = 0;
+        const agrupado = this.cobrosDetalle.reduce((agrupado, elemento) => {
+
+            const clave = `${elemento.secuencial}-${elemento.idCuentaPorCobrar}`;
+
+            if (!agrupado[clave]) {
+                agrupado[clave] = {
+                    abono: 0,
+                    saldo: 0,
+                    diasMora: 0,
+                    mora: 0,
+                    saldoOriginal: 0,
+                };
+            }
+
+            agrupado[clave].abono += elemento.abono;
+            agrupado[clave].saldo += elemento.saldo;
+            agrupado[clave].diasMora = elemento.diasMora;
+            agrupado[clave].mora = elemento.mora;
+            agrupado[clave].saldoOriginal += elemento.saldoOriginal;
+
+
+            return agrupado;
+        }, {});
+
+        // Convertir el objeto agrupado a un array
+        const resultadoArray = Object.entries(agrupado).map(([clave, valores]) => {
+            const [secuencial, idCuentaPorCobrar] = clave.split('-');
+            return {
+                secuencial: parseInt(secuencial),
+                idCuentaPorCobrar: parseInt(idCuentaPorCobrar),
+                abono: valores.abono,
+                saldo: valores.saldo,
+                diasMora: valores.diasMora,
+                mora: valores.mora,
+                saldoOriginal: valores.saldoOriginal,
+            };
+        });
+
+        let totalAbono = resultadoArray.reduce((acc, curr) => acc + curr.abono, 0);
+
+        for (let item of resultadoArray) {
+ 
+            if(historialCobros.length===0){
+                valorMovimientoSaldo = totalAbono;
+            }else{
+                totalAbono -= item.abono; 
+                valorMovimientoSaldo = totalAbono;
+            }
+             
+            historialCobros.push({
+                secuencial: item.secuencial,
+                idCuentaPorCobrar: item.idCuentaPorCobrar,
+                abono: item.abono,
+                saldo: valorMovimientoSaldo,
+                diasMora: item.diasMora,
+                mora: item.mora,
+                //saldoOriginal: valores.saldoOriginal,
+            })
+
+        }
+
+        return historialCobros;
+    }
+
 
     /**
      * 
@@ -563,7 +610,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
     $scope.save = function () {
         try {
             if (!cobroSvc.isValidForm($scope.cobro, $scope.entidadFinanciera.codigo)) throw 'Form invalid'
- 
+
             Swal.fire({
                 // title: 'Guardar Cobro?',
                 text: "Esta seguro de guardar este cobro?",
@@ -633,7 +680,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                         }
 
                         const params = comprobanteIngresoSvc.mapperTo(data);
-                 
+
                         showLoader();
                         comprobanteIngresoSvc.post(params).then(response => {
                             hideLoader();
@@ -1503,10 +1550,11 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         cobros,
                         cobroDetalle: $scope.cobrosDetalle.filter(item => (item.abono > 0)),
                         historialCobros: historial,
-                    }
- 
+                    } 
+
                     let params = comprobanteIngresoSvc.mapperTo(data);
-                
+               
+
                     showLoader();
                     comprobanteIngresoSvc.post(params).then(response => {
                         hideLoader();
@@ -1553,7 +1601,7 @@ function ModalFormaCobroCtrl($scope, $uibModalInstance, $injector, params) {
     let { documentos, entidadesFinanciera, bancos, ciudades } = dataFormaCobro;
 
     let cobroSvc = new CobroService(tS)
-    const VALOR_ABONO_ORIGINAL = saldo;
+    const VALOR_ABONO_ORIGINAL = fS.roundNumber(saldo, 3);
 
     $scope.data = {
         posFechado: false
