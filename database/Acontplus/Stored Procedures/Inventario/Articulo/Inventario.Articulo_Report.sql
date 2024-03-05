@@ -37,6 +37,11 @@ BEGIN
 	       ,@estado         VARCHAR(5)
 	       ,@usuario      VARCHAR(150)
            ,@codEstab     VARCHAR(100)
+           ,@porcentajeRenta NUMERIC(18,5)
+           ,@porcentajeComision NUMERIC(18,5)
+           ,@codDoc VARCHAR(2)
+           ,@subFamiliasChecked VARCHAR(150)
+           ,@idTarifa INT
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
@@ -485,10 +490,6 @@ BEGIN
     --> Rentabilidad (calculo de porcentaje utilidad, ganancia)
 	IF @tipo = 6
 		BEGIN 
-			
-            DECLARE @codDoc VARCHAR(2)
-            DECLARE @subFamiliasChecked VARCHAR(150)
-            DECLARE @idTarifa INT
             
 			SET @params =  '@idArticulo     INT
 	                       ,@idUsuario      INT
@@ -533,31 +534,31 @@ BEGIN
 
 			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-			SELECT @checkBoxFecha  = checkBoxFecha
-				  ,@idArticulo     = idArticulo
-				  ,@idUsuario      = idUsuario
-                  ,@idSubFamilia   = idSubFamilia 
-				  ,@fechaFin       = fechaFin
-				  ,@fechaInicio    = fechaInicio
-                  ,@idBodega       = idBodega
-                  ,@codEstab       = codEstab 
-                  ,@codDoc         = codDoc
+			SELECT @checkBoxFecha      = checkBoxFecha
+				  ,@idArticulo         = idArticulo
+				  ,@idUsuario          = idUsuario
+                  ,@idSubFamilia       = idSubFamilia 
+				  ,@fechaFin           = fechaFin
+				  ,@fechaInicio        = fechaInicio
+                  ,@idBodega           = idBodega
+                  ,@codEstab           = codEstab 
+                  ,@codDoc             = codDoc
                   ,@subFamiliasChecked = subFamiliasChecked
-                  ,@idTarifa       = idTarifa
+                  ,@idTarifa           = idTarifa
 			FROM OPENJSON(@json) WITH 
 			(
-				checkBoxArticulo BIT 
-		       ,checkBoxFecha    BIT 
-		       ,idArticulo       INT 
-		       ,idUsuario        INT
-               ,idSubFamilia     INT 
-		       ,fechaInicio      DATETIME2
-		       ,fechaFin         DATETIME2 
-               ,idBodega         INT  
-               ,codEstab         VARCHAR(100)
-               ,codDoc           VARCHAR(2)
+				checkBoxArticulo   BIT 
+		       ,checkBoxFecha      BIT 
+		       ,idArticulo         INT 
+		       ,idUsuario          INT
+               ,idSubFamilia       INT 
+		       ,fechaInicio        DATETIME2
+		       ,fechaFin           DATETIME2 
+               ,idBodega           INT  
+               ,codEstab           VARCHAR(100)
+               ,codDoc             VARCHAR(2)
                ,subFamiliasChecked VARCHAR(150) 
-               ,idTarifa         INT 
+               ,idTarifa           INT
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -576,7 +577,6 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND tt.idSubFamilia = @idSubFamilia '
                 END 
-                 
 
 			IF @idUsuario > 0 
 				BEGIN
@@ -594,15 +594,21 @@ BEGIN
                 END 
 
             IF @codDoc IS NOT NULL
-                SET @sql = @sql + ' and tt.codDoc = @codDoc '
-
+                BEGIN 
+                    SET @sql = @sql + 'AND tt.codDoc = @codDoc '
+                END 
+            
             IF @subFamiliasChecked IS NOT NULL
-                 SET @sql = @sql + ' and tt.idSubFamilia IN(SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+                BEGIN 
+                    SET @sql = @sql + 'AND tt.idSubFamilia IN (SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+                END 
 
-             IF @idTarifa IS NOT NULL
-                 SET @sql = @sql + ' and tt.idTarifa = @idTarifa '
+            IF @idTarifa IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + 'AND tt.idTarifa = @idTarifa '
+                END 
 
-			SET @sql = @sql + ' ORDER BY tt.articulo,tt.fechaRegistro ASC '
+			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
 			--Entidad 
 			SELECT e.ruc
@@ -618,17 +624,183 @@ BEGIN
 			
 			EXEC sp_executesql @sql
 							  ,@params
-							  ,@idArticulo     = @idArticulo
-                              ,@codEstab       = @codEstab
-                              ,@idBodega       = @idBodega
-							  ,@idEntidad      = @idEntidad
-							  ,@idUsuario      = @idUsuario
-                              ,@idSubFamilia   = @idSubFamilia 
-							  ,@fechaInicio    = @fechaInicio
-							  ,@fechaFin       = @fechaFin
-                              ,@codDoc         = @codDoc
+							  ,@idArticulo         = @idArticulo
+                              ,@codEstab           = @codEstab
+                              ,@idBodega           = @idBodega
+							  ,@idEntidad          = @idEntidad
+							  ,@idUsuario          = @idUsuario
+                              ,@idSubFamilia       = @idSubFamilia 
+							  ,@fechaInicio        = @fechaInicio
+							  ,@fechaFin           = @fechaFin
+                              ,@codDoc             = @codDoc
                               ,@subFamiliasChecked = @subFamiliasChecked
-                              ,@idTarifa       = @idTarifa
+                              ,@idTarifa           = @idTarifa
+
+			RETURN 
+
+		END 
+
+    --> Rentabilidad Personalizada 
+    IF @tipo = 7
+		BEGIN 
+			
+			SET @params =  '@idArticulo         INT
+	                       ,@idUsuario          INT
+                           ,@codEstab           VARCHAR(100)
+                           ,@idBodega           INT
+                           ,@idSubFamilia       INT
+						   ,@fechaInicio        DATETIME2
+						   ,@fechaFin           DATETIME2
+						   ,@idEntidad          INT
+                           ,@codDoc             VARCHAR(2)
+                           ,@subFamiliasChecked VARCHAR(150)
+                           ,@idTarifa           INT
+                           ,@porcentajeRenta    NUMERIC(18,5)
+                           ,@porcentajeComision NUMERIC(18,5)'
+
+			SET @sql = 'SELECT tt.articulo
+							  ,tt.codArticulo
+							  ,cantidad                = CAST(tt.cantidad as numeric(18,2))
+                              ,precioCosto             = CAST(tt.precioCosto as numeric(18,2))
+							  ,precioUnitario          = CAST(tt.precioUnitario as numeric(18,2))
+							  ,precioTotalSinImpuestos = CASE WHEN tt.codTransaccion = ''S'' THEN CAST(tt.totalSalida as numeric(18,2)) 
+															  WHEN tt.codTransaccion = ''E'' THEN CAST(tt.totalEntrada as numeric(18,2)) 
+															  ELSE 0
+														 END 
+                              ,CAST((tt.cantidad * tt.precioCosto) as numeric(18,2))                                                                                                                as totalPrecioCosto
+                              ,CAST((((tt.cantidad * tt.precioCosto) * @porcentajeRenta) / 100) as numeric(18,2))                                                                                   as porcentajeRentabilidad
+                              ,CAST((tt.totalSalida - (tt.cantidad * tt.precioCosto)) - (((tt.cantidad * tt.precioCosto) * @porcentajeRenta) / 100) as numeric(18,2))                               as rentabilidad
+							  ,CAST(((tt.totalSalida - (tt.cantidad * tt.precioCosto)) - (((tt.cantidad * tt.precioCosto) * @porcentajeRenta) / 100) * @porcentajeComision) / 100 as numeric(18,2)) as ganancia
+                              ,tarifa                  = CASE tt.codTransaccion WHEN ''S'' THEN tt.tarifa
+																				WHEN ''E'' THEN ''COSTO''
+																				ELSE ''''
+														 END 
+							  ,tt.rucClienteProveedor
+                              ,tt.clienteProveedor
+							  ,fechaRegistro           = FORMAT(tt.fechaRegistro, ''dd/MM/yyyy HH:mm'')
+							  ,tt.codDoc
+							  ,serieComprobante = tt.nroDocumento
+                              ,tt.usuario
+                              ,tt.bodega
+                              ,tt.medidaSalida
+                              ,tt.subFamilia
+						FROM v_InventarioTransaccion tt WITH (NOLOCK)
+						WHERE tt.idEntidad = @idEntidad 
+                          AND tt.estado = 1 
+                          AND tt.codTransaccion =''S'' 
+                          AND tt.codDoc IN (''FE'', ''NE'') '
+
+			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+			SELECT @checkBoxFecha      = checkBoxFecha
+				  ,@idArticulo         = idArticulo
+				  ,@idUsuario          = idUsuario
+                  ,@idSubFamilia       = idSubFamilia 
+				  ,@fechaFin           = fechaFin
+				  ,@fechaInicio        = fechaInicio
+                  ,@idBodega           = idBodega
+                  ,@codEstab           = codEstab 
+                  ,@codDoc             = codDoc
+                  ,@subFamiliasChecked = subFamiliasChecked
+                  ,@idTarifa           = idTarifa
+                  ,@porcentajeRenta    = porcentajeRenta
+                  ,@porcentajeComision = porcentajeComision
+			FROM OPENJSON(@json) WITH 
+			(
+				checkBoxArticulo   BIT 
+		       ,checkBoxFecha      BIT 
+		       ,idArticulo         INT 
+		       ,idUsuario          INT
+               ,idSubFamilia       INT 
+		       ,fechaInicio        DATETIME2
+		       ,fechaFin           DATETIME2 
+               ,idBodega           INT  
+               ,codEstab           VARCHAR(100)
+               ,codDoc             VARCHAR(2)
+               ,subFamiliasChecked VARCHAR(150) 
+               ,idTarifa           INT
+               ,porcentajeRenta    NUMERIC(18,5)
+               ,porcentajeComision NUMERIC(18,5)
+			)
+
+			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
+
+			IF @checkBoxFecha = 1
+				BEGIN
+					SET @sql = @sql + 'AND CAST(tt.fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+				END
+
+			IF @idArticulo > 0
+				BEGIN
+					SET @sql = @sql + 'AND tt.idArticulo = @idArticulo '
+				END 
+
+            IF @idSubFamilia > 0
+                BEGIN
+                    SET @sql = @sql + 'AND tt.idSubFamilia = @idSubFamilia '
+                END 
+
+			IF @idUsuario > 0 
+				BEGIN
+					SET @sql = @sql + 'AND tt.idUsuario = @idUsuario '
+				END
+
+             IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND tt.codEstab = @codEstab '
+                END 
+
+            IF @idBodega > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND tt.idBodega = @idBodega '
+                END 
+
+            IF @codDoc IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + 'AND tt.codDoc = @codDoc '
+                END 
+            
+            IF @subFamiliasChecked IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + 'AND tt.idSubFamilia IN (SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+                END 
+
+            IF @idTarifa IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + 'AND tt.idTarifa = @idTarifa '
+                END 
+
+			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
+
+			--Entidad 
+			SELECT e.ruc
+				  ,e.razonSocial 
+				  ,e.nombreComercial	
+				  ,ISNULL(e.telefono, '')telefonoEntidad
+				  ,ISNULL(e.direccion, '')direccionEntidad
+                  ,@porcentajeRenta    as porcentajeRenta
+                  ,@porcentajeComision as porcentajeComision
+				  ,tituloReporte = 'REPORTE RENTABILIDAD'
+				  ,usuario       = @usuario
+				  ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
+			FROM Entidad e WITH (NOLOCK)
+			WHERE e.idEntidad = @idEntidad 
+			
+			EXEC sp_executesql @sql
+							  ,@params
+							  ,@idArticulo         = @idArticulo
+                              ,@codEstab           = @codEstab
+                              ,@idBodega           = @idBodega
+							  ,@idEntidad          = @idEntidad
+							  ,@idUsuario          = @idUsuario
+                              ,@idSubFamilia       = @idSubFamilia 
+							  ,@fechaInicio        = @fechaInicio
+							  ,@fechaFin           = @fechaFin
+                              ,@codDoc             = @codDoc
+                              ,@subFamiliasChecked = @subFamiliasChecked
+                              ,@idTarifa           = @idTarifa
+                              ,@porcentajeRenta    = @porcentajeRenta
+                              ,@porcentajeComision = @porcentajeComision
 
 			RETURN 
 

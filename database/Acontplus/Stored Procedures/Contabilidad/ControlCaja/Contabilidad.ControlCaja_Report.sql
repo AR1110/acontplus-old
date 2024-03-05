@@ -66,6 +66,7 @@ BEGIN
 		 serieComprobante VARCHAR(25) NOT NULL
 		,tipDoc VARCHAR(5) NOT NULL
 		,total NUMERIC(18,5) NOT NULL
+        ,totalAnterior NUMERIC(18,5) NOT NULL DEFAULT 0
 		,abono NUMERIC(18,5) NOT NULL
 	)
 
@@ -74,31 +75,29 @@ BEGIN
     --> Reporte Control Caja
     IF @tipo = 1 
         BEGIN 
-	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro)
+	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,saldo,pay,idEntidadFinanciera,cobro)
 	        SELECT nroComprobante  = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
 		          ,doc             = IIF(cc.codDoc = '01','FV',cc.codDoc)
 		          ,nroDoc          = cc.serieComprobante 
 		          ,fechaEmision    = cc.fechaEmision
 		          ,agenteEconomico = cl.nombreFiscal
 		          ,total           = cc.importeTotal
-                  ,CAST(hc.saldo as numeric(18,2)) 
-		          ,abono           = CASE WHEN co.cobro = 1 THEN CAST(hc.abono as numeric(18,2)) ELSE 0 END
-		          ,saldo           = CAST(hc.saldo - hc.abono as numeric(18,2)) 
-		          ,pay             = ISNULL(sf.descripcion,'') + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','')
+				  ,IIF(co.cobro = 1,SUM(cd.abono),0)                                         as abono
+				  ,SUM(cd.saldo - IIF(co.cobro = 1,cd.abono,0))                              as saldo
+				  ,ISNULL(sf.descripcion,'') + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','') as pay
 		          ,co.idEntidadFinanciera
 		          ,co.cobro
-	        FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
-	        INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab               = ci.codEstab
-	        INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
-			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
-			INNER JOIN Contabilidad.CuotaPorCobrar  cu WITH (NOLOCK) ON cu.idCuentaPorCobrar      = hc.idCuentaPorCobrar
-			INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
-	        INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCobro	              = co.idCobro
-	         LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
-	        INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			  = cc.idCliente
-	        WHERE ci.idControlCaja = @idControlCaja 
+			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
+			INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
+	        INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso = ci.idComprobanteIngreso
+			INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCobro              = co.idCobro
+			INNER JOIN Contabilidad.CuotaPorCobrar  cu WITH (NOLOCK) ON cu.idCuotaPorCobrar     = cd.idCuotaPorCobrar
+			INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = cu.idCuentaPorCobrar
+			INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			= cc.idCliente
+			 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
+			WHERE ci.idControlCaja = @idControlCaja  
               AND ci.estado = 1
-            GROUP BY es.estab
+			GROUP BY es.estab
 					,ci.nroDocumento
 					,cc.codDoc
 		            ,cc.serieComprobante 
@@ -109,9 +108,6 @@ BEGIN
 					,co.posfechado 
 					,co.cobro
 		            ,co.idEntidadFinanciera
-					,hc.idCuentaPorCobrar
-					,hc.abono
-					,hc.saldo
 	
 	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
 	        SELECT nroComprobante = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
@@ -253,8 +249,8 @@ BEGIN
               AND ce.estado = 1 
               AND ce.idControlCaja = @idControlCaja
 
-	        INSERT INTO @tbDocuments (serieComprobante,tipDoc,abono,total)
-	        SELECT nroDoc,tipDoc,SUM(abono),totalAnterior FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,totalAnterior,nroDoc
+	        INSERT INTO @tbDocuments (serieComprobante,tipDoc,abono,totalAnterior,total)
+	        SELECT nroDoc,tipDoc,SUM(abono),totalAnterior,total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,totalAnterior,nroDoc,total
 
 	        -- ================================ FORMAS DE PAGOS TOTALIZADAS ========================================
 	        SELECT @chequesPosf     = SUM(td.total)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
