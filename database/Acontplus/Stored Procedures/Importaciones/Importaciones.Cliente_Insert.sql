@@ -82,9 +82,10 @@ BEGIN
 				,importacion
 				,fechaRegistro
 				,idUsuario
-				,idEntidad)
+				,idEntidad
+                ,validationSri)
 			SELECT	
-				idSubContribuyente
+				 idSubContribuyente
 				,idTipoIdentificacion
 				,numeroIdentificacion
 				,nombreComercial
@@ -96,7 +97,15 @@ BEGIN
 				,dbo.ufnGetDateEcuador()
 				,@idUsuario
 				,@idEntidad
+                ,0
 			FROM @table 
+
+            INSERT INTO Customer.Customer WITH (ROWLOCK)
+                     (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address])
+            SELECT	ti.codigoSri,t.numeroIdentificacion,t.nombreFiscal,t.nombreComercial,t.correo,t.telefono,t.direccion
+			FROM @table t
+            INNER JOIN TipoIdentificacion ti ON ti.idTipoIdentificacion = t.idTipoIdentificacion
+            WHERE t.numeroIdentificacion NOT IN (SELECT IDCard FROM Customer.Customer )
 
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
 			SELECT @idUsuario,@idEntidad,'/Ventas/Cliente',@count,dbo.ufnGetDateEcuador()

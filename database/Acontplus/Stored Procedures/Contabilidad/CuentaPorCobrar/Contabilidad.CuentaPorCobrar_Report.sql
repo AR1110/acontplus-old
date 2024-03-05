@@ -227,13 +227,13 @@ BEGIN
                               ,codDoc
                               ,razonSocialComprador
                               ,serieComprobante
-                              ,Format(fechaEmision,''dd/MM/yyyy'')     as fechaEmision
-                              ,Format(fechaVencimiento,''dd/MM/yyyy'') as fechaVencimiento
-                              ,CAST(importeTotal as numeric(18,2))     as importeTotal
-                              ,CAST(abono as numeric(18,2))            as abono
-                              ,CAST(saldo as numeric(18,2))            as saldo
+                              ,Format(fechaEmision,''dd/MM/yyyy'')                                                 as fechaEmision
+                              ,Format(fechaVencimiento,''dd/MM/yyyy'')                                             as fechaVencimiento
+                              ,IIF(codEstado = ''A'' OR codEstado = ''TRA'',0,CAST(importeTotal as numeric(18,2))) as importeTotal
+                              ,CAST(abono as numeric(18,2))                                                        as abono
+                              ,IIF(codEstado = ''A'' OR codEstado = ''TRA'',0,CAST(saldo as numeric(18,2)))        as saldo
                               ,estado 
-                              ,nombreUsuario                           as usuario
+                              ,nombreUsuario                                                                       as usuario
                         FROM v_CuentaPorCobrar WITH (NOLOCK)
                         WHERE idEntidad = @idEntidad '
 
