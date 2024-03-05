@@ -1214,6 +1214,8 @@
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+
                 entity.adicional = datosAdicionales; //
 
 
@@ -1223,7 +1225,6 @@
 
                 entity.idTarifa = $scope.data.idTarifa;
 
-                entity.precioCosto = articulo.precioCosto;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
 
