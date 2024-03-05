@@ -716,7 +716,7 @@
             }))
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
-                precioCosto: medidaFraccionado.precioCostoFraccionado || 0,
+                precioCosto: medidaFraccionado.precioCosto ? medidaFraccionado.precioCosto : medidaFraccionado.precioCostoFraccionado || 0,
                 tipo: 'FRACCIONADO'
             }))
 
