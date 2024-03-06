@@ -39,14 +39,21 @@ internal class Program
 
         var app = builder.Build();
 
+        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        {
+            app.Urls.Add("http://*:5011"); // 👈 Add the URL
+        }
+        else
+        {
+            app.UseHttpsRedirection();
+        }
+
         app.UseMiddleware<ExceptionMiddleware>();
 
         // Configure the HTTP request pipeline.
         app.UseSwaggerDocumentation();
 
-        app.UseRouting();
-
-        app.UseHttpsRedirection();
+        app.UseRouting(); 
 
         app.UseAuthentication();
 
