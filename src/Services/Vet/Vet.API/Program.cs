@@ -36,14 +36,21 @@ builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new Auto
 
 var app = builder.Build();
 
+if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+{
+    app.Urls.Add("http://*:5014"); // 👈 Add the URL
+}
+else
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 app.UseSwaggerDocumentation();
 
-app.UseRouting();
-
-app.UseHttpsRedirection();
+app.UseRouting(); 
 
 app.UseAuthentication();
 
