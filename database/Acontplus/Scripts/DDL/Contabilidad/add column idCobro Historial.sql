@@ -1,13 +1,11 @@
 use [Acontplus]
 go 
 
---ALTER TABLE Contabilidad.Historial_Cobro ADD secuencial INT
-
 --ALTER TABLE Contabilidad.Historial_Cobro ADD idCobro BIGINT 
 
 --ALTER TABLE Contabilidad.Historial_Cobro ADD CONSTRAINT FK_Cobro FOREIGN KEY (idCobro) REFERENCES dbo.Cobro(idCobro)
 
-SELECT * FROM Contabilidad.Historial_Cobro
+--DELETE FROM Contabilidad.Historial_Cobro
 
 --INSERT INTO Contabilidad.Historial_Cobro 
 --      (

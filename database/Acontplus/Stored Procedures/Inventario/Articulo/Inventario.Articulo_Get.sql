@@ -406,6 +406,7 @@ BEGIN
 								   ORDER BY ta.predeterminada DESC FOR JSON PATH)
 			      ,orden = IIF(af.gestionVenta = 1,1,3)
                   ,af.conversion
+                  ,af.precioCostoFraccionado as precioCosto
 			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
 			INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
 			WHERE af.idArticulo = @idArticulo AND af.estado = 1
@@ -423,6 +424,7 @@ BEGIN
 								ORDER BY ta.predeterminada DESC FOR JSON PATH)
 			  ,orden = 2
               ,1 as conversion
+              ,a.precioCosto
 			FROM dbo.Articulo     a WITH (NOLOCK)
 			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
 			WHERE a.idArticulo = @idArticulo AND a.estado = 1
