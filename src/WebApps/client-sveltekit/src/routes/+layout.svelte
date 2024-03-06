@@ -11,6 +11,7 @@
     import '@fortawesome/fontawesome-free/css/all.css'
     import 'simple-line-icons/css/simple-line-icons.css'
     import 'weathericons/css/weather-icons.css' 
+    //import "bootstrap/dist/css/bootstrap.css";
 	import '../assets/css/style.css';
 	import 'toastr/build/toastr.min.css';
 	import 'tabulator-tables/dist/css/tabulator.css';
