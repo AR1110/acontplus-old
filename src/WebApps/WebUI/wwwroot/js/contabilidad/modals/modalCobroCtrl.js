@@ -168,13 +168,12 @@ class CobroService {
 
                 }
                 if (cobrosDetalleFiltered.length > 0) {
-                    if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo, this.MAX_NUMBER_ROUNDS)) {
-                        console.log('no se ha compleado el abono')
+                    if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo, this.MAX_NUMBER_ROUND)) { 
 
                         let historialCuentasFiltered = this.historialCuentas.filter(cd => (
                             cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar  
                         ));
-                        console.log([...historialCuentasFiltered])
+                  
                         let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
                         if (dataUltimoCobroDetalle) {
