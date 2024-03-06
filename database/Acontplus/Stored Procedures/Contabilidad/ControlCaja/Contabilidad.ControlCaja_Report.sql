@@ -76,38 +76,26 @@ BEGIN
     IF @tipo = 1 
         BEGIN 
 	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,saldo,pay,idEntidadFinanciera,cobro)
-	        SELECT nroComprobante  = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
-		          ,doc             = IIF(cc.codDoc = '01','FV',cc.codDoc)
-		          ,nroDoc          = cc.serieComprobante 
-		          ,fechaEmision    = cc.fechaEmision
-		          ,agenteEconomico = cl.nombreFiscal
-		          ,total           = cc.importeTotal
-				  ,IIF(co.cobro = 1,SUM(cd.abono),0)                                         as abono
-				  ,SUM(cd.saldo - IIF(co.cobro = 1,cd.abono,0))                              as saldo
+	        SELECT 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
+		          ,IIF(cc.codDoc = '01','FV',cc.codDoc)
+		          ,cc.serieComprobante 
+		          ,cc.fechaEmision
+		          ,cl.nombreFiscal
+		          ,cc.importeTotal
+				  ,IIF(co.cobro = 1,hc.abono,0)                                              as abono
+				  ,hc.saldo - IIF(co.cobro = 1,hc.abono,0)                                   as saldo
 				  ,ISNULL(sf.descripcion,'') + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','') as pay
 		          ,co.idEntidadFinanciera
 		          ,co.cobro
 			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
-			INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
-	        INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso = ci.idComprobanteIngreso
-			INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCobro              = co.idCobro
-			INNER JOIN Contabilidad.CuotaPorCobrar  cu WITH (NOLOCK) ON cu.idCuotaPorCobrar     = cd.idCuotaPorCobrar
-			INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = cu.idCuentaPorCobrar
-			INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			= cc.idCliente
+			INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab               = ci.codEstab
+	        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
+			INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
+            INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			  = cc.idCliente
+            INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idCobro                = hc.idCobro
 			 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
 			WHERE ci.idControlCaja = @idControlCaja  
               AND ci.estado = 1
-			GROUP BY es.estab
-					,ci.nroDocumento
-					,cc.codDoc
-		            ,cc.serieComprobante 
-		            ,cc.fechaEmision
-		            ,cl.nombreFiscal
-		            ,cc.importeTotal
-		            ,sf.descripcion
-					,co.posfechado 
-					,co.cobro
-		            ,co.idEntidadFinanciera
 	
 	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,pay,idEntidadFinanciera)
 	        SELECT nroComprobante = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
@@ -356,7 +344,7 @@ BEGIN
 		          ,pay =   pay
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
-	         ORDER BY pay,nroDoc,nroComprobante ASC 
+	         ORDER BY nroComprobante,nroDoc ASC 
 
 	         SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
 	               ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))
@@ -390,38 +378,23 @@ BEGIN
                             SELECT nroComprobante  = ''CI'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(ci.nroDocumento)
 		                          ,doc             = IIF(cc.codDoc = ''01'',''FV'',cc.codDoc)
 		                          ,nroDoc          = cc.serieComprobante 
-		                          ,fechaEmision    = FORMAT(cc.fechaEmision, ''dd/MM/yyyy HH:mm'')
+		                          ,fechaEmision    = cc.fechaEmision
 		                          ,agenteEconomico = cl.nombreFiscal
-		                          ,total           = CAST(cc.importeTotal as numeric(18,2))
-		                          ,abono           = CASE WHEN co.cobro = 1 THEN SUM(CAST(cd.abono as numeric(18,2))) ELSE 0 END
-		                          ,saldo           = CAST(SUM(cd.saldo - cd.abono) as numeric(18,2))      
-		                          ,pay             = ISNULL(sf.descripcion,'''') + '' '' +  IIF(co.posfechado = 1,''POSFECHADO'','''')
+		                          ,total           = cc.importeTotal
+				                  ,IIF(co.cobro = 1,hc.abono,0)                                              as abono
+				                  ,hc.saldo - IIF(co.cobro = 1,hc.abono,0)                                   as saldo
+				                  ,ISNULL(sf.descripcion,'''') + '' '' +  IIF(co.posfechado = 1,''POSFECHADO0'','''') as pay
 		                          ,co.idEntidadFinanciera
-	                    FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
-	                    INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab               = ci.codEstab
-	                    INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso
-		                INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
-		                INNER JOIN Contabilidad.CuotaPorCobrar  cu WITH (NOLOCK) ON cu.idCuentaPorCobrar      = hc.idCuentaPorCobrar
-		                INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar      = hc.idCuentaPorCobrar
-	                    INNER JOIN dbo.CobroDetalle             cd WITH (NOLOCK) ON cd.idCobro	              = co.idCobro
-	                        LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
-	                    INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			  = cc.idCliente
-	                    WHERE ci.idControlCaja = @idControlCaja 
-                            AND ci.estado = 1
-                        GROUP BY es.estab
-				                ,ci.nroDocumento
-				                ,cc.codDoc
-		                        ,cc.serieComprobante 
-		                        ,cc.fechaEmision
-		                        ,cl.nombreFiscal
-		                        ,cc.importeTotal
-		                        ,sf.descripcion
-				                ,co.posfechado 
-				                ,co.cobro
-		                        ,co.idEntidadFinanciera
-				                ,hc.idCuentaPorCobrar
-				                ,hc.abono
-				                ,hc.saldo
+		                          ,co.cobro
+			                FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
+			                INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
+	                        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso = ci.idComprobanteIngreso
+			                INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idCobro              = hc.idCobro
+			                INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
+			                INNER JOIN dbo.Cliente                  cl WITH (NOLOCK) ON cl.idCliente			= cc.idCliente
+			                 LEFT JOIN dbo.SubEntidadFinanciera     sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = co.idSubEntidadFinanciera
+			                WHERE ci.idControlCaja = @idControlCaja  
+                              AND ci.estado = 1
 
                             UNION ALL 
 
