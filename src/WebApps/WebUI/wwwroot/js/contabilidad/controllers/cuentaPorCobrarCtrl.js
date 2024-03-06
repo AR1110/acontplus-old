@@ -237,6 +237,7 @@
                 )  
                 return {
                     ...cxc,
+                    saldoTemporal: cxc.saldo,
                     cuotas: structuredClone(cuotasFiltradas),
                     cuotasOriginal: structuredClone(cuotasFiltradas)
                 };
