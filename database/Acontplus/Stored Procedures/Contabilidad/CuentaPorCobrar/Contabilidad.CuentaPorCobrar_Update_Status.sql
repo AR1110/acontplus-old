@@ -32,16 +32,22 @@ BEGIN
 	DECLARE @residuo AS NUMERIC(18,5)
 	DECLARE @idTipoDocumento AS INT 
 	DECLARE @posfechado NUMERIC(18,5)
-	
 
-	SELECT @posfechado = SUM(cd.abono) 
-	FROM dbo.CobroDetalle                  cd WITH (NOLOCK)
-	INNER JOIN Contabilidad.CuotaPorCobrar cc WITH (NOLOCK) ON cc.idCuotaPorCobrar     = cd.idCuotaPorCobrar
-	INNER JOIN dbo.Cobro                   co WITH (NOLOCK) ON co.idCobro              = cd.idCobro
-	INNER JOIN dbo.ComprobanteIngreso      ci WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
-	WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar AND co.cobro = 0 AND ci.estado = 1
+    SELECT @posfechado = SUM(hc.abono) 
+    FROM dbo.ComprobanteIngreso ci WITH (NOLOCK) 
+    INNER JOIN Contabilidad.Historial_Cobro hc ON hc.idComprobanteIngreso = ci.idComprobanteIngreso
+    INNER JOIN dbo.Cobro                    co ON co.idCobro              = hc.idCobro
+    WHERE ci.estado = 1
+      AND hc.idCuentaPorCobrar = @idCuentaPorCobrar
+      AND co.posfechado = 1
+      AND co.cobro = 1
 
-	SELECT @abono =  SUM(abono) FROM Contabilidad.CuotaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar AND estado = 1
+    SELECT @abono = SUM(hc.abono) 
+    FROM dbo.ComprobanteIngreso ci WITH (NOLOCK) 
+    INNER JOIN Contabilidad.Historial_Cobro hc ON hc.idComprobanteIngreso = ci.idComprobanteIngreso
+    WHERE ci.estado = 1
+      AND hc.idCuentaPorCobrar = @idCuentaPorCobrar
+      
 
 	SELECT TOP 1 @importeTotal = importeTotal + mora FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
 
@@ -57,11 +63,6 @@ BEGIN
 			IF @residuo <= 0  
 				BEGIN
 					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'CBR'
-
-                    IF @residuo < 0 
-                        BEGIN
-                            SET @abono = @importeTotal
-                        END
 				END 
 
 			IF @residuo > 0 
