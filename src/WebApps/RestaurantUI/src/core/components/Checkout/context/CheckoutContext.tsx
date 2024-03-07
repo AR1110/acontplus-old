@@ -14,7 +14,7 @@ import {
     checkoutReducer
 } from ".";
 import { SharedService, accountReceivableService as accountReceivableSvc } from "@/core/services";
-import { CheckoutUtility, SnackbarUtility } from "@/core/utilities";
+import { CheckoutUtility, RoundNumber, SnackbarUtility } from "@/core/utilities";
 import { PaymentTypeCode } from "@/core/constants";
 import Swal from "sweetalert2";
 import { showLoader, hideLoader } from "@/spinner";
@@ -446,7 +446,7 @@ export const CheckoutProvider = ({ children }: Props) => {
     // }
 
     const save = async () => {
-        const { voucher, dataForm, multiplesPaymentType, paymentDetails } = state.checkout;
+        const { voucher, multiplesPaymentType, paymentDetails, historialCuentas } = state.checkout;
         try {
             if (!(voucher.customerCompanyId > 0)) {
                 Swal.fire({
@@ -483,8 +483,8 @@ export const CheckoutProvider = ({ children }: Props) => {
             })
             if (!isConfirmed) return
 
-            const checkoutUtility = new CheckoutUtility(0);
-            const historyPayments = checkoutUtility.getHistoryPayments(dataForm.voucherQuotas, paymentDetails);
+            // const checkoutUtility = new CheckoutUtility(0);
+            // const historyPayments = checkoutUtility.getHistoryPayments(dataForm.voucherQuotas, paymentDetails);
             const comprobante = {
                 idCliente: voucher.customerCompanyId,
                 total: multiplesPaymentType.reduce((acc, curr) => acc + curr.receivedAmount, 0),
@@ -527,13 +527,24 @@ export const CheckoutProvider = ({ children }: Props) => {
                 }
             })
 
-            const historialCobrosMappeado = historyPayments.map(hc => {
+            // const historialCobrosMappeado = historyPayments.map(hc => {
+            //     return {
+            //         idCuentaPorCobrar: hc.idCuentaPorCobrar,
+            //         abono: hc.abono,
+            //         diasMora: hc.diasMora,
+            //         mora: hc.mora,
+            //         saldo: hc.saldo,
+            //     }
+            // })
+
+            const historialCobrosMappeado = historialCuentas.map(hc => {
                 return {
                     idCuentaPorCobrar: hc.idCuentaPorCobrar,
-                    abono: hc.abono,
+                    abono: RoundNumber(hc.abono, 5),
                     diasMora: hc.diasMora,
                     mora: hc.mora,
-                    saldo: hc.saldo,
+                    saldo: RoundNumber(hc.saldo, 5),
+                    secuencial: hc.secuencial
                 }
             })
 

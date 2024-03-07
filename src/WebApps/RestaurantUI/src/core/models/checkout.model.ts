@@ -82,6 +82,7 @@ export interface Checkout {
     dataSubTotal: CheckoutSubTotal
     multiplesPaymentType: Array<MultiplesPaymentType>
     paymentDetails: Array<PaymentDetail>
+    historialCuentas: Array<PaymentHistory>
 }
 
 export interface PaymentDetail {
@@ -103,6 +104,7 @@ export interface PaymentHistory {
     diasMora: number
     mora: number,
     saldo: number
+    secuencial: number
 }
 
 //Context Checkout
@@ -216,7 +218,8 @@ export const initialCheckoutState: Checkout = {
         totalSaldoDoc: 0
     },
     multiplesPaymentType: [],
-    paymentDetails: []
+    paymentDetails: [],
+    historialCuentas: []
 }
 
 
