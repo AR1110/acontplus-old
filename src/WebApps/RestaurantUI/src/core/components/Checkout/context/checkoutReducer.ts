@@ -46,6 +46,7 @@ type CheckoutAction =
             voucherQuotas: Array<VoucherQuota>,
             dataPaymentTypeForm: MultiplesPaymentType,
             paymentDetails: Array<PaymentDetail>,
+            historialCuentas: Array<PaymentHistory> 
         }
     }
     | {
@@ -109,6 +110,7 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
                 voucherQuotas,
                 dataPaymentTypeForm,
                 paymentDetails,
+                historialCuentas
             } = action.payload;
             // const payments = state.checkout.payments;
             // const obj = Object.assign(payments, action.payload);
@@ -137,6 +139,7 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
                     },
                     multiplesPaymentType: tempMultiplesPaymentType,
                     paymentDetails: paymentDetails,
+                    historialCuentas: historialCuentas,
                     paymentData: {
                         ...state.checkout.paymentData,
                         nro: "",
