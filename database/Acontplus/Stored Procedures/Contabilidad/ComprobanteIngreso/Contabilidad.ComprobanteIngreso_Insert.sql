@@ -98,9 +98,6 @@ BEGIN
 		) as dt 
 
 
-        SELECT '0'code,'Error en la informacion del comprobante de ingreso ' + @historial as 'message'
-				RETURN 
-		
         INSERT INTO @documento
               (idTipoPersona
               ,idCliente,total,abono,codEstab,nroIdentificacion,nombreFiscal)
