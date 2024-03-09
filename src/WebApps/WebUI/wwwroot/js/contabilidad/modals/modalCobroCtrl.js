@@ -20,6 +20,8 @@ class CobroService {
         this.url = 'Contabilidad/ComprobanteIngreso/'
 
         this.MAX_NUMBER_ROUND = 3;
+        this.MAX_NUMBER_ROUND_GENERAL = 3;
+        this.MAX_NUMBER_ROUND_CUOTA_ABONO = 5;
     }
 
     isDateValid(dateString) {
@@ -134,7 +136,7 @@ class CobroService {
 
                 const cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar)
 
-                const totalAbonoCuenta = this.fS.roundNumber(cobrosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND);
+                const totalAbonoCuenta = this.fS.roundNumber(cobrosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND_GENERAL);
 
                 if (cobrosDetalleFiltered.length === 0) {
 
@@ -160,15 +162,15 @@ class CobroService {
                     this.historialCuentas.push({
                         secuencial: this.indexDatoCobro,
                         idCuentaPorCobrar: this.group.idCuentaPorCobrar,
-                        abono: historialAbono,
-                        saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+                        abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                        saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
                         diasMora: this.group.diasMora,
                         mora: this.group.mora,
                     })
 
                 }
                 if (cobrosDetalleFiltered.length > 0) {
-                    if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo, this.MAX_NUMBER_ROUND)) { 
+                    if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo, this.MAX_NUMBER_ROUND_GENERAL)) { 
 
                         let historialCuentasFiltered = this.historialCuentas.filter(cd => (
                             cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar  
@@ -192,8 +194,8 @@ class CobroService {
                         this.historialCuentas.push({
                             secuencial: this.indexDatoCobro,
                             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
-                            abono: historialAbono,
-                            saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+                            abono: this.fS.roundNumber(historialAbono, MAX_NUMBER_ROUND_CUOTA_ABONO),
+                            saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
                             diasMora: this.group.diasMora,
                             mora: this.group.mora,
                         }) 
@@ -228,43 +230,7 @@ class CobroService {
 
 
 
-            }
-            /**
-                 * 
-                 * CALCULANDO HISTORIAL DE CUENTAS 
-                 * 
-                 */
-
-
-            //     const totalAbonoCuenta = this.fS.roundNumber(this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar)
-            //         .reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND);
-
-            //     const totalAbonoCuota = this.fS.roundNumber(this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar && cd.secuencial === this.indexDatoCobro)
-            //         .reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND);
-            //     console.log(totalAbonoCuenta + '==========' + this.group.saldo)
-            //    console.log(this.historialCuentas)
-
-            //     if (totalAbonoCuenta === this.fS.roundNumber(this.group.saldo) && !this.historialCuentas.some(hc => hc.idCuentaPorCobrar === this.group.idCuentaPorCobrar)) {
-            //         console.log(totalAbonoCuenta + '=====igual abono y q no esta en el historial=====' + this.group.saldo)
-
-            //         this.addHistorialCuentas(totalAbonoCuenta, totalAbonoCuota);
-            //     }
-
-            //     if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo) && this.historialCuentas.some(hc => hc.idCuentaPorCobrar === this.group.idCuentaPorCobrar)) {
-
-            //         console.log(totalAbonoCuenta + '===no se completó y si estan en el historial=======' + this.group.saldo)
-
-
-            //         this.addHistorialCuentas(totalAbonoCuenta, totalAbonoCuota);
-            //     }
-
-            //     if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo) && !this.historialCuentas.some(hc => hc.idCuentaPorCobrar === this.group.idCuentaPorCobrar)) {
-
-            //         console.log(totalAbonoCuenta + '===distinto abono y no esta en el historial=======' + this.group.saldo)
-
-
-            //         this.addHistorialCuentas(totalAbonoCuenta, totalAbonoCuota);
-            //     }
+            } 
 
         }
     } 
@@ -393,14 +359,14 @@ class CobroService {
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
-            abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND),
+            abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
             interes: item.interes,
             diasMora: item.diasMora,
             mora: item.mora,
-            cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND),
+            cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
             saldo,
             secuencial: this.indexDatoCobro,
-            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND)
+            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO)
         })
         item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
         item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
@@ -1673,9 +1639,11 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         cobroDetalle: $scope.cobrosDetalle.filter(item => (item.abono > 0)),
                         historialCobros: cobroSvc.historialCuentas,
                     }
+
+                   
  
                     let params = comprobanteIngresoSvc.mapperTo(data); 
-
+                  
                     showLoader();
                     comprobanteIngresoSvc.post(params).then(response => {
                         hideLoader();
