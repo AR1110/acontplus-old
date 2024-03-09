@@ -297,9 +297,10 @@
         '$timeout',
         '$uibModalInstance',
         'uiGridConstants',
+        'formulario',
         'params'
     ]
-    function ModalConsolidacionNuevoCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _params) {
+    function ModalConsolidacionNuevoCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, fS, _params) {
         console.log("inside new modal")
         $scope.TIPO_REGISTRO = _params
         $scope.data = {}
@@ -595,13 +596,13 @@
 
         $scope.setTotalColumn = (rowEntity) => {
             let total = rowEntity.cantidad * rowEntity.precioActual;
-            rowEntity.total = fS.roundNumber(total, $scope.decimal.nroTotalDetalle); //Total Precio Venta
+            rowEntity.total = fS.roundNumber(total, 3); //Total Precio Venta
         }
 
         $scope.setTotalDetalle = () => {
             let total = $scope.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
 
-            $scope.data.total = fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
+            $scope.data.total = fS.roundNumber(total, 3)
         }
 
         $scope.setFocusArticulo = () => {
@@ -883,10 +884,27 @@
                     return
                 }
 
-                if (!($scope.data.fechaEmision)) {
-                    tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
+                 
+
+                if (!(fS.isDateValid($scope.data.fechaEmision))) {
+                    tS.toastr('warning', 'Ingrese la Fecha de emisión');
                     return
                 }
+
+                if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                    tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                    return
+                }
+
+                let ajusteFechaEmision = fS.ajustarFechaEmisionConsolidacion(null, $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
+
+                if (ajusteFechaEmision) {
+                    $scope.data.fechaEmision = ajusteFechaEmision;
+                } else {
+                    console.log('Error al justar la fecha de Emisión')
+                    return
+                }
+
 
                 if ($scope.gridOptions.data.length === 0) {
                     tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle', tituloModal);
@@ -933,7 +951,7 @@
                     showLoader();
 
                     let consolidacion = Object.assign({}, $scope.data);
-                    consolidacion.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
+                    consolidacion.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision)
 
                     let data = {
                         consolidacion,
@@ -1170,7 +1188,7 @@
         $scope.setTotalDetalle = () => {
             let total = $scope.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
 
-            $scope.data.total = fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
+            $scope.data.total = fS.roundNumber(total, 5)
         }
 
         $scope.initialLoad = () => {
@@ -1356,9 +1374,10 @@
         '$timeout',
         '$uibModalInstance',
         'uiGridConstants',
+        'formulario',
         'params'
     ]
-    function ModalConsolidacionEditarCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _params) {
+    function ModalConsolidacionEditarCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, fS, _params) {
         let {
             TIPO_REGISTRO,
             data
@@ -1368,10 +1387,14 @@
             detalleDocumento,
             medidasTemp
         } = data;
+    
         $scope.uiGridConstants = uiGridConstants
         $scope.TIPO_REGISTRO = TIPO_REGISTRO;
         $scope.TIPO_DOC = commonSvc.tipoDoc['CIV'];
-        $scope.data = dataDocumento;
+        $scope.data = {
+            ...dataDocumento,
+            fechaEmisionDocCreado: dataDocumento.fechaEmision
+        };
         $scope.detalleDocumento = detalleDocumento;
         $scope.detalleDocumento.num = 0
         $scope.detalleDocumento.medidas = []
@@ -1701,7 +1724,7 @@
         $scope.setTotalDetalle = () => {
             let total = $scope.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
 
-            $scope.data.total = fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
+            $scope.data.total = fS.roundNumber(total, 3)
         }
 
         $scope.setFocusArticulo = () => {
@@ -1896,6 +1919,9 @@
             $scope.$broadcast("editArticulo", params);
         }
 
+        function isUpdate(){
+            return $scope.data.idConsolidacionInventario;
+        }
         $scope.validForm = (tituloModal) => {
             if (!$scope.data.codEstab) {
                 tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
@@ -1906,9 +1932,24 @@
                 tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
                 return
             }
+ 
 
-            if (!($scope.data.fechaEmision)) {
-                tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
+            if (!(fS.isDateValid($scope.data.fechaEmision))) {
+                tS.toastr('warning', 'Ingrese la Fecha de emisión');
+                return
+            }
+
+            if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                return
+            }
+
+            let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
+
+            if (ajusteFechaEmision) {
+                $scope.data.fechaEmision = ajusteFechaEmision;
+            } else {
+                console.log('Error al justar la fecha de Emisión')
                 return
             }
 
@@ -1957,23 +1998,24 @@
                     showLoader();
 
                     let consolidacion = Object.assign({}, $scope.data);
-                    consolidacion.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
+                    consolidacion.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision)
 
                     let data = {
                         consolidacion,
                         detalle: $scope.gridOptions.data
                     }
 
-                    mS.getData('put', 'Consolidacion/?id=' + $scope.data.idConsolidacionInventario, { data: data }, true).then(response => {
+                    
+                    mS.getData('put', 'Inventario/Consolidacion/?id=' + $scope.data.idConsolidacionInventario, { data: data }, true).then(response => {
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
                             $uibModalInstance.close(response);
-                        }
-                        hideLoader()
-                    })
+                        } 
+                    }).catch(error=>consolidacion.log(error))
+                    .finally(()=>hideLoader())
                 }
 
             } catch (error) {

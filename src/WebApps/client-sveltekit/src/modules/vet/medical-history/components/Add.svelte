@@ -5,9 +5,9 @@
 	import toast from '$utils/toast';
 	import { showLoader, hideLoader } from '$utils/loading-spinner';
 	import { goto } from '$app/navigation';
-    import { base } from "$app/paths";
+	import { base } from '$app/paths';
 	import { reloadPage } from '$utils/utils';
-	export let newRecord;
+	export let openNew;
 	export let editStatus;
 	export let historyEdited;
 	export let initialLoad;
@@ -304,15 +304,26 @@
 					type: 'success',
 					message: 'Registrado exitosamente'
 				});
-				newRecord = false;
-				setTimeout(() => {
-					reloadPage(base + window.location.pathname);
-				}, 500);
+				openNew(false);
+				// setTimeout(() => {
+				// 	//reloadPage(base + window.location.pathname);
+				// 	const thisPage = window.location.pathname;
+
+				// 	console.log('goto ' + thisPage);
+
+				// 	const url = new URL(window.location.href);
+				// 	console.log(url);
+
+				// 	debugger;
+
+				// 	goto('/').then(() => goto(url.href, { replaceState: true }));
+				// }, 500);
 			})
 			.catch((error) => {
 				console.log(error);
 			});
 		medicalHistory = {};
+		initialLoad();
 	};
 
 	const updateHistory = async () => {
@@ -355,10 +366,20 @@
 					type: 'success',
 					message: 'Actualizada exitosamente'
 				});
-				newRecord = false;
-				setTimeout(() => {
-					reloadPage(base + window.location.pathname);
-				}, 500);
+				openNew(false);
+				// setTimeout(() => {
+				// 	//reloadPage(base + window.location.pathname);
+				// 	const thisPage = window.location.pathname;
+
+				// 	console.log('goto ' + thisPage);
+
+				// 	const url = new URL(window.location.href);
+				// 	console.log(url);
+
+				// 	debugger;
+
+				// 	goto('/').then(() => goto(url.href, { replaceState: true }));
+				// }, 500);
 			})
 			.catch((error) => {
 				console.log(error);

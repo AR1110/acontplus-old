@@ -41,6 +41,7 @@ BEGIN
     ,@dateNow DATETIME = (SELECT dbo.ufnGetDateEcuador())
     ,@day VARCHAR(12)
     ,@hour VARCHAR(5)
+
     			
 	SELECT @idSubFamilia  = idSubFamilia
 		  ,@idSubFamilia  = idFamilia
@@ -63,9 +64,9 @@ BEGIN
     SET @day    = (SELECT DATENAME(weekday, GETDATE()))
     SET @hour   = (SELECT FORMAT(GETDATE(), 'HH:mm'))
     
-	SET @params = N'@idEntidad INT, @idSubFamilia INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'
+	SET @params = '@idEntidad INT, @idSubFamilia INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'
 
-	SET @sql = N'  SELECT Id			            = ri.Id
+	SET @sql = 'SELECT Id			            = ri.Id
 				    ,summary			            = ISNULL(ri.Summary, '''')
 				    ,cooking			            = ri.Cooking
 				    ,recipe				            = ri.Recipe
@@ -110,10 +111,10 @@ BEGIN
                     ,siglaFamilia                   = a.siglaFamilia	
 		            ,categoria                      = f.descripcion
 			FROM Restaurant.Item ri
-			INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
+			INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId AND a.idEntidad = @idEntidad   
             LEFT JOIN Familia f ON f.siglas = a.siglaFamilia
 			LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
-			WHERE a.idEntidad = @idEntidad AND a.estado = 1 '
+			WHERE   a.estado = 1 '
     -- ===== PARTE ADMINISTRATIVA ===== --
     IF @tipo = 1
         BEGIN
@@ -133,7 +134,7 @@ BEGIN
                                 , @idSubFamilia
                                 , @pageIndex
                                 , @pageSize
-                                , @textSearch
+                                , @textSearch 
         END
 
     -- ===== PARTE RESTAURANT POS ===== --
@@ -157,7 +158,7 @@ BEGIN
                                 , @idSubFamilia
                                 , @pageIndex
                                 , @pageSize
-                                , @textSearch
+                                , @textSearch 
         END
 
     -- ===== par ===== --

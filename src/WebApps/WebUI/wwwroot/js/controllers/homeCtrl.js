@@ -137,7 +137,7 @@
             }, 1000)
         };
         function getDashboard() {
-            return mS.getData('get', 'Dashboard/', null, true);
+            return mS.getData('get', 'Reports/Dashboard', null, true);
         }
 
         function getDocs() {

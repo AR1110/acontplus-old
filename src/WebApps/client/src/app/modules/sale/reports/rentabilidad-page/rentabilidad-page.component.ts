@@ -49,6 +49,15 @@ export class RentabilidadPageComponent {
   tiposDoc: Array<TipoDoc> = [];
   subCategorias: Array<GroupedSubFamilia> = [];
 
+  tiposArticulo = [{
+    codigo: 'B',
+    descripcion: 'Bienes'
+  },
+  {
+    codigo: 'S',
+    descripcion: 'Servicios'
+  }]
+
 
   checkedSubCategorias = new FormControl('');
 
@@ -65,7 +74,11 @@ export class RentabilidadPageComponent {
     productChecked: false,
     userChecked: false,
     ckFecha: true,
-    subCategoriaChecked: false
+    subCategoriaChecked: false,
+    checkboxRentabCustom: false,
+    porcentajeRenta: null,
+    porcentajeComision: null,
+    codigoTipoArticulo: 'B'
   }
 
   productSearchProps = {
@@ -94,9 +107,9 @@ export class RentabilidadPageComponent {
           }
         }
 
-        if(this.tarifas.length>0){
-          let dataTarifa = this.tarifas.find(t=>t.predeterminada);
-          if(dataTarifa){
+        if (this.tarifas.length > 0) {
+          let dataTarifa = this.tarifas.find(t => t.predeterminada);
+          if (dataTarifa) {
             this.dataSearch.idTarifa = dataTarifa.idTarifa;
           }
         }
@@ -179,6 +192,23 @@ export class RentabilidadPageComponent {
       }
     }
 
+    if (this.dataSearch.checkboxRentabCustom) {
+      if (!isValidField(this.dataSearch.porcentajeRenta)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Ingrese el valor de porcentaje renta correctamente'
+        })
+        return
+      }
+      if (!isValidField(this.dataSearch.porcentajeComision)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Ingrese el valor de porcentaje de comisión correctamente'
+        })
+        return
+      }
+    }
+
 
     if (this.dataSearch.subCategoriaChecked) {
       if (checkedSubCategorias && Array.isArray(checkedSubCategorias) && checkedSubCategorias.length === 0) {
@@ -202,7 +232,7 @@ export class RentabilidadPageComponent {
 
     let subCategoriasChecked = Array.isArray(checkedSubCategorias) && checkedSubCategorias.join(',');
     const dataParms = {
-      tipo: 6,
+      tipo: this.getDataTipo(),
       format,
       checkBoxFecha: this.dataSearch.ckFecha,
       codEstab: isValidField(this.dataSearch.codEstab),
@@ -213,12 +243,15 @@ export class RentabilidadPageComponent {
       idTarifa: isValidField(this.dataSearch.idTarifa),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
-      subFamiliasChecked: this.dataSearch.subCategoriaChecked && subCategoriasChecked || null
+      subFamiliasChecked: this.dataSearch.subCategoriaChecked && subCategoriasChecked || null,
+      porcentajeRenta: this.dataSearch.checkboxRentabCustom && isValidField(this.dataSearch.porcentajeRenta),
+      porcentajeComision: this.dataSearch.checkboxRentabCustom && isValidField(this.dataSearch.porcentajeComision)
     }
 
     const parameters = {
+      hasIdUsuarioRol: true,
       reportParams: JSON.stringify({
-        codigo: SALE_CODE_REPORT.SRR,
+        codigo: this.dataSearch.checkboxRentabCustom ? SALE_CODE_REPORT.SRRC : SALE_CODE_REPORT.SRR,
         format,
         aditionalParams: []
       }),
@@ -237,6 +270,18 @@ export class RentabilidadPageComponent {
       codDoc = DOC_TYPE.FE
     }
     return codDoc;
+  }
+  private getDataTipo() {
+    let tipo;
+    if (this.dataSearch.codigoTipoArticulo === 'B') {
+      tipo = 3
+    }
+    if (this.dataSearch.codigoTipoArticulo === 'S') {
+      tipo = 4;
+    }
+
+    return tipo;
+
   }
 
 }

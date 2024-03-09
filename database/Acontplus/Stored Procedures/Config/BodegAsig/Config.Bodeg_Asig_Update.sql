@@ -19,11 +19,8 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
--- =============================================
-IF OBJECT_ID(N'Config.Bodeg_Asig_Update', N'P') IS NOT NULL
-DROP PROCEDURE Config.Bodeg_Asig_Update
-GO
-CREATE PROCEDURE Config.Bodeg_Asig_Update @idRol INT,@id INT,@predeterminado BIT
+-- ============================================= 
+CREATE  OR ALTER PROCEDURE Config.Bodeg_Asig_Update @userRoleId INT,@id INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -37,9 +34,9 @@ BEGIN
 
 		BEGIN TRAN 
 			UPDATE Config.Bodeg_Asig SET predeterminado = 0 WHERE codEstab_Asig = @codEstab_Asig
-			UPDATE Config.Bodeg_Asig SET predeterminado = @predeterminado WHERE idBodeg_Asig = @id
-		COMMIT TRAN 
-		SELECT '1'code,'Actualizado Correctamente' as 'message'
+			UPDATE Config.Bodeg_Asig SET predeterminado = 1 WHERE idBodeg_Asig = @id
+		COMMIT TRAN  
+        SELECT [Common].[ufnSpResponse]('1','Actualizado Correctamente',DEFAULT)
 		RETURN 
 	END TRY 
 
@@ -48,7 +45,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-		SELECT '0'code,'Info: Error en el procedimiento ' + ERROR_MESSAGE() as  'message'
+        SELECT [Common].[ufnSpResponse]('1','Info: Error en el procedimiento ' + ERROR_MESSAGE(),DEFAULT) 
 	END CATCH
 END
 GO

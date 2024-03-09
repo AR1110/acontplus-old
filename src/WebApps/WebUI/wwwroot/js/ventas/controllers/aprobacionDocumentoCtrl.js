@@ -2465,6 +2465,8 @@
                 entity.productoFraccionable = articulo.productoFraccionable;
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                entity.precioCosto = dataMedida.precioCosto;
+
 
                 //Datos Adicionales 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
@@ -2719,7 +2721,7 @@
 
         $scope.mostrarFormasPago = $scope.data.docDestino === DOC_TYPE.FV_SRI;
 
-        $scope.cliente = cliente;
+        $scope.cliente = cliente; 
 
         $scope.dataClone = {};
         $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
@@ -3074,9 +3076,7 @@
 
                 //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
                 if ($scope.formasPago.length > 0) {
-                    let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
-                    $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
-                    $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+                    setDataFormaPagoSri();
                 }
 
                 //Permisos para detalle y documento    
@@ -3567,6 +3567,8 @@
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto   
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+
 
                 //Datos Adicionales 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
@@ -3575,7 +3577,6 @@
                 entity.articuloTarifas = dataMedida.tarifas;
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
                 entity.idTarifa = $scope.data.idTarifa;
-                entity.precioCosto = articulo.precioCosto;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
@@ -3697,10 +3698,28 @@
         $scope.resultModalInfoAdicional = function (result) {
             $scope.infoAdicionalDocumento = result;
         }
+        
+        function setDataFormaPagoSri() {
+            let dataFormaPago = {};
+            if ($scope.cliente.idFormaPagoSri > 0) {
+                dataFormaPago = findFormaPagoById($scope.cliente.idFormaPagoSri);
+            }
+            else if ($scope.dataFormaPago.idFormaPagoSri > 0) {
+                dataFormaPago = findFormaPagoById($scope.dataFormaPago.idFormaPagoSri);
+            } else {
+                dataFormaPago = $scope.formasPago.find(item => item.codigo === '01') || {};
+            }
+            $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+
+            function findFormaPagoById(idFormaPagoSri) {
+                return $scope.formasPago.find(item => item.idFormaPagoSri === idFormaPagoSri) || {};
+            }
+
+        }
 
         $scope.onChangeFormaPago = function () {
-            let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
-            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+            setDataFormaPagoSri();
         }
 
 

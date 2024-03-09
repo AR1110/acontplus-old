@@ -22,7 +22,13 @@
           <label for="checkboxSubCategoria">SubFamilia:</label>
         </div>
       </div>
-      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+        <div class="icheck-info">
+          <input type="checkbox" name="checkboxRentabCustom" id="checkboxRentabCustom"
+            [(ngModel)]="dataSearch.checkboxRentabCustom" />
+          <label for="checkboxRentabCustom">Rentab. personalizada:</label>
+        </div>
+      </div>
     </div>
     <hr />
 
@@ -100,7 +106,17 @@
     </div>
 
     <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="tarifas">Tipo Artículo: </label>
+          <select class="form-select" name="tiposArticulo" id="tiposArticulo" [(ngModel)]="dataSearch.codigoTipoArticulo">
+            @for(item of tiposArticulo; track $index){
+            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="tarifas">Tarifa: </label>
           <select class="form-select" name="tarifas" id="tarifas" [(ngModel)]="dataSearch.idTarifa">
@@ -111,7 +127,7 @@
         </div>
       </div>
 
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="tipoDoc">Tipo Doc.:</label>
           <select name="tipoDoc" id="tipoDoc" class="form-select" [(ngModel)]="dataSearch.codDoc">
@@ -122,6 +138,24 @@
           </select>
         </div>
       </div>
+
+      @if (this.dataSearch.checkboxRentabCustom) {
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="porcentajeRenta">Porcentaje Renta: <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" [(ngModel)]="dataSearch.porcentajeRenta" placeholder="0">
+            <small class="text-info">El valor tiene que ser distinto a cero</small>
+
+          </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="porcentajeComision">Porcentaje Comisión: <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" [(ngModel)]="dataSearch.porcentajeComision" placeholder="0">
+            <small class="text-info">El valor tiene que ser distinto a cero</small>
+          </div>
+        </div>
+      }
     </div>
   </div>
 

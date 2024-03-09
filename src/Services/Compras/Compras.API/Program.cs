@@ -35,8 +35,14 @@ namespace Compras.API
 
             var app = builder.Build();
 
-            app.UseHttpsRedirection();
-
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+            {
+                app.Urls.Add("http://*:5003"); // 👈 Add the URL
+            }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseSwaggerDocumentation();
 
             app.UseRouting();

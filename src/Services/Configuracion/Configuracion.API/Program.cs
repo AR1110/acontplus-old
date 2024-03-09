@@ -36,7 +36,16 @@ app.UseSwaggerDocumentation();
 
 app.UseRouting();
 
-app.UseHttpsRedirection();
+if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+{
+    app.Urls.Add("http://*:5004"); // 👈 Add the URL
+}
+else
+{
+    app.UseHttpsRedirection();
+}
+
+app.UseForwardedHeaders();
 
 app.UseAuthentication();
 
@@ -53,19 +62,19 @@ app.UseEndpoints(endpoints =>
 
 app.MapControllers().RequireAuthorization();
 
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-var context = services.GetRequiredService<ConfigContext>();
-var logger = services.GetRequiredService<ILogger<Program>>();
+//using var scope = app.Services.CreateScope();
+//var services = scope.ServiceProvider;
+//var context = services.GetRequiredService<ConfigContext>();
+//var logger = services.GetRequiredService<ILogger<Program>>();
 
-try
-{
-    await context.Database.MigrateAsync();
-    await ConfigContextSeed.SeedAsync(context);
-}
-catch (Exception ex)
-{
-    logger.LogError(ex, "An error occured during migration");
-}
+//try
+//{
+//    await context.Database.MigrateAsync();
+//    await ConfigContextSeed.SeedAsync(context);
+//}
+//catch (Exception ex)
+//{
+//    logger.LogError(ex, "An error occured during migration");
+//}
 
 await app.RunAsync();

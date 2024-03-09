@@ -23,7 +23,7 @@ GO
 IF OBJECT_ID(N'Config.PtoEmi_Asig_Update', N'P') IS NOT NULL
 DROP PROCEDURE Config.PtoEmi_Asig_Update
 GO
-CREATE PROCEDURE Config.PtoEmi_Asig_Update @idRol INT,@id INT,@predeterminado BIT 
+CREATE PROCEDURE Config.PtoEmi_Asig_Update @userRoleId INT,@id INT 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -38,8 +38,8 @@ BEGIN
 		BEGIN TRAN 
 			UPDATE Config.PtoEmi_Asig SET predeterminado = 0 WHERE codEstab_Asig = @codEstab_Asig
 			UPDATE Config.PtoEmi_Asig SET predeterminado = 1 WHERE idPtoEmi_Asig = @id
-		COMMIT TRAN 
-		SELECT '1'code,'Actualizado Correctamente' as 'message'
+		COMMIT TRAN  
+        SELECT [Common].[ufnSpResponse]('1','Actualizado Correctamente',DEFAULT)
 		RETURN 
 	END TRY 
 
@@ -48,7 +48,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-		SELECT '0'code,'Info: Error en el procedimiento ' + ERROR_MESSAGE() as  'message'
+         SELECT [Common].[ufnSpResponse]('0','Info: Error en el procedimiento ' + ERROR_MESSAGE(),DEFAULT) 
 	END CATCH
 END
 GO

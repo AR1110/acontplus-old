@@ -144,8 +144,8 @@
                 return {
                     idSubEntidadFinanciera: cobro.idSubEntidadFinanciera,
                     idEntidadFinanciera: cobro.idEntidadFinanciera,
-                    idBanco: cobro.idBanco,
-                    idCuentaBancaria: cobro.idCuentaBancaria,
+                    idBanco: fS.isValidField(cobro.idBanco),
+                    idCuentaBancaria: fS.isValidField(cobro.idCuentaBancaria),
                     fechaEmision: cobro.fechaEmision,
                     valor: cobro.valor,
                     posfechado: cobro.posfechado,
@@ -153,8 +153,8 @@
                     infoCobro: cobro.infoCobro,
                     abono: cobro.abono,
                     controlCaja: cobro.controlCaja,
-                    idComprobante: cobro.idComprobante,
-                    idTipoDocumento: cobro.idTipoDocumento
+                    idComprobante: fS.isValidField(cobro.idComprobante),
+                    idTipoDocumento: fS.isValidField(cobro.idTipoDocumento)
                 }
             })
 
@@ -178,7 +178,8 @@
                     abono: fS.roundNumber(hc.abono, 5),
                     diasMora: hc.diasMora,
                     mora: hc.mora,
-                    saldo: fS.roundNumber(hc.saldo, 5)
+                    saldo: fS.roundNumber(hc.saldo, 5),
+                    secuencial: hc.secuencial
                 }
             })
 
@@ -430,6 +431,7 @@
                             mora: cxc.mora,
                             abono: cxc.abono,
                             saldo: cxc.saldo,
+                            saldoTemporal: cxc.saldo,
                             descripcion: cxc.descripcion,
                             cuotas: structuredClone(resultsCuotas),
                             cuotasOriginal: structuredClone(resultsCuotas)

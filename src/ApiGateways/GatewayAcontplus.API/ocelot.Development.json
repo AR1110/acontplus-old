@@ -71,7 +71,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7290
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/Consultas/{everything}",

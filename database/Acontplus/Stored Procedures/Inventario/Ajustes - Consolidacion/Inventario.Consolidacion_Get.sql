@@ -117,7 +117,7 @@ BEGIN
 
 			SELECT 
 				 idConsolidacionInventario = ci.idConsolidacionInventario
-				,fechaEmision = CAST(ci.fechaEmision AS date)
+				,fechaEmision = ci.fechaEmision 
 				,observacion  = ISNULL(ci.observacion,'Ninguna') 
 				,total        = ci.total
 				,idPuntoEmision = ci.idPuntoEmision

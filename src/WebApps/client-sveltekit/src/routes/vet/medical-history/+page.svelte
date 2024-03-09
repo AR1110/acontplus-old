@@ -9,13 +9,17 @@
 	import Pagination from '$components/Pagination.svelte';
 	import { PATHS } from '$constants/constants';
 	let newRecord = false;
+	let editStatus = false;
+	let historyEdited = {};
 	let codEstab = '0';
-
 	let gateway = 'Config/';
 
-	function openNew(open) {
+	const openNew = (open) => {
 		newRecord = open;
-	}
+		if (editStatus) {
+			editStatus = false;
+		}
+	};
 	let medicalHistories = [],
 		establecimientos = [];
 	onMount(async () => {
@@ -109,7 +113,7 @@
 	};
 
 	const getReport = async (item) => {
-        console.log(item)
+		console.log(item);
 		//Add authentication headers as params
 		// var params = {
 		//     access_token: "An access_token",
@@ -233,9 +237,6 @@
 		}));
 	};
 
-	let editStatus = false;
-	let historyEdited = {};
-
 	const editHistory = (item) => {
 		//toast({ type: "info", message: "Funcionalidad en construccion" });
 		editStatus = true;
@@ -283,8 +284,8 @@
 	</div>
 </div>
 
-{#if newRecord || editStatus}
-	<Add {newRecord} {editStatus} {historyEdited} {initialLoad} {codEstab} />
+{#if newRecord == true || editStatus}
+	<Add {openNew} {editStatus} {historyEdited} {initialLoad} {codEstab} />
 {:else}
 	<!-- <Search
           bind:searchTerm

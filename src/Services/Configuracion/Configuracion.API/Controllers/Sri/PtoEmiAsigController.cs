@@ -2,7 +2,9 @@
 using Common.Core.Models.Config;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
+using Configuracion.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Configuracion.API.Controllers.Sri
@@ -11,92 +13,77 @@ namespace Configuracion.API.Controllers.Sri
     [ApiController]
     public class PtoEmiAsigController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly DbAccess _db;
+        private readonly IPuntoEmisionAsignacionService _service;
         private readonly LogWriter _log;
-        public PtoEmiAsigController(IConfiguration configuration, LogWriter log)
+
+        public PtoEmiAsigController(IPuntoEmisionAsignacionService service, LogWriter log)
         {
-            _configuration = configuration;
-            _db = new DbAccess(_configuration);
+            _service = service;
             _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-
-            var _response = new ApiResponse();
             try
             {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Config.PtoEmi_Asig_Get", true);
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(json)}
+                };
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al obtener datos de PtoEmi_Asig_Get: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener datos de PtoEmi_Asig_Get");
+                _log.LogActivity("Error en get punto Emision Asignacion" + ex.Message);
+                return BadRequest("Error en get " + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
-
-
 
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] PtoEmiAsig data)
+        public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
-
-            var _response = new ApiResponse();
             try
             {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Config.PtoEmi_Asig_Insert", true);
-                _db.AddDynamicParam("id", idUsuarioRol);
-                _db.AddDynamicParam("id", data.idPtoEmi_Asig);
-                _db.AddDynamicParam("codEstab_Asig", data.codEstab_Asig);
-                _db.AddDynamicParam("idPuntoEmision", data.idPuntoEmision);
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+                var response = await _service.AddAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al crear PtoEmi_Asig_Insert: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al crear PtoEmi_Asig_Insert");
+                _log.LogActivity("Error en Post Emision Asignacion" + ex.Message);
+                return BadRequest("Error en Post Emision Asignacion" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(int id)
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id)
         {
-            var _response = new ApiResponse();
             try
             {
-                await _db.SPExecute("Config.PtoEmi_Asig_Update", true);
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("predeterminado", true);
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                     { "id", id },                    
+                };
+                var response = await _service.UpdateAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error in Update Config.PtoEmi_Asig_Update: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar Config.PtoEmi_Asig_Update");
+                _log.LogActivity("Error en Put Emision Asignacion" + ex.Message);
+                return BadRequest("Error en Actualizar Emision Asignacion" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
 

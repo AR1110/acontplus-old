@@ -57,7 +57,7 @@ BEGIN
                 ,rp.[Description]
                 ,rp.S3ObjectUrl
             FROM Restaurant.Promotion rp
-            WHERE  @dateNow BETWEEN rp.StartDate AND rp.EndDate
+            WHERE RP.CodEstab = @codEstab AND  @dateNow BETWEEN rp.StartDate AND rp.EndDate
             AND @day IN(SELECT diaSemana FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
             AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) 
             AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))            

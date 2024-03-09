@@ -73,7 +73,14 @@ namespace Ventas.API
 
             app.UseRouting();
 
-            app.UseHttpsRedirection();
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+            {
+                app.Urls.Add("http://*:5013"); // 👈 Add the URL
+            }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseAuthentication();
 

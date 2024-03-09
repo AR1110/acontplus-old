@@ -1,8 +1,19 @@
 export const enum SALE_PATHS {
-  EMPLOYEE = 'Empleado/', 
+  EMPLOYEE = 'Empleado/',
 }
 
 
 export const enum SALE_CODE_REPORT {
-  SRR = 'SRR' //Sale Reporte Rentabilidad
+
+  /**
+   * SALE REPORT RENTABILIDAD
+   * @type {string}
+   */
+  SRR = 'SRR',
+
+  /**
+   * SALE REPORT RENTABILIDAD CUSTOM
+   * @type {string}
+   */
+  SRRC = 'SRRC'
 }

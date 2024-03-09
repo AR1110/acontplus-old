@@ -62,6 +62,7 @@
                     rowEntity.porcentajeDescuento = 0;
                     rowEntity.valorDescuento = 0;
                     rowEntity.conversion = dataMedida.conversion;
+                    rowEntity.precioCosto = dataMedida.precioCosto;
                     //  this.setTotalRow(rowEntity, index);                                  
 
                 },

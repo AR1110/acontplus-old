@@ -753,14 +753,6 @@
             idTiempoCredito: 0,
             idTarifa: 0,
             fechaEmision: new Date(),
-            subTotalIva: 0,
-            subTotalIvaCero: 0,
-            subTotalExentoIva: 0,
-            subTotalNoObjetoIva: 0,
-            subTotalNetoIva: 0,
-            subTotalNetoIvaCero: 0,
-            subTotalNetoExentoIva: 0,
-            subTotalNetoNoObjetoIva: 0,
             totalIce: 0,
             irbpnr: 0,
             propina: 0,
@@ -957,10 +949,6 @@
             }
         }
 
-
-
-
-
         $scope.setInfoEstabPtoEmi = function () {
             if ($scope.establecimientos.length > 0) {
                 $scope.infoEstabPtoEmi.nombreComercial = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab).nombreComercial;
@@ -1057,13 +1045,13 @@
                     $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                 }
                 if ($scope.tiemposCredito.length > 0) {
-                    let dataTiempoCredito = $scope.tiemposCredito.find(item=>item.diasCredito ===0 && item.numeroCuota===1)
+                    let dataTiempoCredito = $scope.tiemposCredito.find(item => item.diasCredito === 0 && item.numeroCuota === 1)
                     $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
 
                     //Formas Pago 
                     $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
-                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito; 
+                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                 }
 
                 if ($scope.vendedores.length > 0) {
@@ -1072,17 +1060,16 @@
                     $scope.data.idUsuario = 0;
                 }
 
-                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
-                if ($scope.formasPago.length > 0) {
-                    let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
-                    $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
-                    $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
 
-                }
 
                 //Cliente Predeterminado 
                 if (clienteDefault.idCliente > 0) {
                     $scope.cliente = structuredClone(clienteDefault);
+                }
+
+                //Forma pago sri
+                if ($scope.formasPago.length > 0) {
+                    setDataFormaPagoSri();
                 }
 
                 //Articulo Predeterminado
@@ -1132,9 +1119,10 @@
 
                 //Formas pagos 
                 $scope.dataFormaPago = formasPago[0];
-
-           //     getFechaVencimiento();
-
+                //Forma pago sri
+                if ($scope.formasPago.length > 0) {
+                    setDataFormaPagoSri();
+                }
                 counterGridOptions();
             }
 
@@ -1182,6 +1170,11 @@
 
                 //Formas pagos 
                 $scope.dataFormaPago = formasPago[0];
+
+                //Forma pago sri
+                if ($scope.formasPago.length > 0) {
+                    setDataFormaPagoSri();
+                }
             }
 
             $uibModalInstance.rendered.then(() => {
@@ -1669,7 +1662,7 @@
                 tS.toastr('warning', 'No tienes permiso para realizar esta acción');
                 return
             }
-            
+
             getFechaVencimiento();
 
         }
@@ -1761,9 +1754,12 @@
                 if (($scope.cliente.idTiempoCredito > 0)) {
                     $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito || 0;
                 }
+
                 $scope.data.fechaEmision = new Date();
                 getFechaVencimiento();
             }
+
+            setDataFormaPagoSri();
             $scope.$apply();
         }
 
@@ -1771,6 +1767,7 @@
         $scope.receiveDataCustomerSRI = function (result) {
             $scope.newCustomer = !(result.idCliente > 0);
             $scope.cliente = result;
+            setDataFormaPagoSri();
 
         }
 
@@ -1998,16 +1995,17 @@
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+                entity.articuloTarifas = dataMedida.tarifas;
+
 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
                 entity.consolidacionesFecha = consolidacionesFecha;
 
-                entity.articuloTarifas = dataMedida.tarifas;
 
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
                 entity.idTarifa = $scope.data.idTarifa;
                 entity.precioSinSubsidio = articulo.precioSinSubsidio;
-                entity.precioCosto = articulo.precioCosto;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
@@ -2237,16 +2235,33 @@
                 $scope.data.irbpnr = irbpnr
                 $scope.data.propina = propina;
 
-                $scope.dataFormaPago.total = importeTotal; 
+                $scope.dataFormaPago.total = importeTotal;
             } catch (error) {
                 console.log(error);
             }
         }
 
 
-        $scope.onChangeFormaPago = function(){
-            let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
-            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+        function setDataFormaPagoSri() {
+            let dataFormaPago = {}; 
+            if ($scope.cliente.idFormaPagoSri > 0) {
+                dataFormaPago = findFormaPagoById($scope.cliente.idFormaPagoSri);
+            } 
+            else if ($scope.dataFormaPago.idFormaPagoSri > 0) {
+                dataFormaPago = findFormaPagoById($scope.dataFormaPago.idFormaPagoSri);
+            } else { 
+                dataFormaPago = $scope.formasPago.find(item => item.codigo === '01') || {};
+            } 
+            $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia; 
+            
+            function findFormaPagoById(idFormaPagoSri) {
+                return $scope.formasPago.find(item => item.idFormaPagoSri === idFormaPagoSri) || {};
+            }
+
+        }
+        $scope.onChangeFormaPago = function () {
+            setDataFormaPagoSri();
         }
 
 
@@ -2287,7 +2302,7 @@
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
             }
- 
+
             //===================Start customer validate ============================
             if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
                 if (!($scope.cliente.idTipoIdentificacion > 0)) {

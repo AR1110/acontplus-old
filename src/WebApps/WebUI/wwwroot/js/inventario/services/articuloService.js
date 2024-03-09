@@ -709,6 +709,9 @@
                     // Medida principal con las tarifas
                     let medidasPrincipalTemp = mainData[2];
 
+         
+                    
+
                     // Combinar los dos arrays de medidas en uno solo
                     const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
                         ...medidaPrincipal,
@@ -719,7 +722,7 @@
                         tipo: 'FRACCIONADO'
                     }))
                     const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
-
+ 
                     /**
                      * Ordenar el array de medidas en función de la propiedad "orden" y 
                      * establecer la propiedad "defaultMedida" en falso para todos los elementos 
@@ -738,7 +741,8 @@
                         descripcion: item.descripcion,
                         defaultMedida: item.defaultMedida,
                         tipo: item.tipo,
-                        tarifas: JSON.parse(item.tarifas)
+                        tarifas: JSON.parse(item.tarifas),
+                        precioCosto: item.precioCosto
                     }))
 
                     let consolidacionesFecha = mainData[3] || [];
@@ -855,22 +859,22 @@
     }])
 
     app.factory('articuloCodigoBarraService', function ($injector) {
-        const URL = '/CodigoBarraArticulo/';
+        const URL = 'Inventario/ArticuloCodigoBarra/';
 
         const mS = $injector.get('mainService');
         const service = {};
 
         service.post = function (data) {
-            return mS.getData("post", `${URL}Post`, data);
+            return mS.getData("post", `${URL}`, { data }, true);
         }
 
 
         service.put = function (id, data) {
-            return mS.getData("post", `${URL}Put?idArticuloCodigoBarra=${id}`, data);
+            return mS.getData("put", `${URL}${id}`, { data }, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', `${URL}Delete?idArticuloCodigoBarra=${id}`);
+            return mS.getData('delete', `${URL}${id}`, null, true);
         }
 
         return service;
