@@ -1401,7 +1401,7 @@
 
 
     //---------------------------------Cliente------------------------------------------
-    app.factory('clienteService', function ($injector) {
+    app.factory('clienteService', ['$injector',function ($injector) {
         let url = `FactElect/CompanyCustomer/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
@@ -1417,7 +1417,7 @@
                         throw response
                     }
                     if (response.code === '1') {
-                        let mainDataRepository = JSON.parse(response.payload)
+                        let mainDataRepository = JSON.parse(response.payload) 
                         return {
                             tipoIdentificacion: mainDataRepository[0],
                             tipoContribuyentes: mainDataRepository[1],
@@ -1426,11 +1426,10 @@
                             tiposCliente: mainDataRepository[4] || [],
                             empresas: mainDataRepository[5] || [],
                             cargos: mainDataRepository[6] || [],
+                            formasPagoSri: mainDataRepository[7] || []
                         }
                     }
-                }).catch(response => {
-                    throw response;
-                })
+                }) 
 
         }
 
@@ -1491,6 +1490,7 @@
                 montoCredito: fS.isValidField(data.montoCredito),
                 nota: fS.isValidField(data.nota),
                 validationSri: data.validationSri,
+                idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
             }
 
         }
@@ -1544,7 +1544,8 @@
                         validationSri: dataRepository.validationSri,
                         correos: dataRepository.correo ? dataRepository.correo.split('|') : [],
                         telefonos: dataRepository.telefono ? dataRepository.telefono.split('|') : [],
-                        placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : []
+                        placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : [],
+                        idFormaPagoSri: dataRepository.idFormaPagoSri
                     }
                 }
             })
@@ -1743,7 +1744,7 @@
         }
         return service;
 
-    })
+    }])
 
 
     app.factory('empleadoService', function ($injector) {

@@ -2721,7 +2721,7 @@
 
         $scope.mostrarFormasPago = $scope.data.docDestino === DOC_TYPE.FV_SRI;
 
-        $scope.cliente = cliente;
+        $scope.cliente = cliente; 
 
         $scope.dataClone = {};
         $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
@@ -3076,9 +3076,7 @@
 
                 //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
                 if ($scope.formasPago.length > 0) {
-                    let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
-                    $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
-                    $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+                    setDataFormaPagoSri();
                 }
 
                 //Permisos para detalle y documento    
@@ -3700,10 +3698,28 @@
         $scope.resultModalInfoAdicional = function (result) {
             $scope.infoAdicionalDocumento = result;
         }
+        
+        function setDataFormaPagoSri() {
+            let dataFormaPago = {};
+            if ($scope.cliente.idFormaPagoSri > 0) {
+                dataFormaPago = findFormaPagoById($scope.cliente.idFormaPagoSri);
+            }
+            else if ($scope.dataFormaPago.idFormaPagoSri > 0) {
+                dataFormaPago = findFormaPagoById($scope.dataFormaPago.idFormaPagoSri);
+            } else {
+                dataFormaPago = $scope.formasPago.find(item => item.codigo === '01') || {};
+            }
+            $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+
+            function findFormaPagoById(idFormaPagoSri) {
+                return $scope.formasPago.find(item => item.idFormaPagoSri === idFormaPagoSri) || {};
+            }
+
+        }
 
         $scope.onChangeFormaPago = function () {
-            let dataFormaPago = $scope.formasPago.find(item => item.idFormaPagoSri === $scope.dataFormaPago.idFormaPagoSri);
-            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+            setDataFormaPagoSri();
         }
 
 
