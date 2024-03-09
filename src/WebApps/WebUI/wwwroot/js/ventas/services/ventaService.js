@@ -1491,6 +1491,7 @@
                 nota: fS.isValidField(data.nota),
                 validationSri: data.validationSri,
                 idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
+                estado: data.estado || true
             }
 
         }

@@ -2261,6 +2261,7 @@
 
         }
         $scope.onChangeFormaPago = function () {
+            $scope.cliente.idFormaPagoSri = 0;
             setDataFormaPagoSri();
         }
 
