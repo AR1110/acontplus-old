@@ -344,7 +344,7 @@ BEGIN
 		          ,pay =   pay
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
-	         ORDER BY nroComprobante,nroDoc ASC 
+	         ORDER BY tipDoc,nroDoc,nroComprobante ASC 
 
 	         SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
 	               ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))
