@@ -23,7 +23,7 @@ BEGIN
             ,@forPromotion BIT
             ,@idEntidad INT
                         
-    SET @params = N'@textSearch VARCHAR(20), @idEntidad INT'
+    SET @params = '@textSearch VARCHAR(20), @idEntidad INT'
     SELECT @textSearch = textSearch FROM OPENJSON(@json) WITH(textSearch VARCHAR(20) '$.textSearch')
     SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 

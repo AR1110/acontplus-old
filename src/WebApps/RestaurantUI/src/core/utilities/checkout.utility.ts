@@ -9,6 +9,7 @@ class CheckoutUtility {
     private voucher = {} as VoucherQuota;
     private esAbonoPosfechado = false;
     paymentDetails: Array<PaymentDetail> = [];
+    historialCuentas: Array<PaymentHistory> = [];
     private sequencia = 0;
 
     constructor(sequencia: number) {
@@ -30,6 +31,82 @@ class CheckoutUtility {
 
         for (const group of tempVoucherQuotas) {
             this.voucher = group;
+
+            if (typeof this.receivedAmount !== 'number' || this.receivedAmount > 0) {
+
+                let valorMovimientoSaldo = 0, historialAbono = 0;
+
+                const cobrosDetalleFiltered = this.paymentDetails.filter(cd => cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar)
+
+                const totalAbonoCuenta = RoundNumber(cobrosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND);
+
+                if (cobrosDetalleFiltered.length === 0) {
+
+                    const historialCuentasFiltered = this.historialCuentas.filter(cd => (
+                        cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar && cd.secuencial === this.sequencia
+                    ));
+
+                    const dataUltimoCobroDetalle = historialCuentasFiltered.pop();
+
+                    if (dataUltimoCobroDetalle) {
+                        valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+                    } else {
+                        valorMovimientoSaldo = group.saldo;
+                    }
+
+                    if (this.receivedAmount <= this.voucher.saldo) {
+                        historialAbono = this.receivedAmount;
+
+                    } else if (this.receivedAmount >= this.voucher.saldo) {
+                        historialAbono = this.voucher.saldo;
+                    }
+
+                    this.historialCuentas.push({
+                        secuencial: this.sequencia,
+                        idCuentaPorCobrar: this.voucher.idCuentaPorCobrar,
+                        abono: historialAbono,
+                        saldo: RoundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+                        diasMora: this.voucher.diasMora,
+                        mora: this.voucher.mora,
+                    })
+
+                }
+                if (cobrosDetalleFiltered.length > 0) {
+                    if (totalAbonoCuenta !== RoundNumber(this.voucher.saldo, this.MAX_NUMBER_ROUND)) {
+
+                        const historialCuentasFiltered = this.historialCuentas.filter(cd => (
+                            cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar
+                        ));
+
+                        const dataUltimoCobroDetalle = historialCuentasFiltered.pop();
+
+                        if (dataUltimoCobroDetalle) {
+                            valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+                        } else {
+                            valorMovimientoSaldo = group.saldo;
+                        }
+
+                        if (this.receivedAmount <= valorMovimientoSaldo) {
+                            historialAbono = this.receivedAmount;
+
+                        } else {
+                            historialAbono = valorMovimientoSaldo
+                        }
+
+                        this.historialCuentas.push({
+                            secuencial: this.sequencia,
+                            idCuentaPorCobrar: this.voucher.idCuentaPorCobrar,
+                            abono: historialAbono,
+                            saldo: RoundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND),
+                            diasMora: this.voucher.diasMora,
+                            mora: this.voucher.mora,
+                        })
+                    }
+                }
+            }
+
+
+
             for (const item of group.cuotas) {
                 item.abonoPosfechado = 0;
 
@@ -180,30 +257,30 @@ class CheckoutUtility {
         item.saldoOriginal = RoundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
     }
 
-    getHistoryPayments(voucherQuotas: Array<VoucherQuota>, paymentDetails: Array<PaymentDetail>): Array<PaymentHistory> {
-        const historialCobros: Array<PaymentHistory> = [];
-        for (const item of voucherQuotas) {
-            const totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
-                .reduce((prev, curr) => prev + curr.abono, 0);
-            // if (paymentDetails) {
-            //     totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
-            //         .reduce((prev, curr) => prev + curr.abono, 0);
-            // } else {
-            //     totalAbono = this.paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
-            //         .reduce((prev, curr) => prev + curr.abono, 0);
-            // }
-            if (totalAbono > 0) {
-                historialCobros.push({
-                    idCuentaPorCobrar: item.idCuentaPorCobrar,
-                    abono: totalAbono,
-                    diasMora: item.diasMora,
-                    mora: item.mora,
-                    saldo: item.saldo,
-                }) 
-            } else break;
-        }
-        return historialCobros;
-    }
+    // getHistoryPayments(voucherQuotas: Array<VoucherQuota>, paymentDetails: Array<PaymentDetail>): Array<PaymentHistory> {
+    //     const historialCobros: Array<PaymentHistory> = [];
+    //     for (const item of voucherQuotas) {
+    //         const totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
+    //             .reduce((prev, curr) => prev + curr.abono, 0);
+    //         // if (paymentDetails) {
+    //         //     totalAbono = paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
+    //         //         .reduce((prev, curr) => prev + curr.abono, 0);
+    //         // } else {
+    //         //     totalAbono = this.paymentDetails.filter(cd => cd.idCuentaPorCobrar === item.idCuentaPorCobrar)
+    //         //         .reduce((prev, curr) => prev + curr.abono, 0);
+    //         // }
+    //         if (totalAbono > 0) {
+    //             historialCobros.push({
+    //                 idCuentaPorCobrar: item.idCuentaPorCobrar,
+    //                 abono: totalAbono,
+    //                 diasMora: item.diasMora,
+    //                 mora: item.mora,
+    //                 saldo: item.saldo,
+    //             })
+    //         } else break;
+    //     }
+    //     return historialCobros;
+    // }
 }
 
 export const getTotalesCuota = (voucherQuotas: Array<VoucherQuota>) => {

@@ -11,6 +11,7 @@ class CobroService {
 
         this.selectedDocumentos = [];
         this.cobrosDetalle = [];
+        this.historialCuentas = [];
         this.valorAbono = 0;
 
         this.esAbonoPosfechado = false;
@@ -19,6 +20,8 @@ class CobroService {
         this.url = 'Contabilidad/ComprobanteIngreso/'
 
         this.MAX_NUMBER_ROUND = 3;
+        this.MAX_NUMBER_ROUND_GENERAL = 3;
+        this.MAX_NUMBER_ROUND_CUOTA_ABONO = 5;
     }
 
     isDateValid(dateString) {
@@ -127,9 +130,85 @@ class CobroService {
 
             this.group = group;
 
+            if (typeof this.valorAbono !== 'number' || this.valorAbono > 0) {
+
+                let valorMovimientoSaldo = 0, historialAbono = 0;
+
+                const cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar)
+
+                const totalAbonoCuenta = this.fS.roundNumber(cobrosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND_GENERAL);
+
+                if (cobrosDetalleFiltered.length === 0) {
+
+                    let historialCuentasFiltered = this.historialCuentas.filter(cd => (
+                        cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar && cd.secuencial === this.indexDatoCobro
+                    ));
+ 
+                    let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
+                   
+                    if (dataUltimoCobroDetalle) {
+                        valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+                    } else {
+                        valorMovimientoSaldo = group.saldo;
+                    }
+
+                    if (this.valorAbono <= this.group.saldo) {
+                        historialAbono = this.valorAbono;
+
+                    } else if (this.valorAbono >= this.group.saldo) {
+                        historialAbono = this.group.saldo;
+                    }
+ 
+                    this.historialCuentas.push({
+                        secuencial: this.indexDatoCobro,
+                        idCuentaPorCobrar: this.group.idCuentaPorCobrar,
+                        abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                        saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                        diasMora: this.group.diasMora,
+                        mora: this.group.mora,
+                    })
+
+                }
+                if (cobrosDetalleFiltered.length > 0) {
+                    if (totalAbonoCuenta !== this.fS.roundNumber(this.group.saldo, this.MAX_NUMBER_ROUND_GENERAL)) { 
+
+                        let historialCuentasFiltered = this.historialCuentas.filter(cd => (
+                            cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar  
+                        ));
+                  
+                        let dataUltimoCobroDetalle = historialCuentasFiltered.pop();
+
+                        if (dataUltimoCobroDetalle) {
+                            valorMovimientoSaldo = dataUltimoCobroDetalle.saldo - dataUltimoCobroDetalle.abono;
+                        } else {
+                            valorMovimientoSaldo = group.saldo;
+                        }
+
+                        if (this.valorAbono <= valorMovimientoSaldo) {
+                            historialAbono = this.valorAbono;
+
+                        } else  {
+                            historialAbono = valorMovimientoSaldo
+                        }
+
+                        this.historialCuentas.push({
+                            secuencial: this.indexDatoCobro,
+                            idCuentaPorCobrar: this.group.idCuentaPorCobrar,
+                            abono: this.fS.roundNumber(historialAbono, MAX_NUMBER_ROUND_CUOTA_ABONO),
+                            saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
+                            diasMora: this.group.diasMora,
+                            mora: this.group.mora,
+                        }) 
+                    } 
+                } 
+            }
+
+
+
             for (let item of group.cuotas) {
 
                 item.abonoPosfechado = 0;
+
 
                 if (typeof this.valorAbono !== 'number' || this.valorAbono === 0) return;
 
@@ -147,10 +226,14 @@ class CobroService {
                 // item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota 
                 item.estado = this.getEstadoCuota(item);
 
-                item.esCuotaAfectada = true; //
-            }
+                item.esCuotaAfectada = true; // 
+
+
+
+            } 
+
         }
-    }
+    } 
 
 
     /**
@@ -258,7 +341,7 @@ class CobroService {
      */
     addCobroDetalle(item, abono, saldo) {
         if (item.cuota === 0 || abono === 0) return;
-      
+
         let valorMovimientoSaldo = 0;
         let cobrosDetalleFiltered = this.cobrosDetalle.filter(cd => (
             cd.idCuentaPorCobrar === this.group.idCuentaPorCobrar &&
@@ -276,14 +359,14 @@ class CobroService {
         this.cobrosDetalle.push({
             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
             idCuotaPorCobrar: item.idCuotaPorCobrar,
-            abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND),
+            abono: this.fS.roundNumber(abono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
             interes: item.interes,
             diasMora: item.diasMora,
             mora: item.mora,
-            cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND),
+            cuota: this.fS.roundNumber(item.cuota, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
             saldo,
             secuencial: this.indexDatoCobro,
-            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND)
+            saldoOriginal: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO)
         })
         item.saldo = this.fS.roundNumber(item.saldo, this.MAX_NUMBER_ROUND);
         item.saldoOriginal = this.fS.roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND);
@@ -293,70 +376,73 @@ class CobroService {
     * 
     * @param {Array} selectedDocumentos 
     */
-    getHistorialCobros(selectedDocumentos) {
-        let historialCobros = [], valorMovimientoSaldo = 0;
-        const agrupado = this.cobrosDetalle.reduce((agrupado, elemento) => {
-
-            const clave = `${elemento.secuencial}-${elemento.idCuentaPorCobrar}`;
-
-            if (!agrupado[clave]) {
-                agrupado[clave] = {
-                    abono: 0,
-                    saldo: 0,
-                    diasMora: 0,
-                    mora: 0,
-                    saldoOriginal: 0,
-                };
-            }
-
-            agrupado[clave].abono += elemento.abono;
-            agrupado[clave].saldo += elemento.saldo;
-            agrupado[clave].diasMora = elemento.diasMora;
-            agrupado[clave].mora = elemento.mora;
-            agrupado[clave].saldoOriginal += elemento.saldoOriginal;
+    getHistorialCobros(selectedDocumentos, datosCobro) {
 
 
-            return agrupado;
-        }, {});
+        // let historialCobros = [], valorMovimientoSaldo = 0;
+        // const agrupado = this.cobrosDetalle.reduce((agrupado, elemento) => {
 
-        // Convertir el objeto agrupado a un array
-        const resultadoArray = Object.entries(agrupado).map(([clave, valores]) => {
-            const [secuencial, idCuentaPorCobrar] = clave.split('-');
-            return {
-                secuencial: parseInt(secuencial),
-                idCuentaPorCobrar: parseInt(idCuentaPorCobrar),
-                abono: valores.abono,
-                saldo: valores.saldo,
-                diasMora: valores.diasMora,
-                mora: valores.mora,
-                saldoOriginal: valores.saldoOriginal,
-            };
-        });
+        //     const clave = `${elemento.secuencial}-${elemento.idCuentaPorCobrar}`;
 
-        let totalAbono = resultadoArray.reduce((acc, curr) => acc + curr.abono, 0);
+        //     if (!agrupado[clave]) {
+        //         agrupado[clave] = {
+        //             abono: 0,
+        //             saldo: 0,
+        //             diasMora: 0,
+        //             mora: 0,
+        //             saldoOriginal: 0,
+        //         };
+        //     }
 
-        for (let item of resultadoArray) {
- 
-            if(historialCobros.length===0){
-                valorMovimientoSaldo = totalAbono;
-            }else{
-                totalAbono -= item.abono; 
-                valorMovimientoSaldo = totalAbono;
-            }
-             
-            historialCobros.push({
-                secuencial: item.secuencial,
-                idCuentaPorCobrar: item.idCuentaPorCobrar,
-                abono: item.abono,
-                saldo: valorMovimientoSaldo,
-                diasMora: item.diasMora,
-                mora: item.mora,
-                //saldoOriginal: valores.saldoOriginal,
-            })
+        //     agrupado[clave].abono += elemento.abono;
+        //     agrupado[clave].saldo += elemento.saldo;
+        //     agrupado[clave].diasMora = elemento.diasMora;
+        //     agrupado[clave].mora = elemento.mora;
+        //     agrupado[clave].saldoOriginal += elemento.saldoOriginal;
 
-        }
 
-        return historialCobros;
+        //     return agrupado;
+        // }, {});
+
+
+        // const resultadoArray = Object.entries(agrupado).map(([clave, valores]) => {
+        //     const [secuencial, idCuentaPorCobrar] = clave.split('-');
+        //     return {
+        //         secuencial: parseInt(secuencial),
+        //         idCuentaPorCobrar: parseInt(idCuentaPorCobrar),
+        //         abono: valores.abono,
+        //         saldo: valores.saldo,
+        //         diasMora: valores.diasMora,
+        //         mora: valores.mora,
+        //         saldoOriginal: valores.saldoOriginal,
+        //     };
+        // });
+
+        // let totalAbono = resultadoArray.reduce((acc, curr) => acc + curr.abono, 0);
+
+        // for (let item of resultadoArray) {
+
+        //     let dataHistorialCobro = structuredClone(historialCobros).pop();
+
+        //     if (dataHistorialCobro) {
+        //         valorMovimientoSaldo = dataHistorialCobro.saldo - dataHistorialCobro.abono;
+        //     } else {
+        //         valorMovimientoSaldo = totalAbono;
+        //     } 
+
+        //     historialCobros.push({
+        //         secuencial: item.secuencial,
+        //         idCuentaPorCobrar: item.idCuentaPorCobrar,
+        //         abono: item.abono,
+        //         saldo: valorMovimientoSaldo,
+        //         diasMora: item.diasMora,
+        //         mora: item.mora, 
+        //     })
+
+        // }
+
+        // return historialCobros;
+        return [];
     }
 
 
@@ -660,12 +746,13 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
 
 
                         cobroSvc.cobrosDetalle = [];
+                        cobroSvc.historialCuentas = [];
                         cobroSvc.selectedDocumentos = $scope.selectedDocumentos;
                         cobroSvc.esAbonoPosfechado = $scope.cobro.posFechado;
                         cobroSvc.indexDatoCobro = 0;
 
                         cobroSvc.addFormaCobro();
-                        let historialCobros = cobroSvc.getHistorialCobros(cobroSvc.selectedDocumentos);
+                        // let historialCobros = cobroSvc.getHistorialCobros(cobroSvc.selectedDocumentos);
 
                         if (cobroSvc.cobrosDetalle.length === 0) {
                             fS.sweetAlert('warning', 'Cobro detalle vacio')
@@ -676,7 +763,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                             comprobante,
                             cobros,
                             cobroDetalle: cobroSvc.cobrosDetalle.filter(item => (item.abono > 0)),
-                            historialCobros,
+                            historialCobros: cobroSvc.historialCuentas,
                         }
 
                         const params = comprobanteIngresoSvc.mapperTo(data);
@@ -1325,7 +1412,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
     $scope.addDatosCobro = function (obj, abonoCuota) {
         $scope.datosCobro.push({
             ...obj,
-            abonoCuota,
+            abonoCuota: fS.roundNumber(abonoCuota, 2),
             secuencial: cobroSvc.indexDatoCobro
         })
     }
@@ -1431,6 +1518,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                     $scope.$apply(() => {
 
                         cobroSvc.cobrosDetalle = [];
+                        cobroSvc.historialCuentas = [];
                         $scope.cobrosDetalle = [];
 
                         // cobroSvc.selectedDocumentos = []
@@ -1508,7 +1596,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
 
                 if (result.isConfirmed) {
 
-                    let historial = cobroSvc.getHistorialCobros($scope.selectedDocumentos);
+                    // let historial = cobroSvc.getHistorialCobros($scope.selectedDocumentos, $scope.datosCobro);
 
                     let comprobante = {
                         idCliente: $scope.comprobante.idCliente,
@@ -1549,12 +1637,13 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, $injector, mS, modalSvc, 
                         comprobante,
                         cobros,
                         cobroDetalle: $scope.cobrosDetalle.filter(item => (item.abono > 0)),
-                        historialCobros: historial,
-                    } 
+                        historialCobros: cobroSvc.historialCuentas,
+                    }
 
-                    let params = comprobanteIngresoSvc.mapperTo(data);
-               
-
+                   
+ 
+                    let params = comprobanteIngresoSvc.mapperTo(data); 
+                  
                     showLoader();
                     comprobanteIngresoSvc.post(params).then(response => {
                         hideLoader();

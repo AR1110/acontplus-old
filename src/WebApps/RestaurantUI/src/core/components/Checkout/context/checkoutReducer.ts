@@ -5,6 +5,7 @@ import {
     MultiplesPaymentType,
     Payment,
     PaymentDetail,
+    PaymentHistory,
     PaymentSubType,
     VoucherQuota
 } from "@/core/models";
@@ -45,6 +46,7 @@ type CheckoutAction =
             voucherQuotas: Array<VoucherQuota>,
             dataPaymentTypeForm: MultiplesPaymentType,
             paymentDetails: Array<PaymentDetail>,
+            historialCuentas: Array<PaymentHistory> 
         }
     }
     | {
@@ -108,6 +110,7 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
                 voucherQuotas,
                 dataPaymentTypeForm,
                 paymentDetails,
+                historialCuentas
             } = action.payload;
             // const payments = state.checkout.payments;
             // const obj = Object.assign(payments, action.payload);
@@ -136,6 +139,7 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
                     },
                     multiplesPaymentType: tempMultiplesPaymentType,
                     paymentDetails: paymentDetails,
+                    historialCuentas: historialCuentas,
                     paymentData: {
                         ...state.checkout.paymentData,
                         nro: "",
@@ -152,6 +156,8 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
         case SET_REMOVE_PAYMENT_TYPE: {
             const indexToExclude = action.payload;
             let paymentDetails: Array<PaymentDetail> = [];
+            let historialCuentas: Array<PaymentHistory> = [];
+            
             const tempMultiplesPaymentType = state.checkout.multiplesPaymentType.filter((_, index) => index !== indexToExclude)
 
 
@@ -176,6 +182,7 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
 
                 tempVoucherQuotas = checkoutUtility.applyReceivedAmountToQuota(tempVoucherQuotas);
                 paymentDetails = checkoutUtility.paymentDetails;
+                historialCuentas = checkoutUtility.historialCuentas;
             }
             const dataSubTotal = getCheckoutSubTotales(tempVoucherQuotas, tempMultiplesPaymentType, state.checkout.dataForm.comprobante)
  
@@ -196,6 +203,7 @@ export const checkoutReducer = (state: CheckoutState, action: CheckoutAction): C
                     },
                     multiplesPaymentType: tempMultiplesPaymentType,
                     paymentDetails: paymentDetails,
+                    historialCuentas: historialCuentas,
                     paymentData: {
                         ...state.checkout.paymentData,
                         nro: "",

@@ -106,7 +106,17 @@
     </div>
 
     <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="tarifas">Tipo Artículo: </label>
+          <select class="form-select" name="tiposArticulo" id="tiposArticulo" [(ngModel)]="dataSearch.codigoTipoArticulo">
+            @for(item of tiposArticulo; track $index){
+            <option [ngValue]="item.codigo">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="tarifas">Tarifa: </label>
           <select class="form-select" name="tarifas" id="tarifas" [(ngModel)]="dataSearch.idTarifa">
@@ -117,7 +127,7 @@
         </div>
       </div>
 
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="tipoDoc">Tipo Doc.:</label>
           <select name="tipoDoc" id="tipoDoc" class="form-select" [(ngModel)]="dataSearch.codDoc">

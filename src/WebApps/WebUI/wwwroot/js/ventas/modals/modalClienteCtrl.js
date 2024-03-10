@@ -14,7 +14,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
     $scope.correos = [];
     $scope.telefonos = [];
     $scope.placas = [];
-
+    $scope.formasPagoSri = [];
     $scope.isDisableInputIdentificacion = false;
     $scope.isDisableSelectIdentificacion = false;
     $scope.isDisableInput = false;
@@ -46,7 +46,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     ciudades,
                     tiposCliente,
                     empresas,
-                    cargos
+                    cargos,
+                    formasPagoSri
                 } = response;
 
                 $scope.tiposIdentificacion = tipoIdentificacion;
@@ -54,10 +55,12 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 $scope.tiempoCreditos = tiempoCreditos;
                 $scope.ciudades = ciudades;
 
+
                 // $scope.tiposEntidad = tiposEntidad;
                 $scope.tiposCliente = tiposCliente;
                 $scope.empresas = empresas;
                 $scope.cargos = cargos;
+                $scope.formasPagoSri = formasPagoSri;
 
                 if ($scope.tipoRegistro === 1) {
                     let { idTipoIdentificacion, codigo } = $scope.tiposIdentificacion.find(item => item.codigo === 'R');

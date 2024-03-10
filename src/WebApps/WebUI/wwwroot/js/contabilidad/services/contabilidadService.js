@@ -431,6 +431,7 @@
                             mora: cxc.mora,
                             abono: cxc.abono,
                             saldo: cxc.saldo,
+                            saldoTemporal: cxc.saldo,
                             descripcion: cxc.descripcion,
                             cuotas: structuredClone(resultsCuotas),
                             cuotasOriginal: structuredClone(resultsCuotas)

@@ -66,6 +66,25 @@ BEGIN
  	WHERE ea.idUsuarioRol = @userRoleId
 
     SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+    --SELECT idEstablecimiento
+    --            ,nombreComercial
+    --            ,codEstab
+    --            ,idPuntoEmision
+    --            ,ptoEmi + '-' + estab as ptoEmi
+    --            ,defaultEstab
+    --            ,defaultPtoEmi 
+    --    FROM v_PtoEmi_Asign WITH(NOLOCK) 
+    --    WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+
+    --    SELECT idEstablecimiento
+    --            ,nombreComercial
+    --            ,codEstab
+    --            ,idBodega
+    --            ,bodega
+    --            ,defaultEstab
+    --            ,defaultBodega 
+    --    FROM v_Bodega_Asign WITH(NOLOCK) 
+    --    WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
     SELECT Id, Capacity, Code, [Description]  FROM Restaurant.[Floor] WHERE CodEstab = @codEstab
 
