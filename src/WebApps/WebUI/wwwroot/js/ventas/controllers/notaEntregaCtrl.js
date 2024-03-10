@@ -2419,7 +2419,11 @@
                     `,
                     didOpen: () => {
                         let el = document.getElementById('formaDePago');
+                        if($scope.cliente.idFormaPagoSri>0){
+                            $scope.dataFormaPago.idFormaPagoSri = $scope.cliente.idFormaPagoSri;
+                        }
                         el.value = $scope.dataFormaPago.idFormaPagoSri;
+                        
                         setDataChangeFormaPago();
 
                         el.addEventListener('change', () => { 

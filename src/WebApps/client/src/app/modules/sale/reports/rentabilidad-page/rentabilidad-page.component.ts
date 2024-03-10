@@ -49,6 +49,15 @@ export class RentabilidadPageComponent {
   tiposDoc: Array<TipoDoc> = [];
   subCategorias: Array<GroupedSubFamilia> = [];
 
+  tiposArticulo = [{
+    codigo: 'B',
+    descripcion: 'Bienes'
+  },
+  {
+    codigo: 'S',
+    descripcion: 'Servicios'
+  }]
+
 
   checkedSubCategorias = new FormControl('');
 
@@ -68,7 +77,8 @@ export class RentabilidadPageComponent {
     subCategoriaChecked: false,
     checkboxRentabCustom: false,
     porcentajeRenta: null,
-    porcentajeComision: null
+    porcentajeComision: null,
+    codigoTipoArticulo: 'B'
   }
 
   productSearchProps = {
@@ -222,7 +232,7 @@ export class RentabilidadPageComponent {
 
     let subCategoriasChecked = Array.isArray(checkedSubCategorias) && checkedSubCategorias.join(',');
     const dataParms = {
-      tipo: this.dataSearch.checkboxRentabCustom ? 7 : 6,
+      tipo: this.getDataTipo(),
       format,
       checkBoxFecha: this.dataSearch.ckFecha,
       codEstab: isValidField(this.dataSearch.codEstab),
@@ -239,6 +249,7 @@ export class RentabilidadPageComponent {
     }
 
     const parameters = {
+      hasIdUsuarioRol: true,
       reportParams: JSON.stringify({
         codigo: this.dataSearch.checkboxRentabCustom ? SALE_CODE_REPORT.SRRC : SALE_CODE_REPORT.SRR,
         format,
@@ -259,6 +270,18 @@ export class RentabilidadPageComponent {
       codDoc = DOC_TYPE.FE
     }
     return codDoc;
+  }
+  private getDataTipo() {
+    let tipo;
+    if (this.dataSearch.codigoTipoArticulo === 'B') {
+      tipo = 3
+    }
+    if (this.dataSearch.codigoTipoArticulo === 'S') {
+      tipo = 4;
+    }
+
+    return tipo;
+
   }
 
 }

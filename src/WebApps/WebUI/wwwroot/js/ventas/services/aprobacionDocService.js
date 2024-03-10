@@ -158,7 +158,7 @@
                         puntoEmision: `${compRepository.estab}-${compRepository.ptoEmi}`,
                         fechaEmision: fS.formatDate(compRepository.fechaEmision),
                         fechaEmisionDocCreado: fS.formatDate(compRepository.fechaEmision)
-                    }
+                    } 
                     let clienteMapper = {
                         idCliente: clienteRepository.idCliente,
                         nombreComercial: clienteRepository.nombreComercial,
@@ -169,7 +169,9 @@
                         idTipoIdentificacion: clienteRepository.idTipoIdentificacion,
                         codigoSriTipoIdentificacion: clienteRepository.tipoIdentificacion,
                         identificacionComprador: clienteRepository.numeroIdentificacion,
-                        razonSocialComprador: clienteRepository.nombreFiscal
+                        razonSocialComprador: clienteRepository.nombreFiscal,
+
+                        idFormaPagoSri: clienteRepository.idFormaPagoSri
                     }
 
                     let items = detalleRepository.map((itemPrincipal, index) => {
