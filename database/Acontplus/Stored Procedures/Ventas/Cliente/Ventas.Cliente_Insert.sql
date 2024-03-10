@@ -34,6 +34,7 @@ BEGIN
        ,idEmpleado INT NULL
        ,idEmpresa INT NULL
        ,idCargo INT NULL
+       ,idFormaPagoSri INT NULL
        ,numeroIdentificacion VARCHAR(20) UNIQUE NOT NULL
        ,nombreFiscal VARCHAR(300) NOT NULL
        ,nombreComercial VARCHAR(300) NOT NULL
@@ -53,8 +54,8 @@ BEGIN
 
         --> Data Json 
         INSERT INTO @tbCliente 
-              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri)
-	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri
+              (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri)
+	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri
 	    FROM OPENJSON(@json) WITH
         (
              idEmpleado             INT 
@@ -66,6 +67,7 @@ BEGIN
 	        ,idTiempoCredito        INT 
 	        ,idEmpresa              INT
 	        ,idCargo			    INT
+            ,idFormaPagoSri         INT
 		    ,numeroIdentificacion   VARCHAR(50) 
 		    ,nombreFiscal           VARCHAR(100) 
 		    ,nombreComercial        VARCHAR(100) 
@@ -113,8 +115,8 @@ BEGIN
 				END
 			
 			INSERT INTO Cliente WITH (ROWLOCK)
-			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,idUsuario,idEntidad,customerId)
-			SELECT idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,@idUsuario,@idEntidad,@customerId
+			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,idUsuario,idEntidad,customerId)
+			SELECT idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,@idUsuario,@idEntidad,@customerId
             FROM @tbCliente
 
 		    SET @idCliente = @@IDENTITY

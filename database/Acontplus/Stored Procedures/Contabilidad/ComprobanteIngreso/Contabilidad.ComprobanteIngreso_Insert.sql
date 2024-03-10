@@ -166,7 +166,6 @@ BEGIN
 
         ) AS dt
 
-		
 		--======================================Obteniendo variables ============================================================
 
 		SELECT @codEstab = codEstab FROM @documento 
