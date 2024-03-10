@@ -46,6 +46,7 @@ BEGIN
 	WHERE d.idAprob_Document = @id
 
 	SELECT cl.idCliente
+          ,cl.FormaPagoSriId       as idFormaPagoSri
 		  ,cl.nombreComercial
 		  ,cl.nombreFiscal
 		  ,cl.numeroIdentificacion
@@ -134,7 +135,7 @@ BEGIN
 	INNER JOIN Compra.InfoAdicional i WITH(NOLOCK) ON i.idInfoAdicional = h.idInfoAdicional
 	WHERE h.codDoc='APR' AND h.idDocumento = @id
 
-     SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
+    SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
 
 END
 
