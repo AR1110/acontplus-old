@@ -2420,10 +2420,10 @@
                     didOpen: () => {
                         let el = document.getElementById('formaDePago');
                         if($scope.cliente.idFormaPagoSri>0){
-                            el.value = $scope.cliente.idFormaPagoSri;
-                        }else{
-                            el.value = $scope.dataFormaPago.idFormaPagoSri;
+                            $scope.dataFormaPago.idFormaPagoSri = $scope.cliente.idFormaPagoSri;
                         }
+                        el.value = $scope.dataFormaPago.idFormaPagoSri;
+                        
                         setDataChangeFormaPago();
 
                         el.addEventListener('change', () => { 

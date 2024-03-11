@@ -741,7 +741,12 @@
         let storageSvc = $injector.get('storageService');
         let articuloSvc = $injector.get('articuloService');
         let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
-        const uuid2 = $injector.get('uuid2')
+
+        const FORM_PAGO_SRI_ACCION = {
+            DEFAULT: 'DEFAULT',
+            FORMA_PAGO_SRI_CLIENTE: 'FORMA_PAGO_SRI_CLIENTE',
+            FORMA_PAGO_CHANGE: 'FORMA_PAGO_CHANGE'
+        }
 
         $scope.tipoDoc = tipoDoc;
         $scope.infoEstabPtoEmi = {};
@@ -1065,11 +1070,17 @@
                 //Cliente Predeterminado 
                 if (clienteDefault.idCliente > 0) {
                     $scope.cliente = structuredClone(clienteDefault);
+                    if($scope.cliente.idTiempoCredito>0){
+                        $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito;
+                    }
                 }
 
                 //Forma pago sri
-                if ($scope.formasPago.length > 0) {
-                    setDataFormaPagoSri();
+                if ($scope.cliente.idFormaPagoSri > 0) {
+                    setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.FORMA_PAGO_SRI_CLIENTE);
+
+                } else {
+                    setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.DEFAULT);
                 }
 
                 //Articulo Predeterminado
@@ -1121,7 +1132,7 @@
                 $scope.dataFormaPago = formasPago[0];
                 //Forma pago sri
                 if ($scope.formasPago.length > 0) {
-                    setDataFormaPagoSri();
+                    setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.FORMA_PAGO_CHANGE);
                 }
                 counterGridOptions();
             }
@@ -1173,7 +1184,7 @@
 
                 //Forma pago sri
                 if ($scope.formasPago.length > 0) {
-                    setDataFormaPagoSri();
+                    setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.FORMA_PAGO_CHANGE);
                 }
             }
 
@@ -1759,7 +1770,12 @@
                 getFechaVencimiento();
             }
 
-            setDataFormaPagoSri();
+            if ($scope.cliente.idFormaPagoSri > 0) {
+                setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.FORMA_PAGO_SRI_CLIENTE);
+            } else {
+                setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.DEFAULT);
+            }
+
             $scope.$apply();
         }
 
@@ -1767,7 +1783,7 @@
         $scope.receiveDataCustomerSRI = function (result) {
             $scope.newCustomer = !(result.idCliente > 0);
             $scope.cliente = result;
-            setDataFormaPagoSri();
+            setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.DEFAULT);
 
         }
 
@@ -2242,26 +2258,28 @@
         }
 
 
-        function setDataFormaPagoSri() {
-            let dataFormaPago = {}; 
-            if ($scope.cliente.idFormaPagoSri > 0) {
-                dataFormaPago = findFormaPagoById($scope.cliente.idFormaPagoSri);
-            } 
-            else if ($scope.dataFormaPago.idFormaPagoSri > 0) {
-                dataFormaPago = findFormaPagoById($scope.dataFormaPago.idFormaPagoSri);
-            } else { 
+        function setDataFormaPagoSri(tipoAction) {
+            let dataFormaPago = {};
+            if (tipoAction === FORM_PAGO_SRI_ACCION.DEFAULT) {
                 dataFormaPago = $scope.formasPago.find(item => item.codigo === '01') || {};
-            } 
+            }
+            if (tipoAction === FORM_PAGO_SRI_ACCION.FORMA_PAGO_SRI_CLIENTE) {
+                dataFormaPago = findFormaPagoById($scope.cliente.idFormaPagoSri);
+            }
+            if (tipoAction === FORM_PAGO_SRI_ACCION.FORMA_PAGO_CHANGE) {
+                dataFormaPago = findFormaPagoById($scope.dataFormaPago.idFormaPagoSri);
+            }
+
             $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
-            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia; 
-            
+            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+
             function findFormaPagoById(idFormaPagoSri) {
                 return $scope.formasPago.find(item => item.idFormaPagoSri === idFormaPagoSri) || {};
             }
 
         }
         $scope.onChangeFormaPago = function () {
-            setDataFormaPagoSri();
+            setDataFormaPagoSri(FORM_PAGO_SRI_ACCION.FORMA_PAGO_CHANGE);
         }
 
 
