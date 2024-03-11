@@ -68,7 +68,11 @@ namespace Reports.Application.Services
                 var firstDataSource = ds.Tables[0];
                 if (firstDataSource.Columns.Contains("codigoAutorizacion"))
                 {
-                    lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion")), 0, BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion")).Length)));
+                    var byteBarcode = BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion"));
+                    lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(
+                        byteBarcode,
+                        0,
+                        byteBarcode.Length)));
                     lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
                 }
 
