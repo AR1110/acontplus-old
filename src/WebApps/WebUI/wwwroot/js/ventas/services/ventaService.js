@@ -1724,11 +1724,11 @@
         }
 
         service.checkClientSRIByRUC = function (identificacion) {
-            return mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true)
+            return mS.getData('get', 'FactElect/Consultas/GetRucSRI?Ruc=' + identificacion, null, true)
         }
 
         service.checkClientSRIByCedula = function (identificacion) {
-            return mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true)
+            return mS.getData('get', 'FactElect/Consultas/GetCedulaSri?Ruc=' + identificacion, null, true)
         }
 
 
