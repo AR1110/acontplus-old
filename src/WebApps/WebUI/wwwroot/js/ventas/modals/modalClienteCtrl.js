@@ -519,6 +519,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 telefonos: $scope.telefonos,
                 placas: $scope.placas
             }
+ 
 
             if (!clienteSvc.validateForm(params)) return
 
@@ -534,7 +535,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     cancelButtonText: 'Cancelar!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        saveUpdate();
+                        saveUpdate(params);
                     }
                 });
                 return
@@ -545,7 +546,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 return
             }
 
-            saveUpdate();
+            saveUpdate(params);
 
         } catch (error) {
             hideLoader();
@@ -553,13 +554,10 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
         }
     }
 
-    function saveUpdate() {
+    function saveUpdate(params) {
         if ($scope.tipoRegistro === 1) {
             showLoader();
             clienteSvc.save(params).then($scope.saveResponse).catch(error => {
-                hideLoader();
-                console.log(error)
-            }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
         }
@@ -567,9 +565,6 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
         if ($scope.tipoRegistro === 2) {
             showLoader();
             clienteSvc.update($scope.data.idCliente, params).then($scope.saveResponse).catch(error => {
-                hideLoader();
-                console.log(error)
-            }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader());
         }
