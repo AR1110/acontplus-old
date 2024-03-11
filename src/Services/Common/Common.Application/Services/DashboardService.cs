@@ -1,7 +1,6 @@
 ﻿using Common.Core.Interfaces;
-using Reports.Core.Interfaces;
 
-namespace Reports.Application.Services
+namespace Common.Application.Services
 {
     public class DashboardService : IDashboardService
     {

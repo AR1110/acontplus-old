@@ -1,14 +1,13 @@
-﻿ 
+﻿
 using Common.Core.Interfaces;
-using Common.Core.Models;
 using Common.Core.Utils;
 using Inventario.Core.Interfaces;
 
 namespace Inventario.Application.Services
 {
-    public class ArticuloCodigoBarraService: IArticuloCodigoBarraService
+    public class ArticuloCodigoBarraService : IArticuloCodigoBarraService
     {
-        private readonly IADORepository _repository; 
+        private readonly IADORepository _repository;
 
         public ArticuloCodigoBarraService(IADORepository repository)
         {

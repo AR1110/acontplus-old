@@ -49,6 +49,6 @@ namespace Contabilidad.Application.Servicios
             return await _repository.SPExecuteAsync("Contabilidad.ComprobanteEgreso_Update_Cancel", parameters);
         }
 
-       
+
     }
 }

@@ -1,9 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
-using Configuracion.API.Data;
 using Configuracion.API.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 

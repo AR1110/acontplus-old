@@ -4,7 +4,6 @@ using Services.Common;
 using Services.Common.Logs;
 using TechnicalSupport.API.Entities;
 using TechnicalSupport.API.Interfaces;
-using TechnicalSupport.API.Services;
 
 namespace TechnicalSupport.API.Controllers
 {

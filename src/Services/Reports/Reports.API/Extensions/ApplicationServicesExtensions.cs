@@ -12,7 +12,6 @@ namespace Reports.API.Extensions
             services.AddDbContextPool<ReportsContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IRdlcReportService, RdlcReportService>();
             return services;

@@ -1,10 +1,9 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-using Services.Common;
 using Inventario.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Services.Common;
+using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
 {

@@ -53,7 +53,7 @@ internal class Program
         // Configure the HTTP request pipeline.
         app.UseSwaggerDocumentation();
 
-        app.UseRouting(); 
+        app.UseRouting();
 
         app.UseAuthentication();
 
