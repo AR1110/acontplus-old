@@ -157,7 +157,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 cancelButtonText: 'No!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $scope.consultaIdentificacionSRI(codigoIdentificacion, $scope.data) 
+                    $scope.consultaIdentificacionSRI(codigoIdentificacion, $scope.data)
                 }
             });
         } else {
@@ -317,6 +317,9 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             })
         }
 
+        if($scope.data.isManual){
+            return 
+        }
         if (codigoIdentificacion === 'C') {
             showLoader();
             clienteSvc.checkClientSRIByCedula($scope.data.numeroIdentificacion).then(response => {
@@ -368,6 +371,16 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
         }
     }
 
+    $scope.askToManual = function(){
+        if($scope.data.isManual){
+            Swal.fire({
+                //title: "Are you sure?",
+                text: "En caso de cédula, no se realizará ninguna validación de datos del cliente; por ende, revise que el número de identificación ingresado sea correcto.",
+                icon: "warning",            
+            })
+        }
+    }
+
     function updateDataWithSRI(id, dataSRI) {
         clienteSvc.findById(id).then(response => {
             let {
@@ -376,7 +389,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 estado
             } = response;
 
-            $scope.isDisableInputIdentificacion = $scope.data.idCliente> 0;
+            $scope.isDisableInputIdentificacion = $scope.data.idCliente > 0;
 
             $scope.data = Object.assign($scope.data, {
                 nombreComercial: dataSRI.razonSocial,
@@ -407,7 +420,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
 
     $scope.copiarNombreComercial = function () {
-        
+
         $scope.data.nombreComercial = $scope.data.nombreFiscal;
     }
 
@@ -509,27 +522,56 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
             if (!clienteSvc.validateForm(params)) return
 
-
-            showLoader();
-
-
-            if ($scope.tipoRegistro === 1) {
-                clienteSvc.save(params).then($scope.saveResponse).catch(error => {
-                    hideLoader();
-                    console.log(error)
-                })
+            if (!$scope.data.validationSri && $scope.data.isManual) {
+                Swal.fire({
+                    //title: "Are you sure?",
+                    text: "Revise que el número de identificación ingresada sea correcta!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Continuar!",
+                    cancelButtonText: 'Cancelar!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        saveUpdate();
+                    }
+                });
+                return
             }
 
-            if ($scope.tipoRegistro === 2) {
-                clienteSvc.update($scope.data.idCliente, params).then($scope.saveResponse).catch(error => {
-                    hideLoader();
-                    console.log(error)
-                })
+            if ($("#numeroIdentificacion").hasClass('is-invalid')) {
+                tS.toastr('warning', 'Ingrese el número de Identificación válido');
+                return
             }
+
+            saveUpdate();
 
         } catch (error) {
             hideLoader();
             console.log(error);
+        }
+    }
+
+    function saveUpdate() {
+        if ($scope.tipoRegistro === 1) {
+            showLoader();
+            clienteSvc.save(params).then($scope.saveResponse).catch(error => {
+                hideLoader();
+                console.log(error)
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader());
+        }
+
+        if ($scope.tipoRegistro === 2) {
+            showLoader();
+            clienteSvc.update($scope.data.idCliente, params).then($scope.saveResponse).catch(error => {
+                hideLoader();
+                console.log(error)
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader());
         }
     }
 
