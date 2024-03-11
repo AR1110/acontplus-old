@@ -194,7 +194,7 @@ class CobroService {
                         this.historialCuentas.push({
                             secuencial: this.indexDatoCobro,
                             idCuentaPorCobrar: this.group.idCuentaPorCobrar,
-                            abono: this.fS.roundNumber(historialAbono, MAX_NUMBER_ROUND_CUOTA_ABONO),
+                            abono: this.fS.roundNumber(historialAbono, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
                             saldo: this.fS.roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
                             diasMora: this.group.diasMora,
                             mora: this.group.mora,
