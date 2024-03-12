@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TechnicalSupport.API.Dtos
+﻿namespace TechnicalSupport.API.Dtos
 {
     public class OrderDto
     {

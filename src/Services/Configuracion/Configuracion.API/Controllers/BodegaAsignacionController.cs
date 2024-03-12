@@ -1,10 +1,9 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Configuracion.API.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace Configuracion.API.Controllers
 {
@@ -72,7 +71,7 @@ namespace Configuracion.API.Controllers
                 var parameters = new Dictionary<string, object>
                 {
                     {"userRoleId", User.GetUserRoleId()},
-                     { "id", id },                    
+                     { "id", id },
                 };
                 var response = await _service.UpdateAsync(parameters);
                 if (response == null) { return NoContent(); };

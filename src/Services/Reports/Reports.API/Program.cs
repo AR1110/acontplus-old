@@ -1,7 +1,5 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Reports.API.Extensions;
 using Services.Common;
@@ -42,11 +40,6 @@ namespace Reports.API
             });
 
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
-            builder.Services.AddSingleton<LogWriter>();
-
-            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
             var app = builder.Build();
 

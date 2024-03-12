@@ -4,7 +4,7 @@ using Configuracion.API.Interfaces;
 
 namespace Configuracion.API.Services
 {
-    public class BodegaAsignacionService: IBodegaAsignacionService
+    public class BodegaAsignacionService : IBodegaAsignacionService
     {
         private readonly IADORepository _repository;
 

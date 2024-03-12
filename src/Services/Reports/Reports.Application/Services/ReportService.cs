@@ -6,8 +6,8 @@ namespace Reports.Application.Services
 {
     public class ReportService : IReportService
     {
-        private readonly IADORepository _repository;
-        public ReportService(IADORepository repository)
+        private readonly IADOSqlServer _repository;
+        public ReportService(IADOSqlServer repository)
         {
             _repository = repository;
         }
