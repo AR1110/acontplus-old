@@ -135,7 +135,7 @@ BEGIN
              --               , descuento, detallesAdicionales, impuestos, idUsuario)
 
 					       SELECT ROW_NUMBER() OVER(ORDER BY dd.idDocumentoDetalle ASC) - 1 idDetalle, dd.idDocumento
-                           , @idProveedor idProveedor, dd.idArticulo, dd.idMedida, dd.codigoPrincipal, dd.codigoAuxiliar
+                           , @idProveedor idProveedor, ISNULL(dd.idArticulo , 0) idArticulo, dd.idMedida, dd.codigoPrincipal, dd.codigoAuxiliar
 					        ,dd.cantidad, a.descripcion, dd.precioUnitario
                             , dd.precioTotalSinImpuesto
                             , CAST((CAST(dd.precioTotalSinImpuesto AS decimal(15,5)) / CAST(dd.cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto
@@ -147,12 +147,9 @@ BEGIN
                             FROM Recepcion.DocumentoDetalle dd 
 							INNER JOIN Articulo a ON dd.idArticulo = a.idArticulo 
 							WHERE dd.idDocumento = @idDocumento
-
-                END
-
-                    
-                    INSERT INTO #TEMP
-			        SELECT t.idDetalle, idDocumento, @idProveedor idProveedor, ch.idArticulo, ISNULL(m.idMedida,0), t.codigoPrincipal, t.codigoAuxiliar
+                                                
+                                                INSERT INTO #TEMP
+			        SELECT t.idDetalle, idDocumento, @idProveedor idProveedor, ISNULL(ch.idArticulo,0) idArticulo, ISNULL(m.idMedida,0), t.codigoPrincipal, t.codigoAuxiliar
 			        ,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto
                     , CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto
                     , descuento, CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END detallesAdicionales
@@ -173,6 +170,39 @@ BEGIN
 			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario
                     FROM #TEMP
 
+                                    DROP TABLE #TEMP
+
+
+                END
+                ELSE
+                    BEGIN
+                     
+			        SELECT t.idDetalle, idDocumento, @idProveedor idProveedor, ISNULL(ch.idArticulo , 0) idArticulo, ISNULL(m.idMedida,0) idMedida, t.codigoPrincipal, t.codigoAuxiliar
+			        ,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto
+                    , CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto
+                    , descuento, CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END detallesAdicionales
+                    ,  impuestos
+                    , @idUsuario idUsuario
+                    INTO #TEMPII
+			        FROM @tmp t
+			        LEFT JOIN Recepcion.CompraHabitual ch ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
+			        LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
+			        LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
+			        WHERE NOT EXISTS(SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
+			                                   WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
+			        ORDER BY t.idDetalle ASC
+
+                    INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario)
+
+                    
+                    SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)), idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario
+                    FROM #TEMPII
+                    DROP TABLE #TEMPII
+
+                    END
+
 
 
 
@@ -189,6 +219,7 @@ BEGIN
 			    WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
 			    WHERE tti.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 			    AND tti.codArticulo = tt.codArticulo)
+
 		COMMIT TRAN 
 	END TRY
 	BEGIN CATCH
