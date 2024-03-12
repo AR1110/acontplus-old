@@ -63,7 +63,13 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     $scope.hasPhoneNumber = true
     let phoneNumbers
     if (params.telefono) {
-        phoneNumbers = params.telefono.split(";")
+
+        if (params.telefono.includes(";")) {
+            phoneNumbers = params.telefono.split(";")
+        }
+        if (params.telefono.includes("|")) {
+            phoneNumbers = params.telefono.split("|")
+        }
     } else {
         $scope.hasPhoneNumber = false
     }
@@ -134,7 +140,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                     $scope.phoneNumbers.push({ number: phone })
                     $scope.whatsapp.number = phone
                     $scope.$apply()
-                }  
+                }
             })
         }
     }

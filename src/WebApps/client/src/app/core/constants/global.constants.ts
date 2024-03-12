@@ -10,6 +10,7 @@ export const enum PATHS_API {
   SALES = 'Venta/',
   TECHSUPPORT = 'TechnicalSupport/',
   INVENTORY = 'Inventario/',
+  RESTAURANT = 'Restaurant/'
 }
 
 export const enum PATHS {
@@ -18,6 +19,7 @@ export const enum PATHS {
   APP_NOTIFICATION = 'Notificacion/',
   PRINT = 'Print',
   USER = 'Usuario/',
+  ESTAB_ASIGN = 'EstabAsig/'
 }
 
 export const enum DOC_TYPE {

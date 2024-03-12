@@ -29,6 +29,11 @@ export const routes: Routes = [
         path: 'sale',
         title: 'App - Venta',
         loadChildren: () => import('@sale/sale.routes').then(r => r.routes)
+      },
+      {
+        path: 'restaurant',
+        title: 'App - Restaurante',
+        loadChildren: () => import('@restaurant/restaurant.routes').then(r => r.routes)
       }
     ]
   }
