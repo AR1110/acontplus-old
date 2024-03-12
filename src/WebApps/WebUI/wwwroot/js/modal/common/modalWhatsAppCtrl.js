@@ -66,9 +66,10 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
 
         if (params.telefono.includes(";")) {
             phoneNumbers = params.telefono.split(";")
-        }
-        if (params.telefono.includes("|")) {
+        } else if (params.telefono.includes("|")) {
             phoneNumbers = params.telefono.split("|")
+        }else{
+            phoneNumbers = params.telefono.split(" ")
         }
     } else {
         $scope.hasPhoneNumber = false

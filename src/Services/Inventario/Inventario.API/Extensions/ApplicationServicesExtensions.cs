@@ -24,6 +24,7 @@ namespace Inventario.API.Extensions
             services.AddScoped<IProductPhotoService, ProductPhotoService>();
             services.AddScoped<ISubcategoryPhotoService, SubcategoryPhotoService>();
             services.AddScoped<IArticuloCodigoBarraService, ArticuloCodigoBarraService>();
+            services.AddScoped<IPrecioMasivoService, PrecioMasivoService>();
 
             services.AddSingleton<LogWriter>();
             services.AddSingleton<S3ObjectCustom>();
