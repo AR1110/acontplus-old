@@ -19,7 +19,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE OR ALTER PROCEDURE Config.PtoEmi_Asig_Get @idRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Config.PtoEmi_Asig_Get @userRoleId INT, @json VARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -31,6 +31,8 @@ BEGIN
 	SELECT @codEstab_Asig = codEstab_Asig FROM OPENJSON(@json) WITH (codEstab_Asig VARCHAR(150) '$.codEstab_Asig')
 
 	SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE codEstab_Asig = @codEstab_Asig
+
+     SET @tableNames = 'puntosEmisionAsignadas'
 
 	SELECT 
 		a.idPtoEmi_Asig

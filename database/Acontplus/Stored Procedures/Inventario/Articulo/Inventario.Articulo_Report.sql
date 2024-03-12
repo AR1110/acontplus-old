@@ -37,11 +37,7 @@ BEGIN
 	       ,@estado         VARCHAR(5)
 	       ,@usuario      VARCHAR(150)
            ,@codEstab     VARCHAR(100)
-           ,@porcentajeRenta NUMERIC(18,5)
-           ,@porcentajeComision NUMERIC(18,5)
-           ,@codDoc VARCHAR(2)
-           ,@subFamiliasChecked VARCHAR(150)
-           ,@idTarifa INT
+           
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
