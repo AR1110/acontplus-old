@@ -1607,10 +1607,10 @@
                 return;
             }
 
-            if ($("#numeroIdentificacion").hasClass('is-invalid')) {
-                tS.toastr('warning', 'Ingrese el número de Identificación válido');
-                return
-            }
+            // if ($("#numeroIdentificacion").hasClass('is-invalid')) {
+            //     tS.toastr('warning', 'Ingrese el número de Identificación válido');
+            //     return
+            // }
 
             if (data.codigoIdentificacion === "CF" && data.numeroIdentificacion.length !== 13) {
                 tS.toastr('warning', 'Número de Consumidor Final tiene que ser de 13 dígitos');
@@ -1724,11 +1724,11 @@
         }
 
         service.checkClientSRIByRUC = function (identificacion) {
-            return mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true)
+            return mS.getData('get', 'FactElect/Consultas/GetRucSRI?Ruc=' + identificacion, null, true)
         }
 
         service.checkClientSRIByCedula = function (identificacion) {
-            return mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true)
+            return mS.getData('get', 'FactElect/Consultas/GetCedulaSri?Ruc=' + identificacion, null, true)
         }
 
 
