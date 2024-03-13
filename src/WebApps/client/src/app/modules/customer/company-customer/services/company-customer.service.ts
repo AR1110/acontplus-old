@@ -10,7 +10,7 @@ import { Observable, map } from 'rxjs';
 })
 export class CompanyCustomerService {
   //For customers of Acontplus Customers (cliente)
-  url = `${PATHS_API.CUSTOMER}CompanyCustomer/`
+  url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`
   constructor(private http: HttpClient) { }
 
   async checkExistence(params: any) {

@@ -8,7 +8,7 @@ import { map } from 'rxjs';
 })
 export class CustomerService {
   //All Customers (Customer)
-  url = `${PATHS_API.CUSTOMER}Customers`
+  url = `${PATHS_API.FACT_ELECT}Customers`
   constructor(private http: HttpClient) { }
 
   get(params: any) {
