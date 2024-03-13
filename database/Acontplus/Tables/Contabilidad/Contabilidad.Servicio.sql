@@ -23,6 +23,6 @@ CREATE TABLE Contabilidad.Servicio
    ,PrecioUnitario NUMERIC(18,5) NOT NULL
    ,PrecioCosto NUMERIC(18,5) NOT NULL
    ,PrecioTotalSinImpuesto NUMERIC(18,5) NOT NULL
-   ,Estado BIT DEFAULT 1 NOT NULL
+   ,Estado INT DEFAULT 1 NOT NULL
 )
 

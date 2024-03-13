@@ -376,6 +376,8 @@ BEGIN
                   ,@codDoc             = codDoc
                   ,@subFamiliasChecked = subFamiliasChecked
                   ,@idTarifa           = idTarifa
+                  ,@porcentajeRenta    = porcentajeRenta
+                  ,@porcentajeComision = porcentajeComision
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo   BIT 
@@ -389,6 +391,8 @@ BEGIN
                ,codDoc             VARCHAR(2)
                ,subFamiliasChecked VARCHAR(150) 
                ,idTarifa           INT
+               ,porcentajeRenta    NUMERIC(18,5)
+               ,porcentajeComision NUMERIC(18,5)
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -435,15 +439,17 @@ BEGIN
 
 			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
-			--Entidad 
+			--> Entidad 
 			SELECT e.ruc
 				  ,e.razonSocial 
 				  ,e.nombreComercial	
-				  ,ISNULL(e.telefono, '')telefonoEntidad
-				  ,ISNULL(e.direccion, '')direccionEntidad			
-				  ,tituloReporte = 'REPORTE RENTABILIDAD BIENES'
-				  ,usuario       = @usuario
-				  ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
+				  ,ISNULL(e.telefono, '')                                                       as telefonoEntidad
+				  ,ISNULL(e.direccion, '')                                                      as direccionEntidad			
+				  ,'REPORTE RENTABILIDAD BIENES'                                                as tituloReporte
+				  ,@usuario                                                                     as usuario
+				  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFecha
+                  ,@porcentajeRenta                                                             as porcentajeRenta
+                  ,@porcentajeComision                                                          as porcentajeComision
 			FROM Entidad e WITH (NOLOCK)
 			WHERE e.idEntidad = @idEntidad 
 			
@@ -581,17 +587,19 @@ BEGIN
 
 			SET @sql = @sql + 'ORDER BY se.ArticuloId,se.FechaEmision ASC '
 
-			--Entidad 
+			--> Entidad 
 			SELECT e.ruc
 				  ,e.razonSocial 
 				  ,e.nombreComercial	
-				  ,ISNULL(e.telefono, '')telefonoEntidad
-				  ,ISNULL(e.direccion, '')direccionEntidad			
-				  ,tituloReporte = 'REPORTE RENTABILIDAD SERVICIOS'
-				  ,usuario       = @usuario
-				  ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
+				  ,ISNULL(e.telefono, '')                                                       as telefonoEntidad
+				  ,ISNULL(e.direccion, '')                                                      as direccionEntidad			
+				  ,'REPORTE RENTABILIDAD BIENES'                                                as tituloReporte
+				  ,@usuario                                                                     as usuario
+				  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFecha
+                  ,@porcentajeRenta                                                             as porcentajeRenta
+                  ,@porcentajeComision                                                          as porcentajeComision
 			FROM Entidad e WITH (NOLOCK)
-			WHERE e.idEntidad = @idEntidad 
+			WHERE e.idEntidad = @idEntidad  
 			
 			EXEC sp_executesql @sql
 							  ,@params
