@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\Ventas\Factura.rdlc" />
+    <None Remove="Reports\Ventas\FacturaGeneral.rdl" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Reports\Compras\RecepcionFactura.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -155,6 +160,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\CuentaPorCobrarCuotas.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\Factura.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\FacturaGeneral.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\NotaCreditoCliente.rdlc">
