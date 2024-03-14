@@ -19,6 +19,7 @@ namespace Reports.Application.Services
         }
         public ReportResponse GetReport(DataSet dsParams, DataSet ds, bool offline = false)
         {
+            var response = new ReportResponse();
             var reportProps = DataTableMapper.BindData<ReportProps>(dsParams.Tables["ReportProps"]);
             using (var lr = new LocalReport())
             {
@@ -67,7 +68,11 @@ namespace Reports.Application.Services
                 var firstDataSource = ds.Tables[0];
                 if (firstDataSource.Columns.Contains("codigoAutorizacion"))
                 {
-                    lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion")), 0, BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion")).Length)));
+                    var byteBarcode = BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion"));
+                    lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(
+                        byteBarcode,
+                        0,
+                        byteBarcode.Length)));
                     lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
                 }
 
@@ -98,7 +103,11 @@ namespace Reports.Application.Services
                 byte[] fileReport = lr.Render(reportProps.ReportFormat, null, out _, out _, out _, out _, out _);
                 Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileContentType fc);
                 Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileExtension fe);
-                return new ReportResponse { FileContents = fileReport, ContentType = EnumExtensions.DisplayName(fc), FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + EnumExtensions.DisplayName(fe), Encoding.UTF8) };
+                response.FileContents = fileReport;
+                response.ContentType = EnumExtensions.DisplayName(fc);
+                response.FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + EnumExtensions.DisplayName(fe), Encoding.UTF8);
+                return response;
+                //return new ReportResponse { FileContents = fileReport, ContentType = EnumExtensions.DisplayName(fc), FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + EnumExtensions.DisplayName(fe), Encoding.UTF8) };
             }
         }
         public async Task<ReportResponse> GetErrorAsync()

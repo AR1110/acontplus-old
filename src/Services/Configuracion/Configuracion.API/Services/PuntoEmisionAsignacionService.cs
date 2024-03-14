@@ -1,17 +1,16 @@
 ﻿using Common.Core.Interfaces;
-using Common.Core.Models;
 using Common.Core.Utils;
 using Configuracion.API.Interfaces;
 
 namespace Configuracion.API.Services
 {
-    public class PuntoEmisionAsignacionService: IPuntoEmisionAsignacionService
+    public class PuntoEmisionAsignacionService : IPuntoEmisionAsignacionService
     {
-        private readonly IADORepository _repository; 
+        private readonly IADORepository _repository;
 
         public PuntoEmisionAsignacionService(IADORepository repository)
         {
-            _repository = repository; 
+            _repository = repository;
         }
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)

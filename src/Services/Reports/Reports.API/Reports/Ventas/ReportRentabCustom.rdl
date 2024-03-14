@@ -143,18 +143,6 @@
           <DataField>totalValorRentabilidad</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="porcentajeRentabilidad">
-          <DataField>porcentajeRentabilidad</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="rentabilidad">
-          <DataField>rentabilidad</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="ganancia">
-          <DataField>ganancia</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -2266,7 +2254,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!porcentajeRentabilidad.Value</Value>
+                                  <Value>=Round(Fields!totalPrecioCosto.Value *  First(Fields!porcentajeRenta.Value, "headerDs") / 100, 2)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2320,7 +2308,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!rentabilidad.Value</Value>
+                                  <Value>=Round((Fields!precioTotalSinImpuestos.Value - Fields!totalPrecioCosto.Value) - (Fields!totalPrecioCosto.Value * First(Fields!porcentajeRenta.Value, "headerDs") / 100), 2)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2367,14 +2355,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="ganancia">
+                        <Textbox Name="Textbox6">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!ganancia.Value</Value>
+                                  <Value>=Format(((Fields!precioTotalSinImpuestos.Value - (Fields!cantidad.Value * Fields!precioCosto.Value)) - (((Fields!cantidad.Value * Fields!precioCosto.Value) * First(Fields!porcentajeRenta.Value, "headerDs")) / 100) *  First(Fields!porcentajeComision.Value, "headerDs")) / 100, "N2")</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2386,7 +2374,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>ganancia</rd:DefaultName>
+                          <rd:DefaultName>Textbox6</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>

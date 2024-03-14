@@ -1,0 +1,39 @@
+<form autocomplete="off" [formGroup]="dataForm" (ngSubmit)="save()">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{params.id>0?'Editar Piso': 'Nuevo Piso'}}
+    </h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body"> 
+    <div class="form-group">
+      <label for="description">Descripción: </label>
+      <input type="text" name="description" formControlName="description" id="description" class="form-control" (keyup)="setCode()"
+        required>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="code">Código:</label>
+          <input type="text" name="code" id="code" formControlName="code" class="form-control" required>
+
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="capacity">Capacidad:</label>
+          <input type="number" name="capacity" id="capacity" formControlName="capacity" class="form-control" required>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-outline-success">
+      Guardar
+    </button>
+    <button type="button" class="btn btn-outline-dark" (click)="closeModal()">Cerrar</button>
+  </div>
+</form>

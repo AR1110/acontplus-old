@@ -647,7 +647,7 @@
                         try {
                             showLoader();
 
-                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await commonService.checkClientSRIByRUC(textSearch);
+                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await clienteService.checkClientSRIByRUC(textSearch);
                             hideLoader();
                             if (!numeroRuc) {
                                 toastService.toastr('warning', error)
@@ -688,7 +688,7 @@
                     if (textSearch.length === 10) {
                         try {
                             showLoader();
-                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await commonService.checkClientSRIByCedula(textSearch)
+                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await clienteService.checkClientSRIByCedula(textSearch)
                             hideLoader();
                             if (!identificacion || !nombreCompleto) {
                                 toastService.toastr('warning', error)

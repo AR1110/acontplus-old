@@ -1,7 +1,5 @@
 ﻿using Common.Core.Models;
-using Common.Core.Models.Config;
 using Common.Core.Utils;
-using Common.Infrastructure.Repository;
 using Configuracion.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
@@ -73,7 +71,7 @@ namespace Configuracion.API.Controllers.Sri
                 var parameters = new Dictionary<string, object>
                 {
                     {"userRoleId", User.GetUserRoleId()},
-                     { "id", id },                    
+                     { "id", id },
                 };
                 var response = await _service.UpdateAsync(parameters);
                 if (response == null) { return NoContent(); };

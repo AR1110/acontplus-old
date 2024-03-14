@@ -1,21 +1,12 @@
-﻿@page
-@model WebUI.Areas.PrecioMasivo.Pages.IndexModel
+@page
+@model WebUI.Pages.Inventario.PrecioMasivo.Index
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .grid-articles {
-        width: 100%;
-        height: 400px;
-    }
-
-    .ui-grid,
-    .ui-grid-viewport {
-        width: 100% !important;
-        height: 500px !important;
-    }
+     
     #grid-articles .ui-grid-header-cell .ui-grid-cell-contents {
         text-align: center;
     }
@@ -42,17 +33,7 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="row">
-                @* <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                <div class="form-group">
-                <label for="codEstab">Establecimientos:</label>
-                <select name="codEstab" id="codEstab" class="form-control" ng-model="mainForm.codEstab">
-                <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                {{item.nombreComercial}}
-                </option>
-                </select>
-                </div>
-                </div> *@
+        <div class="row"> 
                 <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
                     <div class="form-group">
                         <label for="">Tarifas:</label>
@@ -77,28 +58,23 @@
 
                 <div class="col-lg-4 col-md-4 col-sm-4 col-12" ng-if="mainForm.opcion == 1">
                     <div class="form-group">
-                        <label for="articuloFiltro">Articulo</label>
-                        <input type="text" id="articuloSearchFiltro" autocomplete="off" name="articuloSearchFiltro"
-                            class="form-control border-select" placeholder="Ingrese Descripción del Articulo"
-                            ng-model="$ctrl.articuloFiltro.descripcion" ng-keyup="$ctrl.onKeyupArticuloSearchFiltro()"
-                            uib-typeahead="a as a.descripcion for a in articuloSearch($viewValue)"
-                            typeahead-loading="$ctrl.articuloFiltro.loading"
-                            typeahead-no-results="$ctrl.articuloFiltro.noResults"
-                            typeahead-template-url="articuloSearchFiltroTemplate.html" typeahead-editable="false"
-                            typeahead-on-select="articleSelected($item)" onclick="this.select()" />
+                        <label for="articuloFiltro">Articulo</label> 
+                        <input type="text" 
+                        ng-model="dataSearchProduct.name" 
+                        class="form-control border-select" 
+                        article-search-drtv 
+                        on-select="onSelectProduct(result)"
+                        on-keyup-article="onKeyupProduct()"
+                        placeholder="...">
 
-                        <script type="text/ng-template" id="articuloSearchFiltroTemplate.html">
+                        <script type="text/ng-template" id="autocompleteArticleTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
                                 <span class="item-title">
                                     <small> {{match.model.descripcion}}</small><br>
                                     <small><b>Código: </b>{{match.model.codigo}}</small>
                                 </span>
                             </div>
-                        </script>
-                        <span class="ml-5" ng-if="$ctrl.articuloFiltro.loading"> <i class="fas fa-sync-alt fa-xs"></i>
-                            Loading...</span>
-                        <small class="text-danger ml-5" ng-if="$ctrl.articuloFiltro.noResults">No se encontraron
-                            resultados</small>
+                        </script> 
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" ng-if="mainForm.opcion==2">
@@ -114,7 +90,7 @@
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" ng-if="mainForm.opcion==3">
                     <div class="form-group">
-                        <label for="idSubFamilia">Subfamilias:</label>
+                        <label for="idSubFamilia">SubFamilias:</label>
                         <select name="idSubFamilia" id="idSubFamilia" class="form-control"
                             ng-model="mainForm.idSubFamilia" ng-change="getArticles()">
                             <option ng-value="item.idSubFamilia" ng-repeat="item in subfamilias">
@@ -124,7 +100,19 @@
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" ng-if="mainForm.opcion==4">
-                    @await Html.PartialAsync("~/Pages/Compras/Proveedor/_ProveedorAutocompleteFiltro.cshtml")
+                    <div class="form-group">
+                        <label for="proveedorFiltro">Proveedor:</label>
+                        <input type="text" id="providerInputSearch" class="form-control border-select"
+                            ng-model="dataSearchProveedor.name" provider-search-drtv
+                            on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
+                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteProviderTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                            </div>
+                        </script>
+                    </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" ng-if="mainForm.opcion==5">
                     <div class="form-group">
@@ -135,29 +123,34 @@
                     </div>
                 </div>
             </div>
-            <div class="row" ng-show="articles.length > 0">
-                <div class="col-6">
+        </div>
+    </div>
+
+    <div class="card" ng-show="articles.length > 0">
+        <div class="card-body"> 
+            <div class="row">
+                <div class="col-6 d-flex justify-content-start">
                     <div class="form-group">
                         <button type="button" class="btn btn-outline-primary" ng-click="rollbackChanges()"><i class="ti-control-backward"></i> Deshacer Cambios</button>
                     </div>
                 </div>
-            </div>
-            <div class="row" ng-show="articles.length > 0">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <div ui-grid="gridOptions" ui-grid-edit ui-grid-auto-resize ui-grid-resize-columns ui-grid-cellNav
-                        class="grid-articles"></div>
-                </div>
-            </div>
-            <hr>
-            <div class="row" ng-if="articlesToSave.length > 0">
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                    <button type="button" class="btn btn-success btn-lg" ng-click="save()"><i
-                            class="fa fa-save"></i> Guardar Todo</button>
-                            <button class="btn btn-warning btn-lg" ng-click="refresh()">
+
+                <div class="col-6 d-flex justify-content-end" ng-if="articlesToSave.length > 0">
+                    <button type="button" class="btn btn-success btn-lg m-1" ng-click="save()">
+                        <i class="fa fa-save"></i> Guardar Todo
+                    </button>
+                   <button class="btn btn-warning btn-lg   m-1" ng-click="refresh()">
                         <i class="fa fa-close"></i> Cancelar
                     </button>
                 </div>
             </div>
+
+            <div class="row mt-1">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div ui-grid="gridOptions" ui-grid-edit ui-grid-auto-resize ui-grid-resize-columns ui-grid-cellNav
+                        class="grid-articles"></div>
+                </div>
+            </div> 
             <!--
             <div class="table-responsive" ng-if="articles.length > 0">
                 <table class="table">
@@ -224,5 +217,6 @@
 </div>
 
 @section Scripts{
-    <script type="text/javascript" src="~/js/inventario/controllers/precioMasivoCtrl.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/inventario/services/precioMasivoService.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/inventario/controllers/precioMasivoCtrl.min.js" asp-append-version="true"></script>
 }

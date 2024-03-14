@@ -50,7 +50,7 @@ app.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 app.UseSwaggerDocumentation();
 
-app.UseRouting(); 
+app.UseRouting();
 
 app.UseAuthentication();
 

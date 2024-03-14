@@ -1,11 +1,11 @@
-﻿using Common.Core.Models;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Reports.Core.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
 
-namespace Reports.API.Controllers
+namespace Common.API.Controllers
 {
     public class DashboardController : BaseApiController
     {

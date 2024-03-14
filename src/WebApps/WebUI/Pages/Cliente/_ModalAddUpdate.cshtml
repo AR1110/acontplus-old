@@ -15,7 +15,13 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
+                                <div class="d-flex flex-row">
                                     <label for="">Tipo Identificación: <span class="text-danger">*</span> </label>
+                                    <div class="pl-2" >
+                                        <input type="checkbox" id="isManual" ng-model="data.isManual" ng-change="askToManual()" />
+                                        <label for="isManual">Manual</label>
+                                    </div>
+                                </div>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <select class="form-control border-select"
@@ -44,7 +50,7 @@
                                         <div class="input-group-append"> 
                                             <button type="button" class="btn btn-info btn-sm" ng-click="getCompanyCustomerSri()">
                                                 <i class=" fas fa-sync"></i>
-                                            </button>
+                                            </button> 
                                         </div>  
 
                                         <small class="invalid-feedback text-right">{{message}} </small>
