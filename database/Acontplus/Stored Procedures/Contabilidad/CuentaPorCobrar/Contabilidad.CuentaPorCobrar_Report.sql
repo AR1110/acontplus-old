@@ -366,7 +366,7 @@ BEGIN
                           AND tt.codTransaccion =''S'' 
                           AND tt.codDoc IN (''FE'', ''NE'') '
 
-			SELECT @ckFecha            = ckFecha
+			SELECT @ckFecha            = checkBoxFecha
 				  ,@idArticulo         = idArticulo
 				  ,@idUsuario          = idUsuario 
 				  ,@fechaFin           = fechaFin
@@ -381,7 +381,7 @@ BEGIN
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo   BIT 
-		       ,ckFecha            BIT 
+		       ,checkBoxFecha      BIT 
 		       ,idArticulo         INT 
 		       ,idUsuario          INT
 		       ,fechaInicio        DATETIME2
@@ -518,7 +518,7 @@ BEGIN
                         WHERE ar.idEntidad = @idEntidad
                           AND se.Estado = 1  '
 
-			SELECT @ckFecha            = ckFecha
+			SELECT @ckFecha            = checkBoxFecha
 				  ,@idArticulo         = idArticulo
 				  ,@idUsuario          = idUsuario 
 				  ,@fechaFin           = fechaFin
@@ -531,7 +531,7 @@ BEGIN
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo   BIT 
-		       ,ckFecha            BIT 
+		       ,checkBoxFecha      BIT 
 		       ,idArticulo         INT 
 		       ,idUsuario          INT
 		       ,fechaInicio        DATETIME2
