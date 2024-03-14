@@ -56,7 +56,8 @@ export class MovimientoCajaModalComponent {
     fromDate: formatDateMoment(new Date()),
     toDate: formatDateMoment(new Date()),
     statusMovement: '',
-    codEstado: ''
+    codEstado: '',
+    checkBoxDate: false
   }
 
   page = 1;
@@ -88,7 +89,7 @@ export class MovimientoCajaModalComponent {
       idCaja: this.params.idCaja,
       pageIndex: this.dataSearch.pageIndex,
       pageSize: this.dataSearch.pageSize,
-      checkBoxDate: true,
+      checkBoxDate: this.dataSearch.checkBoxDate,
       dateStart: this.dataSearch.fromDate,
       dateEnd: this.dataSearch.toDate,
       statusMovement: [""].includes(this.dataSearch.statusMovement) ? null : this.dataSearch.statusMovement
