@@ -192,12 +192,18 @@
                                             </md-button>
                                         </md-menu-item>
 
-
                                         <md-menu-item ng-if="accion.reporte">
                                             <md-button ng-click="getReport(item)">
-                                                <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
+                                                <span md-menu-align-target><i class="ti-file"></i> PDF</span>
                                             </md-button>
                                         </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.reporte">
+                                            <md-button ng-click="getReportHistorial(item)">
+                                                <span md-menu-align-target><i class="ti-receipt"></i> PDF Historial</span>
+                                            </md-button>
+                                        </md-menu-item>
+
                                     </md-menu-content>
                                 </md-menu>
                             </td>
