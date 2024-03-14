@@ -354,13 +354,14 @@ BEGIN
 							  ,serieComprobante = tt.nroDocumento
                               ,tt.usuario
                               ,tt.bodega
-                              ,tt.medidaSalida
+                              ,me.descripcion as medidaSalida
                               ,tt.subFamilia
                               ,valorRentabilidad           = CAST((tt.precioUnitario - tt.precioCosto) as numeric(18,2))
                               ,valorPorcentajeRentabilidad = CAST((((tt.precioUnitario / tt.precioCosto) * 100) - 100) as numeric(18,2))
                               ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCosto) as numeric(18,2))
                               ,totalValorRentabilidad      = CAST( (tt.cantidad * (tt.precioUnitario - tt.precioCosto)) as numeric(18,2))
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
+                        INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida = tt.idMedida 
 						WHERE tt.idEntidad = @idEntidad 
                           AND tt.estado = 1 
                           AND tt.codTransaccion =''S'' 
