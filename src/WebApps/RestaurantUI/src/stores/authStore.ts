@@ -1,9 +1,7 @@
-import { DataLogin, Establecimiento, UserData, UserEmptyState, estabInitialState } from "@/core/models";
+import { DataLogin, estabInitialState, Establecimiento, UserData, UserEmptyState } from "@/core/models";
 import { authService, getUserData, persistenceClear, setEstabs, setToken, setUserData } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities";
 import { create } from "zustand";
-
-
 
 type AuthState = {
     loading: boolean
@@ -32,7 +30,7 @@ export const useAuthStore = create<AuthState>((set) => (
                 dataEstab
             })
         },
-        setPuntoEmision(puntoEmision){
+        setPuntoEmision(puntoEmision){ 
             set({
                 puntoEmision
             })

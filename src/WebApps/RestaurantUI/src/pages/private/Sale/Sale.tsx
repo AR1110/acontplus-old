@@ -56,6 +56,7 @@ export default function Sale() {
         SaleService.getDataForForm(JSON.stringify({
             codEstab: dataEstab?.codEstab
         })).then(response => {
+         
             const warehouseData = response.warehouses.filter(
                 warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(warehouse => (warehouse.defaultBodega));
@@ -96,6 +97,7 @@ export default function Sale() {
                     numberTable
                 }
             })
+        
             if (emissionPointData) {
                 setPuntoEmision(emissionPointData.ptoEmi)
             }

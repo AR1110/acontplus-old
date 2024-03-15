@@ -27,7 +27,7 @@ BEGIN
     --cliente por defecto agregado en configuracion general
     SELECT TOP 1 @customerCompanyId = ISNULL(JSON_VALUE(jsonConfig, '$.idCliente'), 0) FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND  codConfig = 'CV'
 
-	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente,config,vendedores'
+	SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente,config,vendedores'
 	
     SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
     
