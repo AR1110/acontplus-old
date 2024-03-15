@@ -19,10 +19,7 @@ GO
 -- Create date: 2023-03-09
 -- Description:	 SP FOR DELETE DETAIL
 -- =============================================
-IF OBJECT_ID(N'Recepcion.DocumentoDetalle_Delete', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.DocumentoDetalle_Delete 
-GO
-CREATE PROCEDURE Recepcion.DocumentoDetalle_Delete	@idUsuarioRol INT,@id INT 
+CREATE OR ALTER PROCEDURE Recepcion.DocumentoDetalle_Delete	@idUsuarioRol INT,@id INT 
 AS
 BEGIN
 	SET NOCOUNT ON; 
@@ -50,8 +47,8 @@ BEGIN
 				BEGIN
 			
 			        DECLARE @codDoc AS VARCHAR(2) ,@idTipoDocumento INT ,@idTipoTransaccion INT ,@idArticulo INT 
-                           ,@idBodega INT ,@cantidad NUMERIC(18,2) ,@fraccion NUMERIC(18,5) ,@idMedida INT 
-                           ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5)
+                           ,@idBodega INT ,@fraccion NUMERIC(18,5) ,@idMedida INT 
+                           ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5) ,@cantidadTransaccion NUMERIC(18,5)
 
                     -- variables 
 
@@ -60,7 +57,7 @@ BEGIN
                     SELECT TOP 1 @idArticulo = idArticulo
                                 ,@idBodega   = idBodega 
                                 ,@idMedida   = idMedida
-                                ,@cantidad   = cantidad * IIF(@codDoc = 'FE',-1,1)
+                                ,@cantidadTransaccion   = cantidad * IIF(@codDoc = 'FE',-1,1)
                     FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
 
 			        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo  = @codDoc
@@ -70,18 +67,18 @@ BEGIN
                     -- Articulo Fraccionado
                     IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida)
                         BEGIN
-                            SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+                            SELECT TOP 1 @cantidadTransaccion = @cantidadTransaccion  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
                         END
 					
                     IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
                         BEGIN
-                            SELECT @cantidad = 0       
+                            SELECT @cantidadTransaccion = 0       
                         END 
 
                     -- TRAN 
 			        UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion AND idArticulo = @idArticulo
 
-                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidadTransaccion,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
 	                SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
 
