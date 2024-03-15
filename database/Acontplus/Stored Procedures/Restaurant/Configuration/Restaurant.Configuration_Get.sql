@@ -59,32 +59,32 @@ BEGIN
 	SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
 	SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)
 
-    SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
-	FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
-	INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
-	INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
- 	WHERE ea.idUsuarioRol = @userRoleId
+ --   SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
+	--FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
+	--INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
+	--INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
+ --	WHERE ea.idUsuarioRol = @userRoleId
 
-    SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
-    --SELECT idEstablecimiento
-    --            ,nombreComercial
-    --            ,codEstab
-    --            ,idPuntoEmision
-    --            ,ptoEmi + '-' + estab as ptoEmi
-    --            ,defaultEstab
-    --            ,defaultPtoEmi 
-    --    FROM v_PtoEmi_Asign WITH(NOLOCK) 
-    --    WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+ --   SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+    SELECT idEstablecimiento
+                ,nombreComercial
+                ,codEstab
+                ,idPuntoEmision
+                ,ptoEmi + '-' + estab as ptoEmi
+                ,defaultEstab
+                ,defaultPtoEmi 
+        FROM v_PtoEmi_Asign WITH(NOLOCK) 
+        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
-    --    SELECT idEstablecimiento
-    --            ,nombreComercial
-    --            ,codEstab
-    --            ,idBodega
-    --            ,bodega
-    --            ,defaultEstab
-    --            ,defaultBodega 
-    --    FROM v_Bodega_Asign WITH(NOLOCK) 
-    --    WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+        SELECT idEstablecimiento
+                ,nombreComercial
+                ,codEstab
+                ,idBodega
+                ,bodega
+                ,defaultEstab
+                ,defaultBodega 
+        FROM v_Bodega_Asign WITH(NOLOCK) 
+        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
     SELECT Id, Capacity, Code, [Description]  FROM Restaurant.[Floor] WHERE CodEstab = @codEstab
 
