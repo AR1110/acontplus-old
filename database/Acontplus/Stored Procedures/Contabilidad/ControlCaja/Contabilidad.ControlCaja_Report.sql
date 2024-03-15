@@ -75,13 +75,14 @@ BEGIN
     --> Reporte Control Caja
     IF @tipo = 1 
         BEGIN 
-	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,abono,saldo,pay,idEntidadFinanciera,cobro)
+	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro)
 	        SELECT 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
 		          ,IIF(cc.codDoc = '01','FV',cc.codDoc)
 		          ,cc.serieComprobante 
 		          ,cc.fechaEmision
 		          ,cl.nombreFiscal
 		          ,cc.importeTotal
+                  ,hc.saldo
 				  ,IIF(co.cobro = 1,hc.abono,0)                                              as abono
 				  ,hc.saldo - IIF(co.cobro = 1,hc.abono,0)                                   as saldo
 				  ,ISNULL(sf.descripcion,'') + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','') as pay
@@ -339,6 +340,7 @@ BEGIN
 		          ,fechaEmision = dbo.AFTConvertDate(fechaEmision)+dbo.AFTConvertHora(fechaEmision)
 		          ,persona
 		          ,total = CAST(total AS numeric(15,2))
+                  ,CAST(IIF(tipDoc = 'FV' OR tipDoc = 'NE',totalAnterior,total) AS numeric(18,2)) as saldoAnterior
 		          ,abono = CAST(abono AS numeric(15,2))
 		          ,saldo = CAST(saldo AS numeric(15,2))
 		          ,pay =   pay
@@ -378,16 +380,17 @@ BEGIN
 
             SET @sql = 'SELECT * FROM 
                         (
-                            SELECT nroComprobante  = ''CI'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(ci.nroDocumento)
-		                          ,doc             = IIF(cc.codDoc = ''01'',''FV'',cc.codDoc)
-		                          ,nroDoc          = cc.serieComprobante 
-		                          ,fechaEmision    = cc.fechaEmision
-		                          ,agenteEconomico = cl.nombreFiscal
-		                          ,total           = cc.importeTotal
-				                  ,IIF(co.cobro = 1,hc.abono,0)                                              as abono
-				                  ,hc.saldo - IIF(co.cobro = 1,hc.abono,0)                                   as saldo
-				                  ,ISNULL(sf.descripcion,'''') + '' '' +  IIF(co.posfechado = 1,''POSFECHADO0'','''') as pay
-		                          ,co.idEntidadFinanciera
+                            SELECT ''CI'' + ''-'' + es.estab + ''-'' + Helper.F_Auto_Sequential(ci.nroDocumento)     as nroComprobante
+		                          ,IIF(cc.codDoc = ''01'',''FV'',cc.codDoc)                                          as doc
+		                          ,cc.serieComprobante                                                               as nroDoc
+		                          ,FORMAT(cc.fechaEmision, ''dd/MM/yyyy HH:mm'')                                     as fechaEmision
+		                          ,cl.nombreFiscal                                                                   as agenteEconomico
+		                          ,CAST(cc.importeTotal as numeric(18,2))                                            as total
+                                  ,CAST(hc.saldo as numeric(18,2))                                                   as saldoAnterior
+				                  ,CAST(IIF(co.cobro = 1,hc.abono,0) as numeric(18,2))                               as abono
+				                  ,CAST(hc.saldo - IIF(co.cobro = 1,hc.abono,0) as numeric(18,2))                    as saldo
+				                  ,ISNULL(sf.descripcion,'''') + '' '' +  IIF(co.posfechado = 1,''POSFECHADO'','''') as pay
+		                          ,co.idEntidadFinanciera                                                            as idEntidadFinanciera
 			                FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			                INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
 	                        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso = ci.idComprobanteIngreso
@@ -443,7 +446,16 @@ BEGIN
 														                        (
 														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
 														                        )
-							                        END 
+							                        END
+                                ,total            = CASE td.codigo WHEN ''A''  THEN 
+														                        (
+														                        SELECT CAST(an.valor as numeric(18,2)) FROM dbo.Anticipo an WITH (NOLOCK) WHERE an.idAnticipo = cd.idComprobante
+														                        )  
+										                           WHEN ''IC'' THEN 
+														                        (
+														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
+														                        )
+							                        END
 		                        ,CAST(cd.abono as numeric(18,2)) as abono 
 		                        ,CAST(0 as NUMERIC(18,2))        as saldo
                                 ,pay              = CASE td.codigo WHEN ''A''  THEN 
@@ -510,6 +522,11 @@ BEGIN
 														                        )
 							                        END
 		                        ,total            = CASE td.codigo WHEN ''EC'' THEN 
+														                        (
+														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
+														                        )
+							                        END * -1
+                                ,total            = CASE td.codigo WHEN ''EC'' THEN 
 														                        (
 														                        SELECT CAST(mc.valor as numeric(18,2)) FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = pd.idComprobante
 														                        )
