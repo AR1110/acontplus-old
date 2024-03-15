@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.Runtime.Internal.Transform;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
 using Restaurant.Infrastructure.Data;
@@ -22,6 +23,30 @@ namespace Restaurant.API.Controllers
         public async Task<ActionResult<IEnumerable<AppTable>>> GetTables()
         {
             return await _context.Tables.Include(x => x.Room).ToListAsync();
+        }
+
+        [HttpGet("GetAll/{codEstab}")]
+        public async Task<ActionResult<Dictionary<string, object>>> GetAll(string codEstab)
+        {
+            var rooms = await _context.Rooms.Include(x => x.Floor)
+                .Where(x => x.Floor.CodEstab == codEstab && x.Deleted == null)
+                .ToListAsync();
+            var floors = await _context.Floors
+                .Where(x => x.CodEstab == codEstab && x.Deleted == null)
+                .ToListAsync();
+
+            var tables = await _context.Tables
+                .Include(x => x.Room)
+                .Where(x => x.Room.Floor.CodEstab == codEstab && x.Deleted == null)
+                .ToListAsync();
+
+            var result = new Dictionary<string, object>{
+                {"rooms", rooms },
+                { "floors", floors },
+                { "tables", tables }
+            };
+
+            return Ok(result);
         }
 
         [HttpGet("GetByCode/{codEstab}")]
