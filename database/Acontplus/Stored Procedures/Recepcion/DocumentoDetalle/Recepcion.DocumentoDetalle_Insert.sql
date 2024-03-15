@@ -165,13 +165,14 @@ BEGIN
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
 					INSERT INTO Inventario.Transaccion 
-                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
+                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
 			        SELECT @idTipoTransaccion
                            ,idArticulo
                            ,idBodega
                            ,@idTipoDocumento
                            ,@idDocumento
                            ,idMedida
+                           ,td.cantidad
                            ,(ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af WITH (NOLOCK) WHERE af.idArticulo = td.idArticulo AND af.idMedida = td.idMedida ),1) * td.cantidad) * @multiplier
                            ,precioUnitario
                            ,precioUnitario
