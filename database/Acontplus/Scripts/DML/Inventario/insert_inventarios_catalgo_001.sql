@@ -3,6 +3,8 @@ GO
 
 --ALTER TABLE Inventario.Transaccion add cantidadTransaccion NUMERIC(18,5) NOT NULL
 
+--DELETE FROM Inventario.Transaccion
+
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('E', 'Entrada')
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('S', 'Salida')
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('T', 'Transferencia')
