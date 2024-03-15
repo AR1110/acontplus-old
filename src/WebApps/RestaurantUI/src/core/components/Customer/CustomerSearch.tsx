@@ -235,8 +235,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                 value={customerName}
                 onInputChange={handleInputChange}
                 onChange={(_e, _v, _r, details) => {
-                    const customerData = details?.option;
-                    console.log(customerData)
+                    const customerData = details?.option; 
                     //Gestionar el agregar o actualizar clinte
                     refCustomerCompanyId.current = customerData?.customerCompanyId ?? 0;
 

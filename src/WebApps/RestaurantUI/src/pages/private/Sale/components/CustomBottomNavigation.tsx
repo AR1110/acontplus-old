@@ -17,8 +17,7 @@ import { useMobileDetect } from "@/hooks";
    
   const navigation = useSaleStore(state=>state.navigation);
 
-  const handleChange = (event: SyntheticEvent, newValue: string) => {
-    console.log(event);
+  const handleChange = (_: SyntheticEvent, newValue: string) => {
     setValue(newValue);
     if (newValue === "ITEMS") {
       navigation.openDialogCustom();

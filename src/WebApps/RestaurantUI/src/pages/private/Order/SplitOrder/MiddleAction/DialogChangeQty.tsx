@@ -1,17 +1,10 @@
-import React, { forwardRef, useState } from 'react'
-import { Box, Button, Dialog, DialogActions, DialogContent, Grid, Slide, Stack, Typography, styled } from '@mui/material';
-import {
-    DataGrid,
-    GridCellModes,
-    GridCellModesModel,
-    GridCellParams,
-    GridColDef,
-    GridPreProcessEditCellProps,
-    GridRowModel,
-    GridValueGetterParams
-} from '@mui/x-data-grid';
+import { Box, Button, Dialog, DialogActions, DialogContent, Grid, Slide, Stack, styled, Typography } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
+import { DataGrid, GridCellModes, GridCellModesModel, GridCellParams, GridColDef, GridPreProcessEditCellProps, GridRowModel, GridValueGetterParams } from '@mui/x-data-grid';
+import React, { forwardRef, useState } from 'react'
+
 import { useSplitOrderContext } from '../../context';
+
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
     { field: 'description', headerName: 'Descripción', width: 250 },
@@ -180,7 +173,10 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
     const next = () => {
         const mergeRightOrderItems = mergeArraysByField(changeOrderItems, rightOrderItems, 'id');
         const mergeLeftOrderItems = mergeArraysByFieldLeft(changeOrderItems, leftOrderItems, 'id');
+   
         console.log(mergeRightOrderItems)
+        console.log(mergeLeftOrderItems)
+        
         setRightOrderItem(mergeRightOrderItems);
         setLeftOrderItem(mergeLeftOrderItems);
         setLeftCheckedOrderItems([]);

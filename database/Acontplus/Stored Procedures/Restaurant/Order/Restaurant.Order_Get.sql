@@ -190,7 +190,7 @@ BEGIN
                                         itemTypeCode, remainingQuantity, medidasFraccionado, medidasPrincipal, medida
                                         )
             SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, 
-                    va.descripcion, va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = CAST((o_i.Price + o_i.TaxValue) as numeric(18,5)),
+                    va.descripcion, va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = CAST((o_i.Price * (sti.porcentaje/100)) + o_i.Price as numeric(18,5)),
                     o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
                     
                     ISNULL(
@@ -239,7 +239,7 @@ BEGIN
                medidasFraccionado, medidasPrincipal, medida
             )
             SELECT o_i.uuid, o_i.id, o_i.orderId, o_i.ItemTypeId, o_i.MenuId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, va.descripcion,
-                va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = cast((o_i.Price + o_i.TaxValue) as numeric(18,5)),
+                va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat =CAST((o_i.Price * (sti.porcentaje/100)) + o_i.Price as numeric(18,5)),
                 m.Summary, o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
                   ISNULL(
                             (SELECT idMedida      = m.idMedida 
