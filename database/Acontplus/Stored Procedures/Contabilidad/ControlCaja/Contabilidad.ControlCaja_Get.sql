@@ -82,6 +82,11 @@ BEGIN
 				    SET @sql = @sql + 'AND CAST(fechaApertura AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
 			    END 
 
+            IF @checkBoxDate = 0 
+                BEGIN
+                    SET @sql = @sql + 'AND idControlCaja IN (SELECT MAX(idControlCaja) FROM dbo.ControlCaja mc WITH (NOLOCK) WHERE estado = 1 AND idCaja = @idCaja) '
+                END 
+
 		    IF @statusMovement IN (0,1)
 			    BEGIN
 				    SET @sql = @sql + 'AND estado = @statusMovement '
@@ -104,9 +109,11 @@ BEGIN
     IF @tipo = 2
         BEGIN
             
-            SET @tableNames = 'formaPagos'
+            SET @tableNames = 'formaPagos,tipoDocumento'
 
             SELECT idEntidadFinanciera,codigo,descripcion FROM EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
+
+            SELECT idTipoDocumento,codigo,descripcion FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE codigo IN ('FV','NE','EC','IC')
 
             RETURN 
         END 

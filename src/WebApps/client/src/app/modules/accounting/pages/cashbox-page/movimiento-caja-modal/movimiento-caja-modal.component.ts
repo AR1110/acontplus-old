@@ -18,6 +18,7 @@ import { formatDateMoment } from '@core/utils/format-date-moment';
 import { ToasterService } from '@core/services/toaster.service';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { stringToDate } from '@core/utils/string-to-date';
+import { TipoDoc } from '@core/models/tipo-doc.model';
 
 
 @Component({
@@ -56,7 +57,8 @@ export class MovimientoCajaModalComponent {
     fromDate: formatDateMoment(new Date()),
     toDate: formatDateMoment(new Date()),
     statusMovement: '',
-    codEstado: ''
+    codEstado: '',
+    checkBoxDate: false
   }
 
   page = 1;
@@ -88,7 +90,7 @@ export class MovimientoCajaModalComponent {
       idCaja: this.params.idCaja,
       pageIndex: this.dataSearch.pageIndex,
       pageSize: this.dataSearch.pageSize,
-      checkBoxDate: true,
+      checkBoxDate: this.dataSearch.checkBoxDate,
       dateStart: this.dataSearch.fromDate,
       dateEnd: this.dataSearch.toDate,
       statusMovement: [""].includes(this.dataSearch.statusMovement) ? null : this.dataSearch.statusMovement
@@ -408,7 +410,7 @@ export class MovimientoCajaModalComponent {
     }
   }
 
-  //Modal Filtro Reporte Detalle Caja
+  // --> Modal Filtro Reporte Detalle Caja
   openModalReporteFiltroDetalleCaja(params: ControlCaja) {
     try {
       const modalRef = this.modalSvc.openModalCustom(ReporteFiltroDetalleCajaModal);
@@ -448,6 +450,19 @@ export class MovimientoCajaModalComponent {
           </select>
         </div>
       </div>
+
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="tipoDocumento">Tipo Documento</label>
+          <select name="tipoDocumento" id="tipoDocumento" class="form-select" [(ngModel)]="dataSearch.codDoc">
+          <option value="">Todos</option>
+            @for(item of tipoDocumentos; track $index){
+              <option [ngValue]="item.codigo">{{item.descripcion}}</option>
+            }
+          </select>
+        </div>
+      </div>
+
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
              <div class="form-group">
         <label for="fromDate" class="form-label">Fecha de inicio</label>
@@ -471,10 +486,6 @@ export class MovimientoCajaModalComponent {
       </div>
 
     </div>
-
-
-
-
 
         <div class="form-group">
           <div class="icheck-primary">
@@ -516,12 +527,14 @@ export class ReporteFiltroDetalleCajaModal {
 
   dataSearch = {
     idEntidadFinanciera: null,
+    codDoc : undefined,
     fromDate: new Date(),
     toDate: new Date(),
     ckHora: true
   }
 
   entidadesFinanciera: Array<EntidadFinanciera> = [];
+  tipoDocumentos : Array<TipoDoc> = [];
 
   dateRangeOptions = {
     timePicker: true,
@@ -540,8 +553,9 @@ export class ReporteFiltroDetalleCajaModal {
       this.controlCajaSvc.getDataForm().subscribe({
         next: (response) => {
           hideLoader();
-          let { formaPagos } = response as { formaPagos: any }
+          let { formaPagos,tipoDocumento } = response as { formaPagos: any, tipoDocumento :any }
           this.entidadesFinanciera = formaPagos;
+          this.tipoDocumentos = tipoDocumento;
         },
         error(err) {
           hideLoader();
@@ -589,6 +603,7 @@ export class ReporteFiltroDetalleCajaModal {
       let dataParams = {
         tipo: 2,
         idEntidadFinanciera: isValidField(this.dataSearch.idEntidadFinanciera),
+        codDoc : this.dataSearch.codDoc,
         id: this.params.id,
         horaInicio: formatDateMoment(this.dataSearch.fromDate),
         horaFin: formatDateMoment(this.dataSearch.toDate),
