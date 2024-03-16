@@ -33,7 +33,7 @@ BEGIN
     DECLARE @tipo INT ,@sql NVARCHAR(MAX) ,@params NVARCHAR(MAX) 
 
     --> Filters
-    DECLARE @idEntidadFinanciera INT ,@fechaInicio TIME , @fechaFin TIME ,@ckHora BIT ,@codDoc VARCHAR(10)
+    DECLARE @idEntidadFinanciera INT ,@horaInicio DATETIME2 , @horaFin DATETIME2 ,@ckHora BIT ,@codDoc VARCHAR(10)
 
 	DECLARE @idControlCaja INT 
 	DECLARE @color VARCHAR(200) = '#000000'
@@ -344,9 +344,11 @@ BEGIN
 		          ,abono = CAST(abono AS numeric(15,2))
 		          ,saldo = CAST(saldo AS numeric(15,2))
 		          ,pay =   pay
+                  ,1 as optionSort
+                  ,'ASC'
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
-	         ORDER BY tipDoc,nroDoc,nroComprobante ASC 
+	         --ORDER BY tipDoc,nroDoc,nroComprobante ASC 
 
 	         SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
 	               ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))
@@ -359,8 +361,8 @@ BEGIN
         BEGIN
             
             SELECT @idEntidadFinanciera = idEntidadFinanciera
-                  ,@fechaInicio         = horaInicio
-                  ,@fechaFin            = horaFin
+                  ,@horaInicio          = horaInicio
+                  ,@horaFin             = horaFin
                   ,@ckHora              = ckHora
                   ,@codDoc              = codDoc
             FROM OPENJSON(@json) WITH 
@@ -374,8 +376,8 @@ BEGIN
 
             SET @params = '@idControlCaja       INT
                           ,@idEntidadFinanciera INT
-                          ,@fechaInicio         DATETIME2
-                          ,@fechaFin            DATETIME2
+                          ,@horaInicio          DATETIME2
+                          ,@horaFin             DATETIME2
                           ,@codDoc              VARCHAR(10)'
 
             SET @sql = 'SELECT * FROM 
@@ -391,6 +393,7 @@ BEGIN
 				                  ,CAST(hc.saldo - IIF(co.cobro = 1,hc.abono,0) as numeric(18,2))                    as saldo
 				                  ,ISNULL(sf.descripcion,'''') + '' '' +  IIF(co.posfechado = 1,''POSFECHADO'','''') as pay
 		                          ,co.idEntidadFinanciera                                                            as idEntidadFinanciera
+                                  ,ci.fechaRegistro                                                                  as fechaComprobante
 			                FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			                INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
 	                        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso = ci.idComprobanteIngreso
@@ -488,6 +491,7 @@ BEGIN
 														                        WHERE mc.idMovimientoCaja = cd.idComprobante
 														                        )
 								                        END
+                                ,ci.fechaRegistro                                                                  as fechaComprobante
 	                        FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK)
 	                        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
 	                        INNER JOIN dbo.CobroDocumento  cd WITH (NOLOCK) ON cd.idComprobanteIngreso = ci.idComprobanteIngreso
@@ -549,6 +553,7 @@ BEGIN
 														                        WHERE mc.idMovimientoCaja = pd.idComprobante
 														                        )
 								                        END
+                                ,ce.fechaRegistro                                                                  as fechaComprobante
 	                        FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK)
 	                        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ce.codEstab
 	                        INNER JOIN dbo.PagoDocumento   pd WITH (NOLOCK) ON pd.idComprobanteEgreso  = ce.idComprobanteEgreso
@@ -566,7 +571,7 @@ BEGIN
 
             IF @ckHora = 1
                 BEGIN
-                    SET @sql = @sql + 'AND CAST(cd.fechaEmision as time) BETWEEN CAST(@fechaInicio as time) AND CAST(@fechaFin as time) '                  
+                    SET @sql = @sql + 'AND CAST(cd.fechaComprobante as datetime) BETWEEN CAST(@horaInicio as datetime) AND CAST(@horaFin as datetime) '                  
                 END 
 
             IF @codDoc IS NOT NULL
@@ -592,8 +597,8 @@ BEGIN
 						      ,@params 
                               ,@idControlCaja       = @idControlCaja
                               ,@idEntidadFinanciera = @idEntidadFinanciera
-                              ,@fechaInicio         = @fechaInicio
-                              ,@fechaFin            = @fechaFin
+                              ,@horaInicio          = @horaInicio
+                              ,@horaFin             = @horaFin
                               ,@codDoc              = @codDoc
 
             RETURN 

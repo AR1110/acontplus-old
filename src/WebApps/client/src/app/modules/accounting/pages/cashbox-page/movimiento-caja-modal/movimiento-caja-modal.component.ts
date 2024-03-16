@@ -526,8 +526,8 @@ export class ReporteFiltroDetalleCajaModal {
   activeModal = inject(NgbActiveModal);
 
   dataSearch = {
-    idEntidadFinanciera: null,
-    codDoc : undefined,
+    idEntidadFinanciera: "",
+    codDoc : "",
     fromDate: new Date(),
     toDate: new Date(),
     ckHora: true
@@ -603,12 +603,14 @@ export class ReporteFiltroDetalleCajaModal {
       let dataParams = {
         tipo: 2,
         idEntidadFinanciera: isValidField(this.dataSearch.idEntidadFinanciera),
-        codDoc : this.dataSearch.codDoc,
+        codDoc : isValidField(this.dataSearch.codDoc),
         id: this.params.id,
         horaInicio: formatDateMoment(this.dataSearch.fromDate),
         horaFin: formatDateMoment(this.dataSearch.toDate),
         ckHora: this.dataSearch.ckHora
       }
+
+      console.log(dataParams)
 
       const parameters = {
         hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
