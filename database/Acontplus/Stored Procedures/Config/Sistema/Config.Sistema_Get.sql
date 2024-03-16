@@ -98,7 +98,7 @@ BEGIN
             SELECT vs.estado
                   ,ns.descripcion as notificacion
                   ,@idSistema     as idSistema
-                  ,vs.codigo 
+                  ,ns.codigo 
                   ,vs.idNotificacionSistema
             FROM Config.v_Sistema_Notificacion    vs WITH (NOLOCK)
             INNER JOIN Config.NotificacionSistema ns WITH (NOLOCK) ON ns.idNotificacionSistema = vs.idNotificacionSistema

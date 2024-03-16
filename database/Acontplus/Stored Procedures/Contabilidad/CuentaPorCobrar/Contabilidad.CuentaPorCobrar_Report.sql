@@ -529,6 +529,8 @@ BEGIN
                   ,@codDoc             = codDoc
                   ,@subFamiliasChecked = subFamiliasChecked
                   ,@idTarifa           = idTarifa
+                  ,@porcentajeRenta    = porcentajeRenta
+                  ,@porcentajeComision = porcentajeComision
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo   BIT 
@@ -542,6 +544,8 @@ BEGIN
                ,codDoc             VARCHAR(2)
                ,subFamiliasChecked VARCHAR(150) 
                ,idTarifa           INT
+               ,porcentajeRenta    NUMERIC(18,5)
+               ,porcentajeComision NUMERIC(18,5)
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
