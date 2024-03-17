@@ -315,8 +315,8 @@ BEGIN
                              DELETE FROM Inventario.Transaccion WITH (ROWLOCK) WHERE idDocumento = @id AND idTipoDocumento = @idTipoDocumentoIv AND idTipoTransaccion = @idTipoTransaccion
 
                              INSERT INTO Inventario.Transaccion 
-                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario,estado)
-			                 SELECT @idTipoTransaccion,idArticulo,idBodega,@idTipoDocumentoIv,@id,idMedida,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto,@fechaEmision,@idUsuario,estado
+                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,fechaRegistro,idUsuario,estado)
+			                 SELECT @idTipoTransaccion,idArticulo,idBodega,@idTipoDocumentoIv,@id,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto,@fechaEmision,@idUsuario,estado
                              FROM @tblDetails WHERE llevaInventario = 1
 
                              EXEC dbo.Transaccion_Handler_Init 'E', 'IV', @id, DEFAULT

@@ -553,6 +553,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
 
     function resetData() {
         $scope.cobro.valorAbono = $scope.comprobante.saldo;
+        $scope.cobro.abono = $scope.comprobante.saldo;
         $scope.cobro.valorCambio = 0;
 
         $scope.cobro.valorSaldo = 0;
@@ -769,6 +770,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, $injector, mS, modalSvc
                         const params = comprobanteIngresoSvc.mapperTo(data);
 
                         showLoader();
+                     
                         comprobanteIngresoSvc.post(params).then(response => {
                             hideLoader();
                             if (response.code === '0') {

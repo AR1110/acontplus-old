@@ -1,7 +1,4 @@
-
-
 import { DataFormSale, ItemRead, Order } from "@/core/models"
-
 
 export type OrderItemDivide = ItemRead & {
     remainingQuantity: number
@@ -42,12 +39,12 @@ export interface SplitOrderAction {
     setLeftOrderItem(payload: Array<OrderItemDivide>): void
     setRightOrderData(order: Order): void
     setChangeOrderItems(payload: Array<OrderItemDivide>): void
-    mergeArraysByField<T extends { id: number; remainingQuantity: number; price: number; total: number; }>(
+    mergeArraysByField<T extends { id: number; remainingQuantity: number; price: number; total: number; taxValue:number; taxPercentId:number, discount: number }>(
         array1: T[],
         array2: T[],
         field: keyof T
     ): T[]
-    mergeArraysByFieldLeft<T extends { id: number; remainingQuantity: number; price: number, total: number }>(
+    mergeArraysByFieldLeft<T extends { id: number; remainingQuantity: number; price: number, total: number, taxValue: number; taxPercentId: number, discount: number }>(
         array1: T[],
         array2: T[],
         field: keyof T

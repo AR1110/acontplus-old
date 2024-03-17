@@ -303,8 +303,8 @@ BEGIN
                              SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
                              INSERT INTO Inventario.Transaccion 
-                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
-			                 SELECT @idTipoTransaccion,idArticulo,idBodega,@idTipoDocumentoIv,@idDocumentoIngreso,idMedida,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto,@fechaEmision,@idUsuario 
+                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
+			                 SELECT @idTipoTransaccion,idArticulo,idBodega,@idTipoDocumentoIv,@idDocumentoIngreso,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto,@fechaEmision,@idUsuario 
                              FROM @tblDetails WHERE llevaInventario = 1
 
                              EXEC dbo.Transaccion_Handler_Init 'E', 'IV', @idDocumentoIngreso, DEFAULT

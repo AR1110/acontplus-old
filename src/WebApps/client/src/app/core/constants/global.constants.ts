@@ -7,9 +7,11 @@ export const enum PATHS_API {
   PRINT_SERVER = 'https://acontplusprint.com/',
   PURCHASE = 'Compra/',
   REPORT = 'Reports/',
+  FACT_ELECT = 'FactElect/',
   SALES = 'Venta/',
   TECHSUPPORT = 'TechnicalSupport/',
   INVENTORY = 'Inventario/',
+  RESTAURANT = 'Restaurant/'
 }
 
 export const enum PATHS {
@@ -18,6 +20,7 @@ export const enum PATHS {
   APP_NOTIFICATION = 'Notificacion/',
   PRINT = 'Print',
   USER = 'Usuario/',
+  ESTAB_ASIGN = 'EstabAsig/'
 }
 
 export const enum DOC_TYPE {

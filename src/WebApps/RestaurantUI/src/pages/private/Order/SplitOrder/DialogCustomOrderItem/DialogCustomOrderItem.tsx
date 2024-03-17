@@ -1,40 +1,21 @@
-import React, { forwardRef, useState, useEffect } from 'react'
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    Slide,
-    TextField,
-    Typography,
-    styled
-} from '@mui/material';
-import {
-    DataGrid,
-    GridCellModes,
-    GridCellModesModel,
-    GridCellParams,
-    GridColDef,
-    GridColumnVisibilityModel,
-    GridRowModel,
-    GridValueGetterParams
-} from '@mui/x-data-grid';
-import { TransitionProps } from '@mui/material/transitions';
-import { useSplitOrderContext } from '../../context';
-import { SaveIcon } from '@/core/components/IconsMaterial';
-import CustomerSearch from '@/core/components/Customer/CustomerSearch';
-import ProductSearch from '@/core/components/Product/ProductSearch';
-import { v4 as uuidv4 } from 'uuid';
-import { DOC_TYPE, ITEM_TYPE_CODE } from '@/core/constants';
-import { orderService, productService } from '@/core/services';
-import { Measure, ProductPVPReadDto } from '@/core/models';
-import { PricingCalculateUtility, SnackbarUtility } from '@/core/utilities';
-import Swal from 'sweetalert2';
 import { itemToApi, summaryToApi } from '@/core/adapters';
-import { showLoader, hideLoader } from '@/spinner'
+import CustomerSearch from '@/core/components/Customer/CustomerSearch';
+import { SaveIcon } from '@/core/components/IconsMaterial';
+import ProductSearch from '@/core/components/Product/ProductSearch';
+import { DOC_TYPE, ITEM_TYPE_CODE } from '@/core/constants';
+import { Measure, ProductPVPReadDto } from '@/core/models';
+import { orderService, productService } from '@/core/services';
+import { PricingCalculateUtility, RoundNumber, SnackbarUtility } from '@/core/utilities';
+import { hideLoader, showLoader } from '@/spinner'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Slide, styled, TextField, Typography } from '@mui/material';
+import { TransitionProps } from '@mui/material/transitions';
+import { DataGrid, GridCellModes, GridCellModesModel, GridCellParams, GridColDef, GridColumnVisibilityModel, GridRowModel, GridValueGetterParams } from '@mui/x-data-grid';
+import React, { forwardRef, useEffect, useState } from 'react'
+import Swal from 'sweetalert2';
+import { v4 as uuidv4 } from 'uuid';
+
+import { useSplitOrderContext } from '../../context';
+
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
     { field: 'code', headerName: 'Código', width: 120 },
@@ -158,7 +139,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 Swal.fire({
                     icon: 'warning',
                     title: '',
-                    html: 'Seleccione un articulo de tipo servicio, por favor'
+                    html: 'Seleccione un articulo de tipo servicio!'
                 })
                 return
             }
@@ -331,16 +312,27 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 tableId: leftOrder.tableId,                
             }
 
+
+
+            const tax = changeOrderItems.reduce((total, orderItem)=>{
+                const dataTax = dataForm.taxRates.find(tr=>tr.idTarifaImpuesto ===orderItem.taxPercentId)
+                if (dataTax && dataTax.percentage>0){
+                    const precioTotalSinImpuesto = (orderItem.price * orderItem.remainingQuantity) - orderItem.discount;
+                    total += PricingCalculateUtility.calculateTaxValue(precioTotalSinImpuesto, dataTax.percentage); 
+                }
+                return total;
+            }, 0)
+
             const orderResult = summaryToApi(mergeLeftIntoRightOrder);
             const orderItemsResult = itemToApi(changeOrderItems);
             //const orderItemsOriginal = itemToApi(leftCheckedOrderItems);
- 
-            
+  
             const data = {
                 ...orderResult,
                 subtotalSinImpuestos: objTempTotal.subTotalSinImpuestos,
-                tax: objTempTotal.tax,
+                tax: RoundNumber(tax, 5),
                 total: objTempTotal.total,
+                
                 updateOrder: false,
                 saveDoc: true,
                 codDoc: DOC_TYPE.FV,
@@ -353,7 +345,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 items: [],
                 customDetail: orderItemsResult, 
             }
-
+ 
 
             showLoader()
             orderService.put(leftOrder.orderId, data).then(response => {

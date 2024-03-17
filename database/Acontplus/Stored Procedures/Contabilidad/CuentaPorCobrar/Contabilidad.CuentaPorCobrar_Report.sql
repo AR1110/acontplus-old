@@ -354,19 +354,20 @@ BEGIN
 							  ,serieComprobante = tt.nroDocumento
                               ,tt.usuario
                               ,tt.bodega
-                              ,tt.medidaSalida
+                              ,me.descripcion as medidaSalida
                               ,tt.subFamilia
                               ,valorRentabilidad           = CAST((tt.precioUnitario - tt.precioCosto) as numeric(18,2))
                               ,valorPorcentajeRentabilidad = CAST((((tt.precioUnitario / tt.precioCosto) * 100) - 100) as numeric(18,2))
                               ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCosto) as numeric(18,2))
                               ,totalValorRentabilidad      = CAST( (tt.cantidad * (tt.precioUnitario - tt.precioCosto)) as numeric(18,2))
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
+                        INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida = tt.idMedida 
 						WHERE tt.idEntidad = @idEntidad 
                           AND tt.estado = 1 
                           AND tt.codTransaccion =''S'' 
                           AND tt.codDoc IN (''FE'', ''NE'') '
 
-			SELECT @ckFecha            = ckFecha
+			SELECT @ckFecha            = checkBoxFecha
 				  ,@idArticulo         = idArticulo
 				  ,@idUsuario          = idUsuario 
 				  ,@fechaFin           = fechaFin
@@ -381,7 +382,7 @@ BEGIN
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo   BIT 
-		       ,ckFecha            BIT 
+		       ,checkBoxFecha      BIT 
 		       ,idArticulo         INT 
 		       ,idUsuario          INT
 		       ,fechaInicio        DATETIME2
@@ -518,7 +519,7 @@ BEGIN
                         WHERE ar.idEntidad = @idEntidad
                           AND se.Estado = 1  '
 
-			SELECT @ckFecha            = ckFecha
+			SELECT @ckFecha            = checkBoxFecha
 				  ,@idArticulo         = idArticulo
 				  ,@idUsuario          = idUsuario 
 				  ,@fechaFin           = fechaFin
@@ -528,10 +529,12 @@ BEGIN
                   ,@codDoc             = codDoc
                   ,@subFamiliasChecked = subFamiliasChecked
                   ,@idTarifa           = idTarifa
+                  ,@porcentajeRenta    = porcentajeRenta
+                  ,@porcentajeComision = porcentajeComision
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo   BIT 
-		       ,ckFecha            BIT 
+		       ,checkBoxFecha      BIT 
 		       ,idArticulo         INT 
 		       ,idUsuario          INT
 		       ,fechaInicio        DATETIME2
@@ -541,6 +544,8 @@ BEGIN
                ,codDoc             VARCHAR(2)
                ,subFamiliasChecked VARCHAR(150) 
                ,idTarifa           INT
+               ,porcentajeRenta    NUMERIC(18,5)
+               ,porcentajeComision NUMERIC(18,5)
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario

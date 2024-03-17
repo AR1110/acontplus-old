@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\Ventas\AprobHistorial.rdl" />
     <None Remove="Reports\Ventas\Factura.rdlc" />
     <None Remove="Reports\Ventas\FacturaGeneral.rdl" />
   </ItemGroup>
@@ -172,6 +173,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\NotaEntrega.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\AprobHistorial.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\Proforma.rdlc">

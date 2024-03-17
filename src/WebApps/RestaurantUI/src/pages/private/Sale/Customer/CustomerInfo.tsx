@@ -11,14 +11,11 @@ export const CustomerInfo = ({ id }: CustomerInfoProps) => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
     useEffect(() => {
-        console.log('init customer ingo')
         customerService.getId(id).then(response => {            
             setData(response)
             setLoading(false)
         }).catch(()=>setError(true))
-        return () => {
-            console.log('dead component')
-        }
+      
     }, [])
 
     if(error) return <>Algo salio mal</>

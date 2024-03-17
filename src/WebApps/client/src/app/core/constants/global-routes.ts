@@ -7,5 +7,6 @@ export enum GlobalRoutes {
   TechnicalSupportDevice = 'technical-support/device-page',
   TechnicalSupport = 'technical-support/technical-support-page',
   ContabilidadCarteraProveedor='accounting/reports/supplier-accounts',
-  VentasReportRentabilidad = 'sale/reports/rentabilidad-page'
+  VentasReportRentabilidad = 'sale/reports/rentabilidad-page',
+  RestaurantTable = 'restaurant/table-page'
 }

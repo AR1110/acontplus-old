@@ -270,6 +270,7 @@
             try {
                 showLoader();
                 aprobacionDocSvc.getDataFilter().then(response => {
+                    console.log(response)
                     $scope.establecimientos = response.estabs;
                     $scope.estadoDocumentos = response.estadoDocs;
                     if ($scope.establecimientos.length > 0) {
@@ -471,6 +472,7 @@
                     id: item.idAprob_Document,
                     codEstab: item.codEstab,
                     codDoc: item.docDestino,
+                    tipo : 1
                 }
 
                 const parameters = {
@@ -493,6 +495,36 @@
             }
         }
 
+        $scope.getReportHistorial = function (item) {
+            try {
+
+                let format = 'pdf';
+                let dataParms = {
+                    id: item.idAprob_Document,
+                    codEstab: item.codEstab,
+                    codDoc: item.docDestino,
+                    tipo : 2
+                }
+
+                const parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo : "RHA",
+                        codEstab: item.codEstab,
+                        format,
+                        aditionalParams: []
+                    }),
+                    dataParams: JSON.stringify(dataParms)
+                }
+                commonSvc.getReport({
+                    parameters,
+                    formatType: format
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
     }
 
 

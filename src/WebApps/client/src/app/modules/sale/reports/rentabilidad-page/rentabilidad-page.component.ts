@@ -76,8 +76,8 @@ export class RentabilidadPageComponent {
     ckFecha: true,
     subCategoriaChecked: false,
     checkboxRentabCustom: false,
-    porcentajeRenta: null,
-    porcentajeComision: null,
+    porcentajeRenta: 0,
+    porcentajeComision: 0,
     codigoTipoArticulo: 'B'
   }
 
@@ -244,8 +244,8 @@ export class RentabilidadPageComponent {
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       subFamiliasChecked: this.dataSearch.subCategoriaChecked && subCategoriasChecked || null,
-      porcentajeRenta: this.dataSearch.checkboxRentabCustom && isValidField(this.dataSearch.porcentajeRenta),
-      porcentajeComision: this.dataSearch.checkboxRentabCustom && isValidField(this.dataSearch.porcentajeComision)
+      porcentajeRenta: this.dataSearch.porcentajeRenta ,
+      porcentajeComision: this.dataSearch.porcentajeComision  
     }
 
     const parameters = {

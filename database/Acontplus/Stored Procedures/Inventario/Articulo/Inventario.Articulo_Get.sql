@@ -728,11 +728,11 @@ BEGIN
            
            SELECT sf.idSubFamilia
                  ,sf.descripcion as subFamilia
-                 ,sf.codigo
-                 ,fa.descripcion as familia
+                 ,sf.codigo 
+                   ,familia = ISNULL(fa.descripcion, 'Ninguna')
                  ,fa.idFamilia
            FROM dbo.SubFamilia    sf WITH (NOLOCK) 
-           INNER JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
+           LEFT JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
            WHERE idEntidad = @idEntidad
 
            SELECT idMarca, descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad
