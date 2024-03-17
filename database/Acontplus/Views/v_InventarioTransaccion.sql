@@ -11,6 +11,7 @@ SELECT t.idTransaccion
 	,t.idTipoDocumento
 	,t.idDocumento
 	,t.idTarifa
+    ,t.idMedida
     ,a.idSubFamilia
 	,t.cantidad
 	,t.precioUnitario

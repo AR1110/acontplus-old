@@ -1696,6 +1696,7 @@
         $scope.onKeyupCustomer = function () {
             if (!$scope.cliente.nombreFiscal) {
                 $scope.cliente = {};
+                $scope.newCustomer = false;
             }
 
         }

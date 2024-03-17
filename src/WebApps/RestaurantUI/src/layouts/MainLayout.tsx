@@ -101,12 +101,11 @@ export default function PrimarySearchAppBar() {
     };
     const logout = () => {
         closeSession();
-        console.log('logout')
-        navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
+         window.location.reload(); 
     };
 
     useEffect(() => {
-        const userData = getUserData();
+        const userData = getUserData(); 
         setUserName(userData.username)
     }, [])
 

@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Core.Interfaces;
-using Common.Core.Models;
+﻿using Common.Core.Interfaces;
 using Common.Core.Utils;
 using Contabilidad.Core.Interfaces;
-using Contabilidad.Infrastructure.Data;
 
 namespace Contabilidad.Application.Servicios
 {
-    public class ChequeService: IChequeService
+    public class ChequeService : IChequeService
     {
-        private readonly IADORepository _repository; 
+        private readonly IADORepository _repository;
 
         public ChequeService(IADORepository repository)
         {
-            _repository = repository; 
+            _repository = repository;
         }
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)

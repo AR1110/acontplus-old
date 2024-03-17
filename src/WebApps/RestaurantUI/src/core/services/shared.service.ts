@@ -9,10 +9,11 @@ type ParamsPrint = { id: number, documentoId: number, tipo: 1 | 2 | 3 | 4 }
 
 
 class Shared {
+    private url = `${PATHS_API.FACT_ELECT}Consultas/`
     async checkClientSRIByRUC(identificacion: string): Promise<CustomerRucSRI> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS_API.CONSULTA}GetRucSRI`,
+            url: `${this.url}GetRucSRI`,
             params: {
                 Ruc: identificacion
             }
@@ -23,7 +24,7 @@ class Shared {
     async checkClientSRIByCedula(identificacion: string): Promise<CustomerCedulaSRI> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS_API.CONSULTA}GetCedulaSri`,
+            url: `${this.url}GetCedulaSri`,
             params: {
                 Ruc: identificacion
             }
@@ -94,7 +95,7 @@ class Shared {
             this.print(JSON.parse(response.payload));
         }
     }
-    async print(params: any) {
+    async print<T extends { urlPrinter : string}>(params: T[]) {
         for (const param of params) {
             const resultAxios = await Http({
                 method: 'post',

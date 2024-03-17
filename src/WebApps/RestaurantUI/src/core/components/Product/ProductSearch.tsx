@@ -24,26 +24,13 @@ const ProductSearch = ({ onChangeProductSearch }: ProductSearchProps) => {
 
       // Intentamos realizar una búsqueda de productos utilizando un servicio llamado 'productService'
       // pasando la cadena de búsqueda 'value' como parámetro.
-      const dataFetch = productService.search({ busqueda: value });
+      productService.search({ busqueda: value }).then(response => { 
+        // mapea los datos de la API al modelo de la aplicación y devuelve un arreglo de productos.
+        const mappedProducts = productSearchAdapter(JSON.parse(response.payload) || []);
 
-      // Si ya existe un controlador de solicitud activo (abortController), lo abortamos.
-      if (controller) controller.abort();
-
-      // Establecemos el nuevo controlador de solicitud para esta búsqueda.
-      controller = dataFetch.controller;
-
-
-      // Realizamos la llamada a la búsqueda utilizando 'dataFetch.call' y esperamos su resultado.
-      const resultAxios = await dataFetch.call;
-
-      // Extraemos los datos de la respuesta Axios.
-      const response = resultAxios.data;
-
-      // mapea los datos de la API al modelo de la aplicación y devuelve un arreglo de productos.
-      const mappedProducts = productSearchAdapter(JSON.parse(response.payload) || []);
-
-      // Establecemos los productos resultantes 
-      setProducts(mappedProducts);
+        // Establecemos los productos resultantes 
+        setProducts(mappedProducts);
+      })
     } catch (error) {
       console.log(error)
     }
@@ -61,7 +48,7 @@ const ProductSearch = ({ onChangeProductSearch }: ProductSearchProps) => {
       onInputChange={search}
       options={products}
       selectOnFocus
-      clearOnBlur 
+      clearOnBlur
       freeSolo
       getOptionLabel={(option) => typeof option === 'string' ? option : option.description}
       onChange={(_, value) => {

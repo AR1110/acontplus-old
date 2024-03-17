@@ -1,28 +1,15 @@
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionProps,
-    AccordionSummary,
-    AccordionSummaryProps,
-    Button,
-    Card,
-    CardActions,
-    CardContent,
-    Grid,
-    TextField,
-    Typography,
-    styled
-} from '@mui/material'
-import RightOrderItemTable from './RightOrderItemTable'
-import { useSplitOrderContext } from '../../context';
-import { ArrowForwardIosIcon, FileCopyRoundedIcon } from '@/core/components/IconsMaterial';
-import { SnackbarUtility } from '@/core/utilities';
-import { DOC_TYPE } from '@/core/constants';
-import CustomerSearch from '@/core/components/Customer/CustomerSearch';
-import Swal from 'sweetalert2';
 import { itemToApi, summaryToApi } from '@/core/adapters';
+import CustomerSearch from '@/core/components/Customer/CustomerSearch';
+import { ArrowForwardIosIcon, FileCopyRoundedIcon } from '@/core/components/IconsMaterial';
+import { DOC_TYPE } from '@/core/constants';
 import { orderService } from '@/core/services';
-import { showLoader, hideLoader } from "@/spinner";
+import { SnackbarUtility } from '@/core/utilities';
+import { hideLoader, showLoader } from "@/spinner";
+import { Accordion, AccordionDetails, AccordionProps, AccordionSummary, AccordionSummaryProps, Button, Card, CardActions, CardContent, Grid, styled, TextField, Typography } from '@mui/material'
+import Swal from 'sweetalert2';
+
+import { useSplitOrderContext } from '../../context';
+import RightOrderItemTable from './RightOrderItemTable'
 
 const StyledAccordion = styled((props: AccordionProps) => (
     <Accordion disableGutters elevation={0} square {...props} />
@@ -122,6 +109,8 @@ const RightOrderItem = () => {
                 itemsToPay: orderItems,
             }
 
+            console.log(data)
+        
             showLoader();
             orderService.put(leftOrder.orderId, data).then(response => {
                 hideLoader();
@@ -130,9 +119,10 @@ const RightOrderItem = () => {
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    console.log(response)
+   
+                    
                     const queryParams = JSON.parse(response.payload)[0];
-                    console.log(queryParams)
+                    
                     setPaymentData({
                         open: true,
                         payload: queryParams

@@ -1,24 +1,14 @@
-import { ConsolidacionFecha } from './../core/models/product.model';
-import {
-    ItemRead,
-    ItemSearch,
-    ItemReadDto,
-    Order,
-    itemSearchInitialState,
-    DataFormSale,
-    dataFormInitialState,
-    orderInitialState,
-    CATEGORY_CODE
-} from "@/core/models";
-import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities";
-import { create } from "zustand";
-import { produce } from 'immer';
-import { SharedService, orderService, productService } from "@/core/services";
-import Swal from "sweetalert2";
-import { DOC_TYPE } from "@/core/constants";
 import { itemToApi, summaryToApi } from "@/core/adapters";
-import { showLoader, hideLoader } from "@/spinner";
+import { DOC_TYPE } from "@/core/constants";
+import { CATEGORY_CODE, dataFormInitialState, DataFormSale, ItemRead, ItemReadDto, ItemSearch, itemSearchInitialState, Order, orderInitialState } from "@/core/models";
+import { orderService, productService, SharedService } from "@/core/services";
+import { addSound, clearSound, PricingCalculateUtility, RoundNumber, SnackbarUtility } from "@/core/utilities";
+import { hideLoader, showLoader } from "@/spinner";
+import { produce } from 'immer';
+import Swal from "sweetalert2";
+import { create } from "zustand";
 
+import { ConsolidacionFecha } from './../core/models/product.model';
 
 const imgUrlPromocion = new URL('/assets/promocion.jpg', import.meta.url).href
 const imgUrlCombo = new URL(`/assets/combo.jpg`, import.meta.url).href
@@ -64,31 +54,32 @@ type Actions = {
     setItemSearch(itemSearch: ItemSearch): void
     setSummary(order: Order): void
     filterOderItems(textSearch: string): void
-   // getCantidadStock<T extends { productId: number, idBodega: number, consolidacionesFecha: Array<ConsolidacionFecha> }>(data: T):number
+    // getCantidadStock<T extends { productId: number, idBodega: number, consolidacionesFecha: Array<ConsolidacionFecha> }>(data: T):number
     getItemQty(productId: number): number
     setDataForm(dataForm: DataFormSale): void
     setCollectionItems(products: Array<ItemReadDto>): void
+    getTaxValue(item: ItemRead): number
     addItemToCart(item: ItemRead): void //Añadir Item 
     removeItemFromCart(productId: number): void //Eliminar item 
     setTotalItems(): void, //Calcular totales   
     setItemChangeQty(index: number, qty: number): void //Modificar cantidad del item  
     onChangePVP(id: number, index: number): void
-    onChangeMeasure(id: number, index: number):void
+    onChangeMeasure(id: number, index: number): void
     caculateTotals(): void
     resetForm(): void
     save(codDoc: string): void
 }
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
-    setDataEdit(obj: any) { 
+    setDataEdit(obj: any) {
         const { order, orderItems } = obj;
         set(
-            produce((state: State) => { 
+            produce((state: State) => {
                 state.order = order;
                 state.items = orderItems
-                state.totalItems = orderItems.reduce((total:any, item:any) => total + item.quantity, 0); 
-                
-                const subtotalSinImpuesto = orderItems.reduce((subTotalSinImpuestos:number, item:any)=>{
+                state.totalItems = orderItems.reduce((total: any, item: any) => total + item.quantity, 0);
+
+                const subtotalSinImpuesto = orderItems.reduce((subTotalSinImpuestos: number, item: any) => {
                     const itemPrice = item.price - item.discount;
 
                     // Calcular el total del ítem
@@ -98,7 +89,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     subTotalSinImpuestos += itemTotal;
                     return subTotalSinImpuestos;
                 }, 0)
-                state.order.subTotalSinImpuestos = RoundNumber(subtotalSinImpuesto,2)
+                state.order.subTotalSinImpuestos = RoundNumber(subtotalSinImpuesto, 2)
             })
         )
     },
@@ -122,7 +113,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             })
         )
     },
-    setItemSearch: (itemSearch) => { 
+    setItemSearch: (itemSearch) => {
         set({
             itemSearch
         })
@@ -264,8 +255,15 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             })
         )
     },
+    getTaxValue(item) {
+        const { dataForm } = get();
+        const subTotalSinImpuesto = ((item.quantity * item.price) - item.discount);
+        const dataTarifaImpuesto = dataForm.taxRates.find(p => p.idTarifaImpuesto === item.taxPercentId)
+        const taxValue = PricingCalculateUtility.calculateTaxValue(subTotalSinImpuesto, dataTarifaImpuesto?.percentage ?? 0);
+        return taxValue;
+    },
     addItemToCart: (item) => {
-        const { items, setTotalItems, caculateTotals } = get();
+        const { items, setTotalItems, caculateTotals, getTaxValue } = get();
 
         if (items.some(itemCompare => itemCompare.productId === item.productId)) {
 
@@ -274,11 +272,15 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     const sumQty = itemToModify.quantity + 1;
                     const sumTotal = sumQty * itemToModify.price;
 
-                    return {
+                    const obj = {
                         ...itemToModify,
                         quantity: sumQty,
                         total: sumTotal
                     }
+
+                    obj.taxValue = getTaxValue(obj);
+
+                    return obj;
                 }
                 return itemToModify;
             });
@@ -307,18 +309,17 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         setTotalItems();
         caculateTotals();
         clearSound();
-    }, 
+    },
 
-    setTotalItems: () =>{
+    setTotalItems: () => {
         set(
-            produce((state: State) => { 
-                state.totalItems = state.items.reduce((total, item) => total + item.quantity, 0)                
+            produce((state: State) => {
+                state.totalItems = state.items.reduce((total, item) => total + item.quantity, 0)
             })
         )
     },
     setItemChangeQty(index, qty) {
-        const { order, items, dataForm, setTotalItems, caculateTotals, getItemQty } = get();
-        const decimal = dataForm.decimal;
+        const { order, items, setTotalItems, caculateTotals, getItemQty, getTaxValue } = get();
 
         const dataOrderItem = items.find((_, indexToCompare) => indexToCompare === index);
 
@@ -350,10 +351,10 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     }
                 }
             })
-            .catch(error=>{
-                console.log(error)
-            })
-            .finally(() => hideLoader())
+                .catch(error => {
+                    console.log(error)
+                })
+                .finally(() => hideLoader())
         }
         else {
             setQty();
@@ -363,11 +364,15 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             const newArray = items.map((orderItem, orderItemIndex) => {
                 const total = qty * orderItem.price;
                 if (index === orderItemIndex) {
-                    return {
+
+                    const obj = {
                         ...orderItem,
                         quantity: qty,
-                        total: RoundNumber(total, decimal.nroTotalDetalle)
-                    };
+                        total: RoundNumber(total, 5)
+                    }
+                    obj.taxValue = getTaxValue(obj);
+                    return obj;
+
                 } else {
                     return orderItem;
                 }
@@ -387,11 +392,11 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     async resetForm() {
         set(
             produce((state: State) => {
-                state.order.tableId = 0,
-                    state.order.obs = "",
-                    state.order.customerName = "",
-                    state.order.customerCompanyId = 0,
-                    state.order.orderId = 0;
+                state.order.tableId = 0;
+                state.order.obs = "";
+                state.order.customerName = "";
+                state.order.customerCompanyId = 0;
+                state.order.orderId = 0;
                 state.totalItems = 0;
                 state.items = [];
                 state.order.table = {}
@@ -403,18 +408,21 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     onChangePVP(id, index) {
 
-        const { items, setTotalItems, caculateTotals } = get();
+        const { items, setTotalItems, caculateTotals, getTaxValue } = get();
         const newArray = items.map((orderItem, orderItemIndex) => {
             if (index === orderItemIndex) {
                 const dataPVP = orderItem.pvps.find(pvp => pvp.feeId === id);
-                const total = orderItem.quantity * (dataPVP?.salePrice ?? 0);
-                return {
+                const price = dataPVP?.salePrice ?? 0;
+                const total = (orderItem.quantity * price);
+                const obj = {
                     ...orderItem,
                     feeId: dataPVP?.feeId ?? 0,
-                    price: dataPVP?.salePrice ?? 0,
+                    price: price,
                     priceWithVat: dataPVP?.priceWithVat ?? 0,
-                    total: RoundNumber(total, 2)
+                    total: RoundNumber(total, 5)
                 };
+                obj.taxValue = getTaxValue(obj);
+                return obj;
             } else {
                 return orderItem;
             }
@@ -427,24 +435,25 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         setTotalItems();
         caculateTotals();
     },
-    onChangeMeasure(id, index) { 
-        const { items, setTotalItems, caculateTotals } = get();        
+    onChangeMeasure(id, index) {
+        const { items, setTotalItems, caculateTotals, getTaxValue } = get();
         const newArray = items.map((orderItem, orderItemIndex) => {
             if (index === orderItemIndex) {
                 const dataMedida = orderItem.measures.find(val => val.measureId === id);
-                let salePrice = 0, priceWithVat = 0, feeId = 0; 
-                
-                if(dataMedida){
-                    const dataPVP = dataMedida.pvps.find(pvp=>(pvp.default));
-                    if(dataPVP){
+                let salePrice = 0, priceWithVat = 0, feeId = 0;
+
+                if (dataMedida) {
+                    const dataPVP = dataMedida.pvps.find(pvp => (pvp.default));
+                    if (dataPVP) {
                         salePrice = dataPVP.salePrice;
                         priceWithVat = dataPVP.priceWithVat;
                         feeId = dataPVP.feeId
                     }
-                } 
-  
+                }
+
                 const total = orderItem.quantity * (salePrice);
-                return {
+
+                const obj = {
                     ...orderItem,
                     measureId: id,
                     pvps: dataMedida && dataMedida.pvps || [],
@@ -454,6 +463,8 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     total: RoundNumber(total, 2),
                     medida: dataMedida?.description
                 };
+                obj.taxValue = getTaxValue(obj);
+                return obj;
             } else {
                 return orderItem;
             }
@@ -560,10 +571,10 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 })
             )
         },
-    }, 
+    },
     async save(codDoc: string) {
         const { order, items, resetForm, payment, dataForm } = get();
-        
+
         try {
             if (!(order.tableId > 0)) {
                 Swal.fire({
@@ -590,17 +601,17 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 cancelButtonText: 'No, cancelar!'
             })
 
-            if (!isConfirmed) return 
+            if (!isConfirmed) return
             let taxPercentId = 0;
-            if(order.orderId>0){
+            if (order.orderId > 0) {
                 //iva vigente registrado
                 taxPercentId = order.taxPercentId;
-            }else{
-                taxPercentId = dataForm.tarifaImpuestoVigente.idTarifaImpuesto; 
+            } else {
+                taxPercentId = dataForm.tarifaImpuestoVigente.idTarifaImpuesto;
             }
-            
+
             const summaryResult = summaryToApi(order);
-            
+
             const itemsResult = itemToApi(items);
             const taxesResult = items.flatMap(item => item.taxes);
             const data = {
@@ -611,7 +622,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 quickSale: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
                 items: itemsResult,
                 taxes: taxesResult,
-                payments: {}, 
+                payments: {},
                 taxPercentId
             }
             if (order.orderId > 0) {
@@ -678,7 +689,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                                     documentoId: queryParams.idDocumento,
                                     tipo: 4
                                 })
-                            } 
+                            }
                         } else {
                             resetForm();
                         }

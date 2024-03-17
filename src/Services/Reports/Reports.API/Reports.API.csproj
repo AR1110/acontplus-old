@@ -8,10 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Reports\FactElect\ComprobanteRetencionRG.rdl" />
-    <None Remove="Reports\FactElect\RecepcionRetencion.rdl" />
-    <None Remove="Reports\Ventas\ReporteRentabilidad.rdl" />
-    <None Remove="Reports\Ventas\ReportRentabCustom.rdl" />
+    <None Remove="Reports\Ventas\AprobHistorial.rdl" />
+    <None Remove="Reports\Ventas\Factura.rdlc" />
+    <None Remove="Reports\Ventas\FacturaGeneral.rdl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -164,10 +163,19 @@
     <Content Include="Reports\Ventas\CuentaPorCobrarCuotas.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\Ventas\Factura.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\FacturaGeneral.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Ventas\NotaCreditoCliente.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\NotaEntrega.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\AprobHistorial.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\Proforma.rdlc">
@@ -195,8 +203,6 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 
 </Project>

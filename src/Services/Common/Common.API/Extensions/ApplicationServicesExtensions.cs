@@ -14,6 +14,7 @@ namespace Common.API.Extensions
         {
             services.AddDbContextPool<CommonContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<INotificacionService, NotificacionService>();
             services.AddSingleton<LogWriter>();
             return services;

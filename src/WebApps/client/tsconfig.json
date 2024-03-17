@@ -42,6 +42,9 @@
         "src/app/modules/sale/*",
         "src/app/modules/inventory/shared/*"
       ],
+      "@restaurant/*": [
+        "src/app/modules/restaurant/*",
+      ],
       "@shared/*": [
         "src/app/shared/*"
       ],

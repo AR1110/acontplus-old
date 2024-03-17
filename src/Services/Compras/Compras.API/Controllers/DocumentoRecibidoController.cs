@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
@@ -243,13 +244,30 @@ namespace Compras.API.Controllers
             }
             try
             {
-                XmlDocument xmlDocSri = new XmlDocument();
-                using (MemoryStream ms = new MemoryStream())
+                XDocument xmlDocSri = new XDocument();
+
+                using (MemoryStream str = new MemoryStream())
                 {
-                    file.CopyTo(ms);
-                    xmlDocSri.LoadXml(Encoding.UTF8.GetString(ms.ToArray()));
+                    await file.CopyToAsync(str);
+                    str.Position = 0;
+                    xmlDocSri = XDocument.Load(str);
                 }
-                XmlNode nodeAuth = xmlDocSri.GetElementsByTagName("autorizacion")[0];
+
+                //XmlDocument xmlDocSri = new XmlDocument();
+                //using (MemoryStream ms = new MemoryStream())
+                //{
+                //    file.CopyTo(ms);
+                //    xmlDocSri.LoadXml(Encoding.UTF8.GetString(ms.ToArray()));
+                //}
+
+                XmlDocument docNew = new XmlDocument();
+
+                using (var xmlReader = xmlDocSri.CreateReader())
+                {
+                    docNew.Load(xmlReader);
+                }
+
+                XmlNode nodeAuth = docNew.GetElementsByTagName("autorizacion")[0];
                 XmlNode nodeComp = nodeAuth.SelectSingleNode("comprobante");
                 if (nodeComp != null)
                 {

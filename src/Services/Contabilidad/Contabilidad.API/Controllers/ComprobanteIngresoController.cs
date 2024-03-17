@@ -2,7 +2,6 @@
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
 using Services.Common.Logs;
 
 namespace Contabilidad.API.Controllers
@@ -101,7 +100,7 @@ namespace Contabilidad.API.Controllers
         //===========SE USA EN CHEQUE============
         [HttpPut]
         public async Task<IActionResult> Put(ApiRequest request)
-        { 
+        {
 
             var _response = new ApiResponse();
             try

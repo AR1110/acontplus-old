@@ -16,8 +16,8 @@ namespace WebUI.Controllers.Financiero
         {
             _configuration = configuration;
 
-        } 
-         
+        }
+
         //Todavia se usa en cuentas por pagar
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CobroPago data)
@@ -42,6 +42,6 @@ namespace WebUI.Controllers.Financiero
                 return BadRequest(ex.Message);
             }
         }
- 
+
     }
 }

@@ -31,7 +31,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                
+
                 var itemFounded = await _context.DeviceSpecs.FindAsync(id);
                 if (itemFounded == null)
                 {

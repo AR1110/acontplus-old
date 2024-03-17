@@ -218,6 +218,10 @@
           <DataField>pay</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="saldoAnterior">
+          <DataField>saldoAnterior</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="TotalesDs">
@@ -249,7 +253,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.02917in</Width>
+                  <Width>1.01548in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.39375in</Width>
@@ -258,13 +262,16 @@
                   <Width>1.12291in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.25833in</Width>
+                  <Width>1.21546in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.39396in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.8125in</Width>
+                  <Width>0.68189in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.70834in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.65625in</Width>
@@ -273,7 +280,7 @@
                   <Width>0.70834in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.73409in</Width>
+                  <Width>1.19071in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -572,6 +579,60 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox13</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox21">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Saldo A.</Value>
+                                  <Style>
+                                    <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox21</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1103,6 +1164,59 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="saldoAnterior">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!saldoAnterior.Value</Value>
+                                  <Style>
+                                    <FontSize>7pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>saldoAnterior</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="abono">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1275,6 +1389,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1291,7 +1406,7 @@
             <Top>3.05623in</Top>
             <Left>0.13994in</Left>
             <Height>0.5in</Height>
-            <Width>10.1093in</Width>
+            <Width>10.08709in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3750,7 +3865,7 @@
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>9.45322cm</Top>
-            <Left>0.28437cm</Left>
+            <Left>0.26533cm</Left>
             <Height>2.55875cm</Height>
             <Width>25.82797cm</Width>
             <ZIndex>3</ZIndex>
@@ -5149,10 +5264,10 @@
             </Style>
           </Rectangle>
         </ReportItems>
-        <Height>13.95509cm</Height>
+        <Height>14.08738cm</Height>
         <Style />
       </Body>
-      <Width>26.25641cm</Width>
+      <Width>26.11234cm</Width>
       <Page>
         <PageHeader>
           <Height>3.6759cm</Height>

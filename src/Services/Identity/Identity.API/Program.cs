@@ -66,7 +66,7 @@ internal class Program
             }
         });
 
-        app.UseRouting(); 
+        app.UseRouting();
 
         if (Environment.OSVersion.Platform != PlatformID.Win32NT)
         {
