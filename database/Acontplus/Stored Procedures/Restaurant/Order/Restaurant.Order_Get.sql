@@ -317,7 +317,19 @@ BEGIN
     --Order Filters 
     IF (@tipo = 4)
         BEGIN
-            SET @tableNames = 'tables,usuarios'
+            SET @tableNames = 'establecimientos,tables,usuarios'
+
+            SELECT idEstablecimiento
+                ,nombreComercial
+                ,codEstab
+                ,idPuntoEmision
+                ,ptoEmi + '-' + estab as ptoEmi
+                ,defaultEstab
+                ,defaultPtoEmi 
+        FROM v_PtoEmi_Asign WITH(NOLOCK) 
+        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+         
+
             SELECT Id, [NumberTable], [Description], [Floor], roomDescription FROM Restaurant.v_Table vt INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc where e.idEntidad = @idEntidad
             SELECT 
 				u.idUsuario, 
