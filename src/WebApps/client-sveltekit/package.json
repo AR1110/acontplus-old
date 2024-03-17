@@ -13,7 +13,7 @@
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.1.1",
     "@sveltejs/adapter-static": "^3.0.1",
-    "@sveltejs/kit": "^2.5.2",
+    "@sveltejs/kit": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
     "@types/bootstrap": "^5.2.10",
     "@types/file-saver": "^2.0.7",
@@ -28,15 +28,15 @@
     "prettier": "^3.2.5",
     "prettier-plugin-svelte": "^3.2.2",
     "svelte": "^4.2.12",
-    "svelte-check": "^3.6.6",
+    "svelte-check": "^3.6.7",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.5"
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6"
   },
   "type": "module",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
-    "axios": "^1.6.7",
+    "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.2",
     "file-saver": "^2.0.5",
