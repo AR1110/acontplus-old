@@ -328,6 +328,7 @@
         const modalSvc = $injector.get('modalService');
         const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
+        const DOC_TYPE = $injector.get('DOC_TYPE');
 
 
         $scope.tipoDoc = {
@@ -463,8 +464,13 @@
                 showLoader();
                 guiaRemisionSvc.getDataForm().then(response => {
                     const { estabs } = response;
+                    console.log(response)
                     $scope.establecimientos = estabs;
-                    tiposDoc = response.tiposDoc;
+                    tiposDoc = response.tiposDoc
+                    tiposDoc.push({
+                        codigo: DOC_TYPE.APROB_DOC, 
+                        descripcion: 'Aprobación Ventas'
+                    })
                     //Nuevo 
                     if (params !== null && typeof params === "object" && params.tipoRegistro === 1) {
                         $scope.tipoRegistro = 1;
@@ -700,20 +706,26 @@
                                 pageSize: 5,
                                 maxSize: 5,
                                 totalRecords: 0,
-                                codDoc: $scope.tiposDoc.find(item => item.codigo === 'FE').codigo,
+                                codDoc: $scope.tiposDoc.find(item => item.codigo === DOC_TYPE.FE).codigo,
                                 checkBoxDate: true,
                                 fechaInicio: new Date(),
                                 fechaFin: new Date()
                             };
-                            $scope.documentos = [];
-
-                            $scope.tipoDoc = ''
+                            $scope.documentos = []; 
 
                             $scope.resultRangeFilter = function (item) {
                                 $scope.dataSearch.fechaInicio = item.startDate,
                                     $scope.dataSearch.fechaFin = item.endDate
                                 $scope.getDocs();
                             }
+
+                            function getTipo(){
+                                if ($scope.dataSearch.codDoc === DOC_TYPE.FE) return 5;
+                                if ($scope.dataSearch.codDoc === DOC_TYPE.NE) return 6;
+                                if ($scope.dataSearch.codDoc === DOC_TYPE.APROB_DOC) return 7;
+                            }
+
+                            
 
                             $scope.getDocs = function () {
                                 try {
@@ -732,14 +744,13 @@
                                         codEstab,
                                         secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                                         codDoc: $scope.dataSearch.codDoc,
-                                        tipo: $scope.dataSearch.codDoc === 'NE' ? 6 : 5,
+                                        tipo: getTipo(),
                                         checkBoxDate: $scope.dataSearch.checkBoxDate,
                                         fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio) || null,
                                         fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin) || null,
                                     }
                                     showLoader();
-                                    $scope.documentos = [];
-                                    $scope.tipoDoc = $scope.dataSearch.codDoc==='NE'? 'Nota Entrega': 'Factura';
+                                    $scope.documentos = []; 
                                     guiaRemisionSvc.getDocs(params).then(response => {
                                         $scope.documentos = response;
                                         $scope.dataSearch.totalRecords = $scope.documentos.length > 0 ? $scope.documentos[0].totalRecords : 0

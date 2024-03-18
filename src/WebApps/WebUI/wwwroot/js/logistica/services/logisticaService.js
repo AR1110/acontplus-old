@@ -26,7 +26,7 @@
                 const {
                     ptoEmision,
                     tipoDocumento
-                } = response; 
+                } = response;
 
                 const estabs = fS.groupingEstab({
                     estabs: ptoEmision
@@ -81,53 +81,45 @@
         }
 
         function getDocs(obj) {
-            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj}), null, true).then(response=>{
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj }), null, true).then(response => {
                 let docs = [];
-                if(response!==null && typeof response==='object'){
+                if (response !== null && typeof response === 'object') {
                     let tempData = [];
-                    if(obj.codDoc==="NE"){
-                        tempData = response.notas;
-                        docs = tempData.map(doc => {
-                            let detalles = JSON.parse(doc.detalles);
-                            return {
-                                idDocumento: doc.idDocumento,
-                                serieComprobante: doc.serieComprobante,
-                                razonSocialComprador: doc.razonSocialComprador,
-                                fechaEmision: doc.fechaEmision,
-                                importeTotal: doc.importeTotal,
-                                detalles,
-                                totalRecords: doc.totalRecords,
-                            }
-                        })
-
-                    }else{
-                        tempData = response.facturas;
-                        docs = tempData.map(doc => {
-                            let detalles = JSON.parse(doc.detalles);
-                            return {
-                                idDocumento: doc.idFactura,
-                                serieComprobante: doc.serieComprobante,
-                                razonSocialComprador: doc.razonSocialComprador,
-                                fechaEmision: doc.fechaEmision,
-                                importeTotal: doc.importeTotal,
-                                detalles,
-                                totalRecords: doc.totalRecords,
-                            }
-                        }) 
+                    if ("notas" in response) {
+                        tempData = response.notas || [];
                     }
+                    if ("facturas" in response) {
+                        tempData = response.facturas || [];
+                    }
+                    if ("aprobaciones" in response) {
+                        tempData = response.aprobaciones || [];
+                    } 
+                    docs = tempData.map(doc => {
+                        let detalles = JSON.parse(doc.detalles);
+                        return {
+                            idDocumento: doc.idDocumento,
+                            serieComprobante: doc.serieComprobante,
+                            razonSocialComprador: doc.razonSocialComprador,
+                            fechaEmision: doc.fechaEmision,
+                            importeTotal: doc.importeTotal,
+                            nameDoc: doc.nameDoc,
+                            detalles,
+                            totalRecords: doc.totalRecords,
+                        }
+                    })
 
                 }
                 return docs;
             })
         }
 
-        function generateSerieComprobante (query) {
+        function generateSerieComprobante(query) {
             return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
                 let result = null;
-                if(response !== null && typeof response === 'object'){
-                    let {serieComprobante} = response;
-                    if (serieComprobante.length>0){
-                        result = serieComprobante[0].serieComprobante; 
+                if (response !== null && typeof response === 'object') {
+                    let { serieComprobante } = response;
+                    if (serieComprobante.length > 0) {
+                        result = serieComprobante[0].serieComprobante;
                     }
                 }
                 return result;

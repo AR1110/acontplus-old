@@ -193,7 +193,7 @@ export class RentabilidadPageComponent {
     }
 
     if (this.dataSearch.checkboxRentabCustom) {
-      if (!isValidField(this.dataSearch.porcentajeRenta) || !isValidField(this.dataSearch.porcentajeComision)) {
+      if (!isValidField(this.dataSearch.porcentajeRenta) && !isValidField(this.dataSearch.porcentajeComision)) {
         this.tS.toastr({
           type: 'warning',
           message: 'Ingrese el valor del porcentaje de renta o el valor del porcentaje de comisión.'
