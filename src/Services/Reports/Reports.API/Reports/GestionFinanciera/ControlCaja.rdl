@@ -222,6 +222,14 @@
           <DataField>saldoAnterior</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="sortByDefault">
+          <DataField>sortByDefault</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="sortOrder">
+          <DataField>sortOrder</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="TotalesDs">
@@ -249,7 +257,7 @@
     <ReportSection>
       <Body>
         <ReportItems>
-          <Tablix Name="Tablix1">
+          <Tablix Name="DetalleCaja">
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
@@ -869,26 +877,6 @@
                             <Border>
                               <Style>Solid</Style>
                             </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </TopBorder>
-                            <BottomBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </BottomBorder>
-                            <LeftBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </RightBorder>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1399,6 +1387,15 @@
                 </TablixMember>
                 <TablixMember>
                   <Group Name="Details" />
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=IIF(Fields!sortByDefault.Value=0 AND Fields!sortOrder.Value="ASC", Fields!fechaEmision.Value, 0)</Value>
+                    </SortExpression>
+                    <SortExpression>
+                      <Value>=IIF(Fields!sortByDefault.Value=0 AND Fields!sortOrder.Value="DESC", Fields!fechaEmision.Value, 0)</Value>
+                      <Direction>Descending</Direction>
+                    </SortExpression>
+                  </SortExpressions>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
@@ -1407,6 +1404,7 @@
             <Left>0.13994in</Left>
             <Height>0.5in</Height>
             <Width>10.08709in</Width>
+            <ToolTip>DetalleCaja</ToolTip>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1415,7 +1413,7 @@
           </Tablix>
           <Rectangle Name="Rectangle2">
             <ReportItems>
-              <Tablix Name="Tablix2">
+              <Tablix Name="Detalle_Ingresos_Egresos">
                 <TablixBody>
                   <TablixColumns>
                     <TablixColumn>
@@ -3110,7 +3108,7 @@
           </Rectangle>
           <Rectangle Name="Rectangle3">
             <ReportItems>
-              <Tablix Name="Tablix5">
+              <Tablix Name="Documentos_Adicionales">
                 <TablixBody>
                   <TablixColumns>
                     <TablixColumn>
@@ -5263,6 +5261,66 @@
               </Border>
             </Style>
           </Rectangle>
+          <Textbox Name="Textbox23">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!sortByDefault.Value, "ControlCajaDs")</Value>
+                    <Style />
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox23</rd:DefaultName>
+            <Top>6.98645cm</Top>
+            <Left>0.43477cm</Left>
+            <Height>0.6cm</Height>
+            <Width>2.5cm</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox28">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!sortOrder.Value, "ControlCajaDs")</Value>
+                    <Style />
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox28</rd:DefaultName>
+            <Top>6.98645cm</Top>
+            <Left>4.46588cm</Left>
+            <Height>0.6cm</Height>
+            <Width>2.5cm</Width>
+            <ZIndex>8</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
         <Height>14.08738cm</Height>
         <Style />
