@@ -58,7 +58,7 @@ BEGIN
 
 			SELECT * FROM Tarifa WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-			SELECT * FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
+			SELECT * FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL'
 
             SELECT * FROM dbo.TipoIva WITH (NOLOCK) WHERE estado = 1 
 
@@ -97,6 +97,7 @@ BEGIN
 
 
 	        SET @sql = 'SELECT a.idArticulo
+                              ,a.idTipoIva
 				              ,codigo
 				              ,codigoAuxiliar
 				              ,codigoBarra

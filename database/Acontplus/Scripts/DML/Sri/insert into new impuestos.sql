@@ -19,4 +19,5 @@ go
 --select 'Iva 15%',15,4,1,GETDATE(),1,4
 
 
+
 select * from dbo.TipoIva order by porcentaje
