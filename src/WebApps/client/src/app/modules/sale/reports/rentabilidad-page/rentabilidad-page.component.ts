@@ -193,20 +193,20 @@ export class RentabilidadPageComponent {
     }
 
     if (this.dataSearch.checkboxRentabCustom) {
-      if (!isValidField(this.dataSearch.porcentajeRenta)) {
+      if (!isValidField(this.dataSearch.porcentajeRenta) || !isValidField(this.dataSearch.porcentajeComision)) {
         this.tS.toastr({
           type: 'warning',
-          message: 'Ingrese el valor de porcentaje renta correctamente'
+          message: 'Ingrese el valor del porcentaje de renta o el valor del porcentaje de comisión.'
         })
         return
       }
-      if (!isValidField(this.dataSearch.porcentajeComision)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Ingrese el valor de porcentaje de comisión correctamente'
-        })
-        return
-      }
+      // if (!isValidField(this.dataSearch.porcentajeComision)) {
+      //   this.tS.toastr({
+      //     type: 'warning',
+      //     message: 'Ingrese el valor de porcentaje de comisión correctamente'
+      //   })
+      //   return
+      // }
     }
 
 
@@ -244,8 +244,8 @@ export class RentabilidadPageComponent {
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       subFamiliasChecked: this.dataSearch.subCategoriaChecked && subCategoriasChecked || null,
-      porcentajeRenta: this.dataSearch.porcentajeRenta ,
-      porcentajeComision: this.dataSearch.porcentajeComision  
+      porcentajeRenta: this.dataSearch.porcentajeRenta,
+      porcentajeComision: this.dataSearch.porcentajeComision
     }
 
     const parameters = {
