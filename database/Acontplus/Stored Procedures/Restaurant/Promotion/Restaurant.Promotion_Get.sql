@@ -37,7 +37,7 @@ BEGIN
                    ,p.PromotionDays
                    ,ISNULL(p.S3ObjectUrl, '')           AS S3ObjectUrl                   
 	        FROM Restaurant.Promotion p WITH (NOLOCK)
-            WHERE p.codEstab = @codEstab 
+            WHERE p.codEstab = @codEstab ORDER by p.id DESC
 
             SELECT * FROM Dia
         END
@@ -60,7 +60,7 @@ BEGIN
             WHERE RP.CodEstab = @codEstab AND  @dateNow BETWEEN rp.StartDate AND rp.EndDate
             AND @day IN(SELECT diaSemana FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
             AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) 
-            AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))            
+            AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))   ORDER by rp.id DESC         
         END
 END
 GO

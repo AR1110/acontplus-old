@@ -141,9 +141,7 @@ export default function OrderTable() {
                     <PointOfSaleIcon />
                 </Button>
             </Tooltip>
-        )
-
-
+        ) 
     }
     return (
         <React.Fragment>

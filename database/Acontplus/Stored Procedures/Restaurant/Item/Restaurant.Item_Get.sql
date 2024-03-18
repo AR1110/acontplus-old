@@ -15,7 +15,7 @@ GO
 -- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":100,"tipo":1}', ''
 -- Restaurant.Item_Get 139, '{"tipo":2}', ''
 -- Restaurant.Item_Get 139, '{"tipo":4, "pageIndex":1,"pageSize":10 }', ''
--- Restaurant.Item_Get 139, '{"tipo":2,"idSubFamilia":0,"pageIndex":1,"pageSize":25}', ''
+-- Restaurant.Item_Get 139, '{"tipo":3,"checkSubFamilia":false,"idSubFamilia":0,"pageIndex":1,"pageSize":25,"checkBySearch":true,"code":"COM"}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
 GO
@@ -135,6 +135,7 @@ BEGIN
                                 , @pageIndex
                                 , @pageSize
                                 , @textSearch 
+            RETURN 
         END
 
     -- ===== PARTE RESTAURANT POS ===== --
@@ -159,13 +160,16 @@ BEGIN
                                 , @pageIndex
                                 , @pageSize
                                 , @textSearch 
+
+            RETURN 
         END
 
     -- ===== par ===== --
     -----Listado de Menus ----
-    IF (@tipo = 3) 
+    IF @tipo = 3 
          BEGIN
             SET @tableNames = 'items'
+            PRINT @idEntidad
             SELECT m.*
                 ,s3ObjectUrl		= a.s3ObjectUrl
 				,stock				= a.stock
@@ -189,9 +193,10 @@ BEGIN
                ,itemTypeCode = 'MENU'
             FROM Restaurant.Menu m WITH(NOLOCK)
             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            WHERE a.idEntidad = @idEntidad AND a.siglaFamilia = 'COM'
+            WHERE a.idEntidad = @idEntidad AND a.estado = 1 AND a.siglaFamilia = 'COM'
             AND ISNULL(m.ForPromotion, 0) = 0 
             ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
+            RETURN 
          END
 END
 GO
