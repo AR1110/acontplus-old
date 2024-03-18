@@ -4,22 +4,17 @@
     precioMasivoCtrl.$inject = [
         '$scope',
         '$injector',
-        'mainService',
-        'commonService',
-        'articuloService',
         '$interval',
-        '$log',
-        '$window',
-        'modalService',
         'uiGridConstants',
     ]
 
-    function precioMasivoCtrl($scope, $injector, _mS, _commonSvc, _articleSvc, $interval, $log, $window, _modalSvc, uiGridConstants) {
+    function precioMasivoCtrl($scope, $injector, $interval, uiGridConstants) {
 
         const precioMasivoSvc = $injector.get('precioMasivoService');
         const fS = $injector.get('formulario')
         const tS = $injector.get('toastService')
         const pricingUtils = $injector.get('pricingUtils');
+        const modalSvc = $injector.get('modalService');
 
         $scope.catalogs = [
             { code: 1, description: 'Articulo' },
@@ -37,8 +32,14 @@
         $scope.articles = [];
         $scope.decimal = {}
         $scope.tarifasImpuesto = [];
+        $scope.tarifasImpuestoDestino = [];
 
-        $scope.mainForm = {};
+        $scope.mainForm = {
+            idTarifa: 0,
+            idSubFamilia: 0,
+            idTipoIva: 0,
+            idTipoIvaDestino: 0
+        };
 
         //Product 
         $scope.dataSearchProduct = {
@@ -97,7 +98,18 @@
                     width: '8%',
                     minWidth: 100
                 },
-                { name: 'Tipo Iva', field: 'porcentajeIva', type: 'number', enableCellEdit: false, enableFiltering: false, width: '3%', minWidth: 100 },
+                {
+                    name: 'Tipo Iva',
+                    field: 'porcentajeIva',
+                    type: 'number',
+                    enableCellEdit: false,
+                    enableFiltering: false,
+                    width: '3%',
+                    minWidth: 100,
+                    cellClass: function (grid, row) {
+                        return row.entity.idTipoOriginal !== row.entity.idTipoIva ? 'modifiedCell' : '';
+                    }
+                },
                 // {
                 //     name: 'I.V.A',
                 //     field: 'idTipoIva',
@@ -219,7 +231,7 @@
             gridApi.edit.on.afterCellEdit($scope, afterCellEdit)
         }
         function afterCellEdit(rowEntity, colDef, newValue, oldValue) {
-            console.log(oldValue, newValue)
+
             if ([null, "", undefined].includes(rowEntity[colDef.field])) {
                 rowEntity[colDef.field] = oldValue;
                 return
@@ -334,6 +346,7 @@
 
         function initLoad() {
             try {
+                showLoader();
                 precioMasivoSvc.getDataForm().then(response => {
                     const {
                         familias,
@@ -350,7 +363,9 @@
 
                     $scope.tarifasImpuesto = tarifasImpuesto;
                     $scope.mainForm.idTarifa = $scope.tarifas.find(x => x.predeterminada).idTarifa;
-                })
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader())
 
             } catch (error) {
                 console.log(error)
@@ -385,34 +400,45 @@
         $scope.articlesBackup = []
 
         function fillGrid() {
-            console.log($scope.articles)
             $scope.gridOptions.data = $scope.articles.map(item => {
+                let dataTarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.idTipoIva === item.idTipoIva);
                 return {
                     ...item,
-                    porcentajeIva: item.iva,
-                    ganancia: fS.roundNumber((Number(item.precioVenta) - item.precioCosto), $scope.config.nroPrecio),
+                    porcentajeIva: dataTarifaImpuesto.porcentaje,
+                    ganancia: fS.roundNumber((Number(item.precioVenta) - item.precioCosto), 5),
                     estado: item.estadoTarifa,
                     modified: false
                 }
             })
         }
 
+        $scope.onChangeSubFamilia = () => {
+            $scope.mainForm.idTipoOriginal = 0;
+            $scope.mainForm.idTipoIva = 0;
+            $scope.getArticles();
+        }
+        $scope.onChangeOpciones = function () {
+            $scope.mainForm.idTipoOriginal = 0;
+            $scope.mainForm.idTipoIva = 0;
+        }
+
         $scope.getArticles = () => {
             $scope.articles = []
             $scope.articlesBackup = []
+            $scope.articlesToSave = [];
             $scope.mainForm.tipo = 2;
-            console.log($scope.mainForm)
+
 
             showLoader();
             let dataSearch = {
                 opcion: $scope.mainForm.option,
                 idTarifa: $scope.mainForm.idTarifa,
                 rucProveedor: $scope.mainForm.rucProveedor,
+                idSubFamilia: $scope.mainForm.idSubFamilia
             }
             precioMasivoSvc.getProducts(dataSearch).then(response => {
                 $scope.articles = response;
                 $scope.articlesBackup = structuredClone($scope.articles);
-                console.log(response)
 
                 fillGrid($scope.articles)
             })
@@ -433,8 +459,10 @@
             })
             if (isConfirmed) {
                 $scope.articlesToSave = []
-                $scope.articles = []
-                $scope.articles = JSON.parse(JSON.stringify($scope.articlesBackup))
+                $scope.articles = [];
+                $scope.mainForm.idTipoOriginal = 0;
+                $scope.mainForm.idTipoIva = 0;
+                $scope.articles = structuredClone($scope.articlesBackup)
                 $scope.gridOptions.data = []
                 $scope.gridApi.core.refresh();
 
@@ -460,7 +488,7 @@
             if (item.idArticuloPvP == 0) {
                 method = "POST"
             }
-            _mS.getData(method, "Inventario/PrecioMasivo/", { data: item }, true).then(
+            mS.getData(method, "Inventario/PrecioMasivo/", { data: item }, true).then(
                 response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message)
@@ -476,9 +504,85 @@
             })
         }
 
+        $scope.onChangeTipoIvaInicial = function () {
+            if (!$scope.articles.some(d => d.idTipoIva === $scope.mainForm.idTipoIva)) {
+                Swal.fire({
+                    icon: 'warning',
+                    html: '<small>No hay ningún artículo que posee este tipo Iva</small>'
+                })
+                $scope.mainForm.idTipoIvaDestino = 0;
+                $scope.tarifasImpuestoDestino = [];
+                return
+            }
+
+            $scope.tarifasImpuestoDestino = $scope.tarifasImpuesto.filter(ti => ti.idTipoIva !== $scope.mainForm.idTipoIva)
+        }
+
+        $scope.onChangeTipoIvaDestino = function () {
+            try {
+            //    let tarifaImpuestoInicialDesc = $scope.tarifasImpuesto.find(ti => ti.idTipoIva === $scope.mainForm.idTipoIva);
+                let { descripcion: tarifaImpuestoDestinoDesc } = $scope.tarifasImpuestoDestino.find(ti => ti.idTipoIva === $scope.mainForm.idTipoIvaDestino);
+
+                Swal.fire({
+                    title: "Modificar los precios",
+                    html: `Se realizará cálculo de los precios, teniendo en cuenta el tipo de IVA: <b>${tarifaImpuestoDestinoDesc}</b> como factor determinante.`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Continuar!",
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        applyTarifaImpuestoDestino();
+                    }
+                });
+
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        function applyTarifaImpuestoDestino() {
+            let { porcentaje } = $scope.tarifasImpuestoDestino.find(ti => ti.idTipoIva === $scope.mainForm.idTipoIvaDestino);
+            $scope.articlesToSave = [];
+
+            for (let item of $scope.articles) {
+                if (item.idTipoOriginal === $scope.mainForm.idTipoIva) {
+                    let precioVenta = pricingUtils.calcularPrecioVenta(item.precioConIva, porcentaje);
+                    item.precioVenta = fS.roundNumber(precioVenta, $scope.decimal.nroPrecio);
+
+                    let precioConIva = pricingUtils.calcularPrecioConIva(item.precioVenta, porcentaje);
+
+                    item.precioConIva = fS.roundNumber(precioConIva, $scope.decimal.nroPrecio);
+
+                    let porcentajeUtilidad = pricingUtils.campoPorcentajeUtilidad(item.precioCosto, precioVenta);
+
+                    item.porcentajeUtilidad = fS.roundNumber(porcentajeUtilidad, 5);
+
+                    // let ganancia = item.precioVenta - item.precioCosto;
+
+                    // item.ganancia = fS.roundNumber(ganancia, 5);
+                    // console.log('teststst')
+                    item.idTipoIva = $scope.mainForm.idTipoIvaDestino;
+                    $scope.articlesToSave.push(item)
+                }
+
+            }
+            fillGrid();
+            tS.toastr('success', 'Aplicado correctamente');
+
+        }
+
         $scope.save = async () => {
             if ($scope.articlesToSave.length == 0) {
                 tS.toastr("warning", "Usted no poseen ningun articulo modificado")
+                return
+            }
+
+            if ($scope.articlesToSave.length > 50) {
+                tS.toastr("warning", "La cantidad de artículos permitidos es 50")
                 return
             }
             let message
@@ -503,9 +607,9 @@
             message += `</tbody></table>`
             let { isConfirmed } = await Swal.fire({
                 title: 'Esta seguro de actualizar el precio de los siguientes articulos?',
-                html: message,
-                //html: `Esta seguro de actualizar los <b>${$scope.articlesToSave.length}</b> articulos modificados?, esto no se podra revertir!`,
-                width: '800px',
+                //    html: message,
+                html: `Esta seguro de actualizar los <b>${$scope.articlesToSave.length}</b> articulos modificados?, esto no se podra revertir!`,
+               // width: '400px',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -515,10 +619,11 @@
                 allowOutsideClick: false
             })
             if (isConfirmed) {
-                let results = $scope.articlesToSave.map(item=>{
-                   
+                let results = $scope.articlesToSave.map(item => {
+
                     return {
-                         idArticuloPvP: item.idArticuloPvP,
+                        idTipoIva: item.idTipoIva,
+                        idArticuloPvP: item.idArticuloPvP,
                         idArticulo: item.idArticulo,
                         idTarifa: item.idTarifa,
                         precioVenta: item.precioVenta,
@@ -526,29 +631,29 @@
                         porcentajeUtilidad: item.porcentajeUtilidad,
                     }
                 })
-                console.log(results)
+
                 let data = {
                     tipo: 2,
                     articles: results
                 }
                 showLoader()
                 precioMasivoSvc.put(data).then(response => {
-                        if (response.code == "0") {
-                            tS.toastr("warning", response.message)
-                        }
-                        if (response.code == "1") {
-                            $scope.articlesToSave = []
-                            tS.toastr("info", response.message)
-                        } 
+                    if (response.code == "0") {
+                        tS.toastr("warning", response.message)
                     }
-                ).catch(error => { 
+                    if (response.code == "1") {
+                        $scope.articlesToSave = []
+                        tS.toastr("success", response.message)
+                    }
+                }
+                ).catch(error => {
                     console.log(error)
-                }).finally(()=>hideLoader());
+                }).finally(() => hideLoader());
             }
         }
 
         $scope.refresh = () => {
-            $window.location.href = '/PrecioMasivo/Index';
+            window.location.href = '/PrecioMasivo/Index';
         }
 
     }
