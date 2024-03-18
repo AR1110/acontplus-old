@@ -34,6 +34,7 @@ BEGIN
         idArticuloPvP INT NOT NULL UNIQUE
        ,idArticulo INT NOT NULL
        ,idTarifa INT NOT NULL
+       ,idTipoIva INT NOT NULL
        ,precioVenta NUMERIC(18,2) NOT NULL
        ,precioConIva NUMERIC(18,5) NOT NULL
        ,porcentajeUtilidad NUMERIC(18,5) NOT NULL
@@ -41,16 +42,17 @@ BEGIN
 
 	BEGIN TRY
         
-        SELECT tipo, articles FROM OPENJSON (@json) WITH (tipo INT ,articles VARCHAR(MAX) )
+        SELECT @tipo = tipo, @articles = articles FROM OPENJSON (@json) WITH (tipo INT ,articles NVARCHAR(MAX) as json )
 
         INSERT INTO @tbArticle
-              (idArticuloPvP,idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad)
-        SELECT idArticuloPvP,idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad
+              (idArticuloPvP,idArticulo,idTarifa,idTipoIva,precioVenta,precioConIva,porcentajeUtilidad)
+        SELECT idArticuloPvP,idArticulo,idTarifa,idTipoIva,precioVenta,precioConIva,porcentajeUtilidad
         FROM OPENJSON(@articles) WITH
         (
             idArticuloPvP      INT 
            ,idArticulo         INT 
            ,idTarifa           INT 
+           ,idTipoIva          INT
            ,precioVenta        NUMERIC(18,2) 
            ,precioConIva       NUMERIC(18,5) 
            ,porcentajeUtilidad NUMERIC(18,5)
@@ -58,19 +60,26 @@ BEGIN
 
 	    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        IF (SELECT COUNT(*) FROM @tbArticle) > 0 
+        IF (SELECT COUNT(*) FROM @tbArticle) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la informacion de articulo', DEFAULT)
+                SELECT [Common].[ufnSpResponse]('0','Error en la informacion', DEFAULT)
                 RETURN 
             END 
 
 		BEGIN TRAN
-		    UPDATE tb SET 
+		    
+            UPDATE tb SET 
                    tb.precioVenta        = tt.precioVenta
 				  ,tb.precioConIva       = tt.precioConIva
 				  ,tb.porcentajeUtilidad = tt.porcentajeUtilidad
 		    FROM ArticuloPvp      tb WITH (ROWLOCK)
 		    INNER JOIN @tbArticle tt ON tt.idArticuloPvP = tb.idArticuloPvP 
+
+            UPDATE ar SET
+                   ar.idTipoIva = tt.idTipoIva
+            FROM dbo.Articulo     ar WITH (ROWLOCK)
+            INNER JOIN @tbArticle tt ON tt.idArticulo = ar.idArticulo
+
 		COMMIT TRAN
         SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)
 	END TRY
@@ -80,7 +89,8 @@ BEGIN
             BEGIN 
 			    ROLLBACK TRAN
             END 
-		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
+		
+        INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'PrecioMasivo/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	    
         SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento', DEFAULT)
