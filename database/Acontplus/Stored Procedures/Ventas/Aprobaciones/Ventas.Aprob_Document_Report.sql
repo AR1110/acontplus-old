@@ -113,7 +113,7 @@ BEGIN
 	        FROM Ventas.Aprob_Document_Detailt ad WITH (NOLOCK)
 	        INNER JOIN dbo.Medida              me WITH (NOLOCK) ON me.idMedida   = ad.idMedida
 	        INNER JOIN dbo.Articulo            ar WITH (NOLOCK) ON ar.idArticulo = ad.idArticulo 
-	        WHERE ad.uniqueId = @uniqueId AND ad.estado = 1
+	        WHERE ad.uniqueId = @uniqueId AND ad.estado = 1 ORDER BY ad.idAprob_Document_Detailt ASC
 
             IF @codDoc = '01'
                 BEGIN
