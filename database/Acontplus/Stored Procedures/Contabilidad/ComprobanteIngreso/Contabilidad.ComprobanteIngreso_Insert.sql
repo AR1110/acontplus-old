@@ -248,7 +248,7 @@ BEGIN
             FROM @paymentDetail dt 
             INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = dt.secuencial 
             WHERE c.idComprobanteIngreso = @idComprobanteIngreso
-            ORDER BY idCuotaPorCobrar,saldo DESC
+            ORDER BY c.secuencial ASC
 
 			INSERT INTO Contabilidad.Historial_Cobro WITH (ROWLOCK)
                    (idComprobanteIngreso,idCuentaPorCobrar,idCobro,saldo,abono,diasMora,mora) 
@@ -256,7 +256,7 @@ BEGIN
             FROM @history h 
             INNER JOIN dbo.Cobro c WITH (NOLOCK) ON c.secuencial = h.secuencial 
             WHERE c.idComprobanteIngreso = @idComprobanteIngreso
-            ORDER BY idCuentaPorCobrar,saldo DESC
+            ORDER BY c.secuencial ASC
 
 			DECLARE cursor_Cuotas CURSOR LOCAL FOR
 			SELECT idCuotaPorCobrar FROM @paymentDetail

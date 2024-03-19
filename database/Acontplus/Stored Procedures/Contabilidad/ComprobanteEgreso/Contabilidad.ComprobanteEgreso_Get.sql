@@ -10,126 +10,150 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @byEntidad INT =  (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
-		   ,@checkBoxFecha BIT 
-		   ,@checkBoxDocumento BIT 
-		   ,@fechaInicio DATETIME 
-		   ,@fechaFin DATETIME
-		   ,@byPersona NVARCHAR(100)
-		   ,@byUsuario INT
+
+    --> Global
+    DECLARE @tipo INT ,@idEntidad INT
+
+    --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+
+    -->Filters
+	DECLARE @checkBoxFecha   BIT 
+		   ,@fechaInicio     DATETIME2 
+		   ,@fechaFin        DATETIME2
+		   ,@byPersona       VARCHAR(100)
+		   ,@byUsuario       INT
 		   ,@byTipoDocumento INT
-		   ,@byComprobante INT
-		   ,@byEstado INT 
-           ,@tipo INT
-		   ,@params NVARCHAR(MAX) = '@idEntidad INT
-									,@fechaI DATETIME
-									,@fechaF DATETIME
-									,@nroIdentificacion NVARCHAR(100)
-									,@idTipoDocumento INT
-									,@idComprobante INT
-									,@estado INT
-									,@idUsuario INT'
-		    
-			,@sql NVARCHAR(MAX) = 'SELECT TOP 10
-										 idComprobanteEgreso = ce.idComprobanteEgreso
-										,total = ce.total
-										,fechaRegistro = dbo.AFTConvertDate(ce.fechaRegistro)+''''+ dbo.AFTConvertHora(ce.fechaRegistro) 
-										,nroDoc = td.codigo+''-''+s.estab+''-''+dbo.AFTAutoComplete(ce.nroDocumento)  
-										,persona = UPPER(ce.nombreFiscal) 
-										,nroIdentificacion = ce.nroIdentificacion 
-										,caja = ''Ninguna''
-										,color = CASE WHEN ce.estado = 0 THEN ''table-danger'' ELSE '''' END
-										,estado = CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END
-										,usuario = u.nombreUsuario
-								   FROM dbo.ComprobanteEgreso    ce WITH (NOLOCK) 
-								   INNER JOIN dbo.TipoPersona    tp WITH (NOLOCK) ON tp.idTipoPersona   = ce.idTipoPersona 
-								   INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab         = ce.codEstab
-								   INNER JOIN dbo.TipoDocumento  td WITH (NOLOCK) ON td.idTipoDocumento = ce.idTipoDocumento 
-								   INNER JOIN dbo.Usuario u ON u.idUsuario = ce.idUsuario
-								   WHERE ce.idEntidad = @idEntidad '
-		
+		   ,@byComprobante   INT
+		   ,@byEstado        INT 
 
-        SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT)
+    --> Recuperacion de Informacion
+	SELECT @tipo = tipo  FROM OPENJSON(@json) WITH (tipo INT)
 
-        IF @tipo = 1
-            BEGIN 
+	SELECT TOP 1 @idEntidad  = idEntidad FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-			    SELECT 
-				     @checkBoxDocumento = checkBoxDocumento 
-				    ,@checkBoxFecha = checkBoxFecha 
-				    ,@byComprobante = byComprobante
-				    ,@byUsuario = byUsuario
-				    ,@byPersona = byPersona
-				    ,@byTipoDocumento = byTipoDocumento
-				    ,@byEstado = byEstado
-				    ,@fechaFin = fechaFin
-				    ,@fechaInicio = fechaInicio
-			    FROM OPENJSON(@json)
-			    WITH (checkBoxFecha BIT '$.checkBoxFecha' 
-				     ,checkBoxDocumento BIT '$.checkBoxDocumento'
-				     ,checkBoxUsuario BIT '$.checkBoxUsuario'
-				     ,fechaInicio DATETIME2 '$.fechaInicio'
-				     ,fechaFin DATETIME2 '$.fechaFin'
-				     ,byPersona NVARCHAR(100) '$.byPersona'
-				     ,byTipoDocumento INT '$.byTipoDocumento'
-				     ,byComprobante INT '$.byComprobante'
-				     ,byUsuario INT '$.byUsuario'
-				     ,byEstado INT '$.byEstado')
+    --> Get
+    IF @tipo = 1
+        BEGIN 
+                
+            SET @tableNames = 'comprobantesEgreso'
+
+            SET @sql = 'SELECT ce.idComprobanteEgreso
+							   ,ce.total
+                               ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                   as fechaRegistro
+                               ,Common.ufnGetSerieDocument(td.codigo,es.estab,ce.nroDocumento,0) as nroDoc
+							   ,UPPER(ce.nombreFiscal)                                           as persona
+							   ,ce.nroIdentificacion 
+							   ,''Ninguna''                                                      as caja
+							   ,CASE WHEN ce.estado = 0 THEN ''table-danger'' ELSE '''' END      as color
+							   ,CASE WHEN ce.estado = 0 THEN ''Anulado'' ELSE ''Activo'' END     as estado
+							   ,us.nombreUsuario                                                 as usuario
+                               ,COUNT(*) OVER()                                                  as totalRecords
+						FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK) 
+						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = ce.codEstab
+						INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento = ce.idTipoDocumento 
+						INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON uS.idUsuario       = ce.idUsuario
+						WHERE ce.idEntidad = @idEntidad '
+
+
+            SET @params = '@idEntidad         INT
+						  ,@fechaI            DATETIME2
+						  ,@fechaF            DATETIME2
+						  ,@nroIdentificacion VARCHAR(100)
+						  ,@idTipoDocumento   INT
+						  ,@idComprobante     INT
+						  ,@estado            INT
+						  ,@idUsuario         INT
+                          ,@pageIndex         INT
+                          ,@pageSize          INT'
+
+			SELECT @checkBoxFecha   = checkBoxFecha 
+				  ,@byComprobante   = byComprobante
+				  ,@byUsuario       = byUsuario
+				  ,@byPersona       = byPersona
+				  ,@byTipoDocumento = byTipoDocumento
+				  ,@byEstado        = byEstado
+				  ,@fechaFin        = fechaFin
+				  ,@fechaInicio     = fechaInicio
+                  ,@pageSize        = pageSize
+				  ,@pageIndex       = pageIndex
+			FROM OPENJSON(@json) WITH 
+            (
+                 checkBoxFecha     BIT 
+                ,checkBoxDocumento BIT 
+                ,checkBoxUsuario   BIT 
+                ,fechaInicio       DATETIME2 
+                ,fechaFin          DATETIME2 
+                ,byPersona         VARCHAR(100) 
+                ,byTipoDocumento   INT 
+                ,byComprobante     INT 
+                ,byUsuario         INT 
+                ,byEstado          INT
+                ,pageSize          INT
+                ,pageIndex         INT
+            )
  
-		        IF @checkBoxDocumento = 1
-			        BEGIN
-				        SET @sql = @sql+'AND ce.idComprobanteEgreso IN (SELECT pd.idComprobanteEgreso FROM PagoDocumento pd WHERE pd.idTipoDocumento = @idTipoDocumento AND pd.idComprobante = @idComprobante) '
-			        END 
+		    IF @byTipoDocumento > 0 AND @byComprobante > 0
+			    BEGIN
+				    SET @sql = @sql + 'AND ce.idComprobanteEgreso IN (SELECT pd.idComprobanteEgreso FROM PagoDocumento pd WHERE pd.idTipoDocumento = @idTipoDocumento AND pd.idComprobante = @idComprobante) '
+			    END 
 
-		        IF @byEstado IS NOT NULL
-			        BEGIN
-				        SET @sql = @sql+'AND ce.estado = @estado '
-			        END 
+		    IF @byEstado IS NOT NULL
+			    BEGIN
+				    SET @sql = @sql + 'AND ce.estado = @estado '
+			    END 
 
-		        IF @checkBoxFecha = 1
-			        BEGIN
-				        SET @sql = @sql+'AND CAST(ce.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
-			        END 
+		    IF @checkBoxFecha = 1
+			    BEGIN
+				    SET @sql = @sql + 'AND CAST(ce.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
+			    END 
 			
-		        IF @byPersona IS NOT NULL
-			        BEGIN
-				        SET @sql = @sql + ' AND ce.nroIdentificacion = @nroIdentificacion '
-			        END 
+		    IF @byPersona IS NOT NULL
+			    BEGIN
+				    SET @sql = @sql + 'AND ce.nroIdentificacion = @nroIdentificacion '
+			    END 
 
-		        IF @byUsuario IS NOT NULL
-			        BEGIN
-				        SET @sql = @sql + ' AND ce.idUsuario = @idUsuario '
-			        END 
+		    IF @byUsuario > 0
+			    BEGIN
+				    SET @sql = @sql + 'AND ce.idUsuario = @idUsuario '
+			    END 
 
-		        SET @sql = @sql+'ORDER BY ce.idComprobanteEgreso DESC'
+		    SET @sql = @sql + 'ORDER BY ce.idComprobanteEgreso DESC OFFSET @pageSize * (@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
-                SET @tableNames = 'comprobantesEgreso'
-		        EXEC sp_executesql 
-			              @sql
-			             ,@params
-				         ,@idEntidad = @byEntidad
-				         ,@fechaI = @fechaInicio
-				         ,@fechaF = @fechaFin
-				         ,@nroIdentificacion = @byPersona
-				         ,@idTipoDocumento = @byTipoDocumento
-				         ,@idComprobante = @byComprobante
-				         ,@estado = @byEstado
-				         ,@idUsuario = @byUsuario 
+		    EXEC sp_executesql @sql
+			                  ,@params
+				              ,@idEntidad         = @idEntidad
+				              ,@fechaI            = @fechaInicio
+				              ,@fechaF            = @fechaFin
+				              ,@nroIdentificacion = @byPersona
+				              ,@idTipoDocumento   = @byTipoDocumento
+				              ,@idComprobante     = @byComprobante
+				              ,@estado            = @byEstado
+				              ,@idUsuario         = @byUsuario
+                              ,@pageSize          = @pageSize
+                              ,@pageIndex         = @pageIndex
 
-         END
+            RETURN 
+
+        END
         
-        IF @tipo = 2
-            BEGIN 
-                SET @tableNames = 'estabs'
-                 SELECT idEstablecimiento
+    --> Filters 
+    IF @tipo = 2
+        BEGIN 
+            SET @tableNames = 'estabs'
+
+            SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
                   ,idPuntoEmision
-                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,estab + '-' + ptoEmi  as ptoEmi
                   ,defaultEstab
                   ,defaultPtoEmi 
-            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
-            END 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @userRoleId 
+            ORDER BY defaultEstab DESC
 
+            RETURN 
+        END 
 
 END

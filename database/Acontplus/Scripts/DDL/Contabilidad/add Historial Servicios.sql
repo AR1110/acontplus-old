@@ -1,5 +1,5 @@
---use [Acontplus]
---go 
+use [Acontplus]
+go 
 
 --ALTER TABLE Contabilidad.Servicio ALTER COLUMN Estado INT
 
@@ -60,7 +60,7 @@
 --ORDER BY fc.idFactura ASC
 
 
---Nota Entrega
+Nota Entrega
 --INSERT INTO [Contabilidad].[Servicio]
 --       (TipoDocumentoId
 --	   ,PuntoEmisionId
@@ -97,7 +97,7 @@
 --	  ,IIF(nd.nota= 'S/N',NULL,nd.nota) as nota
 --	  ,nd.cantidad
 --	  ,nd.precioUnitario
---	  ,nd.precioCosto
+--	  ,ISNULL(nd.precioCosto,0)
 --	  ,nd.precioTotalSinImpuesto
 --      ,(SELECT TOP 1 CASE ep.codigo WHEN 'A'   THEN 0
 --                                    WHEN 'TRA' THEN 2
