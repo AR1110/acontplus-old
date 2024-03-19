@@ -842,13 +842,14 @@ app.constant('TAX_RATE_CODE', {
 })
 
 app.constant('DOC_TYPE', {
+    FE : 'FE',  //Factura Electrónica
     FV_SRI: '01',
     FV: 'FV',
     NE: 'NE',
     PR: 'PR',
     NC: 'NC',
     NC_SRI: '04',
-    APROB_DOC: '',
+    APROB_DOC: 'APR',
     LC: 'LC',
     FC: 'FC',
     CNH: 'CNH',

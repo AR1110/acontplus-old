@@ -57,8 +57,7 @@ export interface OrderReadDto {
   finished: boolean
   tableName: string
 }
-
-
+ 
 
 export type IOrderDocument = {
   id: number

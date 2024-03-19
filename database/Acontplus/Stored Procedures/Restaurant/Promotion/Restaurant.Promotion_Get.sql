@@ -17,6 +17,7 @@ CREATE OR ALTER PROCEDURE Restaurant.Promotion_Get
 ,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
+    SET LANGUAGE SPANISH;
 	SET NOCOUNT ON;
    
     DECLARE @tipo           INT 
@@ -36,18 +37,18 @@ BEGIN
                    ,p.PromotionDays
                    ,ISNULL(p.S3ObjectUrl, '')           AS S3ObjectUrl                   
 	        FROM Restaurant.Promotion p WITH (NOLOCK)
-            WHERE p.codEstab = @codEstab 
+            WHERE p.codEstab = @codEstab ORDER by p.id DESC
 
             SELECT * FROM Dia
         END
         
     IF @tipo = 2
         BEGIN
-            DECLARE @day            INT
-                   ,@hour           VARCHAR(5)
-                   ,@dayForParam    VARCHAR(15)
+             DECLARE @day            INT
+                    ,@hour           VARCHAR(5)
+                    ,@dayForParam    VARCHAR(15)
                                        
-            SET @day            = DATEPART(dw, DATEADD(dd, -1, @dateNow)); --- Se resta -1 par
+            SET @day            = (SELECT DATEPART(WEEKDAY, @dateNow));
             SET @hour           = (SELECT FORMAT(@dateNow, 'HH:mm'))
             SET @dateNow        = CONVERT(DATE, @dateNow)
 
@@ -56,10 +57,10 @@ BEGIN
                 ,rp.[Description]
                 ,rp.S3ObjectUrl
             FROM Restaurant.Promotion rp
-            WHERE @dateNow BETWEEN rp.StartDate AND rp.EndDate
-            AND @day IN (SELECT diaSemana FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
+            WHERE RP.CodEstab = @codEstab AND  @dateNow BETWEEN rp.StartDate AND rp.EndDate
+            AND @day IN(SELECT diaSemana FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
             AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) 
-            AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
+            AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))   ORDER by rp.id DESC         
         END
 END
 GO
