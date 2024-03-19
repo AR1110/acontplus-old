@@ -6,14 +6,15 @@
   <div class="row">
     <div class="col-12">
       <div class="icheck-primary">
-        <input type="checkbox" id="someCheckboxId" [(ngModel)]="dataSearch.checkBoxDate" />
+        <input type="checkbox" id="someCheckboxId" [(ngModel)]="dataSearch.checkBoxDate"
+          (change)="getMovimientosCaja()" />
         <label for="someCheckboxId">Fecha: </label>
       </div>
     </div>
   </div>
   <hr>
   <div class="row">
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
 
       <div class="form-group">
         <label for="dateRangeSelection">Rango Fechas: </label>
@@ -93,7 +94,7 @@
                 }
 
                 @if (verReporteMovimientoCaja(item.estado)) {
-                <button ngbDropdownItem (click)="openModalFiltroReporteDetalleCaja(item)">
+                <button ngbDropdownItem (click)="askToReportType(item)">
                   <fa-icon [icon]="['far', 'file']"></fa-icon> Reporte Control Caja
                 </button>
                 }
