@@ -393,7 +393,7 @@ BEGIN
 				                  ,CAST(hc.saldo - IIF(co.cobro = 1,hc.abono,0) as numeric(18,2))                    as saldo
 				                  ,ISNULL(sf.descripcion,'''') + '' '' +  IIF(co.posfechado = 1,''POSFECHADO'','''') as pay
 		                          ,co.idEntidadFinanciera                                                            as idEntidadFinanciera
-                                  ,ci.fechaRegistro                                                                  as fechaComprobante
+                                  ,FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')                                    as fechaComprobante
 			                FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			                INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
 	                        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso = ci.idComprobanteIngreso
@@ -491,7 +491,7 @@ BEGIN
 														                        WHERE mc.idMovimientoCaja = cd.idComprobante
 														                        )
 								                        END
-                                ,ci.fechaRegistro                                                                  as fechaComprobante
+                                ,FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')                         as fechaComprobante
 	                        FROM dbo.ComprobanteIngreso    ci WITH (NOLOCK)
 	                        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
 	                        INNER JOIN dbo.CobroDocumento  cd WITH (NOLOCK) ON cd.idComprobanteIngreso = ci.idComprobanteIngreso
@@ -553,7 +553,7 @@ BEGIN
 														                        WHERE mc.idMovimientoCaja = pd.idComprobante
 														                        )
 								                        END
-                                ,ce.fechaRegistro                                                                  as fechaComprobante
+                                ,FORMAT(ce.fechaRegistro, ''dd/MM/yyyy HH:mm'')                         as fechaComprobante
 	                        FROM dbo.ComprobanteEgreso     ce WITH (NOLOCK)
 	                        INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab             = ce.codEstab
 	                        INNER JOIN dbo.PagoDocumento   pd WITH (NOLOCK) ON pd.idComprobanteEgreso  = ce.idComprobanteEgreso
