@@ -32,8 +32,8 @@ SELECT t.idTransaccion
 	,a.codigoBarra
 	,a.descripcion articulo
     ,sf.descripcion as subFamilia
-	,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN t.cantidad END, 0) cantidadEntrada
-	,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.cantidad END, 0) cantidadSalida
+	,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN t.cantidadTransaccion END, 0) cantidadEntrada
+	,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.cantidadTransaccion END, 0) cantidadSalida
 	,u.nombreUsuario usuario
 	,nroDocumento = (
 		CASE 
