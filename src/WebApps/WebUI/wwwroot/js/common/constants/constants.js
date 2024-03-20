@@ -313,6 +313,17 @@ app.constant('nombreModalContabilidad', {
             MC: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCuota.cshtml',
             MM: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalMora.cshtml',
         }
+    },
+    PAGO: {
+        fileCtrl: '/js/contabilidad/modals/modalPagoCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            MPL: 'modalPagoLoteCtrl',
+            MFP: 'modalFormaPagoCtrl'
+        },
+        templates: {
+            MPL: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalPagoLote.cshtml',
+            MFP: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalFormaPago.cshtml'
+        }
     }
 })
 

@@ -133,11 +133,7 @@
                             <i class=" far fa-money-bill-alt"></i> Cobrar
                         </button>
                     </div>
-                </div>
-
-
-
-
+                </div> 
                 <div class="col-4 d-flex justify-content-end">
                     <div class="form-group">
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
@@ -179,7 +175,7 @@
                             md-on-select="onSelectDoc"
                              md-on-deselect="onDesSelectDoc"
                             md-select-id="idCuentaPorCobrar"
-                            md-auto-select
+                   
                             ng-repeat="item in cuentasPorCobrar | orderBy: tableOptions.sortBy track by $index" ng-style="{'background-color': item.colorRow}">
                             <td md-cell>
                                 <!-- <div class="btn-group" uib-dropdown dropdown-append-to-body>
