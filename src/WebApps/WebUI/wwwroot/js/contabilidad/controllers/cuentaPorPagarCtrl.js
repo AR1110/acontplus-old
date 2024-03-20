@@ -70,7 +70,7 @@
         $scope.getCuentasPorPagar = () => {
             try {
 
-
+ 
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     checkboxFecha: $scope.dataSearch.checkBoxFecha,
