@@ -173,6 +173,7 @@ BEGIN
 				BEGIN 
 					SELECT 
 						 c.idCuotaPorPagar
+                        ,c.idCuentaPorPagar
 						,fechaVencimiento = Format(c.fechaVencimiento, 'yyyy-MM-dd')
 						,c.nroCuota
 						,c.cuota
@@ -190,6 +191,7 @@ BEGIN
 				BEGIN 
 					SELECT 
 						 c.idCuotaPorPagar
+                        ,c.idCuentaPorPagar
 						,fechaVencimiento = Format(c.fechaVencimiento, 'yyyy-MM-dd')
 						,c.nroCuota
 						,c.cuota
