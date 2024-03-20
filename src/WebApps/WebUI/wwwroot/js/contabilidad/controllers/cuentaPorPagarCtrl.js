@@ -13,7 +13,7 @@
     cuentaPorPagarCtrl.$inject = ['$scope', '$injector', '$timeout']
 
     function cuentaPorPagarCtrl($scope, $injector, $timeout) {
-        const tS = $injector.get('toastService'); 
+        const tS = $injector.get('toastService');
         const sS = $injector.get('screenSize');
         const modalSvc = $injector.get('modalService');
         const fS = $injector.get('formulario');
@@ -78,7 +78,9 @@
                     codDoc: fS.isValidField($scope.dataSearch.codDoc),
                     idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
                     dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin)
+                    dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize
                 }
 
                 $scope.cuentasPorPagar = [];
@@ -87,6 +89,9 @@
                 showLoader();
                 cuentaPorPagarSvc.getAll(dataSearch).then(response => {
                     $scope.cuentasPorPagar = response;
+                    if($scope.cuentasPorPagar.length>0){
+                        $scope.dataSearch.totalRecords = $scope.cuentasPorPagar[0].totalRecords;
+                    }
                 }).catch((error) => {
                     console.log(error)
                 }).finally(() => hideLoader())
@@ -111,9 +116,9 @@
                         $scope.dataSearch.codEstab = dataEstab.codEstab;
                         $scope.getCuentasPorPagar();
                     }
-                }).catch(error=>{
+                }).catch(error => {
                     console.log(error)
-                }).finally(()=>hideLoader());
+                }).finally(() => hideLoader());
             } catch (error) {
                 console.log(error)
             }
@@ -152,7 +157,7 @@
         };
         //==========================END FILTERS===================================
 
-        $scope.rowEnabledPayment = function (item) { 
+        $scope.rowEnabledPayment = function (item) {
             return !(["PP", "PE"].includes(item.codEstado));
         }
 
@@ -176,7 +181,7 @@
             return selectedDocumentos.map(cxc => {
                 const [cuotasFiltradas] = results.filter(item =>
                     item.some(cuota => cuota.idCuentaPorPagar === cxc.idCuentaPorPagar)
-                ) 
+                )
                 return {
                     ...cxc,
                     saldoTemporal: cxc.saldo,
@@ -186,8 +191,7 @@
             });
         }
 
-        $scope.openDocPaymentModal = function () {
-            console.log($scope.selectedDocumentos)
+        $scope.openDocPaymentModal = function () { 
             if ($scope.selectedDocumentos.length === 0) {
                 tS.toastr('warning', 'Seleccione al menos un documento!');
                 return
@@ -197,7 +201,7 @@
                 tS.toastr('warning', 'Seleccione documentos que pertenezca al mismo proveedor');
                 return
             }
- 
+
             const selectedDocumentos = structuredClone($scope.selectedDocumentos);
             // Crear un array de promesas para cada solicitud
             const promises = selectedDocumentos.map(cxc => cuentaPorPagarSvc.getCuotasById(cxc.idCuentaPorPagar));
@@ -205,8 +209,7 @@
             // Utilizar Promise.all para ejecutar las promesas concurrentemente
             showLoader();
             Promise.all(promises)
-                .then(results => {
-                    console.log(results)
+                .then(results => { 
                     hideLoader();
                     let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
                     openModalCobroLote(mergeWithCuotas);
@@ -219,8 +222,7 @@
         }
 
         async function openModalCobroLote(selectedDocumentos) {
-            try { 
-                console.log(selectedDocumentos)
+            try {
                 let fileCtrl = nombreModalContabilidad.PAGO.fileCtrl;
                 let ctrl = nombreModalContabilidad.PAGO.controllers['MPL'];
                 let template = nombreModalContabilidad.PAGO.templates['MPL'];
@@ -356,110 +358,34 @@
                     isRenderRazorPartial: true
                 }
 
-                let spParams = JSON.stringify({ idCuentaPorPagar: item.idCuentaPorPagar, tipo: 2 })
-
-
                 showLoader();
-                _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
-
-                    let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
-
+                cuentaPorPagarSvc.getCuotas(item.idCuentaPorPagar).then(response => {
                     modalParams.params = {
-                        cuotas,
+                        cuotas: response,
                         data: {
                             ...item,
                             id: item.idCuentaPorPagar,
-                            codPago: item.codPago,
-                            numeroIdentificacion: item.identificacion
+                            codPago: item.codEstado,
+                            numeroIdentificacion: item.identificacionComprador
                         },
                     }
 
-                    let modalRef = _modalSvc.openModalCustom(modalParams);
+                    let modalRef = modalSvc.openModalCustom(modalParams);
                     modalRef.result.then(res => {
-                        if (typeof res === 'object') {
-                            $scope.initialLoad();
+                        if (res !== null && typeof res === 'object') {
+                            initLoad();
 
                         }
                     })
                     hideLoader()
-                })
-                // cuentaPorPagarSvc.get(spParams).then(response=>{
-                //     let cuotas = response.cuotas; 
-                //     modalParams.params = {
-                //         cuotas,
-                //         data: {
-                //             ...item,
-                //             id: item.idCuentaPorPagar,
-                //             codPago: item.codPago,
-                //             numeroIdentificacion: item.identificacion
-                //         },
-                //     }
-
-                //     let modalRef = _modalSvc.openModalCustom(modalParams);
-                //     modalRef.result.then(res => {
-                //         if (typeof res === 'object') {
-                //             $scope.initialLoad(); 
-                //         }
-                //     })
-                // }).finally(()=>hideLoader()) 
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader());
             } catch (error) {
                 hideLoader()
                 console.log(error)
             }
         }
-
-
-        $scope.openModalPago = async (item) => {
-            try {
-                //Params Modal
-                let modalParams = {
-                    controller: 'modalPagoCtrl',
-                    template: FILE_PATH_PARTIAL_UI + '_ModalPago.cshtml',
-                    size: 'xl',
-                    //  windowClass: 'uibModalFullScreen',
-                    isRenderRazorPartial: true
-                }
-
-                showLoader();
-                $scope.getCuotaCuentaPorPagar(item).then(response => {
-
-                    if (response.code === "0") {
-                        hideLoader()
-                        console.log(response)
-                    }
-
-                    if (response.code === "1") {
-
-                        item.cuotas = JSON.parse(response.payload)[0] || [];
-
-                        modalParams.params = {
-                            selectedDocumentos: [item],
-                            data: item
-                        }
-
-                        //Open Modal 
-                        let modalRef = _modalSvc.openModalCustom(modalParams)
-                        modalRef.result.then(result => {
-                            $scope.selectedDocumentos = [];
-
-                            if (typeof result === 'object') {
-                                $scope.getCuentasPorPagar();
-                            }
-                        })
-                        hideLoader()
-                    }
-
-                }).catch(error => {
-                    hideLoader()
-                    console.log(error)
-                })
-
-            } catch (error) {
-                hideLoader();
-                console.log(error)
-            }
-        }
-
 
         $scope.openModalHistorialMov = (item) => {
             try {
@@ -470,28 +396,20 @@
                     size: 'xl',
                     isRenderRazorPartial: true
                 }
-
-                let spParams = JSON.stringify({
-                    tipo: 4,
-                    idCuentaPorPagar: item.idCuentaPorPagar
-                })
-
-
                 showLoader();
-                _mS.getData('get', 'Contabilidad/CuentaPorPagar?json=' + spParams, null, true).then(response => {
-                    if (response.code === '0') {
-                        hideLoader()
-                        fS.sweetAlert('warning', response.message)
+                cuentaPorPagarSvc.getHistorialPago(item.idCuentaPorPagar).then(response => {
+                    if (response.length === 0) {
+                        tS.toastr('warning', 'No tiene historial de movimientos')
+                        return
                     }
-                    if (response.code === '1') {
-                        modalParams.params = {
-                            data: item,
-                            historialMovimientos: JSON.parse(response.payload)[0]
-                        }
-                        _modalSvc.openModalCustom(modalParams)
-                        hideLoader()
+                    modalParams.params = {
+                        data: item,
+                        historialMovimientos: response
                     }
-                })
+                    modalSvc.openModalCustom(modalParams)
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader());
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -504,9 +422,10 @@
     //---------------------------------------------START CUOTAS----------------------------------------------------
     app.controller("modalCuotaCtrl", modalCuotaCtrl);
 
-    modalCuotaCtrl.$inject = ["$scope", "$uibModalInstance", "mainService", "commonService", "formulario", "toastService", "params"];
+    modalCuotaCtrl.$inject = ["$scope", "$uibModalInstance", "mainService", "$injector", "formulario", "toastService", "params"];
 
-    function modalCuotaCtrl($scope, $uibModalInstance, mS, commonSvc, fS, tS, params) {
+    function modalCuotaCtrl($scope, $uibModalInstance, mS, $injector, fS, tS, params) {
+        const cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
 
         let { data, cuotas } = params;
 
@@ -522,9 +441,10 @@
         $scope.totalCuota = $scope.data.importeTotal;
 
 
-        $scope.initialLoad = () => {
+        initialLoad();
+        function initialLoad() {
             showLoader();
-            cuentaPorPagarSvc.get({ tipo: 5 }).then(response => {
+            cuentaPorPagarSvc.getDataFormCuota().then(response => {
                 $scope.tiempoCreditos = response.tiemposCredito;
             }).finally(() => hideLoader())
 
@@ -537,8 +457,6 @@
             $scope.totalCuota = fS.roundNumber(totalCuota, NUM_MAX_ROUND);
 
         }
-
-        $scope.initialLoad();
 
 
         //Obtenemos fecha escrita de fecha vencimiento de la cuota 
@@ -567,7 +485,7 @@
                         codPago: $scope.data.codPago
                     };
 
-                    mS.getData('post', 'Contabilidad/CuentaPorPagar/' + JSON.stringify(data), null, true).then(response => {
+                    cuentaPorPagarSvc.post(data).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
@@ -816,8 +734,7 @@
                         let data = {
                             cuotas: JSON.stringify($scope.cuotas)
                         }
-                        mS.getData('put', 'Contabilidad/CuentaPorPagar/' + $scope.data.id, data, true)
-                            .then(response => {
+                        cuentaPorPagarSvc.put($scope.data.id, data).then(response => {
                                 if (response.code === "0") {
                                     hideLoader()
                                     fS.sweetAlert('warning', response.message, response.titleSms);
@@ -855,7 +772,7 @@
         }
     }
     //---------------------------------------------END CUOTAS--------------------------------------------------
- 
+
     //=======================================START MOVIMIENTO CAJA============================================== 
     app.controller('historialMovimientoCtrl', historialMovimientoCtrl);
 

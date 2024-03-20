@@ -11,10 +11,15 @@
 
         return {
             get,
+            post,
+            put,
             getDataFilter,
             getAll,
             getCuotasById,
-            getDataFormaPago
+            getDataFormaPago,
+            getDataFormCuota,
+            getHistorialPago,
+            getCuotas
         }
 
         function getAll(obj) {
@@ -50,6 +55,7 @@
                         estado: item.estado,
                         codEstado: item.codPago,
                         colorRow: item.colorRow,
+                        totalRecords: item.totalRecords
                     }
                 })
                 return results;
@@ -89,6 +95,14 @@
                     }
                 }
             })
+        }
+
+        function post(data){
+            return mS.getData('post', `${url}` + JSON.stringify(data), null, true)
+        }
+        
+        function put(id, data){
+            return mS.getData('put', `${url}` + id, data, true)
         }
 
         function getDataFilter() {
@@ -203,14 +217,94 @@
                     })
 
                     data.ciudades = ciudadesTemp;
-                    data.docs = docsTemp;
-                    console.log(mainData)
+                    data.docs = docsTemp; 
                 }
 
                 return data;
             })
 
         }
+
+        function getDataFormCuota(){
+            const json = JSON.stringify({
+                tipo: 5, 
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+                const data = {
+                    tiemposCredito: [],
+                }
+                if(response.code==="0"){
+                    console.log(response)
+                }
+                if(response.code==="1"){
+                    const [tiemposCredito] = JSON.parse(response.payload ); 
+                    data.tiemposCredito = tiemposCredito;
+                }
+                return data;                
+            })
+        }
+
+
+        function getHistorialPago(id) {
+            let json = JSON.stringify({
+                idCuentaPorPagar: id,
+                tipo: 4
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+                let historiales = [];
+                if (response.code === "0") {
+                    console.log(historiales)
+                }
+                if (response.code === "1") {
+                    const [mainData] = JSON.parse(response.payload) || [];
+                    historiales = mainData.map(item => {
+                        return {
+                            nroIdentificacion: item.nroIdentificacion,
+                            nombreFiscal: item.nombreFiscal,
+                            total: item.total,
+                            tipoDocumento: item.tipoDocumento,
+                            usuario: item.usuario,
+                            estado: item.estado,
+                            fechaRegistro: item.fechaRegistro,
+                        }
+                    })
+                }
+
+                return historiales;
+            })
+        }
+
+        /**
+         * Modificacion de cuotas
+         * @param {*} id 
+         */
+        function getCuotas(id) {
+            let json = JSON.stringify({ idCuentaPorPagar: id, tipo: 2 });
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+                let cuotas = [];
+                if (response.code === "0") {
+                    console.log(response)
+                }
+                if (response.code === "1") {
+                    const [mainData] = JSON.parse(response.payload)
+                    cuotas = mainData.map(item => {
+                        return {
+                            idCuotaPorPagar: item.idCuotaPorPagar,
+                            idCuentaPorPagar: item.idCuentaPorPagar,
+                            fechaVencimiento: item.fechaVencimiento,
+                            nroCuota: item.nroCuota,
+                            cuota: item.cuota,
+                            abono: item.abono,
+                            saldo: item.saldo,
+                            descripcion: item.descripcion,
+                            codigo: item.codigo,
+                        }
+                    })
+                }
+                return cuotas;
+            })
+        }
+
     }])
 
     app.factory('comprobanteEgresoService', ['mainService', 'formulario', function (mS, fS) {
@@ -222,7 +316,7 @@
             mapperTo,
             post,
             anular,
-            update
+            update,
         }
 
         function getDataFilter() {
@@ -353,9 +447,6 @@
         function anular(id, observacion) {
             return mS.getData('delete', `${url}${id}?observacion=${observacion}`, null, true)
         }
-
-
-
 
     }])
 
