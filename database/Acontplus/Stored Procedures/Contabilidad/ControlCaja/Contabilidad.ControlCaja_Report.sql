@@ -239,7 +239,7 @@ BEGIN
               AND ce.idControlCaja = @idControlCaja
 
 	        INSERT INTO @tbDocuments (serieComprobante,tipDoc,abono,totalAnterior,total)
-	        SELECT nroDoc,tipDoc,SUM(abono),totalAnterior,total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,nroDoc,total,totalAnterior
+	        SELECT nroDoc,tipDoc,SUM(abono),MAX(totalAnterior),total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,nroDoc,total
 
 	        -- ================================ FORMAS DE PAGOS TOTALIZADAS ========================================
 	        SELECT @chequesPosf     = SUM(td.total)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
@@ -306,7 +306,6 @@ BEGIN
 	           ,abono    = CAST(ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(15,2))
 	           ,saldo    = CAST(ISNULL((SELECT SUM(IIF(tipDoc IN ('FV','NE'),totalAnterior,total)) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0)  - ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(18,5))
 	           ,cantidad = (ISNULL((    SELECT COUNT(*)      FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0))
-	           ,(SELECT * FROM @tbDocuments where tipDoc = 'NE' FOR JSON PATH) as dt
              FROM dbo.TipoDocumento td WITH (NOLOCK)
 	         WHERE td.codigo IN ('FV','NE','IC','EC')
 	 
@@ -349,7 +348,7 @@ BEGIN
                   ,'ASC'
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
-	         --ORDER BY tipDoc,nroDoc,nroComprobante ASC 
+	         ORDER BY nroComprobante,tipDoc,nroDoc ASC 
 
 	         SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
 	               ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))
