@@ -796,6 +796,10 @@
                                         codDoc = DOC_TYPE.NE;
                                         keyTemplate = 'NE'
                                     }
+                                    if ($scope.dataSearch.codDoc === DOC_TYPE.APROB_DOC){
+                                        tS.toastr('warning', 'No disponible')
+                                        return
+                                    }
                                     let { fileCtrl, controller, templates } = nombreModalVenta.DOC_VENTA_DETALLE;
                                     let ctrl = (await import(fileCtrl))[controller];
                                     let template = templates[keyTemplate];
@@ -840,7 +844,14 @@
         }
         function setDataDocReferenciado(result) {
             let { data, codDoc } = result;
-            if (codDoc === 'NE') {
+            if (codDoc === 'FE') {                
+                $scope.dataDocumentoReferenciado = {
+                    idDocumento: data.idDocumento,
+                    serieComprobante: data.serieComprobante,
+                    labelName: `Factura: ${data.serieComprobante}`
+
+                };
+            } else {
                 let index = $scope.infoAdicionalDocumento.findIndex(item => item.valor === data.serieComprobante);
                 if (index === -1) {
                     $scope.infoAdicionalDocumento = [{
@@ -850,15 +861,9 @@
                 }
                 $scope.dataDocumentoReferenciado = {
                     serieComprobante: data.serieComprobante,
-                    labelName: `Nota Entrega: ${data.serieComprobante}`
+                    labelName: `${data.nameDoc}: ${data.serieComprobante}`
                 }
-            } else {
-                $scope.dataDocumentoReferenciado = {
-                    idDocumento: data.idDocumento,
-                    serieComprobante: data.serieComprobante,
-                    labelName: `Factura: ${data.serieComprobante}`
-
-                };
+                tS.toastr('info','Recuerde que si el documento de referencia es distinto a la factura, el número de comprobante se agrega en los datos adicionales.', '', 6000, 2000)
             }
             $scope.gridOptionsDetalle.data = data.detalles;
             focusColumnCantidad();
