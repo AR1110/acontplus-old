@@ -25,8 +25,8 @@
 
         let { latestVersion } = $scope.userData;
 
-        if (latestVersion != '20240301') {
-            // $scope.logout();
+        if (latestVersion != '20240318') {
+          //  $scope.logout();
         } else {
             //consume from bd
         }
@@ -165,8 +165,8 @@
                     location.reload();
                 }
             })
-            return 
-        } 
+            return
+        }
         if (Object.keys(userData).length > 0 && (tempUserData.username !== userData.username)) {
             userData = tempUserData;
             location.reload();
