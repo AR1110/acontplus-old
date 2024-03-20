@@ -48,6 +48,7 @@ BEGIN
 	DECLARE @tbDetalleCaja AS TABLE (
 		id INT IDENTITY(1,1) NOT NULL
 	   ,idEntidadFinanciera INT NOT NULL
+       ,secuencial INT NOT NULL DEFAULT 1 
 	   ,nroComprobante VARCHAR(100) NOT NULL
 	   ,tipDoc VARCHAR(10) NOT NULL
 	   ,nroDoc VARCHAR(25) NOT NULL
@@ -75,7 +76,7 @@ BEGIN
     --> Reporte Control Caja
     IF @tipo = 1 
         BEGIN 
-	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro)
+	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro,secuencial)
 	        SELECT 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
 		          ,IIF(cc.codDoc = '01','FV',cc.codDoc)
 		          ,cc.serieComprobante 
@@ -88,6 +89,7 @@ BEGIN
 				  ,ISNULL(sf.descripcion,'') + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','') as pay
 		          ,co.idEntidadFinanciera
 		          ,co.cobro
+                  ,co.secuencial
 			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab               = ci.codEstab
 	        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
@@ -348,7 +350,7 @@ BEGIN
                   ,'ASC'
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
-	         ORDER BY nroComprobante,tipDoc,nroDoc ASC 
+	         ORDER BY nroComprobante,secuencial,tipDoc,nroDoc ASC 
 
 	         SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
 	               ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))
