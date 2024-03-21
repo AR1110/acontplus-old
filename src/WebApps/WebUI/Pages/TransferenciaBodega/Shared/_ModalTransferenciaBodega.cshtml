@@ -48,7 +48,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Bodega Destino: <span class="text-danger">*</span> </label>
-                            <select class="form-control border-select" ng-model="data.idBodegaDestino" ng-disabled="data.idTransferenciaBodega>0">
+                            <select class="form-control border-select" ng-model="data.idBodegaDestino" ng-disabled="data.idTransferenciaBodega>0" ng-change="onChangeBodegaDestino()">
                                 <option ng-value="item.idBodega" ng-repeat="item in bodegasDestino">
                                     {{item.descripcion}}
                                 </option>
