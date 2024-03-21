@@ -90,6 +90,8 @@
                 let products = [];
                 if (response !== null && typeof response === 'object') {
                     products = response.articulos.map(item => ({
+                        idTipoOriginal: item.idTipoIva,
+                        idTipoIva: item.idTipoIva,
                         idArticulo: item.idArticulo,
                         codigo: item.codigo,
                         codigoAuxiliar: item.codigoAuxiliar,

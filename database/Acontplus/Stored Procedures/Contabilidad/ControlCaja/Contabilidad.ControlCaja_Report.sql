@@ -44,6 +44,8 @@ BEGIN
 	DECLARE @otros DECIMAL(15,5)
 	DECLARE @chequesPosf DECIMAL(15,5)
 	DECLARE @direfencia DECIMAL(15,5)
+    DECLARE @sortByDefault INT
+    DECLARE @sortOrder VARCHAR(3)
 	
 	DECLARE @tbDetalleCaja AS TABLE (
 		id INT IDENTITY(1,1) NOT NULL
@@ -71,7 +73,7 @@ BEGIN
 		,abono NUMERIC(18,5) NOT NULL
 	)
 
-	SELECT @idControlCaja = idControlCaja ,@tipo = tipo FROM OPENJSON(@json) WITH (idControlCaja INT '$.id' , tipo INT) AS jsonValues
+	SELECT @idControlCaja = idControlCaja ,@tipo = tipo, @sortByDefault=sortByDefault, @sortOrder=sortOrder FROM OPENJSON(@json) WITH (idControlCaja INT '$.id' , tipo INT, sortByDefault INT, sortOrder VARCHAR(3)) AS jsonValues
 
     --> Reporte Control Caja
     IF @tipo = 1 
@@ -346,8 +348,8 @@ BEGIN
 		          ,abono = CAST(abono AS numeric(15,2))
 		          ,saldo = CAST(saldo AS numeric(15,2))
 		          ,pay =   pay
-                  ,1 as optionSort
-                  ,'ASC'
+                  ,sortByDefault  = @sortByDefault 
+                  ,sortOrder = @sortOrder
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
 	         ORDER BY nroComprobante,secuencial,tipDoc,nroDoc ASC 

@@ -6,10 +6,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- Restaurant.Report_Item_Ingredients 139, '{"codEstab":"ESTAB-000000117","idSubfamilia":0}'
+-- Restaurant.Report_Item_Ingredients 139, '{"codEstab":"ESTAB-000000117","idSubfamilia":0}',''
 CREATE OR ALTER PROC Restaurant.Report_Item_Ingredients
-@idUsuarioRol INT
+@userRoleId INT
 ,@json      VARCHAR(300)
+,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -17,39 +18,29 @@ BEGIN
     DECLARE @idEntidad INT;
     ---Params    
     DECLARE @codEstab VARCHAR(100)
-    DECLARE @idSubfamilia INT 
-    DECLARE @itemId INT  
+    DECLARE   @subFamiliasChecked VARCHAR(150) 
+    DECLARE @itemId INT   
 
     DECLARE @sql NVARCHAR(MAX) 
     DECLARE @params nvarchar(max) = '@idEntidad int,
 									 @itemId int,
-									 @idSubfamilia int'
+									 @subFamiliasChecked VARCHAR(150)'
     SELECT 
         @codEstab = codEstab 
-        ,@idSubfamilia = idSubfamilia 
+        ,@subFamiliasChecked  = subFamiliasChecked 
         ,@itemId = itemId
     FROM OPENJSON(@json)
     WITH(
         codEstab VARCHAR(100) '$.codEstab'
-        ,idSubfamilia INT '$.idSubfamilia'
+        ,subFamiliasChecked INT '$.subFamiliasChecked'
         ,itemId INT '$.itemId'
     ) 
 
-    SELECT top 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol =  @idUsuarioRol
+    SELECT top 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol =  @userRoleId
     SELECT TOP 1 @codEstab = codEstab
-    FROM v_Estab_Asign WHERE idUsuarioRol = @idUsuarioRol
+    FROM v_Estab_Asign WHERE idUsuarioRol = @userRoleId
  
-    SELECT  
-        v_ea.ruc
-        ,companyName      = v_u.entidad
-        ,estabName        = v_ea.nombreComercial
-        ,estabPhoneNumber = v_ea.telefono
-        ,estabAddress     = v_ea.correo
-        ,userName         = v_ea.usuario
-    FROM v_Estab_Asign v_ea WITH(NOLOCK)
-    INNER JOIN v_usuario v_u WITH(NOLOCK) ON v_u.idUsuarioRol = v_ea.idUsuarioRol
-    WHERE v_ea.codEstab = @codEstab
-                
+ 
     --SELECT ri.Summary
     --    ,ri.CreatedAt        
     --FROM Restaurant.Recipe rr    
@@ -89,18 +80,33 @@ BEGIN
             SET @sql = @sql + ' AND recip.ItemId = @itemId '
         END
 
-    IF (@idSubfamilia > 0 )
-        BEGIN 
-            SET @sql = @sql + ' AND item_va.idSubfamilia = @idSubfamilia '
-        END 
+    IF @subFamiliasChecked IS NOT NULL
+            BEGIN 
+                SET @sql = @sql + 'AND item_va.idSubFamilia IN (SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+            END 
+ 
 
         SET @sql = @sql + ' order by recip.id, ing.IngredientTypeId ASC '
 
+        
+	SET @tableNames = 'headerDs,detalleDs'
+
+           SELECT  
+                v_ea.ruc
+                ,companyName      = v_u.entidad
+                ,estabName        = v_ea.nombreComercial
+                ,estabPhoneNumber = v_ea.telefono
+                ,estabAddress     = v_ea.correo
+                ,userName         = v_ea.usuario
+            FROM v_Estab_Asign v_ea WITH(NOLOCK)
+            INNER JOIN v_usuario v_u WITH(NOLOCK) ON v_u.idUsuarioRol = v_ea.idUsuarioRol
+            WHERE v_u.idUsuarioRol = @userRoleId AND v_ea.codEstab = @codEstab
+                
 
     EXEC sp_executesql 
 		 @sql
 		,@params 	
 		,@idEntidad = @idEntidad
 		,@itemId  = @itemId
-		,@idSubfamilia = @idSubfamilia
+		 ,@subFamiliasChecked = @subFamiliasChecked
 END

@@ -19,6 +19,8 @@ import { ToasterService } from '@core/services/toaster.service';
 import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { stringToDate } from '@core/utils/string-to-date';
 import { TipoDoc } from '@core/models/tipo-doc.model';
+import { FiltroDetalleCajaReportModal } from './components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
+import { FiltroControlCajaReportModal } from './components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
 
 
 @Component({
@@ -321,7 +323,22 @@ export class MovimientoCajaModalComponent {
 
   }
 
+  openModalFiltroReporteDetalleCaja(data: ControlCaja){
+    try {
+      const modalRef = this.modalSvc.openModalCustom(FiltroControlCajaReportModal, {
+        size: 'sm'
+      });
+      modalRef.componentInstance.params = {
+        id: data.id,
+        enterKey: this.dataPermisosCaja.enterKey
+      };
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
   async askToReportType(data: ControlCaja, buttonType?: string) {
+
     const { isConfirmed, value } = await Swal.fire({
       title: "Seleccione el formato de reporte",
       input: "radio",
@@ -413,7 +430,7 @@ export class MovimientoCajaModalComponent {
   // --> Modal Filtro Reporte Detalle Caja
   openModalReporteFiltroDetalleCaja(params: ControlCaja) {
     try {
-      const modalRef = this.modalSvc.openModalCustom(ReporteFiltroDetalleCajaModal);
+      const modalRef = this.modalSvc.openModalCustom(FiltroDetalleCajaReportModal);
       modalRef.componentInstance.params = params || {};
 
     } catch (error) {
@@ -424,208 +441,4 @@ export class MovimientoCajaModalComponent {
   closeModal() {
     this.activeModal.close(this.isReloadCaja);
   }
-}
-
-
-@Component({
-  selector: 'app-reporte-filtro-detalle-caja-modal',
-  standalone: true,
-  imports: [AppModule, AccountingModule, NgbTimepickerModule, DateRangeSelectionComponent],
-  template: `
-		<div class="modal-header">
-			<h4 class="modal-title">Reporte Detalle Caja</h4>
-			<button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
-		</div>
-		<div class="modal-body">
-
-    <div class="row">
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="entidadFinanciera">Entidad Financiera</label>
-          <select name="entidadFinanciera" id="entidadFinanciera" class="form-select" [(ngModel)]="dataSearch.idEntidadFinanciera">
-          <option value="">Todos</option>
-            @for(item of entidadesFinanciera; track $index){
-              <option [ngValue]="item.idEntidadFinanciera">{{item.descripcion}}</option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-          <label for="tipoDocumento">Tipo Documento</label>
-          <select name="tipoDocumento" id="tipoDocumento" class="form-select" [(ngModel)]="dataSearch.codDoc">
-          <option value="">Todos</option>
-            @for(item of tipoDocumentos; track $index){
-              <option [ngValue]="item.codigo">{{item.descripcion}}</option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-             <div class="form-group">
-        <label for="fromDate" class="form-label">Fecha de inicio</label>
-        <div class="input-group">
-          <input type="date" disabled [ngModel] ="dataSearch.fromDate | date:'yyyy-MM-dd'" class="form-control" >
-
-          <input type="time" [value]="dataSearch.fromDate | date:'HH:mm'" class="form-control" (change)="onTimeChange($event, true)">
-        </div>
-          </div>
-      </div>
-
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <div class="form-group">
-            <label for="toDate" class="form-label">Fecha de fin</label>
-        <div class="input-group">
-          <input type="date" disabled [ngModel] ="dataSearch.toDate | date:'yyyy-MM-dd'" class="form-control" >
-
-          <input type="time" [value]="dataSearch.toDate | date:'HH:mm'" class="form-control" (change)="onTimeChange($event, false)">
-        </div>
-        </div>
-      </div>
-
-    </div>
-
-        <div class="form-group">
-          <div class="icheck-primary">
-              <input type="checkbox" [(ngModel)]="dataSearch.ckHora" id="ckHora" />
-              <label for="ckHora">Hora</label>
-          </div>
-        </div>
-
-        <div class="d-grid gap-2 col-12 mx-auto">
-          <button class="btn btn-warning" type="button" (click)="getReport('pdf')">
-            <fa-icon [icon]="['fas', 'file-pdf']"></fa-icon>
-                PDF
-          </button>
-          <button class="btn btn-success" type="button" (click)="getReport('excel')">
-            <fa-icon [icon]="['fas', 'file-excel']"></fa-icon>
-                EXCEL
-          </button>
-        </div>
-		</div>
-		<div class="modal-footer">
-			<button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">&times; Cerrar</button>
-		</div>
-	`,
-})
-export class ReporteFiltroDetalleCajaModal {
-  @Input("params") params = {
-    id: 0,
-    fechaApertura: '',
-    fechaCierre: ''
-  }
-
-
-  private controlCajaSvc = inject(ControlCajaService);
-  private tS = inject(ToasterService);
-  private sharedSvc = inject(SharedService);
-
-
-  activeModal = inject(NgbActiveModal);
-
-  dataSearch = {
-    idEntidadFinanciera: "",
-    codDoc : "",
-    fromDate: new Date(),
-    toDate: new Date(),
-    ckHora: true
-  }
-
-  entidadesFinanciera: Array<EntidadFinanciera> = [];
-  tipoDocumentos : Array<TipoDoc> = [];
-
-  dateRangeOptions = {
-    timePicker: true,
-    format: 'YYYY-MM-DD HH:mm'
-  }
-
-
-  ngOnInit() {
-    let fromDate = stringToDate(this.params.fechaApertura, "dd/MM/yyyy HH:ii", "/");
-    let toDate = this.params.fechaCierre && stringToDate(this.params.fechaCierre, "dd/MM/yyyy HH:ii", "/");
-
-    this.dataSearch.fromDate = fromDate || new Date()
-    this.dataSearch.toDate = toDate || new Date();
-
-    try {
-      this.controlCajaSvc.getDataForm().subscribe({
-        next: (response) => {
-          hideLoader();
-          let { formaPagos,tipoDocumento } = response as { formaPagos: any, tipoDocumento :any }
-          this.entidadesFinanciera = formaPagos;
-          this.tipoDocumentos = tipoDocumento;
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  onTimeChange(event: Event, fromDate: boolean): void {
-    const inputElement = event.target as HTMLInputElement;
-    const timeString = inputElement.value;
-    const [hours, minutes] = timeString.split(':').map(Number);
-
-    // Actualiza solo la hora y el minuto manteniendo la fecha actual
-    if (fromDate) {
-      this.dataSearch.fromDate.setHours(hours);
-      this.dataSearch.fromDate.setMinutes(minutes);
-    } else {
-      this.dataSearch.toDate.setHours(hours);
-      this.dataSearch.toDate.setMinutes(minutes);
-    }
-  }
-
-  // onDateRangeSelection(range: { from: string, to: string }) {
-
-  //   this.dataSearch.fromDate = range.from;
-  //   this.dataSearch.toDate = range.to;
-  // }
-
-  getReport(format: 'pdf' | 'excel') {
-    try {
-
-      if (!(this.params.id > 0)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'id no proporcionado!'
-        })
-        return
-      }
-
-
-      let dataParams = {
-        tipo: 2,
-        idEntidadFinanciera: isValidField(this.dataSearch.idEntidadFinanciera),
-        codDoc : isValidField(this.dataSearch.codDoc),
-        id: this.params.id,
-        horaInicio: formatDateMoment(this.dataSearch.fromDate),
-        horaFin: formatDateMoment(this.dataSearch.toDate),
-        ckHora: this.dataSearch.ckHora
-      }
-
-      console.log(dataParams)
-
-      const parameters = {
-        hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
-        reportParams: JSON.stringify({
-          codigo: CODE_REPORT.CDCC,
-          format,
-          aditionalParams: []
-        }),
-        dataParams: JSON.stringify(dataParams)
-      }
-
-      this.sharedSvc.getReport(parameters, format, true)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
 }

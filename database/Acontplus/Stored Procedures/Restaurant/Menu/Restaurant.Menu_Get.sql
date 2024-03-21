@@ -37,7 +37,7 @@ BEGIN
                 ,ISNULL(m.ForPromotion, CAST(0 AS BIT)) AS ForPromotion
 	        FROM Restaurant.Menu m WITH (NOLOCK)
             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            WHERE a.idEntidad = @idEntidad '
+            WHERE a.idEntidad = @idEntidad AND a.estado = 1'
    
      IF @textSearch IS NOT NULL
         BEGIN
