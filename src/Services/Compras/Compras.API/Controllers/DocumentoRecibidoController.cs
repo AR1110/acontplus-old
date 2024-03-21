@@ -330,28 +330,32 @@ namespace Compras.API.Controllers
 
                     root.SelectSingleNode("comprobante").InnerText = xmlComp.OuterXml;
 
+                    using (var db = new DbAccess(_configuration))
+                    {
+                        await db.SPExecute("Recepcion.Documento_Upload_Xml");
+                        db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
+                        db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                        db.AddDynamicParam("codDoc", codDoc);
+                        db.AddDynamicParam("claveAcceso", claveAcceso);
+                        db.AddDynamicParam("versionComp", versionComp);
+                        db.AddDynamicParam("fechaEmision", fechaEmision);
+                        db.AddDynamicParam("XmlDoc", xmlTosave.OuterXml);
+                        _response = db.GetDefault();
+                    }
+                    return Ok(_response);
 
-                    await _db.SPExecute("Recepcion.Documento_Upload_Xml");
-                    _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                    _db.AddDynamicParam("codDoc", codDoc);
-                    _db.AddDynamicParam("claveAcceso", claveAcceso);
-                    _db.AddDynamicParam("versionComp", versionComp);
-                    _db.AddDynamicParam("fechaEmision", fechaEmision);
-                    _db.AddDynamicParam("XmlDoc", xmlTosave.OuterXml);
-                    _response = _db.GetDefault();
+                }
+                else
+                {
+                    _response.Create(code: "0", message: "Error al importar el archivo");
+                    return Ok(_response);
                 }
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error al importar el archivo: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al importar el archivo");
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
 
@@ -576,17 +580,6 @@ namespace Compras.API.Controllers
         //        return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "report.pdf");
 
         //    }
-        //} 
-
-
-
-
-
-
-
-
-
-
-
+        //}
     }
 }
