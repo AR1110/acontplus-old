@@ -10,4 +10,5 @@ export enum GlobalRoutes {
   VentasReportRentabilidad = 'sale/reports/rentabilidad-page',
   RestaurantTable = 'restaurant/table-page',
   RestaurantReports = 'restaurant/item-report',
+  InventarioCambioMasivoIva='inventory/massive-tax-change-page'
 }

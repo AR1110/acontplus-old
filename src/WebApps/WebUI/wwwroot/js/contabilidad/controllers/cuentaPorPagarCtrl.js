@@ -212,6 +212,10 @@
                 .then(results => { 
                     hideLoader();
                     let mergeWithCuotas = mergeCuotas(selectedDocumentos, results);
+                    if (mergeWithCuotas.some(item => !item.cuotas|| item.cuotas.length===0)){
+                        tS.toastr('warning', 'Algunos de los documentos seleccionados no tiene cuotas');
+                        return
+                    }
                     openModalCobroLote(mergeWithCuotas);
                 })
                 .catch(error => {
