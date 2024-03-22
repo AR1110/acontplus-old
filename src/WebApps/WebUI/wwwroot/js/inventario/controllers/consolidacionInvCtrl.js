@@ -36,6 +36,7 @@
         tS = $injector.get("toastService");
         fS = $injector.get("formulario");
         consolidacionInvSvc = $injector.get("consolidacionInvService");
+        const nombreModalInventario = $injector.get('nombreModalInventario');
 
         $scope.btnEditDisabled = false;
         $scope.dataSearch = {
@@ -178,27 +179,26 @@
         }
 
         $scope.openModalDetalle = async (item) => {
-            try {
-                showLoader();
-                const response = await commonSvc.getDataConsolidacionInventario(item.idConsolidacionInventario)
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DETALLE',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller: "ModalConsolidacionDetalleCtrl",
-                    template: URL_TEMPLATE + '_ModalDetalle.cshtml',
+            try { 
+                let fileCtrl = nombreModalInventario.CONSOLIDACION.fileCtrl;
+                let ctrl = nombreModalInventario.CONSOLIDACION.controllers['D'];
+                let template = nombreModalInventario.CONSOLIDACION.templates['D'];
+       
+                let controller = (await import(fileCtrl))[ctrl];
+                modalSvc.openModalCustom({
+                    controller,
+                    template,
+                    size: 'xl',
+                    params: {
+                        id: item.idConsolidacionInventario
+                    },
                     isRenderRazorPartial: true,
-                    params
-                })
+                    windowClass: 'uibModalFullScreen'
+                }) 
+                
             } catch (error) {
                 console.log(error)
-            } finally {
-                hideLoader();
-            }
+            }  
         }
 
         $scope.openModalEditar = async (item) => {
