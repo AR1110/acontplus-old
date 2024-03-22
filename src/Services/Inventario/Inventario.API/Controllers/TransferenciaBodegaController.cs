@@ -11,7 +11,7 @@ namespace Inventario.API.Controllers
     [Route("api/[controller]")]
     public class TransferenciaBodegaController : ControllerBase
     {
-         private readonly ITransferenciaBodegaService _service;
+        private readonly ITransferenciaBodegaService _service;
         private readonly LogWriter _log;
 
         public TransferenciaBodegaController(ITransferenciaBodegaService service, LogWriter log)
