@@ -13,7 +13,7 @@ SELECT t.idTransaccion
 	,t.idTarifa
     ,t.idMedida
     ,a.idSubFamilia
-	,t.cantidad
+	,t.cantidadTransaccion as cantidad
 	,t.precioUnitario
 	,t.precioCosto
 	,t.fechaRegistro

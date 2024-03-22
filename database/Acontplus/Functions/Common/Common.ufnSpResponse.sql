@@ -6,7 +6,7 @@ GO
 CREATE OR ALTER FUNCTION Common.ufnSpResponse
 (
     @code VARCHAR(1),
-    @message VARCHAR(300),
+    @message VARCHAR(MAX),
     @payload NVARCHAR(MAX) = NULL
 )
 RETURNS VARCHAR(MAX)
