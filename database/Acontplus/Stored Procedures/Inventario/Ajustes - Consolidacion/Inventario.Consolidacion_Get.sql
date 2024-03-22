@@ -186,7 +186,8 @@ BEGIN
 				           @idSubFamilia INT,
 				           @nroDocumento VARCHAR(25) '
 
-	        SET @sql = 'SELECT a.idArticulo
+	        SET @sql = 'SELECT TOP 50
+                               a.idArticulo
 				              ,codigo
 				              ,codigoAuxiliar
 				              ,codigoBarra
@@ -200,34 +201,66 @@ BEGIN
 				              ,ISNULL(idMedida,0) idMedida
 				              ,ISNULL(a.medida, ''SIN MEDIDA'') medida
 				              ,ISNULL(tipoIva, ''SIN IVA'') AS nombreTipoIva
-				              ,a.fraccionado
-				              ,CASE WHEN a.fraccionado = 1 THEN (SELECT af.idMedida, m.descripcion, af.precioCostoFraccionado precioCosto FROM ArticuloFraccionado af WITH (NOLOCK) 
-																												               INNER JOIN Medida m WITH (NOLOCK) ON af.idMedida = m.idMedida WHERE af.idArticulo = a.idArticulo FOR JSON PATH)
-				              ELSE ''[]'' END medidas
+				              ,ISNULL
+                               ((SELECT me.idMedida 
+			                           ,me.descripcion 
+			                           ,orden = IIF(af.gestionVenta = 1,1,3)
+                                       ,af.conversion
+			                     FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			                     INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida = af.idMedida
+			                     WHERE af.idArticulo = a.idArticulo
+                                   AND af.estado = 1
+                                   FOR JSON PATH),''[]''
+                               ) as fraccionado
+                              ,(
+                                 SELECT me.idMedida
+			                           ,me.descripcion 
+			                           ,orden = 2
+                                       ,1 as conversion
+			                     FROM dbo.Articulo     ar WITH (NOLOCK)
+			                     INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida
+			                     WHERE ar.idArticulo = a.idArticulo 
+                                  FOR JSON PATH
+                                ) as principal
+
 				         FROM Inventario.v_Articulo a 
 				         WHERE a.estado = 1 
 				           AND a.idEntidad = @idEntidad
 				           AND a.llevaInventario = 1 '
 
-			IF (@opcion = 1)
+			IF @opcion = 1
 				BEGIN 
 					SET @sql = @sql + 'AND a.idArticulo = @idArticulo '
 				END
 
-			IF (@opcion = 3)
+			IF @opcion = 3
 				BEGIN
 					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
 				END
 
-			IF (@opcion = 4)
+			IF @opcion = 4
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE rucClienteProveedor = @rucProveedor) '
 				END
 
-			IF (@opcion = 5)
+			IF @opcion = 5
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
 				END
+
+            IF @opcion = 6
+                BEGIN
+                    SET @sql = @sql + 'AND a.importacion = 1 
+                                       AND a.stock > 0
+                                       AND a.idArticulo NOT IN (
+                                                                SELECT cd.idArticulo
+                                                                FROM dbo.ConsolidacionInventario              ci WITH (NOLOCK)
+                                                                INNER JOIN dbo.EstadoPago                     ep WITH (NOLOCK) ON ep.idEstadoPago              = ci.idEstadoDocumento
+                                                                INNER JOIN dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) ON cd.idConsolidacionInventario = ci.idConsolidacionInventario
+                                                                WHERE ci.idEntidad = @idEntidad
+                                                                  AND ep.codigo = ''AC''
+                                                               ) '
+                END 
 
 		    SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
 		
