@@ -50,6 +50,7 @@ BEGIN
 	DECLARE @tbDetalleCaja AS TABLE (
 		id INT IDENTITY(1,1) NOT NULL
 	   ,idEntidadFinanciera INT NOT NULL
+       ,secuencial INT NOT NULL DEFAULT 1 
 	   ,nroComprobante VARCHAR(100) NOT NULL
 	   ,tipDoc VARCHAR(10) NOT NULL
 	   ,nroDoc VARCHAR(25) NOT NULL
@@ -77,7 +78,7 @@ BEGIN
     --> Reporte Control Caja
     IF @tipo = 1 
         BEGIN 
-	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro)
+	        INSERT INTO @tbDetalleCaja (nroComprobante,tipDoc,nroDoc,fechaEmision,persona,total,totalAnterior,abono,saldo,pay,idEntidadFinanciera,cobro,secuencial)
 	        SELECT 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento)
 		          ,IIF(cc.codDoc = '01','FV',cc.codDoc)
 		          ,cc.serieComprobante 
@@ -90,6 +91,7 @@ BEGIN
 				  ,ISNULL(sf.descripcion,'') + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','') as pay
 		          ,co.idEntidadFinanciera
 		          ,co.cobro
+                  ,co.secuencial
 			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab               = ci.codEstab
 	        INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON hc.idComprobanteIngreso   = ci.idComprobanteIngreso
@@ -241,7 +243,7 @@ BEGIN
               AND ce.idControlCaja = @idControlCaja
 
 	        INSERT INTO @tbDocuments (serieComprobante,tipDoc,abono,totalAnterior,total)
-	        SELECT nroDoc,tipDoc,SUM(abono),totalAnterior,total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,totalAnterior,nroDoc,total
+	        SELECT nroDoc,tipDoc,SUM(abono),MAX(totalAnterior),total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,nroDoc,total
 
 	        -- ================================ FORMAS DE PAGOS TOTALIZADAS ========================================
 	        SELECT @chequesPosf     = SUM(td.total)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
@@ -306,9 +308,9 @@ BEGIN
 		        tipDoc   = td.descripcion
 	           ,total    = CAST(ISNULL((SELECT SUM(ac.total) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(15,2))
 	           ,abono    = CAST(ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(15,2))
-	           ,saldo    = CAST(ISNULL((SELECT SUM(ac.total) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0)  - ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(18,5))
+	           ,saldo    = CAST(ISNULL((SELECT SUM(IIF(tipDoc IN ('FV','NE'),totalAnterior,total)) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0)  - ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(18,5))
 	           ,cantidad = (ISNULL((    SELECT COUNT(*)      FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0))
-	         FROM dbo.TipoDocumento td WITH (NOLOCK)
+             FROM dbo.TipoDocumento td WITH (NOLOCK)
 	         WHERE td.codigo IN ('FV','NE','IC','EC')
 	 
 	         -------------------------------------------------END-----------------------------------------------------------------
@@ -350,7 +352,7 @@ BEGIN
                   ,sortOrder = @sortOrder
 	         FROM @tbDetalleCaja
 	         WHERE cobro = 1
-	         --ORDER BY tipDoc,nroDoc,nroComprobante ASC 
+	         ORDER BY nroComprobante,secuencial,tipDoc,nroDoc ASC 
 
 	         SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
 	               ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))

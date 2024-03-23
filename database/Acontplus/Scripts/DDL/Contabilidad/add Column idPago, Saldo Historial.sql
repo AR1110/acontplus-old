@@ -7,13 +7,13 @@ go
 
 --> NUEVA COLUMANS Y MIGRACIONES
 
+--DELETE FROM Contabilidad.Historial_Pago
+
 --ALTER TABLE Contabilidad.Historial_Pago ADD idPago BIGINT NOT NULL 
 
 --ALTER TABLE Contabilidad.Historial_Pago ADD saldo NUMERIC(18,5) NOT NULL 
 
 --ALTER TABLE Contabilidad.Historial_Pago ADD CONSTRAINT FK_Histo_Pago FOREIGN KEY (idPago) REFERENCES dbo.Pago(idPago)
-
---SELECT * FROM Contabilidad.Historial_Pago
 
 --INSERT INTO Contabilidad.Historial_Pago 
 --      (
@@ -69,12 +69,6 @@ go
 
 --update Contabilidad.Historial_Pago set saldo = abono + saldo
 
---select hc.idCuentaPorCobrar,hc.saldo as importeTotal , hc.abono , hc.saldo - hc.abono as saldo 
---from Contabilidad.Historial_Cobro hc
---INNER JOIN Contabilidad.CuentaPorCobrar cc ON cc.idCuentaPorCobrar = hc.idCuentaPorCobrar
---inner join dbo.ComprobanteIngreso ci ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
---WHERE ci.estado = 1
---ORDER BY hc.idCuentaPorCobrar,hc.idComprobanteIngreso  
 
 --> Histoial pago Detalles
 
@@ -86,12 +80,12 @@ go
 
 ------ALTER TABLE dbo.PagoDetalle ADD saldo NUMERIC(18,5)
 
-----update pd set
-----       pd.saldo = cp.cuota
-----from pagoDetalle                       pd
-----inner join pago                        pa ON pa.idPago              = pd.idPago
-----inner join Contabilidad.CuotaPorPagar  cp ON cp.idCuotaPorPagar     = pd.idCuotaPorPagar
-----inner join ComprobanteEgreso           ce on ce.idComprobanteEgreso = pa.idComprobanteEgreso
+--update pd set
+--       pd.saldo = cp.cuota
+--from pagoDetalle                       pd
+--inner join pago                        pa ON pa.idPago              = pd.idPago
+--inner join Contabilidad.CuotaPorPagar  cp ON cp.idCuotaPorPagar     = pd.idCuotaPorPagar
+--inner join ComprobanteEgreso           ce on ce.idComprobanteEgreso = pa.idComprobanteEgreso
 
 --INSERT INTO @tbDetalle (idPagoDetalle,saldo)
 --select pd.idPagoDetalle
@@ -110,13 +104,6 @@ go
 
 --update PagoDetalle set saldo = abono + saldo
 
---select cd.idCobroDetalle,idCuotaPorCobrar,cd.saldo,cd.abono ,cd.saldo - cd.abono
---from CobroDetalle cd
---inner join Cobro co ON co.idCobro = cd.idCobro
---inner join ComprobanteIngreso ci on ci.idComprobanteIngreso = co.idComprobanteIngreso
---where ci.estado = 1
---ORDER BY cd.idCuotaPorCobrar,cd.idCobro
-
---ALTER TABLE dbo.CobroDetalle ALTER COLUMN saldo NUMERIC(18,5) NOT NULL
+--ALTER TABLE dbo.PagoDetalle ALTER COLUMN saldo NUMERIC(18,5) NOT NULL
 
 select * from PagoDetalle
