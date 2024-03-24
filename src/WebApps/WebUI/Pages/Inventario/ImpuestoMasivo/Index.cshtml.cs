@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace WebUI.Pages.Inventario.CambioMasivoIva
+namespace WebUI.Pages.Inventario.ImpuestoMasivo
 {
     public class Index : PageModel
     { 
