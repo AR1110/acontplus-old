@@ -114,7 +114,8 @@
             const mergeDetalle = [...resultsDetalleOrigen, ...resultsDetalleDestino].map((item, index) => ({ ...item, orderIndex: index + 1 }))
 
 
-            const mergeDetalleOrigen = [...resultsDetalleOrigen, ...itemsDeleted];
+            const tempItemsDeleted = itemsDeleted.map((item, index) => ({ ...item, orderIndex: index + 1 }))
+            const mergeDetalleOrigen = [...resultsDetalleOrigen, ...tempItemsDeleted];
 
 
             return ({
@@ -139,7 +140,7 @@
         function mapDetalleOrigen(detalles, idTipoTransaccionOrigen, idBodega) {
             let results = detalles.map((item, index) => {
                 return {
-                    orderIndex: index,
+                    orderIndex: index + 1,
                     idTransferenciaBodegaDetalle: item.idTransferenciaBodegaDetalle,
                     idTipoTransaccion: idTipoTransaccionOrigen,
                     idArticulo: item.idArticulo,
@@ -160,7 +161,7 @@
         function mapDetalleDestino(detalles, idTipoTransaccionDestino, idBodega) {
             let results = detalles.map((item, index) => {
                 return {
-                    orderIndex: index,
+                    orderIndex: index + 1,
                     idTransferenciaBodegaDetalle: item.idTransferenciaBodegaDetalle,
                     idTipoTransaccion: idTipoTransaccionDestino,
                     idArticulo: item.idArticulo,
@@ -215,8 +216,8 @@
 
                         const medidas = fS.processAndSortMeasures(principal, fraccionado);
 
-                        const dataMedida = medidas.find(m=>m.idMedida===restItem.idMedida);
-                        restItem.conversion = dataMedida.conversion; 
+                        const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
+                        restItem.conversion = dataMedida.conversion;
                         restItem.medidas = medidas;
                         return restItem;
                     })
@@ -236,15 +237,15 @@
                     detalleDocumento: []
                 }
                 if (response !== null && typeof response === 'object') {
-                    const { detalles} = response;
+                    const { detalles } = response;
 
-                    const comprobante = response.comprobante[0];                     
+                    const comprobante = response.comprobante[0];
                     data.dataDocumento = {
                         ...comprobante,
                         fechaEmision: fS.formatDate(comprobante.fechaEmision)
-                    } 
+                    }
                     data.detalleDocumento = detalles;
-                } 
+                }
                 return data;
 
             })
