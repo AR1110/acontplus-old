@@ -2,7 +2,8 @@ import { Route } from "@angular/router";
 import { CategoryPageComponent } from "./pages/category-page/category-page.component";
 import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
 import { ProductPageComponent } from "./pages/product-page/product-page.component";
-import { MassiveTaxChangePageComponent } from "./pages/massive-tax-change-page/massive-tax-change-page.component";
+import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
+import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
 
 
 export const routes: Route[] = [
@@ -32,11 +33,19 @@ export const routes: Route[] = [
     },
   },
   {
-    path: 'massive-tax-change-page',
+    path: 'massive-tax-page',
     title: 'Cambio Masivo de IVA',
-    component: MassiveTaxChangePageComponent,
+    component: MassiveTaxPageComponent,
     data: {
       breadcrumb: 'Cambio Masivo de IVA'
+    },
+  },
+  {
+    path: 'lot-price-page',
+    title: 'Precio por Lote',
+    component: LotPricePageComponent,
+    data: {
+      breadcrumb: 'Precio por Lote'
     },
   },
 
