@@ -10,12 +10,12 @@ namespace Inventario.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MassiveTaxChangeController : ControllerBase
+    public class MassiveTaxController : ControllerBase
     {
-        private readonly IMassiveTaxChangeService _service;
+        private readonly IMassiveTaxService _service;
         private readonly LogWriter _log;
 
-        public MassiveTaxChangeController(IMassiveTaxChangeService service, LogWriter log)
+        public MassiveTaxController(IMassiveTaxService service, LogWriter log)
         {
             _service = service;
             _log = log;
@@ -42,8 +42,8 @@ namespace Inventario.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] ApiRequest data)
         {
             try
             {
@@ -52,14 +52,14 @@ namespace Inventario.API.Controllers
                     {"userRoleId", User.GetUserRoleId()},
                     {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
-                var response = await _service.AddAsync(parameters);
+                var response = await _service.UpdateAsync(parameters);
                 if (response == null) { return NoContent(); };
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error en Insertar CAMBIOS MASIVOS DE IVA" + ex.Message);
-                return BadRequest("Error en Post MASSIVE TAX CHANGE" + ex.Message);
+                _log.LogActivity("Error en Actualizar CAMBIOS MASIVOS DE IVA " + ex.Message);
+                return BadRequest("Error en Put     MASSIVE TAX CHANGE " + ex.Message);
             }
         }
 
