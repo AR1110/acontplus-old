@@ -35,6 +35,17 @@
                         </select>
                     </div>
                 </div>
+                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="form-gorup">
+                        <span for="puntosEmision">Punto Emisión</span>
+                        <select name="puntosEmision" id="puntosEmision" ng-model="dataSearch.idPuntoEmision"
+                                class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                {{item.ptoEmi}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="">Rango de Fechas</span>
@@ -44,13 +55,7 @@
                                            result-range-date="resultDateRange(result)"></date-range-filter>
 
                     </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="buscar">Buscar</span>
-                        <input type="text" class="form-control border-select" ng-model="dataSearch.bySearch" ng-keyup="getFilterTransferencia()" placeholder="Buscar">
-                    </div>
-                </div>
+                </div> 
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
                             ng-click="getTransferenciasBodega()">
@@ -58,8 +63,23 @@
                     </button>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
 
-            <hr>
+                <div class="col-6 d-flex justify-content-end">
+                    <!-- <div class="form-group">
+                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                            ng-model="dataSearch.bySearch" placeholder="...">
+                    </div> -->
+                </div>
+            </div>
+ 
             <md-table-container style="max-height: 400px;">
                 <table md-table>
                     <thead md-head fix-head>
@@ -109,6 +129,11 @@
                     </tfoot>
                 </table>
             </md-table-container>
+        </div>
+        <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
 

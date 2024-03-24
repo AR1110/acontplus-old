@@ -88,13 +88,13 @@ app.constant('nombreModalInventario', {
             MF: '~/Pages/Kardex/Shared/_ModalFiltroKardex.cshtml'
         }
     },
-    CONSOLIDACION_INVENTARIO: {
-        fileCtrl: '/js/modal/inventario/modalConsolidacionInventarioCtrl.js' + CHANGE_VERSION(),
+    CONSOLIDACION: {
+        fileCtrl: '/js/inventario/modals/modalConsolidacionDetalleCtrl.min.js' + CHANGE_VERSION(),
         controllers: {
-            D: 'ModalConsolidacionDetalleCtrl',
+            D: 'modalConsolidacionDetalleCtrl',
         },
         templates: {
-            D: 'ConsolidacionInventario/_ModalDetalle.cshtml',
+            D: '~/Areas/Consolidacion/Pages/Shared/_ModalDetalle.cshtml',
         }
     },
     TRANSFERENCIA_BODEGA: {

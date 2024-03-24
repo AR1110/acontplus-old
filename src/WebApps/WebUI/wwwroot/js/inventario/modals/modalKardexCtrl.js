@@ -19,6 +19,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
     let modalSvc = $injector.get('modalService');
     let nombreModalCompra = $injector.get('nombreModalCompra');
     let nombreModalVenta = $injector.get('nombreModalVenta');
+    const nombreModalInventario = $injector.get('nombreModalInventario');
     let fS = $injector.get('formulario');
     let tS = $injector.get('toastService');
     let DOC_TYPE = $injector.get('DOC_TYPE');
@@ -611,7 +612,25 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                         isRenderRazorPartial: true
                     })
 
-                } else {
+                } else if(item.tipoDoc==='CI'){
+                    let fileCtrl = nombreModalInventario.CONSOLIDACION.fileCtrl;
+                    let ctrl = nombreModalInventario.CONSOLIDACION.controllers['D'];
+                    let template = nombreModalInventario.CONSOLIDACION.templates['D'];
+
+                    let controller = (await import(fileCtrl))[ctrl];
+                    modalSvc.openModalCustom({
+                        controller,
+                        template,
+                        size: 'xl',
+                        params: {
+                            id: item.idDocumento
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+                }
+                
+                else {
                     commonSvc.viewDetailDocumentII({
                         id: item.idDocumento,
                         codTransaccion: item.codTransaccion,

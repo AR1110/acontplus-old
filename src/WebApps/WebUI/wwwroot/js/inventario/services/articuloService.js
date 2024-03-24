@@ -448,6 +448,7 @@
                             style: item.style,
                             subFamilia: item.subFamilia,
                             fraccionado: item.fraccionado,
+                            llevaInventario: item.llevaInventario,
                             priceSales: priceSales.map(item => {
                                 return {
                                     tarifa: item.tarifa,

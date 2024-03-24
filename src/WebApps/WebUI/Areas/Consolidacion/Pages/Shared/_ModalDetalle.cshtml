@@ -1,4 +1,4 @@
-<form autocomplete="off" ng-submit="onSave()">
+ 
     <div class="modal-header bg-info text-white">
         <h5 class="modal-title">Detalle Consolidación Inventario</h5>
         <button type="button" class="close" ng-click="closeModal()">&times;</button>
@@ -8,24 +8,16 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: </label>
-                    <select name="establecimiento" id="establecimiento" class="form-control border-select"
-                        ng-model="data.codEstab" disabled>
-                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                            {{item.nombreComercial}}
-                        </option>
-                    </select>
+                    <input type="text" name="establecimiento" ng-model="data.establecimiento"
+                        class="form-control border-select" disabled>
                 </div>
             </div>
 
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: </label>
-                    <select id="puntoEmision" name="puntoEmision" class="form-control border-select"
-                        ng-model="data.idPuntoEmision" disabled>
-                        <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
-                            {{item.ptoEmi}}
-                        </option>
-                    </select>
+                    <input type="text" name="ptoEmi" ng-model="data.ptoEmi"
+                        class="form-control border-select" disabled>
                 </div>
             </div>
 
@@ -69,5 +61,4 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
     </div>
-
-</form>
+ 

@@ -15,6 +15,7 @@
             getDataForm,
             generateSerieComprobante,
             getAll,
+            mapTo,
             insert,
             update,
             anular,
@@ -24,216 +25,227 @@
 
 
         function getDataFilter() {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
-                if (response.code == "0") {
-                    throw response;
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
+                const data = {
+                    estabs: []
                 }
-                if (response.code == "1") { 
-                    let results = JSON.parse(response.payload) || [];
+                if (response !== null && typeof response === 'object') {
                     let dataToGroup = {
-                        estabs: results[0], //Establecimientos con puntos de emision 
+                        estabs: response.establecimientos
                     }
-                    let estabs = fS.groupingEstab(dataToGroup);
-
-                    return {
-                        estabs
-                    }          
-
+                    data.estabs = fS.groupingEstab(dataToGroup);
                 }
-            }) 
+                return data;
+            })
         }
+
 
         function getDataForm() {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
-                if (response.code == "0") {
-                    throw response;
+            return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
+                const data = {
+                    estabs: [],
+                    tiposTransaccion: []
                 }
-                if (response.code == "1") {
-                    let results = JSON.parse(response.payload) || [];
-                    let dataToGroup = {
-                        estabs: results[0], //Establecimientos con puntos de emision
-                        bodegas: results[1], // Establecimientos con bodegas
+                if (response !== null && typeof response === 'object') {
+                    const { ptoEmision, bodega, tipoTransaccion } = response;
+                    const dataToGroup = {
+                        estabs: ptoEmision,
+                        bodegas: bodega,
                         isGroupBodega: true
                     }
-                    let estabs = fS.groupingEstab(dataToGroup);
-                    
-                    return {
-                        estabs
-                    }                    
+                    data.estabs = fS.groupingEstab(dataToGroup);
+                    data.tiposTransaccion = tipoTransaccion;
+                }
 
-                }
-            }) 
-        }
-        function generateSerieComprobante (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
-                if (response.code === "0") {
-                    throw response;
-                }
-                if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
-                    let data = mainData[0][0];
-                    return data.serieComprobante;
-                }
+                return data;
             })
         }
-        function getAll(query) {
-            return mS.getData('get', `${url}Get?json=${JSON.stringify({
-                ...query,
+        function generateSerieComprobante(query) {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+                let value = null;
+                if (response !== null && typeof response === 'object') {
+                    const { serieComprobante } = response;
+                    value = serieComprobante[0].serieComprobante
+                }
+                return value;
+            })
+        }
+        function getAll(obj) {
+            let json = JSON.stringify({
+                ...obj,
                 tipo: 1
-            })}`, null, true).then(response => {
-                if (response.code == "0") {
-                    throw response;
+            })
+            return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
+                let transferenciasBodega = [];
+                if (response !== null && typeof response === 'object') {
+                    const tempData = response.tranferencias;
+                    transferenciasBodega = tempData.map(item => {
+                        return {
+                            idTransferenciaBodega: item.idTransferenciaBodega,
+                            idTipoDocumento: item.idTipoDocumento,
+                            codEstab: item.codEstab,
+                            nroDoc: item.nroDoc,
+                            fechaEmision: item.fechaEmision,
+                            estadoDesc: item.estadoDesc,
+                            estadoCodigo: item.estadoCodigo,
+                            total: item.total,
+                            bodegaOrigen: item.bodegaOrigen,
+                            bodegaDestino: item.bodegaDestino,
+                            rowColor: item.rowColor,
+                            totalRecords: item.totalRecords
+                        }
+                    })
                 }
-                if (response.code == "1") {
-                    let results = JSON.parse(response.payload) || [];
-                    const transferenciaProductos = results[0];
 
-                    return transferenciaProductos.map(item => ({
-                        idTransferenciaBodega: item.idTransferenciaBodega,
-                        idTipoDocumento: item.idTipoDocumento,
-                        nroDoc: item.nroDoc,
-                        fechaEmision: item.fechaEmision,
-                        estadoDesc: item.estadoDesc,
-                        estadoCodigo: item.estadoCodigo,
-                        total: item.total,
-                        bodegaOrigen: item.bodegaOrigen,
-                        bodegaDestino: item.bodegaDestino,
-                        rowColor: item.rowColor,
-                        codEstab: item.codEstab,
-                    }))
-                }
-            }).catch(err => {
-                throw err;
+                return transferenciasBodega;
             })
         }
 
-        function insert(query) {
-            return mS.getData('post', `${url}`, query, true).then(response => {
-                if (response.code == "0") {
-                    throw response;
-                }
-                return response;
-            }).catch(err => {
-                throw err;
+        function mapTo(obj) {
+            const { data, detalles, tiposTransaccion, itemsDeleted } = obj;
+
+            const idTipoTransaccionOrigen = tiposTransaccion.find(item => item.codigo === 'S').idTipoTransaccion
+            const idTipoTransaccionDestino = tiposTransaccion.find(item => item.codigo === 'E').idTipoTransaccion
+            data.total = detalles.reduce((acc, curr) => acc + curr.total, 0);
+
+            const comprobante = mapComprobanteTo(data);
+            const resultsDetalleOrigen = mapDetalleOrigen(detalles, idTipoTransaccionOrigen, data.idBodegaOrigen)
+            const resultsDetalleDestino = mapDetalleDestino(detalles, idTipoTransaccionDestino, data.idBodegaDestino)
+            const mergeDetalle = [...resultsDetalleOrigen, ...resultsDetalleDestino].map((item, index) => ({ ...item, orderIndex: index + 1 }))
+
+
+            const mergeDetalleOrigen = [...resultsDetalleOrigen, ...itemsDeleted];
+
+
+            return ({
+                comprobante,
+                detalles: mergeDetalleOrigen,
+                transaccion: mergeDetalle,
             })
+
+        }
+        function mapComprobanteTo(data) {
+            return {
+                idPuntoEmision: data.idPuntoEmision,
+                idBodegaOrigen: data.idBodegaOrigen,
+                idBodegaDestino: data.idBodegaDestino,
+                fechaEmision: fS.formatDateMoment(data.fechaEmision),
+                observacion: data.observacion,
+                total: data.total,
+            }
+
+        }
+
+        function mapDetalleOrigen(detalles, idTipoTransaccionOrigen, idBodega) {
+            let results = detalles.map((item, index) => {
+                return {
+                    orderIndex: index,
+                    idTransferenciaBodegaDetalle: item.idTransferenciaBodegaDetalle,
+                    idTipoTransaccion: idTipoTransaccionOrigen,
+                    idArticulo: item.idArticulo,
+                    idBodega: idBodega,
+                    idMedida: item.idMedida,
+                    descripcion: item.descripcion,
+                    cantidad: item.cantidad,
+                    cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion),
+                    precioUnitario: item.precioUnitario,
+                    precioCosto: item.precioCosto,
+                    precioUnitario: item.precioCosto,
+                    total: item.total,
+                    estado: item.estado
+                }
+            })
+            return results;
+        }
+        function mapDetalleDestino(detalles, idTipoTransaccionDestino, idBodega) {
+            let results = detalles.map((item, index) => {
+                return {
+                    orderIndex: index,
+                    idTransferenciaBodegaDetalle: item.idTransferenciaBodegaDetalle,
+                    idTipoTransaccion: idTipoTransaccionDestino,
+                    idArticulo: item.idArticulo,
+                    idBodega: idBodega,
+                    idMedida: item.idMedida,
+                    cantidad: item.cantidad,
+                    cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion),
+                    precioUnitario: item.precioUnitario,
+                    precioCosto: item.precioCosto,
+                    precioUnitario: item.precioCosto,
+                    total: item.total,
+                    descripcion: item.descripcion,
+                    estado: item.estado
+                }
+            })
+            return results;
+        }
+
+        function insert(data) {
+            return mS.getData('post', `${url}`, { data }, true)
         }
 
 
-        function update(id, query) {
-            return mS.getData('put', `${url}?id=` + id, query, true).then(response => {
-                if (response.code == "0") {
-                    throw response;
-                }
-                return response;
-            }).catch(err => {
-                throw err;
-            })
+        function update(id, data) {
+            return mS.getData('put', `${url}${id}`, { data }, true)
         }
 
         function anular(id) {
-            return mS.getData('delete', `${url}?id=` + id, null, true).then(response => {
-                // if(response.code=="0"){
-                //     throw response;
-                // }
-                return response;
-            }).catch(err => {
-                throw err;
-            })
+            return mS.getData('delete', `${url}${id}`, null, true)
         }
 
 
-        function getId(id){
+        function getId(id) {
 
-            return mS.getData('get', `${url}GetId?id=` + id, null, true).then(response=>{
-                if (response.code === "0") { 
-                    throw response.message
+            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+                const data = {
+                    comprobante: {},
+                    detalles: []
                 }
+                if (response !== null && typeof response === 'object') {
+                    const { detalles: detallesTemp } = response;
 
-                if (response.code === "1") {
-                    
-                    let dataMain = JSON.parse(response.payload);
-                    let [dataTemp, itemsTemp] = dataMain;
-                    console.log(dataMain)
-
-                    let dataDocumento = dataTemp[0];
-                    dataDocumento.fechaEmision = fS.formatDate(dataDocumento.fechaEmision);
-
-                    const detalleDocumento = itemsTemp.map(item=>{
-                        const { medidasFraccionado, medidasPrincipal, ...restItem } = item;
-
-                        // Medidas del artículo fraccionado del principal
-                        let medidasFraccionadoTemp = JSON.parse(medidasFraccionado) || [];
-
-                        // Medida principal con las tarifas
-                        let medidasPrincipalTemp = JSON.parse(medidasPrincipal) || []; 
-
-                        const medidasPrincipalMap = medidasPrincipalTemp.map(medidaPrincipal => ({
-                            ...medidaPrincipal,
-                            tipo: 'PRINCIPAL'
-                        }))
-                        const medidasFraccionadoMap = medidasFraccionadoTemp.map(medidaFraccionado => ({
-                            ...medidaFraccionado,
-                            tipo: 'FRACCIONADO'
-                        }))
-
-
-                        /**
-                         * Combinar los dos arrays de medidas en uno solo
-                         *
-                         * Parámetros:
-                         *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
-                         */
-                        const mergedMedidasArray = [...medidasFraccionadoMap, ...medidasPrincipalMap];
-
-                        /**
-                         * Ordenar el array de medidas en función de la propiedad "orden" y
-                         * establecer la propiedad "defaultMedida" en falso para todos los elementos
-                         *
-                         * Parámetros:
-                         *  - orderMedidaArray: El array de medidas ordenado
-                         */
-                        let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
-                            ...medida,
-                            defaultMedida: false
-                        }));
-
-                        // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
-                        orderMedidaArray[0].defaultMedida = true;
-
-                        restItem.medidas = orderMedidaArray;
-                        return restItem; 
-                    }) 
-
-
-                    return {
-                        dataDocumento, 
-                        detalleDocumento, 
+                    const comprobante = response.comprobante[0];
+                    data.comprobante = {
+                        ...comprobante,
+                        fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                        fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
                     }
+
+                    data.detalles = detallesTemp.map(item => {
+                        const { fraccionado, principal, ...restItem } = item;
+
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                        const dataMedida = medidas.find(m=>m.idMedida===restItem.idMedida);
+                        restItem.conversion = dataMedida.conversion; 
+                        restItem.medidas = medidas;
+                        return restItem;
+                    })
+
+
                 }
+                return data;
 
             })
 
         }
-        
-        function getIdDetalle(id){
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign({id}, { tipo: 5 })), null, true).then(response => {
-                if (response.code === "0") {
-                    throw response.message
+
+        function getIdDetalle(id) {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign({ id }, { tipo: 5 })), null, true).then(response => {
+                const data = {
+                    dataDocumento: {},
+                    detalleDocumento: []
                 }
+                if (response !== null && typeof response === 'object') {
+                    const { detalles} = response;
 
-                if (response.code === "1") {
-                    let dataMain = JSON.parse(response.payload);
-                    let [dataTemp, detalleDocumento] = dataMain;
-
-                    let dataDocumento = dataTemp[0];
-                    dataDocumento.fechaEmision = fS.formatDate(dataDocumento.fechaEmision); 
-
-
-                    return {
-                        dataDocumento,
-                        detalleDocumento,
-                    }
-                }
+                    const comprobante = response.comprobante[0];                     
+                    data.dataDocumento = {
+                        ...comprobante,
+                        fechaEmision: fS.formatDate(comprobante.fechaEmision)
+                    } 
+                    data.detalleDocumento = detalles;
+                } 
+                return data;
 
             })
         }

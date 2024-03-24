@@ -6,10 +6,10 @@
 
     const PATH_HTML = 'Pages/TransferenciaBodega/'
 
-    let transBogegaSvc = {};
+    let transBodegaSvc = {};
     let commonSvc = {};
     let fS = {};
-    let tS = {}; 
+    let tS = {};
     let mainDataForm = {};
 
 
@@ -19,14 +19,23 @@
 
     function transferenciaBodegaCtrl($scope, $injector, $filter, modalSvc, nombreModalInventario) {
 
-        transBogegaSvc = $injector.get('transferenciaBodegaService');
+        transBodegaSvc = $injector.get('transferenciaBodegaService');
         commonSvc = $injector.get('commonService');
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
 
-        $scope.dataSearch = {};
         $scope.transferenciasBodegas = [];
+        $scope.puntosEmision = [];
         let tempTransferenciasBodegas = [];
+
+        $scope.recordsQuantity = [25, 50, 75, 100];
+
+        $scope.dataSearch = {
+            pageIndex: 1,
+            pageSize: 25,
+            totalRecords: 0,
+            maxSize: 5
+        }
 
         $scope.openModalNew = function () {
             try {
@@ -50,8 +59,8 @@
 
         $scope.resultDateRange = function (item) {
             $scope.dataSearch.checkBoxFecha = true;
-            $scope.dataSearch.startDate = item.startDate,
-                $scope.dataSearch.endDate = item.endDate;
+            $scope.dataSearch.startDate = item.startDate;
+            $scope.dataSearch.endDate = item.endDate;
 
             $scope.getTransferenciasBodega();
         }
@@ -59,22 +68,31 @@
         $scope.getTransferenciasBodega = function () {
 
             try {
-                showLoader();
                 let query = {
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
                     codEstab: $scope.dataSearch.codEstab,
+                    idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     startDate: fS.formatDateMoment($scope.dataSearch.startDate),
                     endDate: fS.formatDateMoment($scope.dataSearch.endDate),
                 }
                 $scope.transferenciasBodegas = [];
-                transBogegaSvc.getAll(query).then(response => {
-                    hideLoader();
+                showLoader();
 
+                transBodegaSvc.getAll(query).then(response => {
                     $scope.transferenciasBodegas = response;
-                    tempTransferenciasBodegas = JSON.parse(JSON.stringify($scope.transferenciasBodegas))
-                }).catch(error => {
-                    hideLoader();
-                    console.log(error)
+                    tempTransferenciasBodegas = structuredClone($scope.transferenciasBodegas);
+
+                    if ($scope.transferenciasBodegas.length > 0) {
+                        $scope.dataSearch.totalRecords = $scope.transferenciasBodegas[0].totalRecords;
+                    } else {
+                        $scope.dataSearch.totalRecords = 0;
+                    }
                 })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader());
 
             } catch (error) {
                 hideLoader();
@@ -82,27 +100,46 @@
             }
         }
 
-        $scope.initiload = function () {
+        initiload();
+        function initiload() {
             try {
                 showLoader();
-                transBogegaSvc.getDataFilter().then(response => {
+                transBodegaSvc.getDataFilter().then(response => {
                     $scope.establecimientos = response.estabs;
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
                         $scope.dataSearch.codEstab = dataEstab.codEstab;
+
+                        $scope.puntosEmision = dataEstab.puntosEmision;
+                        const dataPuntoEmision = $scope.puntosEmision.find(item => item.defaultPtoEmi);
+                        if (dataPuntoEmision) {
+                            $scope.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+                        }
                         $scope.getTransferenciasBodega();
                     }
-                }).finally(()=>hideLoader())
-                transBogegaSvc.getDataForm().then(response => {
+                })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
+                transBodegaSvc.getDataForm().then(response => {
                     mainDataForm = response;
                 })
- 
+
 
             } catch (error) {
                 console.log(error)
             }
         }
-        $scope.initiload();
+
+        $scope.pagechanged = function () {
+            $scope.getTransferenciasBodega();
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getTransferenciasBodega();
+        };
 
 
         $scope.getFilterTransferencia = () => {
@@ -115,7 +152,7 @@
             try {
                 showLoader();
 
-                transBogegaSvc.getId(item.idTransferenciaBodega).then(response => {
+                transBodegaSvc.getId(item.idTransferenciaBodega).then(response => {
                     let modalRef = modalSvc.openModalCustom({
                         controller: 'ModalTransferenciaBodegaCtrl',
                         template: PATH_HTML + 'Shared/_ModalTransferenciaBodega.cshtml',
@@ -132,7 +169,7 @@
                     })
                 }).catch(error => {
                     console.log(error)
-                }).finally(() => hideLoader()) 
+                }).finally(() => hideLoader())
 
             } catch (error) {
                 hideLoader();
@@ -142,14 +179,13 @@
 
         $scope.openModalDetalle = async (item) => {
             try {
-                showLoader();
-                console.log(item)
+                showLoader(); 
                 let fileCtrl = nombreModalInventario.TRANSFERENCIA_BODEGA.fileCtrl;
                 let ctrl = nombreModalInventario.TRANSFERENCIA_BODEGA.controllers['D'];
                 let template = nombreModalInventario.TRANSFERENCIA_BODEGA.templates['D'];
                 let controller = (await import(fileCtrl))[ctrl];
-                
-                transBogegaSvc.getIdDetalle(item.idTransferenciaBodega).then(response => {
+
+                transBodegaSvc.getIdDetalle(item.idTransferenciaBodega).then(response => {
                     let modalRef = modalSvc.openModalCustom({
                         controller,
                         template,
@@ -166,7 +202,7 @@
                     })
                 }).catch(error => {
                     console.log(error)
-                }).finally(() => hideLoader())  
+                }).finally(() => hideLoader())
             } catch (error) {
                 console.log(error)
             } finally {
@@ -190,7 +226,7 @@
 
             if (isConfirmed) {
                 showLoader();
-                transBogegaSvc.anular(item.idTransferenciaBodega).then(response => {
+                transBodegaSvc.anular(item.idTransferenciaBodega).then(response => {
                     hideLoader()
                     if (response.code === "0") {
                         fS.sweetAlert('warning', response.message, response.titleSms);
@@ -248,15 +284,18 @@
     ModalTransferenciaBodegaCtrl.$inject = ["$scope", "$timeout", "$uibModalInstance", "params"];
 
     function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, params) {
-        let { data } = params; 
+        let { data } = params;
 
         $scope.tipoDoc = {
-            codigo: 'TRA'
+            codigo: 'C'
         }
         $scope.data = {
             fechaEmision: new Date()
         };
         $scope.puntosEmision = [];
+        $scope.tiposTransaccion = [];
+
+        let itemsDeleted = [];
 
         $scope.gridOptions = {
             enableColumnMenus: false,
@@ -295,6 +334,7 @@
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                     rowEntity.precioCosto = dataMedida.precioCosto;
+                    rowEntity.conversion = dataMedida.conversion;
                 }
 
                 $scope.setTotal(rowEntity);
@@ -450,44 +490,38 @@
         ]
 
 
-
-
-
-
         initiload();
         async function initiload() {
             try {
 
                 $scope.establecimientosOrigen = structuredClone(mainDataForm.estabs);
                 $scope.establecimientosDestino = structuredClone(mainDataForm.estabs);
+                $scope.tiposTransaccion = mainDataForm.tiposTransaccion;
 
                 if ($scope.establecimientosOrigen.length === 0) {
                     tS.toastr('info', 'No tienes asignado ningún Establecimiento');
                     return
                 }
 
-                if ( typeof data =='object' && data.dataDocumento && data.dataDocumento.idTransferenciaBodega > 0) {
-                    let { dataDocumento, detalleDocumento } = params.data;  
+                if (typeof data == 'object' && data.comprobante && data.comprobante.idTransferenciaBodega > 0) {
+                    let { comprobante, detalles } = params.data;
 
                     let dataEstabOrigen = $scope.establecimientosOrigen
-                        .filter((es) => es.puntosEmision.some((pp) => pp.idPuntoEmision === dataDocumento.idPuntoEmision))
+                        .filter((es) => es.puntosEmision.some((pp) => pp.idPuntoEmision === comprobante.idPuntoEmision))
                         .reduce((acc, curr) => {
-                            return  curr;
+                            return curr;
                         }, {});
                     let dataEstabDestino = $scope.establecimientosOrigen
-                        .filter((es) => es.bodegas.some((pp) => pp.idBodega === dataDocumento.idBodegaDestino))
+                        .filter((es) => es.bodegas.some((pp) => pp.idBodega === comprobante.idBodegaDestino))
                         .reduce((acc, curr) => {
                             return curr
                         }, {});
- 
-                    $scope.data = dataDocumento; 
-                    // $scope.establecimientoOrigen = establecimientoOrigen;
-                    // $scope.establecimientoDestino = establecimientoDestino;
-                    // $scope.detalleDocumento = detalleDocumento;
+
+                    $scope.data = comprobante;
 
                     $scope.data.codEstabOrigen = dataEstabOrigen.codEstab;
-                    $scope.data.codEstabDestino = dataEstabDestino.codEstab; 
-  
+                    $scope.data.codEstabDestino = dataEstabDestino.codEstab;
+
                     //Punto de Emision
                     $scope.puntosEmision = dataEstabOrigen.puntosEmision;
 
@@ -497,11 +531,11 @@
 
                     //Bodega Destino 
                     $scope.bodegasDestino = dataEstabDestino.bodegas;
-                    $scope.gridOptions.data = detalleDocumento;
+                    $scope.gridOptions.data = detalles;
                     enumGridOptions();
                     $scope.tituloModal = 'Editar';
                     $scope.btnText = 'Actualizar';
-                    $scope.iconModal = 'ti-pencil'; 
+                    $scope.iconModal = 'ti-pencil';
                 } else {
                     $scope.tituloModal = 'Nueva';
                     $scope.btnText = 'Guardar';
@@ -574,6 +608,8 @@
                     } else {
                         tS.toastr('info', 'No tienes asignado ninguna Bodega');
                     }
+                    $scope.data.codEstabDestino = null;
+                    $scope.data.idBodegaDestino = 0;
                     $scope.$apply();
                 } else {
                     $scope.data.codEstabOrigen = $scope.cloneCodEstabOrigen;
@@ -591,25 +627,22 @@
             try {
                 let dataEstab = $scope.establecimientosDestino.find(item => item.codEstab === $scope.data.codEstabDestino);
                 $scope.bodegasDestino = dataEstab.bodegas;
-                if ($scope.bodegasDestino.length > 0) {
-                    const dataBodega = $scope.bodegasDestino.find(bodega => (bodega.defaultBodega))
-                    if (dataBodega) {
-                        if (dataBodega.idBodega === $scope.data.idBodegaOrigen) {
-                            tS.toastr('warning', 'No puedes transferir los productos a la misma bodega!');
-                            $scope.data.codEstabDestino = null;
-                            $scope.data.idBodegaDestino = 0;
-                            return
-                        }
-                        $scope.data.idBodegaDestino = dataBodega.idBodega;
-                    }
-                } else {
+                $scope.data.idBodegaDestino = 0;
+                if ($scope.bodegasDestino.length === 0) {
                     tS.toastr('warning', 'No tienes asignado ninguna bodega');
                 }
+
             } catch (error) {
                 console.trace(error)
             }
         }
 
+        $scope.onChangeBodegaDestino = function () {
+            if ($scope.data.idBodegaOrigen === $scope.data.idBodegaDestino) {
+                tS.toastr('warning', 'No puedes transferir los productos a la misma bodega!');
+                $scope.data.idBodegaDestino = 0;
+            }
+        }
 
         $scope.abrirModalArticulo = function (item) {
             $scope.gridApi.cellNav.scrollToFocus(
@@ -621,6 +654,13 @@
 
         $scope.setItemArticuloEnDetalle = function (item) {
             try {
+                if (!item.articulo.llevaInventario) {
+                    Swal.fire({
+                        icon: 'warning',
+                        html: 'Solo puedes transferir el artículo de tipo servicio'
+                    })
+                    return
+                }
                 const { articulo, medidas } = item;
 
                 let entity = {};
@@ -635,7 +675,7 @@
 
                 } else {
 
-                    $scope.addRow();
+                    addRow();
 
                     $scope.indexRow = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
                     entity = $scope.gridOptions.data[$scope.indexRow];
@@ -643,14 +683,14 @@
 
                 $scope.addItem(entity, articulo, medidas); // item row
                 enumGridOptions();
-                $scope.focusColumnaCantidad();
+                focusColumnaCantidad();
 
             } catch (error) {
                 console.log(error)
             }
         }
 
-        $scope.addRow = function () {
+        function addRow() {
             $scope.gridOptions.data.push({
                 idTransferenciaBodegaDetalle: 0,
                 num: 1,
@@ -661,7 +701,9 @@
                 medidas: [],
                 stock: 0,
                 precioCosto: 0,
-                total: 0
+                total: 0,
+                estado: true,
+                conversion: 1,
             });
         }
 
@@ -676,7 +718,8 @@
             entity.total = dataMedida.precioCosto;
             entity.llevaInventario = item.llevaInventario;
             entity.medidas = medidas; //Lista Medida 
-            entity.idMedida = dataMedida.idMedida; //Medida por defecto                                    
+            entity.idMedida = dataMedida.idMedida; //Medida por defecto    
+            entity.conversion = dataMedida.conversion;
         }
 
 
@@ -688,7 +731,7 @@
             }
         }
 
-        $scope.focusColumnaCantidad = function () {
+        function focusColumnaCantidad() {
             $scope.gridApi.cellNav.scrollToFocus(
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
@@ -718,64 +761,87 @@
             if (isConfirmed) {
                 let index = $scope.gridOptions.data.indexOf(row.entity);
                 $scope.gridOptions.data.splice(index, 1);
+
+                if (row.entity.idTransferenciaBodegaDetalle > 0) {
+                    itemsDeleted.push({
+                        ...row.entity,
+                        estado: false
+                    })
+                }
                 $scope.$apply()
             }
         }
 
 
+        function isUpdate() {
+            return $scope.data.idTransferenciaBodega > 0
+        }
+        function isRegister() {
+            return !($scope.data.idTransferenciaBodega > 0)
+        }
+
 
 
         $scope.onSave = async function () {
             try {
-                let tituloModal = $scope.data.idTransferenciaBodega > 0 ? 'Actualizar' : 'Guardar';
-                const idTransferenciaBodega = $scope.data.idTransferenciaBodega;
                 if (!$scope.data.codEstabOrigen) {
-                    tS.toastr('warning', 'Seleccione Establecimiento Origen', tituloModal);
+                    tS.toastr('warning', 'Seleccione Establecimiento Origen');
                     return
                 }
 
                 if (!($scope.data.idBodegaOrigen > 0)) {
-                    tS.toastr('warning', 'Seleccione la Bodega Origen', tituloModal);
+                    tS.toastr('warning', 'Seleccione la Bodega Origen');
                     return
                 }
 
                 if (!($scope.data.idBodegaDestino > 0)) {
-                    tS.toastr('warning', 'Seleccione la Bodega Destino', tituloModal);
+                    tS.toastr('warning', 'Seleccione la Bodega Destino');
+                    return
+                }
+                if ($scope.data.idBodegaOrigen === $scope.data.idBodegaDestino) {
+                    tS.toastr('warning', 'No puedes transferir los productos a la misma bodega!');
                     return
                 }
 
                 if (!($scope.data.idPuntoEmision > 0)) {
-                    tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
+                    tS.toastr('warning', 'Seleccione el Punto de Emisión');
                     return
                 }
 
-                if (!$scope.data.fechaEmision) {
-                    tS.toastr('warning', 'Ingrese fecha de Emisión', tituloModal);
+                if (!(fS.isDateValid($scope.data.fechaEmision))) {
+                    tS.toastr('warning', 'Ingrese la Fecha de emisión');
                     return
                 }
+
+                if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                    tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                    return
+                }
+
+                let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
+
+                if (ajusteFechaEmision) {
+                    $scope.data.fechaEmision = ajusteFechaEmision;
+                } else {
+                    console.log('Error al justar la fecha de Emisión')
+                    return
+                }
+
 
                 if ($scope.gridOptions.data.length === 0) {
-                    tS.toastr('warning', 'Ingrese al menos un articulo en el Detalle', tituloModal);
+                    tS.toastr('warning', 'Ingrese al menos un articulo en el Detalle');
                     return
                 }
 
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
 
-                if (!(idTransferenciaBodega > 0)) {
+                if (isRegister()) {
                     showLoader();
-                    serieComprobante = await transBogegaSvc.generateSerieComprobante({
+                    serieComprobante = await transBodegaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     })
                     hideLoader();
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
-                    // showLoader();
-                    // nroDocumentoSecuencial = await commonSvc.generarNroDocumentoCompra({
-                    //     idPuntoEmision: $scope.data.idPuntoEmision,
-                    //     codigoDocumento: $scope.tipoDoc.codigo
-                    // })
-                    // hideLoader();
-
-                    // if (!nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
                     titleSwal = '<small>Guardar Transferencia Bodega</small>';
                     confirmButtonText = 'Guardar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
@@ -808,45 +874,30 @@
 
                 if (!isConfirmed) return
 
-
-                let header = Object.assign({}, $scope.data);
-                header.total = $scope.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
-                header.fechaEmision = fS.formatDateMoment($scope.data.fechaEmision);
-
-                let data = {
-                    header: JSON.stringify(header),
-                    detail: JSON.stringify($scope.gridOptions.data.map(item => {
-                        return {
-                            idTransferenciaBodegaDetalle: item.idTransferenciaBodegaDetalle || 0,
-                            idTransferenciaBodega: item.idTransferenciaBodega,
-                            idArticulo: item.idArticulo,
-                            idMedida: item.idMedida,
-                            descripcion: item.descripcion,
-                            cantidad: item.cantidad,
-                            precioCosto: item.precioCosto,
-                            estado: item.estado,
-                            total: item.total
-                        }
-                    }))
+                const dataMapeado = transBodegaSvc.mapTo({
+                    data: $scope.data,
+                    detalles: $scope.gridOptions.data,
+                    tiposTransaccion: $scope.tiposTransaccion,
+                    itemsDeleted
+                })
+                showLoader();
+                if (isUpdate()) {
+                    transBodegaSvc.update($scope.data.idTransferenciaBodega, dataMapeado)
+                        .then($scope.successResponse)
+                        .catch(error => {
+                            console.log(error);
+                        }).finally(() => hideLoader())
                 }
 
-                showLoader();
-                if (idTransferenciaBodega > 0) {
-                    transBogegaSvc.update($scope.data.idTransferenciaBodega, data)
+                if (isRegister()) {
+                    transBodegaSvc.insert(dataMapeado)
                         .then($scope.successResponse)
                         .catch(error => {
-                            hideLoader();
                             console.log(error);
-                        })
-                } else if (!(idTransferenciaBodega > 0)) {
-                    transBogegaSvc.insert(data)
-                        .then($scope.successResponse)
-                        .catch(error => {
-                            hideLoader();
-                            console.log(error);
-                        })
+                        }).finally(() => hideLoader())
                 }
             } catch (error) {
+                hideLoader();
                 console.log(error)
             }
         }
