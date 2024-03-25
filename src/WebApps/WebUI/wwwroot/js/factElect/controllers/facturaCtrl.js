@@ -1059,7 +1059,7 @@
                     $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                 }
 
-                if ($scope.vendedores.length > 0) {
+                if ($scope.vendedores.length > 0 && !$scope.config.multipleVendedor) {
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
@@ -2338,6 +2338,11 @@
                 return
             }
 
+
+            if (!($scope.data.idUsuario>0)){
+                tS.toastr('warning', 'Seleccione el Vendedor');
+                return 
+            }
 
             //===================End customer validate ============================
 
