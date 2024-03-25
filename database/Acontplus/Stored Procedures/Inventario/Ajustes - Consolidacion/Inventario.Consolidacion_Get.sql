@@ -132,8 +132,8 @@ BEGIN
 				  ,ci.fechaEmision 
 				  ,ci.observacion
 				  ,ci.total
-				  ,ci.idPuntoEmision
-				  ,es.codEstab
+				  ,es.nombreComercial
+                  ,es.estab + '-' + pe.ptoEmi as ptoEmi 
 			FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
 			INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision = ci.idPuntoEmision
 			INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
@@ -142,6 +142,7 @@ BEGIN
 			SELECT cd.idConsolidacionInventarioDetalle
 				  ,ar.codigo
                   ,cd.descripcion
+                  ,ar.stock
                   ,cd.cantidad
                   ,me.descripcion as medida
                   ,bo.descripcion as bodega

@@ -45,8 +45,10 @@ BEGIN
     SELECT @abono = SUM(hc.abono) 
     FROM dbo.ComprobanteIngreso ci WITH (NOLOCK) 
     INNER JOIN Contabilidad.Historial_Cobro hc ON hc.idComprobanteIngreso = ci.idComprobanteIngreso
+    INNER JOIN dbo.Cobro                    co ON co.idCobro              = hc.idCobro
     WHERE ci.estado = 1
       AND hc.idCuentaPorCobrar = @idCuentaPorCobrar
+      AND co.cobro = 1
       
 
 	SELECT TOP 1 @importeTotal = importeTotal + mora FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar

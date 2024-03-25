@@ -245,13 +245,13 @@ BEGIN
 
 		IF EXISTS (SELECT 1 FROM Articulo WITH (NOLOCK) WHERE codigoBarra = @codigoBarra and idEntidad = @idEntidad AND idArticulo != @id)
 			BEGIN
-				SELECT '0'code,'Este codigo se encuentra en uso para otro articulo' as 'message'
+				SELECT '0'code,'Este codigo de barra se encuentra en uso para otro articulo' as 'message'
 				RETURN 
 			END 
 
 		IF EXISTS (SELECT 1 FROM Articulo WITH (NOLOCK) WHERE codigoAuxiliar = @codigoAuxiliar and idEntidad = @idEntidad AND idArticulo != @id)
 			BEGIN
-				SELECT '0'code,'Este codigo se encuentra en uso para otro articulo' as 'message'
+				SELECT '0'code,'Este codigo Auxiliar se encuentra en uso para otro articulo' as 'message'
 				RETURN 
 			END 
 

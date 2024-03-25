@@ -107,6 +107,15 @@ SELECT t.idTransaccion
 					INNER JOIN Sri.Establecimiento e  WITH (NOLOCK) ON pe.codEstab = e.codEstab
 					WHERE dr.idConsolidacionInventario = t.idDocumento
 				)
+            WHEN tt.codigo IN ('E','S') AND td.codigo = 'TB'
+				THEN 
+				(
+					SELECT TOP 1 e.estab + '-' + pe.ptoEmi + '-' + RIGHT('000000000' + CONVERT(VARCHAR, tb.nroDoc), 9)
+					FROM dbo.TransferenciaBodega      tb  WITH (NOLOCK)
+					INNER JOIN dbo.PuntoEmision       pe  WITH (NOLOCK) ON pe.idPuntoEmision = tb.idPuntoEmision
+					INNER JOIN Sri.Establecimiento    e   WITH (NOLOCK) ON pe.codEstab       = e.codEstab
+					WHERE tb.idTransferenciaBodega = t.idDocumento
+				)
 			END
 		)
 
