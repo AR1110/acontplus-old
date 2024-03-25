@@ -6,9 +6,10 @@ export enum GlobalRoutes {
   ContabilidadMovimientoCaja = 'accounting/movimiento-caja-page',
   TechnicalSupportDevice = 'technical-support/device-page',
   TechnicalSupport = 'technical-support/technical-support-page',
-  ContabilidadCarteraProveedor='accounting/reports/supplier-accounts',
+  ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
   VentasReportRentabilidad = 'sale/reports/rentabilidad-page',
   RestaurantTable = 'restaurant/table-page',
   RestaurantReports = 'restaurant/item-report',
-  InventarioCambioMasivoIva='inventory/massive-tax-change-page'
+  InventarioImpuestoMasivo = 'inventory/massive-tax-page',
+  InventarioLotPrice = 'inventory/lot-price-page'
 }

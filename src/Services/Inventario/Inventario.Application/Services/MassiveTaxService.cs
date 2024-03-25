@@ -9,11 +9,11 @@ using Inventario.Core.Interfaces;
 
 namespace Inventario.Application.Services
 {
-    public class MassiveTaxChangeService: IMassiveTaxChangeService
+    public class MassiveTaxService: IMassiveTaxService
     {
         private readonly IADORepository _repository;
-        private readonly string nameSchema = "Inventario.MassiveTaxChange";
-        public MassiveTaxChangeService(IADORepository repository)
+        private readonly string nameSchema = "Inventario.ImpuestoMasivo";
+        public MassiveTaxService(IADORepository repository)
         {
             _repository = repository;
         }
@@ -31,9 +31,9 @@ namespace Inventario.Application.Services
         }
 
 
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
+        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Insert", parameters);
+            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters);
         }
 
     }

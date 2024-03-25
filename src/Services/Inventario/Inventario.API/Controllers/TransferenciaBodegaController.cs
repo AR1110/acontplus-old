@@ -1,8 +1,8 @@
-﻿using Common.Core.Models;
-using Common.Core.Models.Inventario;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
+﻿using Common.Core.Models; 
+using Common.Core.Utils; 
+using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
@@ -11,137 +11,121 @@ namespace Inventario.API.Controllers
     [Route("api/[controller]")]
     public class TransferenciaBodegaController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly ITransferenciaBodegaService _service;
         private readonly LogWriter _log;
-        public TransferenciaBodegaController(IConfiguration configuration, LogWriter log)
+
+        public TransferenciaBodegaController(ITransferenciaBodegaService service, LogWriter log)
         {
-            _configuration = configuration;
+            _service = service;
             _log = log;
         }
 
-
-        [HttpGet("Get")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.TransferenciaBodega_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(json)}
+                };
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-
-                _log.LogActivity("Error on Get Search: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener las trans. a bodegas");
+                _log.LogActivity("Error en Obtener Transferencias de bodegas" + ex.Message);
+                return BadRequest("Error en get Transferencias de bodegas" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
-        [HttpGet("GetId")]
+
+        [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
-
-            ApiResponse _response = new ApiResponse();
             try
             {
-                await _db.SPExecute("Inventario.TransferenciaBodega_Get_Id");
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDataSetAsync();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id}
+                };
+                var response = await _service.GetIdAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error in GetId: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Obtener los datos");
+                _log.LogActivity("Error en Obtener Datos de Transferencias de bodegas" + ex.Message);
+                return BadRequest("Error en get Data Transferencias de bodegas" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
+
+
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] TransferenciaBodegaParams data)
+        public async Task<IActionResult> Post( ApiRequest data)
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.TransferenciaBodega_Insert", true);
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("jsonHeader", SqlStringParam.Sanitize(data.header));
-                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detail));
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", DataConverters.SerializeDictionary(data.Data)}
+                };
+
+                var response = await _service.AddAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-
-                _log.LogActivity("Error on Insert: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar Trans. Bodega");
+                _log.LogActivity("Error en Insertar Transferencias de bodegas" + ex.Message);
+                return BadRequest("Error en Post Transferencias de bodegas" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Put(int id, [FromBody] TransferenciaBodegaParams data)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.TransferenciaBodega_Update", true);
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("jsonHeader", SqlStringParam.Sanitize(data.header));
-                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detail));
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id},
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+                var response = await _service.UpdateAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-
-                _log.LogActivity("Error on Update: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar Trans. Bodega");
+                _log.LogActivity("Error en Actualizar Transferencias de bodegas" + ex.Message);
+                return BadRequest("Error en Put Transferencias de bodegas" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.TransferenciaBodega_Delete");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id}
+                };
+                var response = await _service.DeleteAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-
-                _log.LogActivity("Error on Delete: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar Trans. Bodega");
+                _log.LogActivity("Error en Eliminar Transferencias de bodegas" + ex.Message);
+                return BadRequest("Error en Delete Transferencias de bodegas" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
     }

@@ -2,7 +2,9 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
+using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
@@ -11,109 +13,121 @@ namespace Inventario.API.Controllers
     [ApiController]
     public class ConsolidacionController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConsolidacionService _service;
         private readonly LogWriter _log;
-        public ConsolidacionController(IConfiguration configuration, LogWriter log)
+
+        public ConsolidacionController(IConsolidacionService service, LogWriter log)
         {
-            _configuration = configuration;
+            _service = service;
             _log = log;
         }
+
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> Get(string json)
+        public async Task<IActionResult> Get(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            ApiResponse _response = new ApiResponse();
             try
             {
-                await _db.SPExecute("Inventario.Consolidacion_Get", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(json)}
+                };
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _response.Create(code: "0", message: "Error al obtener los datos");
-
-                _log.LogActivity("Error on Get: \n" + ex.ToString());
+                _log.LogActivity("Error en Obtener Consolidacion" + ex.Message + "\n" + json);
+                return BadRequest("Error en get Consolidacion" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return _response;
         }
+
+        [HttpGet("GetId/{id}")]
+        public async Task<IActionResult> GetId(int id)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id}
+                };
+                var response = await _service.GetIdAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en Obtener Datos de Consolidacion" + ex.Message);
+                return BadRequest("Error en get Data Consolidacion" + ex.Message);
+            }
+        }
+
+
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> Post([FromBody] ApiRequest parameters)
+        public async Task<IActionResult> Post( ApiRequest data)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            ApiResponse _response = new ApiResponse();
             try
             {
-                await _db.SPExecute("Inventario.Consolidacion_Insert", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", DataConverters.SerializeDictionary(data.Data)}
+                };
+
+                var response = await _service.AddAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _response.Create(code: "0", message: "Error al guardar");
-
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
+                _log.LogActivity("Error en Insertar Consolidacion" + ex.Message);
+                return BadRequest("Error en Post Consolidacion" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return _response;
         }
-        [HttpPut]
-        public async Task<ActionResult<ApiResponse>> Put(int id, [FromBody] ApiRequest parameters)
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            ApiResponse _response = new ApiResponse();
             try
             {
-                await _db.SPExecute("Inventario.Consolidacion_Update", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id},
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+                var response = await _service.UpdateAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _response.Create(code: "0", message: "Error al actualizar");
-
-                _log.LogActivity("Error on Put: \n" + ex.ToString());
+                _log.LogActivity("Error en Actualizar Consolidacion" + ex.Message);
+                return BadRequest("Error en Put Consolidacion" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return _response;
         }
-        [HttpDelete]
-        public async Task<ActionResult<ApiResponse>> Delete(int id)
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            ApiResponse _response = new ApiResponse();
             try
             {
-                await _db.SPExecute("Inventario.Consolidacion_Delete");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id}
+                };
+                var response = await _service.DeleteAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _response.Create(code: "0", message: "Error al eliminar");
-
-                _log.LogActivity("Error on Delete: \n" + ex.ToString());
+                _log.LogActivity("Error en Eliminar Consolidacion" + ex.Message);
+                return BadRequest("Error en Delete Consolidacion" + ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return _response;
         }
     }
 }

@@ -785,7 +785,7 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
 
     const cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
     const fS = $injector.get('formulario');
-    const tS = $injector.get('formulario');
+    const tS = $injector.get('toastService');
     let pagoSvc = new PagoService(tS)
 
 
@@ -800,6 +800,7 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.data.fechaEmision = new Date();
     $scope.data.valorAbono = fS.roundNumber(VALOR_ABONO_ORIGINAL, 3)
 
+ 
 
 
     //Entidad Financiera Documento 
@@ -863,12 +864,16 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
             $scope.data.valorAbono = fS.roundNumber(VALOR_ABONO_ORIGINAL, 3);
             $scope.data.idBanco = 0;
             $scope.data.idCiudad = 0;
-            $scope.data.referencia = null;
             $scope.data.nro = null;
             $scope.data.lote = null;
             $scope.data.aprobacion = null;
             $scope.data.posFechado = false;
             $scope.selectedDocElectronico = [];
+            if(codigo==='CHE'){
+                $scope.data.referencia = $scope.proveedor.razonSocialComprador;            
+            }else{
+                $scope.data.referencia = null;
+            }
 
 
         } catch (error) {
