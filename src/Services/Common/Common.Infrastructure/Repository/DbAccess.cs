@@ -97,9 +97,13 @@ namespace Common.Infrastructure.Repository
         {
             return _command.Parameters[$"{paramName}"].Value;
         }
-        public void OnlyExecute()
+        public async Task<int> OnlyExecuteAsync(bool timeout = true)
         {
-            _command.ExecuteNonQuery();
+            if (!timeout)
+            {
+                _command.CommandTimeout = 0;
+            }
+          return await _command.ExecuteNonQueryAsync();
         }
         public object ExecuteScalar()
         {
