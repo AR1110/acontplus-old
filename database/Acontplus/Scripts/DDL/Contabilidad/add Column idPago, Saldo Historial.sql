@@ -72,38 +72,38 @@ go
 
 --> Histoial pago Detalles
 
---DECLARE @tbDetalle AS TABLE(
+DECLARE @tbDetalle AS TABLE(
 
---    idPagoDetalle INT UNIQUE NOT NULL
---   ,saldo NUMERIC(18,5) NOT NULL
---)
+    idPagoDetalle INT UNIQUE NOT NULL
+   ,saldo NUMERIC(18,5) NOT NULL
+)
 
-------ALTER TABLE dbo.PagoDetalle ADD saldo NUMERIC(18,5)
+----ALTER TABLE dbo.PagoDetalle ADD saldo NUMERIC(18,5)
 
---update pd set
---       pd.saldo = cp.cuota
---from pagoDetalle                       pd
---inner join pago                        pa ON pa.idPago              = pd.idPago
---inner join Contabilidad.CuotaPorPagar  cp ON cp.idCuotaPorPagar     = pd.idCuotaPorPagar
---inner join ComprobanteEgreso           ce on ce.idComprobanteEgreso = pa.idComprobanteEgreso
+update pd set
+       pd.saldo = cp.cuota
+from pagoDetalle                       pd
+inner join pago                        pa ON pa.idPago              = pd.idPago
+inner join Contabilidad.CuotaPorPagar  cp ON cp.idCuotaPorPagar     = pd.idCuotaPorPagar
+inner join ComprobanteEgreso           ce on ce.idComprobanteEgreso = pa.idComprobanteEgreso
 
---INSERT INTO @tbDetalle (idPagoDetalle,saldo)
---select pd.idPagoDetalle
---      ,pd.saldo - SUM( IIF(pa.cobro = 1,pd.abono,0)) over(partition by pd.idCuotaPorPagar ORDER BY pd.idPagoDetalle  ROWS UNBOUNDED PRECEDING)
---from pagodetalle              pd
---inner join Pago               pa ON pa.idPago = pd.idPago
---inner join ComprobanteEgreso  ce on ce.idComprobanteEgreso = pa.idComprobanteEgreso
---where ce.estado = 1
---GROUP BY pa.idPago,pd.idCuotaPorPagar,pd.saldo,pd.abono,pd.idPagoDetalle,pa.cobro
---ORDER BY pd.idCuotaPorPagar,pa.idPago
+INSERT INTO @tbDetalle (idPagoDetalle,saldo)
+select pd.idPagoDetalle
+      ,pd.saldo - SUM( IIF(pa.cobro = 1,pd.abono,0)) over(partition by pd.idCuotaPorPagar ORDER BY pd.idPagoDetalle  ROWS UNBOUNDED PRECEDING)
+from pagodetalle              pd
+inner join Pago               pa ON pa.idPago = pd.idPago
+inner join ComprobanteEgreso  ce on ce.idComprobanteEgreso = pa.idComprobanteEgreso
+where ce.estado = 1
+GROUP BY pa.idPago,pd.idCuotaPorPagar,pd.saldo,pd.abono,pd.idPagoDetalle,pa.cobro
+ORDER BY pd.idCuotaPorPagar,pa.idPago
 
---update pd set
---       pd.saldo = td.saldo
---from PagoDetalle pd 
---inner join @tbDetalle td on td.idPagoDetalle = pd.idPagoDetalle
+update pd set
+       pd.saldo = td.saldo
+from PagoDetalle pd 
+inner join @tbDetalle td on td.idPagoDetalle = pd.idPagoDetalle
 
---update PagoDetalle set saldo = abono + saldo
+update PagoDetalle set saldo = abono + saldo
 
---ALTER TABLE dbo.PagoDetalle ALTER COLUMN saldo NUMERIC(18,5) NOT NULL
+ALTER TABLE dbo.PagoDetalle ALTER COLUMN saldo NUMERIC(18,5) NOT NULL
 
 select * from PagoDetalle

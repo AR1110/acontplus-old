@@ -31,14 +31,22 @@ BEGIN
 	DECLARE @idEstadoPago INT
 	DECLARE @residuo AS NUMERIC(18,5)
 
-	SELECT @posfechado = SUM(pd.abono)
-	FROM dbo.PagoDetalle pd WITH (NOLOCK)
-	INNER JOIN Contabilidad.CuotaPorPagar pp WITH (NOLOCK) ON pp.idCuotaPorPagar     = pd.idCuotaPorPagar
-	INNER JOIN dbo.Pago                   pa WITH (NOLOCK) ON pa.idPago              = pd.idPago
-	INNER JOIN dbo.ComprobanteEgreso      ce WITH (NOLOCK) ON ce.idComprobanteEgreso = pa.idComprobanteEgreso
-	WHERE pp.idCuentaPorPagar = @idCuentaPorPagar  AND ce.estado = 1 AND cobro = 0
-	
-	SELECT @abono = SUM(abono) FROM Contabilidad.CuotaPorPagar WHERE idCuentaPorPagar = @idCuentaPorPagar AND estado = 1
+    SELECT @posfechado = SUM(hp.abono) 
+    FROM dbo.ComprobanteEgreso ce WITH (NOLOCK) 
+    INNER JOIN Contabilidad.Historial_Pago hp ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+    INNER JOIN dbo.Pago                    pa ON pa.idPago              = hp.idPago
+    WHERE ce.estado = 1
+      AND hp.idCuentaPorPagar = @idCuentaPorPagar
+      AND pa.posfechado = 1
+      AND pa.cobro = 1
+
+    SELECT @abono = SUM(hp.abono) 
+    FROM dbo.ComprobanteEgreso ce WITH (NOLOCK) 
+    INNER JOIN Contabilidad.Historial_Pago hp ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+    INNER JOIN dbo.Pago                    pa ON pa.idPago              = hp.idPago
+    WHERE ce.estado = 1
+      AND hp.idCuentaPorPagar = @idCuentaPorPagar
+      AND pa.cobro = 1
 
 	SELECT @residuo = ISNULL(@importeTotal,0) - ISNULL(@abono,0)
 
