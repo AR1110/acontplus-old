@@ -110,7 +110,7 @@ namespace Compras.API.Controllers
                             _db.AddDynamicParam("idDocumento", id);
                             _db.AddDynamicParam("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
                             _db.AddDynamicParam("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
-                            _db.OnlyExecute();
+                            int affectedRows = await _db.OnlyExecuteAsync(false);
                         }
                         _response.payload = ceXml;
                     }
