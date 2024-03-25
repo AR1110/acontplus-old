@@ -14,6 +14,7 @@ namespace Identity.API.Data
         public DbSet<ForgotPassword> ForgotPasswords { get; set; }
         public DbSet<LoginHistory> LoginHistories { get; set; }
         public DbSet<LoginFailed> LoginFaileds { get; set; }
+        public DbSet<AccessAuthorization> AccessAuthorizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
