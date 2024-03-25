@@ -75,11 +75,6 @@ BEGIN
 		    FROM ArticuloPvp      tb WITH (ROWLOCK)
 		    INNER JOIN @tbArticle tt ON tt.idArticuloPvP = tb.idArticuloPvP 
 
-            UPDATE ar SET
-                   ar.idTipoIva = tt.idTipoIva
-            FROM dbo.Articulo     ar WITH (ROWLOCK)
-            INNER JOIN @tbArticle tt ON tt.idArticulo = ar.idArticulo
-
 		COMMIT TRAN
         SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)
 	END TRY
