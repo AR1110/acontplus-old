@@ -158,6 +158,7 @@
                         abono: item.abono,
                         saldo: item.saldo,
                         descripcion: item.descripcion,
+                        estado: item.descripcion,
                         codigo: item.codigo,
                         saldoCta: item.saldoCta,
                         saldoOriginal: item.saldo

@@ -218,6 +218,7 @@ class PagoService {
                 item.abonoPosfechado = this.fS.roundNumber(item.abonoPosfechado, this.MAX_NUMBER_ROUND_GENERAL);
                 // item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota 
                 item.estado = this.getEstadoCuota(item);
+                item.descripcion = this.getEstadoCuota(item);
 
                 item.esCuotaAfectada = true; //  
 
@@ -382,7 +383,7 @@ class PagoService {
          */
     getEstadoCuota(item) {
         let estado = '';
-        if (item.saldo === 0) estado = 'COBRADA'
+        if (item.saldo === 0) estado = 'PAGADA'
         if (item.saldo > 0) estado = "PENDIENTE PARCIAL";
         if (item.abono === 0) estado = "PENDIENTE";
         return estado
@@ -537,8 +538,7 @@ function modalPagoLoteCtrl($scope, $uibModalInstance, $injector, params) {
                         let abonoCuota = $scope.pagosDetalle.filter(item => item.secuencial === pagoSvc.secuencial)
                             .reduce((prev, curr) => prev + curr.abono, 0);
 
-                        console.log($scope.pagosDetalle)
-                        console.log(pagoSvc)
+                       
                         $scope.addDataPayment(result, abonoCuota);
 
                         calculoTotales();

@@ -254,39 +254,46 @@ namespace Common.Infrastructure.Repository
                 }
             }
         }
-        public async Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters)
+        public async Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters, bool timeout)
         {
             string response = string.Empty;
-            var _context = _contexts.GetContext(_configuration["ContextName"]);
-            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
+            using (var _context = _contexts.GetContext(_configuration["ContextName"]))
             {
-                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
-                try
+                using (var cmd = _context.Database.GetDbConnection().CreateCommand())
                 {
-                    cmd.CommandText = spName;
-                    if (parameters.Count > 0)
+                    bool wasOpen = cmd.Connection.State == ConnectionState.Open;
+                    try
                     {
-                        foreach (var parameter in parameters)
+                        cmd.CommandText = spName;
+                        if (parameters.Count > 0)
                         {
-                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            foreach (var parameter in parameters)
                             {
-                                ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                                if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                                {
+                                    ParametersUtils.AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                                }
                             }
                         }
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        if (!timeout)
+                        {
+                            cmd.CommandTimeout = 0;
+                        }
+                        if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                        var reader = await cmd.ExecuteReaderAsync();
+                        if (await reader.ReadAsync())
+                        {
+                            response = reader.GetString(0);
+                        }
                     }
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
+                    finally
                     {
-                        response = reader.GetString(0);
+                        if (!wasOpen) await cmd.Connection.CloseAsync();
                     }
-                }
-                finally
-                {
-                    if (!wasOpen) cmd.Connection.Close();
                 }
             }
+
             return response;
         }
     }
