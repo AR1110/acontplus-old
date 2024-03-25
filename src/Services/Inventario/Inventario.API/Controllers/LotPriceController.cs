@@ -1,8 +1,13 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
+using Services.Common;
 
 namespace Inventario.API.Controllers
 {
@@ -10,6 +15,33 @@ namespace Inventario.API.Controllers
     [Route("api/[controller]")]
     public class LotPriceController : ControllerBase
     {
-        
+        private readonly ILotPriceService _service;
+        private readonly LogWriter _log;
+
+        public LotPriceController(ILotPriceService service, LogWriter log)
+        {
+            _service = service;
+            _log = log;
+        }
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse>> Get(string json)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(json)}
+                };
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en get Precio Masivo" + ex.Message + '\n' + json);
+                return BadRequest("Error en get Precio Masivo " + ex.Message);
+            }
+        }
     }
 }

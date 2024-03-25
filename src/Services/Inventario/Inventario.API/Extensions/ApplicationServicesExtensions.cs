@@ -28,6 +28,7 @@ namespace Inventario.API.Extensions
             services.AddScoped<IMassiveTaxService, MassiveTaxService>();
             services.AddScoped<ITransferenciaBodegaService, TransferenciaBodegaService>();
             services.AddScoped<IConsolidacionService, ConsolidacionService>();
+            services.AddScoped<ILotPriceService, LotPriceService>();
 
             services.AddSingleton<LogWriter>();
             services.AddSingleton<S3ObjectCustom>();
