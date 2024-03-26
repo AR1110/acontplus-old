@@ -19,7 +19,7 @@ import { GroupedSubFamilia } from "@modules/inventory/models/sub-category.model"
 
 export class SubCategorySelectMultipleComponent {
 
-  @Input() checkedSubCategorias = new FormControl('');
+  @Input() checkedSubCategorias = new FormControl([]);
   @Input() subCategorias: Array<GroupedSubFamilia> = [];
 
 }
