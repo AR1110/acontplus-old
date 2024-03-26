@@ -6,5 +6,6 @@
         public string Password { get; set; }
         public string ReturnUrl { get; set; }
         public string UserAgent { get; set; }
+        public int code { get; set; }
     }
 }

@@ -126,6 +126,7 @@
     @*<partial name="_LoginUsuarioEntidad" />*@
 
     @await Html.PartialAsync("Shared/_LoginUsuarioEntidad.cshtml")
+    @await Html.PartialAsync("Shared/_AccessAuthorization.cshtml")
 
 
     <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
@@ -135,7 +136,7 @@
     <script src="~/lib/toastr/toastr.min.js" asp-append-version="true"></script>
     <script src="~/js/spinners.min.js" asp-append-version="true"></script>
     <script src="~/lib/ngStorage/ngStorage.min.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/loginCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/loginCtrl.js" asp-append-version="true"></script>
     <!--Device Info-->
     <script src="~/lib/UAParser.js/ua-parser.min.js" asp-append-version="true"></script>
 
