@@ -28,6 +28,7 @@ BEGIN
 	DECLARE @idUsuario INT
 	       ,@articles VARCHAR(MAX)
            ,@tipo INT
+           ,@quantity INT
 
     DECLARE @tbArticle AS TABLE
     (
@@ -58,6 +59,8 @@ BEGIN
            ,porcentajeUtilidad NUMERIC(18,5)
         )
 
+        SELECT @Quantity = COUNT(*) FROM @tbArticle 
+
 	    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         IF (SELECT COUNT(*) FROM @tbArticle) = 0 
@@ -72,8 +75,12 @@ BEGIN
                    tb.precioVenta        = tt.precioVenta
 				  ,tb.precioConIva       = tt.precioConIva
 				  ,tb.porcentajeUtilidad = tt.porcentajeUtilidad
-		    FROM ArticuloPvp      tb WITH (ROWLOCK)
+		    FROM dbo.ArticuloPvp  tb WITH (ROWLOCK)
 		    INNER JOIN @tbArticle tt ON tt.idArticuloPvP = tb.idArticuloPvP 
+
+            INSERT INTO Seguridad.TransactionHistory
+                   (UserRoleId,Quantity,Module,[Action],CreateAt)
+            SELECT @userRoleId,@Quantity,'/Inventario/PrecioMasivo','Update',GETDATE() 
 
 		COMMIT TRAN
         SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)
