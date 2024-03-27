@@ -11,6 +11,7 @@
         // Ditect user info
         let Url = "https://" + "cloudflare.com/cdn-cgi/trace";
         let customerIp = "";
+        $scope.codes = ['', '', '', '', '', ''];
         let AjaxUrl = new XMLHttpRequest();
         AjaxUrl.open("get", Url);
         AjaxUrl.send();
@@ -44,15 +45,6 @@
 
         $scope.loginMultiple = (item) => {
             showLoader();
-            //let data = {
-            //    fullname: item.fullname,
-            //    username: item.username,
-            //    userId: item.userId,
-            //    role: item.role,
-            //    userRoleId: item.userRoleId,
-            //    idCardUser: item.idCardUser,
-            //    idCardCompany
-            //}
             item.userAgent = JSON.stringify({ userAgent: JSON.stringify(parserResults), ipAddress: customerIp });
             $http.post(`${urlService}seguridad/account/createToken`, item).then(
                 response => {
@@ -95,10 +87,16 @@
                     };
                     if (response.data.code == "1") {
                         let mainResponse = JSON.parse(response.data.payload);
+
                         if (mainResponse.length == 1) {
                             $localStorage.currentUser = {
                                 token: mainResponse[0].token
                             }
+
+                            hideLoader();
+                            $("#accessAuthorizationModal").modal('show');
+                            return;
+
                             // add jwt token to auth header for all requests made by the $http service
                             $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
                             localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
@@ -124,10 +122,37 @@
                 console.log(error)
             }
         }
-        //Bloquear Ir a la pagina Anterior en el Navegador 
+        //Bloquear Ir a la pagina Anterior en el Navegador
         history.pushState(null, document.title, location.href);
         window.addEventListener('popstate', function (event) {
             history.pushState(null, document.title, location.href);
         });
+
+        $scope.skipCodeFields = function (event, index) {
+        }
+
+        $scope.verifyCode = function () {
+            showLoader();
+            $scope.dataSend = {
+                username: '',
+                password: '',
+                returnURL: '',
+                userAgent: '',
+                code: Number($scope.codes.join(''))
+            }
+
+            $http.post(`${urlService}seguridad/account/verifyCode`, $scope.dataSend).then(response => {
+                if (response.data.code === "0") {
+                    hideLoader();
+                    toastr.warning(response.data.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                    return;
+                };
+                if (response.data.code == "1") {
+                }
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
+            });
+        }
     };
 })(window.angular)
