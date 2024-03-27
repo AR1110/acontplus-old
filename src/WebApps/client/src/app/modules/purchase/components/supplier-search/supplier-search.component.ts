@@ -51,13 +51,19 @@ export class SupplierSearchComponent {
 
   onSelect($event: any) {
     let customer: SupplierSearch = $event.item;
-    this.onSupplierSelected.emit({ data: customer });
+    this.onSupplierSelected.emit({
+      data: {
+        ...customer,
+        razonSocialComprador: customer.razonSocial,
+        identificacionComprador: customer.numeroIdentificacion
+      }
+    });
     setTimeout(() => {
       this.textSearch = customer.razonSocial;
     });
   }
 
-  onKeyupSearch() { 
+  onKeyupSearch() {
     if (!this.textSearch) {
       this.emptyInput.emit({})
     }

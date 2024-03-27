@@ -1,4 +1,5 @@
-@import "tabulator-tables/dist/css/tabulator_bootstrap5.css";
+// @import "tabulator-tables/dist/css/tabulator_bootstrap5.css";
+@import "tabulator-tables/dist/css/tabulator.min.css";
 /* Define the hover background color for the table rows */
 .tabulator .tabulator-row.tabulator-selectable:hover .tabulator-cell {
   //background-color: gray;
@@ -6,5 +7,5 @@
 
 /* Define the selected background color for the table rows */
 .tabulator .tabulator-row.tabulator-selected .tabulator-cell {
-  background-color: darkblue;
+  // background-color: darkblue;
 }

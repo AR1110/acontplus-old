@@ -1,0 +1,10 @@
+<mat-select matNativeControl [formControl]="checkedSubCategorias" multiple class="form-select">
+  @for (item of subCategorias; track $index) {
+  <mat-optgroup [label]="item.familia" style="font-weight: bold;">
+    @for (sf of item.subFamilias; track $index) {
+    <mat-option [value]="sf.idSubFamilia">{{sf.subFamilia}}</mat-option>
+    }
+  </mat-optgroup>
+  }
+
+</mat-select>

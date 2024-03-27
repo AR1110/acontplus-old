@@ -1024,7 +1024,7 @@
                 }
 
 
-                if ($scope.vendedores.length > 0) {
+                if ($scope.vendedores.length > 0 && !$scope.config.multipleVendedor) {
                     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
@@ -2216,6 +2216,11 @@
                 }
             } else if (!($scope.cliente.idCliente > 0)) {
                 tS.toastr('warning', 'Seleccione el Cliente');
+                return
+            }
+
+            if (!($scope.data.idUsuario > 0)) {
+                tS.toastr('warning', 'Seleccione el Vendedor');
                 return
             }
 
