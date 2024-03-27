@@ -92,21 +92,21 @@
                         let mainResponse = JSON.parse(response.data.payload);
 
                         if (mainResponse.length == 1) {
-                            hideLoader();
-                            mainResponse = mainResponse;
-                            $("#accessAuthorizationModal").modal('show');
-                            return;
+                            //hideLoader();
+                            //mainResponse = mainResponse;
+                            //$("#accessAuthorizationModal").modal('show');
+                            //return;
 
-                            // $localStorage.currentUser = {
-                            //     token: mainResponse[0].token
-                            // }
-                            // // add jwt token to auth header for all requests made by the $http service
-                            // $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
-                            // localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
-                            // hideLoader();
-                            // toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
-                            // location.href = mainResponse[0].returnUrl;
-                            // return;
+                             $localStorage.currentUser = {
+                                 token: mainResponse[0].token
+                             }
+                             // add jwt token to auth header for all requests made by the $http service
+                             $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
+                             localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
+                             hideLoader();
+                             toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                             location.href = mainResponse[0].returnUrl;
+                             return;
                         }
 
                         if (mainResponse.length > 1) {
