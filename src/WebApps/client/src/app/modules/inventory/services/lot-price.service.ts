@@ -3,6 +3,9 @@ import { PATHS_API } from "@core/constants/global.constants";
 import { INVENTORY_PATHS } from "../enums/inventory.enum";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
+import { pricingCalculateUtil } from "@core/utils/pricing-calculate.util";
+import { roundNumber } from "@core/utils/round-number.utils";
+import { groupSubCategoryUtil } from "../utils/group-sub-category.util";
 
 
 @Injectable({
@@ -20,7 +23,9 @@ export class LotPriceService {
       map((response: any) => {
 
         const data = {
-          decimal: {},
+          decimal: {
+            nroPrecio: 2
+          },
           tarifasImpuesto: [],
           tarifas: [],
           subFamilias: [],
@@ -32,18 +37,18 @@ export class LotPriceService {
           const tempDecimal = decimales[0];
           data.decimal = {
             nroPrecio: tempDecimal.nroPrecio,
-            nroCantidad: tempDecimal.nroCantidad,
-            nroIva: tempDecimal.nroIva,
-            nroDescuentoDetalle: tempDecimal.nroDescuentoDetalle,
-            nroTotalDetalle: tempDecimal.nroTotalDetalle,
-            nroTotalSubTotal: tempDecimal.nroTotalSubTotal,
-            nroDescuento: tempDecimal.nroDescuento,
-            importeTotal: tempDecimal.importeTotal,
-            nroIce: tempDecimal.nroIce,
+            // nroCantidad: tempDecimal.nroCantidad,
+            // nroIva: tempDecimal.nroIva,
+            // nroDescuentoDetalle: tempDecimal.nroDescuentoDetalle,
+            // nroTotalDetalle: tempDecimal.nroTotalDetalle,
+            // nroTotalSubTotal: tempDecimal.nroTotalSubTotal,
+            // nroDescuento: tempDecimal.nroDescuento,
+            // importeTotal: tempDecimal.importeTotal,
+            // nroIce: tempDecimal.nroIce,
           }
           data.tarifasImpuesto = impuestos.map((item: any) => {
             return {
-              idTipoIva: item.idTipoIva,
+              idTarifaImpuesto: item.idTipoIva,
               descripcion: item.descripcion,
               porcentaje: item.porcentaje,
               // codigoPorcentaje: item.codigoPorcentaje,
@@ -55,22 +60,14 @@ export class LotPriceService {
             }
           })
 
-          data.familias = familias.map((item: any) => {
-            return {
-              idFamilia: item.idFamilia,
-              descripcion: item.descripcion,
-              siglas: item.siglas,
-            }
-          })
-
-          data.subFamilias = subFamilias.map((item: any) => {
-            return {
-              idSubFamilia: item.idSubFamilia,
-              idFamilia: item.idFamilia,
-              descripcion: item.descripcion,
-              siglas: item.siglas,
-            }
-          })
+          // data.familias = familias.map((item: any) => {
+          //   return {
+          //     idFamilia: item.idFamilia,
+          //     descripcion: item.descripcion,
+          //     siglas: item.siglas,
+          //   }
+          // })
+          data.subFamilias = groupSubCategoryUtil(subFamilias)
 
           data.tarifas = tarifas.map((item: any) => {
             return {
@@ -87,12 +84,13 @@ export class LotPriceService {
     )
   }
 
-  getAll() {
-    let json = JSON.stringify({ tipo: 2 })
+  getAll<T>(obj: T) {
+    let json = JSON.stringify({ ...obj, tipo: 2 })
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
         let mainData = response.articulos;
-        let products = mainData.map((item: any) => {
+        console.log(mainData)
+        let products = mainData.map((item: any, index: number) => {
           let mainTarifas = JSON.parse(item.tarifas);
           let tarifas = mainTarifas.map((t: any) => {
             return {
@@ -102,10 +100,12 @@ export class LotPriceService {
               precioVenta: t.precioVenta,
               precioConIva: t.precioConIva,
               porcentajeUtilidad: t.porcentajeUtilidad,
-              tarifaDesc: t.tarifa
+              tarifaDesc: t.tarifa,
+              utilidad: roundNumber(pricingCalculateUtil.getValueUtility(t.precioVenta, item.precioCosto), 5)
             }
           })
           return {
+            index: index + 1,
             idArticulo: item.idArticulo,
             idTipoIva: item.idTipoIva,
             codigo: item.codigo,
@@ -116,11 +116,20 @@ export class LotPriceService {
             precioCosto: item.precioCosto,
             estado: item.estado,
             iva: item.iva,
-            tarifas: tarifas,
+            _children: tarifas,
           }
         })
         return products;
       })
     )
   }
+
+  put<T>(data: T) {
+    return this.http.put(`${this.url}`, { data })
+  }
+
+
+
+
+
 }

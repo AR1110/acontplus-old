@@ -128,22 +128,22 @@ BEGIN
 					SET @sql = @sql + ' AND CAST(pp.fechaEmision AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
 				END 
 
-			IF @checkboxEstab = 1
+			IF  @codEstab IS NOT NULL
 				BEGIN
 					SET @sql = @sql + ' AND es.codEstab = @codEstab'
 				END 
 
-			IF @checkboxTipoDoc = 1
+			IF @codDoc is not null
 				BEGIN
 					SET @sql = @sql + ' AND pp.codDoc= @codDoc '
 				END 
 
-			IF @checkboxEstado = 1
+			IF @codEstado is not null
 				BEGIN
 					SET @sql = @sql + ' AND ep.codigo= @codEstado'
 				END 
 
-			IF @checkboxProveedor = 1
+			IF @idProveedor IS NOT NULL
 				BEGIN
 					SET @sql = @sql + ' AND pp.idProveedor= @idProveedor'
 				END 

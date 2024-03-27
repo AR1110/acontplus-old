@@ -2,9 +2,9 @@
 
 <div class="card">
   <div class="card-body">
-    <div class="row">
+    <div class="row justify-content-between">
       @for (item of catalogs; track $index) {
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
         <div class="icheck-primary">
           <input type="radio" [id]="item.code" [value]="item.code" name="someGroupCatalogo"
             [(ngModel)]="mainForm.opcion" />
@@ -18,7 +18,9 @@
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="form-group">
           <label for="subFamilias">SubFamilias</label>
-          <app-sub-category-select-multiple />
+          <app-sub-category-select-multiple
+          [checkedSubCategorias]="checkedSubCategorias"
+          [subCategorias]="subCategorias" />
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -44,45 +46,74 @@
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="nroDocumento">N° de Documento:</label>
-          <input type="text" class="form-control" id="nroDocumento" name="nroDocumento" placeholder="000-000-000000000"
-            onclick="this.select()">
+          <input type="text" class="form-control" [(ngModel)]="mainForm.nroDocumento" pattern="[0-9]{3}-[0-9]{3}-[0-9]*" placeholder="000-000-XXXXXXXXXXX"
+            title="Formato: 000-000-XXXXXXXXXXX"
+            oninput="this.value=this.value.replace(/[^0-9-]/g,'').replace(/(\d{3})-?(\d{3})-?(.*)/, '$1-$2-$3')">
         </div>
+      </div>
+      <div
+        class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center mt-xl-3 mtlg-3 mt-md-3">
+        <button type="button" class="btn btn-info" (click)="toSearch()">
+          <fa-icon [icon]="'search'"></fa-icon> Buscar
+        </button>
       </div>
     </div>
     <hr>
     <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
         <div class="form-froup">
-          <label for="optionCalculate">Opción de cálculo:: <span class="text-danger">*</span></label>
-          <select name="optionCalculate" id="optionCalculate" class="form-select" [(ngModel)]="mainForm.optionToCalculate">
+          <label for="optionCalculate">Opción de cálculo: <span class="text-danger">*</span></label>
+          <select name="optionCalculate" id="optionCalculate" class="form-select"
+            [(ngModel)]="mainForm.optionToCalculate">
             @for (item of optionsCalculate; track $index) {
             <option [ngValue]="item.code">{{item.description}}</option>
             }
           </select>
         </div>
       </div>
+
       <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
         <div class="form-froup">
           <label for="optionCalculate">Tarifa: <span class="text-danger">*</span></label>
-          <mat-select [formControl]="tarifasSelected" multiple class="form-select" (selectionChange)="valueChangeTarifa($event)">
+          <mat-select [formControl]="tarifasSelected" multiple class="form-select"
+            (selectionChange)="valueChangeTarifa($event)">
             @for (item of tarifas; track $index) {
             <mat-option [value]="item.idTarifa">{{item.descripcion}}</mat-option>
             }
           </mat-select>
         </div>
       </div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+        <div class="form-froup">
+          <label for="optionPvp">Opción PVP: <span class="text-danger">*</span></label>
+          <select name="optionPvp" id="optionPvp" class="form-select" [(ngModel)]="optionPvp">
+            @for (item of optionsPvps; track $index) {
+            <option [ngValue]="item.code">{{item.description}}</option>
+            }
+          </select>
+        </div>
+      </div>
       <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
         <div class="form-group">
           <label for="inputValueCalculate">Valor: <span class="text-danger">*</span></label>
           <div class="input-group">
-            <input type="number" name="inputValueCalculate" id="inputValueCalculate" [(ngModel)]="mainForm.valueToCalculate"
-              class="form-control">
-            <button type="button" class="btn btn-outline-success" type="button" (click)="calculate()" >Calcular</button>
+            <input type="number" name="inputValueCalculate" id="inputValueCalculate"
+              [(ngModel)]="mainForm.valueToCalculate" class="form-control">
+            <button type="button" class="btn btn-outline-info"  (click)="calculate()">Calcular</button>
+            <button type="button" class="btn btn-outline-danger"  ngbTooltip="Deshacer cambios"
+              (click)="refreshToNestedProducts()">
+                <fa-icon [icon]="'undo-alt'"></fa-icon>
+            </button>
           </div>
 
         </div>
       </div>
-      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12"></div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center mt-xl-3 mtlg-3 mt-md-3">
+        <button type="button" class="btn btn-success" (click)="askToSave()">
+          Guardar
+        </button>
+      </div>
+
     </div>
     <div class="mt-2">
       <app-tabulator [columnNames]="columns" [dataTree]="true" [tableData]="nestedProducts"
