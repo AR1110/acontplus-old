@@ -345,7 +345,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                 title: "Saldos",
                 columns: [
                     {
-                        title: "Stock. ",
+                        title: "Cant. ",
                         field: "cantidadTransaccion",
                         hozAlign: "center",
                         width: 60,
@@ -353,7 +353,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                         cssClass: "table-saldos",
                     },
                     {
-                        title: "Cant. ",
+                        title: "Stock. ",
                         hozAlign: "center",
                         field: "saldo",
                         width: 60,
@@ -414,6 +414,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
         $scope.bodegas = dataEstab.bodegas;
         let dataBodega = $scope.bodegas.find(estab => (estab.defaultBodega));
         $scope.dataSearch.byBodega = dataBodega.idBodega
+        getKardex();
     }
 
 
@@ -441,19 +442,22 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
 
     $scope.onChangeUltimaConsolidacion = function () {
-        $scope.dataSearch.consolidacion = 0
         if ($scope.dataSearch.checkBoxUltimaConsolidacion) {
-            $scope.dataSearch.consolidacion = 1;
             $scope.dataSearch.checkBoxConsolidacion = false;
-
             $scope.dataSearch.checkBoxFecha = false;
         }
     }
 
+    $scope.onChangeFechaFiltro = function () {
+        if ($scope.dataSearch.checkBoxFecha) {
+            $scope.dataSearch.checkBoxConsolidacion = false;
+            $scope.dataSearch.checkBoxUltimaConsolidacion = false;
+        }
+    }
+
     $scope.onChangecheckBoxConsolidacionInventario = function () {
-        $scope.dataSearch.consolidacion = 0
         if ($scope.dataSearch.checkBoxConsolidacion) {
-            $scope.dataSearch.consolidacion = 2;
+            $scope.dataSearch.checkBoxFecha = false;
             $scope.dataSearch.checkBoxUltimaConsolidacion = false;
         }
     }
