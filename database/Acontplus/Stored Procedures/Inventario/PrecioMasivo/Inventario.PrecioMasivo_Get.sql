@@ -96,7 +96,8 @@ BEGIN
 				          ,@nroDocumento VARCHAR(25) '
 
 
-	        SET @sql = 'SELECT a.idArticulo
+	        SET @sql = 'SELECT TOP 500
+                               a.idArticulo
                               ,a.idTipoIva
 				              ,codigo
 				              ,codigoAuxiliar
@@ -105,33 +106,23 @@ BEGIN
 				              ,stock
 				              ,precioCosto
 				              ,estado
-				              ,@idTarifa idTarifa
 				              ,iva
-				              ,idArticuloPvp = ISNULL((SELECT TOP 1 ap.idArticuloPvp FROM v_ArticuloPvp ap
-														            WHERE ap.idArticulo = a.idArticulo 
-														            AND ap.idTarifa = @idTarifa), 0)
-
-				              ,precioVenta = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-														            WHERE ap.idArticulo = a.idArticulo 
-														            AND ap.idTarifa = @idTarifa), 0)
-				
-				              ,precioConIva = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-														            WHERE ap.idArticulo = a.idArticulo 
-														            AND ap.idTarifa = @idTarifa), 0)
-				              ,porcentajeUtilidad = ISNULL((SELECT TOP 1 ap.porcentajeUtilidad FROM v_ArticuloPvp ap
-														            WHERE ap.idArticulo = a.idArticulo 
-														            AND ap.idTarifa = @idTarifa), 0)
-
-				              ,estadoTarifa = ISNULL((SELECT TOP 1 ap.estado FROM v_ArticuloPvp ap
-														            WHERE ap.idArticulo = a.idArticulo 
-														            AND ap.idTarifa = @idTarifa), 0)
-
-				              ,tarifa = ISNULL((SELECT TOP 1 ap.tarifa FROM v_ArticuloPvp ap
-														            WHERE ap.idArticulo = a.idArticulo 
-														            AND ap.idTarifa = @idTarifa), '''')
+				              ,ISNULL((SELECT       ap.idArticuloPvp
+                                                   ,ap.idArticulo
+                                                   ,ap.idTarifa
+                                                   ,ap.precioVenta
+                                                   ,ap.precioConIva
+                                                   ,ap.porcentajeUtilidad
+                                                   ,ap.tarifa
+                                       FROM v_ArticuloPvp ap
+									   WHERE ap.idArticulo = a.idArticulo
+                                         AND ap.precioVenta > 0 
+                                       ORDER BY ap.predeterminada DESC
+                                       FOR JSON PATH
+                                       ), ''[]'') as tarifas
 				        FROM Inventario.v_Articulo a 
 				        WHERE a.estado = 1 
-				        AND a.idEntidad = @idEntidad '
+				          AND a.idEntidad = @idEntidad '
 
 			IF @idArticulo > 0
 				BEGIN 
@@ -158,7 +149,7 @@ BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
 				END
 
-		    SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
+		    SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC  '
 
 		    EXEC sp_executesql @sql,@params
 							       ,@idEntidad    = @idEntidad

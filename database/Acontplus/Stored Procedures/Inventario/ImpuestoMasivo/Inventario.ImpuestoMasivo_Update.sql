@@ -29,7 +29,7 @@ BEGIN
 	DECLARE @idUsuario INT, @idEntidad INT
 
     --> Dato json
-    DECLARE @taxIdFrom INT, @taxIdTo INT
+    DECLARE @taxIdFrom INT, @taxIdTo INT, @decimal INT 
 	       
     DECLARE @tbImpuesto AS TABLE 
     (
@@ -48,6 +48,8 @@ BEGIN
         
         --> Informacion General
 	    SELECT TOP 1 @idUsuario = idUsuario , @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+       
+        SELECT TOP 1 @decimal = ISNULL(nroPrecio,5) FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL'
 
         --> Data Json
         INSERT INTO @tbImpuesto
@@ -78,6 +80,16 @@ BEGIN
             WHERE idEntidad = @idEntidad
               AND estado = 1 
               AND idTipoIva = @taxIdFrom
+
+            UPDATE pv SET
+                   pv.precioConIva = ROUND(pv.precioVenta + ((pv.precioVenta * ti.porcentaje) / 100),@decimal)
+            FROM dbo.ArticuloPvP    pv WITH (ROWLOCK)
+            INNER JOIN dbo.Articulo ar WITH (ROWLOCK) ON ar.idArticulo = pv.idArticulo
+            INNER JOIN dbo.TipoIva  ti WITH (ROWLOCK) ON ti.idTipoIva  = ar.idTipoIva
+            WHERE ar.idEntidad = @idEntidad 
+              AND ar.estado = 1
+              AND ar.idTipoIva = @taxIdTo
+              AND pv.precioVenta > 0
 
             INSERT INTO Seguridad.TransactionHistory
                    (UserRoleId,Quantity,Module,[Action],Obs,CreateAt)
