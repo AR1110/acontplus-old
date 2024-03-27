@@ -1,15 +1,5 @@
 USE AcontPlus
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19,10 +9,8 @@ GO
 -- Create date: 2022-09-17
 -- Description:	SP Para insertar los detalles temporales del comprobante importado
 -- =============================================
-IF OBJECT_ID(N'Recepcion.Doc_Detail_Temp_Insert_All', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All 
-GO
-CREATE PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All
+
+CREATE OR ALTER PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All
 @idRol INT
 ,@idDocumento INT
 ,@jsonData VARCHAR(MAX)
@@ -115,19 +103,19 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN
-            IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt 
+            IF EXISTS(SELECT TOP 1 1 FROM Recepcion.Doc_Detalle_Temp cpt WITH (NOLOCK)
                                     INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				        BEGIN
 					        DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 				        END
 
-            IF EXISTS(SELECT 1 FROM Recepcion.Doc_Impuesto_Temp cpt
+            IF EXISTS(SELECT TOP 1 1 FROM Recepcion.Doc_Impuesto_Temp cpt WITH (NOLOCK)
                                 INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				        BEGIN
 					        DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 				        END
 
-            IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle WHERE idDocumento = @idDocumento)
+            IF EXISTS (SELECT TOP 1 1 FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumento = @idDocumento)
                 BEGIN
              --       INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
 					        --, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto
@@ -144,8 +132,8 @@ BEGIN
                             , dd.impuestos
                             , @idUsuario idUsuario
 					        INTO #TEMP
-                            FROM Recepcion.DocumentoDetalle dd 
-							INNER JOIN Articulo a ON dd.idArticulo = a.idArticulo 
+                            FROM Recepcion.DocumentoDetalle dd WITH (NOLOCK)
+							INNER JOIN Articulo a WITH (NOLOCK) ON dd.idArticulo = a.idArticulo 
 							WHERE dd.idDocumento = @idDocumento
                                                 
                                                 INSERT INTO #TEMP
@@ -156,9 +144,9 @@ BEGIN
                     ,  impuestos
                     , @idUsuario idUsuario
 			        FROM @tmp t
-			        LEFT JOIN Recepcion.CompraHabitual ch ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
-			        LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
-			        LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
+			        LEFT JOIN Recepcion.CompraHabitual ch WITH (NOLOCK) ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
+			        LEFT JOIN dbo.Articulo a WITH (NOLOCK) ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
+			        LEFT JOIN dbo.Medida m WITH (NOLOCK) ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
 			        WHERE NOT EXISTS(SELECT * FROM #TEMP tt 
 			                                   WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 			        ORDER BY t.idDetalle ASC
@@ -185,10 +173,10 @@ BEGIN
                     , @idUsuario idUsuario
                     INTO #TEMPII
 			        FROM @tmp t
-			        LEFT JOIN Recepcion.CompraHabitual ch ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
-			        LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
-			        LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
-			        WHERE NOT EXISTS(SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
+			        LEFT JOIN Recepcion.CompraHabitual ch WITH (NOLOCK) ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
+			        LEFT JOIN dbo.Articulo a WITH (NOLOCK) ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
+			        LEFT JOIN dbo.Medida m WITH (NOLOCK) ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
+			        WHERE NOT EXISTS(SELECT * FROM Recepcion.Doc_Detalle_Temp tt WITH (NOLOCK)
 			                                   WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 			        ORDER BY t.idDetalle ASC
 
@@ -216,7 +204,7 @@ BEGIN
                 INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 			    SELECT idDetalle, (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
 			    FROM @taxes tt
-			    WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
+			    WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti  WITH (NOLOCK)
 			    WHERE tti.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 			    AND tti.codArticulo = tt.codArticulo)
 

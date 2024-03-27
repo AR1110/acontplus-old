@@ -149,8 +149,8 @@ namespace Configuracion.API.Controllers.Sri
                     await _db.QueryExecute(query);
                     _db.AddDynamicParam("id", id);
                     _db.AddDynamicParam("autoSriAuth", autoSriAuth);
-                    _db.OnlyExecute();
-                    _response.Create(code: "1", message: "Actualizado exitosamente");
+                    int affectedRows  = await _db.OnlyExecuteAsync();
+                    _response.Create(code: affectedRows > 0? "1": "0", message: affectedRows > 0 ? "Actualizado exitosamente" : "No se actualizo");
                 }
             }
             catch (Exception ex)

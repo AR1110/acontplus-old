@@ -9,6 +9,6 @@ namespace Common.Core.Interfaces
         public Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp = false);
         public Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters);
         public Task OnlyExecute(string spName, Dictionary<string, object> parameters);
-        public Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters);
+        public Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters, bool timeout = true);
     }
 }

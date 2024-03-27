@@ -19,7 +19,7 @@ namespace Inventario.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync(nameSchema +"_Get", parameters);
+            var ds = await _repository.GetDataSetAsync(nameSchema +"_Get", parameters, false);
             if (ds.Tables.Count == 0)
             {
                 return null;
@@ -33,7 +33,7 @@ namespace Inventario.Application.Services
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters);
+            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters, false);
         }
 
     }
