@@ -18,14 +18,14 @@ GO
 -- Create date: 2023-04-19
 -- Description:	SP FOR GET FILTERS FOR CARDEX
 -- =============================================
-IF OBJECT_ID(N'Inventario.Kardex_Get_Filters', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Kardex_Get_Filters
-GO
-CREATE PROCEDURE Inventario.Kardex_Get_Filters @idUsuarioRol INT
+CREATE OR ALTER PROCEDURE Inventario.Kardex_Get_Filters @idUsuarioRol INT
 AS
 BEGIN
 	SET NOCOUNT ON;
-	SELECT * FROM Inventario.TipoTransaccion
-	SELECT * FROM Inventario.TipoDocumento
+	
+    SELECT * FROM Inventario.TipoTransaccion WITH (NOLOCK)
+
+	SELECT * FROM Inventario.TipoDocumento WITH (NOLOCK)
+
 END
 GO
