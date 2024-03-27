@@ -31,6 +31,8 @@ export class TabulatorComponent implements OnChanges, OnInit {
 
   tab = document.createElement('div');
 
+  refTabulator!: Tabulator
+
   ngOnInit(): void {
     this.drawTable();
   }
@@ -46,7 +48,7 @@ export class TabulatorComponent implements OnChanges, OnInit {
   }
 
   private drawTable(): void {
-    let refTabultaor = new Tabulator(this.tab, {
+    this.refTabulator = new Tabulator(this.tab, {
       renderVerticalBuffer: 300,
       columns: this.columnNames,
       data: this.tableData,
@@ -72,4 +74,10 @@ export class TabulatorComponent implements OnChanges, OnInit {
       table.appendChild(this.tab);
     }
   }
+
+  updateData(){
+    console.log(this.tableData)
+    // this.refTabulator.updateData(this.tableData)
+  }
+
 }

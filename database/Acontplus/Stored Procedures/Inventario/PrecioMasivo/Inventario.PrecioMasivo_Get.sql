@@ -40,6 +40,7 @@ BEGIN
 	       ,@idFamilia    INT
 	       ,@idSubFamilia INT
 	       ,@nroDocumento VARCHAR(25)
+           ,@subFamiliasChecked VARCHAR(250) 
 
     --> Filters
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
@@ -50,11 +51,19 @@ BEGIN
 	IF @tipo = 1
 		BEGIN
             
-            SET @tableNames = 'familias,subfamilias,tarifas,decimales,impuestos'
+            SET @tableNames = 'subfamilias,tarifas,decimales,impuestos'
 
-			SELECT * FROM Familia WITH (NOLOCK)
+			--SELECT * FROM Familia WITH (NOLOCK)
 
-			SELECT * FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			--SELECT * FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad
+            SELECT sf.idSubFamilia
+                 ,sf.descripcion as subFamilia
+                 ,sf.codigo 
+                   ,familia = ISNULL(fa.descripcion, 'Ninguna')
+                 ,fa.idFamilia
+           FROM dbo.SubFamilia    sf WITH (NOLOCK) 
+           LEFT JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
+           WHERE idEntidad = @idEntidad
 
 			SELECT * FROM Tarifa WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
@@ -77,6 +86,7 @@ BEGIN
 	              ,@idFamilia    = idFamilia
 	              ,@idSubFamilia = idSubFamilia
 	              ,@nroDocumento = nroDocumento
+                  ,@subFamiliasChecked = subFamiliasChecked
 	        FROM OPENJSON(@json) WITH 
             (
 		        idTarifa     INT 
@@ -85,6 +95,7 @@ BEGIN
 		       ,idFamilia    INT
 		       ,idSubFamilia INT 
 		       ,nroDocumento VARCHAR(25) 
+                ,subFamiliasChecked VARCHAR(250) 
 	        )
 
             SET @params = '@idEntidad    INT
@@ -93,7 +104,8 @@ BEGIN
 				          ,@rucProveedor VARCHAR(25)
 				          ,@idFamilia    INT
 				          ,@idSubFamilia INT
-				          ,@nroDocumento VARCHAR(25) '
+				          ,@nroDocumento VARCHAR(25)
+                          ,@subFamiliasChecked VARCHAR(250)'
 
 
 	        SET @sql = 'SELECT TOP 500
@@ -134,10 +146,15 @@ BEGIN
 					SET @sql = @sql + 'AND a.idFamilia = @idFamilia '
 				END
 
-			IF @idSubFamilia > 0
-				BEGIN
-					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
-				END
+			--IF @idSubFamilia > 0
+			--	BEGIN
+			--		SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
+			--	END
+             
+            IF @subFamiliasChecked IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + 'AND a.idSubFamilia IN (SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+                END 
 
 			IF @rucProveedor IS NOT NULL
 				BEGIN
@@ -159,6 +176,7 @@ BEGIN
 							       ,@idSubFamilia = @idSubFamilia
 							       ,@rucProveedor = @rucProveedor
 							       ,@nroDocumento = @nroDocumento
+                                   ,@subFamiliasChecked = @subFamiliasChecked
             RETURN 
 		END
 
