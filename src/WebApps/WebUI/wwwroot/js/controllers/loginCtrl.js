@@ -11,10 +11,13 @@
         // Ditect user info
         let Url = "https://" + "cloudflare.com/cdn-cgi/trace";
         let customerIp = "";
-        $scope.codes = ['', '', '', '', '', ''];
         let AjaxUrl = new XMLHttpRequest();
         AjaxUrl.open("get", Url);
         AjaxUrl.send();
+
+        // For get the customer data from response
+        $scope.codes = ['', '', '', '', '', ''];
+        $scope.mainResponse = {};
 
         AjaxUrl.onreadystatechange = function () {
             if (AjaxUrl.readyState === 4 && AjaxUrl.status === 200) {
@@ -89,21 +92,21 @@
                         let mainResponse = JSON.parse(response.data.payload);
 
                         if (mainResponse.length == 1) {
-                            $localStorage.currentUser = {
-                                token: mainResponse[0].token
-                            }
-
                             hideLoader();
+                            mainResponse = mainResponse;
                             $("#accessAuthorizationModal").modal('show');
                             return;
 
-                            // add jwt token to auth header for all requests made by the $http service
-                            $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
-                            localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
-                            hideLoader();
-                            toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
-                            location.href = mainResponse[0].returnUrl;
-                            return;
+                            // $localStorage.currentUser = {
+                            //     token: mainResponse[0].token
+                            // }
+                            // // add jwt token to auth header for all requests made by the $http service
+                            // $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
+                            // localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
+                            // hideLoader();
+                            // toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                            // location.href = mainResponse[0].returnUrl;
+                            // return;
                         }
 
                         if (mainResponse.length > 1) {
@@ -148,6 +151,16 @@
                     return;
                 };
                 if (response.data.code == "1") {
+                    $localStorage.currentUser = {
+                        token: mainResponse[0].token
+                    }
+
+                    // add jwt token to auth header for all requests made by the $http service
+                    $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
+                    localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
+                    hideLoader();
+                    toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                    location.href = mainResponse[0].returnUrl;
                 }
             }).catch(error => {
                 hideLoader();
