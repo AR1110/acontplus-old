@@ -23,13 +23,8 @@ namespace Identity.API.Controllers.v1
         private readonly ApplicationDbContext _context;
         private readonly ITokenService _tokenService;
         private readonly IAccountService _accountService;
-        public AccountController(
-            ITokenService tokenService,
-            IConfiguration config,
-            LogWriter log,
-            ApplicationDbContext context,
-            IAccountService accountService
-            )
+
+        public AccountController(ITokenService tokenService, IConfiguration config, LogWriter log, ApplicationDbContext context, IAccountService accountService)
         {
             _tokenService = tokenService;
             _config = config;
@@ -37,6 +32,7 @@ namespace Identity.API.Controllers.v1
             _context = context;
             _accountService = accountService;
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
