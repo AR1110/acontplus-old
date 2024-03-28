@@ -15,6 +15,10 @@
         AjaxUrl.open("get", Url);
         AjaxUrl.send();
 
+        // For get the customer data from response
+        $scope.codes = ['', '', '', '', '', ''];
+        $scope.mainResponse = {};
+
         AjaxUrl.onreadystatechange = function () {
             if (AjaxUrl.readyState === 4 && AjaxUrl.status === 200) {
                 let resultUrl = AjaxUrl.responseText;
@@ -44,15 +48,6 @@
 
         $scope.loginMultiple = (item) => {
             showLoader();
-            //let data = {
-            //    fullname: item.fullname,
-            //    username: item.username,
-            //    userId: item.userId,
-            //    role: item.role,
-            //    userRoleId: item.userRoleId,
-            //    idCardUser: item.idCardUser,
-            //    idCardCompany
-            //}
             item.userAgent = JSON.stringify({ userAgent: JSON.stringify(parserResults), ipAddress: customerIp });
             $http.post(`${urlService}seguridad/account/createToken`, item).then(
                 response => {
@@ -95,17 +90,23 @@
                     };
                     if (response.data.code == "1") {
                         let mainResponse = JSON.parse(response.data.payload);
+
                         if (mainResponse.length == 1) {
-                            $localStorage.currentUser = {
-                                token: mainResponse[0].token
-                            }
-                            // add jwt token to auth header for all requests made by the $http service
-                            $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
-                            localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
-                            hideLoader();
-                            toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
-                            location.href = mainResponse[0].returnUrl;
-                            return;
+                            //hideLoader();
+                            //mainResponse = mainResponse;
+                            //$("#accessAuthorizationModal").modal('show');
+                            //return;
+
+                             $localStorage.currentUser = {
+                                 token: mainResponse[0].token
+                             }
+                             // add jwt token to auth header for all requests made by the $http service
+                             $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
+                             localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
+                             hideLoader();
+                             toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                             location.href = mainResponse[0].returnUrl;
+                             return;
                         }
 
                         if (mainResponse.length > 1) {
@@ -124,10 +125,47 @@
                 console.log(error)
             }
         }
-        //Bloquear Ir a la pagina Anterior en el Navegador 
+        //Bloquear Ir a la pagina Anterior en el Navegador
         history.pushState(null, document.title, location.href);
         window.addEventListener('popstate', function (event) {
             history.pushState(null, document.title, location.href);
         });
+
+        $scope.skipCodeFields = function (event, index) {
+        }
+
+        $scope.verifyCode = function () {
+            showLoader();
+            $scope.dataSend = {
+                username: '',
+                password: '',
+                returnURL: '',
+                userAgent: '',
+                code: Number($scope.codes.join(''))
+            }
+
+            $http.post(`${urlService}seguridad/account/verifyCode`, $scope.dataSend).then(response => {
+                if (response.data.code === "0") {
+                    hideLoader();
+                    toastr.warning(response.data.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                    return;
+                };
+                if (response.data.code == "1") {
+                    $localStorage.currentUser = {
+                        token: mainResponse[0].token
+                    }
+
+                    // add jwt token to auth header for all requests made by the $http service
+                    $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
+                    localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
+                    hideLoader();
+                    toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                    location.href = mainResponse[0].returnUrl;
+                }
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
+            });
+        }
     };
 })(window.angular)

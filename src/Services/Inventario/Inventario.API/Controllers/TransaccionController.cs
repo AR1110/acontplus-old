@@ -1,6 +1,8 @@
-﻿using Common.Core.Interfaces;
+﻿using Common.Core.Utils;
 using Inventario.API.Dtos;
+using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
@@ -14,6 +16,28 @@ namespace Inventario.API.Controllers
             _transaccionService = transaccionService;
             _logWriter = logWriter;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Get(string json)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(json)}
+                };
+                var response = await _transaccionService.GetAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logWriter.LogActivity("Error en Obtener Transferencias de bodegas" + ex.Message);
+                return BadRequest("Error en get Transferencias de bodegas" + ex.Message);
+            }
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] TransaccionDto data)
         {
