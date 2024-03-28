@@ -1017,7 +1017,13 @@
 
                 //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
                 if ($scope.formasPago.length > 0) {
-                    let dataFormaPago = $scope.formasPago.find(item => item.codigo === '01');
+                    let dataFormaPago = $scope.formasPago.find(item => {
+                        if ($scope.config.idFormaPagoSri > 0) {
+                            return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
+                        } else {
+                            return (item.codigo === '01');
+                        }
+                    });
                     if (dataFormaPago) {
                         $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
                     }
@@ -2424,14 +2430,14 @@
                     `,
                     didOpen: () => {
                         let el = document.getElementById('formaDePago');
-                        if($scope.cliente.idFormaPagoSri>0){
+                        if ($scope.cliente.idFormaPagoSri > 0) {
                             $scope.dataFormaPago.idFormaPagoSri = $scope.cliente.idFormaPagoSri;
                         }
                         el.value = $scope.dataFormaPago.idFormaPagoSri;
-                        
+
                         setDataChangeFormaPago();
 
-                        el.addEventListener('change', () => { 
+                        el.addEventListener('change', () => {
                             $scope.dataFormaPago.idFormaPagoSri = Number(el.value);
                             setDataChangeFormaPago();
                         })
@@ -2441,7 +2447,7 @@
                         if (!(idFormaPagoSri > 0)) {
                             tS.toastr('warning', 'Seleccione la forma de pago!')
                             return false;
-                        } 
+                        }
                     },
                     allowOutsideClick: false,
                     allowEscapeKey: false,
