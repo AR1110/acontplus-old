@@ -57,7 +57,7 @@ export class LotPricePageComponent {
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
   readonly catalogs = [
-    { code: 0, description: 'Ninguno' },
+   // { code: 0, description: 'Ninguno' },
     { code: 3, description: 'Subfamilias' },
     { code: 1, description: 'Articulo' },
     { code: 4, description: 'Proveedor' },
@@ -65,9 +65,9 @@ export class LotPricePageComponent {
   ]
   readonly optionsCalculate = [
     { code: OptionsCalculateEnum.A, description: 'Sumar un valor a la tarifa' },
-    { code: OptionsCalculateEnum.B, description: 'Calcular un porcentaje a los precios' },
-    { code: OptionsCalculateEnum.C, description: 'Reemplazar un valor en la tarifa' },
-    { code: OptionsCalculateEnum.D, description: 'Desglozar el porcentaje al precio ' },
+    { code: OptionsCalculateEnum.B, description: 'Sumar un porcentaje a la tarifa ' },
+    { code: OptionsCalculateEnum.C, description: 'Reemplazar un valor a la tarifa ' },
+   // { code: OptionsCalculateEnum.D, description: 'Desglozar el porcentaje al precio ' },
     //{ code: "E", description: 'Sumar el IVA al PRECIO DE VENTA SIN IVA' },
   ]
 
