@@ -13,5 +13,6 @@ export enum GlobalRoutes {
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
   InventarioLotPrice = 'inventory/lot-price-page',
   ConfigGeneralConfig = 'config/general-config-page',
-  ConfigDocConfig = 'config/doc-config-page'
+  ConfigDocConfig = 'config/doc-config-page',
+  ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page'
 }

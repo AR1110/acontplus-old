@@ -1,0 +1,60 @@
+<app-breadcrumb />
+
+
+<div class="card">
+  <div class="card-body">
+    <div ngbAccordion [closeOthers]="true">
+      @for (item of entidadesFinanciera; track $index) {
+        <div ngbAccordionItem (shown)="showAcordeon(item.idEntidadFinanciera)" (hidden)="hideAcordeon()">
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton>{{ item.descripcion }}</button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <ng-template>
+                <div class="form-group">
+                  <button type="button" class="btn btn-info" (click)="openModal(item)">
+                    <fa-icon [icon]="'plus'"></fa-icon> Nuevo
+                  </button>
+                </div>
+                 <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Nro.</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Op</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (se of subEntidadesFinanciera; track $index) {
+                        <tr>
+                          <td>{{$index+1}}</td>
+                          <td>{{se.codigo}}</td>
+                          <td>{{se.descripcion}}</td>
+                          <td>
+                            <button type="button" class="btn btn-success btn-sm" (click)="openModal(item, se)">
+                              <fa-icon [icon]="'edit'"></fa-icon>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm m-2" (click)="askToDelete(se)">
+                              <fa-icon [icon]="'trash'"></fa-icon>
+                            </button>
+                          </td>
+                        </tr>
+                      }@empty {
+                        <tr>
+                          <td colspan="4" class="text-center">No hay registros!</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                 </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
