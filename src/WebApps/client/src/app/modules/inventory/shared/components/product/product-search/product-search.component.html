@@ -1,6 +1,5 @@
 @if (props.isSearchAdvanced) {
-
-<input type="text" placeholder="..." [formControl]="control" [matAutocomplete]="auto"
+<input type="text" placeholder="..."  [formControl]="control" [matAutocomplete]="auto"
   class="form-control" />
 
 <mat-autocomplete #auto="matAutocomplete" class="mat-autocomplete">
@@ -67,7 +66,7 @@
 
 @if (props.isSearchSimple) {
 
-<input type="text" placeholder="..." [formControl]="control" [matAutocomplete]="autoProductSearchSimple"
+<input type="text" placeholder="..." [value]="textSearch" [formControl]="control" [matAutocomplete]="autoProductSearchSimple"
   class="form-control" />
 
 <mat-autocomplete #autoProductSearchSimple="matAutocomplete">

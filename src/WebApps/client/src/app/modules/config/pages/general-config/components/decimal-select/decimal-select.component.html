@@ -1,0 +1,7 @@
+<select class="form-select" [(ngModel)]="value"  (change)="onChange()">
+  @for (item of decimales; track $index) {
+    <option [ngValue]="item">
+       {{item}}
+    </option>
+  }
+</select>
