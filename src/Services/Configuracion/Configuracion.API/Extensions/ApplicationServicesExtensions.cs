@@ -20,6 +20,7 @@ namespace Configuracion.API.Extensions
             services.AddScoped<IEstablecimientoLogoService, EstablecimientoLogoService>();
             services.AddScoped<IPuntoEmisionAsignacionService, PuntoEmisionAsignacionService>();
             services.AddScoped<IBodegaAsignacionService, BodegaAsignacionService>();
+            services.AddScoped<IGeneralConfigService, GeneralConfigService>();
 
             services.AddSingleton<LogWriter>();
 
