@@ -531,7 +531,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
         let parameters = {
             hasIdUsuarioRol: true,
             reportParams: JSON.stringify({
-                codigo: "KRG",
+                codigo: "RK",
                 format: formatType,
                 codEstab: $scope.dataSearch.codEstab,
                 hasParams: true,
@@ -540,13 +540,15 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
             dataParams: JSON.stringify(Object.assign($scope.dataSearch, {
                 checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                tipo : 1,
                 movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement
             }))
         }
 
         commonSvc.getReport({
             parameters,
-            formatType
+            formatType,
+            v2: true
         })
     }
 
