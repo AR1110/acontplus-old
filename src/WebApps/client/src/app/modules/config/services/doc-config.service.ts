@@ -1,0 +1,49 @@
+import { inject, Injectable } from "@angular/core";
+import { PATHS_API } from "@core/constants/global.constants";
+import { CONFIG_PATHS } from "../enums/config.enums";
+import { HttpClient } from "@angular/common/http";
+import { map } from "rxjs";
+import { groupEstabUtil } from "@core/utils/group-estab.util";
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DocConfigService {
+  #url = `${PATHS_API.CONFIG}${CONFIG_PATHS.DOC_CONFIG}`;
+  #http = inject(HttpClient);
+
+  getDataForm() {
+    return this.#http.get(`${this.#url}?json=${JSON.stringify({ tipo: 2 })}`).pipe(
+      map((response: any) => {
+        const { estabs } = response;
+
+        return {
+          establecimientos: groupEstabUtil({
+            estabs,
+            isGroupPuntoEmision: true
+          })
+        }
+      })
+    )
+  }
+
+  getAll(idPuntoEmision: number) {
+    let json = JSON.stringify({
+      tipo: 1,
+      idPuntoEmision
+    })
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response: any) => {
+        let mainData = response.docs;
+        return mainData;
+      })
+    )
+  }
+
+
+  post<T>(data: T) {
+    return this.#http.post(`${this.#url}`, { data })
+  }
+
+}

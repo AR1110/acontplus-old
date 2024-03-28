@@ -12,5 +12,6 @@ export enum GlobalRoutes {
   RestaurantReports = 'restaurant/item-report',
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
   InventarioLotPrice = 'inventory/lot-price-page',
-  ConfigGeneralConfig = 'config/general-config-page'
+  ConfigGeneralConfig = 'config/general-config-page',
+  ConfigDocConfig = 'config/doc-config-page'
 }
