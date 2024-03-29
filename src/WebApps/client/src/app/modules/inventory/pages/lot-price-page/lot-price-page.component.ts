@@ -57,25 +57,26 @@ export class LotPricePageComponent {
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
   readonly catalogs = [
-   // { code: 0, description: 'Ninguno' },
+    // { code: 0, description: 'Ninguno' },
     { code: 3, description: 'Subfamilias' },
     { code: 1, description: 'Articulo' },
     { code: 4, description: 'Proveedor' },
     { code: 5, description: 'N° Documento' }
   ]
   readonly optionsCalculate = [
+    { code: OptionsCalculateEnum.D, description: 'Sumar un % de rentabilidad al PVP' },
     { code: OptionsCalculateEnum.A, description: 'Sumar un valor a la tarifa' },
     { code: OptionsCalculateEnum.B, description: 'Sumar un porcentaje a la tarifa ' },
     { code: OptionsCalculateEnum.C, description: 'Reemplazar un valor a la tarifa ' },
-   // { code: OptionsCalculateEnum.D, description: 'Desglozar el porcentaje al precio ' },
     //{ code: "E", description: 'Sumar el IVA al PRECIO DE VENTA SIN IVA' },
   ]
 
 
-  readonly optionsPvps = [
+  readonly tempOptionsPvps = [
     { code: 'precioVenta', description: 'Precio Venta' },
     { code: 'precioConIva', description: 'Precio incluido IVA' },
   ]
+  optionsPvps = structuredClone(this.tempOptionsPvps)
 
   readonly columns = [
     { align: "center", headerSort: false },
@@ -263,6 +264,17 @@ export class LotPricePageComponent {
 
   }
 
+  onChangeOptionCalculate() {
+    this.optionsPvps = this.tempOptionsPvps.filter(p => {
+      if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D) {
+        this.optionPvp = "precioConIva";
+        return p.code === this.optionPvp;
+      }
+      return p;
+
+    })
+  }
+
   calculate() {
     try {
 
@@ -291,7 +303,6 @@ export class LotPricePageComponent {
         })
         return
       }
-      console.log(tarifasSelected)
 
       if (tarifasSelected && Array.isArray(tarifasSelected) && tarifasSelected.length === 0) {
         this.tS.toastr({
@@ -316,7 +327,7 @@ export class LotPricePageComponent {
         return
       }
 
-      if (this.mainForm.optionToCalculate === OptionsCalculateEnum.B && this.mainForm.valueToCalculate > 100) {
+      if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D && this.mainForm.valueToCalculate > 100) {
         this.tS.toastr({
           type: 'warning',
           message: 'Cuando la opción a calcular es: "Calcular un porcentaje que se aplique a la tarifa", el valor no puede ser mayor a 100.'
@@ -429,18 +440,13 @@ export class LotPricePageComponent {
           }
           //===========================================END========================================
 
-          //Start Desglozar el IVA al PRECIO VENTA INC IVA por tarifas
+          //Start Sumar un % de rentabilidad al PVP
           if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D) {
-            if (this.optionPvp === "precioVenta") {
-              precioConIva = pricingCalculateUtil.calculatePriceWithVat(t.precioVenta, this.mainForm.valueToCalculate);
-              porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, t.precioVenta);
-              setDataToProductsModified = true;
-            }
-
-            if (this.optionPvp === "precioConIva") {
-              let precioVentaCalculado = pricingCalculateUtil.calculatePriceSale(precioConIva, this.mainForm.valueToCalculate);
-              precioVenta = precioVentaCalculado;
-              porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, precioConIva);
+            let precioVentaValidar = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(item.precioCosto, this.mainForm.valueToCalculate)
+            if (precioVentaValidar >= item.precioCosto) {
+              precioVenta = precioVentaValidar;
+              precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
+              porcentajeUtilidad = this.mainForm.valueToCalculate;
               setDataToProductsModified = true;
             }
           }
