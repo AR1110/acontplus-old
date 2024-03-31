@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+    <div class="card">
+      <div class="card-body shadow">
+        <section class="example-section">
+          <span class="example-list-section">
+            <mat-checkbox class="example-margin" [checked]="allComplete" [color]="task.color" [indeterminate]="someComplete()"
+              (change)="setAll($event.checked)">
+              {{task.name}}
+            </mat-checkbox>
+          </span>
+          <span class="example-list-section">
+            <ul>
+              @for (subtask of task.subtasks; track subtask) {
+              <li>
+                <mat-checkbox [(ngModel)]="subtask.completed" [color]="subtask.color" (ngModelChange)="updateAllComplete()">
+                  {{subtask.name}}
+                </mat-checkbox>
+              </li>
+              }
+            </ul>
+          </span>
+        </section>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
+</div>

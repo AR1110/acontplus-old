@@ -1,0 +1,42 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div ngbAccordion [closeOthers]="true">
+    @for (item of items; track item) {
+    <div ngbAccordionItem [collapsed]="item !== 'First'">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>{{ item }}</button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+              <li [ngbNavItem]="1">
+                <button ngbNavLink>Establecimientos</button>
+                <ng-template ngbNavContent>
+                   <div class="card">
+                    <div class="card-body shadow">
+                      <app-user-customer-role-estab />
+                    </div>
+                   </div>
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="2">
+                <button ngbNavLink>Permisos</button>
+                <ng-template ngbNavContent>
+                    <app-user-customer-role-permission/>
+                </ng-template>
+              </li>
+            </ul>
+
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+<div class="modal-footer"></div>
