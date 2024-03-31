@@ -22,8 +22,11 @@ CREATE VIEW v_Articulo_Fraccionado AS (
 		  ,sobrante                 = CAST(ar.stock - (CAST(ar.stock / IIF(af.conversion = 0,1,af.conversion) AS INT) * af.conversion) AS NUMERIC(18,2))
           ,idMedidaFraccionado      = af.idMedida          
           ,precioCostoFraccionado   = af.precioCostoFraccionado
+          ,ar.idTipoIva
+          ,iva =CAST(CAST(ti.porcentaje as decimal(15,0)) AS varchar)
 	FROM Articulo                  ar WITH (NOLOCK)
 	INNER JOIN ArticuloFraccionado af WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
 	INNER JOIN Medida              me WITH (NOLOCK) ON me.idMedida   = ar.idMedida 
 	INNER JOIN Medida              mf WITH (NOLOCK) ON mf.idMedida   = af.idMedida
+    INNER JOIN TipoIva             ti WITH (NOLOCK) ON ti.idTipoIva  = ar.idTipoIva
 ) 
