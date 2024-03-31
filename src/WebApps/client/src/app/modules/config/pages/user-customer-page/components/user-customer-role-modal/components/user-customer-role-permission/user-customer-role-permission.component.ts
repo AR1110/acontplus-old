@@ -42,6 +42,38 @@ export class UserCustomerRolePermissionComponent {
 
   allComplete: boolean = false;
 
+  permissionSale:any = {
+    comprobante: {
+      label: "Comprobante",
+      permissions: {
+        fechaEmision: {
+          description: "Modificar la fecha de emisión.",
+          enabled: true
+        },
+        tiempoCredito: {
+          description: "Cambiar el tiempo de crédito.",
+          enabled: true
+        },
+        tarifa: {
+          description: "Modificar la tarifa general.",
+          enabled: true
+        },
+        porcentajeDescuento: {
+          description: "Modificar el % de descuento.",
+          enabled: true
+        },
+        descuento: {
+          description: "Modificar el descuento.",
+          enabled: true
+        },
+      }
+    }
+
+  }
+
+  permissions = Object.keys(this.permissionSale.comprobante.permissions)
+
+
   updateAllComplete() {
     this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
   }
@@ -54,11 +86,15 @@ export class UserCustomerRolePermissionComponent {
   }
 
   setAll(completed: boolean) {
+    console.log(this.permissions)
     this.allComplete = completed;
     if (this.task.subtasks == null) {
       return;
     }
-    this.task.subtasks.forEach(t => (t.completed = completed));
+   // this.task.subtasks.forEach(t => (t.completed = completed));
+    Object.values(this.permissionSale.comprobante.permissions).forEach((permission:any) => {
+      permission.enabled = false;
+    });
   }
 
 }

@@ -1,24 +1,26 @@
 <div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+  <h4 class="modal-title" id="modal-basic-title">Usuario Roles</h4>
   <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
   <div ngbAccordion [closeOthers]="true">
-    @for (item of items; track item) {
-    <div ngbAccordionItem [collapsed]="item !== 'First'">
+    @for (item of userCustomerRoles; track item) {
+    <div ngbAccordionItem  (shown)="showAcordeon(item)">
       <h2 ngbAccordionHeader>
-        <button ngbAccordionButton>{{ item }}</button>
+        <button ngbAccordionButton>
+          <b>{{item.ruc}}</b> - {{ item.razonSocial }}
+        </button>
       </h2>
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
-            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs"  >
               <li [ngbNavItem]="1">
-                <button ngbNavLink>Establecimientos</button>
+                <button ngbNavLink (click)="clickNgbNavLink(item)">Establecimientos</button>
                 <ng-template ngbNavContent>
                    <div class="card">
                     <div class="card-body shadow">
-                      <app-user-customer-role-estab />
+                      <app-user-customer-role-estab   />
                     </div>
                    </div>
                 </ng-template>

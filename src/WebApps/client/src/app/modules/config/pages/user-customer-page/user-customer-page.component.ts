@@ -47,6 +47,9 @@ export class UserCustomerPageComponent {
     let modalRef = this.modalSvc.openModalCustom(UserCustomerRoleModalComponent, {
       size: 'xl'
     })
+    modalRef.componentInstance.params = {
+      idUsuario: data.idUsuario
+    }
   }
 
 }

@@ -135,13 +135,13 @@ export class LotPricePageComponent {
         if (targetElement.tagName === 'INPUT' && targetElement.type === 'checkbox') {
           if(!targetElement.checked){
             this.tabulatorComponent.refTabulator.deselectRow();
-            return 
+            return
           }
           const rows = this.tabulatorComponent.refTabulator.getRows();
 
           for (let i = 0; i < rows.length; i++) {
             const childRows = rows[i].getTreeChildren();
-            if (childRows.length > 0) { 
+            if (childRows.length > 0) {
               for (let j = 0; j < childRows.length; j++) {
                 const data = childRows[j].getData();
 
@@ -150,7 +150,7 @@ export class LotPricePageComponent {
                     childRows[j].toggleSelect();
                   }
 
-                } 
+                }
 
               }
             }
@@ -428,7 +428,6 @@ export class LotPricePageComponent {
   }
 
   isValidFilter() {
-    console.log(this.mainForm)
     let checkedSubCategorias = this.checkedSubCategorias.value;
     if (this.mainForm.opcion === 3) {
       if (checkedSubCategorias && Array.isArray(checkedSubCategorias) && checkedSubCategorias.length === 0) {
@@ -439,7 +438,6 @@ export class LotPricePageComponent {
         return
       }
     }
-    console.log(this.mainForm)
 
     if (this.mainForm.opcion === 1 && !(this.mainForm.idArticulo > 0)) {
       this.tS.toastr({
@@ -709,17 +707,17 @@ export class LotPricePageComponent {
       return selectedData.some(rowSelect => {
         return this.isProductModified(data, rowSelect);
       })
-    })    
+    })
   }
   askToSave() {
 
-    const selectedData = this.getSelectedData(); 
+    const selectedData = this.getSelectedData();
     if(selectedData.length===0){
       this.tS.toastr({
         type: 'warning',
         message: 'Seleccione al menos un artículo!'
       })
-      return 
+      return
     }
 
 
