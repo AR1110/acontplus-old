@@ -647,13 +647,19 @@
                     },
                     isRenderRazorPartial: true,
                     //windowClass: 'uibModalFullScreen'
-                }).result.then(result => {
-                    if (Array.isArray(result)) {
-                        for (const a of result) {
+                }).result.then((result) => {
+                
+                    if (result !== null && Array.isArray(result.articlesSelected)) {
+                        const {
+                            articlesSelected,
+                            opcion
+                        } = result;
+                        for (const a of articlesSelected) {
                             if (!$scope.gridOptions.data.some(x => x.idArticulo == a.idArticulo)) {
                                 let obj = structuredClone(a);
                                 obj.precioActual = obj.precioCosto;
-                                obj.cantidad =1;
+                                console.log(opcion)
+                                obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
                                 obj.idBodega = $scope.data.idBodega;
                                 let total = obj.cantidad * obj.precioActual;
                                 obj.total = fS.roundNumber(total, $scope.decimal.nroPrecio); //Total Precio Venta
@@ -1132,7 +1138,10 @@
         }
 
         $scope.setArticlesSelected = () => {
-            $uibModalInstance.close($scope.articlesSelected)
+            $uibModalInstance.close({
+                articlesSelected: $scope.articlesSelected,
+                opcion: $scope.mainForm.opcion
+            })
         }
 
         $scope.closeAdvancedSearch = () => {
