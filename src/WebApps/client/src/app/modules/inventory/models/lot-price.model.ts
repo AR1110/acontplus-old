@@ -1,5 +1,7 @@
 
 export interface LotPriceTarifa {
+  idArticuloFraccionadoPvP: number,
+  idArticuloFraccionado: number
   idArticuloPvp: number
   idArticulo: number
   idTarifa: number
@@ -14,6 +16,7 @@ export interface LotPriceTarifa {
 export interface LotPrice {
   index?: number
   idArticulo: number
+  idArticuloFraccionado: number
   idTipoIva: number
   codigo: string
   codigoAuxiliar: string

@@ -332,7 +332,7 @@ export class ProductSearchComponent {
 
   private _filter(value: string) {
     const filterValue = this._normalizeValue(value);
-    return this.productSvc.search({ textSearch: filterValue }).pipe(
+    return this.productSvc.search({ textSearch: value }).pipe(
       map(response => {
         console.log(response)
         return response;

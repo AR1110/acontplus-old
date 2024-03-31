@@ -33,7 +33,7 @@ export class LotPriceService {
         }
         if (response !== null && typeof response === 'object') {
           const { decimales, impuestos, familias, subfamilias: subFamilias, tarifas } = response;
-          console.log(response)
+
           const tempDecimal = decimales[0];
           data.decimal = {
             nroPrecio: tempDecimal.nroPrecio,
@@ -85,7 +85,7 @@ export class LotPriceService {
   }
 
   getAll<T>(obj: T) {
-    let json = JSON.stringify({ ...obj, tipo: 2 })
+    let json = JSON.stringify({ ...obj})
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
         let mainData = response.articulos;
@@ -94,7 +94,10 @@ export class LotPriceService {
           let mainTarifas = JSON.parse(item.tarifas);
           let tarifas = mainTarifas.map((t: any) => {
             return {
-              idArticuloPvp: t.idArticuloPvp,
+              idArticuloFraccionadoPvP: t.idArticuloFraccionadoPvP || 0,//Articulo Fraccionado
+              idArticuloFraccionado: t.idArticuloFraccionado || 0, //Articulo Fraccionado
+
+              idArticuloPvP: t.idArticuloPvp,
               idArticulo: t.idArticulo,
               idTarifa: t.idTarifa,
               precioVenta: t.precioVenta,
@@ -107,6 +110,7 @@ export class LotPriceService {
           return {
             index: index + 1,
             idArticulo: item.idArticulo,
+            idArticuloFraccionado: item.idArticuloFraccionado, //articulo fraccionado
             idTipoIva: item.idTipoIva,
             codigo: item.codigo,
             codigoAuxiliar: item.codigoAuxiliar,

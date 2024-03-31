@@ -14,5 +14,6 @@ export enum GlobalRoutes {
   InventarioLotPrice = 'inventory/lot-price-page',
   ConfigGeneralConfig = 'config/general-config-page',
   ConfigDocConfig = 'config/doc-config-page',
-  ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page'
+  ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page',
+  ConfigUserCustomer = 'config/user-customer-page'
 }
