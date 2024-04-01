@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
@@ -28,6 +30,10 @@ export class TabulatorComponent implements OnChanges, OnInit {
   @Input() dataTree: boolean = false;
   @Input() dataTreeChildField: string = 'childRows';
   @Input() dataTreeStartExpanded: boolean = false;
+
+  @Output() cellEdited = new EventEmitter();
+  @Output() cellClick = new EventEmitter();
+
 
   tab = document.createElement('div');
 
@@ -58,25 +64,34 @@ export class TabulatorComponent implements OnChanges, OnInit {
       // dataTreeChildField: this.dataTreeChildField,
       dataTreeStartExpanded: this.dataTreeStartExpanded,
       height: this.height,
-      //layout: 'fitData',
-      reactiveData: true, //enable data reactivity
+      layout: 'fitData',
+      // reactiveData: true,
       //responsiveLayout: true,
       autoResize: true, // prevent auto resizing of table
       placeholder: "No Data Set",
-      // selectable: true,
+
+       selectable: true,
       // selectableRangeMode: "click",
-      // selectableRollingSelection: true
+      // selectableRollingSelection: true,
     });
-
-
     let table = document.getElementById('tabulatorTable');
     if (table) {
       table.appendChild(this.tab);
+      if(this.cellEdited){
+        this.refTabulator.on("cellEdited", (cell)=>{
+          this.cellEdited.emit(cell)
+        })
+      }
+
+      if (this.cellClick){
+        this.refTabulator.on("rowClick",(cell, row)=>{
+          this.cellClick.emit(row)
+        })
+      }
     }
   }
 
   updateData(){
-    console.log(this.tableData)
     // this.refTabulator.updateData(this.tableData)
   }
 

@@ -136,6 +136,7 @@
                     let infoAdicionalDocumento = dataRepository[4];
                     let datosAdicionalesArticulo = dataRepository[5];
                     let formasPago = dataRepository[6];
+                    let config = dataRepository[7] ? dataRepository[7][0] : {}
 
                     let compMapper = {
                         idAprob_Document: compRepository.idAprob_Document,
@@ -158,7 +159,7 @@
                         puntoEmision: `${compRepository.estab}-${compRepository.ptoEmi}`,
                         fechaEmision: fS.formatDate(compRepository.fechaEmision),
                         fechaEmisionDocCreado: fS.formatDate(compRepository.fechaEmision)
-                    } 
+                    }
                     let clienteMapper = {
                         idCliente: clienteRepository.idCliente,
                         nombreComercial: clienteRepository.nombreComercial,
@@ -258,7 +259,8 @@
                             selected: item.selected,
                             estado: item.estado
                         })),
-                        formasPago: fS.mapperFromFormaPago(formasPago)
+                        formasPago: fS.mapperFromFormaPago(formasPago),
+                        config
                     }
                 }
             }).catch(error => {

@@ -4,3 +4,5 @@ export interface EntidadFinanciera {
   codigo: EntidadFinancieraCode
   descripcion: string
 }
+
+export interface EntidadFinancieraRead extends EntidadFinanciera{}

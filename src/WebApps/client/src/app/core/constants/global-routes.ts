@@ -11,5 +11,10 @@ export enum GlobalRoutes {
   RestaurantTable = 'restaurant/table-page',
   RestaurantReports = 'restaurant/item-report',
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
-  InventarioLotPrice = 'inventory/lot-price-page'
+  InventarioLotPrice = 'inventory/lot-price-page',
+  ConfigGeneralConfig = 'config/general-config-page',
+  ConfigDocConfig = 'config/doc-config-page',
+  ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page',
+  ConfigUserCustomer = 'config/user-customer-page',
+  ConfigUserCustomerRequest = 'config/user-customer-request-page'
 }

@@ -1,0 +1,45 @@
+<app-breadcrumb>
+  <button class="btn btn-info">Nuevo</button>
+  </app-breadcrumb>
+
+
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nro.</th>
+              <th></th>
+              <th>Número Identificación</th>
+              <th>Nombre Completo</th>
+              <th>Usuario</th>
+              <th>Correo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of usersCustomer; track $index) {
+              <tr>
+                <td>{{$index+1}}</td>
+                <td>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-success btn-sm">
+                      <fa-icon [icon]="'edit'"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm  " (click)="openModalConfig(item)">
+                      <fa-icon [icon]="'person-chalkboard'"></fa-icon>
+                    </button>
+
+                  </div>
+                </td>
+                <td>{{item.nroIdentificacion}}</td>
+                <td>{{item.nombreCompleto}}</td>
+                <td>{{item.nombreUsuario}}</td>
+                <td>{{item.correo}}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

@@ -3,6 +3,13 @@
 <div class="card">
   <div class="card-body">
     <div class="row justify-content-between">
+      <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+        <select name="tipoArticulo" id="tipoArticulo" class="form-select" [(ngModel)]="mainForm.tipo">
+          @for (item of tiposArticulo; track $index) {
+            <option [ngValue]="item.code">{{item.description}}</option>
+          }
+        </select>
+      </div>
       @for (item of catalogs; track $index) {
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
         <div class="icheck-primary">
@@ -75,8 +82,7 @@
       <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
         <div class="form-froup">
           <label for="optionCalculate">Tarifa: <span class="text-danger">*</span></label>
-          <mat-select [formControl]="tarifasSelected" multiple class="form-select"
-            (selectionChange)="valueChangeTarifa($event)">
+          <mat-select [formControl]="tarifasSelected" multiple class="form-select">
             @for (item of tarifas; track $index) {
             <mat-option [value]="item.idTarifa">{{item.descripcion}}</mat-option>
             }
@@ -95,7 +101,7 @@
       </div>
       <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
         <div class="form-group">
-          <label for="inputValueCalculate">Valor: <span class="text-danger">*</span></label>
+          <label for="inputValueCalculate">Valor/Porcentaje: <span class="text-danger">*</span></label>
           <div class="input-group">
             <input type="number" name="inputValueCalculate" id="inputValueCalculate"
               [(ngModel)]="mainForm.valueToCalculate" class="form-control">
@@ -116,8 +122,14 @@
 
     </div>
     <div class="mt-2">
-      <app-tabulator [columnNames]="columns" [dataTree]="true" [tableData]="nestedProducts"
-        [dataTreeStartExpanded]="true" height="400px" />
+      <app-tabulator
+      [columnNames]="columns"
+      [dataTree]="true"
+      [tableData]="nestedProducts"
+        [dataTreeStartExpanded]="true"
+        (cellEdited)="cellEdited($event)"
+        (cellClick)="cellClick($event)"
+        height="400px" />
     </div>
   </div>
 </div>

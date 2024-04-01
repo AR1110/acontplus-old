@@ -41,47 +41,99 @@ BEGIN
        ,porcentajeUtilidad NUMERIC(18,5) NOT NULL
     )
 
+     DECLARE @tbArticleFraccionado AS TABLE
+    (
+        idArticuloFraccionadoPvP INT NOT NULL UNIQUE
+       ,idArticuloFraccionado INT NOT NULL
+       ,idTarifa INT NOT NULL
+       ,idTipoIva INT NOT NULL
+       ,precioVenta NUMERIC(18,2) NOT NULL
+       ,precioConIva NUMERIC(18,5) NOT NULL
+       ,porcentajeUtilidad NUMERIC(18,5) NOT NULL
+    )
+
 	BEGIN TRY
         
         SELECT @tipo = tipo, @articles = articles FROM OPENJSON (@json) WITH (tipo INT ,articles NVARCHAR(MAX) as json )
-
-        INSERT INTO @tbArticle
-              (idArticuloPvP,idArticulo,idTarifa,idTipoIva,precioVenta,precioConIva,porcentajeUtilidad)
-        SELECT idArticuloPvP,idArticulo,idTarifa,idTipoIva,precioVenta,precioConIva,porcentajeUtilidad
-        FROM OPENJSON(@articles) WITH
-        (
-            idArticuloPvP      INT 
-           ,idArticulo         INT 
-           ,idTarifa           INT 
-           ,idTipoIva          INT
-           ,precioVenta        NUMERIC(18,2) 
-           ,precioConIva       NUMERIC(18,5) 
-           ,porcentajeUtilidad NUMERIC(18,5)
-        )
-
-        SELECT @Quantity = COUNT(*) FROM @tbArticle 
-
 	    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        IF (SELECT COUNT(*) FROM @tbArticle) = 0 
-            BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la informacion', DEFAULT)
-                RETURN 
+        IF @tipo = 2
+            BEGIN 
+
+                INSERT INTO @tbArticle
+                      (idArticuloPvP,idArticulo,idTarifa,idTipoIva,precioVenta,precioConIva,porcentajeUtilidad)
+                SELECT idArticuloPvP,idArticulo,idTarifa,idTipoIva,precioVenta,precioConIva,porcentajeUtilidad
+                FROM OPENJSON(@articles) WITH
+                (
+                    idArticuloPvP      INT 
+                   ,idArticulo         INT 
+                   ,idTarifa           INT 
+                   ,idTipoIva          INT
+                   ,precioVenta        NUMERIC(18,2) 
+                   ,precioConIva       NUMERIC(18,5) 
+                   ,porcentajeUtilidad NUMERIC(18,5)
+                )
+                SELECT @Quantity = COUNT(*) FROM @tbArticle 
+
+                IF (SELECT COUNT(*) FROM @tbArticle) = 0 
+                    BEGIN
+                        SELECT [Common].[ufnSpResponse]('0','Error en la informacion', DEFAULT)
+                        RETURN 
+                    END 
+
             END 
 
+        IF @tipo = 3
+             BEGIN 
+
+                INSERT INTO @tbArticleFraccionado
+                      (idArticuloFraccionadoPvP,idArticuloFraccionado,idTarifa,idTipoIva,precioVenta,precioConIva,porcentajeUtilidad)
+                SELECT idArticuloFraccionadoPvP,idArticuloFraccionado,idTarifa,idTipoIva,precioVenta,precioConIva,porcentajeUtilidad
+                FROM OPENJSON(@articles) WITH
+                (
+                    idArticuloFraccionadoPvP INT 
+                   ,idArticuloFraccionado    INT 
+                   ,idTarifa           INT 
+                   ,idTipoIva          INT
+                   ,precioVenta        NUMERIC(18,2) 
+                   ,precioConIva       NUMERIC(18,5) 
+                   ,porcentajeUtilidad NUMERIC(18,5)
+                )
+                SELECT @Quantity = COUNT(*) FROM @tbArticleFraccionado;
+
+                IF (SELECT COUNT(*) FROM @tbArticleFraccionado) = 0 
+                    BEGIN
+                        SELECT [Common].[ufnSpResponse]('0','Error en la informacion', DEFAULT)
+                        RETURN 
+                    END 
+            END 
+            
+             
 		BEGIN TRAN
 		    
-            UPDATE tb SET 
-                   tb.precioVenta        = tt.precioVenta
-				  ,tb.precioConIva       = tt.precioConIva
-				  ,tb.porcentajeUtilidad = tt.porcentajeUtilidad
-		    FROM dbo.ArticuloPvp  tb WITH (ROWLOCK)
-		    INNER JOIN @tbArticle tt ON tt.idArticuloPvP = tb.idArticuloPvP 
+            IF @tipo = 2
+                BEGIN 
+                    UPDATE tb SET 
+                           tb.precioVenta        = tt.precioVenta
+				          ,tb.precioConIva       = tt.precioConIva
+				          ,tb.porcentajeUtilidad = tt.porcentajeUtilidad
+		            FROM dbo.ArticuloPvp  tb WITH (ROWLOCK)
+		            INNER JOIN @tbArticle tt ON tt.idArticuloPvP = tb.idArticuloPvP  
+                END 
 
-            INSERT INTO Seguridad.TransactionHistory
-                   (UserRoleId,Quantity,Module,[Action],CreateAt)
-            SELECT @userRoleId,@Quantity,'/Inventario/PrecioMasivo','Update',GETDATE() 
+            IF @tipo = 3
+                BEGIN 
+                    UPDATE tb SET 
+                           tb.precioVenta        = tt.precioVenta
+				          ,tb.precioConIva       = tt.precioConIva
+				          ,tb.porcentajeUtilidad = tt.porcentajeUtilidad
+		            FROM dbo.ArticuloFraccionadoPvP  tb WITH (ROWLOCK)
+		            INNER JOIN @tbArticleFraccionado tt ON tt.idArticuloFraccionadoPvP = tb.idArticuloFraccionadoPvP  
+                END 
 
+                    INSERT INTO Seguridad.TransactionHistory
+                           (UserRoleId,Quantity,Module,[Action],CreateAt)
+                    SELECT @userRoleId,@Quantity,'/Inventario/PrecioMasivo','Update',GETDATE() 
 		COMMIT TRAN
         SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)
 	END TRY

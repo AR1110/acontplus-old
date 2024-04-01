@@ -3,6 +3,7 @@ import { CashboxPageComponent } from "./pages/cashbox-page/cashbox-page.componen
 import { MovimientoCajaPageComponent } from "./pages/movimiento-caja-page/movimiento-caja-page.component";
 import { CobroPageComponent } from "./pages/cobro-page/cobro-page.component";
 import { SupplierAccountsComponent } from "./reports/supplier-accounts/supplier-accounts.component";
+import { SubEntidadFinancieraPageComponent } from "./pages/sub-entidad-financiera/sub-entidad-financiera-page.component";
 export const routes: Routes = [
   {
     path: 'cashbox-page',
@@ -37,7 +38,16 @@ export const routes: Routes = [
     component: SupplierAccountsComponent,
     data: {
       breadcrumb: 'Cartera Proveedor',
-    }
+    },
+  },
+  {
+    path: 'sub-entidad-financiera-page',
+    title: 'SubEntidad Financiera',
+    component: SubEntidadFinancieraPageComponent,
+    data: {
+      breadcrumb: 'SubEntidad Financiera',
+    },
   }
+
 
 ]

@@ -9,6 +9,7 @@ CREATE OR ALTER VIEW Config.v_Sistema_Ventas WITH SCHEMABINDING AS (
 		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.payAutomatic')     as payAutomatic
 		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.multipleVendedor') as multipleVendedor
 		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.detailDuplicate')  as detailDuplicate
+		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.idFormaPagoSri')   as idFormaPagoSri
 		  ,cs.idEntidad
 	FROM Config.Sistema cs WITH (NOLOCK)
 	WHERE cs.codConfig = 'CV'

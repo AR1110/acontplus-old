@@ -208,6 +208,7 @@
                         <tbody md-body>
                             <tr md-row ng-repeat="ne in notaEntregas | orderBy: dataSearch.order" ng-class="ne.style">
                                 <td md-cell>
+                                <div class="d-flex">
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
                                                    ng-click="$mdMenu.open($event)">
@@ -279,16 +280,7 @@
                                                         Hist. Mov.
                                                     </span>
                                                 </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item>
-                                                <md-button ng-click="print(ne)">
-                                                    <span md-menu-align-target>
-                                                        <icon class="mdi mdi-cloud-print-outline"></icon>
-                                                        Impresión
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                            </md-menu-item> 
 
                                             <md-menu-item ng-if="accion.enviarCorreo">
                                                 <md-button btn-send-to-email params="ne" type-send="typeSendToMail"
@@ -322,6 +314,10 @@
                                         </md-menu-content>
                                     </md-menu>
 
+                                     <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="print(ne)">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                    </div>
                                 </td>
                                 @* <td md-cell>{{$index+1}}</td> *@
                                 <td md-cell>{{ne.serieComprobante}}</td>

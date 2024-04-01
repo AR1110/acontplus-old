@@ -2744,7 +2744,7 @@
 
     function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
         let { docOrigenDesc, docDestinoDesc, data } = params
-        let { comprobante, cliente, detalles, datosAdicionalesArticulo, formasPago } = data;
+        let { comprobante, cliente, detalles, datosAdicionalesArticulo, formasPago, config } = data;
 
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
@@ -2778,6 +2778,8 @@
         $scope.infoAdicionalDocumento = [];
 
         $scope.formasPago = formasPago;
+        $scope.config = config;
+        
         $scope.dataFormaPago = {
             idFormaPagoSri: 0,
             idTiempoCredito: 0,
@@ -3739,7 +3741,13 @@
             else if ($scope.dataFormaPago.idFormaPagoSri > 0) {
                 dataFormaPago = findFormaPagoById($scope.dataFormaPago.idFormaPagoSri);
             } else {
-                dataFormaPago = $scope.formasPago.find(item => item.codigo === '01') || {};
+                dataFormaPago = $scope.formasPago.find(item => {
+                    if ($scope.config.idFormaPagoSri > 0) {
+                        return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
+                    } else {
+                        return (item.codigo === '01');
+                    }
+                }) || {};
             }
             $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
             $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;

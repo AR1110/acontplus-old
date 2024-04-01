@@ -118,7 +118,6 @@ export class MassiveTaxPageComponent {
 
   onChangeTaxTo() {
     this.taxToDesc = this.taxRatesTo.find(t => t.idTarifaImpuesto === this.dataForm.taxIdTo)?.descripcion || ''
-    console.log(this.taxToDesc)
     this.setTaxDesc();
   }
   private setTaxDesc() {
@@ -168,6 +167,13 @@ export class MassiveTaxPageComponent {
         })
         return
       }
+      if (this.dataForm.obs == null || this.dataForm.obs == undefined || this.dataForm.obs.trim() === '') {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'La observacion es obligatorio.'
+        })
+        return
+      }
 
       let obs = `${this.joinTaxDesc}${this.dataForm.obs}`;
 
@@ -193,7 +199,7 @@ export class MassiveTaxPageComponent {
         taxIdFrom: this.dataForm.taxIdFrom,
         taxIdTo: this.dataForm.taxIdTo,
         quantity: this.dataForm.quantityProducts,
-        obs
+        obs: obs
       }
       this.massiveTaxSvc.put(params).subscribe({
         next: (response) => {
