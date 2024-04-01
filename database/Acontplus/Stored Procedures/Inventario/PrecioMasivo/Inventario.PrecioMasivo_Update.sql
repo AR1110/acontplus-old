@@ -55,7 +55,8 @@ BEGIN
 	BEGIN TRY
         
         SELECT @tipo = tipo, @articles = articles FROM OPENJSON (@json) WITH (tipo INT ,articles NVARCHAR(MAX) as json )
-	    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+	    
+        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         IF @tipo = 2
             BEGIN 
@@ -93,12 +94,13 @@ BEGIN
                 (
                     idArticuloFraccionadoPvP INT 
                    ,idArticuloFraccionado    INT 
-                   ,idTarifa           INT 
-                   ,idTipoIva          INT
-                   ,precioVenta        NUMERIC(18,2) 
-                   ,precioConIva       NUMERIC(18,5) 
-                   ,porcentajeUtilidad NUMERIC(18,5)
+                   ,idTarifa                 INT 
+                   ,idTipoIva                INT
+                   ,precioVenta              NUMERIC(18,2) 
+                   ,precioConIva             NUMERIC(18,5) 
+                   ,porcentajeUtilidad       NUMERIC(18,5)
                 )
+                
                 SELECT @Quantity = COUNT(*) FROM @tbArticleFraccionado;
 
                 IF (SELECT COUNT(*) FROM @tbArticleFraccionado) = 0 
@@ -131,9 +133,10 @@ BEGIN
 		            INNER JOIN @tbArticleFraccionado tt ON tt.idArticuloFraccionadoPvP = tb.idArticuloFraccionadoPvP  
                 END 
 
-                    INSERT INTO Seguridad.TransactionHistory
-                           (UserRoleId,Quantity,Module,[Action],CreateAt)
-                    SELECT @userRoleId,@Quantity,'/Inventario/PrecioMasivo','Update',GETDATE() 
+            INSERT INTO Seguridad.TransactionHistory
+                    (UserRoleId,Quantity,Module,[Action],CreateAt)
+            SELECT @userRoleId,@Quantity,'/Inventario/PrecioMasivo','Update',GETDATE() 
+
 		COMMIT TRAN
         SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)
 	END TRY
