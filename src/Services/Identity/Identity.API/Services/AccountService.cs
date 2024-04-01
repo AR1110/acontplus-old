@@ -16,9 +16,9 @@ namespace Identity.API.Services
             _repository = repository;
             _context = context;
         }
-        public async Task<string> LoginAsync(string username, string password)
+        public async Task<ApiResponse> LoginAsync(string username, string password)
         {
-            return await _repository.SPExecuteDeprecatedAsync("Seguridad.Login_Start", new Dictionary<string, object> {
+            return await _repository.SPExecuteAsync("Seguridad.Login_Start", new Dictionary<string, object> {
                 { "username", username },
                 { "password", password }
             });
