@@ -30,7 +30,7 @@ namespace Configuracion.API.Services
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
         }
     }
 }

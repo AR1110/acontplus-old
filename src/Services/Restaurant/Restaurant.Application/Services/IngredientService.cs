@@ -48,7 +48,7 @@ namespace Restaurant.Application.Services
                     {"userRoleId", data.UserRoleId},
                     {"json", DataConverters.SerializeDictionary(data.Data)}
                 };
-            var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Insert", parameters);
+            var response = await _repository.SPExecuteDeprecatedAsync("Restaurant.Ingredient_Insert", parameters);
             return response;
         }
         public async Task<string> UpdateAsync(int id, ApiRequest data)
@@ -58,7 +58,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
             };
-            var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Update", parameters);
+            var response = await _repository.SPExecuteDeprecatedAsync("Restaurant.Ingredient_Update", parameters);
             return response;
         }
 

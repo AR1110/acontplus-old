@@ -29,12 +29,12 @@ namespace Restaurant.Application.Services
 
         public async Task<string> PostAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.Promotion_Post", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Promotion_Post", parameters);
         }
 
         public async Task<string> PutAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.Promotion_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Promotion_Update", parameters);
         }
     }
 }

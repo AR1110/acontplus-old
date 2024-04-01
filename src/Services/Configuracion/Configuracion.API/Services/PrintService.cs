@@ -12,7 +12,7 @@ namespace Configuracion.API.Services
         }
         public async Task<string> GetAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Config.Print_Get", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Config.Print_Get", parameters);
         }
     }
 }

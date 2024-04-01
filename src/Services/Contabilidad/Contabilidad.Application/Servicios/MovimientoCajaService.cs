@@ -36,12 +36,12 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.MovimientoCaja_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.MovimientoCaja_Insert", parameters);
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.MovimientoCaja_Delete", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.MovimientoCaja_Delete", parameters);
         }
     }
 }
