@@ -158,7 +158,7 @@ namespace Identity.API.Controllers.v1
         {
             try
             {
-                var response = await _accountService.VerifyCodeAsync(data.code);
+                var response = await _accountService.VerifyCodeAsync(0);
                 return Ok(response);
             }
             catch (Exception ex)
