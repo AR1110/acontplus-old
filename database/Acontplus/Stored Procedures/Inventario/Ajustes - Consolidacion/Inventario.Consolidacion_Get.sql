@@ -187,7 +187,7 @@ BEGIN
 				           @idSubFamilia INT,
 				           @nroDocumento VARCHAR(25) '
 
-	        SET @sql = 'SELECT TOP 50
+	        SET @sql = 'SELECT TOP 100
                                a.idArticulo
 				              ,codigo
 				              ,codigoAuxiliar
