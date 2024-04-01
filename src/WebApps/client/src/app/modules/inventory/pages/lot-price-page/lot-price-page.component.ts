@@ -57,38 +57,155 @@ export class LotPricePageComponent {
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
   readonly catalogs = [
-    { code: 0, description: 'Ninguno' },
+    // { code: 0, description: 'Ninguno' },
     { code: 3, description: 'Subfamilias' },
     { code: 1, description: 'Articulo' },
     { code: 4, description: 'Proveedor' },
     { code: 5, description: 'N° Documento' }
   ]
   readonly optionsCalculate = [
+    { code: OptionsCalculateEnum.D, description: 'Sumar un % de rentabilidad a la tarifa' },
     { code: OptionsCalculateEnum.A, description: 'Sumar un valor a la tarifa' },
-    { code: OptionsCalculateEnum.B, description: 'Calcular un porcentaje a los precios' },
-    { code: OptionsCalculateEnum.C, description: 'Reemplazar un valor en la tarifa' },
-    { code: OptionsCalculateEnum.D, description: 'Desglozar el porcentaje al precio ' },
+    { code: OptionsCalculateEnum.B, description: 'Sumar un porcentaje a la tarifa ' },
+    { code: OptionsCalculateEnum.C, description: 'Reemplazar un valor a la tarifa ' },
     //{ code: "E", description: 'Sumar el IVA al PRECIO DE VENTA SIN IVA' },
   ]
 
 
-  readonly optionsPvps = [
+  readonly tempOptionsPvps = [
     { code: 'precioVenta', description: 'Precio Venta' },
     { code: 'precioConIva', description: 'Precio incluido IVA' },
   ]
 
+  tiposArticulo = [
+    { code: 2, description: 'Articulo' },
+    { code: 3, description: 'Articulo Fraccionado' },
+  ]
+
+  optionsPvps = structuredClone(this.tempOptionsPvps);
+
+  isProductModified = (data: any, dataProductModified: any): boolean => {
+    const isSamePvPProduct = (
+      (data.idArticuloPvP === dataProductModified.idArticuloPvP) ||
+      (data.idArticuloFraccionadoPvP === dataProductModified.idArticuloFraccionadoPvP)
+    );
+
+    const isSameProduct = (
+      (data.idArticulo > 0 && data.idArticulo === dataProductModified.idArticulo) ||
+      (data.idArticuloFraccionado > 0 && dataProductModified.idArticuloFraccionado === data.idArticuloFraccionado)
+    );
+
+    const isSamePvP = data.idTarifa === dataProductModified.idTarifa
+
+    return isSamePvPProduct && isSameProduct && isSamePvP
+  }
+
+
+  answerCellColorFormatter() {
+    return (cell: any, formatterParams: any, onRendered: any) => {
+      if (cell.getValue() != null) {
+        let dataRow = cell.getData();
+        let dataAdded = this.productsModified.find(d => dataRow.idTarifa === d.idTarifa && d.idArticuloPvP === dataRow.idArticuloPvP);
+
+        if (dataAdded) {
+          cell.getElement().style.backgroundColor = "#fad";
+
+        }
+        //var data = parseInt(cell.getValue());
+      }
+      return cell.getValue();
+    };
+  }
+
+  editCheck = (cell: any) => {
+    let data = cell.getRow().getData();
+    return this.productsModified.some(d => {
+      return this.isProductModified(data, d);
+    })
+  }
+
+
   readonly columns = [
-    { align: "center", headerSort: false },
-    { title: "Nro.", field: "index", width: "6px", headerSort: false, responsive: 0 },
+    {
+      title: `<input type="checkbox" id="allSelectedRow">`,
+      headerHozAlign: 'center',
+      headerSort: false, // Disable sorting on this column
+      headerClick: (e: any) => {
+        const targetElement = e.target;
+        if (targetElement.tagName === 'INPUT' && targetElement.type === 'checkbox') {
+          if(!targetElement.checked){
+            this.tabulatorComponent.refTabulator.deselectRow();
+            return
+          }
+          const rows = this.tabulatorComponent.refTabulator.getRows();
+
+          for (let i = 0; i < rows.length; i++) {
+            const childRows = rows[i].getTreeChildren();
+            if (childRows.length > 0) {
+              for (let j = 0; j < childRows.length; j++) {
+                const data = childRows[j].getData();
+
+                if(!childRows[j].isSelected()){
+                  if (this.productsModified.some(d => this.isProductModified(data, d))) {
+                    childRows[j].toggleSelect();
+                  }
+
+                }
+
+              }
+            }
+          }
+
+        }
+      }
+    },
+    // {
+    //   formatter: "rowSelection",
+    //   field: 'IsSelected',
+    //   titleFormatter: "rowSelection",
+    //   hozAlign: "center",
+    //   headerSort: false,
+    // },
+    { headerSort: false, },
+    { title: "Nro.", field: "index", width: "6px", headerSort: false, responsive: 0, },
     { title: "Código", field: "codigo", width: "10px", responsive: 0, headerSort: false, },
     { title: "Descripción", field: "descripcion", width: "23px", headerSort: false, },
     { title: "P. Costo", field: "precioCosto", width: "9px", responsive: 2, headerSort: false, },
     { title: "Iva", field: "iva", width: "7px", headerSort: false, },
-    { title: "Tarifa", field: "tarifaDesc", width: 100, headerSort: false, },
-    { title: "P. Venta", field: "precioVenta", width: "9px", headerSort: false, },
-    { title: "P. IVA", field: "precioConIva", width: "8px", headerSort: false, },
-    { title: "% Utilidad", field: "porcentajeUtilidad", width: 100, headerSort: false, },
-    { title: "Utilidad", field: "utilidad", width: 100, headerSort: false, },
+    { title: "Tarifa", field: "tarifaDesc", width: 100, headerSort: false, formatter: this.answerCellColorFormatter(), },
+    {
+      title: "P. Venta",
+      field: "precioVenta",
+      width: "9px",
+      headerSort: false,
+      editor: "input", editable: this.editCheck,
+      formatter: this.answerCellColorFormatter()
+    },
+    {
+      title: "P. IVA",
+      field: "precioConIva",
+      width: "8px",
+      headerSort: false,
+      editor: "input", editable: this.editCheck,
+      formatter: this.answerCellColorFormatter()
+    },
+    {
+      title: "% Utilidad",
+      field: "porcentajeUtilidad",
+      width: 100,
+      headerSort: false,
+      editor: "input", editable: this.editCheck,
+      formatter: this.answerCellColorFormatter()
+    },
+    {
+      title: "Utilidad",
+      field: "utilidad",
+      width: 100,
+
+
+      headerSort: false,
+      formatter: this.answerCellColorFormatter()
+    },
   ]
 
   checkedSubCategorias = new FormControl([]);
@@ -107,6 +224,7 @@ export class LotPricePageComponent {
   }
 
   mainForm = {
+    tipo: 2,
     opcion: 3,
     idArticulo: 0,
     rucProveedor: null,
@@ -150,41 +268,140 @@ export class LotPricePageComponent {
 
 
   getProducts() {
-    showLoader();
-    let subCategoriasChecked = Array.isArray(this.checkedSubCategorias.value) && this.checkedSubCategorias.value.join(',');
-    let dataSearch = {
-      opcion: this.mainForm.opcion,
-      rucProveedor: isValidField(this.mainForm.rucProveedor),
-      nroDocumento: isValidField(this.mainForm.nroDocumento),
-      subFamiliasChecked: this.mainForm.opcion === 3 && subCategoriasChecked || null,
-      //  checkedSubFamilias: this.
-      // idSubFamilia: $scope.mainForm.idSubFamilia
+    try {
+      showLoader();
+      let subCategoriasChecked = Array.isArray(this.checkedSubCategorias.value) && this.checkedSubCategorias.value.join(',');
+      let dataSearch = {
+        tipo: this.mainForm.tipo,
+        opcion: this.mainForm.opcion,
+        idArticulo: this.mainForm.opcion === 1 ? isValidField(this.mainForm.idArticulo) : null,
+        rucProveedor: this.mainForm.opcion === 4 ? isValidField(this.mainForm.rucProveedor) : null,
+        nroDocumento: this.mainForm.opcion === 5 ? isValidField(this.mainForm.nroDocumento) : null,
+        subFamiliasChecked: this.mainForm.opcion === 3 && subCategoriasChecked || null,
+        //  checkedSubFamilias: this.
+        // idSubFamilia: $scope.mainForm.idSubFamilia
+      }
+      this.cloneNestedProducts = [];
+      this.nestedProducts = [];
+      this.productsModified = [];
+
+      this.lotPriceSvc.getAll(dataSearch).subscribe({
+        next: (response) => {
+          hideLoader();
+          let results = response;
+          this.nestedProducts = structuredClone(results);
+          this.cloneNestedProducts = structuredClone(results);
+
+        }, error(err) {
+          hideLoader();
+          console.log(err)
+        },
+      })
+    } catch (error) {
+      hideLoader();
+      console.log(error)
     }
-    this.cloneNestedProducts = [];
-    this.nestedProducts = [];
-    this.productsModified = [];
-
-    this.lotPriceSvc.getAll(dataSearch).subscribe({
-      next: (response) => {
-        hideLoader();
-        let results = response;
-        this.nestedProducts = structuredClone(results);
-        this.cloneNestedProducts = structuredClone(results);
-
-
-        console.log(this.nestedProducts)
-      }, error(err) {
-        hideLoader();
-        console.log(err)
-      },
-    })
   }
 
   ngOnInit() {
     this.getDataFilter();
-    //   this.getProducts();
   }
 
+  cellEdited(cell: any) {
+    let row = cell.getRow();
+    let column = cell.getColumn().getField();
+    let oldValue = cell.getOldValue();
+    let value = parseFloat(cell.getValue())
+
+    let parentData = row.getTreeParent().getData();
+    let precioCosto = parentData.precioCosto;
+    let data = cell.getData();
+    let precioVenta = parseFloat(data.precioVenta);
+    let precioConIva = parseFloat(data.precioConIva);
+    let porcentajeUtilidad = parseFloat(data.porcentajeUtilidad);
+
+    let dataTarifaImpuesto = this.taxRates.find(tr => tr.idTarifaImpuesto === parentData.idTipoIva);
+    let porcentajeImpuesto = dataTarifaImpuesto?.porcentaje || 0;
+
+    if (!dataTarifaImpuesto) {
+      cell.setValue(oldValue);
+      return
+    }
+
+    if (isNaN(cell.getValue()) || cell.getValue() === "") {
+      cell.setValue(oldValue);
+      return
+    }
+
+    if (column === "precioVenta") {
+      if (value >= precioCosto) {
+        precioConIva = pricingCalculateUtil.calculatePriceWithVat(value, porcentajeImpuesto);
+        porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, precioCosto);
+      } else {
+        precioVenta = oldValue;
+      }
+    }
+
+    if (column === "precioConIva") {
+      let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(value, porcentajeImpuesto);
+      if (precioVentaValidar >= precioCosto) {
+        precioVenta = precioVentaValidar;
+        porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, precioCosto);
+      } else {
+        precioConIva = oldValue;
+      }
+    }
+
+    if (column === "porcentajeUtilidad") {
+      if (value <= 100) {
+        let precioVentaValidar = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(precioCosto, value);
+        if (precioVentaValidar >= precioCosto) {
+          precioVenta = precioVentaValidar;
+          precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
+        } else {
+          porcentajeUtilidad = oldValue;
+        }
+      } else {
+        porcentajeUtilidad = oldValue;
+      }
+    }
+
+    let utilidad = pricingCalculateUtil.getValueUtility(precioVenta, precioCosto)
+
+    precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
+    precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
+    porcentajeUtilidad = roundNumber(porcentajeUtilidad, 5);
+    utilidad = roundNumber(utilidad, 5);
+
+    let obj = {
+      precioVenta,
+      precioConIva,
+      porcentajeUtilidad,
+      utilidad
+    }
+    row.update({
+      ...row,
+      ...obj
+    })
+    let dataProductModified = this.productsModified.find(pm => this.isProductModified(data, pm));
+    if (dataProductModified) {
+      dataProductModified = {
+        ...dataProductModified,
+        ...obj
+      }
+    }
+
+  }
+
+  cellClick(cell: any) {
+    let data = cell.getData();
+    let isRowAdded = this.productsModified.some(d => {
+      return this.isProductModified(data, d);
+    })
+    if (isRowAdded) {
+      cell.toggleSelect()
+    }
+  }
 
   addTarifaDefault(numero: number) {
     // Utilizamos el método push para agregar el número al array
@@ -203,7 +420,6 @@ export class LotPricePageComponent {
   }
 
   onSupplierSelected<T extends { data: any }>({ data }: T) {
-    console.log(data)
     this.mainForm.rucProveedor = data.identificacionComprador;
   }
 
@@ -258,11 +474,6 @@ export class LotPricePageComponent {
     this.getProducts();
   }
 
-  //Opciones calculo tarifas
-  valueChangeTarifa(event: any) {
-
-  }
-
   calculate() {
     try {
 
@@ -291,7 +502,6 @@ export class LotPricePageComponent {
         })
         return
       }
-      console.log(tarifasSelected)
 
       if (tarifasSelected && Array.isArray(tarifasSelected) && tarifasSelected.length === 0) {
         this.tS.toastr({
@@ -316,7 +526,7 @@ export class LotPricePageComponent {
         return
       }
 
-      if (this.mainForm.optionToCalculate === OptionsCalculateEnum.B && this.mainForm.valueToCalculate > 100) {
+      if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D && this.mainForm.valueToCalculate > 100) {
         this.tS.toastr({
           type: 'warning',
           message: 'Cuando la opción a calcular es: "Calcular un porcentaje que se aplique a la tarifa", el valor no puede ser mayor a 100.'
@@ -429,19 +639,28 @@ export class LotPricePageComponent {
           }
           //===========================================END========================================
 
-          //Start Desglozar el IVA al PRECIO VENTA INC IVA por tarifas
+          //Start Sumar un % de rentabilidad al PVP
           if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D) {
-            if (this.optionPvp === "precioVenta") {
-              precioConIva = pricingCalculateUtil.calculatePriceWithVat(t.precioVenta, this.mainForm.valueToCalculate);
-              porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, t.precioVenta);
-              setDataToProductsModified = true;
-            }
-
             if (this.optionPvp === "precioConIva") {
-              let precioVentaCalculado = pricingCalculateUtil.calculatePriceSale(precioConIva, this.mainForm.valueToCalculate);
-              precioVenta = precioVentaCalculado;
-              porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, precioConIva);
-              setDataToProductsModified = true;
+              let valorImpuesto = pricingCalculateUtil.calculateTaxValue(t.precioVenta, this.mainForm.valueToCalculate);
+              let precioConImpuestos = t.precioVenta + valorImpuesto;
+              let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
+
+              if (precioVentaValidar >= item.precioCosto) {
+                precioVenta = precioVentaValidar;
+                precioConIva = precioConImpuestos;
+                porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                setDataToProductsModified = true;
+              }
+            }
+            if (this.optionPvp === "precioVenta") {
+              let precioVentaValidar = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(item.precioCosto, this.mainForm.valueToCalculate);
+              if (precioVentaValidar >= item.precioCosto) {
+                precioVenta = precioVentaValidar;
+                precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
+                porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                setDataToProductsModified = true;
+              }
             }
           }
 
@@ -463,9 +682,7 @@ export class LotPricePageComponent {
 
 
     this.nestedProducts = structuredClone(nestedProducts);
-    console.log(nestedProducts)
-    //Update list in tabulator
-    this.tabulatorComponent.updateData();
+
     this.tS.toastr({
       type: 'info',
       message: `${this.productsModified.length} Tarifas modificados!`
@@ -484,14 +701,33 @@ export class LotPricePageComponent {
     this.tabulatorComponent.updateData();
   }
 
+  getSelectedData(){
+    const selectedData  = this.tabulatorComponent.refTabulator.getSelectedData();
+    return this.productsModified.filter(data=>{
+      return selectedData.some(rowSelect => {
+        return this.isProductModified(data, rowSelect);
+      })
+    })
+  }
   askToSave() {
-    if (this.productsModified.length === 0) {
+
+    const selectedData = this.getSelectedData();
+    if(selectedData.length===0){
       this.tS.toastr({
         type: 'warning',
-        message: 'No ha modificado ninguna tarifa del artículo!'
+        message: 'Seleccione al menos un artículo!'
       })
       return
     }
+
+
+    // if (this.productsModified.length === 0) {
+    //   this.tS.toastr({
+    //     type: 'warning',
+    //     message: 'No ha modificado ninguna tarifa del artículo!'
+    //   })
+    //   return
+    // }
 
     Swal.fire({
       title: "Actualizar precios masivamente",
@@ -504,11 +740,13 @@ export class LotPricePageComponent {
       cancelButtonText: 'No!'
     }).then((result) => {
       if (result.isConfirmed) {
-        let results = this.productsModified.map(item => {
+        let results = selectedData.map(item => {
 
           return {
             idTipoIva: item.idTipoIva,
-            idArticuloPvP: item.idArticuloPvp,
+            idArticuloPvP: item.idArticuloPvP,
+            idArticuloFraccionadoPvP: item.idArticuloFraccionadoPvP,
+            idArticuloFraccionado: item.idArticuloFraccionado,
             idArticulo: item.idArticulo,
             idTarifa: item.idTarifa,
             precioVenta: item.precioVenta,
@@ -518,7 +756,7 @@ export class LotPricePageComponent {
         })
 
         let data = {
-          tipo: 2,
+          tipo: this.mainForm.tipo,
           articles: results
         }
         showLoader();
@@ -547,7 +785,7 @@ export class LotPricePageComponent {
           error(err) {
             Swal.fire({
               icon: 'error',
-              text: err
+              text: typeof err == 'object' ? err.error : err
             })
             hideLoader();
           },

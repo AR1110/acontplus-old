@@ -12,6 +12,7 @@ import { ProductSearch } from '@modules/inventory/models/product.model';
 type ProductSearchProps = {
   isSearchSimple?: boolean;
   isSearchAdvanced?: boolean;
+  nameProduct?: string
 };
 
 /**
@@ -27,8 +28,10 @@ type ProductSearchProps = {
 export class ProductSearchComponent {
   @Input() props: ProductSearchProps = {
     isSearchSimple: false,
-    isSearchAdvanced: false
+    isSearchAdvanced: false,
+    nameProduct: ''
   }
+  @Input() textSearch = ''
 
   @Output() onProductSelected = new EventEmitter<{ data: any }>();
   @Output() emptyInput = new EventEmitter();
@@ -329,7 +332,7 @@ export class ProductSearchComponent {
 
   private _filter(value: string) {
     const filterValue = this._normalizeValue(value);
-    return this.productSvc.search({ textSearch: filterValue }).pipe(
+    return this.productSvc.search({ textSearch: value }).pipe(
       map(response => {
         console.log(response)
         return response;

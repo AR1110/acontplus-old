@@ -11,6 +11,11 @@ export const routes: Routes = [
         loadChildren: () => import('@modules/purchase/purchase.routes').then(r => r.routes)
       },
       {
+        path: 'config',
+        title: 'App - Config',
+        loadChildren: () => import('@modules/config/config.routes').then(r => r.routes)
+      },
+      {
         path: 'technical-support',
         title: 'App - Soporte Técnico',
         loadChildren: () => import('@modules/technical-support/technical-support.routes').then(r => r.routes)

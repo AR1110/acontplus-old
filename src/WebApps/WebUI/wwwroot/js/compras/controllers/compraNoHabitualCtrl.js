@@ -566,7 +566,7 @@
                     "comprobante" in params &&
                     params.comprobante.idDocumentoIngreso > 0
                 ) {
-                    const { comprobante, proveedor, detalles, infoAdicionalDocumento, cuotas } = params;
+                    const { comprobante, proveedor, detalles, infoAdicionalDocumento, datosAdicionalesArticulo, cuotas } = params;
 
                     $scope.data = comprobante;
                     $scope.dataClone.codEstab = $scope.data.codEstab;
@@ -578,6 +578,7 @@
                     $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
                     $scope.gridOptions.data = calculateTotalItems(detalles);
                     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                    $scope.datosAdicionalesArticulo = infoAdicionalDocumento;
 
                     $scope.cuotas = cuotas;
 

@@ -11,7 +11,7 @@ GO
 -- Description:	GET para traer la configuracion del sistema
 -- =============================================
 
-CREATE PROCEDURE Config.Sistema_Update @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE PROCEDURE Config.Sistema_Update @userRoleId INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -30,14 +30,14 @@ BEGIN
 
 		IF ISJSON(@jsonConfig) = 0	
 			BEGIN
-				SELECT '0'code,'Error en el json' as 'message'
+                  SELECT [Common].[ufnSpResponse]('0','Error en el json', DEFAULT) 
 				RETURN 
 			END 
 
 		BEGIN TRAN 
 			UPDATE Config.Sistema SET jsonConfig = @jsonConfig WHERE idSistema = @idSistema 
 		COMMIT TRAN 
-		SELECT '1'code,'Registrado Exitosamente' as 'message'
+        SELECT [Common].[ufnSpResponse]('1','Registrado Exitosamente', DEFAULT) 
 		RETURN 
 
 	END TRY 
@@ -48,7 +48,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-		SELECT '0'code,'Info: Error en el procedimiento ' as 'message'
+         SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento', DEFAULT)  
 	END CATCH
 
 END

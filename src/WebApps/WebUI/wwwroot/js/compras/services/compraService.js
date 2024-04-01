@@ -1362,11 +1362,23 @@
                             }
                         })
 
+                        infoAdicional = infoAdicional || []
+                        const datosAdicionalesArticulo = infoAdicional.map(item => {
+                            return {
+                                idArticulo: item.idArticulo,
+                                idEtiqueta: item.idEtiqueta,
+                                idInfoAdicional: item.idInfoAdicional,
+                                adicionales: JSON.parse(item.jsonAdicional),
+                                estado: item.estado,
+                            }
+                        })
+
+
                         return {
                             comprobante,
                             proveedor,
                             detalles,
-                            infoAdicionalDocumento: infoAdicional,
+                            infoAdicionalDocumento: datosAdicionalesArticulo,
                             cuotas
                         }
 
@@ -1451,7 +1463,7 @@
                     idArticulo: item.idArticulo,
                     idEtiqueta: item.idEtiqueta,
                     idInfoAdicional: item.idInfoAdicional || 0,
-                    jsonAdicional: JSON.stringify(item.adicionales)
+                    jsonAdicional: item.adicionales
                 }
             });
         }

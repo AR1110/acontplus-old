@@ -19,13 +19,14 @@ BEGIN
 	DECLARE @uniqueId VARCHAR(300)
 
 	DECLARE @idTipoDocumento INT 
+    DECLARE @idEntidad INT 
 	
-	SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+	SELECT TOP 1 @uniqueId = uniqueId,  @idEntidad = idEntidad   FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
 
 	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-	SELECT 
-		d.idAprob_Document
+	SELECT  
+	   d.idAprob_Document
 	   ,d.uniqueId
 	   ,idTiempoCredito = ISNULL(cl.idTiempoCredito, 0)
 	   ,d.idPuntoEmision
@@ -136,6 +137,10 @@ BEGIN
 	WHERE h.codDoc='APR' AND h.idDocumento = @id
 
     SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
+    SELECT  
+           CAST(idFormaPagoSri   AS INT) as idFormaPagoSri
+	FROM Config.v_Sistema_Ventas gs
+    WHERE gs.idEntidad = @idEntidad
 
 END
 

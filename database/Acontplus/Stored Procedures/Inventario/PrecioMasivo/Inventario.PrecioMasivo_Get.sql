@@ -74,7 +74,7 @@ BEGIN
             RETURN 
 		END
 
-    --> Get
+    --> Get Articulos 
 	IF @tipo = 2
 		BEGIN
             
@@ -180,5 +180,109 @@ BEGIN
             RETURN 
 		END
 
-END
+    IF @tipo = 3
+	    BEGIN
+            
+            SET @tableNames = 'articulos'
+
+            SELECT @idTarifa     = idTarifa
+	                ,@idArticulo   = idArticulo
+	                ,@rucProveedor = rucProveedor
+	                ,@idFamilia    = idFamilia
+	                ,@idSubFamilia = idSubFamilia
+	                ,@nroDocumento = nroDocumento
+                    ,@subFamiliasChecked = subFamiliasChecked
+	        FROM OPENJSON(@json) WITH 
+            (
+		        idTarifa     INT 
+		        ,idArticulo   INT
+		        ,rucProveedor VARCHAR(25)
+		        ,idFamilia    INT
+		        ,idSubFamilia INT 
+		        ,nroDocumento VARCHAR(25) 
+                ,subFamiliasChecked VARCHAR(250) 
+	        )
+
+            SET @params = '@idEntidad    INT
+				            ,@idArticulo   INT
+				            ,@idTarifa     INT
+				            ,@rucProveedor VARCHAR(25)
+				            ,@idFamilia    INT
+				            ,@idSubFamilia INT
+				            ,@nroDocumento VARCHAR(25)
+                            ,@subFamiliasChecked VARCHAR(250)'
+
+
+	        SET @sql = 'SELECT TOP 500
+                                af.idArticuloFraccionado
+                                ,af.idTipoIva
+                                ,af.idArticulo
+				                ,af.codigo  
+				                ,descripcion = af.articulo
+                                ,medida = af.medidaFraccionada
+				                ,af.stock
+				                ,precioCosto = af.precioCostoFraccionado
+				                ,af.estado
+				                ,af.iva
+				                ,ISNULL((SELECT      afp.idArticuloFraccionadoPvP 
+                                                    ,afp.idArticuloFraccionado
+                                                    ,afp.idTarifa
+                                                    ,afp.precioVenta
+                                                    ,afp.precioConIva
+                                                    ,afp.porcentajeUtilidad
+                                                    ,tarifa = t.descripcion
+                                        FROM dbo.ArticuloFraccionadoPvp afp
+                                        INNER JOIN dbo.Tarifa t WITH(NOLOCK) ON t.idTarifa = afp.idTarifa
+									    WHERE afp.idArticuloFraccionado = af.idArticuloFraccionado
+                                            AND afp.precioVenta > 0 
+                                        ORDER BY afp.idArticuloFraccionadoPvP DESC
+                                        FOR JSON PATH
+                                        ), ''[]'') as tarifas
+				        FROM v_articulo_fraccionado  af
+				        WHERE af.estado = 1  AND af.idEntidad = @idEntidad '
+
+		    IF @idArticulo > 0
+			    BEGIN 
+				    SET @sql = @sql + 'AND af.idArticulo = @idArticulo '
+			    END
+
+		    IF @idFamilia > 0
+			    BEGIN 
+				    SET @sql = @sql + 'AND af.idFamilia = @idFamilia '
+			    END
+
+		    --IF @idSubFamilia > 0
+		    --	BEGIN
+		    --		SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
+		    --	END
+             
+            IF @subFamiliasChecked IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + 'AND af.idSubFamilia IN (SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+                END 
+
+		    IF @rucProveedor IS NOT NULL
+			    BEGIN
+				    SET @sql = @sql + 'AND af.idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE rucClienteProveedor = @rucProveedor) '
+			    END
+
+		    IF @nroDocumento IS NOT NULL
+			    BEGIN
+				    SET @sql = @sql + 'AND af.idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
+			    END
+
+		    SET @sql = @sql + 'ORDER BY af.idArticuloFraccionado DESC  '
+
+		    EXEC sp_executesql @sql,@params
+							        ,@idEntidad    = @idEntidad
+							        ,@idTarifa     = @idTarifa
+							        ,@idArticulo   = @idArticulo
+							        ,@idFamilia    = @idFamilia
+							        ,@idSubFamilia = @idSubFamilia
+							        ,@rucProveedor = @rucProveedor
+							        ,@nroDocumento = @nroDocumento
+                                    ,@subFamiliasChecked = @subFamiliasChecked
+            RETURN 
+	    END
+    END
 GO

@@ -1070,7 +1070,7 @@
                 //Cliente Predeterminado 
                 if (clienteDefault.idCliente > 0) {
                     $scope.cliente = structuredClone(clienteDefault);
-                    if($scope.cliente.idTiempoCredito>0){
+                    if ($scope.cliente.idTiempoCredito > 0) {
                         $scope.data.idTiempoCredito = $scope.cliente.idTiempoCredito;
                     }
                 }
@@ -2262,7 +2262,15 @@
         function setDataFormaPagoSri(tipoAction) {
             let dataFormaPago = {};
             if (tipoAction === FORM_PAGO_SRI_ACCION.DEFAULT) {
-                dataFormaPago = $scope.formasPago.find(item => item.codigo === '01') || {};
+
+                dataFormaPago = $scope.formasPago.find(item => {
+                    if ($scope.config.idFormaPagoSri > 0) {
+                        return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
+                    } else {
+                        return (item.codigo === '01');
+                    }
+                }) || {};
+
             }
             if (tipoAction === FORM_PAGO_SRI_ACCION.FORMA_PAGO_SRI_CLIENTE) {
                 dataFormaPago = findFormaPagoById($scope.cliente.idFormaPagoSri);
@@ -2339,9 +2347,9 @@
             }
 
 
-            if (!($scope.data.idUsuario>0)){
+            if (!($scope.data.idUsuario > 0)) {
                 tS.toastr('warning', 'Seleccione el Vendedor');
-                return 
+                return
             }
 
             //===================End customer validate ============================

@@ -4,4 +4,6 @@ export interface SubEntidadFinanciera {
   descripcion: string
   codigo: string
 }
- 
+
+
+export interface SubEntidadFinancieraRead extends SubEntidadFinanciera {}
