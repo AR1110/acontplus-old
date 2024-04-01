@@ -6,11 +6,14 @@
   <div ngbAccordion [closeOthers]="true">
     @for (item of userCustomerRoles; track item) {
     <div ngbAccordionItem  (shown)="showAcordeon(item)">
-      <h2 ngbAccordionHeader>
-        <button ngbAccordionButton>
-          <b>{{item.ruc}}</b> - {{ item.razonSocial }}
+        <button ngbAccordionButton class="d-flex flex-row">
+          <div class="p-2 bd-highlight">
+            <b>{{item.ruc}}</b> - {{ item.razonSocial }}
+          </div>
+          <div class="p-2 bd-highlight">
+            Rol: <b>{{item.codRol}}</b>
+          </div>
         </button>
-      </h2>
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
