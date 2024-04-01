@@ -237,8 +237,7 @@ SELECT t.idTransaccion
 					 )
 				END
 		)
-,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN m.descripcion END, '') medidaEntrada
-,ISNULL(CASE WHEN tt.codigo = 'S' THEN m.descripcion END, '') medidaSalida
+,m.descripcion as  medida
 ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN t.total END, 0) totalEntrada
 ,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.total END, 0) totalSalida 
 --,IIF(td.codigo = 'CI', t.idDocumento, dbo.AFTMovimientoKardex(t.fechaRegistro, t.idArticulo, t.idBodega)) particion
