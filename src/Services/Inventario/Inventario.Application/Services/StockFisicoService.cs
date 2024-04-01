@@ -38,7 +38,7 @@ namespace Inventario.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Inventario.StockFisico_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Inventario.StockFisico_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -50,7 +50,7 @@ namespace Inventario.Application.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Inventario.StockFisico_Update", request.Data);
+            return await _repository.SPExecuteDeprecatedAsync("Inventario.StockFisico_Update", request.Data);
         }
         public async Task<ApiResponse> DeleteAsync(int id)
         {

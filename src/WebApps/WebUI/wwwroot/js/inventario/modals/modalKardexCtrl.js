@@ -240,13 +240,6 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                     tooltip: true
                 },
                 {
-                    title: "Bodega",
-                    field: "bodega",
-                    hozAlign: "center",
-                    headerSort: false,
-                    width: 150
-                },
-                {
                     title: "Usuario",
                     field: "usuario",
                     hozAlign: "center",

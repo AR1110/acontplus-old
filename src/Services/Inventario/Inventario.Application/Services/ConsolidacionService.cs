@@ -45,17 +45,17 @@ namespace Inventario.Application.Services
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
         }
 
          public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
         }
 
          public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Delete", parameters);
+            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
         }
     }
 }

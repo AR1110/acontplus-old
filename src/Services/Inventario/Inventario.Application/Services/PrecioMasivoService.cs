@@ -35,7 +35,7 @@ namespace Inventario.Application.Services
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Inventario.PrecioMasivo_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Inventario.PrecioMasivo_Update", parameters);
         }
 
 

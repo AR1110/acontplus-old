@@ -25,7 +25,7 @@ namespace Compras.API.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Compra.Orden_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Compra.Orden_Insert", parameters);
 
         }
 
@@ -43,13 +43,13 @@ namespace Compras.API.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Compra.Orden_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Compra.Orden_Update", parameters);
 
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Compra.Orden_Delete", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Compra.Orden_Delete", parameters);
 
         }
     }

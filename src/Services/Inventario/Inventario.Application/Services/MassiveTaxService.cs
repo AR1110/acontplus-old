@@ -33,7 +33,7 @@ namespace Inventario.Application.Services
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters, false);
+            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters, false);
         }
 
     }

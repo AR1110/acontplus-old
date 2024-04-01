@@ -33,11 +33,11 @@ namespace Mechanical.API.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Mechanical.Inspection_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Inspection_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Mechanical.Inspection_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Inspection_Update", parameters);
         }
     }
 }

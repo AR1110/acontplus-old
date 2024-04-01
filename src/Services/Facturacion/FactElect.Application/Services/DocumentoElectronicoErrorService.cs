@@ -14,7 +14,7 @@ namespace FactElect.Application.Services
 
         public async Task<string> GetAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("FactElect.Doc_Elect_Error_Get_Id", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("FactElect.Doc_Elect_Error_Get_Id", parameters);
         }
     }
 }

@@ -19,15 +19,15 @@ namespace Restaurant.Application.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.ConsumoAnuladoTpv_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.ConsumoAnuladoTpv_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Update", parameters);
         }
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.ConsumoAnuladoTpv_Delete", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConsumoAnuladoTpv_Delete", parameters);
         }
     }
 }

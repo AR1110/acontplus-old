@@ -32,7 +32,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteAsync("Restaurant.Menu_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Menu_Update", parameters);
         }
     }
 }

@@ -19,15 +19,15 @@ namespace Restaurant.Application.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.ConfigTpv_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConfigTpv_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.ConfigTpv_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConfigTpv_Update", parameters);
         }
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.ConfigTpv_Delete", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConfigTpv_Delete", parameters);
         }
         public async Task<string> GetPrinterAsync(Dictionary<string, object> parameters)
         {
@@ -37,7 +37,7 @@ namespace Restaurant.Application.Services
         }
         public async Task<string> AddPrinterAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.ConfigPrinter_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ConfigPrinter_Insert", parameters);
         }
     }
 }

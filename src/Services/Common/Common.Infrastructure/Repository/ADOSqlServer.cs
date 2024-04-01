@@ -46,7 +46,7 @@ namespace Common.Infrastructure.Repository
                 }
                 finally
                 {
-                    if (!wasOpen) cmd.Connection.Close();
+                    if (!wasOpen) await cmd.Connection.CloseAsync();
                 }
             }
             return response;
@@ -108,7 +108,7 @@ namespace Common.Infrastructure.Repository
                 }
                 finally
                 {
-                    if (!wasOpen) cmd.Connection.Close();
+                    if (!wasOpen) await cmd.Connection.CloseAsync();
                 }
                 return mappedObject;
             }
@@ -176,7 +176,7 @@ namespace Common.Infrastructure.Repository
                     }
                     finally
                     {
-                        if (!wasOpen) cmd.Connection.Close();
+                        if (!wasOpen) await cmd.Connection.CloseAsync();
                     }
                 }
             }
@@ -215,7 +215,7 @@ namespace Common.Infrastructure.Repository
                 }
                 finally
                 {
-                    if (!wasOpen) cmd.Connection.Close();
+                    if (!wasOpen) await cmd.Connection.CloseAsync();
                 }
 
             }
@@ -246,7 +246,7 @@ namespace Common.Infrastructure.Repository
                 }
                 finally
                 {
-                    if (!wasOpen) cmd.Connection.Close();
+                    if (!wasOpen) await cmd.Connection.CloseAsync();
                 }
             }
         }
@@ -280,7 +280,7 @@ namespace Common.Infrastructure.Repository
                 }
                 finally
                 {
-                    if (!wasOpen) cmd.Connection.Close();
+                    if (!wasOpen) await cmd.Connection.CloseAsync();
                 }
             }
             return response;

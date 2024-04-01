@@ -39,7 +39,7 @@ namespace Restaurant.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Restaurant.ProductionArea_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ProductionArea_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -49,7 +49,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Restaurant.ProductionArea_Update", request.Data);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ProductionArea_Update", request.Data);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)
@@ -58,7 +58,7 @@ namespace Restaurant.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"id", id}
             };
-            return await _repository.SPExecuteAsync("Restaurant.ProductionArea_Update_Cancel", request.Data);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.ProductionArea_Update_Cancel", request.Data);
         }
     }
 }
