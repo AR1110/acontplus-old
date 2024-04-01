@@ -326,32 +326,28 @@
 
 
 
-    app.factory('kardexService', function ($injector) {
+    app.factory('TransaccionService', function ($injector) {
         let mS = $injector.get('mainService');
-        let URL = 'Inventario/Kardex/'
+        let fS = $injector.get('formulario');
+        let URL = 'Inventario/Transaccion/'
         let service = {};
 
 
-
         service.get = (params) => {
-            return mS.getData('get', URL + '?json=' + JSON.stringify(params), null, true).then(response => {
-                if (response.code === "0") {
-                    return response;
+            let json = JSON.stringify({ ...params, tipo: 2 })
+            return mS.getData('get', URL + '?json=' + json, null, true).then(response => {
+                return {
+                    dataArticulo: response.dataArticulo[0],
+                    kardex: response.kardex
                 }
-                return JSON.parse(response.payload)
             })
         }
 
         service.getDataFilters = () => {
-            return mS.getData('get', URL + 'Filters', null, true).then(response => {
-                if (response.code === "0") {
-                    throw response;
-                }
-                if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
-                    return {
-                        estadoMovimientos: mainData[0]
-                    }
+            return mS.getData('get', URL + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+                return {
+                    estabs: fS.groupEstabBodega(response.bodegas),
+                    tiposTransaccion: response.tipoTransaccion
                 }
             })
 
@@ -603,36 +599,36 @@
             })
         }
 
-        function getInfoById(id){
+        function getInfoById(id) {
             const json = JSON.stringify({
                 id,
                 tipo: 3
             })
             return mS.getData('get', `${url}?json=${json}`, null, true).then(response => {
-                let {comprobante, detalles} = response;
+                let { comprobante, detalles } = response;
                 let tempComprobante = comprobante[0];
-             
-                comprobante = {       
+
+                comprobante = {
                     establecimiento: tempComprobante.nombreComercial,
-                    ptoEmi: tempComprobante.ptoEmi,             
+                    ptoEmi: tempComprobante.ptoEmi,
                     idConsolidacionInventario: tempComprobante.idConsolidacionInventario,
                     fechaEmision: fS.formatDate(tempComprobante.fechaEmision),
                     observacion: tempComprobante.observacion,
-                    total: tempComprobante.total, 
+                    total: tempComprobante.total,
                 }
-                detalles = detalles.map((item, index)=>{
+                detalles = detalles.map((item, index) => {
                     return {
-                        index: index+1,
-                        idConsolidacionInventarioDetalle:item.idConsolidacionInventarioDetalle,
-                        codigo:item.codigo,
-                        descripcion:item.descripcion,
-                        cantidad:item.cantidad,
-                        medida:item.medida,
-                        bodega:item.bodega,
+                        index: index + 1,
+                        idConsolidacionInventarioDetalle: item.idConsolidacionInventarioDetalle,
+                        codigo: item.codigo,
+                        descripcion: item.descripcion,
+                        cantidad: item.cantidad,
+                        medida: item.medida,
+                        bodega: item.bodega,
                         stock: item.stock,
-                        precioActual:item.precioActual,
-                        precioCosto:item.precioCosto,
-                        total:item.total,
+                        precioActual: item.precioActual,
+                        precioCosto: item.precioCosto,
+                        total: item.total,
                     }
                 })
                 return {

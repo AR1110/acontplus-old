@@ -14,7 +14,7 @@ modalKardexCtrl.$inject = [
 function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
     let commonSvc = $injector.get('commonService');
-    let kardexSvc = $injector.get('kardexService');
+    let transaccionSvc = $injector.get('TransaccionService');
     let articuloSvc = $injector.get('articuloService');
     let modalSvc = $injector.get('modalService');
     let nombreModalCompra = $injector.get('nombreModalCompra');
@@ -30,7 +30,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
     $scope.dataSearch = {
         checkBoxFecha: true,
-        checkBoxBodega: false,
+        checkBoxBodega: true,
         consolidacion: 0,
         checkBoxDefault: false,
         estado: false
@@ -42,7 +42,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
     $scope.estadoMovimientos = [];
     $scope.kardexs = [];
-
+    $scope.dataArticulo = {};
     $scope.data = {};
 
     //Rango Fechas 
@@ -82,10 +82,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                 'apply.daterangepicker': function () {
                     $scope.dataSearch.fechaInicio = fS.formatDateMoment($scope.dateRangePicker.date.startDate);
                     $scope.dataSearch.fechaFin = fS.formatDateMoment($scope.dateRangePicker.date.endDate);
-                    // $scope.dataSearch.fechaInicio = for $scope.dateRangePicker.date.startDate
-                    // $scope.dataSearch.fechaFin = $scope.dateRangePicker.date.endDate;
-                    // $scope.getComprobantes()
-                    //console.log('applied')
+
                 }
             }
         }
@@ -94,62 +91,35 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
     $scope.dataSearch.fechaInicio = startOfMonth
     $scope.dataSearch.fechaFin = endOfMonth;
 
+    load()
+    function load() {
+        transaccionSvc.getDataFilters().then(response => {
+            $scope.establecimientos = response.estabs;
+            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            $scope.dataSearch.codEstab = dataEstab.codEstab;
+            $scope.bodegas = dataEstab.bodegas;
+            let dataBodega = $scope.bodegas.find(estab => (estab.defaultBodega));
+            $scope.dataSearch.byBodega = dataBodega.idBodega
+            $scope.estadoMovimientos = response.tiposTransaccion;
+            $scope.dataSearch.byArticulo = $scope.articulo.idArticulo;
+            const params = Object.assign($scope.dataSearch, {
+                checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                checkBoxMovement: $scope.dataSearch.movement ? true : false,
+                fechaInicio: fS.formatDateMoment(startOfMonth),
+                fechaFin: fS.formatDateMoment(endOfMonth),
+            })
 
-
-    onInit();
-    async function onInit() {
-
-        $scope.dataSearch.byArticulo = $scope.articulo.idArticulo;
-
-        kardexSvc.getDataFilters().then(response => {
-            $scope.estadoMovimientos = response.estadoMovimientos;
-        }).catch(error => {
-            console.log(error)
-        })
-        showLoader();
-        await commonSvc.getEstabAsign().then(response => {
-            $scope.establecimientos = response;
-
-            if ($scope.establecimientos.length > 0) {
-                let dataEstab = $scope.establecimientos.find(estab => (estab.predeterminado
-                ));
-                $scope.dataSearch.codEstab = dataEstab.codEstab;
-                commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
-                    $scope.bodegas = response[1];
-                    if ($scope.bodegas.length > 0) {
-                        let dataBodega = $scope.bodegas[0];
-                        $scope.dataSearch.byBodega = dataBodega.idBodega
-                    }
-                })
-            } else {
-                tS.toastr('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
-            }
-        }).finally(() => hideLoader())
-
-        //getKardex();
-        const params = Object.assign($scope.dataSearch, {
-            checkBoxFecha: $scope.dataSearch.checkBoxFecha,
-            checkBoxMovement: $scope.dataSearch.movement ? true : false,
-            fechaInicio: fS.formatDateMoment(startOfMonth),
-            fechaFin: fS.formatDateMoment(endOfMonth),
-        })
-
-        getDataKardex(params)
-
+            getDataKardex(params)
+        });
     }
-
-
 
     function getKardex() {
         try {
-            // const params = Object.assign($scope.dataSearch, {
-            //     checkBoxMovement: $scope.dataSearch.movement? true: false
-            // }) 
 
             const params = Object.assign($scope.dataSearch, {
                 checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                 checkBoxMovement: $scope.dataSearch.movement ? true : false,
-                movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement 
+                movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement
             })
 
             getDataKardex(params)
@@ -161,39 +131,29 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
     function getDataKardex(params) {
         showLoader();
-        kardexSvc.get(params).then(response => {
-            if (Array.isArray(response)) {
-                $scope.kardexs = response[2] || [];
-                if ($scope.kardexs.length === 0) {
-                    hideLoader();
-                    tS.toastr('info', 'No se encontraron los resultados');
-                    drawTabulator();
-                    return
-                }
-
-                $scope.data.cantTotalEntrada = calculoTotales("cantidadEntrada");
-                $scope.data.totalEntrada = calculoTotales("totalEntrada");
-
-                $scope.data.cantTotalSalida = calculoTotales("cantidadSalida");
-                $scope.data.totalSalida = calculoTotales("totalSalida");
-
-                $scope.data.stock = calculoTotales("saldo");
-                $scope.data.totalGenetal = calculoTotales("totalGeneral");
-
-                for (let value of $scope.kardexs) {
-                    value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2)
-                }
-
-                drawTabulator();
-            }
-
-            if (response.code === "0") {
+        transaccionSvc.get(params).then(response => {
+            $scope.dataArticulo = response.dataArticulo || {};
+            $scope.kardexs = response.kardex || [];
+            if ($scope.kardexs.length === 0) {
                 hideLoader();
-                Swal.fire({
-                    icon: 'warning',
-                    html: `<small>${response.message}</small>`
-                })
+                tS.toastr('info', 'No se encontraron los resultados');
+                drawTabulator();
+                return
             }
+
+            $scope.data.cantTotalEntrada = calculoTotales("cantidadEntrada");
+            $scope.data.totalEntrada = calculoTotales("totalEntrada");
+
+            $scope.data.cantTotalSalida = calculoTotales("cantidadSalida");
+            $scope.data.totalSalida = calculoTotales("totalSalida");
+
+            $scope.data.stock = calculoTotales("saldo");
+            $scope.data.totalGenetal = calculoTotales("totalGeneral");
+
+            for (let value of $scope.kardexs) {
+                value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2)
+            }
+            drawTabulator();
         }).catch(error => {
             hideLoader()
             console.log(error)
@@ -267,7 +227,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                 {
                     title: "Nro. Doc",
                     field: "nroDocumento",
-                    hozAlign: "left",
+                    hozAlign: "center",
                     headerSort: false,
                     width: 130
                 },
@@ -275,16 +235,9 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                     title: "Cliente/Proveedor",
                     field: "clienteProveedor",
                     headerSort: false,
-                    hozAlign: "left",
+                    hozAlign: "center",
                     width: 150,
                     tooltip: true
-                },
-                {
-                    title: "Bodega",
-                    field: "bodega",
-                    hozAlign: "center",
-                    headerSort: false,
-                    width: 150
                 },
                 {
                     title: "Usuario",
@@ -308,6 +261,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                 columns: [{
                     title: "Medida",
                     field: "medidaEntrada",
+                    hozAlign: "center",
                     width: 70,
                     headerSort: false,
                     cssClass: "table-entradas",
@@ -317,6 +271,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                     field: "cantidadEntrada",
                     width: 60,
                     headerSort: false,
+                    hozAlign: "center",
                     cssClass: "table-entradas",
                     bottomCalc: sumCantidadEntrada,
                 },
@@ -346,6 +301,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                     title: "Medida",
                     field: "medidaSalida",
                     width: 70,
+                    hozAlign: "center",
                     headerSort: false,
                     cssClass: "table-salidas",
                 },
@@ -354,6 +310,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                     field: "cantidadSalida",
                     width: 60,
                     headerSort: false,
+                    hozAlign: "center",
                     cssClass: "table-salidas",
                     bottomCalc: sumCantidadSalida,
                 },
@@ -379,30 +336,41 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
             },
             { //create column group
                 title: "Saldos",
-                columns: [{
-                    title: "Cant. ",
-                    field: "saldo",
-                    width: 60,
-                    headerSort: false,
-                    cssClass: "table-saldos",
-                },
-                {
-                    title: "Costo U.",
-                    field: "precioCosto",
-                    width: 70,
-                    headerSort: false,
-                    sorter: "number",
-                    cssClass: "table-saldos",
-                },
-                {
-                    title: "Total",
-                    field: "totalGeneral",
-                    hozAlign: "center",
-                    width: 60,
-                    headerSort: false,
-                    sorter: "number",
-                    cssClass: "table-saldos",
-                },
+                columns: [
+                    {
+                        title: "Cant. ",
+                        field: "cantidadTransaccion",
+                        hozAlign: "center",
+                        width: 60,
+                        headerSort: false,
+                        cssClass: "table-saldos",
+                    },
+                    {
+                        title: "Stock. ",
+                        hozAlign: "center",
+                        field: "saldo",
+                        width: 60,
+                        headerSort: false,
+                        cssClass: "table-saldos",
+                    },
+                    {
+                        title: "Costo U.",
+                        hozAlign: "center",
+                        field: "precioCosto",
+                        width: 70,
+                        headerSort: false,
+                        sorter: "number",
+                        cssClass: "table-saldos",
+                    },
+                    {
+                        title: "Total",
+                        field: "totalGeneral",
+                        hozAlign: "center",
+                        width: 60,
+                        headerSort: false,
+                        sorter: "number",
+                        cssClass: "table-saldos",
+                    },
                 ],
             },
             ]
@@ -436,16 +404,16 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
     $scope.getBodegas = function () {
         let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
-        commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
-            $scope.bodegas = response[1];
-            $scope.dataSearch.byBodega = $scope.bodegas[0].idBodega
-        })
+        $scope.bodegas = dataEstab.bodegas;
+        let dataBodega = $scope.bodegas.find(estab => (estab.defaultBodega));
+        $scope.dataSearch.byBodega = dataBodega.idBodega
+        getKardex();
     }
 
 
     $scope.articuloSearch = function (textSearch) {
         if (textSearch.length < 2) return;
-        return articuloSvc.search({ busqueda: textSearch, pageIndex: 1, pageSize: 15})
+        return articuloSvc.search({ busqueda: textSearch, pageIndex: 1, pageSize: 15 })
             .catch(error => {
                 console.log(error)
             })
@@ -467,19 +435,22 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
 
     $scope.onChangeUltimaConsolidacion = function () {
-        $scope.dataSearch.consolidacion = 0
         if ($scope.dataSearch.checkBoxUltimaConsolidacion) {
-            $scope.dataSearch.consolidacion = 1;
             $scope.dataSearch.checkBoxConsolidacion = false;
-
             $scope.dataSearch.checkBoxFecha = false;
         }
     }
 
+    $scope.onChangeFechaFiltro = function () {
+        if ($scope.dataSearch.checkBoxFecha) {
+            $scope.dataSearch.checkBoxConsolidacion = false;
+            $scope.dataSearch.checkBoxUltimaConsolidacion = false;
+        }
+    }
+
     $scope.onChangecheckBoxConsolidacionInventario = function () {
-        $scope.dataSearch.consolidacion = 0
         if ($scope.dataSearch.checkBoxConsolidacion) {
-            $scope.dataSearch.consolidacion = 2;
+            $scope.dataSearch.checkBoxFecha = false;
             $scope.dataSearch.checkBoxUltimaConsolidacion = false;
         }
     }
@@ -553,7 +524,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
         let parameters = {
             hasIdUsuarioRol: true,
             reportParams: JSON.stringify({
-                codigo: "KRG",
+                codigo: "RK",
                 format: formatType,
                 codEstab: $scope.dataSearch.codEstab,
                 hasParams: true,
@@ -562,20 +533,22 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
             dataParams: JSON.stringify(Object.assign($scope.dataSearch, {
                 checkBoxFecha: $scope.dataSearch.checkBoxFecha,
-                movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement 
+                tipo : 1,
+                movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement
             }))
         }
 
         commonSvc.getReport({
             parameters,
-            formatType
+            formatType,
+            v2: true
         })
     }
 
 
     async function openModalTipoDocumento(item) {
         try {
- 
+
             if (("idDocumento" in item) && ("tipoDoc") in item) {
 
                 //Nota Entrega
@@ -584,10 +557,10 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                     return
                 }
                 //Factura Venta
-                if ((item.tipoDoc === 'FE' && item.codTransaccion === 'S')) {                    
+                if ((item.tipoDoc === 'FE' && item.codTransaccion === 'S')) {
                     let params = {
                         ...item,
-                        tipoDoc : DOC_TYPE.FV_SRI
+                        tipoDoc: DOC_TYPE.FV_SRI
                     }
                     $scope.openDocSale(params, 'FV_SRI');
                     return
@@ -612,7 +585,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                         isRenderRazorPartial: true
                     })
 
-                } else if(item.tipoDoc==='CI'){
+                } else if (item.tipoDoc === 'CI') {
                     let fileCtrl = nombreModalInventario.CONSOLIDACION.fileCtrl;
                     let ctrl = nombreModalInventario.CONSOLIDACION.controllers['D'];
                     let template = nombreModalInventario.CONSOLIDACION.templates['D'];
@@ -629,7 +602,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                         isRenderRazorPartial: true
                     })
                 }
-                
+
                 else {
                     commonSvc.viewDetailDocumentII({
                         id: item.idDocumento,

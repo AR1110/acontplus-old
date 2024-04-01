@@ -1,4 +1,4 @@
-﻿using Common.Core.Interfaces;
+﻿using Inventario.Core.Interfaces;
 using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

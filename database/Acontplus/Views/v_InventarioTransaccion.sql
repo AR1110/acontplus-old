@@ -13,7 +13,8 @@ SELECT t.idTransaccion
 	,t.idTarifa
     ,t.idMedida
     ,a.idSubFamilia
-	,t.cantidadTransaccion as cantidad
+	,t.cantidad 
+    ,t.cantidadTransaccion
 	,t.precioUnitario
 	,t.precioCosto
 	,t.fechaRegistro
@@ -32,8 +33,8 @@ SELECT t.idTransaccion
 	,a.codigoBarra
 	,a.descripcion articulo
     ,sf.descripcion as subFamilia
-	,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN t.cantidadTransaccion END, 0) cantidadEntrada
-	,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.cantidadTransaccion END, 0) cantidadSalida
+	,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN t.cantidad END, 0) cantidadEntrada
+	,ISNULL(CASE WHEN tt.codigo = 'S' THEN t.cantidad END, 0) cantidadSalida
 	,u.nombreUsuario usuario
 	,nroDocumento = (
 		CASE 
@@ -258,7 +259,7 @@ INNER JOIN dbo.Bodega                  b WITH (NOLOCK) ON t.idBodega          = 
 INNER JOIN Sri.Establecimiento         e WITH (NOLOCK) ON b.codEstab          = e.codEstab
 INNER JOIN dbo.Articulo                a WITH (NOLOCK) ON t.idArticulo        = a.idArticulo
  LEFT JOIN dbo.SubFamilia             sf WITH (NOLOCK) ON sf.idSubFamilia     = a.idSubFamilia
- LEFT JOIN dbo.Medida                  m WITH (NOLOCK) ON a.idMedida          = m.idMedida
+ LEFT JOIN dbo.Medida                  m WITH (NOLOCK) ON m.idMedida          = t.idMedida
  LEFT JOIN dbo.Usuario                 u WITH (NOLOCK) ON t.idUsuario         = u.idUsuario
  LEFT JOIN dbo.Tarifa                 ta WITH (NOLOCK) ON ta.idTarifa         = t.idTarifa
 )

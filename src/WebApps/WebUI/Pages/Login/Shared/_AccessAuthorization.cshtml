@@ -35,18 +35,18 @@
                          class="rounded-circle avatar-lg img-thumbnail mb-4" alt="profile-image">
                     <h2 class="text-info">2FA Seguridad</h2>
                     <p class="mb-4">Ingrese el código de 6 dígitos que le reenvia el administrador del almacén</p>
-                    <form ng-submit="verifyCode()">
+                    <form ng-submit="verifyCode()" autocomplete="off">
                         <div class="row mb-4">
                             <div class="col-lg-2 col-md-2 col-2 ps-0 ps-md-2" ng-repeat="index in [0, 1, 2, 3, 4, 5]">
                                 <input type="text"
-                                       maxlength="1"
-                                       class="form-control text-lg text-center"
-                                       placeholder="_"
-                                       ng-model="codes[index]"
-                                       id="code_auth2f{{index + 1}}"
-                                       value=""
-                                       ng-keydown="skipCodeFields($event, index)"
-                                       aria-label="2fa">
+                                    maxlength="1"
+                                    class="form-control text-lg text-center"
+                                    placeholder="_"
+                                    ng-model="codes[index]"
+                                    id="code_auth2f{{index + 1}}"
+                                    value=""
+                                    ng-keydown="skipCodeFields($event, index)"
+                                    aria-label="2fa">
                             </div>
                         </div>
                         <div class="text-center">
