@@ -32,7 +32,7 @@ namespace Identity.API.Services
                     new Claim("idCardCompany", data.IDCardCompany),
                     new Claim("companyId", Convert.ToString(data.CompanyId)),
                     new Claim("tradeName", data.TradeName),
-                    new Claim("bussinesName", data.BussinesName),
+                    new Claim("businessName", data.BusinessName),
                     new Claim("urlGateway", data.UrlGateway),
                     //Legacy
                     new Claim("idUsuarioRol", Convert.ToString(data.UserRoleId)),

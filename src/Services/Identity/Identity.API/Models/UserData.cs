@@ -3,7 +3,7 @@
     public class UserData
     {
         public dynamic Actions { get; set; }
-        public string BussinesName { get; set; }
+        public string BusinessName { get; set; }
         public string CodeRole { get; set; }
         public int CompanyId { get; set; }
         public dynamic LicenseExpiration { get; set; }
@@ -13,6 +13,7 @@
         public string IDCardUser { get; set; }
         public string LatestVersion { get; set; }
         public dynamic Menus { get; set; }
+        public bool NeedAuthorization { get; set; }
         public dynamic Permissions { get; set; }
         public string ProfilePicture { get; set; }
         public string Role { get; set; }
