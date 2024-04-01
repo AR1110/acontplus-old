@@ -11,7 +11,7 @@ namespace Common.Application.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("App.Notificacion_Serv_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("App.Notificacion_Serv_Insert", parameters);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Inventario.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Inventario.Fraccionado_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Inventario.Fraccionado_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -47,12 +47,12 @@ namespace Inventario.Application.Services
                 {"id", id},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Inventario.Fraccionado_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Inventario.Fraccionado_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Inventario.Fraccionado_Delete", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Inventario.Fraccionado_Delete", parameters);
         }
 
     }

@@ -11,7 +11,7 @@ namespace Common.Application.Services
         }
         public async Task<string> GetAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Dashboard.Estadisticas_Get", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Dashboard.Estadisticas_Get", parameters);
         }
     }
 }

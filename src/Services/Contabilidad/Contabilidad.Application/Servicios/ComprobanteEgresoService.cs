@@ -35,18 +35,18 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.ComprobanteEgreso_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.ComprobanteEgreso_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Update", parameters);
         }
 
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.ComprobanteEgreso_Update_Cancel", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Update_Cancel", parameters);
         }
 
 

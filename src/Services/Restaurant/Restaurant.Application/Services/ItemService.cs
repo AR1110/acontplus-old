@@ -56,7 +56,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteAsync("Restaurant.Item_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Item_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)
@@ -65,7 +65,7 @@ namespace Restaurant.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"id", id}
             };
-            return await _repository.SPExecuteAsync("Restaurant.Item_Update_Cancel", request.Data);
+            return await _repository.SPExecuteDeprecatedAsync("Restaurant.Item_Update_Cancel", request.Data);
         }
     }
 }

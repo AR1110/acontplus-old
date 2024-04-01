@@ -35,17 +35,17 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.Anticipo_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Anticipo_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("", parameters);
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.Anticipo_Delete", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Anticipo_Delete", parameters);
         }
     }
 }
