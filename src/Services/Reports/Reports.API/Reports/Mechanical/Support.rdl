@@ -83,8 +83,8 @@
           <DataField>idCard</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="bussinesName">
-          <DataField>bussinesName</DataField>
+        <Field Name="businessName">
+          <DataField>businessName</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="tradeName">
