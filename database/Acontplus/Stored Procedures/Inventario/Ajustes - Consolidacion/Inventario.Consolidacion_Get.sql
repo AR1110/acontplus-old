@@ -197,7 +197,7 @@ BEGIN
 				              ,precioCosto
 				              ,estado
 				              ,iva
-				              ,cantidad = 1
+				              ,cantidad = a.stock
 				              ,llevaInventario
 				              ,ISNULL(idMedida,0) idMedida
 				              ,ISNULL(a.medida, ''SIN MEDIDA'') medida
@@ -263,7 +263,7 @@ BEGIN
                                                                ) '
                 END 
 
-		    SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
+		    SET @sql = @sql + 'ORDER BY a.idArticulo ASC '
 		
 		    EXEC sp_executesql @sql,@params
 							       ,@idEntidad    = @idEntidad 
