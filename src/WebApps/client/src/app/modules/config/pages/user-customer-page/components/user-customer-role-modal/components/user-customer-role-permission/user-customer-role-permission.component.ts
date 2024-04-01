@@ -1,16 +1,14 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
+import { isApiResponse } from "@core/models/api-response";
+import { ToasterService } from "@core/services/toaster.service";
+import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
-export interface Task {
-  name: string;
-  completed: boolean;
-  color: any
-  subtasks?: Task[];
-}
+import { UserCustomer } from "@modules/config/models/user-customer.model";
+import { UserCustomerPermissionService } from "@modules/config/services/user-customer-permission.service";
 
 @Component({
   selector: 'app-user-customer-role-permission',
@@ -28,127 +26,105 @@ export interface Task {
 })
 export class UserCustomerRolePermissionComponent {
 
-  toppings = new FormControl('');
+  private readonly userCustomerPermissionSvc = inject(UserCustomerPermissionService);
+  private readonly tS = inject(ToasterService);
+  idUsuarioRol = 0;
 
-  toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
+  usersCustomerAdmin: UserCustomer[] = [];
+  userCustomerAdminSelected = new FormControl([]);
 
   allCompleteSaleComprobante = false;
   allCompleteSaleDetail = false;
   allCompleteSaleAdditional = false;
+  allCompleteProduct = false;
+  allCompleteCashBox = false;
 
-  permissionSale: any = {
-    comprobante: {
-      label: "Comprobante",
-      permissions: {
-        fechaEmision: {
-          description: "Modificar Fecha de Emisión",
-          enabled: true
-        },
-        tiempoCredito: {
-          description: "Cambiar tiempo Credito",
-          enabled: true
-        },
-        tarifa: {
-          description: "Modifcar tarifa general",
-          enabled: true
-        },
-        porcentajeDescuento: {
-          description: "Cambiar Porcentaje Descuento",
-          enabled: true
-        },
-        descuento: {
-          description: "Cambiar Descuento",
-          enabled: true
-        }
-      }
-    },
-    detail: {
-      label: 'Detalle',
-      permissions: {
-        medida: {
-          description: "Cambiar Medida",
-          enabled: true
-        },
-        tipoIva: {
-          description: "Cambiar Tipo IVA",
-          enabled: true
-        },
-        tarifa: {
-          description: "Cambiar tarifa",
-          enabled: true
-        },
-        precioUnitario: {
-          description: "Modificar Precio Unitario",
-          enabled: true
-        },
-        precioConIva: {
-          description: "Modificar Precio con IVA",
-          enabled: true
-        },
-        porcentajeDescuento: {
-          description: "Modificar Porcentaje Descuento",
-          enabled: true
-        },
-        descuento: {
-          description: "Modificar Descuento",
-          enabled: true
-        }
-      }
-    },
-    additional: {
-      label: 'Adicional',
-      permissions: {
-        keyRequest: { // Cambiado por un nombre legible y corto
-          description: "Solicitar Autorización para Editar o Anular el Doc. Venta",
-          enabled: false,
-          usersAdmin: [],
-          isKeyRequest: true
-        },
-        viewOthersDocs: {
-          description: "Consultar documentos electronicos de otros usuarios",
-          enabled: true
-        },
-        kardex: {
-          description: "Ver Kardex",
-          enabled: true
-        },
-        totalesVenta: {
-          description: "Mostrar totales de ventas",
-          enabled: true
-        }
-      }
-    }
+  mainPermission:any = {
+    permissionsProduct: {},
+    permissionsCashBox: {}
+  }
+  mainPermissionSale: any = {
+    comprobante: {},
+    detail: {},
+    additional: {}
   };
+  permissionProductKey: string[] = []
+  permissionCashBoxKey:string[] = []
 
 
-  permissionSaleComprobante = Object.keys(this.permissionSale.comprobante.permissions);
-  permissionSaleDetail = Object.keys(this.permissionSale.detail.permissions)
-  permissionSaleAdditional = Object.keys(this.permissionSale.additional.permissions)
+  permissionSaleComprobanteKey:string[] = [];
+  permissionSaleDetailKey:string[] =[];
+  permissionSaleAdditionalKey: string[] = [];
 
-  ngOnInit(){
+  getUserPermissions(idUsuarioRol: number){
+    this.idUsuarioRol = idUsuarioRol;
+    let params = {
+      idUsuarioRol
+    }
+    this.userCustomerPermissionSvc.getAll(params).subscribe({
+      next:(response:any)=> {
+        this.usersCustomerAdmin = response.usersCustomerAdmin;
+        this.mainPermission = response;
+        this.setDataPermissionSale();
+        this.setDataPermissionArticulo();
+        this.setDataPermissionCashBox()
+      },
+    })
+  }
+
+  setDataPermissionSale(){
+    const {permission } = this.mainPermission.permissionsSale;
+    this.mainPermissionSale = permission;
+
+    this.permissionSaleComprobanteKey = Object.keys(this.mainPermissionSale.comprobante);
+    this.permissionSaleDetailKey = Object.keys(this.mainPermissionSale.detail);
+    this.permissionSaleAdditionalKey = Object.keys(this.mainPermissionSale.additional);
+    this.userCustomerAdminSelected.setValue(this.mainPermissionSale?.additional?.keyRequest?.usersAdmin || [])
+
     this.updateAllCompleteSaleComprobante();
     this.updateAllCompleteSaleDetail();
+    this.updateAllCompleteSaleAdditional();
   }
+
+  setDataPermissionArticulo(){
+    const { permission } = this.mainPermission.permissionsProduct;
+    this.permissionProductKey = Object.keys(permission);
+    this.updateAllCompleteProduct()
+  }
+
+  setDataPermissionCashBox(){
+    const { permission } = this.mainPermission.permissionsCashBox;
+    this.permissionCashBoxKey = Object.keys(permission);
+    this.updateAllCompleteCashBox()
+  }
+
+  ngOnInit(){
+    // this.updateAllCompleteSaleComprobante();
+    // this.updateAllCompleteSaleDetail();
+  }
+
+
+
   /**
    * Permiso venta comprobante
    *
    */
   someCompleteSaleComprobante() {
-    const comprobantePermisos = this.permissionSaleComprobante
-      .filter(permiso => this.permissionSale.comprobante.permissions[permiso].enabled).length > 0 && !this.allCompleteSaleComprobante;
+    const comprobantePermisos = this.permissionSaleComprobanteKey
+      .filter(permiso => this.mainPermissionSale.comprobante[permiso].enabled).length > 0 && !this.allCompleteSaleComprobante;
     return comprobantePermisos;
   }
 
   setAllSaleComprobante(completed: boolean) {
     this.allCompleteSaleComprobante = completed;
 
-    this.permissionSaleComprobante.forEach(permiso => {
-      this.permissionSale.comprobante.permissions[permiso].enabled = completed;
+    this.permissionSaleComprobanteKey.forEach(permiso => {
+      this.mainPermissionSale.comprobante[permiso].enabled = completed;
     });
   }
 
   updateAllCompleteSaleComprobante() {
-    this.allCompleteSaleComprobante = this.permissionSaleComprobante.every(permiso => this.permissionSale.comprobante.permissions[permiso].enabled);
+    this.allCompleteSaleComprobante = this.permissionSaleComprobanteKey.every(permiso => this.mainPermissionSale.comprobante[permiso].enabled);
   }
 
   /**
@@ -156,20 +132,20 @@ export class UserCustomerRolePermissionComponent {
    *
    */
   someCompleteSaleDetail(){
-    const isSome = this.permissionSaleDetail
-      .filter(permiso => this.permissionSale.detail.permissions[permiso].enabled).length > 0 && !this.allCompleteSaleDetail;
+    const isSome = this.permissionSaleDetailKey
+      .filter(permiso => this.mainPermissionSale.detail[permiso].enabled).length > 0 && !this.allCompleteSaleDetail;
     return isSome;
   }
 
   setAllSaleDetail(completed: boolean) {
     this.allCompleteSaleDetail = completed;
 
-    this.permissionSaleDetail.forEach(permiso => {
-      this.permissionSale.detail.permissions[permiso].enabled = completed;
+    this.permissionSaleDetailKey.forEach(permiso => {
+      this.mainPermissionSale.detail[permiso].enabled = completed;
     });
   }
   updateAllCompleteSaleDetail() {
-    this.allCompleteSaleDetail = this.permissionSaleDetail.every(permiso => this.permissionSale.detail.permissions[permiso].enabled);
+    this.allCompleteSaleDetail = this.permissionSaleDetailKey.every(permiso => this.mainPermissionSale.detail[permiso].enabled);
   }
   //=======================================
 
@@ -178,22 +154,125 @@ export class UserCustomerRolePermissionComponent {
    */
 
   someCompleteSaleAdditional(){
-    const isSome = this.permissionSaleAdditional
-      .filter(permiso => this.permissionSale.additional.permissions[permiso].enabled).length > 0 && !this.allCompleteSaleAdditional;
+    const isSome = this.permissionSaleAdditionalKey
+      .filter(permiso => this.mainPermissionSale.additional[permiso].enabled).length > 0 && !this.allCompleteSaleAdditional;
     return isSome;
   }
 
   setAllSaleAdditional(completed: boolean) {
     this.allCompleteSaleAdditional = completed;
 
-    this.permissionSaleAdditional.forEach(permiso => {
-      this.permissionSale.additional.permissions[permiso].enabled = completed;
+    this.permissionSaleAdditionalKey.forEach(permiso => {
+      this.mainPermissionSale.additional[permiso].enabled = completed;
     });
   }
 
   updateAllCompleteSaleAdditional() {
-    this.allCompleteSaleAdditional = this.permissionSaleAdditional.every(permiso => this.permissionSale.additional.permissions[permiso].enabled);
+    this.allCompleteSaleAdditional = this.permissionSaleAdditionalKey.every(permiso => this.mainPermissionSale.additional[permiso].enabled);
+  }
+
+  /**
+   * Permiso Producto
+   *
+   */
+  someCompleteProduct() {
+    const isSome = this.permissionProductKey
+      .filter(permiso => this.mainPermission?.permissionsProduct?.permission[permiso].enabled).length > 0 && !this.allCompleteProduct;
+    return isSome;
+  }
+
+  setAllProduct(completed: boolean) {
+    this.allCompleteProduct = completed;
+
+    this.permissionProductKey.forEach(permiso => {
+      this.mainPermission.permissionsProduct.permission[permiso].enabled = completed;
+    });
+  }
+
+  updateAllCompleteProduct() {
+    this.allCompleteProduct = this.permissionProductKey.every(permiso => this.mainPermission?.permissionsProduct?.permission[permiso].enabled);
   }
 
 
+  /**
+   * Permisos caja
+   *
+   */
+  someCompleteCashBox() {
+    const isSome = this.permissionCashBoxKey
+      .filter(permiso => this.mainPermission?.permissionsCashBox?.permission[permiso].enabled).length > 0 && !this.allCompleteCashBox;
+    return isSome;
+  }
+
+  setAllCashBox(completed: boolean) {
+    this.allCompleteCashBox = completed;
+
+    this.permissionCashBoxKey.forEach(permiso => {
+      this.mainPermission.permissionsCashBox.permission[permiso].enabled = completed;
+    });
+  }
+
+  updateAllCompleteCashBox() {
+    this.allCompleteCashBox = this.permissionCashBoxKey.every(permiso => this.mainPermission?.permissionsCashBox?.permission[permiso].enabled);
+  }
+
+
+  onSave(){
+    try {
+
+      if (this.mainPermission?.permissionsSale?.permission?.additional?.keyRequest.enabled){
+        if (!this.userCustomerAdminSelected.value ||this.userCustomerAdminSelected.value?.length===0){
+          this.tS.toastr({
+            type: 'warning',
+            message: 'Seleccione al menos un usuario administrador, a quien se le enviará la solicitud correspondiente'
+          })
+          return
+        }else{
+          this.mainPermission.permissionsSale.permission.additional.keyRequest.usersAdmin = this.userCustomerAdminSelected.value;
+        }
+      }else{
+        this.mainPermission.permissionsSale.permission.additional.keyRequest.usersAdmin = []
+      }
+
+      const { permissionsCashBox, permissionsProduct, permissionsSale}= this.mainPermission;
+      let dataPermissions = [
+        permissionsSale,
+        permissionsProduct,
+        permissionsCashBox
+      ]
+      let data = {
+        dataPermissions
+      }
+
+      console.log(this.mainPermission)
+
+      showLoader();
+      this.userCustomerPermissionSvc.put(data).subscribe({
+        next: (response)=> {
+          hideLoader();
+            if(isApiResponse(response)){
+              if(response.code==='0'){
+                this.tS.toastr({
+                  type: 'warning',
+                  message: response.message
+                })
+              }
+              if (response.code === '1') {
+                this.tS.toastr({
+                  type: 'success',
+                  message: response.message
+                })
+                this.getUserPermissions(this.idUsuarioRol)
+              }
+            }
+        },
+        error(err) {
+            hideLoader();
+            console.log(err)
+        },
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }

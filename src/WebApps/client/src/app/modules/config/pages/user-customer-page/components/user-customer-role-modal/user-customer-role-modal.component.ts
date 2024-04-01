@@ -21,12 +21,12 @@ export class UserCustomerRoleModalComponent {
     idUsuario: 0,
   }
   @ViewChild(UserCustomerRoleEstabComponent) childEstab!: UserCustomerRoleEstabComponent;
+  @ViewChild(UserCustomerRolePermissionComponent) childPermission!: UserCustomerRolePermissionComponent;
 
   modal = inject(NgbActiveModal);
   private readonly userCustomerRoleSvc = inject(UserCustomerRoleService)
 
-  active = 1;
-  items = ['First', 'Second', 'Third'];
+  activeNav = 1;
 
   idUsuarioRol = 0;
   userCustomerRoles: Array<any> = [];
@@ -42,11 +42,20 @@ export class UserCustomerRoleModalComponent {
 
   showAcordeon(data:any){
     this.idUsuarioRol = data.idUsuarioRol;
-    this.childEstab.getUserCustomerRoleEstabs(data.idUsuarioRol);
-  }
-  clickNgbNavLink(data: any){
+
     setTimeout(()=>{
       this.childEstab.getUserCustomerRoleEstabs(data.idUsuarioRol);
+    })
+  }
+  onNavChange(data: any){
+
+    setTimeout(()=>{
+      if(this.activeNav===1){
+        this.childEstab.getUserCustomerRoleEstabs(data.idUsuarioRol);
+      }
+      if (this.activeNav === 2){
+        this.childPermission.getUserPermissions(data.idUsuarioRol)
+      }
 
     })
   }
