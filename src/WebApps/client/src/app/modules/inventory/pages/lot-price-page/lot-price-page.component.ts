@@ -30,7 +30,7 @@ enum OptionsCalculateEnum {
   D = 'D',
 }
 
-type OptionPvpEnum = "precioVenta" | "precioConIva"
+type OptionPvpEnum = "precioVenta" | "precioConIva" | "precioCosto"
 
 @Component({
   selector: 'app-lot-price-page',
@@ -75,6 +75,11 @@ export class LotPricePageComponent {
   readonly tempOptionsPvps = [
     { code: 'precioVenta', description: 'Precio Venta' },
     { code: 'precioConIva', description: 'Precio incluido IVA' },
+  ]
+
+  readonly optionsPorcentaje = [
+    { code: 'precioVenta', description: 'Precio Venta' },
+    { code: 'precioCosto', description: 'Precio Costo' },
   ]
 
   tiposArticulo = [
@@ -133,7 +138,7 @@ export class LotPricePageComponent {
       headerClick: (e: any) => {
         const targetElement = e.target;
         if (targetElement.tagName === 'INPUT' && targetElement.type === 'checkbox') {
-          if(!targetElement.checked){
+          if (!targetElement.checked) {
             this.tabulatorComponent.refTabulator.deselectRow();
             return
           }
@@ -145,7 +150,7 @@ export class LotPricePageComponent {
               for (let j = 0; j < childRows.length; j++) {
                 const data = childRows[j].getData();
 
-                if(!childRows[j].isSelected()){
+                if (!childRows[j].isSelected()) {
                   if (this.productsModified.some(d => this.isProductModified(data, d))) {
                     childRows[j].toggleSelect();
                   }
@@ -307,6 +312,14 @@ export class LotPricePageComponent {
     this.getDataFilter();
   }
 
+  onChangeOptionCalculate() {
+    if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D) {
+      this.optionsPvps = structuredClone(this.optionsPorcentaje);
+    } else {
+      this.optionsPvps = structuredClone(this.tempOptionsPvps);
+    }
+  }
+
   cellEdited(cell: any) {
     let row = cell.getRow();
     let column = cell.getColumn().getField();
@@ -434,6 +447,14 @@ export class LotPricePageComponent {
         this.tS.toastr({
           type: 'warning',
           message: 'Seleccione al menos una SubFamilia'
+        })
+        return
+      }
+
+      if (checkedSubCategorias && Array.isArray(checkedSubCategorias) && checkedSubCategorias.length > 3) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Máximo de SubFamilias permitidos es 3'
         })
         return
       }
@@ -641,23 +662,27 @@ export class LotPricePageComponent {
 
           //Start Sumar un % de rentabilidad al PVP
           if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D) {
-            if (this.optionPvp === "precioConIva") {
-              let valorImpuesto = pricingCalculateUtil.calculateTaxValue(t.precioVenta, this.mainForm.valueToCalculate);
-              let precioConImpuestos = t.precioVenta + valorImpuesto;
-              let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
+            if (this.optionPvp === "precioCosto") {
+               let valorImpuesto = pricingCalculateUtil.calculateTaxValue(item.precioCosto, this.mainForm.valueToCalculate);
+              let precioVentaValidar = item.precioCosto + valorImpuesto;
+              // let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
 
               if (precioVentaValidar >= item.precioCosto) {
                 precioVenta = precioVentaValidar;
-                precioConIva = precioConImpuestos;
+                precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
                 porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
                 setDataToProductsModified = true;
               }
             }
             if (this.optionPvp === "precioVenta") {
-              let precioVentaValidar = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(item.precioCosto, this.mainForm.valueToCalculate);
+
+              let valorImpuesto = pricingCalculateUtil.calculateTaxValue(precioVenta, this.mainForm.valueToCalculate);
+              let precioConImpuestos = precioVenta + valorImpuesto;
+              let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
+
               if (precioVentaValidar >= item.precioCosto) {
                 precioVenta = precioVentaValidar;
-                precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
+                precioConIva = precioConImpuestos;
                 porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
                 setDataToProductsModified = true;
               }
@@ -701,9 +726,9 @@ export class LotPricePageComponent {
     this.tabulatorComponent.updateData();
   }
 
-  getSelectedData(){
-    const selectedData  = this.tabulatorComponent.refTabulator.getSelectedData();
-    return this.productsModified.filter(data=>{
+  getSelectedData() {
+    const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
+    return this.productsModified.filter(data => {
       return selectedData.some(rowSelect => {
         return this.isProductModified(data, rowSelect);
       })
@@ -712,7 +737,7 @@ export class LotPricePageComponent {
   askToSave() {
 
     const selectedData = this.getSelectedData();
-    if(selectedData.length===0){
+    if (selectedData.length === 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Seleccione al menos un artículo!'

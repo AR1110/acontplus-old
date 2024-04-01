@@ -9,32 +9,37 @@
     ];
 
     function kardexCtrl($scope, $injector) {
-
-        let commonSvc = $injector.get('commonService');
-        let kardexSvc = $injector.get('kardexService');
+ 
+     
+        let transaccionSvc = $injector.get('TransaccionService');
         let articuloSvc = $injector.get('articuloService');
         let modalSvc = $injector.get('modalService');
         let nombreModalCompra = $injector.get('nombreModalCompra');
         let nombreModalVenta = $injector.get('nombreModalVenta');
+        const nombreModalInventario = $injector.get('nombreModalInventario');
         let fS = $injector.get('formulario');
         let tS = $injector.get('toastService');
         let DOC_TYPE = $injector.get('DOC_TYPE');
 
+
+
+        $scope.articulo = {}
+
         $scope.dataSearch = {
             checkBoxFecha: true,
-            checkBoxBodega: false,
+            checkBoxBodega: true,
             consolidacion: 0,
             checkBoxDefault: false,
             estado: false
         };
 
         $scope.articuloFiltro = {
-            descripcion: ""
+            descripcion: $scope.articulo.descripcion
         }
 
         $scope.estadoMovimientos = [];
         $scope.kardexs = [];
-
+        $scope.dataArticulo = {};
         $scope.data = {};
 
         //Rango Fechas 
@@ -74,59 +79,44 @@
                     'apply.daterangepicker': function () {
                         $scope.dataSearch.fechaInicio = fS.formatDateMoment($scope.dateRangePicker.date.startDate);
                         $scope.dataSearch.fechaFin = fS.formatDateMoment($scope.dateRangePicker.date.endDate);
-                       
-                        // $scope.getComprobantes()
-                        //console.log('applied')
+
                     }
                 }
             }
         };
 
-        $scope.dataSearch.fechaInicio = $scope.dateRangePicker.date.startDate
-        $scope.dataSearch.fechaFin = $scope.dateRangePicker.date.endDate;
+        $scope.dataSearch.fechaInicio = startOfMonth
+        $scope.dataSearch.fechaFin = endOfMonth;
 
-        onInit();
-        async function onInit() { 
+        load()
+        function load() {
+            transaccionSvc.getDataFilters().then(response => {
+                $scope.establecimientos = response.estabs;
+                let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+                $scope.dataSearch.codEstab = dataEstab.codEstab;
+                $scope.bodegas = dataEstab.bodegas;
+                let dataBodega = $scope.bodegas.find(estab => (estab.defaultBodega));
+                $scope.dataSearch.byBodega = dataBodega.idBodega
+                $scope.estadoMovimientos = response.tiposTransaccion;
+                $scope.dataSearch.byArticulo = $scope.articulo.idArticulo;
+                const params = Object.assign($scope.dataSearch, {
+                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                    checkBoxMovement: $scope.dataSearch.movement ? true : false,
+                    fechaInicio: fS.formatDateMoment(startOfMonth),
+                    fechaFin: fS.formatDateMoment(endOfMonth),
+                })
 
-            kardexSvc.getDataFilters().then(response => {
-                $scope.estadoMovimientos = response.estadoMovimientos;
-            }).catch(error => {
-                console.log(error)
-            })
-            showLoader();
-            await commonSvc.getEstabAsign().then(response => {
-                $scope.establecimientos = response;
-
-                if ($scope.establecimientos.length > 0) {
-                    let dataEstab = $scope.establecimientos.find(estab => (estab.predeterminado
-                    ));
-                    $scope.dataSearch.codEstab = dataEstab.codEstab;
-                    commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
-                        $scope.bodegas = response[1];
-                        // if ($scope.bodegas.length > 0) {
-                        //     let dataBodega = $scope.bodegas[0];
-                        //     $scope.dataSearch.byBodega = dataBodega.idBodega
-                        // }
-                    })
-                } else {
-                    tS.toastr('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
-                }
-            }).finally(() => hideLoader())
- 
-
+              //  getDataKardex(params)
+            });
         }
-
-
 
         function getKardex() {
             try {
-                // const params = Object.assign($scope.dataSearch, {
-                //     checkBoxMovement: $scope.dataSearch.movement? true: false
-                // })
 
                 const params = Object.assign($scope.dataSearch, {
-                    checkBoxFecha: true,
-                    checkBoxMovement: $scope.dataSearch.movement ? true : false, 
+                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                    checkBoxMovement: $scope.dataSearch.movement ? true : false,
+                    movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement
                 })
 
                 getDataKardex(params)
@@ -138,39 +128,29 @@
 
         function getDataKardex(params) {
             showLoader();
-            kardexSvc.get(params).then(response => {
-                if (Array.isArray(response)) {
-                    $scope.kardexs = response[2] || [];
-                    if ($scope.kardexs.length === 0) {
-                        hideLoader();
-                        tS.toastr('info', 'No se encontraron los resultados');
-                        drawTabulator();
-                        return
-                    }
-
-                    $scope.data.cantTotalEntrada = calculoTotales("cantidadEntrada");
-                    $scope.data.totalEntrada = calculoTotales("totalEntrada");
-
-                    $scope.data.cantTotalSalida = calculoTotales("cantidadSalida");
-                    $scope.data.totalSalida = calculoTotales("totalSalida");
-
-                    $scope.data.stock = calculoTotales("saldo");
-                    $scope.data.totalGenetal = calculoTotales("totalGeneral");
-
-                    for (let value of $scope.kardexs) {
-                        value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2)
-                    }
-
-                    drawTabulator();
-                }
-
-                if (response.code === "0") {
+            transaccionSvc.get(params).then(response => {
+                $scope.dataArticulo = response.dataArticulo || {};
+                $scope.kardexs = response.kardex || [];
+                if ($scope.kardexs.length === 0) {
                     hideLoader();
-                    Swal.fire({
-                        icon: 'warning',
-                        html: `<small>${response.message}</small>`
-                    })
+                    tS.toastr('info', 'No se encontraron los resultados');
+                    drawTabulator();
+                    return
                 }
+
+                $scope.data.cantTotalEntrada = calculoTotales("cantidadEntrada");
+                $scope.data.totalEntrada = calculoTotales("totalEntrada");
+
+                $scope.data.cantTotalSalida = calculoTotales("cantidadSalida");
+                $scope.data.totalSalida = calculoTotales("totalSalida");
+
+                $scope.data.stock = calculoTotales("saldo");
+                $scope.data.totalGenetal = calculoTotales("totalGeneral");
+
+                for (let value of $scope.kardexs) {
+                    value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2)
+                }
+                drawTabulator();
             }).catch(error => {
                 hideLoader()
                 console.log(error)
@@ -244,7 +224,7 @@
                     {
                         title: "Nro. Doc",
                         field: "nroDocumento",
-                        hozAlign: "left",
+                        hozAlign: "center",
                         headerSort: false,
                         width: 130
                     },
@@ -252,16 +232,9 @@
                         title: "Cliente/Proveedor",
                         field: "clienteProveedor",
                         headerSort: false,
-                        hozAlign: "left",
+                        hozAlign: "center",
                         width: 150,
                         tooltip: true
-                    },
-                    {
-                        title: "Bodega",
-                        field: "bodega",
-                        hozAlign: "center",
-                        headerSort: false,
-                        width: 150
                     },
                     {
                         title: "Usuario",
@@ -277,109 +250,117 @@
                         headerSort: false,
                         width: 100
                     },
+                    {
+                        title: "Medida",
+                        field: "medida",
+                        hozAlign: "center",
+                        headerSort: false,
+                        width: 100
+                    },
 
                     ],
                 },
                 { //create column group
                     title: "Entradas",
-                    columns: [{
-                        title: "Medida",
-                        field: "medidaEntrada",
-                        width: 70,
-                        headerSort: false,
-                        cssClass: "table-entradas",
-                    },
-                    {
-                        title: "Cant.",
-                        field: "cantidadEntrada",
-                        width: 60,
-                        headerSort: false,
-                        cssClass: "table-entradas",
-                        bottomCalc: sumCantidadEntrada,
-                    },
-                    {
-                        title: "Costo U.",
-                        field: "costo",
-                        hozAlign: "center",
-                        headerSort: false,
-                        sorter: "date",
-                        width: 75,
-                        cssClass: "table-entradas",
-                    },
-                    {
-                        title: "Total",
-                        field: "totalEntrada",
-                        hozAlign: "center",
-                        headerSort: false,
-                        sorter: "date",
-                        width: 75,
-                        cssClass: "table-entradas",
-                    },
+                    columns: [
+                        {
+                            title: "Cant.",
+                            field: "cantidadEntrada",
+                            width: 60,
+                            headerSort: false,
+                            hozAlign: "center",
+                            cssClass: "table-entradas",
+                            bottomCalc: sumCantidadEntrada,
+                        },
+                        {
+                            title: "Costo U.",
+                            field: "costo",
+                            hozAlign: "center",
+                            headerSort: false,
+                            sorter: "date",
+                            width: 75,
+                            cssClass: "table-entradas",
+                        },
+                        {
+                            title: "Total",
+                            field: "totalEntrada",
+                            hozAlign: "center",
+                            headerSort: false,
+                            sorter: "date",
+                            width: 75,
+                            cssClass: "table-entradas",
+                        },
                     ],
                 },
                 { //create column group
                     title: "Salidas",
-                    columns: [{
-                        title: "Medida",
-                        field: "medidaSalida",
-                        width: 70,
-                        headerSort: false,
-                        cssClass: "table-salidas",
-                    },
-                    {
-                        title: "Cant.",
-                        field: "cantidadSalida",
-                        width: 60,
-                        headerSort: false,
-                        cssClass: "table-salidas",
-                        bottomCalc: sumCantidadSalida,
-                    },
-                    {
-                        title: "P. Venta",
-                        field: "venta",
-                        hozAlign: "center",
-                        headerSort: false,
-                        sorter: "date",
-                        width: 75,
-                        cssClass: "table-salidas",
-                    },
-                    {
-                        title: "Total",
-                        field: "totalSalida",
-                        hozAlign: "center",
-                        headerSort: false,
-                        width: 75,
-                        cssClass: "table-salidas",
-                        bottomCalc: sumTotalSalida,
-                    },
+                    columns: [
+                        {
+                            title: "Cant.",
+                            field: "cantidadSalida",
+                            width: 60,
+                            headerSort: false,
+                            hozAlign: "center",
+                            cssClass: "table-salidas",
+                            bottomCalc: sumCantidadSalida,
+                        },
+                        {
+                            title: "Costo U.",
+                            field: "venta",
+                            hozAlign: "center",
+                            headerSort: false,
+                            sorter: "date",
+                            width: 75,
+                            cssClass: "table-salidas",
+                        },
+                        {
+                            title: "Total",
+                            field: "totalSalida",
+                            hozAlign: "center",
+                            headerSort: false,
+                            width: 75,
+                            cssClass: "table-salidas",
+                            bottomCalc: sumTotalSalida,
+                        },
                     ],
                 },
                 { //create column group
                     title: "Saldos",
-                    columns: [{
-                        title: "Cant. ",
-                        field: "saldo",
-                        width: 60,
-                        headerSort: false,
-                        cssClass: "table-saldos",
-                    },
-                    {
-                        title: "Costo U.",
-                        field: "precioCosto",
-                        width: 70,
-                        headerSort: false,
-                        sorter: "number",
-                        cssClass: "table-saldos",
-                    },
-                    {
-                        title: "Total",
-                        field: "totalGeneral",
-                        hozAlign: "center",
-                        width: 60,
-                        headerSort: false,
-                        sorter: "number",
-                        cssClass: "table-saldos",
-                    },
+                    columns: [
+                        {
+                            title: "Cant. ",
+                            field: "cantidadTransaccion",
+                            hozAlign: "center",
+                            width: 60,
+                            headerSort: false,
+                            cssClass: "table-saldos",
+                        },
+                        {
+                            title: "Stock. ",
+                            hozAlign: "center",
+                            field: "saldo",
+                            width: 60,
+                            headerSort: false,
+                            cssClass: "table-saldos",
+                        },
+                        {
+                            title: "Costo U.",
+                            hozAlign: "center",
+                            field: "precioCosto",
+                            width: 70,
+                            headerSort: false,
+                            sorter: "number",
+                            cssClass: "table-saldos",
+                        },
+                        {
+                            title: "Total",
+                            field: "totalGeneral",
+                            hozAlign: "center",
+                            width: 60,
+                            headerSort: false,
+                            sorter: "number",
+                            cssClass: "table-saldos",
+                        },
                     ],
                 },
                 ]
@@ -413,10 +394,10 @@
 
         $scope.getBodegas = function () {
             let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
-            commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
-                $scope.bodegas = response[1];
-                $scope.dataSearch.byBodega = $scope.bodegas[0].idBodega
-            })
+            $scope.bodegas = dataEstab.bodegas;
+            let dataBodega = $scope.bodegas.find(estab => (estab.defaultBodega));
+            $scope.dataSearch.byBodega = dataBodega.idBodega
+            getKardex();
         }
 
 
@@ -444,19 +425,22 @@
 
 
         $scope.onChangeUltimaConsolidacion = function () {
-            $scope.dataSearch.consolidacion = 0
             if ($scope.dataSearch.checkBoxUltimaConsolidacion) {
-                $scope.dataSearch.consolidacion = 1;
                 $scope.dataSearch.checkBoxConsolidacion = false;
-
                 $scope.dataSearch.checkBoxFecha = false;
             }
         }
 
+        $scope.onChangeFechaFiltro = function () {
+            if ($scope.dataSearch.checkBoxFecha) {
+                $scope.dataSearch.checkBoxConsolidacion = false;
+                $scope.dataSearch.checkBoxUltimaConsolidacion = false;
+            }
+        }
+
         $scope.onChangecheckBoxConsolidacionInventario = function () {
-            $scope.dataSearch.consolidacion = 0
             if ($scope.dataSearch.checkBoxConsolidacion) {
-                $scope.dataSearch.consolidacion = 2;
+                $scope.dataSearch.checkBoxFecha = false;
                 $scope.dataSearch.checkBoxUltimaConsolidacion = false;
             }
         }
@@ -488,8 +472,8 @@
 
             if ($scope.dataSearch.checkBoxMovement) {
                 if ($scope.dataSearch.movement === null || $scope.dataSearch.movement === undefined || $scope.dataSearch.movement === "") {
-                    tS.toastr('warning', 'Seleccione el Movimiento', tituloToast);
-                    return
+                    // tS.toastr('warning', 'Seleccione el Movimiento');
+                    // return
                 }
             }
             $scope.dataSearch.isSearch = true;
@@ -530,7 +514,7 @@
             let parameters = {
                 hasIdUsuarioRol: true,
                 reportParams: JSON.stringify({
-                    codigo: "KRG",
+                    codigo: "RK",
                     format: formatType,
                     codEstab: $scope.dataSearch.codEstab,
                     hasParams: true,
@@ -538,20 +522,25 @@
                 }),
 
                 dataParams: JSON.stringify(Object.assign($scope.dataSearch, {
-                    checkBoxFecha: true
+                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                    tipo: 1,
+                    movement: [null, undefined, ""].includes($scope.dataSearch.movement) ? null : $scope.dataSearch.movement
                 }))
             }
 
             commonSvc.getReport({
                 parameters,
-                formatType
+                formatType,
+                v2: true
             })
         }
 
 
         async function openModalTipoDocumento(item) {
             try {
+
                 if (("idDocumento" in item) && ("tipoDoc") in item) {
+
                     //Nota Entrega
                     if ([DOC_TYPE.NE].includes(item.tipoDoc)) {
                         $scope.openDocSale(item, item.tipoDoc);
@@ -566,7 +555,7 @@
                         $scope.openDocSale(params, 'FV_SRI');
                         return
                     }
-                    
+
                     if (item.codTransaccion == 'E' && item.tipoDoc == 'FE') {
 
                         let { fileCtrl, controller, F } = nombreModalCompra.DOCUMENTO_RECIBIDO;
@@ -586,7 +575,25 @@
                             isRenderRazorPartial: true
                         })
 
-                    } else {
+                    } else if (item.tipoDoc === 'CI') {
+                        let fileCtrl = nombreModalInventario.CONSOLIDACION.fileCtrl;
+                        let ctrl = nombreModalInventario.CONSOLIDACION.controllers['D'];
+                        let template = nombreModalInventario.CONSOLIDACION.templates['D'];
+
+                        let controller = (await import(fileCtrl))[ctrl];
+                        modalSvc.openModalCustom({
+                            controller,
+                            template,
+                            size: 'xl',
+                            params: {
+                                id: item.idDocumento
+                            },
+                            windowClass: 'uibModalFullScreen',
+                            isRenderRazorPartial: true
+                        })
+                    }
+
+                    else {
                         commonSvc.viewDetailDocumentII({
                             id: item.idDocumento,
                             codTransaccion: item.codTransaccion,
@@ -596,6 +603,9 @@
                         })
                     }
                 }
+
+
+
             } catch (error) {
                 console.log(error)
             }
@@ -621,6 +631,7 @@
                 console.log(error)
             }
         }
+
 
     }
 })(window.angular)
