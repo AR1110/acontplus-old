@@ -3,7 +3,7 @@ import { FormsModule } from "@angular/forms";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerCustomerRoleEstab } from "@modules/config/models/user-customer-role-estab.model";
-import { UserCustomerRoleEstabService } from "@modules/config/services/user-customer-role-estab.service";
+import { UserCustomerRoleEstabService } from "@modules/config/services/user-customer/user-customer-role-estab.service";
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ToasterService } from "@core/services/toaster.service";
 import { isApiResponse } from "@core/models/api-response";

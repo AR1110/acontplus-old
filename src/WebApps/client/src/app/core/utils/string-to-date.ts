@@ -15,8 +15,6 @@ export function stringToDate(_date: string, _format: string, _delimiter: string)
   const minutesIndex = formatItems.indexOf("ii");
   const secondsIndex = formatItems.indexOf("ss");
 
-  console.log(formatItems)
-  console.log(formatItems.indexOf('ii'))
   const today = new Date();
 
   const year = yearIndex > -1 ? parseInt(dateItems[yearIndex], 10) : today.getFullYear();

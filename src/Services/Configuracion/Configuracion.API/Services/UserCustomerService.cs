@@ -1,4 +1,5 @@
 ﻿using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Configuracion.API.Interfaces;
 
@@ -27,10 +28,14 @@ namespace Configuracion.API.Services
             }
         }
 
-
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
+            return await _repository.SPExecuteAsync(nameSchema + "_Insert", parameters);
+        }
+
+        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+        {
+            return await _repository.SPExecuteAsync(nameSchema + "_Update", parameters);
         }
     }
 }

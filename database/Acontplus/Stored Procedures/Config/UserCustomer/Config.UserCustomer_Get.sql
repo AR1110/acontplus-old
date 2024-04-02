@@ -33,14 +33,17 @@ BEGIN
 
 			SELECT @pageSize = pageSize, @pageIndex  = pageIndex FROM OPENJSON(@json) WITH ( pageIndex INT '$.pageIndex', pageSize  INT '$.pageSize')
 
-			SELECT idUsuario          
-				  ,nroIdentificacion 
-				  ,nombreUsuario  
-				  ,correo            
-				  ,nombreCompleto    
+			SELECT u.idUsuario          
+				  ,u.nroIdentificacion 
+				  ,u.nombreUsuario  
+				  ,u.correo            
+				  ,u.nombreCompleto    
 				  ,COUNT(*) OVER()   as TotalRecords
+                  ,ur.roleId
+                  ,ur.estado
 			FROM dbo.Usuario u WITH (NOLOCK) 
-            WHERE u.idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad)
+            INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON ur.idUsuario = u.idUsuario
+            WHERE ur.idEntidad = @idEntidad
 			ORDER BY idUsuario DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
 
 			RETURN 
@@ -50,8 +53,9 @@ BEGIN
 	IF @tipo = 2
 		BEGIN
 			
-			SET @tableNames = 'roles'
- 
+			SET @tableNames = 'roles' 
+            SELECT Id, [Name], Code FROM AcontPlusAdmin.Seguridad.[Role] WHERE Code NOT IN ('RT', 'SU', 'ADM')
+            AND [Enabled] = 1
 
 			RETURN 
 		END 

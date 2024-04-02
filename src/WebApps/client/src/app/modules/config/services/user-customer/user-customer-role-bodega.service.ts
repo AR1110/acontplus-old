@@ -1,10 +1,10 @@
 import { inject, Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
-import { CONFIG_PATHS } from "../enums/config.enums";
+import { CONFIG_PATHS } from "../../enums/config.enums";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
-import { UserCustomerCustomerRoleEstab } from "../models/user-customer-role-estab.model";
-import { UserCustomerCustomerRoleBodega } from "../models/user-customer-role-bodega.model";
+import { UserCustomerCustomerRoleEstab } from "../../models/user-customer-role-estab.model";
+import { UserCustomerCustomerRoleBodega } from "../../models/user-customer-role-bodega.model";
 
 
 @Injectable({

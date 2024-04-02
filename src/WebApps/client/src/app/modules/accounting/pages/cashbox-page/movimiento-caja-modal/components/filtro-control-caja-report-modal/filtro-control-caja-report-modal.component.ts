@@ -6,7 +6,7 @@ import { SharedService } from "@core/services/shared.service";
 import { ToasterService } from "@core/services/toaster.service";
 import { AccountingModule } from "@modules/accounting/accounting.module";
 import { ControlCajaService } from "@modules/accounting/services/control-caja.service";
-import { UserPermissionService } from "@modules/config/services/user-permission.service";
+import { UserPermissionService } from "@modules/config/services/user-customer/user-permission.service";
 import { NgbActiveModal, NgbTimepickerModule } from "@ng-bootstrap/ng-bootstrap";
 import { AppModule } from "src/app/app.module";
 import Swal from "sweetalert2";

@@ -5,7 +5,7 @@ import { ToasterService } from "@core/services/toaster.service";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRequest } from "@modules/config/models/user-customer-request.model";
-import { UserCustomerRequestService } from "@modules/config/services/user-customer-request.service";
+import { UserCustomerRequestService } from "@modules/config/services/user-customer/user-customer-request.service";
 import { NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap";
 import Swal from "sweetalert2";
 

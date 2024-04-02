@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
-import { CONFIG_PATHS } from "../enums/config.enums";
+import { CONFIG_PATHS } from "../../enums/config.enums";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 
@@ -19,4 +19,20 @@ export class UserCustomerService {
     })
     return this.http.get(`${this.url}?json=${json}`)
   }
+
+  getDataForm() {
+    let json = JSON.stringify({
+      tipo: 2
+    })
+    return this.http.get(`${this.url}?json=${json}`)
+  }
+
+  post<T>(data: T){
+    return this.http.post(`${this.url}`, {data})
+  }
+
+  put<T>(id: number, data: T) {
+    return this.http.put(`${this.url}${id}`, { data })
+  }
+
 }
