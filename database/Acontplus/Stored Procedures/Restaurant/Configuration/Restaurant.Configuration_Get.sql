@@ -17,16 +17,42 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @codEstab VARCHAR(20)
     DECLARE @customerCompanyId INT 
-    DECLARE @actividad VARCHAR(4)
+  --  DECLARE @actividad VARCHAR(4)
     DECLARE @idUsuario INT 
+
+    DECLARE @tipo INT 
     
 	SELECT TOP 1  @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
-	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab')
-    SELECT TOP 1 @actividad = actividad FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
+	SELECT @codEstab = codEstab, @tipo = tipo FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab', tipo INT )
+   -- SELECT TOP 1 @actividad = actividad FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
     --cliente por defecto agregado en configuracion general
     SELECT TOP 1 @customerCompanyId = ISNULL(JSON_VALUE(jsonConfig, '$.idCliente'), 0) FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND  codConfig = 'CV'
 
+    IF @tipo = 1
+        BEGIN 
+            SET @tableNames='estabs,bodegas'
+             SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,estab + '-' + ptoEmi as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idBodega
+                  ,bodega
+                  ,defaultEstab
+                  ,defaultBodega 
+            FROM v_Bodega_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+            RETURN 
+        END
 	SET @tableNames = 'ConfigDecimal,Tables,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente,config,vendedores'
 	
     SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
@@ -57,7 +83,8 @@ BEGIN
     ORDER BY sf.idSubFamilia DESC  
     
 	SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
-	SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)
+	SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)  
+    
 
     SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
 	FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 

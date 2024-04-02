@@ -8,7 +8,7 @@ import { ModalService } from '@core/services/modal.service';
 import { CashboxCloseModalComponent } from '../cashbox-close-modal/cashbox-close-modal.component';
 import { getPermisosLocal, isValidField } from '@core/utils/utils';
 import Swal from 'sweetalert2';
-import { UserPermissionService } from '@modules/config/services/user-permission.service';
+import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { CODE_ESTADO, CODE_REPORT, FORMAT_REPORT, FORMAT_TYPE } from '@core/constants/global.constants';

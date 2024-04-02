@@ -8,7 +8,8 @@ import { ToasterService } from "@core/services/toaster.service";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomer } from "@modules/config/models/user-customer.model";
-import { UserCustomerPermissionService } from "@modules/config/services/user-customer-permission.service";
+import { UserCustomerPermissionService } from "@modules/config/services/user-customer/user-customer-permission.service";
+
 
 @Component({
   selector: 'app-user-customer-role-permission',
@@ -74,11 +75,11 @@ export class UserCustomerRolePermissionComponent {
 
   setDataPermissionSale(){
     const {permission } = this.mainPermission.permissionsSale;
-    this.mainPermissionSale = permission;
+    this.mainPermissionSale = permission || this.mainPermissionSale;
 
-    this.permissionSaleComprobanteKey = Object.keys(this.mainPermissionSale.comprobante);
-    this.permissionSaleDetailKey = Object.keys(this.mainPermissionSale.detail);
-    this.permissionSaleAdditionalKey = Object.keys(this.mainPermissionSale.additional);
+    this.permissionSaleComprobanteKey = Object.keys(this.mainPermissionSale?.comprobante || []);
+    this.permissionSaleDetailKey = Object.keys(this.mainPermissionSale?.detail || []);
+    this.permissionSaleAdditionalKey = Object.keys(this.mainPermissionSale?.additional || []);
     this.userCustomerAdminSelected.setValue(this.mainPermissionSale?.additional?.keyRequest?.usersAdmin || [])
 
     this.updateAllCompleteSaleComprobante();
@@ -88,13 +89,13 @@ export class UserCustomerRolePermissionComponent {
 
   setDataPermissionArticulo(){
     const { permission } = this.mainPermission.permissionsProduct;
-    this.permissionProductKey = Object.keys(permission);
+    this.permissionProductKey = Object.keys(permission || []);
     this.updateAllCompleteProduct()
   }
 
   setDataPermissionCashBox(){
     const { permission } = this.mainPermission.permissionsCashBox;
-    this.permissionCashBoxKey = Object.keys(permission);
+    this.permissionCashBoxKey = Object.keys(permission || []);
     this.updateAllCompleteCashBox()
   }
 

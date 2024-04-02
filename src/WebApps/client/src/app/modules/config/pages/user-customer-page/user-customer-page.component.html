@@ -1,10 +1,35 @@
 <app-breadcrumb>
-  <button class="btn btn-info">Nuevo</button>
+  <button class="btn btn-info" (click)="openModalAddEdit()">Nuevo</button>
   </app-breadcrumb>
 
 
   <div class="card">
     <div class="card-body">
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+          <div class="d-flex justify-content-start">
+            <span class="form-group pull-left page-size form-inline">
+              <select class="form-select control-color" [(ngModel)]="pagination.pageSize" (change)="changePageSize()">
+                @for(item of pagination.pageSizeOptions; track $index){
+                <option [ngValue]="item">{{ item }}</option>
+                }
+              </select>
+            </span>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+          <div class="d-flex justify-content-end">
+            <!-- <form class="form-material">
+                  <input
+                    type="text"
+                    class="form-control"
+                    ng-model="buscar"
+                    placeholder="..."
+                  />
+                </form> -->
+          </div>
+        </div>
+      </div>
       <div class="table-responsive">
         <table class="table">
           <thead>
@@ -23,7 +48,7 @@
                 <td>{{$index+1}}</td>
                 <td>
                   <div class="btn-group">
-                    <button type="button" class="btn btn-success btn-sm">
+                    <button type="button" class="btn btn-success btn-sm" (click)="openModalAddEdit(item)">
                       <fa-icon [icon]="'edit'"></fa-icon>
                     </button>
                     <button type="button" class="btn btn-warning btn-sm  " (click)="openModalConfig(item)">
@@ -39,6 +64,14 @@
               </tr>
             }
           </tbody>
+          <tfoot>
+            <tr>
+              <td align="center" colspan="6">
+                <ngb-pagination [collectionSize]="pagination.totalRecords" [(page)]="pagination.pageIndex" [maxSize]="pagination.maxSize"
+                  [pageSize]="pagination.pageSize" [rotate]="true" (pageChange)="pageChanged()" [boundaryLinks]="true" />
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
