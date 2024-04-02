@@ -60,6 +60,7 @@ BEGIN
             FROM dbo.SubFamilia    sf WITH (NOLOCK) 
             LEFT JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
             WHERE idEntidad = @idEntidad
+              AND sf.estado = 1
 
 			SELECT * FROM Tarifa WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
