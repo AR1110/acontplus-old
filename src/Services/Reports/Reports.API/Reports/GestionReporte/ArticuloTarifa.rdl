@@ -97,290 +97,9 @@
     <ReportSection>
       <Body>
         <ReportItems>
-          <Textbox Name="Textbox1">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!razonSocial.Value, "headerDs")</Value>
-                    <Style>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>0.01827cm</Top>
-            <Left>0.03593cm</Left>
-            <Height>0.6cm</Height>
-            <Width>15.61804cm</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox2">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!ruc.Value, "headerDs")</Value>
-                    <Style>
-                      <FontSize>7pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <Top>0.65354cm</Top>
-            <Left>0.03593cm</Left>
-            <Height>0.46771cm</Height>
-            <Width>15.61804cm</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox3">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!direccionEntidad.Value, "headerDs")</Value>
-                    <Style>
-                      <FontSize>7pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <Top>1.15653cm</Top>
-            <Left>0.03593cm</Left>
-            <Height>0.46771cm</Height>
-            <Width>15.61804cm</Width>
-            <ZIndex>2</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox4">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>INVENTARIO CON LISTA DE PRECIOS</Value>
-                    <Style>
-                      <FontSize>8pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>1.58897cm</Top>
-            <Left>0.03593cm</Left>
-            <Height>0.6cm</Height>
-            <Width>15.61804cm</Width>
-            <ZIndex>3</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox8">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>IMPRESO:</Value>
-                    <Style>
-                      <FontSize>7pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>2.33008cm</Top>
-            <Left>0.03593cm</Left>
-            <Height>0.41479cm</Height>
-            <Width>1.41521cm</Width>
-            <ZIndex>4</ZIndex>
-            <Style>
-              <Border />
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox9">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=Globals!ExecutionTime</Value>
-                    <Style>
-                      <FontSize>7pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>2.33008cm</Top>
-            <Left>1.48641cm</Left>
-            <Height>0.41479cm</Height>
-            <Width>2.47826cm</Width>
-            <ZIndex>5</ZIndex>
-            <Style>
-              <Border />
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Tablix Name="Tablix1">
             <TablixCorner>
               <TablixCornerRows>
-                <TablixCornerRow>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox7">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value />
-                                <Style>
-                                  <FontSize>7pt</FontSize>
-                                  <FontWeight>Bold</FontWeight>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox7</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <VerticalAlign>Middle</VerticalAlign>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox15">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value />
-                                <Style>
-                                  <FontSize>7pt</FontSize>
-                                  <FontWeight>Bold</FontWeight>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox15</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <VerticalAlign>Middle</VerticalAlign>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                      <ColSpan>3</ColSpan>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell />
-                  <TablixCornerCell />
-                </TablixCornerRow>
                 <TablixCornerRow>
                   <TablixCornerCell>
                     <CellContents>
@@ -528,7 +247,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.81209cm</Width>
+                  <Width>1.81928cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -576,17 +295,27 @@
             <TablixColumnHierarchy>
               <TablixMembers>
                 <TablixMember>
+                  <Group Name="tarifa">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!tarifa.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!tarifa.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
                   <TablixHeader>
                     <Size>0.6cm</Size>
                     <CellContents>
-                      <Textbox Name="Textbox40">
+                      <Textbox Name="tarifa">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Tarifa</Value>
+                                <Value>=Fields!tarifa.Value</Value>
                                 <Style>
                                   <FontSize>7pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
@@ -598,7 +327,7 @@
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Textbox40</rd:DefaultName>
+                        <rd:DefaultName>tarifa</rd:DefaultName>
                         <Style>
                           <Border>
                             <Style>Solid</Style>
@@ -612,56 +341,6 @@
                       </Textbox>
                     </CellContents>
                   </TablixHeader>
-                  <TablixMembers>
-                    <TablixMember>
-                      <Group Name="tarifa">
-                        <GroupExpressions>
-                          <GroupExpression>=Fields!tarifa.Value</GroupExpression>
-                        </GroupExpressions>
-                      </Group>
-                      <SortExpressions>
-                        <SortExpression>
-                          <Value>=Fields!tarifa.Value</Value>
-                        </SortExpression>
-                      </SortExpressions>
-                      <TablixHeader>
-                        <Size>0.6cm</Size>
-                        <CellContents>
-                          <Textbox Name="tarifa">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>=Fields!tarifa.Value</Value>
-                                    <Style>
-                                      <FontSize>7pt</FontSize>
-                                      <FontWeight>Bold</FontWeight>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
-                              </Paragraph>
-                            </Paragraphs>
-                            <rd:DefaultName>tarifa</rd:DefaultName>
-                            <Style>
-                              <Border>
-                                <Style>Solid</Style>
-                              </Border>
-                              <VerticalAlign>Middle</VerticalAlign>
-                              <PaddingLeft>2pt</PaddingLeft>
-                              <PaddingRight>2pt</PaddingRight>
-                              <PaddingTop>2pt</PaddingTop>
-                              <PaddingBottom>2pt</PaddingBottom>
-                            </Style>
-                          </Textbox>
-                        </CellContents>
-                      </TablixHeader>
-                    </TablixMember>
-                  </TablixMembers>
                 </TablixMember>
               </TablixMembers>
             </TablixColumnHierarchy>
@@ -679,7 +358,7 @@
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>1.45114cm</Size>
+                    <Size>1.45833cm</Size>
                     <CellContents>
                       <Textbox Name="Textbox11">
                         <CanGrow>true</CanGrow>
@@ -716,7 +395,7 @@
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>3cm</Size>
+                        <Size>3.00719cm</Size>
                         <CellContents>
                           <Textbox Name="codigo1">
                             <CanGrow>true</CanGrow>
@@ -753,7 +432,7 @@
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>9.36022cm</Size>
+                            <Size>9.36741cm</Size>
                             <CellContents>
                               <Textbox Name="descripcion">
                                 <CanGrow>true</CanGrow>
@@ -790,7 +469,7 @@
                           <TablixMembers>
                             <TablixMember>
                               <TablixHeader>
-                                <Size>4.0475cm</Size>
+                                <Size>4.05469cm</Size>
                                 <CellContents>
                                   <Textbox Name="subFamilia">
                                     <CanGrow>true</CanGrow>
@@ -837,10 +516,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
-            <Top>3.1605cm</Top>
-            <Height>1.8cm</Height>
-            <Width>19.67095cm</Width>
-            <ZIndex>6</ZIndex>
+            <Height>1.2cm</Height>
+            <Width>19.70688cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -848,10 +525,10 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>2.03629in</Height>
+        <Height>0.76546in</Height>
         <Style />
       </Body>
-      <Width>8.15741in</Width>
+      <Width>7.76158in</Width>
       <Page>
         <PageFooter>
           <Height>0.74083cm</Height>

@@ -1125,7 +1125,7 @@
                 consolidacionInvSvc.getProducts(dataSearch).then(response => {
                     $scope.articlesFounded = response.articulos;
                     if ($scope.articlesFounded.length > 50) {
-                        Swal.fire({ title: "Aviso", text: "Le recomendamos realizar consolidaciones por cada 50 articulos", icon: "info" })
+                        // Swal.fire({ title: "Aviso", text: "Le recomendamos realizar consolidaciones por cada 50 articulos", icon: "info" })
                     }
                 }).catch(error => {
                     hideLoader()

@@ -1,4 +1,6 @@
 use acontplus_old
+
+--FOR TEST
 --select *  from PuntoEmision pe INNER JOIN Sri.Establecimiento e ON pe.codEstab = e.codEstab
 --where e.ruc = '0101374015001'
 --select * from PuntoEmision pe 
@@ -30,3 +32,14 @@ order  by c.idPuntoEmision, td.idTipoDocumento
 --INNER JOIN @tbl tt ON e.ruc = tt.ruc AND e.estab = tt.estab AND pe.ptoEmi = tt.ptoEmi AND td.codigo = tt.codDoc
 
 --select * from FactElect.Config_Comprob_Elect
+GO
+
+
+update Acontplus.dbo.puntoemision set ambiente = 1 where ambiente = 2
+GO
+
+update Acontplus.Sri.Establecimiento set autoSriAuth = 0
+GO
+
+update Acontplus.dbo.DocumentoElectronico set isAutomatic = 0
+GO

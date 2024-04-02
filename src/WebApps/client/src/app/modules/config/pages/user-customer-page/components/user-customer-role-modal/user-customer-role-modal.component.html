@@ -17,9 +17,9 @@
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
-            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs"  >
+            <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs" (navChange)="onNavChange(item)" >
               <li [ngbNavItem]="1">
-                <button ngbNavLink (click)="clickNgbNavLink(item)">Establecimientos</button>
+                <button ngbNavLink  >Establecimientos</button>
                 <ng-template ngbNavContent>
                    <div class="card">
                     <div class="card-body shadow">

@@ -35,7 +35,7 @@ BEGIN
            ,@licenses VARCHAR(MAX)
 		
 	SET @cantidadArticulo  =(SELECT COUNT(*) FROM Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1)
-	SET @cantidadUsuario   =(SELECT COUNT(*) FROM Usuario WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM Rol WHERE idEntidad = @idEntidad))
+	SET @cantidadUsuario   =(SELECT COUNT(*) FROM Usuario WITH (NOLOCK) WHERE idUsuario IN (SELECT idUsuario FROM App.UsuarioRol WHERE idEntidad = @idEntidad))
 	SET @cantidadProveedor =(SELECT COUNT(*) FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad and estado = 1)
 	SET @cantidadCliente   =(SELECT COUNT(*) FROM Cliente WITH (NOLOCK) WHERE idEntidad = @idEntidad and estado = 1)
 	SET @facturaVenta	   =(SELECT COUNT(*) FROM Factura WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1)

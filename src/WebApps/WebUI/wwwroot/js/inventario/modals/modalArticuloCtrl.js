@@ -29,7 +29,7 @@ function modalArticuloCtrl(
     let pricingUtils = $injector.get("pricingUtils");
     let productPhotoService = $injector.get("productPhotoService");
 
-    const CODIGO_IVA = "IVA12";
+    const CODIGO_IVA = "4";
 
     $scope.data = {
         idTipoArticulo: 0,

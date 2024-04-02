@@ -47,8 +47,8 @@ namespace Identity.API.Controllers.v1
                 {
                     return BadRequest("Contraseña no puede estar vacia");
                 }
-                var mainResponse = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
-                var _response = JsonConvert.DeserializeObject<ApiResponse>(mainResponse);
+                var _response = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
+                //var _response = JsonConvert.DeserializeObject<ApiResponse>(mainResponse);
                 //User founded
                 if (_response.code == "1" && !string.IsNullOrEmpty(_response.payload))
                 {
@@ -106,7 +106,7 @@ namespace Identity.API.Controllers.v1
                     _context.LoginFaileds.Add(new LoginFailed { UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password });
                     await _context.SaveChangesAsync();
                 }
-                return Ok(mainResponse);
+                return Ok(_response);
             }
             catch (Exception ex)
             {
@@ -158,7 +158,7 @@ namespace Identity.API.Controllers.v1
         {
             try
             {
-                var response = await _accountService.VerifyCodeAsync(data.code);
+                var response = await _accountService.VerifyCodeAsync(0);
                 return Ok(response);
             }
             catch (Exception ex)

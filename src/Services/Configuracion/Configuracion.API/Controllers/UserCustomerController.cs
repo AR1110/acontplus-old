@@ -42,8 +42,8 @@ namespace Configuracion.API.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Put(ApiRequest data)
+        [HttpPost]
+        public async Task<IActionResult> Post(ApiRequest data)
         {
             try
             {
@@ -52,14 +52,34 @@ namespace Configuracion.API.Controllers
                     {"userRoleId", User.GetUserRoleId()},
                     {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
-                var response = await _service.UpdateAsync(parameters);
-                if (response == null) { return NoContent(); };
+                var response = await _service.AddAsync(parameters); 
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error en Post " + ex.Message);
                 return BadRequest("Error en Post " + ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, ApiRequest data)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id},
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+                var response = await _service.UpdateAsync(parameters); 
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en Update User Customer " + ex.Message);
+                return BadRequest("Error en Update User Customer " + ex.Message);
             }
         }
     }

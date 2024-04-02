@@ -115,6 +115,7 @@ export class DocConfigPageComponent {
     showLoader();
     this.docConfigSvc.post(data).subscribe({
       next: (response) => {
+        hideLoader()
         if (isApiResponse(response)) {
           if (response.code === "0") {
             this.tS.toastr({
