@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\GestionReporte\ArticuloTarifa - Copy.rdl" />
     <None Remove="Reports\Ventas\AprobHistorial.rdl" />
     <None Remove="Reports\Ventas\Factura.rdlc" />
     <None Remove="Reports\Ventas\FacturaGeneral.rdl" />
@@ -40,6 +41,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\FactElect\ComprobanteRetencionRG.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\ArticuloTarifa - Copy.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Inventario\ConsumoDiarioArticuloAgrupado.rdl">
