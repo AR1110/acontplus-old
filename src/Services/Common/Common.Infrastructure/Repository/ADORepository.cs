@@ -226,7 +226,7 @@ namespace Common.Infrastructure.Repository
             }
             return dt;
         }
-        public async Task<int> OnlyExecute(string spName, Dictionary<string, object> parameters)
+        public async Task<int> OnlyExecute(string spName, Dictionary<string, object> parameters, bool useStoredProcedure)
         {
             var _context = _contexts.GetContext(_configuration["ContextName"]);
             using (var cmd = _context.Database.GetDbConnection().CreateCommand())
@@ -245,7 +245,14 @@ namespace Common.Infrastructure.Repository
                             }
                         }
                     }
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    if (useStoredProcedure)
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                    }
+                    else
+                    {
+                        cmd.CommandType = CommandType.Text;
+                    }
                     if (!wasOpen) await _context.Database.OpenConnectionAsync();
                    return await cmd.ExecuteNonQueryAsync();
                 }
