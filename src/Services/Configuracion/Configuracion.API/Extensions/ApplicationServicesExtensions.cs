@@ -24,6 +24,7 @@ namespace Configuracion.API.Extensions
             services.AddScoped<IDocConfigService, DocConfigService>();
             services.AddScoped<IUserCustomerService, UserCustomerService>(); 
             services.AddScoped<IUserCustomerRoleService, UserCustomerRoleService>(); 
+            services.AddScoped<IUserCustomerRequestService, UserCustomerRequestService>(); 
 
             services.AddSingleton<LogWriter>();
 

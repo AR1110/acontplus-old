@@ -1,6 +1,9 @@
 import { Component } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 export interface Task {
   name: string;
@@ -12,89 +15,185 @@ export interface Task {
 @Component({
   selector: 'app-user-customer-role-permission',
   standalone: true,
-  imports: [MatCheckboxModule, FormsModule],
+  imports: [
+    FontAwesomeModule,
+    MatCheckboxModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './user-customer-role-permission.component.html',
-  styles: `.example-section {
-  margin: 12px 0;
-}
-
-.example-margin {
-  margin: 0 12px;
-}
-
-ul {
-  list-style-type: none;
-  margin-top: 4px;
-}`
+  styleUrl: 'user-customer-role-permission.component.scss'
 })
 export class UserCustomerRolePermissionComponent {
 
-  task: Task = {
-    name: 'Indeterminate',
-    completed: false,
-    color: 'primary',
-    subtasks: [
-      { name: 'Primary', completed: false, color: 'primary' },
-      { name: 'Accent', completed: false, color: 'accent' },
-      { name: 'Warn', completed: false, color: 'warn' },
-    ],
-  };
+  toppings = new FormControl('');
 
-  allComplete: boolean = false;
+  toppingList: string[] = ['Extra cheese', 'Mushroom', 'Onion', 'Pepperoni', 'Sausage', 'Tomato'];
 
-  permissionSale:any = {
+  allCompleteSaleComprobante = false;
+  allCompleteSaleDetail = false;
+  allCompleteSaleAdditional = false;
+
+  permissionSale: any = {
     comprobante: {
       label: "Comprobante",
       permissions: {
         fechaEmision: {
-          description: "Modificar la fecha de emisión.",
+          description: "Modificar Fecha de Emisión",
           enabled: true
         },
         tiempoCredito: {
-          description: "Cambiar el tiempo de crédito.",
+          description: "Cambiar tiempo Credito",
           enabled: true
         },
         tarifa: {
-          description: "Modificar la tarifa general.",
+          description: "Modifcar tarifa general",
           enabled: true
         },
         porcentajeDescuento: {
-          description: "Modificar el % de descuento.",
+          description: "Cambiar Porcentaje Descuento",
           enabled: true
         },
         descuento: {
-          description: "Modificar el descuento.",
+          description: "Cambiar Descuento",
+          enabled: true
+        }
+      }
+    },
+    detail: {
+      label: 'Detalle',
+      permissions: {
+        medida: {
+          description: "Cambiar Medida",
           enabled: true
         },
+        tipoIva: {
+          description: "Cambiar Tipo IVA",
+          enabled: true
+        },
+        tarifa: {
+          description: "Cambiar tarifa",
+          enabled: true
+        },
+        precioUnitario: {
+          description: "Modificar Precio Unitario",
+          enabled: true
+        },
+        precioConIva: {
+          description: "Modificar Precio con IVA",
+          enabled: true
+        },
+        porcentajeDescuento: {
+          description: "Modificar Porcentaje Descuento",
+          enabled: true
+        },
+        descuento: {
+          description: "Modificar Descuento",
+          enabled: true
+        }
+      }
+    },
+    additional: {
+      label: 'Adicional',
+      permissions: {
+        keyRequest: { // Cambiado por un nombre legible y corto
+          description: "Solicitar Autorización para Editar o Anular el Doc. Venta",
+          enabled: false,
+          usersAdmin: [],
+          isKeyRequest: true
+        },
+        viewOthersDocs: {
+          description: "Consultar documentos electronicos de otros usuarios",
+          enabled: true
+        },
+        kardex: {
+          description: "Ver Kardex",
+          enabled: true
+        },
+        totalesVenta: {
+          description: "Mostrar totales de ventas",
+          enabled: true
+        }
       }
     }
+  };
 
+
+  permissionSaleComprobante = Object.keys(this.permissionSale.comprobante.permissions);
+  permissionSaleDetail = Object.keys(this.permissionSale.detail.permissions)
+  permissionSaleAdditional = Object.keys(this.permissionSale.additional.permissions)
+
+  ngOnInit(){
+    this.updateAllCompleteSaleComprobante();
+    this.updateAllCompleteSaleDetail();
+  }
+  /**
+   * Permiso venta comprobante
+   *
+   */
+  someCompleteSaleComprobante() {
+    const comprobantePermisos = this.permissionSaleComprobante
+      .filter(permiso => this.permissionSale.comprobante.permissions[permiso].enabled).length > 0 && !this.allCompleteSaleComprobante;
+    return comprobantePermisos;
   }
 
-  permissions = Object.keys(this.permissionSale.comprobante.permissions)
+  setAllSaleComprobante(completed: boolean) {
+    this.allCompleteSaleComprobante = completed;
 
-
-  updateAllComplete() {
-    this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
-  }
-
-  someComplete(): boolean {
-    if (this.task.subtasks == null) {
-      return false;
-    }
-    return this.task.subtasks.filter(t => t.completed).length > 0 && !this.allComplete;
-  }
-
-  setAll(completed: boolean) {
-    console.log(this.permissions)
-    this.allComplete = completed;
-    if (this.task.subtasks == null) {
-      return;
-    }
-   // this.task.subtasks.forEach(t => (t.completed = completed));
-    Object.values(this.permissionSale.comprobante.permissions).forEach((permission:any) => {
-      permission.enabled = false;
+    this.permissionSaleComprobante.forEach(permiso => {
+      this.permissionSale.comprobante.permissions[permiso].enabled = completed;
     });
   }
+
+  updateAllCompleteSaleComprobante() {
+    this.allCompleteSaleComprobante = this.permissionSaleComprobante.every(permiso => this.permissionSale.comprobante.permissions[permiso].enabled);
+  }
+
+  /**
+   * Pemirso detalle Venta
+   *
+   */
+  someCompleteSaleDetail(){
+    const isSome = this.permissionSaleDetail
+      .filter(permiso => this.permissionSale.detail.permissions[permiso].enabled).length > 0 && !this.allCompleteSaleDetail;
+    return isSome;
+  }
+
+  setAllSaleDetail(completed: boolean) {
+    this.allCompleteSaleDetail = completed;
+
+    this.permissionSaleDetail.forEach(permiso => {
+      this.permissionSale.detail.permissions[permiso].enabled = completed;
+    });
+  }
+  updateAllCompleteSaleDetail() {
+    this.allCompleteSaleDetail = this.permissionSaleDetail.every(permiso => this.permissionSale.detail.permissions[permiso].enabled);
+  }
+  //=======================================
+
+  /**
+   * Permisos adicionales en venta
+   */
+
+  someCompleteSaleAdditional(){
+    const isSome = this.permissionSaleAdditional
+      .filter(permiso => this.permissionSale.additional.permissions[permiso].enabled).length > 0 && !this.allCompleteSaleAdditional;
+    return isSome;
+  }
+
+  setAllSaleAdditional(completed: boolean) {
+    this.allCompleteSaleAdditional = completed;
+
+    this.permissionSaleAdditional.forEach(permiso => {
+      this.permissionSale.additional.permissions[permiso].enabled = completed;
+    });
+  }
+
+  updateAllCompleteSaleAdditional() {
+    this.allCompleteSaleAdditional = this.permissionSaleAdditional.every(permiso => this.permissionSale.additional.permissions[permiso].enabled);
+  }
+
 
 }

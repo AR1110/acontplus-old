@@ -22,12 +22,15 @@
               <tr>
                 <td>{{$index+1}}</td>
                 <td>
-                  <button type="button" class="btn btn-success btn-sm">
-                    <fa-icon [icon]="'edit'"></fa-icon>
-                  </button>
-                  <button type="button" class="btn btn-warning btn-sm m-2" (click)="openModalConfig(item)">
-                    <fa-icon [icon]="'person-chalkboard'"></fa-icon>
-                  </button>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-success btn-sm">
+                      <fa-icon [icon]="'edit'"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm  " (click)="openModalConfig(item)">
+                      <fa-icon [icon]="'person-chalkboard'"></fa-icon>
+                    </button>
+
+                  </div>
                 </td>
                 <td>{{item.nroIdentificacion}}</td>
                 <td>{{item.nombreCompleto}}</td>
