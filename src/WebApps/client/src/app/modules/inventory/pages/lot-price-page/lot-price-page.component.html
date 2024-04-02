@@ -71,7 +71,7 @@
         <div class="form-froup">
           <label for="optionCalculate">Opción de cálculo: <span class="text-danger">*</span></label>
           <select name="optionCalculate" id="optionCalculate" class="form-select"
-            [(ngModel)]="mainForm.optionToCalculate">
+            [(ngModel)]="mainForm.optionToCalculate" (change)="onChangeOptionCalculate()">
             @for (item of optionsCalculate; track $index) {
             <option [ngValue]="item.code">{{item.description}}</option>
             }
