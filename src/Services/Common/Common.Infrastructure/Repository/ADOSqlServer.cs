@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text;
 using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Infrastructure.Utils;
 using FastMember;
 using Microsoft.Data.SqlClient;
@@ -13,19 +14,19 @@ namespace Common.Infrastructure.Repository
     {
         private readonly IConfiguration _configuration;
         public ADOSqlServer(IConfiguration configuration)
-        { 
+        {
             _configuration = configuration;
         }
-        public async Task<List<T>> DynamicListAsync<T>(string spName, Dictionary<string, object> parameters)
+        public async Task<List<T>> DynamicListAsync<T>(string spname, Dictionary<string, object> parameters)
         {
             List<T> response = new List<T>();
-            var _conn =new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-            using (var cmd = new SqlCommand(spName, _conn))
+            var _conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            using (var cmd = new SqlCommand(spname, _conn))
             {
                 bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                 try
                 {
-                    cmd.CommandText = spName;
+
                     if (parameters.Count > 0)
                     {
                         foreach (var parameter in parameters)
@@ -51,16 +52,16 @@ namespace Common.Infrastructure.Repository
             }
             return response;
         }
-        public async Task<T> DinamycObjectAsync<T>(string spName, Dictionary<string, object> parameters) where T : class, new()
+        public async Task<T> DinamycObjectAsync<T>(string spname, Dictionary<string, object> parameters) where T : class, new()
         {
-            var _conn =new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            var _conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
             var mappedObject = new T();
-            using (var cmd = new SqlCommand(spName, _conn))
+            using (var cmd = new SqlCommand(spname, _conn))
             {
                 bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                 try
                 {
-                    cmd.CommandText = spName;
+
                     if (parameters.Count > 0)
                     {
                         foreach (var parameter in parameters)
@@ -113,17 +114,17 @@ namespace Common.Infrastructure.Repository
                 return mappedObject;
             }
         }
-        public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp)
+        public async Task<DataSet> GetDataSetAsync(string spname, Dictionary<string, object> parameters, bool oldSp)
         {
             DataSet ds = null;
-            using (var _conn =new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            using (var _conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                using (var cmd = new SqlCommand(spName, _conn))
+                using (var cmd = new SqlCommand(spname, _conn))
                 {
                     bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                     try
                     {
-                        cmd.CommandText = spName;
+
                         if (parameters.Count > 0)
                         {
                             foreach (var parameter in parameters)
@@ -153,14 +154,6 @@ namespace Common.Infrastructure.Repository
                         if (!oldSp)
                         {
                             string[] tableNames = ParametersUtilsSqlServer.GetParameter(cmd, outParam).ToString().Split(',');
-
-                            //for (int i = 0; i < tableNames.Length; i++)
-                            //{
-                            //    if (!string.IsNullOrEmpty(tableNames[i]))
-                            //    {
-                            //        ds.Tables[i].TableName = tableNames[i];
-                            //    }
-                            //}
                             await Task.Run(() =>
                             {
                                 Parallel.ForEach(tableNames, (tableName, state, index) =>
@@ -183,16 +176,16 @@ namespace Common.Infrastructure.Repository
 
             return ds;
         }
-        public async Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters)
+        public async Task<DataTable> GetDataTableAsync(string spname, Dictionary<string, object> parameters)
         {
             DataTable dt = null;
-            var _conn =new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-            using (var cmd = new SqlCommand(spName, _conn))
+            var _conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            using (var cmd = new SqlCommand(spname, _conn))
             {
                 bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                 try
                 {
-                    cmd.CommandText = spName;
+
                     if (parameters.Count > 0)
                     {
                         foreach (var parameter in parameters)
@@ -221,15 +214,14 @@ namespace Common.Infrastructure.Repository
             }
             return dt;
         }
-        public async Task OnlyExecute(string spName, Dictionary<string, object> parameters)
+        public async Task<int> OnlyExecute(string query, Dictionary<string, object> parameters, bool useStoredProcedure)
         {
-            var _conn =new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-            using (var cmd = new SqlCommand(spName, _conn))
+            var _conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            using (var cmd = new SqlCommand(query, _conn))
             {
                 bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                 try
                 {
-                    cmd.CommandText = spName;
                     if (parameters.Count > 0)
                     {
                         foreach (var parameter in parameters)
@@ -240,9 +232,16 @@ namespace Common.Infrastructure.Repository
                             }
                         }
                     }
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    if (useStoredProcedure)
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                    }
+                    else
+                    {
+                        cmd.CommandType = CommandType.Text;
+                    }
                     if (!wasOpen) await _conn.OpenAsync();
-                    cmd.ExecuteNonQuery();
+                    return await cmd.ExecuteNonQueryAsync();
                 }
                 finally
                 {
@@ -250,16 +249,16 @@ namespace Common.Infrastructure.Repository
                 }
             }
         }
-        public async Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters)
+        public async Task<ApiResponse> SPExecuteAsync(string spname, Dictionary<string, object> parameters)
         {
-            string response = string.Empty;
-            var _conn =new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-            using (var cmd = new SqlCommand(spName, _conn))
+            var response = new ApiResponse();
+            var _conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            using (var cmd = new SqlCommand(spname, _conn))
             {
                 bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                 try
                 {
-                    cmd.CommandText = spName;
+
                     if (parameters.Count > 0)
                     {
                         foreach (var parameter in parameters)
@@ -272,10 +271,33 @@ namespace Common.Infrastructure.Repository
                     }
                     cmd.CommandType = CommandType.StoredProcedure;
                     if (!wasOpen) await _conn.OpenAsync();
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        response = reader.GetString(0);
+                        if (await reader.ReadAsync())
+                        {
+                            var schemaTable = reader.GetSchemaTable();
+                            response.code = reader.IsDBNull(0) ? null : reader.GetString(0);
+                            // Check if the schema table contains the "message" column
+                            var columnExists = schemaTable != null && schemaTable.Rows.Cast<DataRow>().Any(row => row["ColumnName"].ToString().Equals("message", StringComparison.OrdinalIgnoreCase));
+                            if (columnExists)
+                            {
+                                var indexMessage = reader.GetOrdinal("message");
+                                if (indexMessage != -1 && !reader.IsDBNull(indexMessage))
+                                {
+                                    response.message = reader.GetString(indexMessage);
+                                }
+                            }
+
+                            var payloadExists = schemaTable != null && schemaTable.Rows.Cast<DataRow>().Any(row => row["ColumnName"].ToString().Equals("payload", StringComparison.OrdinalIgnoreCase));
+                            if (payloadExists)
+                            {
+                                var indexPayload = reader.GetOrdinal("payload");
+                                if (indexPayload != -1 && !reader.IsDBNull(indexPayload))
+                                {
+                                    response.payload = reader.GetString(indexPayload);
+                                }
+                            }
+                        }
                     }
                 }
                 finally
