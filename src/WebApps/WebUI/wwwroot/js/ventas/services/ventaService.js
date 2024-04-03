@@ -369,6 +369,8 @@
                             codEstado: item.codEstado,
                             tiempoCredito: item.tiempoCredito,
                             esContado: item.tiempoCredito,
+                            disabledUpdate: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.anulada,
+                            disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR'
                         }
                     })
 
@@ -1056,8 +1058,10 @@
                             codDoc: item.codDoc,
                             rowColor: item.rowColor,
                             codEstado: item.codEstado,
+                            disabledUpdate: item.codEstado === 'TRA' || item.codEstado==='CR' || item.anulada
                         }
                     })
+                 
                     return {
                         proformas,
                         dataTotals: { totalRecords, totalDocument }

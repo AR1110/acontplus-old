@@ -1,5 +1,5 @@
-
-
+USE Acontplus
+GO
 CREATE OR ALTER VIEW Config.v_User_Permission_Sale 
 AS(
     SELECT  
@@ -25,14 +25,16 @@ AS(
             FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
         ) AS detalle,
         (
-            SELECT keyRequest = CAST(ISNULL(JSON_VALUE(additional, '$.keyRequest.enabled'), 0) AS BIT),
-                   usersAdmin = JSON_QUERY(additional, '$.keyRequest.usersAdmin')  ,
-                   viewOthersDocs  =CAST(ISNULL(JSON_VALUE(additional, '$.viewOthersDocs.enabled'), 0) AS BIT),
+            SELECT keyRequest = CAST(ISNULL(keyRequest, 0) AS BIT),
+                   usersAdmin,
+                   viewOthersDocs  =CAST(ISNULL(viewOthersDocs, 0) AS BIT),
                    kardex  =CAST(ISNULL(JSON_VALUE(additional, '$.kardex.enabled'), 0) AS BIT),
                    totalesVenta  =CAST(ISNULL(JSON_VALUE(additional, '$.totalesVenta.enabled'), 0) AS BIT) 
             FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
         ) AS adicionales
-        ,viewOthersDocs  =CAST(ISNULL(JSON_VALUE(additional, '$.viewOthersDocs.enabled'), 0) AS BIT)
+         ,viewOthersDocs  =CAST(ISNULL(viewOthersDocs, 0) AS BIT)
+         ,usersAdmin 
+         ,keyRequest
 	    ,estado  
     FROM 
         Config.UserPermission up
@@ -41,8 +43,11 @@ AS(
 	    comprobante NVARCHAR(MAX) '$.comprobante' AS JSON
 	    ,detalle NVARCHAR(MAX) '$.detail' AS JSON 
 	    ,additional NVARCHAR(MAX) '$.additional' AS JSON 
+        ,viewOthersDocs BIT '$.additional.viewOthersDocs.enabled'
+        ,keyRequest BIT '$.additional.keyRequest.enabled' 
+        ,usersAdmin NVARCHAR(MAX)  '$.additional.keyRequest.usersAdmin' as json
     )
     WHERE 
         up.codModule = 'V'   
 )
--- SELECT * FROM Config.UserPermission WHERE idUsuarioRol = 264
+-- SELECT * FROM Config.v_User_Permission_Sale  WHERE idUsuarioRol = 264

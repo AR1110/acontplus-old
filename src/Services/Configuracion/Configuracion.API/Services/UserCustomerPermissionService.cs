@@ -32,6 +32,11 @@ namespace Configuracion.API.Services
             }
         }
 
+        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+        {
+            return await _repository.SPExecuteAsync(nameSchema + "Insert", parameters);
+        }
+
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
             return await _repository.SPExecuteAsync(nameSchema + "Update", parameters);

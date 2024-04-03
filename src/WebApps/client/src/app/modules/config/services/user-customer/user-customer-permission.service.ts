@@ -20,7 +20,7 @@ export class UserCustomerPermissionService {
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response:any)=>{
         const [permissionsSale, permissionsProduct, permissionsCashBox] = response.permissions;
-        console.log(response)
+
         permissionsSale.permission = JSON.parse(permissionsSale.permission);
         permissionsProduct.permission = JSON.parse(permissionsProduct.permission);
         permissionsCashBox.permission = JSON.parse(permissionsCashBox.permission)

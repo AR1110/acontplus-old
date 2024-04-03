@@ -165,7 +165,7 @@
 
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
                     let { sales, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
-                    console.log(permisoEditarDoc)
+                
 
                     // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
                     let dataToGroup = {
@@ -772,6 +772,7 @@
                     nota: item.nota,
                     cantidadStock: 0,
                     llevaInventario: item.llevaInventario,
+                    conversion: item.conversion,
                     precioCosto: item.precioCosto,
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
                     estado: item.estado,

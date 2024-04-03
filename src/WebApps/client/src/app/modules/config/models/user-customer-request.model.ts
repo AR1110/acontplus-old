@@ -1,5 +1,7 @@
 export interface UserCustomerRequest {
   idSolicitud: number
+  tipoDoc: string
+  serieComprobante: string
   usuarioAprobante: string
   usuarioSolicitante: string
   codigoAccion: string
