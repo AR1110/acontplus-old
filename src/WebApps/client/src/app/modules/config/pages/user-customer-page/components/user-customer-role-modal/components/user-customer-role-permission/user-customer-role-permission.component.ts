@@ -235,6 +235,7 @@ export class UserCustomerRolePermissionComponent {
         this.mainPermission.permissionsSale.permission.additional.keyRequest.usersAdmin = []
       }
 
+
       const { permissionsCashBox, permissionsProduct, permissionsSale}= this.mainPermission;
       let dataPermissions = [
         permissionsSale,

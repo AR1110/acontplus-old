@@ -247,6 +247,8 @@ export class LotPricePageComponent {
   //Suppier
   isSearchSupplierSimple = true;
 
+  isCalculateManual = false;
+
   protected getDataFilter() {
     showLoader();
     this.lotPriceSvc.getDataFilter().subscribe({
@@ -451,7 +453,7 @@ export class LotPricePageComponent {
         return
       }
 
-      if (checkedSubCategorias && Array.isArray(checkedSubCategorias) && checkedSubCategorias.length > 3) {
+      if (checkedSubCategorias && Array.isArray(checkedSubCategorias) && checkedSubCategorias.length > 4) {
         this.tS.toastr({
           type: 'warning',
           message: 'Máximo de SubFamilias permitidos es 3'
@@ -498,6 +500,7 @@ export class LotPricePageComponent {
   calculate() {
     try {
 
+      this.isCalculateManual = false;
       let tarifasSelected = this.tarifasSelected.value;
 
       if (this.nestedProducts.length === 0) {
@@ -561,6 +564,42 @@ export class LotPricePageComponent {
     }
   }
 
+  calculateManual() {
+    let tarifasSelected = this.tarifasSelected.value;
+    if (this.nestedProducts.length === 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No se encontrarón productos!'
+      })
+      return
+    }
+    if (!isValidField(this.mainForm.optionToCalculate)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione opcion a calcular'
+      })
+      return
+    }
+
+    if (!isValidField(this.optionPvp)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione una opción de PVP.'
+      })
+      return
+    }
+
+    if (tarifasSelected && Array.isArray(tarifasSelected) && tarifasSelected.length === 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione al menos una tarifa'
+      })
+      return
+    }
+    this.isCalculateManual = true;
+    this.applyValueToProducts();
+  }
+
   applyValueToProducts() {
     this.productsModified = [];
     let tarifasSelected = this.tarifasSelected.value || [];
@@ -582,114 +621,123 @@ export class LotPricePageComponent {
         let utilidad = t.utilidad;
         let setDataToProductsModified = false;
 
-        if (tarifasSelected.includes(t.idTarifa)) {
+        if (this.isCalculateManual) {
+          if (tarifasSelected.includes(t.idTarifa)) {
+            console.log('testts')
+            setDataToProductsModified = true;
+          }
+        } else {
+          if (tarifasSelected.includes(t.idTarifa)) {
 
-          // Sart Sumar un valor a la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
-          if (this.mainForm.optionToCalculate === OptionsCalculateEnum.A) {
+            // Sart Sumar un valor a la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
+            if (this.mainForm.optionToCalculate === OptionsCalculateEnum.A) {
 
-            if (this.optionPvp === "precioVenta") {
-              let precioVentaSumado = precioVenta + this.mainForm.valueToCalculate;
-              if (precioVentaSumado >= item.precioCosto) {
-                precioVenta = precioVentaSumado;
+              if (this.optionPvp === "precioVenta") {
+                let precioVentaSumado = precioVenta + this.mainForm.valueToCalculate;
+                if (precioVentaSumado >= item.precioCosto) {
+                  precioVenta = precioVentaSumado;
+                  precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
+                  porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                  setDataToProductsModified = true;
+                }
+              }
+
+              if (this.optionPvp === "precioConIva") {
+                let precioConIvaSumado = precioConIva + this.mainForm.valueToCalculate;
+                let precioVentaCalculado = pricingCalculateUtil.calculatePriceSale(precioConIvaSumado, porcentajeImpuesto);
+                if (precioVentaCalculado >= item.precioCosto) {
+                  precioConIva = precioConIvaSumado;
+                  precioVenta = precioVentaCalculado;
+                  porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                  setDataToProductsModified = true;
+                }
+              }
+            }
+            //============================================END =====================================
+
+
+            //Start Calcular un porcentaje que se aplique a la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
+            if (this.mainForm.optionToCalculate === OptionsCalculateEnum.B) {
+              if (this.optionPvp === "precioVenta") {
+                let valorImpuesto = pricingCalculateUtil.calculateTaxValue(t.precioVenta, this.mainForm.valueToCalculate);
+                let precioVentaConImpuestos = t.precioVenta + valorImpuesto;
+                if (precioVentaConImpuestos >= item.precioCosto) {
+                  precioVenta = precioVentaConImpuestos;
+                  precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
+                  porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                  setDataToProductsModified = true;
+                }
+              }
+              if (this.optionPvp === "precioConIva") {
+                let valorPrecioConIva = pricingCalculateUtil.calculatePriceWithVat(t.precioConIva, this.mainForm.valueToCalculate);
+                let precioVentaCalculado = pricingCalculateUtil.calculatePriceSale(valorPrecioConIva, porcentajeImpuesto);
+                if (precioVentaCalculado >= item.precioCosto) {
+                  precioConIva = valorPrecioConIva;
+                  precioVenta = precioVentaCalculado;
+                  porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                  setDataToProductsModified = true;
+                }
+              }
+            }
+            //===========================================END========================================
+
+
+            //Start Reemplazar un valor en la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
+            if (this.mainForm.optionToCalculate === OptionsCalculateEnum.C) {
+              if (this.optionPvp === "precioVenta" && this.mainForm.valueToCalculate >= item.precioCosto) {
+                precioVenta = this.mainForm.valueToCalculate;
                 precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
                 porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
                 setDataToProductsModified = true;
               }
-            }
 
-            if (this.optionPvp === "precioConIva") {
-              let precioConIvaSumado = precioConIva + this.mainForm.valueToCalculate;
-              let precioVentaCalculado = pricingCalculateUtil.calculatePriceSale(precioConIvaSumado, porcentajeImpuesto);
-              if (precioVentaCalculado >= item.precioCosto) {
-                precioConIva = precioConIvaSumado;
-                precioVenta = precioVentaCalculado;
-                porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
-                setDataToProductsModified = true;
+              if (this.optionPvp === "precioConIva") {
+                precioConIva = this.mainForm.valueToCalculate;
+                precioVenta = pricingCalculateUtil.calculatePriceSale(precioConIva, porcentajeImpuesto);
+                if (precioVenta >= item.precioCosto) {
+                  porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                  setDataToProductsModified = true;
+                } else {
+                  precioConIva = t.precioConIva;
+                  precioVenta = t.precioVenta;
+                }
               }
             }
-          }
-          //============================================END =====================================
+            //===========================================END========================================
 
+            //Start Sumar un % de rentabilidad al PVP
+            if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D) {
+              if (this.optionPvp === "precioCosto") {
+                let valorImpuesto = pricingCalculateUtil.calculateTaxValue(item.precioCosto, this.mainForm.valueToCalculate);
+                let precioVentaValidar = item.precioCosto + valorImpuesto;
+                // let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
 
-          //Start Calcular un porcentaje que se aplique a la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
-          if (this.mainForm.optionToCalculate === OptionsCalculateEnum.B) {
-            if (this.optionPvp === "precioVenta") {
-              let valorImpuesto = pricingCalculateUtil.calculateTaxValue(t.precioVenta, this.mainForm.valueToCalculate);
-              let precioVentaConImpuestos = t.precioVenta + valorImpuesto;
-              if (precioVentaConImpuestos >= item.precioCosto) {
-                precioVenta = precioVentaConImpuestos;
-                precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
-                porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
-                setDataToProductsModified = true;
+                if (precioVentaValidar >= item.precioCosto) {
+                  precioVenta = precioVentaValidar;
+                  precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
+                  porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                  setDataToProductsModified = true;
+                }
+              }
+              if (this.optionPvp === "precioVenta") {
+
+                let valorImpuesto = pricingCalculateUtil.calculateTaxValue(precioVenta, this.mainForm.valueToCalculate);
+                let precioConImpuestos = precioVenta + valorImpuesto;
+                let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
+
+                if (precioVentaValidar >= item.precioCosto) {
+                  precioVenta = precioVentaValidar;
+                  precioConIva = precioConImpuestos;
+                  porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
+                  setDataToProductsModified = true;
+                }
               }
             }
-            if (this.optionPvp === "precioConIva") {
-              let valorPrecioConIva = pricingCalculateUtil.calculatePriceWithVat(t.precioConIva, this.mainForm.valueToCalculate);
-              let precioVentaCalculado = pricingCalculateUtil.calculatePriceSale(valorPrecioConIva, porcentajeImpuesto);
-              if (precioVentaCalculado >= item.precioCosto) {
-                precioConIva = valorPrecioConIva;
-                precioVenta = precioVentaCalculado;
-                porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
-                setDataToProductsModified = true;
-              }
-            }
-          }
-          //===========================================END========================================
 
-
-          //Start Reemplazar un valor en la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
-          if (this.mainForm.optionToCalculate === OptionsCalculateEnum.C) {
-            if (this.optionPvp === "precioVenta" && this.mainForm.valueToCalculate >= item.precioCosto) {
-              precioVenta = this.mainForm.valueToCalculate;
-              precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
-              porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
-              setDataToProductsModified = true;
-            }
-
-            if (this.optionPvp === "precioConIva") {
-              precioConIva = this.mainForm.valueToCalculate;
-              precioVenta = pricingCalculateUtil.calculatePriceSale(precioConIva, porcentajeImpuesto);
-              if (precioVenta >= item.precioCosto) {
-                porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
-                setDataToProductsModified = true;
-              } else {
-                precioConIva = t.precioConIva;
-                precioVenta = t.precioVenta;
-              }
-            }
-          }
-          //===========================================END========================================
-
-          //Start Sumar un % de rentabilidad al PVP
-          if (this.mainForm.optionToCalculate === OptionsCalculateEnum.D) {
-            if (this.optionPvp === "precioCosto") {
-               let valorImpuesto = pricingCalculateUtil.calculateTaxValue(item.precioCosto, this.mainForm.valueToCalculate);
-              let precioVentaValidar = item.precioCosto + valorImpuesto;
-              // let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
-
-              if (precioVentaValidar >= item.precioCosto) {
-                precioVenta = precioVentaValidar;
-                precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeImpuesto);
-                porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
-                setDataToProductsModified = true;
-              }
-            }
-            if (this.optionPvp === "precioVenta") {
-
-              let valorImpuesto = pricingCalculateUtil.calculateTaxValue(precioVenta, this.mainForm.valueToCalculate);
-              let precioConImpuestos = precioVenta + valorImpuesto;
-              let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
-
-              if (precioVentaValidar >= item.precioCosto) {
-                precioVenta = precioVentaValidar;
-                precioConIva = precioConImpuestos;
-                porcentajeUtilidad = pricingCalculateUtil.getValuePercentageUtility(precioVenta, item.precioCosto);
-                setDataToProductsModified = true;
-              }
-            }
           }
 
         }
+
 
 
         utilidad = pricingCalculateUtil.getValueUtility(precioVenta, item.precioCosto)
@@ -708,10 +756,18 @@ export class LotPricePageComponent {
 
     this.nestedProducts = structuredClone(nestedProducts);
 
-    this.tS.toastr({
-      type: 'info',
-      message: `${this.productsModified.length} Tarifas modificados!`
-    })
+
+    if (this.productsModified.length > 0) {
+      Swal.fire({
+        icon: 'success',
+        text: `${this.productsModified.length} Tarifas modificadas! Antes de guardar, revise que los precios modificados estén correctamente.`
+      })
+    } else {
+      this.tS.toastr({
+        type: 'info',
+        message: `${this.productsModified.length} Tarifas modificados!`
+      })
+    }
   }
 
 
