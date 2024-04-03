@@ -39,27 +39,27 @@ BEGIN
 	DECLARE @header VARCHAR(MAX)
 	DECLARE @detail VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
-	--DECLARE @formaPago VARCHAR(100)
     DECLARE @payments VARCHAR(MAX)
-	--DECLARE @pago DECIMAL(15,2)
- --   DECLARE @cambio DECIMAL(15,2)
+    DECLARE @taxesValue VARCHAR(MAX)
+    DECLARE @taxes VARCHAR(MAX)
     DECLARE @saldo NUMERIC(18,2)
+
+    DECLARE @tbTaxes AS TABLE(
+        descripcion VARCHAR(150) NOT NULL
+       ,subTotal NUMERIC(18,2) NOT NULL
+    )
 	
     IF @codDoc = 'FV' OR @codDoc = 'NE'
         BEGIN
-         SELECT TOP 1
-		        -- @pago =  ci.total
-		        --,@cambio = ci.cambio
-		        --,@formaPago = ef.descripcion
-                @saldo = ISNULL(cc.saldo, 0)
-	        FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) 
-	        INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
-	        INNER JOIN dbo.ComprobanteIngreso       ci WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
-	        INNER JOIN dbo.Cobro                     c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
-	        INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-	        WHERE cc.codDoc = IIF(@codDoc = 'FV','01','NE') 
-              AND cc.idDocumento = @idDocument 
-              AND ci.estado = 1
+             SELECT TOP 1 @saldo = ISNULL(cc.saldo, 0)
+	         FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) 
+	         INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
+	         INNER JOIN dbo.ComprobanteIngreso       ci WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
+	         INNER JOIN dbo.Cobro                     c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
+	         INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
+	         WHERE cc.codDoc = IIF(@codDoc = 'FV','01','NE') 
+               AND cc.idDocumento = @idDocument 
+               AND ci.estado = 1
 
 	       SET @payments = (SELECT CAST(ci.total AS numeric(18,2)) valor
                 ,CAST(c.abono AS numeric(18,2)) abono
@@ -107,75 +107,17 @@ BEGIN
 						        ,razonSocialComprador = REPLACE(cl.nombreFiscal  , '&', '%26')  
 						        ,nroIdentificacion = cl.numeroIdentificacion
 						        ,direccionComprador = REPLACE(cl.direccion  , '&', '%26')  
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(fi.TaxBase)as numeric(15,2)) FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = f.idFactura 
-                                      AND fi.codigo = '2' AND fi.[Percent] > 0 
-                                ),0) 
-                                as subTotalIva12
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(fi.TaxBase)as numeric(15,2)) FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = f.idFactura 
-                                      AND fi.codigo = '2' AND fi.codigoPorcentaje = '6' 
-                                ),0) 
-                                as subTotalNoObjetoIva
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(fi.TaxBase)as numeric(15,2)) FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = f.idFactura 
-                                      AND fi.codigo = '2' AND fi.codigoPorcentaje = '0' 
-                                ),0) 
-                                as subTotalIva0
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(fi.TaxBase)as numeric(15,2)) FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = f.idFactura 
-                                      AND fi.codigo = '2' AND fi.codigoPorcentaje = '7'
-                                ),0) as subtotalExcentoIva
-
-						        ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(fi.TaxBase)as numeric(15,2)) FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = f.idFactura 
-                                      AND fi.codigo = '3' 
-                                ),0) as ice
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(fi.TaxBase)as numeric(15,2)) FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = f.idFactura 
-                                      AND fi.codigo = '5' 
-                                ),0) as irbpnr
-
-						        ,subTotalSinImpuestos = CAST(f.subTotalSinImpuestos as numeric(15,2))
-						        ,totalDescuentos = CAST(f.totalDescuento as numeric(15,2))
-						        
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(fi.TaxValue)as numeric(15,2)) FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = f.idFactura 
-                                      AND fi.codigo = '2' 
-                                ),0)  as iva12 
-
 						        ,propina = CAST(f.propina as numeric(15,2))  
 						        ,importeTotal = CAST(f.total as numeric(15,2)) 
+                                ,CAST(f.subtotalSinImpuestos as numeric(15,2)) as subtotalSinImpuestos
+                                ,CAST(f.totalDescuento as numeric(15,2)) as totalDescuentos
+                                ,CAST(0 as numeric(18,2))                as ice
 						        ,direccion = cl.direccion  
 						        ,telefonoCliente = cl.telefono 
 						        ,email = cl.correo 
 						        ,valorTotal = CAST(f.total as numeric(15,2))
 						        ,regimen = UPPER(s.contribuyenteRimpe)
-						        ,tipoIva = 'IVA 12' 
-						        ,'SUBTOTAL 12% ' as porcentajeIva 
 						        ,usuario = u.nombreUsuario
-						        --,pago = ISNULL(@pago,0)
-						        --,cambio = ISNULL(@cambio,0)
-						        --,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
-              --                  ,@payments payments
                                 ,@saldo saldo
 					        FROM dbo.Factura f WITH (NOLOCK)
 					        INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK)  ON pe.idPuntoEmision = f.idPuntoEmision 
@@ -187,21 +129,48 @@ BEGIN
 					        FOR JSON PATH
 				        )
 
-		SET @detail = (
-						SELECT 
-							 codigo         = a.codigo 
-							,descripcion    = REPLACE(fd.descripcion, '#', '%23')
-							,medida         = me.descripcion
-							,cantidad       = CAST(fd.cantidad as numeric(15,2))
-							,precioUnitario = CAST(fd.precioUnitario as numeric(15,2))
-							,valorDescuento = CAST(fd.valorDescuento as numeric(15,2)) 
-							,precioTotal    = CAST(fd.precioTotalSinImpuesto as numeric(15,2))
-						FROM dbo.FacturaDetalle fd WITH (NOLOCK)
-						INNER JOIN dbo.Articulo a  WITH (NOLOCK) ON a.idArticulo = fd.idArticulo
-						INNER JOIN dbo.Medida  me  WITH (NOLOCK) ON me.idMedida  = fd.idMedida
-						WHERE fd.idFactura = @idDocument AND fd.estado = 1
-						FOR JSON PATH
-					  )
+		    SET @detail = (
+						    SELECT 
+							     codigo         = a.codigo 
+							    ,descripcion    = REPLACE(fd.descripcion, '#', '%23')
+							    ,medida         = me.descripcion
+							    ,cantidad       = CAST(fd.cantidad as numeric(15,2))
+							    ,precioUnitario = CAST(fd.precioUnitario as numeric(15,2))
+							    ,valorDescuento = CAST(fd.valorDescuento as numeric(15,2)) 
+							    ,precioTotal    = CAST(fd.precioTotalSinImpuesto as numeric(15,2))
+						    FROM dbo.FacturaDetalle fd WITH (NOLOCK)
+						    INNER JOIN dbo.Articulo a  WITH (NOLOCK) ON a.idArticulo = fd.idArticulo
+						    INNER JOIN dbo.Medida  me  WITH (NOLOCK) ON me.idMedida  = fd.idMedida
+						    WHERE fd.idFactura = @idDocument AND fd.estado = 1
+						    FOR JSON PATH
+					      )
+
+            INSERT INTO @tbTaxes (descripcion,subTotal)
+            SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
+                    ,ISNULL
+                    ((
+                    SELECT CAST(SUM(fi.TaxBase) as numeric(18,2)) 
+                    FROM Ventas.v_FacturaImpuesto fi 
+                    where FacturaId = @idDocument AND fi.TaxPercentId = ti.idTipoIva
+
+                    ),0) as subTotal
+            FROM dbo.TipoIva ti WITH (NOLOCK) 
+            WHERE estado = 1
+
+            UNION ALL
+
+            SELECT ti.descripcion 
+                    ,ISNULL
+                    ((
+                    SELECT CAST(SUM(fi.TaxValue) as numeric(18,2)) 
+                    FROM Ventas.v_FacturaImpuesto fi 
+                    where FacturaId = @idDocument AND fi.TaxPercentId = ti.idTipoIva
+                    ),0) 
+            FROM dbo.TipoIva ti WITH (NOLOCK) 
+            WHERE ti.porcentaje > 0 
+                AND estado = 1
+
+            SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)
 
 		END 
 
@@ -210,7 +179,7 @@ BEGIN
 		BEGIN
 			SET @header = (SELECT 
 							
-							codDoc = 'NE'
+							 codDoc = 'NE'
 							,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento)	
 							,labelNroDoc = 'NOTA DE ENTREGA Nro. '  
 							,tipoDoc = 'NOTA DE ENTREGA'
@@ -223,90 +192,24 @@ BEGIN
 							,telefonoEntidad = ISNULL(s.telefono, 'SN') 
 							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
                             ,(SELECT TOP 1 CONVERT(NVARCHAR,FORMAT(cx.fechaVencimiento, 'dd/MM/yyyy')) FROM dbo.v_CuentaPorCobrar cx WITH (NOLOCK) WHERE cx.codDoc = 'NE' AND cx.idDocumento = ne.idNotaEntrega) as fechaVencimiento 
-							
 							,s.dirEstablecimiento  
 							,s.contribuyenteEspecial
 						    ,s.obligadoContabilidad
-
 							,cliente = REPLACE(cl.nombreFiscal   , '&', '%26')  
 							,nroIdentificacion = cl.numeroIdentificacion
 							,direccionCliente = REPLACE(cl.direccion   , '&', '%26')  
 							,correoCliente = REPLACE(ISNULL(cl.correo , 'S/N'),';',',')
 							,telefonoCliente = REPLACE(ISNULL(cl.telefono, 'S/N'),';',',')
 							,ciudad = c.descripcion 
-							
-                            ,ISNULL
-                            ((
-                                SELECT CAST(SUM(ni.TaxBase)as numeric(15,2)) FROM Ventas.v_NotaEntregaImpuesto ni WITH (NOLOCK)
-                                WHERE ni.NotaEntregaId = ne.idNotaEntrega 
-                                    AND ni.codigo = '2' AND ni.[Percent] > 0 
-                            ),0) 
-                            as subTotalIva12
-
-                            ,ISNULL
-                            ((
-                                SELECT CAST(SUM(ni.TaxBase)as numeric(15,2)) FROM Ventas.v_NotaEntregaImpuesto ni WITH (NOLOCK)
-                                WHERE ni.NotaEntregaId = ne.idNotaEntrega 
-                                    AND ni.codigo = '2' AND ni.codigoPorcentaje = '6' 
-                            ),0) 
-                            as subTotalNoObjetoIva
-
-                            ,ISNULL
-                            ((
-                                SELECT CAST(SUM(ni.TaxBase)as numeric(15,2)) FROM Ventas.v_NotaEntregaImpuesto ni WITH (NOLOCK)
-                                WHERE ni.NotaEntregaId = ne.idNotaEntrega 
-                                    AND ni.codigo = '2' AND ni.codigoPorcentaje = '0' 
-                            ),0) 
-                            as subTotalIva0
-
-                            ,ISNULL
-                            ((
-                                SELECT CAST(SUM(ni.TaxBase)as numeric(15,2)) FROM Ventas.v_NotaEntregaImpuesto ni WITH (NOLOCK)
-                                WHERE ni.NotaEntregaId = ne.idNotaEntrega 
-                                    AND ni.codigo = '2' AND ni.codigoPorcentaje = '7' 
-                            ),0) 
-                            as subtotalExcentoIva
-
-                            ,ISNULL
-                            ((
-                                SELECT CAST(SUM(ni.TaxBase)as numeric(15,2)) FROM Ventas.v_NotaEntregaImpuesto ni WITH (NOLOCK)
-                                WHERE ni.NotaEntregaId = ne.idNotaEntrega 
-                                    AND ni.codigo = '3' 
-                            ),0) 
-                            as ice
-
-                            ,ISNULL
-                            ((
-                                SELECT CAST(SUM(ni.TaxBase)as numeric(15,2)) FROM Ventas.v_NotaEntregaImpuesto ni WITH (NOLOCK)
-                                WHERE ni.NotaEntregaId = ne.idNotaEntrega 
-                                    AND ni.codigo = '5' 
-                            ),0) 
-                            as irbpnr
-
-							,subTotalSinImpuestos = CAST(ne.subTotalSinImpuestos as numeric(15,2))
-							,totalDescuentos = CAST(ne.totalDescuento as numeric(15,2))
-							
-                            ,ISNULL
-                            ((
-                                SELECT CAST(SUM(ni.TaxValue)as numeric(15,2)) FROM Ventas.v_NotaEntregaImpuesto ni WITH (NOLOCK)
-                                WHERE ni.NotaEntregaId = ne.idNotaEntrega 
-                                    AND ni.codigo = '2' 
-                            ),0) 
-                            as iva12
-
-							
                             ,propina = CAST(ne.propina AS numeric(15,2)) 
 							,importeTotal = CAST(ne.total as numeric(15,2))		
 							,valorTotal = CAST(ne.total as numeric(15,2))
-							,observacion = ISNULL(ne.observacion, 'S/N') 
-							,tipoIva = 'IVA 12'
-							,'subTotal 12 %' as porcentajeIva
+                            ,CAST(ne.totalDescuento as numeric(15,2)) as totalDescuentos
+                            ,CAST(0 as numeric(18,2))                 as ice
+                            ,CAST(ne.subtotalSinImpuestos as numeric(15,2)) as subtotalSinImpuestos
+							,observacion = ISNULL(ne.observacion, 'S/N')
 							,usuario = u.nombreUsuario
                             ,@saldo saldo
-							--,pago = ISNULL(@pago,0)
-							--,cambio = ISNULL(@cambio,0)
-						 --   ,formaPago = IIF(@formaPago Is NULL,'Cobro:','Cobro:'+ SUBSTRING(@formaPago,0, 9))
-       --                     ,@payments payments
 						FROM dbo.NotaEntrega ne WITH (NOLOCK)
 						INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = ne.idPuntoEmision 
 						INNER JOIN Sri.Establecimiento  s WITH (NOLOCK) ON s.codEstab        = pe.codEstab
@@ -328,12 +231,40 @@ BEGIN
 						INNER JOIN dbo.Medida   m WITH (NOLOCK) ON m.idMedida   = ned.idMedida
 						INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ned.idArticulo 
 						WHERE ned.idNotaEntrega = @idDocument AND ned.estado = 1 FOR JSON PATH)
+            
+            INSERT INTO @tbTaxes (descripcion,subTotal)
+            SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
+                    ,ISNULL
+                    ((
+                    SELECT  CAST(SUM(ni.TaxBase) as numeric(18,2)) 
+                    FROM Ventas.NotaEntregaImpuesto ni WITH (NOLOCK) 
+                    WHERE ni.NotaEntregaId = @idDocument AND ni.TaxPercentId = ti.idTipoIva
+
+                    ),0) as subTotal
+            FROM dbo.TipoIva ti WITH (NOLOCK)
+            WHERE estado = 1
+
+            UNION ALL 
+
+            SELECT ti.descripcion 
+                  ,ISNULL
+                  ((
+                    SELECT  CAST(SUM(ni.TaxValue) as numeric(18,2)) 
+                    FROM Ventas.NotaEntregaImpuesto ni WITH (NOLOCK) 
+                    WHERE ni.NotaEntregaId = @idDocument AND ni.TaxPercentId = ti.idTipoIva
+
+                  ),0) 
+            FROM dbo.TipoIva ti WITH (NOLOCK) 
+            WHERE ti.porcentaje > 0
+              AND estado = 1 
+
+            SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)
+
 		END 
 
 	IF @codDoc ='PR'
 		BEGIN 
 			SET @header = (SELECT 
-								 
 								 codDoc = 'PR'
 								,idProforma = pr.idProforma
 								,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,pr.nroDocumento) 
@@ -351,7 +282,6 @@ BEGIN
 								,nroIdentificacion = cl.numeroIdentificacion 
 								,direccionCliente = REPLACE(ISNULL(cl.direccion, ''), '&', '%26')   
 								,correoCliente = ISNULL(cl.correo, '')
-
 								,s.dirEstablecimiento
 								,s.contribuyenteEspecial 
 						        ,s.obligadoContabilidad
@@ -361,71 +291,13 @@ BEGIN
 								,regimen = UPPER(s.contribuyenteRimpe)
 								,telefonoCliente = ISNULL(cl.telefono, '')
 								,ciudadCliente = ISNULL(c.descripcion, 'S/N')
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(pm.TaxBase)as numeric(15,2)) FROM Ventas.v_ProformaImpuesto pm WITH (NOLOCK)
-                                    WHERE pm.ProformaId = pr.idProforma 
-                                        AND pm.codigo = '2' AND pm.[Percent] > 0 
-                                ),0) 
-                                as subTotalIva12
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(pm.TaxBase)as numeric(15,2)) FROM Ventas.v_ProformaImpuesto pm WITH (NOLOCK)
-                                    WHERE pm.ProformaId = pr.idProforma 
-                                        AND pm.codigo = '2' AND pm.codigoPorcentaje = '6' 
-                                ),0) 
-                                as subTotalNoObjetoIva
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(pm.TaxBase)as numeric(15,2)) FROM Ventas.v_ProformaImpuesto pm WITH (NOLOCK)
-                                    WHERE pm.ProformaId = pr.idProforma 
-                                        AND pm.codigo = '2' AND pm.codigoPorcentaje = '0' 
-                                ),0) 
-                                as subTotalIva0
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(pm.TaxBase)as numeric(15,2)) FROM Ventas.v_ProformaImpuesto pm WITH (NOLOCK)
-                                    WHERE pm.ProformaId = pr.idProforma 
-                                        AND pm.codigo = '2' AND pm.codigoPorcentaje = '7' 
-                                ),0) 
-                                as subtotalExcentoIva
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(pm.TaxValue)as numeric(15,2)) FROM Ventas.v_ProformaImpuesto pm WITH (NOLOCK)
-                                    WHERE pm.ProformaId = pr.idProforma 
-                                      AND pm.codigo = '3'
-                                ),0) 
-                                as ice
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(pm.TaxValue)as numeric(15,2)) FROM Ventas.v_ProformaImpuesto pm WITH (NOLOCK)
-                                    WHERE pm.ProformaId = pr.idProforma 
-                                      AND pm.codigo = '5'
-                                ),0) 
-                                as irbpnr
-
-                                ,ISNULL
-                                ((
-                                    SELECT CAST(SUM(pm.TaxValue)as numeric(15,2)) FROM Ventas.v_ProformaImpuesto pm WITH (NOLOCK)
-                                    WHERE pm.ProformaId = pr.idProforma 
-                                      AND pm.codigo = '2'
-                                ),0) 
-                                as iva12
- 
 								,subTotalSinImpuestos = CAST(pr.subTotalSinImpuestos AS numeric(15,2)) 
 								,totalDescuentos = CAST(pr.totalDescuento AS numeric(15,2))
+                                ,CAST(0 as numeric(18,2))                as ice
 								,propina = CAST(pr.propina AS numeric(15,2))  
 								,importeTotal = CAST(pr.total AS numeric(15,2))
 								,valorTotal = CAST(pr.total AS numeric(15,2))
-								,observacion = ISNULL(UPPER(pr.observacion), '')		
-								,porcentajeIva = 'SUBTOTAL IVA 12%'
-								,tipoIva = 'IVA 12%'
+								,observacion = ISNULL(UPPER(pr.observacion), '')	
 							FROM dbo.Proforma pr
 							INNER JOIN dbo.PuntoEmision       pe  ON pe.idPuntoEmision       = pr.idPuntoEmision 
 							INNER JOIN Sri.Establecimiento    s   ON s.codEstab              = pe.codEstab
@@ -448,8 +320,36 @@ BEGIN
 							FROM dbo.ProformaDetalle prd
 							LEFT JOIN dbo.Medida   m ON m.idMedida   = prd.idMedida
 							INNER JOIN dbo.Articulo a ON a.idArticulo = prd.idArticulo 
-							WHERE prd.idProforma = @idDocument --AND prd.estado = 1 
+							WHERE prd.idProforma = @idDocument 
 							FOR JSON PATH)
+            
+            INSERT INTO @tbTaxes (descripcion,subTotal)
+            SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
+                    ,ISNULL
+                    ((
+                    SELECT  CAST(SUM(pr.TaxBase) as numeric(18,2)) 
+                    FROM Ventas.ProformaImpuesto pr WITH (NOLOCK) 
+                    WHERE pr.ProformaId = @idDocument AND pr.TaxPercentId = ti.idTipoIva
+
+                    ),0) as subTotal
+            FROM dbo.TipoIva ti WITH (NOLOCK)
+            WHERE estado = 1
+
+            UNION ALL
+
+            SELECT ti.descripcion 
+                  ,ISNULL
+                  ((
+                    SELECT  CAST(SUM(pr.TaxValue) as numeric(18,2)) 
+                    FROM Ventas.ProformaImpuesto pr WITH (NOLOCK) 
+                    WHERE pr.ProformaId = @idDocument AND pr.TaxPercentId = ti.idTipoIva
+
+                  ),0) 
+            FROM dbo.TipoIva ti WITH (NOLOCK) 
+            WHERE ti.porcentaje > 0 
+              AND estado = 1
+
+            SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)             
 		END 
 
 
@@ -464,8 +364,6 @@ BEGIN
 								,dirMatriz = mc.dirEstablecimiento
 								,fechaEmision =  CONVERT(NVARCHAR, FORMAT(mc.fechaEmision, 'dd/MM/yyyy hh:mm')) 						
 								,nroDoc= UPPER(mc.tipoDoc) + ' : ' + mc.codDoc + '-'+ mc.estab+ '-'+ dbo.AFTAutoComplete(mc.nroDoc)
-								--,mc.entregadoPor
-								-- mc.recibidoPor
 								,mc.tipoDoc
 								,mc.nroIdentificacion
 								,labelEmpleado = IIF(mc.codDoc='IC', 'Recib. por: ', 'Entrg. por: ') 
@@ -510,7 +408,7 @@ BEGIN
 		END 
  
 
-	SET @dataSources = (SELECT encabezadoDs = @header, detalleDs = @detail, paymentsDs = ISNULL(@payments, '[]') FOR JSON PATH )
+	SET @dataSources = (SELECT encabezadoDs = @header, detalleDs = @detail, paymentsDs = ISNULL(@payments, '[]'), ISNULL(@taxesValue,'[]') as taxesValue FOR JSON PATH )
 
 	INSERT INTO @table (dataSources) SELECT @dataSources
 	RETURN 

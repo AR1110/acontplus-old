@@ -140,7 +140,8 @@ BEGIN
                     WHERE ai.AprobDocumentId = @id AND ai.TaxPercentId = ti.idTipoIva
 
                   ),0) as subTotal
-            FROM dbo.TipoIva ti WITH (NOLOCK) 
+            FROM dbo.TipoIva ti WITH (NOLOCK)
+            WHERE estado = 1
 
 
             SELECT ti.descripcion as descripcion
@@ -153,6 +154,7 @@ BEGIN
                   ),0) as iva
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0 
+              AND estado = 1
         
             RETURN 
     END 
