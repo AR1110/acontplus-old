@@ -26,6 +26,8 @@
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
         nombreModalVenta = $injector.get('nombreModalVenta');
+        let nombreModalCommon = $injector.get('nombreModalCommon');
+
         let DOC_TYPE = $injector.get('DOC_TYPE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
 
@@ -352,6 +354,20 @@
             }
         }
 
+        async function openModalKeyRequest() {
+            const { fileCtrl, controller, template, } = nombreModalCommon.KEY_REQUEST_MODAL;
+
+            let ctrl = (await import(fileCtrl))[controller];
+
+            const modalRef = modalSvc.openModalCustom({
+                controller: ctrl,
+                template,
+                size: 'md',
+                params: { }, 
+                isRenderRazorPartial: true
+            })
+        }
+
         $scope.openModalInvoiceEdit = async (item) => {
             try {
                 if (item.codEstado === 'A') {
@@ -359,11 +375,18 @@
                     return
                 }
 
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+                if ($scope.permisoEditarDoc.requiereClave) {
+                  //  openModalKeyRequest();
                     return
                 }
+
+                // console.log($scope.permisoEditarDoc)
+
+                // let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
+                // if (result.code === "2") {
+                //     commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+                //     return
+                // }
 
                 showLoader();
                 facturaSvc.getId(item.idDocumento).then(response => {
@@ -1025,6 +1048,7 @@
             $scope.vendedores = vendedores;
             $scope.tarifasImpuesto = tarifasImpuesto;
             $scope.permisoComprobanteVenta = permisoVenta.comprobante;
+
             $scope.permisoDetalleVenta = permisoVenta.detalle;
             $scope.notificacionVenta = notificacionVenta;
             $scope.decimal = decimal;
@@ -1254,17 +1278,7 @@
             $scope.historyDatosAdicionales = historyDatosAdicionales;
         }
         function setColumnDefs() {
-            let defaultPermission = Object.freeze({
-                tarifa: true,
-                medida: true,
-                tipoIva: true,
-                porcentajeDescuento: true,
-                descuento: true,
-                precioUnitario: true,
-                precioConIva: true,
-            })
-
-            const ventaDetailPermission = $scope.permisoDetalleVenta ? $scope.permisoDetalleVenta : defaultPermission;
+            const ventaDetailPermission = $scope.permisoDetalleVenta
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a update-article ng-click="grid.appScope.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >

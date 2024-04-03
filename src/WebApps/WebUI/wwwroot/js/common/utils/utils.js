@@ -988,4 +988,117 @@
     }
 
 
+    angular.module('acontPlusApp')
+        .factory('userCustomerPermissionService', function () {
+            return {
+                userPermissionAdapter,
+                accionesSubMenu
+            }
+
+            function getUserData() {
+                return JSON.parse(localStorage.getItem('userData'));
+            }
+            function userPermissionAdapter() {
+
+                let userData = getUserData();
+                if (userData) {
+                    const { product, cashAccountig, sales } = Array.isArray(userData.permissions) && userData.permissions[0] || {
+                        product: {},
+                        cashAccountig: {},
+                        sales: {}
+                    }
+
+                    return {
+                        sales: saleAdapter(sales),
+                        cashAccountig: cashAccountigAdapter(cashAccountig),
+                        product: producAdapter(product),
+                        permisoEditarDoc: saleAdapter(sales).permisoEditarDoc
+                    }
+
+                }
+                else {
+                    console.error('Error al mapear los permisos')
+                }
+
+            }
+
+            function saleAdapter(sales) {
+                let comprobante = {};
+                let detalle = {
+                    tarifa: true,
+                    medida: true,
+                    tipoIva: true,
+                    porcentajeDescuento: true,
+                    descuento: true,
+                    precioUnitario: true,
+                    precioConIva: true,
+                };
+                let adicionales = {};
+                if (Array.isArray(sales)) {
+                    const mainData = sales[0];
+                    comprobante = typeof mainData.comprobante === 'string' ? JSON.parse(mainData.comprobante) || {} : {}
+                    detalle = typeof mainData.detalle === 'string' ? JSON.parse(mainData.detalle) || {} : {}
+                    adicionales = typeof mainData.adicionales === 'string' ? JSON.parse(mainData.adicionales) || {} : {}
+                }
+
+                return {
+                    comprobante: comprobante,
+                    detalle: detalle,
+                    adicionales: adicionales,
+                    permisoEditarDoc: {
+                        requiereClave: adicionales.keyRequest
+                    }
+                }
+            }
+            function cashAccountigAdapter(cashAccountig) {
+                if (Array.isArray(cashAccountig)) {
+                    return cashAccountig[0] || {}
+                }
+                return {}
+
+            }
+            function producAdapter(product) {
+                const permissionDefault = {
+                    nroPrecio: false
+                }
+                if (Array.isArray(product)) {
+                    return product[0] || permissionDefault
+                }
+                return permissionDefault
+            }
+
+            function accionesSubMenu() {
+                let { submenus } = getUserData();
+
+                let accionesDefault = {
+                    leer: false,
+                    crear: false,
+                    editar: false,
+                    eliminar: false,
+                    reporte: false,
+                    enviarCorreo: false,
+                    cobroPago: false,
+                    enviarSri: false,
+                    historialFinanciero: false,
+                    cuota: false,
+                    anular: false,
+                    impuesto: false,
+                    kardex: false,
+                    imagen: false,
+                    acceso: false,
+                    aperturarCaja: false,
+                    cerrarCaja: false,
+                    generarDocumento: false,
+                    movimiento: false,
+                }
+                let accionesProduct = submenus.find(sm => sm.codTemp === 'ART');
+
+                return {
+                    accionesProduct: accionesProduct || structuredClone(accionesDefault)
+                }
+            }
+
+        })
+
+
 })(window.angular)

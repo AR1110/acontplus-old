@@ -249,7 +249,7 @@
 
     //............................Inventario-------------------------------------------------
     //permiso para ver kardex en documentos de ventas 
-    app.directive('viewKardex', function ($rootScope, modalService, nombreModalInventario) {
+    app.directive('viewKardex', ['$rootScope', 'modalService', 'nombreModalInventario', function ($rootScope, modalSvc, nombreModalInventario) {
         return {
             scope: {
                 params: "=",
@@ -259,10 +259,10 @@
             template: ' <a style="cursor:pointer;" ng-if="kardex.view" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
             link: function (scope, element) {
                 let {
-                    ventaPermiso
+                    sales
                 } = $rootScope.usuarioPermiso;
 
-                scope.kardex = ventaPermiso.additional.kardex;
+                scope.kardex = sales.adicionales.kardex;
 
                 element.on('click', async function () {
 
@@ -276,7 +276,7 @@
                         descripcion: scope.params.descripcion,
                     }
 
-                    modalService.openModalCustom({
+                    modalSvc.openModalCustom({
                         controller: ctrl,
                         template,
                         size: 'xl',
@@ -288,7 +288,7 @@
                 })
             }
         };
-    })
+    }])
 
 
     app.directive('viewKardexBtn', function (modalService, nombreModalInventario) {
