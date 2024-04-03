@@ -46,6 +46,10 @@ namespace Identity.API.Data
                 }
             }
 
+            builder.Entity<AccessAuthorization>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<AccessAuthorization>().Property(p => p.Enabled).HasDefaultValue(true);
+
+
             builder.Entity<LoginHistory>().Property(p => p.LoginDate).HasDefaultValueSql("GETDATE()");
             builder.Entity<LoginHistory>().Property(x => x.IsLoggedIn).HasDefaultValue(true);
 

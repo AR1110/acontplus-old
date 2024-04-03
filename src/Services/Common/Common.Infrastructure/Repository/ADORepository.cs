@@ -226,7 +226,7 @@ namespace Common.Infrastructure.Repository
             }
             return dt;
         }
-        public async Task<int> OnlyExecute(string spName, Dictionary<string, object> parameters, bool useStoredProcedure)
+        public async Task<int> OnlyExecuteAsync(string spName, Dictionary<string, object> parameters, bool useStoredProcedure)
         {
             var _context = _contexts.GetContext(_configuration["ContextName"]);
             using (var cmd = _context.Database.GetDbConnection().CreateCommand())
