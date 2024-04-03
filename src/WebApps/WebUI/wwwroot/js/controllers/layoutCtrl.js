@@ -116,7 +116,7 @@
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                         // $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
                     } else {
-                        location.href = "/Home/Index";
+                        //location.href = "/Home/Index";
                     }
                 }
             }

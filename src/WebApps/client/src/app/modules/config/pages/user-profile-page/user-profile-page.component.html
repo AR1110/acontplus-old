@@ -1,0 +1,84 @@
+<app-breadcrumb></app-breadcrumb>
+
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-lg-4 col-xlg-3 col-md-5">
+        <div style="text-align: center; margin-top: 20px;">
+          <img src="../assets/images/users/1.jpg" class="rounded-circle" width="150" />
+          <br><br>
+          <h4 class="card-title m-t-10">{{ user.nombreCompleto }}</h4>
+          <h6 class="card-subtitle">{{ user.correo }}</h6>
+        </div>
+        <div>
+          <hr>
+        </div>
+        <div class="card-body">
+          <small class="text-muted">Usuario </small>
+          <h6>{{ user.nombreUsuario }}</h6>
+
+          <small class="text-muted p-t-30 db">N° de Identificación </small>
+          <h6>{{ user.nroIdentificacion }}</h6>
+
+          <small class="text-muted p-t-30 db">Email</small>
+          <h6>{{ user.correo }}</h6>
+        </div>
+        <div class="card-body">
+          <button type="button" class="btn waves-effect waves-light btn-outline-dark btn-sm btn-block">Actualizar
+            contraseña</button>
+        </div>
+      </div>
+
+      <div class="col-lg-8 col-xlg-9 col-md-7">
+        <h4 class="card-title" style="margin-top: 20px;">Actividades</h4>
+        <h6 class="card-subtitle">Resumen de las Permisos y Actividades en el sistema</h6>
+
+        <ul class="nav nav-tabs customtab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#home2" role="tab">
+              <span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Roles </span>
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="home2" role="tabpanel">
+            <div class="p-20">
+              <div class="card">
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Código</th>
+                          <th>Rol</th>
+                          <th>Fecha registro</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (item of roles; track $index) {
+                          <tr>
+                            <td>{{$index+1}}</td>
+                            <td>{{ item.code }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.fechaRegistro }}</td>
+                            <td>
+                              <span class="label label-danger">{{ item.estado ? 'Activo': 'Inactivo'}}</span> 
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane  p-20" id="profile2" role="tabpanel">2</div>
+          <div class="tab-pane p-20" id="messages2" role="tabpanel">3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
