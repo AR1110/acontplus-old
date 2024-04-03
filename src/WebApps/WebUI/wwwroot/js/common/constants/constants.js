@@ -19,6 +19,11 @@ app.constant('nombreModalCommon', {
         templates: {
             ME: 'Shared/Common/_ModalSendMail.cshtml',
         },
+    },
+    KEY_REQUEST_MODAL: {
+        fileCtrl: '/js/common/modals/keyRequestCtrl.js' + CHANGE_VERSION(),
+        controllers: "keyRequestCtrl",
+        template: '~/Pages/Common/_KeyRequestModal.cshtml',        
     }
 })
 

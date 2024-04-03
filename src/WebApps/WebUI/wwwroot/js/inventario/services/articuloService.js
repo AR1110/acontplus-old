@@ -3,7 +3,11 @@
 
     'use strict';
 
-    app.factory('articuloService', ['mainService', 'formulario', function (mS, fS) {
+    app.factory('articuloService', ['$injector', function ($injector) {
+        let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario');
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
 
         let url = 'Inventario/Articulo/';
 
@@ -158,44 +162,14 @@
                     let tiposICE = mainData[9];
                     let tarifas = mainData[10];
                     let etiquetas = mainData[11];
-
-                    let userData = JSON.parse(localStorage.getItem("userData"));
+ 
+                    const dataPermission = userCustomerPermissionSvc.userPermissionAdapter();
+                    
                     let permission = {
-                        isUpdatePrice: true
-                    }
-                    if (userData) {
-                        let jsonDataPermission = userData.permissions.find(dt => dt.codModule === 'AR');
-                        if (jsonDataPermission) {
-                            let result = JSON.parse(jsonDataPermission.permission);
-                            permission.isUpdatePrice = result.precio.update;
-                        }
-                    }
-                    const establecimientos = tempEstabs.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                bodegas: [{
-                                    idEstablecimiento: item.idEstablecimiento,
-                                    idBodega: item.idBodega,
-                                    bodega: item.bodega,
-                                    defaultBodega: item.defaultBodega,
-                                }]
-                            });
-                        } else {
-                            existingItem.bodegas.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                idBodega: item.idBodega,
-                                bodega: item.bodega,
-                                defaultBodega: item.defaultBodega,
-                            });
-                        }
-                        return acc;
-                    }, []);
+                        isUpdatePrice: dataPermission.product.precio
+                    }  
+                    const establecimientos = fS.groupEstabBodega(tempEstabs);
+                      
                     return {
                         establecimientos,
                         decimal,
@@ -210,19 +184,7 @@
                         tarifas,
                         etiquetas,
                         permission
-                    }
-                    // return {
-                    //     establecimientos: mainData[0],
-                    //     bodegas: mainData[1],
-                    //     subFamilias: mainData[2],
-                    //     familias: mainData[3],
-                    //     medidas: mainData[4],
-                    //     modelos: mainData[5],
-                    //     marcas: mainData[6],
-                    //     tiposArticulo: mainData[7],
-                    //     tarifasImpuesto: mainData[8],
-                    //     tarifas: mainData[9]
-                    // }
+                    } 
                 }
             })
         }

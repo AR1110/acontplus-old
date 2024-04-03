@@ -205,11 +205,12 @@
      * Nota Entrega 
      */
 
-    app.factory('notaEntregaService', function ($injector) {
+    app.factory('notaEntregaService',['$injector', function ($injector) {
         let url = `${URL_API}NotaEntrega/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
         const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
         let service = {
             data: {}
@@ -242,7 +243,7 @@
                     notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
                     let tempEstabsAndPtosEmision = mainData[9];
                     let tempBodegas = mainData[10];
-                    let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
+                    let {sales: permisoVenta, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
@@ -918,16 +919,17 @@
 
         return service;
 
-    })
+    }])
 
     /**
      * Proforma 
      */
-    app.factory('proformaService', function ($injector) {
+    app.factory('proformaService',['$injector', function ($injector) {
         let url = `${URL_API}Proforma/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
         let service = {};
 
@@ -957,8 +959,8 @@
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
                     let tempEstabsAndPtosEmision = mainData[8];
-                    let tempBodegas = mainData[9];
-                    let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
+                    let tempBodegas = mainData[9]; 
+                    let { sales: permisoVenta, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
@@ -1397,7 +1399,7 @@
 
         return service;
 
-    })
+    }])
 
 
     //---------------------------------Cliente------------------------------------------

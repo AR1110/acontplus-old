@@ -3,9 +3,15 @@
 
     angular.module("acontPlusApp").controller("layoutCtrl", layoutCtrl);
 
-    layoutCtrl.$inject = ["$scope", "$rootScope", "$window", "decodeToken"];
+    layoutCtrl.$inject = [
+        "$scope", 
+        "$rootScope", 
+        "$window", 
+        "decodeToken",
+        "userCustomerPermissionService"
+    ];
 
-    function layoutCtrl($scope, $rootScope, $window, decodeToken) {
+    function layoutCtrl($scope, $rootScope, $window, decodeToken, userCustomerPermissionSvc) {
         "use strict";
 
         $scope.logout = function () {
@@ -92,20 +98,23 @@
                 if ([1, 2, 3].includes(lengthPath)) {
                     let dataMenu = $scope.subMenus.find((item) => item.url === pathname);
                     if (dataMenu) {
-                        $rootScope.usuarioPermiso = {
-                            almacenPermiso: JSON.parse(
-                                $scope.permissions.find((x) => x.codModule == "AR").permission
-                            ),
-                            ventaPermiso: JSON.parse(
-                                $scope.permissions.find((x) => x.codModule == "V").permission
-                            ),
-                            cajaPermiso: JSON.parse(
-                                $scope.permissions.find((x) => x.codModule == "C").permission
-                            ),
-                        };
+                        const dataAccionesSubMenu = userCustomerPermissionSvc.accionesSubMenu()
+                  
+                        $rootScope.usuarioPermiso = userCustomerPermissionSvc.userPermissionAdapter();
+                        // $rootScope.usuarioPermiso = {
+                        //     almacenPermiso: JSON.parse(
+                        //         $scope.permissions.find((x) => x.codModule == "AR").permission
+                        //     ),
+                        //     ventaPermiso: JSON.parse(
+                        //         $scope.permissions.find((x) => x.codModule == "V").permission
+                        //     ),
+                        //     cajaPermiso: JSON.parse(
+                        //         $scope.permissions.find((x) => x.codModule == "C").permission
+                        //     ),
+                        // };
                         $scope.accion = dataMenu;
-                        $rootScope.articlePermission = $scope.accions[0];
-                        $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
+                        $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
+                        // $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
                     } else {
                         location.href = "/Home/Index";
                     }
