@@ -1,4 +1,5 @@
-﻿using Common.Core.Utils;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Configuracion.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
@@ -40,15 +41,14 @@ namespace Configuracion.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] string json)
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             try
             {
                 var parameters = new Dictionary<string, object>
                 {
-                    {"userRoleId", User.GetUserRoleId()},
                     {"id", id },
-                    {"json", SqlStringParam.Sanitize(json)}
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
                 };
                 var response = await _service.UpdateAsync(parameters);
                 if (response == null) { return NoContent(); };

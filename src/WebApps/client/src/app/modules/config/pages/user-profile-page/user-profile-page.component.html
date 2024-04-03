@@ -23,61 +23,96 @@
           <small class="text-muted p-t-30 db">Email</small>
           <h6>{{ user.correo }}</h6>
         </div>
-        <div class="card-body">
-          <button type="button" class="btn waves-effect waves-light btn-outline-dark btn-sm btn-block">Actualizar
-            contraseña</button>
-        </div>
       </div>
 
       <div class="col-lg-8 col-xlg-9 col-md-7">
         <h4 class="card-title" style="margin-top: 20px;">Actividades</h4>
         <h6 class="card-subtitle">Resumen de las Permisos y Actividades en el sistema</h6>
 
-        <ul class="nav nav-tabs customtab" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#home2" role="tab">
-              <span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Roles </span>
-            </a>
-          </li>
-        </ul>
-        <div class="tab-content">
-          <div class="tab-pane active" id="home2" role="tabpanel">
-            <div class="p-20">
-              <div class="card">
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Código</th>
-                          <th>Rol</th>
-                          <th>Fecha registro</th>
-                          <th>Estado</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (item of roles; track $index) {
-                          <tr>
-                            <td>{{$index+1}}</td>
-                            <td>{{ item.code }}</td>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.fechaRegistro }}</td>
-                            <td>
-                              <span class="label label-danger">{{ item.estado ? 'Activo': 'Inactivo'}}</span> 
-                            </td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
-                  </div>
+        <mat-tab-group>
+          <mat-tab label="Roles">
+            <div class="card">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Código</th>
+                        <th>Rol</th>
+                        <th>Fecha registro</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of roles; track $index) {
+                      <tr>
+                        <td>{{$index+1}}</td>
+                        <td>{{ item.code }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.fechaRegistro }}</td>
+                        <td>
+                          <span class="label label-danger">{{ item.estado ? 'Activo': 'Inactivo'}}</span>
+                        </td>
+                      </tr>
+                      }
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="tab-pane  p-20" id="profile2" role="tabpanel">2</div>
-          <div class="tab-pane p-20" id="messages2" role="tabpanel">3</div>
-        </div>
+          </mat-tab>
+          <mat-tab label="Seguridad">
+            <div class="card">
+              <div class="card-body">
+
+                <!-- Add grid -->
+                <div class="container">
+                  <div class="row justify-content-md-center">
+                    <div class="col-6 col-lg-6 col-md-6 col-sm-10">
+                      <form [formGroup]="passwordForm" autocomplete="off">
+                        <div class="form-floating mb-3">
+                          <input (change)="verifyPassword()"
+                                formControlName="password"
+                                [type]="isShowPassword ? 'text' : 'password'"
+                                class="form-control"
+                                id="floatingInput"
+                                placeholder="*******">
+                          <label for="floatingInput">Contraseña</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                          <input (change)="verifyPassword()"
+                                formControlName="confirmPassword"
+                                [type]="isShowPassword ? 'text' : 'password'"
+                                class="form-control"
+                                id="floatingInput"
+                                placeholder="*******">
+
+                          <label for="floatingInput">Confirmar contraseña</label>
+                        </div>
+
+                        <section class="example-section">
+                          <mat-checkbox class="example-margin" (change)="showPassword()">Mostrar contraseña</mat-checkbox>
+                        </section>
+
+                        <button [disabled]="!isVerified"
+                                (click)="confirmUpdate()"
+                                type="button"
+                                class="btn btn-outline-success btn-lg btn-block mt-3">
+                                Cambiar contraseña
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+
+               
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     </div>
   </div>

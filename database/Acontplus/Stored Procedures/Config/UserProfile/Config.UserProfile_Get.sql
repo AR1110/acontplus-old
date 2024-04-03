@@ -22,8 +22,7 @@ BEGIN
     DECLARE @idUsuario INT
 
     SELECT @idUsuario = idUsuario FROM Acontplus.App.UsuarioRol WHERE idUsuarioRol = @userRoleId
-
-
+    
     SET @tableNames = 'user,roles'
 
     SELECT * FROM Acontplus.dbo.Usuario WHERE idUsuario = @idUsuario
@@ -31,7 +30,7 @@ BEGIN
     SELECT au.idUsuarioRol
         , au.nroIdentificacion
         , au.ruc
-        , au.codRol
+        , sr.Code
         , CONVERT(NVARCHAR, FORMAT(au.fechaRegistro, 'dd/MM/yyyy HH:mm:ss')) AS fechaRegistro        
         , au.codigo
         , sr.Name AS name
