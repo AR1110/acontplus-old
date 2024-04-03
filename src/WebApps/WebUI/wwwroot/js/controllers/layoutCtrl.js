@@ -61,7 +61,7 @@
                     <span class="hide-menu">${$scope.userData.fullname}</span>
                 </a>
                 <ul aria-expanded="false" class="collapse">
-                    <li><a href="/Usuario/Perfil"><i class="ti-user"></i> Mi Perfil</a></li>
+                    <li><a href="/Config/UserProfile/Index"><i class="ti-user"></i> Mi Perfil</a></li>
                     <li><a href="#" onclick="logout()" id="logoutII"><i class="fa fa-power-off"></i> Salir</a></li>
                 </ul>
             </li>`;
@@ -116,7 +116,7 @@
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                         // $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
                     } else {
-                      //  location.href = "/Home/Index";
+                        //location.href = "/Home/Index";
                     }
                 }
             }

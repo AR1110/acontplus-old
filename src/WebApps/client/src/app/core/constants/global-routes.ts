@@ -16,5 +16,6 @@ export enum GlobalRoutes {
   ConfigDocConfig = 'config/doc-config-page',
   ContabilidadSubEntidadFinanciera = 'accounting/sub-entidad-financiera-page',
   ConfigUserCustomer = 'config/user-customer-page',
-  ConfigUserCustomerRequest = 'config/user-customer-request-page'
+  ConfigUserCustomerRequest = 'config/user-customer-request-page',
+  ConfigUserProfile = 'config/user-profile-page',
 }
