@@ -1334,7 +1334,12 @@ export class CommonService {
 
 
 
-    //Permiso para editar o anular Doc. Venta 
+    //Permiso para editar o anular Doc. Venta  
+    /**
+     * NO USAR 
+     * @param {*} codigoAccion 
+     * @returns 
+     */
     async checkHasPermissionToEditOrDelete(codigoAccion) {
         let jsonParams = {
             typeList: 2,
@@ -1360,6 +1365,11 @@ export class CommonService {
     }
 
 
+    /**
+     * NO USAR 
+     * @param {*} codigoAccion 
+     * @returns 
+     */
     async requestAuthorizationKey(codigoAccion) {
         let textMotivo = codigoAccion === 'E' ? 'Editar' : 'Anular';
         Swal.fire({
@@ -1403,6 +1413,11 @@ export class CommonService {
     }
 
 
+    /**
+     * NO USAR 
+     * @param {*} codigoAccion 
+     * @returns 
+     */
     updateRequestKey(codigoAccion) {
         this.mS.getData('put', 'Config/Solicitud/Put/' + JSON.stringify({
             codigoAccion,

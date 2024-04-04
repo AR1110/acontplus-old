@@ -26,6 +26,8 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalVenta = $injector.get('nombreModalVenta');
+        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
         let DOC_TYPE = $injector.get('DOC_TYPE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
         tipoDoc = {
@@ -34,11 +36,7 @@
 
         $scope.typeSend = 'GenericFile';
         $scope.typeSendToMail = 'N';
-
-        const PERMISSION_KEY_ACTIONS = {
-            E: 'E',
-            A: 'A',
-        }
+ 
 
         $scope.permisoEditarDoc = {}
 
@@ -298,11 +296,34 @@
         }
 
 
+        function getParamsPermission(item, codigoAccion) {
+            let paramsPermission = {
+                idDocumento: item.idDocumento,
+                codDoc: item.codDoc,
+                codigoAccion,
+                tipoDoc: 'Proforma',
+                serieComprobante: item.serieComprobante,
+                jsonData: JSON.stringify({
+                    idDocumento: item.idDocumento,
+                    codDoc: item.codDoc,
+                    tipoDoc: 'Proforma',
+                    serieComprobante: item.serieComprobante
+                })
+            }
+            return paramsPermission;
+        }
+
+
         $scope.openModalEdit = async (item) => {
             try {
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+         
+                let paramsPermission = getParamsPermission(item, 'E');
+                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
+
+                if (!response) return
+
+                if (response && response.code === "2") {
+                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
                 }
 
@@ -323,7 +344,7 @@
                         if (typeof result === 'object') {
                             $scope.getProformas();
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)     
                             }
 
                         }
@@ -379,11 +400,15 @@
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
                 }
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
+                let paramsPermission = getParamsPermission(item, 'A');
+                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
+
+                if (!response) return
+
+                if (response && response.code === "2") {
+                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
-                }
+                } 
 
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
@@ -417,7 +442,7 @@
 
                             //Una vez actualizado el documento  
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)    
                             }
 
                             $scope.getProformas();
@@ -515,8 +540,7 @@
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let storageSvc = $injector.get('storageService');
         let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
-
-        console.log('modal proforma')
+ 
 
         $scope.tipoDoc = tipoDoc;
         $scope.infoEstabPtoEmi = {};

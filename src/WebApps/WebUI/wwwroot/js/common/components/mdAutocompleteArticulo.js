@@ -48,7 +48,7 @@ class BaseSearchArticulo {
                 return
             }
 
-            if (this.searchText.length < 3) return
+            if (this.searchText.length < 2) return
 
             /**
              * return object {idArticulo: 0}

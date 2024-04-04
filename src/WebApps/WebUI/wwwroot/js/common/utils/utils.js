@@ -989,10 +989,19 @@
 
 
     angular.module('acontPlusApp')
-        .factory('userCustomerPermissionService', function () {
+        .factory('userCustomerPermissionService', ['$injector', function ($injector) {
+            const mS = $injector.get('mainService');
+            const fS = $injector.get('formulario');
+            const urlUserRequest = 'Config/UserCustomerRequest/'
+            const urlUserPermission = 'Config/UserCustomerPermission/'
             return {
                 userPermissionAdapter,
-                accionesSubMenu
+                accionesSubMenu,
+                checkHasPermissionToEdit,
+                checkHasPermissionToDelete,
+                requestAuthorizationKey,
+                updateRequestKey,
+                fetchUserPermission
             }
 
             function getUserData() {
@@ -1098,7 +1107,144 @@
                 }
             }
 
-        })
+
+
+            async function checkHasPermissionToEdit(obj) {
+                const { idDocumento, codDoc } = obj;
+                let json = JSON.stringify({
+                    codigoAccion: 'E',
+                    tipo: 2,
+                    idDocumento,
+                    codDoc
+                })
+                let resultReponse = {};
+                showLoader();
+                await mS.getData('get', `${urlUserRequest}?json=${json}`, null, true).then(result => {
+                    if (result !== null && typeof result === 'object') {
+                        const [response] = result.response;
+                        console.log(response)
+                        resultReponse = response;
+                        if (response.code === "0") {
+                            hideLoader();
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                            resultReponse = null;
+                            throw response;
+                        }
+                    }
+                })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
+                return resultReponse;
+            }
+
+            async function checkHasPermissionToDelete(obj) {
+                const { idDocumento, codDoc } = obj;
+                let json = JSON.stringify({
+                    codigoAccion: 'A',
+                    tipo: 2,
+                    idDocumento,
+                    codDoc
+                })
+                let resultReponse = {};
+                showLoader();
+                await mS.getData('get', `${urlUserRequest}?json=${json}`, null, true).then(result => {
+                    if (result !== null && typeof result === 'object') {
+                        const [response] = result.response;
+                        console.log(response)
+                        resultReponse = response;
+                        if (response.code === "0") {
+                            hideLoader();
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                            resultReponse = null;
+                            throw response;
+                        }
+                    }
+                })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
+                return resultReponse;
+            }
+
+            async function requestAuthorizationKey(obj) {
+                const { codigoAccion } = obj;
+                let textMotivo = codigoAccion === 'E' ? 'Editar' : 'Anular';
+                Swal.fire({
+                    title: "Solicitud de Clave de Autorización",
+                    text: `Por favor, proporcione una explicación del motivo por el cual desea ${textMotivo} el documento!`,
+                    input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocomplete: 'off'
+                    },
+                    showCancelButton: true,
+                    inputPlaceholder: "Explicación del motivo",
+                    confirmButtonText: "Confirmar",
+                    cancelButtonText: "Cancelar",
+                    allowOutsideClick: false,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return ('Por favor ingrese la descripción del motivo');
+                        }
+                        if (value.length < 15) {
+                            return ('La descripción del motivo tiene que terner al menos de 15 caracteres');
+                        }
+                    }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        try {
+                            let params = {
+                                ...obj,
+                                motivo: result.value,
+                            };
+                            showLoader();
+                            mS.getData('post', `${urlUserRequest}`, { data: params }, true).then(response => {
+                                hideLoader();
+                                if (response.code === "0") {
+                                    fS.sweetAlert('warning', response.message)
+                                }
+                                if (response.code === "1") {
+                                    fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                                }
+                            }).catch(error => {
+                                console.log(error)
+                            }).finally(() => hideLoader())
+                        } catch (error) {
+                            hideLoader();
+                            console.log(error)
+                        }
+                    }
+                })
+            }
+
+
+            function updateRequestKey(params) {
+                let data = {
+                    idDocumento: params.idDocumento,
+                    codDoc: params.codDoc,
+                    codigoAccion: params.codigoAccion,
+                    tipo: 2
+                }
+                mS.getData('put', `${urlUserRequest}`, { data }, true).then(response => {
+                    console.log(response)
+                })
+            }
+
+            function fetchUserPermission(){
+                mS.getData('get', `${urlUserPermission}?json=${JSON.stringify({tipo: 2})}`, null, true).then(response=>{
+                    if(response){
+                        let userData = structuredClone(getUserData())
+
+                        userData.permissions = [response]; 
+                        localStorage.setItem('userData', JSON.stringify(structuredClone(userData)))
+                    }
+                })
+            }
+
+        }])
 
 
 })(window.angular)

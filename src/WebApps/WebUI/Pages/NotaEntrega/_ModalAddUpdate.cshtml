@@ -1,6 +1,10 @@
 <form autocomplete="off">
     <div class="modal-header">
-        <div class="float-left">
+        <div class="d-flex float-left align-items-center">
+            <button type="button" class="btn btn-secondary btn-sm mr-2" tooltip-placement="right"
+                            uib-tooltip="Opción para recargar los permisos del documento." ng-click="refreshUserPermission()">
+                <i class="fas fa-redo"></i>
+            </button>
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" ng-model="showHeader" id="checkbox0" value="check">
                 <label class="custom-control-label" for="checkbox0">Mas datos</label>

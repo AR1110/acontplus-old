@@ -30,6 +30,9 @@
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
         nombreModalVenta = $injector.get('nombreModalVenta');
+        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
+
         const CODE_REPORT = $injector.get('CODE_REPORT');
 
         TIPO_DOC_NE = commonSvc.tipoDoc['NE'];
@@ -336,21 +339,37 @@
             }
         }
 
+        function getParamsPermission(item, codigoAccion) {
+            let paramsPermission = {
+                idDocumento: item.idDocumento,
+                codDoc: item.codDoc,
+                codigoAccion,
+                tipoDoc: 'Nota Entrega',
+                serieComprobante: item.serieComprobante,
+                jsonData: JSON.stringify({
+                    idDocumento: item.idDocumento,
+                    codDoc: item.codDoc,
+                    tipoDoc: 'Nota Entrega',
+                    serieComprobante: item.serieComprobante
+                })
+            }
+            return paramsPermission;
+        }
+
         $scope.openModalEdit = async (item) => {
-            try {
-                if (item.anulada) {
-                    fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
+            try { 
+                if (item.disabledUpdate) {
+                    fS.sweetAlert('warning', 'Este documento ya no se puede editar!');
                     return
-                }
+                } 
 
-                if (item.codEstado === 'TRA') {
-                    fS.sweetAlert('warning', 'No puede ser editada; ¡tiene un documento de aprobación!');
-                    return
-                }
+                let paramsPermission = getParamsPermission(item, 'E');
+                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
 
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+                if (!response) return
+
+                if (response && response.code === "2") {
+                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
                 }
 
@@ -371,7 +390,8 @@
                         if (typeof result === 'object') {
                             $scope.getNotaEntregas();
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)     
+
                             }
 
                         }
@@ -424,16 +444,21 @@
 
         $scope.askToDelete = async (item) => {
             try {
-                if (item.anulada) {
-                    fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
+                if (item.disabledAnular) {
+                    fS.sweetAlert('warning', 'El documento ya se encuentra anulada o transferida');
                     return
                 }
 
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
+                let paramsPermission = getParamsPermission(item, 'A');
+                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
+
+                if (!response) return
+
+                if (response && response.code === "2") {
+                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
-                }
+                } 
+
 
                 let { isConfirmed } = await Swal.fire({
                     title: "<small>Anular Nota de Entrega?</small>",
@@ -459,7 +484,8 @@
 
                             //Una vez actualizado el documento  
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)    
+
                             }
                             $scope.getNotaEntregas();
                         }
@@ -718,6 +744,8 @@
         let storageSvc = $injector.get('storageService');
         let articuloSvc = $injector.get('articuloService');
         let facturaSvc = $injector.get('facturaService');
+        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
 
 
         $scope.tipoDoc = TIPO_DOC_NE;
@@ -926,6 +954,10 @@
                 hideLoader();
                 console.log(error);
             }
+        }
+
+        $scope.refreshUserPermission = function(){
+            userCustomerPermissionSvc.fetchUserPermission();
         }
 
         $scope.setInfoEstabPtoEmi = function () {

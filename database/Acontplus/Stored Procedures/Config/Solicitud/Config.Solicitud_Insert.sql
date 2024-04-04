@@ -1,74 +1,57 @@
 
 USE AcontPlus;
+ GO
 
-IF OBJECT_ID('Config.Solicitud_Insert ')IS NOT NULL
-	DROP PROCEDURE Config.Solicitud_Insert 
-GO
-
--- =============================================
--- Author:		Emilio Senguana.
--- Create date: 11/04/2023
--- Description:	
--- =============================================
-
-CREATE PROCEDURE Config.Solicitud_Insert  @idUsuarioRol INT, @json VARCHAR(300)
+CREATE OR ALTER PROCEDURE Config.UserCustomerRequest_Insert  @userRoleId INT, @json VARCHAR(300)
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @id INT;
+    DECLARE @jsonData NVARCHAR(MAX) 
 	DECLARE @motivo VARCHAR(50)
 	DECLARE @codigoAccion VARCHAR(5)
 
-	DECLARE @idEntidad INT = (SELECT top 1 idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
-	DECLARE @idUsuarioRolAprobante INT;
+	DECLARE @idEntidad INT = (SELECT top 1 idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+ 
+    DECLARE @tbUsersAdmin AS TABLE (
+        idUsuarioRol INT NOT NULL UNIQUE 
+    )
 
-	--SELECT '0'code, CAST( @json AS varchar(300)) as 'message'
-	--RETURN 
-	SELECT @motivo = motivo, @codigoAccion = codigoAccion FROM OPENJSON(@json)
-	WITH(motivo VARCHAR(50) '$.motivo', codigoAccion VARCHAR(5) '$.codigoAccion')
+ 
+	SELECT @motivo = motivo, @codigoAccion = codigoAccion, @jsonData = jsonData FROM OPENJSON(@json)
+	WITH(
+            motivo VARCHAR(50) '$.motivo', 
+            codigoAccion VARCHAR(5) '$.codigoAccion',
+            jsonData VARCHAR(300) '$.jsonData'
+        )
+         
 
+    INSERT INTO @tbUsersAdmin (idUsuarioRol)
+    SELECT 
+        CONVERT(INT, value) AS idUsuarioRol
+    FROM  Config.v_User_Permission_Sale ups WITH(NOLOCK)
+    CROSS APPLY OPENJSON(ups.usersAdmin)
+    WHERE ups.idUsuarioRol = @userRoleId 
 
-
-	IF EXISTS(SELECT 1 FROM Config.Solicitud WHERE idUsuarioRolSolictante = @idUsuarioRol AND codigoAccion= @codigoAccion AND codEstado='P')
+    IF (SELECT COUNT(*) FROM @tbUsersAdmin) = 0 
 		BEGIN
-			SELECT '0'code, 'Tienes una solicitud de ' + IIF(@codigoAccion='E', 'Editar', 'Anular') + ' que no ha sido aprobada' as 'message', ''titleSms
-			RETURN 
-		END
-
-	SELECT 
-		@idUsuarioRolAprobante = JSON_VALUE(jsonPermission, '$.additional.requestAuthorizationKey.idUsuarioRolAprobante')
-	FROM Config.UserPermission 
-	WHERE idUsuarioRol = @idUsuarioRol 
-	AND codModule = 'V'
-
-	IF @idUsuarioRolAprobante IS NULL 
-		BEGIN
-			SELECT '0'code, 'Solictud de Clave de Autorización para modificar o anular el documento no tiene asignado el Receptor de la Solicitud de Aprobación' as 'message'
+			SELECT '0'code, 'La solicitud de clave de autorización para modificar o anular el documento no tiene asignado el receptor de la solicitud de aprobación' as 'message'
 			RETURN
-		END 
-
-	--Analizar 
-	IF NOT EXISTS(SELECT 1 FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRolAprobante)
-		BEGIN
-			SELECT '0'code, 'N'
-			RETURN 
-		END 
-
-	IF @idUsuarioRolAprobante = @idUsuarioRol
-		BEGIN 
-			SELECT '0'code, 'El Receptor de la Solicitud de Aprobación no tiene que ser el mismo usuario que solicita la aprobación' as 'message'
-			RETURN 
-		END 
-	
-
+		END  
+  
 	BEGIN TRY
-		BEGIN TRAN 					
-			INSERT INTO Config.Solicitud (idUsuarioRolAprobante, idUsuarioRolSolictante, observacion, codigoAccion, codEstado)
-			VALUES(@idUsuarioRolAprobante, @idUsuarioRol, UPPER(@motivo), @codigoAccion, 'P')
+		BEGIN TRAN 			 
+
+            INSERT INTO Config.Solicitud (idUsuarioRolAprobante, idUsuarioRolSolictante, observacion, codigoAccion, codEstado, jsonData)
+           SELECT ua.idUsuarioRol, @userRoleId, UPPER(@motivo),  @codigoAccion, 'P', @jsonData
+            FROM @tbUsersAdmin ua;
+
 		COMMIT TRAN 
-		SELECT '1' code,'Registrado Correctamente' as 'message'	    
+		IF @@ROWCOUNT > 0
+        BEGIN
+            SELECT '0'code, 'Registro insertado correctamente.' as [message];
+        END
 	END TRY 
 
 	BEGIN CATCH 

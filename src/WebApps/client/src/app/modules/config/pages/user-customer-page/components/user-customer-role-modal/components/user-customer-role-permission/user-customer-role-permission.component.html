@@ -73,7 +73,7 @@
                   <mat-label>Administradores:</mat-label>
                   <mat-select [formControl]="userCustomerAdminSelected" multiple class="form-select">
                     @for (item of usersCustomerAdmin; track $index) {
-                    <mat-option [value]="item.idUsuario">{{item.nombreCompleto}}</mat-option>
+                    <mat-option [value]="item.idUsuarioRol">{{item.nombreCompleto}}</mat-option>
                     }
                   </mat-select>
 

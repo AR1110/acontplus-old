@@ -45,6 +45,27 @@ namespace Configuracion.API.Controllers
             }
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> Post(ApiRequest data)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+                };
+                var response = await _service.AddAsync(parameters); 
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en Post " + ex.Message);
+                return BadRequest("Error en Post " + ex.Message);
+            }
+        }
+
         [HttpPut]
         public async Task<IActionResult> Put(ApiRequest data)
         {
