@@ -120,7 +120,9 @@ export class MovimientoCajaModalComponent {
       let getDataPermiso: any = getPermisosLocal();
 
       if (getDataPermiso) {
-        this.dataPermisosCaja = getDataPermiso.cashAccountig;
+       // this.dataPermisosCaja = getDataPermiso.cashAccountig;
+        this.dataPermisosCaja = getDataPermiso.permisoCaja || {};
+
       }
       showLoader()
       this.controlCajaSvc.getDataFilter().subscribe({

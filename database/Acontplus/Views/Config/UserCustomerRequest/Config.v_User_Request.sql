@@ -5,7 +5,7 @@ AS(
     SELECT  
     s.idSolicitud,
 	s.idUsuarioRolAprobante,
-	s.idUsuarioRolSolictante,
+	s.idUsuarioRolSolictante, 
     u_aprob.nombreCompleto AS usuarioAprobante,
     u_soli.nombreCompleto AS usuarioSolicitante,
     s.codigoAccion,

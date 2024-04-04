@@ -1173,7 +1173,7 @@
                 const { codigoAccion } = obj;
                 let textMotivo = codigoAccion === 'E' ? 'Editar' : 'Anular';
                 Swal.fire({
-                    title: "Solicitud de Clave de Autorización",
+                    title: "Solicitud de permiso para " + textMotivo,
                     text: `Por favor, proporcione una explicación del motivo por el cual desea ${textMotivo} el documento!`,
                     input: 'text',
                     inputAttributes: {

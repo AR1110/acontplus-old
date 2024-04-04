@@ -22,7 +22,7 @@
               <li>
                 <mat-checkbox [(ngModel)]="mainPermissionSale.comprobante[permission].enabled"
                   (ngModelChange)="updateAllCompleteSaleComprobante()">
-                  {{mainPermissionSale.comprobante[permission].description}}
+                  {{mainPermissionSale.comprobante[permission].label}}
                 </mat-checkbox>
               </li>
               }
@@ -43,7 +43,7 @@
               <li>
                 <mat-checkbox [(ngModel)]="mainPermissionSale.detail[permission].enabled"
                   (ngModelChange)="updateAllCompleteSaleDetail()">
-                  {{mainPermissionSale.detail[permission].description}}
+                  {{mainPermissionSale.detail[permission].label}}
                 </mat-checkbox>
               </li>
               }
@@ -65,7 +65,7 @@
               <li>
                 <mat-checkbox [(ngModel)]="mainPermissionSale.additional[permission].enabled"
                   (ngModelChange)="updateAllCompleteSaleAdditional()">
-                  {{mainPermissionSale.additional[permission].description}}
+                  {{mainPermissionSale.additional[permission].label}}
                 </mat-checkbox>
                 @if(mainPermissionSale.additional[permission].isKeyRequest &&
                 mainPermissionSale.additional[permission].enabled){
@@ -115,7 +115,7 @@
                 <li>
                   <mat-checkbox [(ngModel)]="this.mainPermission.permissionsProduct.permission[permission].enabled"
                     (ngModelChange)="updateAllCompleteProduct()">
-                    {{this.mainPermission.permissionsProduct.permission[permission].description}}
+                    {{this.mainPermission.permissionsProduct.permission[permission].label}}
                   </mat-checkbox>
                 </li>
                 }
@@ -148,7 +148,7 @@
               <li>
                 <mat-checkbox [(ngModel)]="this.mainPermission.permissionsCashBox.permission[permission].enabled"
                   (ngModelChange)="updateAllCompleteCashBox()">
-                  {{this.mainPermission.permissionsCashBox.permission[permission].description}}
+                  {{this.mainPermission.permissionsCashBox.permission[permission].label}}
                 </mat-checkbox>
               </li>
               }

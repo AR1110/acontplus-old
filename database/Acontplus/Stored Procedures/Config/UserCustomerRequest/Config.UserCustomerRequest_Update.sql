@@ -14,6 +14,7 @@ BEGIN
     DECLARE @idDocumento INT 
     DECLARE @codDoc VARCHAR(10)
 
+
 	SELECT @id = id, 
 		   @tipo = tipo,
 		   @codigoAccion = codigoAccion
@@ -51,20 +52,16 @@ BEGIN
 				
 			IF @tipo = 2  
 				BEGIN 
-                    
-                    
-                    
-					IF EXISTS(SELECT 1 FROM  Config.v_User_Request WHERE idUsuarioRolSolictante = @userRoleId 
+                    SET @id = (SELECT top 1 idSolicitud FROM Config.v_User_Request WHERE idUsuarioRolSolictante = @userRoleId 
                                                                                 AND idDocumento = @idDocumento 
                                                                                 AND codDoc      = @codDoc
                                                                                AND codigoAccion = @codigoAccion 
-                                                                                   AND codEstado='A')
+                                                                                   AND  codEstado='A'   )                 
+                    
+					IF @id > 0
 						BEGIN
-							UPDATE Config.Solicitud SET codEstado='F' WHERE idUsuarioRolSolictante = @userRoleId 
-                                                                                   AND JSON_VALUE(jsonData, '$.idDocumento') = @idDocumento 
-                                                                                   AND JSON_VALUE(jsonData, '$.codDoc') = @codDoc 
-                                                                                  AND codigoAccion = @codigoAccion 
-                                                                                     AND codEstado = 'A'
+							UPDATE Config.Solicitud SET codEstado='F' WHERE idUsuarioRolSolictante = @userRoleId  AND idSolicitud= @id
+                             EXEC Config.UserCustomerRequest_SendMail @userRoleId, @id
 							SELECT '1'code,'Solictud para editar o anular finalizado' as [message]
 						END 
 				END 
