@@ -86,23 +86,19 @@ namespace Common.Core.Utils
         {
             return "{" + string.Join(", ", dictionary.Select(kvp => kvp.Key + "=" + kvp.Value).ToArray()) + "}";
         }
-        //public static string ToCamelCase(this string str)
-        //{
-        //    //var words = str.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
-        //    //words = words
-        //    //    .Select(word => char.ToUpper(word[0]) + word.Substring(1))
-        //    //    .ToArray();
-        //    //return string.Join(string.Empty, words);
-        //    var words = str.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
-        //    var leadWord = Regex.Replace(words[0], @"([A-Z])([A-Z]+|[a-z0-9]+)($|[A-Z]\w*)",
-        //        m =>
-        //        {
-        //            return m.Groups[1].Value.ToLower() + m.Groups[2].Value.ToLower() + m.Groups[3].Value;
-        //        });
-        //    var tailWords = words.Skip(1)
-        //        .Select(word => char.ToUpper(word[0]) + word.Substring(1))
-        //        .ToArray();
-        //    return $"{leadWord}{string.Join(string.Empty, tailWords)}";
-        //}
+        public static string SerializeObjectCustom<T>(object data)
+        {
+            var contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
+            var options = new JsonSerializerSettings
+            {
+                ContractResolver = contractResolver,
+                Formatting = Formatting.Indented
+            };
+            var JSONString = JsonConvert.SerializeObject(data, options);
+            return JSONString;
+        }
     }
 }

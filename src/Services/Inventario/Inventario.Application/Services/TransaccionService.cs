@@ -27,7 +27,7 @@ namespace Inventario.Application.Services
         }
         public void Process(Dictionary<string, object> parameters)
         {
-            _repository.OnlyExecute("dbo.Transaccion_Handler_Init", parameters);
+            _repository.OnlyExecuteAsync("dbo.Transaccion_Handler_Init", parameters);
         }
     }
 }

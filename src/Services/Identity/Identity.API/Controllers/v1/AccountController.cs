@@ -1,5 +1,4 @@
 ﻿using Asp.Versioning;
-using Common.Core.Models;
 using Identity.API.Data;
 using Identity.API.Dtos;
 using Identity.API.Entities;
@@ -48,18 +47,26 @@ namespace Identity.API.Controllers.v1
                     return BadRequest("Contraseña no puede estar vacia");
                 }
                 var _response = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
-                //var _response = JsonConvert.DeserializeObject<ApiResponse>(mainResponse);
                 //User founded
                 if (_response.code == "1" && !string.IsNullOrEmpty(_response.payload))
                 {
+                    //dynamic container = JsonConvert.DeserializeObject<dynamic>(_response.payload);
+                    //Guid guid;
+                    //if (Guid.TryParse(container[0].uuid?.ToString(), out guid))
+                    //{
+                    //    Console.WriteLine(guid);
+                    //}
+                    ////else
+                    ////{
+                    ////    Console.WriteLine("No guid present or it has an invalid format");
+                    ////}
                     List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.payload);
 
                     if (authRequest.ReturnUrl == "/") { authRequest.ReturnUrl = null; }
 
                     userData.ForEach(x => x.ReturnUrl = authRequest.ReturnUrl ?? "/Home/Index");
 
-                    //Only has one company
-                    if (userData.Count == 1)
+                    if (userData.Count == 1 && !userData[0].NeedAuthorization)
                     {
                         userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
 
@@ -72,9 +79,11 @@ namespace Identity.API.Controllers.v1
                         }
 
                         userData.ForEach(x => x.Token = token);
-
-                        _context.LoginHistories.Add(new LoginHistory { UserId = userData[0].UserId, Username = userData[0].Username, UserRoleId = userData[0].UserRoleId, UserAgent = authRequest.UserAgent, Token = token });
+                        var logingHistory = new LoginHistory { UserId = userData[0].UserId, Username = userData[0].Username, UserRoleId = userData[0].UserRoleId, UserAgent = authRequest.UserAgent, Token = token };
+                        _context.LoginHistories.Add(logingHistory);
                         await _context.SaveChangesAsync();
+
+                        await _accountService.AddNotificationAsync(logingHistory);
 
                         return Ok(new
                         {
@@ -87,7 +96,20 @@ namespace Identity.API.Controllers.v1
                             })
                         });
                     }
-                    else
+                    else if (userData.Count == 1 && userData[0].NeedAuthorization)
+                    {
+                        return Ok(new
+                        {
+                            code = "1",
+                            message = "Su ingreso requiere ser autenticado, espere la confirmación",
+                            payload = JsonConvert.SerializeObject(userData, new JsonSerializerSettings
+                            {
+                                ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                        });
+                    }
+                    if (userData.Count > 1)
                     {
                         return Ok(new
                         {
@@ -114,7 +136,7 @@ namespace Identity.API.Controllers.v1
                 return BadRequest("Error on login");
             }
         }
-        
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] UserData userData)
@@ -130,8 +152,10 @@ namespace Identity.API.Controllers.v1
                 }
                 else
                 {
-                    _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
+                    var logingHistory = new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token };
+                    _context.LoginHistories.Add(logingHistory);
                     await _context.SaveChangesAsync();
+                    await _accountService.AddNotificationAsync(logingHistory);
                 }
                 userData.Token = token;
                 return Ok(new
@@ -154,16 +178,16 @@ namespace Identity.API.Controllers.v1
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> VerifyCode([FromBody] AuthRequestDto data)
+        public async Task<IActionResult> Authenticate([FromBody] AccessAuthorization data)
         {
             try
             {
-                var response = await _accountService.VerifyCodeAsync(0);
+                var response = await _accountService.AuthenticateAsync(data);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error while verify code into Acontplus Web: " + ex.ToString());
+                _log.LogActivity("Error while verify code into Acontplus ERP: " + ex.ToString());
                 return BadRequest("Error on verify code");
             }
         }
