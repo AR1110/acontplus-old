@@ -1099,8 +1099,8 @@
                     cerrarCaja: false,
                     generarDocumento: false,
                     movimiento: false,
-                }
-                let accionesProduct = submenus.find(sm => sm.codTemp === 'ART');
+                } 
+                let accionesProduct = JSON.parse(submenus).find(sm => sm.code === 'ART');
 
                 return {
                     accionesProduct: accionesProduct || structuredClone(accionesDefault)
