@@ -46,6 +46,14 @@
             $("#sidebarnav").html(textHtml);
         };
 
+        $scope.logout = function () {
+            Object.keys(localStorage).forEach(function (key) {
+                localStorage.removeItem(key);
+            });
+            location.href = "/Login";
+        };
+
+
 
         $scope.init = () => {
             if (JSON.parse(localStorage.getItem("userData")) === null) {
@@ -92,12 +100,6 @@
         }
         $scope.init();
 
-        $scope.logout = function () {
-            Object.keys(localStorage).forEach(function (key) {
-                localStorage.removeItem(key);
-            });
-            location.href = "/Login";
-        };
 
         const pathname = $window.location.pathname;
         if (pathname) {
