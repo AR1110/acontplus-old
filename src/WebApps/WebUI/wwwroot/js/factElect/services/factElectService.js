@@ -109,11 +109,12 @@
     })
 
 
-    app.factory('facturaService', function ($injector) {
+    app.factory('facturaService', ['$injector', function ($injector) {
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
         let service = {
             data: {}
@@ -163,7 +164,8 @@
                     let tempBodegas = mainData[10];
 
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
-                    let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
+                    let { sales, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
+                
 
                     // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
                     let dataToGroup = {
@@ -181,7 +183,7 @@
                         tarifasImpuesto,
                         tiemposCredito,
                         tarifas,
-                        permisoVenta,
+                        permisoVenta: sales,
                         notificacionVenta,
                         decimal,
                         config,
@@ -782,6 +784,7 @@
                     porcentajeDescuento: item.porcentajeDescuento,
                     nota: item.nota,
                     llevaInventario: item.llevaInventario,
+                    conversion: item.conversion,
                     precioCosto: item.precioCosto,
                     precioCostoFraccionado : item.conversion,
                     conversion : item.conversion,
@@ -796,7 +799,7 @@
 
         return service;
 
-    })
+    }])
 
 
 
@@ -828,10 +831,12 @@
         return estabs;
     }
 
-    app.factory('notaCreditoService', function ($injector) {
+    app.factory('notaCreditoService',['$injector', function ($injector) {
         const mS = $injector.get('mainService');
         const fS = $injector.get('formulario');
         const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
 
         const URL = 'FactElect/NotaCredito/'
         const service = {};
@@ -865,7 +870,8 @@
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
-                    let { permisoVenta } = fS.getDataUserRol();
+                    let { sales: permisoVenta } = userCustomerPermissionSvc.userPermissionAdapter();
+
 
                     return {
                         estabs,
@@ -1180,7 +1186,7 @@
 
 
 
-    });
+    }]);
 
 
 

@@ -8,6 +8,8 @@
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
 
         let service = {}
 
@@ -56,8 +58,8 @@
 
                     let tempEstabsAndPtosEmision = mainData[4];
                     let tempBodegas = mainData[5];
-                    let vendedores = mainData[6];
-                    let { permisoVenta } = fS.getDataUserRol();
+                    let vendedores = mainData[6]; 
+                    let { sales: permisoVenta } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision

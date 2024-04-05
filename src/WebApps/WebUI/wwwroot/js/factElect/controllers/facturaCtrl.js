@@ -25,7 +25,9 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        nombreModalVenta = $injector.get('nombreModalVenta');
+        nombreModalVenta = $injector.get('nombreModalVenta'); 
+        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
         let DOC_TYPE = $injector.get('DOC_TYPE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
 
@@ -351,17 +353,37 @@
                 console.log(error)
             }
         }
-
+ 
+        function getParamsPermission(item, codigoAccion){
+             let paramsPermission = {
+                idDocumento: item.idDocumento,
+                codDoc: item.codDoc,
+                codigoAccion,
+                tipoDoc: 'Factura Electrónica',
+                serieComprobante: item.serieComprobante,
+                jsonData: JSON.stringify({
+                    idDocumento: item.idDocumento,
+                    codDoc: item.codDoc,
+                    tipoDoc: 'Factura Electrónica',
+                    serieComprobante: item.serieComprobante
+                })
+            }
+            return paramsPermission;
+        }
         $scope.openModalInvoiceEdit = async (item) => {
-            try {
-                if (item.codEstado === 'A') {
-                    fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
+            try { 
+                if (item.disabledActionUpdate) {
+                    fS.sweetAlert('warning', 'Este documento ya no se puede editar');
                     return
                 }
-
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+ 
+                let paramsPermission = getParamsPermission(item, 'E');
+                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
+    
+                if(!response) return
+               
+                if (response && response.code === "2") {
+                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
                 }
 
@@ -378,11 +400,12 @@
                         windowClass: 'uibModalFullScreen',
                         isRenderRazorPartial: true
                     })
-                    modalRef.result.then(result => {
+                    modalRef.result.then(result => {                           
+
                         if (typeof result === 'object' && result.isUpdate) {
                             //Actualizar el estado de solicitud en caso de tener 
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {      
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)                                
                             }
 
                             $scope.getFacturas();
@@ -460,16 +483,20 @@
         $scope.askToDelete = async (item) => {
             try {
 
-                if (item.codEstado === 'A') {
+                if (item.disabledActionAnular) {
                     fS.sweetAlert('warning', 'Este documento ya se cuentra anulada');
                     return
                 }
 
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
+                let paramsPermission = getParamsPermission(item, 'A');
+                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
+
+                if (!response) return
+
+                if (response && response.code === "2") {
+                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
-                }
+                } 
 
                 let { isConfirmed } = await Swal.fire({
                     title: '<small>Anular Factura?</small>',
@@ -494,7 +521,7 @@
 
                             //Una vez actualizado el documento 
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)    
                             }
                             $scope.getFacturas();
                         }
@@ -1025,6 +1052,7 @@
             $scope.vendedores = vendedores;
             $scope.tarifasImpuesto = tarifasImpuesto;
             $scope.permisoComprobanteVenta = permisoVenta.comprobante;
+
             $scope.permisoDetalleVenta = permisoVenta.detalle;
             $scope.notificacionVenta = notificacionVenta;
             $scope.decimal = decimal;
@@ -1145,7 +1173,7 @@
                     formasPago,
                     cuotas
                 } = params.data;
-
+          
                 $scope.data = {
                     ...$scope.data,
                     ...structuredClone(comprobante)
@@ -1254,17 +1282,7 @@
             $scope.historyDatosAdicionales = historyDatosAdicionales;
         }
         function setColumnDefs() {
-            let defaultPermission = Object.freeze({
-                tarifa: true,
-                medida: true,
-                tipoIva: true,
-                porcentajeDescuento: true,
-                descuento: true,
-                precioUnitario: true,
-                precioConIva: true,
-            })
-
-            const ventaDetailPermission = $scope.permisoDetalleVenta ? $scope.permisoDetalleVenta : defaultPermission;
+            const ventaDetailPermission = $scope.permisoDetalleVenta
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a update-article ng-click="grid.appScope.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >

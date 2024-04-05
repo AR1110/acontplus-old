@@ -214,7 +214,7 @@ namespace Common.Infrastructure.Repository
             }
             return dt;
         }
-        public async Task<int> OnlyExecute(string query, Dictionary<string, object> parameters, bool useStoredProcedure)
+        public async Task<int> OnlyExecuteAsync(string query, Dictionary<string, object> parameters, bool useStoredProcedure)
         {
             var _conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
             using (var cmd = new SqlCommand(query, _conn))

@@ -463,8 +463,7 @@
             try {
                 showLoader();
                 guiaRemisionSvc.getDataForm().then(response => {
-                    const { estabs } = response;
-                    console.log(response)
+                    const { estabs } = response; 
                     $scope.establecimientos = estabs;
                     tiposDoc = response.tiposDoc
                     tiposDoc.push({

@@ -9,7 +9,8 @@
 
     function iframeAngularCtrl($scope, $location, $injector) {
         const mS = $injector.get('mainService');
-        const fS = $injector.get('formulario')
+        const fS = $injector.get('formulario');
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         mS.detectDevice();
 
         let frontend = document.getElementById('frontend').value
@@ -38,7 +39,7 @@
             let { token } = JSON.parse(params);
             if (!token) { return; }
 
-            let permissions = fS.getDataUserRol();
+            let permissions = userCustomerPermissionSvc.userPermissionAdapter();
             // Create a new iframe element
             var iframe = document.createElement('iframe');
 

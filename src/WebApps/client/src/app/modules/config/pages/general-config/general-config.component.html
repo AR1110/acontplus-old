@@ -192,7 +192,7 @@
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                   <div class="form-group">
                     <select name="metodoValoracion" id="metodoValoracion" class="form-control border-select"
-                      [ngModel]="configInventario.idMetodoValoracion">
+                      [(ngModel)]="configInventario.idMetodoValoracion">
                       @for (item of metodosValoracion; track $index) {
                       <option [ngValue]="item.idMetodoValoracion">
                         {{item.descripcion}}

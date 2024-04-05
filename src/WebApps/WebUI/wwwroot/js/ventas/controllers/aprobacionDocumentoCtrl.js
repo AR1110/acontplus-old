@@ -2137,18 +2137,9 @@
             }
         }
 
-        function setColumnDefs() {
-            let defaultPermission = Object.freeze({
-                tarifa: true,
-                medida: true,
-                tipoIva: true,
-                porcentajeDescuento: true,
-                descuento: true,
-                precioUnitario: true,
-                precioConIva: true,
-            })
+        function setColumnDefs() { 
 
-            const ventaDetailPermission = $scope.permisoDetalleVenta ? $scope.permisoDetalleVenta : defaultPermission;
+            const ventaDetailPermission = $scope.permisoDetalleVenta 
 
             $scope.gridOptionsDetalle.columnDefs = [{
                 name: 'Op.',
@@ -3138,19 +3129,9 @@
 
         $scope.initiload();
 
-        function setColumnDefs() {
+        function setColumnDefs() { 
 
-            let defaultPermission = Object.freeze({
-                tarifa: true,
-                medida: true,
-                tipoIva: true,
-                porcentajeDescuento: true,
-                descuento: true,
-                precioUnitario: true,
-                precioConIva: true,
-            })
-
-            const ventaDetailPermission = $scope.permisoDetalleVenta ? $scope.permisoDetalleVenta : defaultPermission;
+            const ventaDetailPermission = $scope.permisoDetalleVenta  
 
             $scope.gridOptionsDetalle.columnDefs = [{
                 name: 'Op.',

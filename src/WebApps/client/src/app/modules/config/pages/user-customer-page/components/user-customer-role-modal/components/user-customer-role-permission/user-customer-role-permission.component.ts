@@ -7,7 +7,7 @@ import { isApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { UserCustomer } from "@modules/config/models/user-customer.model";
+import { UserCustomerRole } from "@modules/config/models/user-customer-role.model";
 import { UserCustomerPermissionService } from "@modules/config/services/user-customer/user-customer-permission.service";
 
 
@@ -31,7 +31,7 @@ export class UserCustomerRolePermissionComponent {
   private readonly tS = inject(ToasterService);
   idUsuarioRol = 0;
 
-  usersCustomerAdmin: UserCustomer[] = [];
+  usersCustomerAdmin: UserCustomerRole[] = [];
   userCustomerAdminSelected = new FormControl([]);
 
   allCompleteSaleComprobante = false;
@@ -235,9 +235,14 @@ export class UserCustomerRolePermissionComponent {
         this.mainPermission.permissionsSale.permission.additional.keyRequest.usersAdmin = []
       }
 
-      const { permissionsCashBox, permissionsProduct, permissionsSale}= this.mainPermission;
+
+      const { permissionsCashBox, permissionsProduct, permissionsSale}= structuredClone(this.mainPermission)
+      permissionsCashBox.permission = JSON.stringify(permissionsCashBox.permission);
+      permissionsProduct.permission = JSON.stringify(permissionsProduct.permission);
+      permissionsSale.permission = JSON.stringify(permissionsSale.permission);
+
       let dataPermissions = [
-        permissionsSale,
+        permissionsSale ,
         permissionsProduct,
         permissionsCashBox
       ]
@@ -245,7 +250,6 @@ export class UserCustomerRolePermissionComponent {
         dataPermissions
       }
 
-      console.log(this.mainPermission)
 
       showLoader();
       this.userCustomerPermissionSvc.put(data).subscribe({

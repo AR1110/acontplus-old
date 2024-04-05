@@ -944,7 +944,7 @@ function modalFormaPagoCtrl($scope, $uibModalInstance, $injector, params) {
             cancelButtonText: 'No, cancelar'
         }).then(result => {
             if (result.isConfirmed) {
-                $uibModalInstance.close($scope.getDataPago(item))
+                $uibModalInstance.close(getDataPago(item))
             }
         })
     }

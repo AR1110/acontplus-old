@@ -3,6 +3,7 @@ import { GeneralConfigComponent } from "./pages/general-config/general-config.co
 import { DocConfigPageComponent } from "./pages/doc-config/doc-config.component";
 import { UserCustomerPageComponent } from "./pages/user-customer-page/user-customer-page.component";
 import { UserCustomerRequestPageComponent } from "./pages/user-customer-request-page/user-customer-request-page.component";
+import { UserProfilePageComponent } from "./pages/user-profile-page/user-profile-page.component";
 export const routes: Routes = [
   {
     path: 'general-config-page',
@@ -34,6 +35,13 @@ export const routes: Routes = [
     component: UserCustomerRequestPageComponent,
     data: {
       breadcrumb: 'Solicitudes de Usuario'
+    }
+  }, {
+    path: 'user-profile-page',
+    title: 'Configuración de Perfil',
+    component: UserProfilePageComponent,
+    data: {
+      breadcrumb: 'Configuración de Perfil'
     }
   }
 ]
