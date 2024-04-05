@@ -85,7 +85,8 @@ namespace Identity.API.Data.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool?>("Enabled")
                         .HasColumnType("bit");
@@ -122,18 +123,22 @@ namespace Identity.API.Data.Migrations
 
                     b.Property<string>("IpAddress")
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(15)");
 
                     b.Property<string>("Password")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("UserAgent")
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("Username")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -150,7 +155,8 @@ namespace Identity.API.Data.Migrations
 
                     b.Property<string>("IpAddress")
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(15)");
 
                     b.Property<bool?>("IsLocked")
                         .HasColumnType("bit");
@@ -166,10 +172,12 @@ namespace Identity.API.Data.Migrations
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Token")
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("UserAgent")
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -178,7 +186,8 @@ namespace Identity.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.HasKey("Id");
 

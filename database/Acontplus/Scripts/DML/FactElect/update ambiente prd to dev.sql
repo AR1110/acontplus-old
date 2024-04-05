@@ -52,7 +52,7 @@ GO
 --INNER JOIN dbo.puntoEmision pe ON de.idPuntoEmision = pe.idPuntoEmision
 --INNER JOIN Sri.Establecimiento e On pe.codEstab = e.codEstab
 --INNER JOIN dbo.Entidad en On e.ruc = en.ruc
---WHERE en.idEntidad not in (9,195,46,26,169)
+--WHERE en.idEntidad not in (9,195)
 
 --UPDATE de SET de.xmlCompressed = NULL
 --,de.xmlDoc = NULL
@@ -60,4 +60,6 @@ GO
 --FROM Recepcion.DocumentoRecibido de 
 --INNER JOIN Sri.Establecimiento e On de.idEstablecimiento = e.idEstablecimiento
 --INNER JOIN dbo.Entidad en On e.ruc = en.ruc
---WHERE en.idEntidad not in (9,195,46,26,169)
+--WHERE en.idEntidad not in (9,195)
+
+ 
