@@ -874,7 +874,8 @@
                         cuota: formSvc.roundNumber(valorCuota, 5),
                         fechaVencimiento: formSvc.formatDateTimeZone(fechaVencimiento),
                         entrada: cuota.entrada,
-                        idCuotaPorPagar: cuota.idCuotaPorPagar
+                        idCuotaPorPagar: cuota.idCuotaPorPagar,
+                        idCuotaPorCobrar : cuota.idCuotaPorCobrar
                     };
                 }
 
@@ -883,7 +884,8 @@
                     cuota: cuota.cuota,
                     fechaVencimiento: formSvc.formatDateTimeZone(cuota.fechaVencimiento),
                     entrada: cuota.entrada,
-                    idCuotaPorPagar: cuota.idCuotaPorPagar
+                    idCuotaPorPagar: cuota.idCuotaPorPagar,
+                    idCuotaPorCobrar : cuota.idCuotaPorCobrar
                 };
             });
 

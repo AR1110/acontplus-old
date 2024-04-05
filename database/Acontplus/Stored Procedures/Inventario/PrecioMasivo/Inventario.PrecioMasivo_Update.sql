@@ -29,6 +29,7 @@ BEGIN
 	       ,@articles VARCHAR(MAX)
            ,@tipo INT
            ,@quantity INT
+           ,@Obs VARCHAR(300)
 
     DECLARE @tbArticle AS TABLE
     (
@@ -74,7 +75,7 @@ BEGIN
                    ,precioConIva       NUMERIC(18,5) 
                    ,porcentajeUtilidad NUMERIC(18,5)
                 )
-                SELECT @Quantity = COUNT(*) FROM @tbArticle 
+                SELECT @Quantity = COUNT(*), @Obs = 'Pvps Articulos' FROM @tbArticle 
 
                 IF (SELECT COUNT(*) FROM @tbArticle) = 0 
                     BEGIN
@@ -101,7 +102,7 @@ BEGIN
                    ,porcentajeUtilidad       NUMERIC(18,5)
                 )
                 
-                SELECT @Quantity = COUNT(*) FROM @tbArticleFraccionado;
+                SELECT @Quantity = COUNT(*), @Obs = 'Pvps Articulos Fraccionados' FROM @tbArticleFraccionado;
 
                 IF (SELECT COUNT(*) FROM @tbArticleFraccionado) = 0 
                     BEGIN
@@ -134,8 +135,8 @@ BEGIN
                 END 
 
             INSERT INTO Seguridad.TransactionHistory
-                    (UserRoleId,Quantity,Module,[Action],CreateAt)
-            SELECT @userRoleId,@Quantity,'/Inventario/PrecioMasivo','Update',GETDATE() 
+                    (UserRoleId,Quantity,Module,[Action],obs,CreateAt)
+            SELECT @userRoleId,@Quantity,'/Inventario/PrecioMasivo',@Obs,'Update',GETDATE() 
 
 		COMMIT TRAN
         SELECT [Common].[ufnSpResponse]('1','Actualización exitosa', DEFAULT)

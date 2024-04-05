@@ -749,6 +749,7 @@
         }
 
         $scope.tipoDoc = tipoDoc;
+        $scope.cuotas = [];
         $scope.infoEstabPtoEmi = {};
 
         $scope.data = {
@@ -761,7 +762,6 @@
             totalIce: 0,
             irbpnr: 0,
             propina: 0,
-
             porcentajeDescuento: 0,
             transporte: 0,
             recargo: 0,
@@ -1041,9 +1041,6 @@
                 $scope.dataClone.idTarifa = $scope.data.idTarifa;
             }
 
-
-
-
             if (params && params.action === "NUEVO") {
                 if ($scope.puntosEmision.length > 0) {
                     let dataPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi));
@@ -1145,7 +1142,8 @@
                     cliente,
                     items,
                     infoAdicionalDocumento,
-                    formasPago
+                    formasPago,
+                    cuotas
                 } = params.data;
 
                 $scope.data = {
@@ -1178,6 +1176,8 @@
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
 
+                // Cuotas
+                $scope.cuotas = cuotas;
 
                 //Formas pagos 
                 $scope.dataFormaPago = formasPago[0];
@@ -2395,14 +2395,48 @@
             return params.action === 'EDITAR';
         }
 
+        const validateCuota = function () {
+            let objParamsCuota = {
+                fechaEmision: $scope.data.fechaEmision,
+                tiemposCredito: $scope.tiemposCredito,
+                idTiempoCredito: $scope.data.idTiempoCredito,
+                montoTotal: $scope.data.total,
+                cuotas: $scope.cuotas
+            }
+            let cuotas = [];
+            let montoTotalCuota = 0;
+
+            if (isRegister()) {
+                let dataCuota = fS.calcularCuotas(objParamsCuota);
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+
+            }
+            if (isUpdate()) {
+                let dataCuota = fS.updateCuotas(objParamsCuota)
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+            }
+
+            if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
+                tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
+                return [];
+            }
+
+            return cuotas;
+        }
+
         $scope.onSave = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
                 let validateForm = isValidForm()
-
                 if (!validateForm) {
                     throw "Invalid form!";
                 }
+
+                let cuotas = validateCuota();
+
+                if (cuotas && cuotas.length === 0) return
 
                 if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
                     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
@@ -2459,7 +2493,8 @@
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
                     infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    historyDatosAdicionales: $scope.historyDatosAdicionales
+                    historyDatosAdicionales: $scope.historyDatosAdicionales,
+                    cuotas 
                 })
 
 
