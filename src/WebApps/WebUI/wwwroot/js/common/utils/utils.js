@@ -989,10 +989,7 @@
         return formSvc;
     }
 
-
-<<<<<<< HEAD
-   
-=======
+ 
     angular.module('acontPlusApp')
         .factory('userCustomerPermissionService', ['$injector', function ($injector) {
             const mS = $injector.get('mainService');
@@ -1250,7 +1247,6 @@
             }
 
         }])
-
->>>>>>> origin/ivan_work
+ 
 
 })(window.angular)
