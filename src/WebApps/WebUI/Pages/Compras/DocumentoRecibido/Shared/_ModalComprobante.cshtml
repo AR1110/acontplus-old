@@ -414,13 +414,24 @@
                     <td class="text-center">{{item.codigoPrincipal}}</td>
                     <td class="text-center">{{item.codigoAuxiliar}}</td>
                     <td>{{item.descripcion}}</td>
-                    <td>
+                    <td> 
                         <div style="position:relative; min-width:100px;">
-                            <select class="form-control" ng-model="item.idMedida" ng-change="updateArticleTemp(item)">
-                                <option ng-value="size.idMedida" ng-repeat="size in medidas">
-                                    {{size.descripcion}}
-                                </option>
-                            </select>
+                            <div ng-if="item.medidas.length > 0">
+                                <select class="form-control" ng-model="item.idMedida" ng-change="updateArticleTemp(item)">
+                                    <option ng-value="size.idMedida" ng-repeat="size in item.medidas">
+                                        {{size.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div ng-if="item.medidas.length === 0">
+                                <select class="form-control" ng-model="item.idMedida" ng-change="updateArticleTemp(item)">
+                                    <option ng-value="size.idMedida" ng-repeat="size in medidas">
+                                        {{size.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+
                         </div>
                     </td>
                     <td class="text-right">{{item.precioUnitario | currency}}</td>
