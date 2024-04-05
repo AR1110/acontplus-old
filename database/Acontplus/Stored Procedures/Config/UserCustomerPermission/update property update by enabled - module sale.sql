@@ -149,7 +149,7 @@ WHERE codModule = @codModuleVenta;
 --    '$.additional.keyRequest', 
 --    JSON_QUERY('
 --        {
---            "description": "Solicitar Autorización para Editar o Anular el Doc. Venta",
+--            "label": "Solicitar Autorización para Editar o Anular el Doc. Venta",
 --            "enabled": false,
 --            "usersAdmin": [],
 --            "isKeyRequest": true

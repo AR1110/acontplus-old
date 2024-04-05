@@ -3,6 +3,8 @@
   <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
+  <h5>Usuario: {{params.nombreCompleto}}</h5>
+  <br>
   <div ngbAccordion [closeOthers]="true">
     @for (item of userCustomerRoles; track item) {
     <div ngbAccordionItem  (shown)="showAcordeon(item)">

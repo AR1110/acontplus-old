@@ -1,4 +1,5 @@
-
+USE Acontplus
+GO
 --DROP VIEW IF EXISTS Config.UserCustomerPermissionSale
 
 CREATE OR ALTER VIEW Config.v_User_Permission_CashAccounting
@@ -14,7 +15,7 @@ AS(
 	    ,estado  
     FROM 
         Config.UserPermission up
-    CROSS APPLY OPENJSON (up.permission)
+    CROSS APPLY OPENJSON (up.jsonPermission)
     WITH(
 	     vertOtrasCajas BIT '$.vertOtrasCajas.enabled'  
 	    ,reporteMovimiento BIT '$.reporteMovimiento.enabled'  

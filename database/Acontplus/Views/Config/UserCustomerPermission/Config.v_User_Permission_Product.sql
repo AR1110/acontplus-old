@@ -11,7 +11,7 @@ AS(
 	    ,estado  
     FROM 
         Config.UserPermission up
-    CROSS APPLY OPENJSON (up.permission)
+    CROSS APPLY OPENJSON (up.jsonPermission)
     WITH(
 	     precio BIT '$.precio.enabled'    
     )

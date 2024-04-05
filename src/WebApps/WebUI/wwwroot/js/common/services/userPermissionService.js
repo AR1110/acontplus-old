@@ -87,7 +87,7 @@ angular.module('acontPlusApp')
         }
 
         function accionesSubMenu() {
-            let { submenus } = getUserData();
+            let { submenus } = getUserData(); 
 
             let accionesDefault = {
                 leer: false,
@@ -110,10 +110,11 @@ angular.module('acontPlusApp')
                 generarDocumento: false,
                 movimiento: false,
             }
-            let accionesProduct = JSON.parse(submenus).find(sm => sm.code === 'ART');
+          
+            let accionesProduct = submenus.find(sm => sm.code === 'ART');
 
             return {
-                accionesProduct: accionesProduct || structuredClone(accionesDefault)
+                accionesProduct: accionesProduct || accionesDefault
             }
         }
 

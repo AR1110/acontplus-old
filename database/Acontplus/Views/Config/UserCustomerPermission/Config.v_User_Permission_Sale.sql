@@ -38,7 +38,7 @@ AS(
 	    ,estado  
     FROM 
         Config.UserPermission up
-    CROSS APPLY OPENJSON (up.permission)
+    CROSS APPLY OPENJSON (up.jsonPermission)
     WITH(
 	    comprobante NVARCHAR(MAX) '$.comprobante' AS JSON
 	    ,detalle NVARCHAR(MAX) '$.detail' AS JSON 
