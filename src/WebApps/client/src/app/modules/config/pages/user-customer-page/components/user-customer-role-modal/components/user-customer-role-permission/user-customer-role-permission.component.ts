@@ -62,13 +62,19 @@ export class UserCustomerRolePermissionComponent {
     let params = {
       idUsuarioRol
     }
+    showLoader();
     this.userCustomerPermissionSvc.getAll(params).subscribe({
       next:(response:any)=> {
+        hideLoader();
         this.usersCustomerAdmin = response.usersCustomerAdmin;
         this.mainPermission = response;
         this.setDataPermissionSale();
         this.setDataPermissionArticulo();
         this.setDataPermissionCashBox()
+      },
+      error(err) {
+          hideLoader();
+          console.log(err)
       },
     })
   }

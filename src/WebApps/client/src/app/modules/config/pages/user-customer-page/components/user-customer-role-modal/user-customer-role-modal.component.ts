@@ -20,6 +20,7 @@ import { hideLoader, showLoader } from "@core/utils/loader";
 export class UserCustomerRoleModalComponent {
   @Input() params = {
     idUsuario: 0,
+    nombreCompleto: ''
   }
   @ViewChild(UserCustomerRoleEstabComponent) childEstab!: UserCustomerRoleEstabComponent;
   @ViewChild(UserCustomerRolePermissionComponent) childPermission!: UserCustomerRolePermissionComponent;
@@ -48,11 +49,12 @@ export class UserCustomerRoleModalComponent {
   }
 
   showAcordeon(data:any){
+    this.activeNav = 1;
     this.idUsuarioRol = data.idUsuarioRol;
 
     setTimeout(()=>{
       this.childEstab.getUserCustomerRoleEstabs(data.idUsuarioRol);
-    })
+    }, 100)
   }
   onNavChange(data: any){
 

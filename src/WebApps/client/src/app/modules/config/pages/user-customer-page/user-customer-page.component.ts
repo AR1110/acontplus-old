@@ -84,7 +84,8 @@ export class UserCustomerPageComponent {
       size: 'xl'
     })
     modalRef.componentInstance.params = {
-      idUsuario: data.idUsuario
+      idUsuario: data.idUsuario,
+      nombreCompleto: data.nombreCompleto
     }
   }
 
