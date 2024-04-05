@@ -391,13 +391,15 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
-                    const [
+                    let [
                         comprobanteApi,
                         clienteTempApi,
                         itemsApi,
                         infoAdicionalDocumento,
                         datosAdicionalesArticuloTemp,
-                        formasPagoTemp
+                        formasPagoTemp,
+                        cuenta,
+                        cuotas
                     ] = mainDataApi;
                      
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
@@ -480,10 +482,21 @@
                         serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
-                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
-                        irbpnr: comprobanteTemp.irbpnr || 0
+                        irbpnr: comprobanteTemp.irbpnr || 0,
+                        idTiempoCredito : cuenta[0].idTiempoCredito,
+                        fechaVencimiento: fS.formatDate(cuenta[0].fechaVencimiento),
                     }
+
+                    cuotas = cuotas.map(item => {
+                        return {
+                            idCuotaPorCobrar: item.idCuotaPorCobrar,
+                            nroCuota: item.nroCuota,
+                            fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                            cuota: item.cuota,
+                            entrada: item.entrada,
+                        }
+                    })
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
                         idDocumento: item.idDocumento,
@@ -503,7 +516,7 @@
                             idFactura: fp.idFactura,
                             idTiempoCredito: fp.idTiempoCredito,
                             total: fp.total,
-                            plazo: fp.plazo
+                            plazo: fp.plazo,
                         }
                     });
 
@@ -513,7 +526,8 @@
                         items,
                         infoAdicionalDocumento,
                         datosAdicionalesArticulo,
-                        formasPago
+                        formasPago,
+                        cuotas
                     }
                 }
             })
@@ -665,6 +679,7 @@
                 itemsDeleted,
                 infoAdicionalDocumento,
                 historyDatosAdicionales,
+                cuotas,
                 fromAprobacion = false
             } = params;
 
@@ -703,7 +718,8 @@
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumento || [],
                 infoAdicionalArticulo: historyDatosAdicionales,
-                formaPago: dataFormaPago
+                formaPago: dataFormaPago,
+                cuotas
             }
         }
 
@@ -762,18 +778,16 @@
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
                     precioSinSubsidio: item.precioSinSubsidio || 0,
-                    precioCostoNeto: item.precioCostoNeto,
                     precioUnitario: item.precioUnitario,
-                    precioConIva: item.precioConIva,
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
                     porcentajeDescuento: item.porcentajeDescuento,
-                    total: item.total,
                     nota: item.nota,
-                    cantidadStock: 0,
                     llevaInventario: item.llevaInventario,
                     conversion: item.conversion,
                     precioCosto: item.precioCosto,
+                    precioCostoFraccionado : item.conversion,
+                    conversion : item.conversion,
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
                     estado: item.estado,
                     valorImpuesto: item.valorImpuesto //✅
