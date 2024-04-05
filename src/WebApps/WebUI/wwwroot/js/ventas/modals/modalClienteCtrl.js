@@ -90,6 +90,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     $scope.isDisableInputIdentificacion = true;
                     $scope.isDisableSelectIdentificacion = true;
                     $scope.isDisableInput = true;
+                   
+
 
                     $scope.data = response;
                     $scope.tempIdTipoIdentificacion = $scope.data.idTipoIdentificacion;
@@ -105,6 +107,12 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
                     if (!($scope.data.idTiempoCredito > 0)) {
                         $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
+                    }
+
+                    let codigoIdentificacion = $scope.dataFindByIdTipoIdentificacion().codigo;
+                    
+                    if (codigoIdentificacion === "P") {
+                        $scope.isDisableInput = false;
                     }
 
                     $("#nombreComercial").focus();
@@ -144,8 +152,11 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
     }
 
     $scope.getCompanyCustomerSri = function () {
+        let codigoIdentificacion = $scope.dataFindByIdTipoIdentificacion().codigo;
+        //SI ES PASAPORTE NO VALIDA
+        if (codigoIdentificacion === "P") return
+
         if ($scope.data.idCliente > 0) {
-            let codigoIdentificacion = $scope.dataFindByIdTipoIdentificacion().codigo;
             Swal.fire({
                 title: "Validar datos al SRI",
                 html: `Esta seguro de validar datos del cliente desde el SRI?`,

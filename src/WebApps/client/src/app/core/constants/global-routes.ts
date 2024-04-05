@@ -18,4 +18,5 @@ export enum GlobalRoutes {
   ConfigUserCustomer = 'config/user-customer-page',
   ConfigUserCustomerRequest = 'config/user-customer-request-page',
   ConfigUserProfile = 'config/user-profile-page',
+  ConfigEstablishment = 'config/establishment-page',
 }

@@ -21,15 +21,15 @@ angular.module('acontPlusApp')
 
             let userData = getUserData();
             if (userData) {
-                const { product, cashAccountig, sales } = Array.isArray(userData.permissions) && userData.permissions[0] || {
+                const { product, cashAccounting, sales } = Array.isArray(userData.permissions) && userData.permissions[0] || {
                     product: {},
-                    cashAccountig: {},
+                    cashAccounting: {},
                     sales: {}
                 }
 
                 return {
                     sales: saleAdapter(sales),
-                    cashAccountig: cashAccountigAdapter(cashAccountig),
+                    cashAccounting: cashAccountingAdapter(cashAccounting),
                     product: producAdapter(product),
                     permisoEditarDoc: saleAdapter(sales).permisoEditarDoc
                 }
@@ -69,9 +69,9 @@ angular.module('acontPlusApp')
                 }
             }
         }
-        function cashAccountigAdapter(cashAccountig) {
-            if (Array.isArray(cashAccountig)) {
-                return cashAccountig[0] || {}
+        function cashAccountingAdapter(cashAccounting) {
+            if (Array.isArray(cashAccounting)) {
+                return cashAccounting[0] || {}
             }
             return {}
 
