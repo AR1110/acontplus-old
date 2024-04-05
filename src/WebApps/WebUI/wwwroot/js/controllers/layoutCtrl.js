@@ -74,14 +74,14 @@
                 //consume from bd
             }
 
-            $scope.menus = JSON.parse($scope.userData.menus) || [];
+            $scope.menus = $scope.userData.menus || [];
 
             if ($scope.menus.length == 0) {
                 $scope.logout();
                 return;
             }
 
-            $scope.submenus = JSON.parse($scope.userData.submenus) || [];
+            $scope.submenus = $scope.userData.submenus || [];
 
             //console.log($scope.menus)
             //console.log($scope.submenus)
