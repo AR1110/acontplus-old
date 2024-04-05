@@ -1100,7 +1100,7 @@
                     generarDocumento: false,
                     movimiento: false,
                 } 
-                let accionesProduct = JSON.parse(submenus).find(sm => sm.code === 'ART');
+                let accionesProduct = submenus.find(sm => sm.code === 'ART');
 
                 return {
                     accionesProduct: accionesProduct || structuredClone(accionesDefault)
