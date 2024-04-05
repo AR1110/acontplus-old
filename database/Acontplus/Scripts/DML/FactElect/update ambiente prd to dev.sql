@@ -1,4 +1,5 @@
-use acontplus_old
+use Acontplus
+go
 
 --FOR TEST
 --select *  from PuntoEmision pe INNER JOIN Sri.Establecimiento e ON pe.codEstab = e.codEstab
@@ -10,17 +11,17 @@ use acontplus_old
 --e.ruc = '0101374015001'
 
 
-DECLARE @tbl AS TABLE (ruc VARCHAR(100),estab VARCHAr(100), ptoEmi VARCHAR(100), codDoc VARCHAR(100), generacionNro INT, ultimaSecuencia INT)
+--DECLARE @tbl AS TABLE (ruc VARCHAR(100),estab VARCHAr(100), ptoEmi VARCHAR(100), codDoc VARCHAR(100), generacionNro INT, ultimaSecuencia INT)
 
-INSERT INTO @tbl(ruc, estab, ptoEmi, codDoc, generacionNro, ultimaSecuencia)
+--INSERT INTO @tbl(ruc, estab, ptoEmi, codDoc, generacionNro, ultimaSecuencia)
 
-select e.ruc, e.estab, pe.ptoEmi, td.codigo codDoc, generacionNro, ultimaSecuencia from ConfiguracionDocumento c 
-INNER JOIN PuntoEmision pe ON c.idPuntoEmision = pe.idPuntoEmision
-INNER JOIN Sri.Establecimiento e ON pe.codEstab = e.codEstab
-INNER JOIN TipoDocumento td ON c.idTipoDocumento = td.idTipoDocumento where c.idPuntoEmision in (6,
-22)
+--select e.ruc, e.estab, pe.ptoEmi, td.codigo codDoc, generacionNro, ultimaSecuencia from ConfiguracionDocumento c 
+--INNER JOIN PuntoEmision pe ON c.idPuntoEmision = pe.idPuntoEmision
+--INNER JOIN Sri.Establecimiento e ON pe.codEstab = e.codEstab
+--INNER JOIN TipoDocumento td ON c.idTipoDocumento = td.idTipoDocumento where c.idPuntoEmision in (6,
+--22)
 
-order  by c.idPuntoEmision, td.idTipoDocumento
+--order  by c.idPuntoEmision, td.idTipoDocumento
 
 --select * from @tbl
 --UPDATE c SET c.generacionNro = tt.generacionNro, c.ultimaSecuencia = tt.ultimaSecuencia
@@ -43,3 +44,20 @@ GO
 
 update Acontplus.dbo.DocumentoElectronico set isAutomatic = 0
 GO
+
+--UPDATE de SET de.xmlCompressed = NULL
+--,de.xmlSri = NULL
+----select COUNT(*) 
+--FROM dbo.DocumentoElectronico de
+--INNER JOIN dbo.puntoEmision pe ON de.idPuntoEmision = pe.idPuntoEmision
+--INNER JOIN Sri.Establecimiento e On pe.codEstab = e.codEstab
+--INNER JOIN dbo.Entidad en On e.ruc = en.ruc
+--WHERE en.idEntidad not in (9,195,46,26,169)
+
+--UPDATE de SET de.xmlCompressed = NULL
+--,de.xmlDoc = NULL
+----select COUNT(*) 
+--FROM Recepcion.DocumentoRecibido de 
+--INNER JOIN Sri.Establecimiento e On de.idEstablecimiento = e.idEstablecimiento
+--INNER JOIN dbo.Entidad en On e.ruc = en.ruc
+--WHERE en.idEntidad not in (9,195,46,26,169)
