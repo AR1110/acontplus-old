@@ -707,16 +707,16 @@
             } else {
                 medidasFraccionadoTemp = medidasFraccionado;
             }
-
-
             const medidasPrincipalMapper = medidasPrincipalTemp.map(medidaPrincipal => ({
                 ...medidaPrincipal,
                 precioCosto: medidaPrincipal.precioCosto || 0,
+                precioCostoFraccionado: medidaPrincipal.precioCostoFraccionado || 0,
                 tipo: 'PRINCIPAL'
             }))
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
-                precioCosto: medidaFraccionado.precioCosto ? medidaFraccionado.precioCosto : medidaFraccionado.precioCostoFraccionado || 0,
+                precioCosto: medidaFraccionado.precioCosto || 0,
+                precioCostoFraccionado : medidaFraccionado.precioCostoFraccionado || 0,
                 tipo: 'FRACCIONADO'
             }))
 
@@ -757,7 +757,8 @@
                 defaultMedida: item.defaultMedida,
                 tipo: item.tipo,
                 precioCosto: item.precioCosto,
-                tarifas: item.tarifas || []
+                precioCostoFraccionado: item.precioCostoFraccionado,
+                tarifas: (typeof item.tarifas === "string" ? JSON.parse(item.tarifas) : item.tarifas) || []
             }))
 
             return medidas;

@@ -495,10 +495,11 @@
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
                     porcentajeDescuento: item.porcentajeDescuento,
-                    total: item.total,
-                    nota: item.nota,
+                    nota: item.nota || undefined,
                     llevaInventario: item.llevaInventario,
                     precioCosto: item.precioCosto,
+                    conversion : item.conversion,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
                     cantidadTransaccion,
                     estado: item.estado,
                     valorImpuesto: item.valorImpuesto

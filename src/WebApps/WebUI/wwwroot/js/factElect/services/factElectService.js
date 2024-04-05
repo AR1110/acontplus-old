@@ -467,6 +467,7 @@
                             valorImpuesto: restItem.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -784,9 +785,8 @@
                     porcentajeDescuento: item.porcentajeDescuento,
                     nota: item.nota,
                     llevaInventario: item.llevaInventario,
-                    conversion: item.conversion,
                     precioCosto: item.precioCosto,
-                    precioCostoFraccionado : item.conversion,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
                     conversion : item.conversion,
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
                     estado: item.estado,

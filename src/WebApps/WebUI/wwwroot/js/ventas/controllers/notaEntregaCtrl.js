@@ -749,6 +749,7 @@
 
 
         $scope.tipoDoc = TIPO_DOC_NE;
+        $scope.cuotas = [];
         $scope.infoEstabPtoEmi = {};
 
         $scope.data = {
@@ -1995,6 +1996,7 @@
 
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
+                console.log(dataMedida);
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
@@ -2031,6 +2033,7 @@
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
                 entity.conversion = dataMedida.conversion;
                 entity.precioCosto = dataMedida.precioCosto;
+                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
 
 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //

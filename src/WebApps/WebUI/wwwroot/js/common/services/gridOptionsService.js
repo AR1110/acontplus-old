@@ -63,6 +63,7 @@
                     rowEntity.valorDescuento = 0;
                     rowEntity.conversion = dataMedida.conversion;
                     rowEntity.precioCosto = dataMedida.precioCosto;
+                    rowEntity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
                     //  this.setTotalRow(rowEntity, index);                                  
 
                 },
