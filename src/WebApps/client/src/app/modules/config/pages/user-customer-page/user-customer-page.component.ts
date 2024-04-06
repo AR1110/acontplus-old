@@ -11,6 +11,7 @@ import { UserCustomerRoleModalComponent } from "./components/user-customer-role-
 import { Pagination } from "@shared/class/Pagination";
 import { FormsModule } from "@angular/forms";
 import { NgbPaginationModule } from "@ng-bootstrap/ng-bootstrap";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-user-customer-apge',
@@ -26,6 +27,7 @@ import { NgbPaginationModule } from "@ng-bootstrap/ng-bootstrap";
 export class UserCustomerPageComponent {
   private readonly userCustomerSvc = inject(UserCustomerService);
   private readonly modalSvc = inject(ModalService)
+  private router = inject(Router)
 
 
   pagination = new Pagination();
@@ -53,7 +55,8 @@ export class UserCustomerPageComponent {
   }
 
   ngOnInit() {
-    this.getUsersCustomer()
+   // this.router.navigate(['/', 'config', 'establishment-page'])
+   this.getUsersCustomer()
   }
 
 

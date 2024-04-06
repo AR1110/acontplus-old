@@ -196,14 +196,7 @@ export class CommonService {
         //return str.replace(/[^a-z0-9]/gi, '');
         return str.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "");
     }
-
-    //revisar y eliminar posteriormente
-    getAllTiempoCredito(gestion) {
-        return this.$http.get("/TiempoCredito/OptionTiempoCredito?gestion=" + gestion)
-            .then(({
-                data: response
-            }) => response.data);
-    }
+ 
 
     getEstadoDocByCodDoc(codDoc) {
         return this.mS.getData("get", "Config/EstadoDocumento/?json=" + JSON.stringify({

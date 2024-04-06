@@ -8,7 +8,7 @@ AS(
 	    idUserPermission
 	    ,idUsuarioRol
 	    ,codModule
-        ,vertOtrasCajas = CAST(ISNULL( vertOtrasCajas, 0) AS BIT)
+        ,verOtrasCajas = CAST(ISNULL( verOtrasCajas, 0) AS BIT)
         ,reporteMovimiento = CAST(ISNULL(reporteMovimiento , 0) AS BIT)
         ,cerrarCaja = CAST(ISNULL(cerrarCaja , 0) AS BIT)
         ,enterKey = CAST(ISNULL(enterKey , 0) AS BIT)
@@ -17,7 +17,7 @@ AS(
         Config.UserPermission up
     CROSS APPLY OPENJSON (up.jsonPermission)
     WITH(
-	     vertOtrasCajas BIT '$.vertOtrasCajas.enabled'  
+	     verOtrasCajas BIT '$.verOtrasCajas.enabled'  
 	    ,reporteMovimiento BIT '$.reporteMovimiento.enabled'  
 	    ,cerrarCaja BIT '$.cerrarCaja.enabled'  
 	    ,enterKey BIT '$.enterKey.enabled'  

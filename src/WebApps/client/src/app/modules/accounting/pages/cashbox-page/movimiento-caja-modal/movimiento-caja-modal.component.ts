@@ -120,7 +120,7 @@ export class MovimientoCajaModalComponent {
       let getDataPermiso: any = getPermisosLocal();
 
       if (getDataPermiso) {
-       // this.dataPermisosCaja = getDataPermiso.cashAccountig;
+       // this.dataPermisosCaja = getDataPermiso.cashAccounting;
         this.dataPermisosCaja = getDataPermiso.permisoCaja || {};
 
       }

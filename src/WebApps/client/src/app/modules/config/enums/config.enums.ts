@@ -10,4 +10,5 @@ export const enum CONFIG_PATHS {
   USER_CUSTOMER_REQUEST = 'UserCustomerRequest/',
   USER_CUSTOMER_PERMISSION = 'UserCustomerPermission/',
   USER_PROFILE = 'UserProfile/',
+  ESTABLISHMENT ='Establishment/'
 }
