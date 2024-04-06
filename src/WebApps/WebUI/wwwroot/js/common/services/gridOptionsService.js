@@ -713,12 +713,15 @@
                 });
 
                 // Construir el HTML para la tabla de impuestos
-                htmlImpuestoTotal += `<tr>
-                                <td class="left">
-                                    <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
-                                </td>
-                                <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
-                            </tr>`;
+                if (totalNetoIva>0){
+
+                    htmlImpuestoTotal += `<tr>
+                                    <td class="left">
+                                        <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
+                                    </td>
+                                    <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
+                                </tr>`;
+                }
 
                 if (dataTarifaImpuesto.tarifa > 0) {
                     let { totalIva } = filteredItems.reduce((acc, prev) => {
@@ -732,13 +735,16 @@
 
                     sumTotalIva += totalIva;
 
-                    htmlIvaTotal += `
-                                <tr>
-                                    <td class="left">
-                                        <span class="text-dark">${dataTarifaImpuesto.descripcion}</span>
-                                    </td>
-                                    <td class="right">$${fS.roundNumber(totalIva, decimal.nroIva)}</td>
-                                </tr>`
+                    if (totalIva>0){
+                        htmlIvaTotal += `
+                                    <tr>
+                                        <td class="left">
+                                            <span class="text-dark">${dataTarifaImpuesto.descripcion}</span>
+                                        </td>
+                                        <td class="right">$${fS.roundNumber(totalIva, decimal.nroIva)}</td>
+                                    </tr>`
+
+                    }
                 }
             }
 

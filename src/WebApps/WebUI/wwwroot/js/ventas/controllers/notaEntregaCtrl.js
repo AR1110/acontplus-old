@@ -798,6 +798,7 @@
         $scope.formasPago = [];
         $scope.tiposIdentificacion = [];
 
+        $scope.cuotas = [];
         $scope.datosAdicionalesArticulo = [];
         $scope.historyDatosAdicionales = [];
 
@@ -1931,6 +1932,7 @@
                 precioUnitario: 0,
                 precioConIva: 0,
                 porcentajeDescuento: 0,
+                precioCostoFraccionado: 0,
                 valorDescuento: 0,
                 totalDescuento: 0,
                 ice: 0,
@@ -1994,27 +1996,11 @@
 
 
 
-                let dataMedida = medidas.find(medida => (medida.defaultMedida));
-
-                console.log(dataMedida);
+                let dataMedida = medidas.find(medida => (medida.defaultMedida)); 
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
-                entity.descripcion = articulo.descripcion;
-
-                //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
-                // if (
-                //     $scope.tarifaImpuestoVigente.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX
-                //     && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
-                // ) {
-                //     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
-
-                //     entity.idImpuesto = tarifaImpuesto.idImpuesto;
-                //     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
-                //     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
-                //     entity.tarifa = dataImpuestoTarifa.tarifa;
-
-                // } else
+                entity.descripcion = articulo.descripcion; 
 
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
@@ -2294,6 +2280,37 @@
             return params.action === 'EDITAR';
         }
 
+        const validateCuota = function () {
+            let objParamsCuota = {
+                fechaEmision: $scope.data.fechaEmision,
+                tiemposCredito: $scope.tiemposCredito,
+                idTiempoCredito: $scope.data.idTiempoCredito,
+                montoTotal: $scope.data.total,
+                cuotas: $scope.cuotas
+            }
+            let cuotas = [];
+            let montoTotalCuota = 0;
+
+            if (isRegister()) {
+                let dataCuota = fS.calcularCuotas(objParamsCuota);
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+
+            }
+            if (isUpdate()) {
+                let dataCuota = fS.updateCuotas(objParamsCuota)
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+            }
+
+            if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
+                tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
+                return [];
+            }
+
+            return cuotas;
+        }
+
         $scope.onSave = async function () {
             try {
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
@@ -2302,6 +2319,10 @@
                 if (!validateForm) {
                     throw "Invalid form!";
                 }
+
+                let cuotas = validateCuota();
+
+                if (cuotas && cuotas.length === 0) return
 
                 if (isRegister()) {
                     showLoader();
@@ -2351,7 +2372,8 @@
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
                     infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                    historyDatosAdicionales: $scope.historyDatosAdicionales
+                    historyDatosAdicionales: $scope.historyDatosAdicionales,
+                    cuotas 
                 })
 
 
@@ -2414,6 +2436,10 @@
                 if (!validateForm) {
                     throw "Invalid form!";
                 }
+
+                let cuotas = validateCuota();
+
+                if (cuotas && cuotas.length === 0) return
 
                 if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
                     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
@@ -2531,7 +2557,8 @@
                                 dataFormaPago: $scope.dataFormaPago,
                                 itemsDeleted: $scope.gridOptionsItemsDeleted,
                                 infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                                historyDatosAdicionales: $scope.historyDatosAdicionales
+                                historyDatosAdicionales: $scope.historyDatosAdicionales,
+                                cuotas
                             })
 
 
