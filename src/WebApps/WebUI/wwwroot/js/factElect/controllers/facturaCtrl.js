@@ -2031,6 +2031,7 @@
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
                 entity.conversion = dataMedida.conversion;
                 entity.precioCosto = dataMedida.precioCosto;
+                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
                 entity.articuloTarifas = dataMedida.tarifas;
 
 

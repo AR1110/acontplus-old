@@ -672,41 +672,8 @@
                     // Medida principal con las tarifas
                     let medidasPrincipalTemp = mainData[2];
 
-         
-                    
-
-                    // Combinar los dos arrays de medidas en uno solo
-                    const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
-                        ...medidaPrincipal,
-                        tipo: 'PRINCIPAL'
-                    }))
-                    const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado => ({
-                        ...medidaFraccionado,
-                        tipo: 'FRACCIONADO'
-                    }))
-                    const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
- 
-                    /**
-                     * Ordenar el array de medidas en función de la propiedad "orden" y 
-                     * establecer la propiedad "defaultMedida" en falso para todos los elementos 
-                     * */
-                    let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
-                        ...medida,
-                        defaultMedida: false
-                    }))
-                    // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
-                    orderMedidaArray[0].defaultMedida = true;
-
-                    // Crear un nuevo array de medidas con un formato específico
-                    let medidas = orderMedidaArray.map(item => ({
-                        idMedida: item.idMedida,
-                        conversion: item.conversion,
-                        descripcion: item.descripcion,
-                        defaultMedida: item.defaultMedida,
-                        tipo: item.tipo,
-                        tarifas: JSON.parse(item.tarifas),
-                        precioCosto: item.precioCosto
-                    }))
+                    let medidas = fS.processAndSortMeasures(medidasPrincipalTemp,medidasFraccionadoTemp);
+            
 
                     let consolidacionesFecha = mainData[3] || [];
 
