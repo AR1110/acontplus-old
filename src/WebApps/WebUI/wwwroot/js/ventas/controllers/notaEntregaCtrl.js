@@ -1128,6 +1128,7 @@
                     cliente,
                     items,
                     infoAdicionalDocumento,
+                    cuotas
                 } = params.data;
 
                 $scope.data = structuredClone(comprobante);
@@ -1155,6 +1156,9 @@
                 }))
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
+
+                // Cuotas
+                $scope.cuotas = cuotas;
             }
 
 

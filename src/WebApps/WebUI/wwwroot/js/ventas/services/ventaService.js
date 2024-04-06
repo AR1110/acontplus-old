@@ -656,12 +656,14 @@
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
 
-                    const [
+                    let [
                         comprobanteApi,
                         clienteTempApi,
                         itemsApi,
                         infoAdicionalDocumento,
-                        datosAdicionalesArticuloTemp
+                        datosAdicionalesArticuloTemp,
+                        cuentaPorCobrar,
+                        cuotas,
                     ] = mainDataApi;
 
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
@@ -728,6 +730,7 @@
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -743,10 +746,21 @@
                         serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
-                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
-                        irbpnr: comprobanteTemp.irbpnr || 0
+                        irbpnr: comprobanteTemp.irbpnr || 0,
+                        idTiempoCredito : cuentaPorCobrar[0].idTiempoCredito,
+                        fechaVencimiento: fS.formatDate(cuentaPorCobrar[0].fechaVencimiento),
                     }
+
+                    cuotas = cuotas.map(item => {
+                        return {
+                            idCuotaPorCobrar: item.idCuotaPorCobrar,
+                            nroCuota: item.nroCuota,
+                            fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                            cuota: item.cuota,
+                            entrada: item.entrada,
+                        }
+                    })
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
                         idDocumento: item.idDocumento,
@@ -764,7 +778,8 @@
                         cliente,
                         items,
                         infoAdicionalDocumento,
-                        datosAdicionalesArticulo
+                        datosAdicionalesArticulo,
+                        cuotas
                     }
                 }
             })

@@ -91,6 +91,17 @@ BEGIN
               AND ar.idTipoIva = @taxIdTo
               AND pv.precioVenta > 0
 
+            UPDATE fp SET
+                   fp.precioConIva = ROUND(fp.precioVenta + ((fp.precioVenta * ti.porcentaje) / 100),@decimal)
+            FROM dbo.ArticuloFraccionadoPvP    fp WITH (ROWLOCK)
+            INNER JOIN dbo.ArticuloFraccionado af WITH (ROWLOCK) ON af.idArticuloFraccionado = fp.idArticuloFraccionado
+            INNER JOIN dbo.Articulo            ar WITH (ROWLOCK) ON ar.idArticulo            = af.idArticulo
+            INNER JOIN dbo.TipoIva             ti WITH (ROWLOCK) ON ti.idTipoIva             = ar.idTipoIva
+             WHERE ar.idEntidad = @idEntidad 
+               AND ar.estado = 1
+               AND ar.idTipoIva = @taxIdTo
+               AND fp.precioVenta > 0
+
             INSERT INTO Seguridad.TransactionHistory
                    (UserRoleId,Quantity,Module,[Action],Obs,CreateAt)
             SELECT @userRoleId,Quantity,Module,[Action],Obs,CreateAt FROM @tbImpuesto
