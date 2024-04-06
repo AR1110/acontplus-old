@@ -2002,18 +2002,7 @@
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
 
-                //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
-                // if (
-                //     $scope.tarifaImpuestoVigente.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX
-                //     && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
-                // ) {
-                //     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
-                //     entity.idImpuesto = tarifaImpuesto.idImpuesto;
-                //     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
-                //     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
-                //     entity.tarifa = dataImpuestoTarifa.tarifa;
-
-                // } else {
+               
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
@@ -2111,16 +2100,7 @@
         /**
          * Calculamos todos los totales y subtotales del comprobantes 
          */
-        function recalculateTotalsSimple() {
-            // $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
-            //     items: $scope.gridOptions.data,
-            //     decimal: $scope.decimal,
-            //     dataTarifaImpuesto: $scope.tarifaImpuestoVigente,
-            //     TAX_RATE_CODE
-            // }))
-
-            // $scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
-            // $scope.dataClone.totalDescuento = $scope.data.totalDescuento;
+        function recalculateTotalsSimple() { 
             drawImpuestoTotales();
         }
 
