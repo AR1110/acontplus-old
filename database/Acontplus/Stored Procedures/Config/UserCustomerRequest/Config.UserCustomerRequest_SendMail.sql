@@ -20,9 +20,10 @@ BEGIN
     DECLARE @userId INT  
 	
 	DECLARE @isCompleted BIT 
+    DECLARE @isApproved BIT 
 
-	DECLARE @tbUsersAdmin as Table (
-		userRoleIdApprover INT NOT NULL UNIQUE
+	DECLARE @tbUserRole as Table (
+		userRoleId INT NOT NULL UNIQUE
 	)
 
     ---START EMAL 
@@ -53,46 +54,62 @@ BEGIN
         receptor VARCHAR(100) NOT NULL
     )
 		 
-	INSERT INTO @tbUsersAdmin (userRoleIdApprover)
-    SELECT 
-        CONVERT(INT, value) AS userRoleIdApprover
-    FROM  Config.v_User_Permission_Sale ups WITH(NOLOCK)
-    CROSS APPLY OPENJSON(ups.usersAdmin)
-    WHERE ups.idUsuarioRol = @userRoleId 
+	
 
 	---------------Body -------------
 	DECLARE @accionDescripcion VARCHAR(50) 
-	SELECT top 1 @accionDescripcion = accionDescripcion , @isCompleted =IIF(codEstado='F', 1, 0)  FROM Config.v_User_Request WHERE idSolicitud = @userCustomerRequestId
+	SELECT top 1 @accionDescripcion = accionDescripcion , 
+                       @isCompleted = IIF(codEstado='F', 1, 0), 
+                       @isApproved  = IIF(codEstado='A', 1, 0)  
+    FROM Config.v_User_Request 
+    WHERE idSolicitud = @userCustomerRequestId
 
-	 SELECT top 1 @custom_content = 'El usuario <b>' + v_ur.usuarioSolicitante + '</b> ' +
-                            CASE 
-                                WHEN @isCompleted = 1 THEN 
-                                    CASE 
-                                        WHEN v_ur.codigoAccion = 'E' THEN 'ya ha <strong>Actualizado</strong>'
-                                        WHEN v_ur.codigoAccion = 'A' THEN 'ya ha <strong>Anulado</strong>' 
-                                    END
-                                ELSE 'solicita <strong>' + v_ur.accionDescripcion + '</strong>'
-                            END +
-                            ' el documento ' + v_ur.tipoDoc + ' Nro.: <strong>' + v_ur.serieComprobante + '</strong>.<br />'
-    FROM Config.v_User_Request v_ur
-    WHERE v_ur.idSolicitud = @userCustomerRequestId
-     
     
+    IF @isApproved = 1
+        BEGIN 
+            SELECT top 1 @custom_content = 'El administrador <b>' + v_ur.usuarioAprobante + '</b> ' + ' ha aprobado tu solicitud para ' + v_ur.accionDescripcion + ' el documento ' + v_ur.tipoDoc + ' Nro.: <strong>' + v_ur.serieComprobante + '</strong>.<br />'
+            FROM Config.v_User_Request v_ur
+            WHERE v_ur.idSolicitud = @userCustomerRequestId
+
+            INSERT INTO @tbUserRole (userRoleId)
+            SELECT @userRoleId
+                 
+
+        END 
+    ELSE 
+        BEGIN 
+             SELECT top 1 @custom_content = 'El usuario <b>' + v_ur.usuarioSolicitante + '</b> ' +
+                        CASE 
+                            WHEN @isCompleted = 1 THEN 
+                                CASE 
+                                    WHEN v_ur.codigoAccion = 'E' THEN 'ya ha <strong>Actualizado</strong>'
+                                    WHEN v_ur.codigoAccion = 'A' THEN 'ya ha <strong>Anulado</strong>' 
+                                END
+                            ELSE 'solicita <strong>' + v_ur.accionDescripcion + '</strong>'
+                        END +
+                        ' el documento ' + v_ur.tipoDoc + ' Nro.: <strong>' + v_ur.serieComprobante + '</strong>.<br />'
+            FROM Config.v_User_Request v_ur
+            WHERE v_ur.idSolicitud = @userCustomerRequestId
+
+
+            INSERT INTO @tbUserRole (userRoleId)
+            SELECT 
+                CONVERT(INT, value) AS userRoleIdApprover
+            FROM  Config.v_User_Permission_Sale ups WITH(NOLOCK)
+            CROSS APPLY OPENJSON(ups.usersAdmin)
+            WHERE ups.idUsuarioRol = @userRoleId 
+
+        END 
+
+         
     --Enviar por correo la notificacion 
     INSERT INTO @userToSendEmail(emailData, params, receptor)
 		SELECT  
-            (SELECT body = (SELECT
-								   --serieComprobante = v_ur.serieComprobante
-           --                         ,tipoAccion =  CASE 
-											--			WHEN @isCompleted = 1 AND v_ur.codEstado='E' THEN 'Actualizado'
-											--			WHEN @isCompleted = 1 AND v_ur.codEstado='A' THEN 'Anulado'
-											--			ELSE  v_ur.accionDescripcion
-											--		END   
-           --                         ,tipoDoc    = v_ur.tipoDoc 
-           --                         ,userRequester = v_ur.usuarioSolicitante
+            (SELECT body = (SELECT 
                                     approverUser = v_ur.usuarioAprobante
                                     ,requestDate   = CONVERT(NVARCHAR,FORMAT(dbo.ufnGetDateEcuador() , 'dd/MM/yyyy HH:mm')) 
-									--,isCompleted  = @isCompleted
+                                    ,v_ur.razonSocial
+                                    ,v_ur.establecimiento  
                                     ,custom_content= @custom_content
 							FROM Config.v_User_Request  v_ur
 							WHERE v_ur.idSolicitud = @userCustomerRequestId 
@@ -111,10 +128,10 @@ BEGIN
 			),
             (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
             LTRIM(RTRIM(u.correo))
-        FROM @tbUsersAdmin ua
+        FROM @tbUserRole ua
         INNER JOIN dbo.Usuario u 
-        WITH(NOLOCK) ON u.idUsuario = (SELECT TOP 1 idUsuario FROM v_usuario v_ur WHERE v_ur.idUsuarioRol =ua.userRoleIdApprover )
-        WHERE LEN(ISNULL(LTRIM(RTRIM(u.correo)), '')) > 0
+        WITH(NOLOCK) ON u.idUsuario = (SELECT TOP 1 idUsuario FROM v_usuario v_ur WHERE v_ur.idUsuarioRol =ua.userRoleId )
+        WHERE LEN(ISNULL(LTRIM(RTRIM(u.correo)), '')) > 1
 
         INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
                         SELECT params, emailData, receptor,  'NE', @userId FROM @userToSendEmail 

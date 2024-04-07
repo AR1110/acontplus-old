@@ -1,4 +1,5 @@
 export interface UserCustomerRequest {
+  rowguid: string
   idSolicitud: number
   tipoDoc: string
   serieComprobante: string
