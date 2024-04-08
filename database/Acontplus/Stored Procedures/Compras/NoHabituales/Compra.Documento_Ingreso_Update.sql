@@ -43,8 +43,12 @@ BEGIN
     -----DATOS CONTABILIDAD------
 	DECLARE @fechaVencimiento DATETIME2
 
+    --> Customer
+    DECLARE @CustomerId INT
+
 	DECLARE @document AS TABLE(
-		 idProveedor INT NOT NULL
+		 idDocumentoIngreso INT NOT NULL
+        ,idProveedor INT NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
         ,fechaVencimiento DATETIME2 NOT NULL
         ,totalSinImpuestos NUMERIC (18,5) NOT NULL
@@ -123,18 +127,19 @@ BEGIN
         )
         
 		INSERT INTO @document 
-		      (idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
-		SELECT idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
+		      (idDocumentoIngreso,idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
+		SELECT @id               ,idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
 		FROM OPENJSON(@comprobante)WITH 
         (
-             idProveedor         INT           '$.idProveedor' 
-		    ,fechaEmision        DATETIME2     '$.fechaEmision'
-		    ,fechaVencimiento    DATETIME2     '$.fechaVencimiento'
-		    ,totalSinImpuestos   NUMERIC(18,5) '$.totalSinImpuestos'
-            ,descuento           NUMERIC(18,5) '$.descuento'
-            ,porcentajeDescuento NUMERIC(18,5) '$.porcentajeDescuento'
-		    ,importeTotal        NUMERIC(18,5) '$.importeTotal'
-            ,observacion         VARCHAR(300)  '$.observacion'
+             idDocumentoIngreso  INT
+            ,idProveedor         INT  
+		    ,fechaEmision        DATETIME2 
+		    ,fechaVencimiento    DATETIME2  
+		    ,totalSinImpuestos   NUMERIC(18,5)
+            ,descuento           NUMERIC(18,5) 
+            ,porcentajeDescuento NUMERIC(18,5) 
+		    ,importeTotal        NUMERIC(18,5)
+            ,observacion         VARCHAR(300)  
 
 		) as dt
 		
@@ -143,27 +148,27 @@ BEGIN
 		SELECT orderIndex,idDocumentoIngresoDetail,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,estado 
 		FROM OPENJSON (@detalles) WITH 
         (
-		     orderIndex                       INT '$.orderIndex' 
-		    ,idDocumentoIngresoDetail         INT '$.idDocumentoIngresoDetail'
-            ,idArticulo                       INT '$.idArticulo'
-		    ,idBodega                         INT '$.idBodega'
-		    ,idMedida                         INT '$.idMedida'
-            ,idTipoIva                        INT '$.idTipoIva' 
-		    ,ice                    NUMERIC(10,5) '$.ice'
-		    ,cantidad               NUMERIC(15,5) '$.cantidad'
-		    ,precioUnitario         NUMERIC(15,5) '$.precioUnitario'
-		    ,descuento              NUMERIC(15,5) '$.descuento'
-		    ,precioTotalSinImpuesto NUMERIC(15,5) '$.precioTotalSinImpuesto'
-		    ,porcentajeDescuento    NUMERIC(15,5) '$.porcentajeDescuento'
-            ,codigoPorcentaje          VARCHAR(5) '$.codigoPorcentaje'
-            ,tarifa                 NUMERIC(15,5) '$.tarifa'
-            ,valorImpuesto          NUMERIC(15,5) '$.valorImpuesto'
-		    ,precioTotalSinImpuesto NUMERIC(15,5) '$.precioTotalSinImpuesto'
-		    ,nota                    VARCHAR(100) '$.nota'
-		    ,descripcion             VARCHAR(255) '$.descripcion'
-            ,llevaInventario                  BIT '$.llevaInventario'
-            ,cantidadTransaccion    NUMERIC(15,5) '$.cantidadTransaccion'
-            ,estado                           BIT '$.estado'
+		     orderIndex               INT 
+		    ,idDocumentoIngresoDetail INT 
+            ,idArticulo               INT 
+		    ,idBodega                 INT
+		    ,idMedida                 INT 
+            ,idTipoIva                INT 
+		    ,ice                      NUMERIC(10,5)
+		    ,cantidad                 NUMERIC(15,5) 
+		    ,precioUnitario           NUMERIC(15,5) 
+		    ,descuento                NUMERIC(15,5) 
+		    ,precioTotalSinImpuesto   NUMERIC(15,5) 
+		    ,porcentajeDescuento      NUMERIC(15,5) 
+            ,codigoPorcentaje         VARCHAR(5) 
+            ,tarifa                   NUMERIC(15,5) 
+            ,valorImpuesto            NUMERIC(15,5) 
+		    ,precioTotalSinImpuesto   NUMERIC(15,5) 
+		    ,nota                     VARCHAR(100) 
+		    ,descripcion              VARCHAR(255) 
+            ,llevaInventario          BIT 
+            ,cantidadTransaccion      NUMERIC(15,5) 
+            ,estado                   BIT 
 		)
 		
 		INSERT INTO @tbTaxes
@@ -171,17 +176,17 @@ BEGIN
         SELECT TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount
         FROM OPENJSON(@impuestos) WITH 
         (
-            taxId               INT 
-	       ,taxPercentId        INT
-	       ,[percent] NUMERIC(18,5)
-	       ,taxBase   NUMERIC(18,5) 
-	       ,taxValue  NUMERIC(18,5) 
-           ,discount  NUMERIC(18,5)
+            taxId        INT 
+	       ,taxPercentId INT
+	       ,[percent]    NUMERIC(18,5)
+	       ,taxBase      NUMERIC(18,5) 
+	       ,taxValue     NUMERIC(18,5) 
+           ,discount     NUMERIC(18,5)
         )
 
 		INSERT INTO @artInfoAdicional  
-              (idInfoAdicional, idArticulo, idEtiqueta, jsonAdicional)
-		SELECT idInfoAdicional, idArticulo, idEtiqueta, jsonAdicional
+              (idInfoAdicional,idArticulo,idEtiqueta,jsonAdicional)
+		SELECT idInfoAdicional,idArticulo,idEtiqueta,jsonAdicional
 		FROM OPENJSON(@artInfoAdicionales) WITH 
         (
 		     idInfoAdicional INT
@@ -195,17 +200,17 @@ BEGIN
         SELECT idCuotaPorPagar,nroCuota,fechaVencimiento,cuota,entrada
         FROM OPENJSON(@cuotas) WITH 
         (
-            idCuotaPorPagar INT
-           ,nroCuota INT
+            idCuotaPorPagar  INT
+           ,nroCuota         INT
 	       ,fechaVencimiento DATE 
-	       ,cuota NUMERIC(18,5) 
-	       ,entrada BIT 
+	       ,cuota            NUMERIC(18,5) 
+	       ,entrada          BIT 
         )
 
 		--> Recuperar datos de las Tablas
 		SELECT TOP 1 @fechaEmision = fechaEmision ,@importeTotal = importeTotal ,@idProveedor = idProveedor ,@fechaVencimiento = fechaVencimiento FROM @document
 
-        SELECT TOP 1 @identificacion = numeroIdentificacion FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
+        SELECT TOP 1 @identificacion = numeroIdentificacion ,@CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
 
 		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @id 
 
@@ -244,16 +249,16 @@ BEGIN
 		BEGIN TRAN 
 			
 			--> Comprobante
-			UPDATE di SET 
-				   di.idProveedor         = dc.idProveedor
+			UPDATE di WITH (ROWLOCK) 
+               SET di.idProveedor         = dc.idProveedor
 			      ,di.fechaEmision        = dc.fechaEmision
                   ,di.descuento           = dc.descuento
                   ,di.porcentajeDescuento = dc.porcentajeDescuento
 			      ,di.totalSinImpuestos   = dc.totalSinImpuestos
 			      ,di.importeTotal        = dc.importeTotal
                   ,di.observacion         = dc.observacion
-			FROM Compra.Documento_Ingreso di WITH (NOLOCK)
-			INNER JOIN @document          dc ON di.idDocumentoIngreso = @id
+			FROM Compra.Documento_Ingreso di 
+			INNER JOIN @document          dc ON dc.idDocumentoIngreso = di.idDocumentoIngreso
 			 
             --> Detalles
 			UPDATE dd SET
@@ -304,40 +309,51 @@ BEGIN
             --> Inventario
 			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 				BEGIN
+                    
+                    DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT ,@idTransaccion INT
+
+                    SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
+
+                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+
+                    SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
+
+                    --> Transaccion
+                    UPDATE Inventario.Transaccion WITH (ROWLOCK)
+                       SET fechaEmision = @fechaEmision
+                          ,CustomerId   = @customerId
+                    WHERE idTransaccion = @idTransaccion
+
+                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
+
                     IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
 				        BEGIN
-                             DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT
-
-                             SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
-
-                             SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
-
-                             DELETE FROM Inventario.Transaccion WITH (ROWLOCK) WHERE idDocumento = @id AND idTipoDocumento = @idTipoDocumentoIv AND idTipoTransaccion = @idTipoTransaccion
-
-                             INSERT INTO Inventario.Transaccion 
-                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,fechaRegistro,idUsuario,estado)
-			                 SELECT @idTipoTransaccion,idArticulo,idBodega,@idTipoDocumentoIv,@id,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto,@fechaEmision,@idUsuario,estado
-                             FROM @tblDetails WHERE llevaInventario = 1
+                             INSERT INTO Inventario.TransaccionDetalle 
+                                   (idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total)
+			                 SELECT idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto
+                             FROM @tblDetails 
+                             WHERE llevaInventario = 1
+                               AND estado = 1
 
                              EXEC dbo.Transaccion_Handler_Init 'E', 'IV', @id, DEFAULT
                         END
 				END
 
 		    --> Contabilidad
-		    UPDATE Contabilidad.CuentaPorPagar SET 
-			       idProveedor      = @idProveedor
+		    UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
+               SET idProveedor      = @idProveedor
 		          ,identificacion   = @identificacion
 		          ,fechaEmision     = @fechaEmision
                   ,fechaVencimiento = @fechaVencimiento
 		          ,importeTotal     = @importeTotal
-            WHERE idDocumento = @id AND codDoc = 'DH'
+            WHERE idDocumento = @id 
+              AND codDoc = 'DH'
 
-            UPDATE cp SET 
-                   cp.fechaVencimiento = tc.fechaVencimiento
+            UPDATE cp WITH (ROWLOCK)
+               SET cp.fechaVencimiento = tc.fechaVencimiento
                   ,cp.cuota            = tc.cuota
-            FROM Contabilidad.CuotaPorPagar cp WITH (ROWLOCK)
+            FROM Contabilidad.CuotaPorPagar cp 
             INNER JOIN @tbCuotas            tc ON tc.idCuotaPorPagar = cp.idCuotaPorPagar
-		    
 
 		COMMIT TRAN 
         SELECT [Common].[ufnSpResponse]('1','Actualizado Correctamente',DEFAULT)
@@ -349,10 +365,10 @@ BEGIN
 			    ROLLBACK TRAN
             END 
 
-        SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento',DEFAULT)
-
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'CompraHabitual/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
-	END CATCH 
+	    
+        SELECT [Common].[ufnSpResponse]('0','Error en el procedimiento',DEFAULT)
+    END CATCH 
 END
 GO

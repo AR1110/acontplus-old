@@ -142,6 +142,7 @@ BEGIN
 						    INNER JOIN dbo.Articulo a  WITH (NOLOCK) ON a.idArticulo = fd.idArticulo
 						    INNER JOIN dbo.Medida  me  WITH (NOLOCK) ON me.idMedida  = fd.idMedida
 						    WHERE fd.idFactura = @idDocument AND fd.estado = 1
+                            ORDER BY idFacturaDetalle ASC
 						    FOR JSON PATH
 					      )
 
@@ -230,7 +231,10 @@ BEGIN
 						FROM dbo.NotaEntregaDetalle ned WITH (NOLOCK)
 						INNER JOIN dbo.Medida   m WITH (NOLOCK) ON m.idMedida   = ned.idMedida
 						INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ned.idArticulo 
-						WHERE ned.idNotaEntrega = @idDocument AND ned.estado = 1 FOR JSON PATH)
+						WHERE ned.idNotaEntrega = @idDocument 
+                        AND ned.estado = 1 
+                        ORDER BY idNotaEntregaDetalle ASC
+                        FOR JSON PATH)
             
             INSERT INTO @tbTaxes (descripcion,subTotal)
             SELECT 'Subtotal' + ' ' + ti.descripcion as descripcion
@@ -321,6 +325,7 @@ BEGIN
 							LEFT JOIN dbo.Medida   m ON m.idMedida   = prd.idMedida
 							INNER JOIN dbo.Articulo a ON a.idArticulo = prd.idArticulo 
 							WHERE prd.idProforma = @idDocument 
+                            ORDER BY idProformaDetalle ASC
 							FOR JSON PATH)
             
             INSERT INTO @tbTaxes (descripcion,subTotal)
