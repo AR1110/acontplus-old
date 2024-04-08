@@ -7,7 +7,7 @@ angular.module('acontPlusApp')
         return {
             userPermissionAdapter,
             accionesSubMenu,
-            checkHasPermissionToEdit,
+            checkHasPermissionToEdit, 
             checkHasPermissionToDelete,
             requestAuthorizationKey,
             updateRequestKey,
@@ -245,12 +245,13 @@ angular.module('acontPlusApp')
         }
 
         function fetchUserPermission() {
-            mS.getData('get', `${urlUserPermission}?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
+            return mS.getData('get', `${urlUserPermission}?json=${JSON.stringify({ tipo: 2 })}`, null, true).then(response => {
                 if (response) {
-                    let userData = structuredClone(getUserData())
+                    const {detalle} = response.sales[0]
+                     return {
+                         detalle: JSON.parse(detalle)
+                     };
 
-                    userData.permissions = [response];
-                    localStorage.setItem('userData', JSON.stringify(structuredClone(userData)))
                 }
             })
         }

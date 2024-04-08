@@ -3,7 +3,7 @@ import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.comp
 import { ModalService } from "@core/services/modal.service";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { UserCustomerRead } from "@modules/config/models/user-customer.model";
+import { UserCustomerRead } from "@modules/config/models/user-customer/user-customer.model";
 import { UserCustomerService } from "@modules/config/services/user-customer/user-customer.service";
 
 import { UserCustomerAddEditModalComponent } from "./components/user-customer-add-edit-modal/user-customer-add-edit-modal.component";

@@ -114,7 +114,7 @@
                     if (dataMenu) {
                         const dataAccionesSubMenu = userCustomerPermissionSvc.accionesSubMenu()
                         $rootScope.usuarioPermiso = userCustomerPermissionSvc.userPermissionAdapter();
-                        let tempArray = JSON.parse(dataMenu.permisos) || []
+                        let tempArray = JSON.parse(dataMenu.actions) || []
                         let newArr = tempArray.map(x => x.name);
                         const namesObject = newArr.reduce((obj, name) => {
                             obj[name] = true;
