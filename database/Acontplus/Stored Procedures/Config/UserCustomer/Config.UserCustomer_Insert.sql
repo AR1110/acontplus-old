@@ -18,6 +18,11 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	DECLARE @idUsuarioRol INT;
 
+    DECLARE @permisoModuloVenta VARCHAR(MAX) = '{"comprobante":{"fechaEmision":{"label":"Modificar Fecha de Emisión","enabled":false},"tiempoCredito":{"label":"Cambiar tiempo Credito","enabled":false},"tarifa":{"label":"Modifcar tarifa general","enabled":false},"porcentajeDescuento":{"label":"Cambiar Porcentaje Descuento","enabled":false},"descuento":{"label":"Cambiar Descuento","enabled":false}},"detail":{"medida":{"label":"Cambiar Medida","enabled":true},"tipoIva":{"label":"Cambiar Tipo IVA","enabled":true},"tarifa":{"label":"Cambiar tarifa","enabled":true},"precioUnitario":{"label":"Modificar Precio Unitario","enabled":true},"precioConIva":{"label":"Modificar Precio con IVA","enabled":true},"porcentajeDescuento":{"label":"Modificar Porcentaje Descuento","enabled":true},"descuento":{"label":"Modificar Descuento","enabled":true}},"additional":{"keyRequest":{"label":"Solicitar Autorización para Editar o Anular el Doc. Venta","enabled":false,"usersAdmin":[],"isKeyRequest":true},"viewOthersDocs":{"label":"Consultar documentos electronicos de otros usuarios","enabled":false},"kardex":{"label":"Ver Kardex","enabled":false},"totalesVenta":{"label":"Mostrar totales de ventas","enabled":false}}}'
+	DECLARE @permisoModuloArticulo VARCHAR(MAX)= '{"precio":{"label":"Permitir actualizar el precio costo y venta","enabled":false}}' 
+	DECLARE @permisoModuloCaja VARCHAR(MAX) = '{"verOtrasCajas":{"label":"Ver otras cajas","enabled":false},"reporteMovimientoCaja":{"label":"Ver Reporte","enabled":false},"cerrarCaja":{"label":"Cerrar Caja","enabled":false},"enterKey":{"label":"Ingresar Clave para las acciones de caja","enabled":false}}'
+
+
 	DECLARE
 			@roleCode VARCHAR(10)
 		   ,@correo NVARCHAR(300)
@@ -79,10 +84,14 @@ BEGIN
 			
             SET @idUsuarioRol = @@IDENTITY
 
-			--INSERCION DE PERMISOS 
-			INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
-			SELECT @idUsuarioRol, codModule, jsonPermission, dbo.ufnGetDateEcuador() 
-			FROM Config.UserPermission WHERE idUsuarioRol = @userRoleId			
+			--INSERCION DE PERMISOS  
+            INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
+			VALUES (@idUsuarioRol, 'V', @permisoModuloVenta, GETDATE()) 
+			INSERT INTO Acontplus.Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
+			VALUES (@idUsuarioRol, 'AR', @permisoModuloArticulo, GETDATE()) 
+			INSERT INTO Acontplus.Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
+			VALUES (@idUsuarioRol, 'C', @permisoModuloCaja, GETDATE()) 
+
 
 		COMMIT TRAN 
 		SELECT '1' as code,'Registrado Exitosamente' as [message]   
