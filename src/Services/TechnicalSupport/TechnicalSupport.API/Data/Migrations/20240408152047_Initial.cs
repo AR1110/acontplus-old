@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -222,8 +223,20 @@ namespace TechnicalSupport.API.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    BodegaId = table.Column<int>(type: "int", nullable: false),
+                    FeeId = table.Column<int>(type: "int", nullable: false),
+                    MedidaId = table.Column<int>(type: "int", nullable: false),
                     OrderDetailId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
+                    TaxId = table.Column<int>(type: "int", nullable: false),
+                    TaxPercentId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Cost = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    TaxValue = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Discount = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Total = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Obs = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: true),

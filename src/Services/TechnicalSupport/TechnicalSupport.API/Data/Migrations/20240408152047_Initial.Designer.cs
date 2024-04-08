@@ -12,7 +12,7 @@ using TechnicalSupport.API.Data;
 namespace TechnicalSupport.API.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
-    [Migration("20240212162937_Initial")]
+    [Migration("20240408152047_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace TechnicalSupport.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -365,20 +365,58 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BodegaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("numeric(18,5), null");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("numeric(18,5), null");
+
                     b.Property<bool?>("Enabled")
                         .HasColumnType("bit");
+
+                    b.Property<int>("FeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedidaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Obs")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<int>("OrderDetailId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric(18,5), null");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<int>("TaxId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaxPercentId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TaxValue")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
