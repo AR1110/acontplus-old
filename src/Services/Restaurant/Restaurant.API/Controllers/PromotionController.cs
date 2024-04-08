@@ -3,7 +3,7 @@ using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Restaurant.Core.Interfaces;
+using Restaurant.API.Interfaces;
 using Services.Common;
 
 namespace Restaurant.API.Controllers
