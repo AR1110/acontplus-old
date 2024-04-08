@@ -72,7 +72,9 @@ BEGIN
             WHERE v_ur.idSolicitud = @userCustomerRequestId
 
             INSERT INTO @tbUserRole (userRoleId)
-            SELECT @userRoleId
+            SELECT idUsuarioRolSolicitante
+            FROM Config.v_User_Request v_ur
+            WHERE v_ur.idSolicitud = @userCustomerRequestId
                  
 
         END 
