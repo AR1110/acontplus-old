@@ -605,8 +605,9 @@
                             tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
-                            medidas,
+                            medidas,                            
                             conversion: dataMedida.conversion,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -1074,6 +1075,7 @@
                             precioTotalSinImpuesto: itemPrincipal.precioTotalSinImpuesto,
                             medidas,
                             conversion: dataMedida.conversion,
+                            precioCostoFraccionado : dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -1125,9 +1127,6 @@
 
         }
 
-
-
-
         service.infoComprobanteMapperTo = function (data) {
             let comprobante = {
                 idCliente: data.idCliente,
@@ -1173,7 +1172,9 @@
                     descripcion: orderItem.descripcion,
                     idTipoIva: orderItem.idTipoIva,
                     llevaInventario: orderItem.llevaInventario,
-                    cantidadTransaccion: cantidadTransaccion,
+                    cantidadTransaccion: cantidadTransaccion * -1,
+                    conversion : orderItem.conversion,
+                    precioCostoFraccionado : orderItem.precioCostoFraccionado,
                     precioCosto: orderItem.precioCosto,
                     valorImpuesto: orderItem.valorImpuesto,
                     estado: orderItem.estado
