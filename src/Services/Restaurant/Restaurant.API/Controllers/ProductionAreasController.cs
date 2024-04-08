@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Restaurant.Core.Entities;
-using Restaurant.Infrastructure.Data;
+using Restaurant.API.Data;
+using Restaurant.API.Entities;
 
 namespace Restaurant.API.Controllers
 {

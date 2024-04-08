@@ -46,19 +46,19 @@ BEGIN
 
           SELECT Common.ufnSpResponse('1'
                 ,'Login correcto'  
-                ,(SELECT           userId       = r.idUsuario
-                                ,userRoleId     = r.idUsuarioRol
-                                ,codeRole       = ro.Code
-                                ,[role]         = ro.[Name]
-			                    ,username       = u.nombreUsuario
-			                    ,fullname       = u.nombreCompleto
-                                ,email          = u.correo
-			                    ,IDCardUser     = ISNULL(u.nroIdentificacion,'')
-			                    ,profilePicture = ''
-			                    ,tradeName      = e.razonSocial
-			                    ,bussinesName   = e.nombreComercial 
-			                    ,IDCardCompany  = e.ruc
-				                ,companyId      = e.idEntidad
+                ,(SELECT         userId           = r.idUsuario
+                                ,userRoleId       = r.idUsuarioRol
+                                ,codeRole         = ro.Code
+                                ,[role]           = ro.[Name]
+			                    ,username         = u.nombreUsuario
+			                    ,fullname         = u.nombreCompleto
+                                ,email            = u.correo
+			                    ,IDCardUser       = ISNULL(u.nroIdentificacion,'')
+			                    ,profilePicture   = ''
+			                    ,tradeName        = e.razonSocial
+			                    ,businessName     = e.nombreComercial 
+			                    ,IDCardCompany    = e.ruc
+				                ,companyId        = e.idEntidad
                                 ,establecimientos = (
                                                         SELECT  v_eai.*
                                                                ,v_ui.idEntidad
