@@ -50,7 +50,7 @@ SELECT tr.idTransaccion
       ,sf.descripcion                                                               as subFamilia
 	
 	  ,us.nombreUsuario                                                             as usuario
-	  ,cu.TradeName                                                                 as clienteProveedor
+	  ,cu.BusinessName                                                              as clienteProveedor
       ,cu.IDCard                                                                    as rucClienteProveedor
       ,me.descripcion                                                               as medida
       ,es.nombreComercial                                                           as establecimiento
