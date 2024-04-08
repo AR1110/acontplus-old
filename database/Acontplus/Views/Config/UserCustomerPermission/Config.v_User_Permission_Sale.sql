@@ -10,7 +10,7 @@ AS(
             SELECT fechaEmision        = CAST(ISNULL(JSON_VALUE(comprobante, '$.fechaEmision.enabled'), 0) AS BIT),
                    tiempoCredito       = CAST(ISNULL(JSON_VALUE(comprobante, '$.tiempoCredito.enabled'),0) AS BIT),
                    tarifa              = CAST(ISNULL(JSON_VALUE(comprobante, '$.tarifa.enabled'),0) AS BIT),
-                   porcentajeDescuento = CAST(ISNULL(JSON_VALUE(comprobante, '$.porcentajeDescuento.enabled'),0) AS BIT),
+                   porcentajeDescuento = CAST(JSON_VALUE(comprobante, '$.porcentajeDescuento.enabled') AS BIT),
                    descuento           = CAST(ISNULL(JSON_VALUE(comprobante, '$.descuento.enabled'),0) AS BIT)
 		    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
         ) AS comprobante,
@@ -50,4 +50,5 @@ AS(
     WHERE 
         up.codModule = 'V'   
 )
--- SELECT * FROM Config.v_User_Permission_Sale  WHERE idUsuarioRol = 264
+-- SELECT * FROM Config.UserPermission  WHERE idUsuarioRol = 264
+--SELECT * FROM v_usuario WHERE nombreUsuario ='sheyla.sanmartin'

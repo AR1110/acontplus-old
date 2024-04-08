@@ -1,6 +1,12 @@
 <form autocomplete="off">
     <div class="modal-header">
-        <h5 class="modal-title">{{data.idProforma>0?'Editar':'Nuevo'}} Proforma</h5>
+        <h5 class="modal-title">
+         <button type="button" class="btn btn-secondary btn-sm mr-2" tooltip-placement="right"
+                            uib-tooltip="Opción para recargar los permisos del documento." ng-click="refreshUserPermission()">
+                <i class="fas fa-redo"></i>
+            </button>
+        {{data.idProforma>0?'Editar':'Nuevo'}} Proforma
+        </h5>
         <h4>Total: <strong>${{getImporteTotal()}}</strong></h4>
     </div>
     <div class="modal-body">
