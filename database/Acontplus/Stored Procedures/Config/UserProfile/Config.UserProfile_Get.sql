@@ -36,7 +36,7 @@ BEGIN
         , sr.Name AS name
         , au.estado
     FROM Acontplus.App.UsuarioRol au WITH(NOLOCK)
-    INNER JOIN AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Code = au.codRol
+    INNER JOIN AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = au.RoleId
     WHERE au.idUsuario = @idUsuario
 END
 GO
