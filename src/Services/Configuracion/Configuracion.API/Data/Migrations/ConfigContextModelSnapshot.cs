@@ -17,7 +17,7 @@ namespace Configuracion.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -62,6 +62,9 @@ namespace Configuracion.API.Data.Migrations
 
                     b.Property<bool?>("IsCompressed")
                         .HasColumnType("bit");
+
+                    b.Property<int>("LatestVersion")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

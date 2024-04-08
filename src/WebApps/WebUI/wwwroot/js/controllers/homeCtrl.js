@@ -50,7 +50,7 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="3" class="text-right"><b>Total: </b></td>
-                                    <td class="text-right">$ ${$scope.licenses.reduce((prev, next) => prev + next.total, 0).toFixed(2) }</td>
+                                    <td class="text-right">$ ${$scope.licenses.reduce((prev, next) => prev + next.total, 0).toFixed(2)}</td>
                                 </tr>
                             </tfoot>
                          </table>`
@@ -137,7 +137,7 @@
             }, 1000)
         };
         function getDashboard() {
-            return mS.getData('get', 'Dashboard/', null, true);
+            return mS.getData('get', `Common/Dashboard/?json=${JSON.stringify({ tipo: 1 })}`, null, true);
         }
 
         function getDocs() {
@@ -194,7 +194,7 @@
         init()
 
         $scope.fixDocs = () => {
-            location.href = '/DocumentoElectronico/Index?tipo=' + 3
+            location.href = '/FactElect/DocumentoElectronico/Index?tipo=' + 3
         }
     }
 })(window.angular)

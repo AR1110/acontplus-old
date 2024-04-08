@@ -1,15 +1,5 @@
 USE AcontPlus
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -19,10 +9,8 @@ GO
 -- Create date: 2022-09-17
 -- Description:	SP Para insertar los detalles temporales del comprobante importado
 -- =============================================
-IF OBJECT_ID(N'Recepcion.Doc_Detail_Temp_Insert_All', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All 
-GO
-CREATE PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All
+
+CREATE OR ALTER PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All
 @idRol INT
 ,@idDocumento INT
 ,@jsonData VARCHAR(MAX)
@@ -115,68 +103,98 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN
-            IF EXISTS(SELECT 1 FROM Recepcion.Doc_Detalle_Temp cpt 
+            IF EXISTS(SELECT TOP 1 1 FROM Recepcion.Doc_Detalle_Temp cpt WITH (NOLOCK)
                                     INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				        BEGIN
 					        DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 				        END
-            IF EXISTS(SELECT 1 FROM Recepcion.Doc_Impuesto_Temp cpt INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
+
+            IF EXISTS(SELECT TOP 1 1 FROM Recepcion.Doc_Impuesto_Temp cpt WITH (NOLOCK)
+                                INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
 				        BEGIN
 					        DELETE FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
 				        END
 
-            IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle WHERE idDocumento = @idDocumento)
+            IF EXISTS (SELECT TOP 1 1 FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumento = @idDocumento)
                 BEGIN
-                    INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
-					        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto
-                            , costoNeto
-                            , descuento, detallesAdicionales, impuestos, idUsuario)
+             --       INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+					        --, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto
+             --               , costoNeto
+             --               , descuento, detallesAdicionales, impuestos, idUsuario)
 
-					       SELECT ROW_NUMBER() OVER(ORDER BY dd.idDocumentoDetalle ASC), dd.idDocumento, @idProveedor, dd.idArticulo, dd.idMedida, dd.codigoPrincipal, dd.codigoAuxiliar
-					        ,dd.cantidad, a.descripcion, dd.precioUnitario, dd.precioTotalSinImpuesto
-                            , CAST((CAST(dd.precioTotalSinImpuesto AS decimal(15,5)) / CAST(dd.cantidad AS decimal(18,5))) AS numeric(18,5))
-                            , dd.descuento, CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), dd.detallesAdicionales))))= 0 THEN NULL ELSE dd.detallesAdicionales END,  dd.impuestos, @idUsuario
-					        FROM Recepcion.DocumentoDetalle dd 
-							INNER JOIN Articulo a ON dd.idArticulo = a.idArticulo 
+					       SELECT ROW_NUMBER() OVER(ORDER BY dd.idDocumentoDetalle ASC) - 1 idDetalle, dd.idDocumento
+                           , @idProveedor idProveedor, ISNULL(dd.idArticulo , 0) idArticulo, dd.idMedida, dd.codigoPrincipal, dd.codigoAuxiliar
+					        ,dd.cantidad, a.descripcion, dd.precioUnitario
+                            , dd.precioTotalSinImpuesto
+                            , CAST((CAST(dd.precioTotalSinImpuesto AS decimal(15,5)) / CAST(dd.cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto
+                            , dd.descuento
+                            ,CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), dd.detallesAdicionales))))= 0 THEN NULL ELSE dd.detallesAdicionales END detallesAdicionales
+                            , dd.impuestos
+                            , @idUsuario idUsuario
+					        INTO #TEMP
+                            FROM Recepcion.DocumentoDetalle dd WITH (NOLOCK)
+							INNER JOIN Articulo a WITH (NOLOCK) ON dd.idArticulo = a.idArticulo 
 							WHERE dd.idDocumento = @idDocumento
-                END
-           -- ELSE
-           --     BEGIN 
-			        --INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
-			        --, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario)
-
-			        --SELECT idDetalle, idDocumento, @idProveedor, ch.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar
-			        --,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), descuento, CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END,  impuestos, @idUsuario
-			        --FROM @tmp t
-			        --LEFT JOIN Recepcion.CompraHabitual ch ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
-			        --LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
-			        --LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
-			        --WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
-			        --WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
-			        --ORDER BY t.idDetalle ASC
-
-			        --INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-			        --SELECT idDetalle, (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
-			        --FROM @taxes tt
-			        --WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
-											--	        WHERE tti.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
-											--	        AND tti.codArticulo = tt.codArticulo) 
-           --     END
-
-                INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
-			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario)
-
-			        SELECT idDetalle, idDocumento, @idProveedor, ch.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar
-			        ,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto, CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)), descuento, CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END,  impuestos, @idUsuario
+                                                
+                                                INSERT INTO #TEMP
+			        SELECT t.idDetalle, idDocumento, @idProveedor idProveedor, ISNULL(ch.idArticulo,0) idArticulo, ISNULL(m.idMedida,0), t.codigoPrincipal, t.codigoAuxiliar
+			        ,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto
+                    , CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto
+                    , descuento, CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END detallesAdicionales
+                    ,  impuestos
+                    , @idUsuario idUsuario
 			        FROM @tmp t
-			        LEFT JOIN Recepcion.CompraHabitual ch ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
-			        LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
-			        LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
-			        WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
-			        WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
+			        LEFT JOIN Recepcion.CompraHabitual ch WITH (NOLOCK) ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
+			        LEFT JOIN dbo.Articulo a WITH (NOLOCK) ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
+			        LEFT JOIN dbo.Medida m WITH (NOLOCK) ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
+			        WHERE NOT EXISTS(SELECT * FROM #TEMP tt 
+			                                   WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
 			        ORDER BY t.idDetalle ASC
 
-			        INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+                    INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario)
+
+                    SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)), idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario
+                    FROM #TEMP
+
+                                    DROP TABLE #TEMP
+
+
+                END
+                ELSE
+                    BEGIN
+                     
+			        SELECT t.idDetalle, idDocumento, @idProveedor idProveedor, ISNULL(ch.idArticulo , 0) idArticulo, ISNULL(m.idMedida,0) idMedida, t.codigoPrincipal, t.codigoAuxiliar
+			        ,cantidad, t.descripcion, precioUnitario, precioTotalSinImpuesto
+                    , CAST((CAST(precioTotalSinImpuesto AS decimal(15,5)) / CAST(cantidad AS decimal(18,5))) AS numeric(18,5)) costoNeto
+                    , descuento, CASE WHEN LEN(LTRIM(RTRIM(CONVERT(VARCHAR(MAX), detallesAdicionales))))= 0 THEN NULL ELSE detallesAdicionales END detallesAdicionales
+                    ,  impuestos
+                    , @idUsuario idUsuario
+                    INTO #TEMPII
+			        FROM @tmp t
+			        LEFT JOIN Recepcion.CompraHabitual ch WITH (NOLOCK) ON t.codigoPrincipal = ch.codArticulo AND ch.idProveedor = @idProveedor
+			        LEFT JOIN dbo.Articulo a WITH (NOLOCK) ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
+			        LEFT JOIN dbo.Medida m WITH (NOLOCK) ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
+			        WHERE NOT EXISTS(SELECT * FROM Recepcion.Doc_Detalle_Temp tt WITH (NOLOCK)
+			                                   WHERE t.idDocumento = tt.idDocumento AND t.codigoPrincipal = tt.codigoPrincipal)
+			        ORDER BY t.idDetalle ASC
+
+                    INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario)
+
+                    
+                    SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)), idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario
+                    FROM #TEMPII
+                    DROP TABLE #TEMPII
+
+                    END
+
+
+
+
+			   INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 			        SELECT idDetalle, (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
 			        FROM @taxes tt
 			        WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
@@ -186,9 +204,10 @@ BEGIN
                 INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 			    SELECT idDetalle, (SELECT TOP 1 idDocumento FROM @tmp), codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
 			    FROM @taxes tt
-			    WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti 
+			    WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Impuesto_Temp tti  WITH (NOLOCK)
 			    WHERE tti.idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) 
 			    AND tti.codArticulo = tt.codArticulo)
+
 		COMMIT TRAN 
 	END TRY
 	BEGIN CATCH

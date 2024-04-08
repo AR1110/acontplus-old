@@ -15,5 +15,6 @@ namespace TechnicalSupport.API.Entities
         public int DeviceId { get; set; }
         [MaxLength(500)]
         public string Obs { get; set; }
+        public List<OrderMaintenance> OrderMaintenances { get; set; }
     }
 }

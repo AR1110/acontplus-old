@@ -14,7 +14,7 @@ import {
     checkoutReducer
 } from ".";
 import { SharedService, accountReceivableService as accountReceivableSvc } from "@/core/services";
-import { CheckoutUtility, SnackbarUtility } from "@/core/utilities";
+import { CheckoutUtility, RoundNumber, SnackbarUtility, isValidField } from "@/core/utilities";
 import { PaymentTypeCode } from "@/core/constants";
 import Swal from "sweetalert2";
 import { showLoader, hideLoader } from "@/spinner";
@@ -166,7 +166,7 @@ export const CheckoutProvider = ({ children }: Props) => {
 
             const modifiedQuotas = checkoutUtility.applyReceivedAmountToQuota(voucherQuotas);
             const resultPaymentDetails = checkoutUtility.paymentDetails;
-            
+
             const payingAmount = resultPaymentDetails.filter(item => item.secuencial === sequential)
                 .reduce((prev, curr) => prev + curr.abono, 0)
 
@@ -181,7 +181,7 @@ export const CheckoutProvider = ({ children }: Props) => {
             const dataPaymentTypeForm = {
                 paymentTypeId: paymentData.paymentTypeId,
                 paymentSubTypeId: paymentData.paymentSubTypeId,
-                idBanco: paymentData.idBanco,
+                idBanco: isValidField(paymentData.idBanco),
                 creationDate: new Date(),
                 receivedAmount: Number(voucher.receivedAmount),
                 payingAmount,
@@ -194,16 +194,17 @@ export const CheckoutProvider = ({ children }: Props) => {
                 lote: paymentData.lote,
                 aprobacion: paymentData.aprobacion,
                 referencia: paymentData.referencia,
-                idCiudad: paymentData.cityId,
+                idCiudad: isValidField(paymentData.cityId),
                 infoCobro: paymentData.paymentTypeCode === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
                 paymentSubTypeName: dataPaymentSubType?.description || "",
-                idCuentaBancaria: 0,
+                idCuentaBancaria: null,
             }
 
             const payload = {
                 voucherQuotas: modifiedQuotas,
                 dataPaymentTypeForm: dataPaymentTypeForm,
                 paymentDetails: resultPaymentDetails,
+                historialCuentas: checkoutUtility.historialCuentas
             }
             dispatch({ type: SET_ADD_PAYMENT_DATA, payload });
             SnackbarUtility.success('Agregado correctamente')
@@ -446,7 +447,7 @@ export const CheckoutProvider = ({ children }: Props) => {
     // }
 
     const save = async () => {
-        const { voucher, dataForm, multiplesPaymentType, paymentDetails } = state.checkout;
+        const { voucher, multiplesPaymentType, paymentDetails, historialCuentas } = state.checkout;
         try {
             if (!(voucher.customerCompanyId > 0)) {
                 Swal.fire({
@@ -483,8 +484,8 @@ export const CheckoutProvider = ({ children }: Props) => {
             })
             if (!isConfirmed) return
 
-            const checkoutUtility = new CheckoutUtility(0);
-            const historyPayments = checkoutUtility.getHistoryPayments(dataForm.voucherQuotas, paymentDetails);
+            // const checkoutUtility = new CheckoutUtility(0);
+            // const historyPayments = checkoutUtility.getHistoryPayments(dataForm.voucherQuotas, paymentDetails);
             const comprobante = {
                 idCliente: voucher.customerCompanyId,
                 total: multiplesPaymentType.reduce((acc, curr) => acc + curr.receivedAmount, 0),
@@ -512,12 +513,48 @@ export const CheckoutProvider = ({ children }: Props) => {
                 return obj;
             })
 
+            const cobroDetalle = paymentDetails.filter(item => (item.abono > 0))
+            const cobroDetalleMappeado = cobroDetalle.map(detalle => {
+                return {
+                    idCuentaPorCobrar: detalle.idCuentaPorCobrar,
+                    idCuotaPorCobrar: detalle.idCuotaPorCobrar,
+                    abono: detalle.abono,
+                    interes: detalle.interes,
+                    diasMora: detalle.diasMora,
+                    mora: detalle.mora,
+                    cuota: detalle.cuota,
+                    saldo: detalle.saldoOriginal,
+                    secuencial: detalle.secuencial,
+                }
+            })
+
+            // const historialCobrosMappeado = historyPayments.map(hc => {
+            //     return {
+            //         idCuentaPorCobrar: hc.idCuentaPorCobrar,
+            //         abono: hc.abono,
+            //         diasMora: hc.diasMora,
+            //         mora: hc.mora,
+            //         saldo: hc.saldo,
+            //     }
+            // })
+
+            const historialCobrosMappeado = historialCuentas.map(hc => {
+                return {
+                    idCuentaPorCobrar: hc.idCuentaPorCobrar,
+                    abono: RoundNumber(hc.abono, 5),
+                    diasMora: hc.diasMora,
+                    mora: hc.mora,
+                    saldo: RoundNumber(hc.saldo, 5),
+                    secuencial: hc.secuencial
+                }
+            })
+
             const data = {
                 comprobante,
                 cobros,
-                cobroDetalle: paymentDetails.filter(item => (item.abono > 0)),
-                historial: historyPayments,
-            } 
+                cobroDetalle: cobroDetalleMappeado,
+                historial: historialCobrosMappeado,
+            }
 
             showLoader();
             accountReceivableSvc.post(data).then(response => {

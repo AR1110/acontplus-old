@@ -1,57 +1,94 @@
-import { IBodegaEstablecimiento } from "@core/models/bodega.model";
+import { BodegaEstablecimiento } from "@core/models/bodega.model";
 import { GroupedEstab } from "@core/models/estab.model";
-import { IPuntoEmisionEstablecimiento } from "@core/models/punto-emision.model";
+import { PuntoEmisionEstablecimiento } from "@core/models/punto-emision.model";
 
+type GroupEstabProps = {
+  estabs?: PuntoEmisionEstablecimiento[];
+  bodegas?: BodegaEstablecimiento[];
+  isGroupBodega?: boolean;
+  isGroupPuntoEmision?: boolean;
+};
 
-export const groupEstabUtil = function (obj: {
-    estabs: IPuntoEmisionEstablecimiento[];
-    bodegas?: IBodegaEstablecimiento[];
-    isGroupBodega?: boolean;
-}): GroupedEstab[] {
-    const { estabs, bodegas, isGroupBodega } = obj;
+export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
+  const { estabs, bodegas, isGroupBodega, isGroupPuntoEmision } = obj;
 
-    const tempEstabs = estabs.reduce((acc, item) => {
-        const existingItem = acc.find(
-            (el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab
-        );
+  let groupEstabs: GroupedEstab[] = [];
 
-        if (!existingItem) {
-            acc.push({
-                idEstablecimiento: item.idEstablecimiento,
-                nombreComercial: item.nombreComercial,
-                codEstab: item.codEstab,
-                defaultEstab: item.defaultEstab,
-                puntosEmision: [
-                    {
-                        idPuntoEmision: item.idPuntoEmision,
-                        ptoEmi: item.ptoEmi,
-                        defaultPtoEmi: item.defaultPtoEmi,
-                    },
-                ],
-            });
-        } else {
-            existingItem.puntosEmision.push({
-                idPuntoEmision: item.idPuntoEmision,
-                ptoEmi: item.ptoEmi,
-                defaultPtoEmi: item.defaultPtoEmi,
-            });
-        }
-        return acc;
+  if (isGroupPuntoEmision && estabs) {
+    groupEstabs = estabs.reduce((acc, item) => {
+      const existingItem = acc.find(
+        (el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab
+      );
+
+      if (!existingItem) {
+        acc.push({
+          idEstablecimiento: item.idEstablecimiento,
+          nombreComercial: item.nombreComercial,
+          codEstab: item.codEstab,
+          defaultEstab: item.defaultEstab,
+          puntosEmision: [
+            {
+              idPuntoEmision: item.idPuntoEmision,
+              ptoEmi: item.ptoEmi,
+              defaultPtoEmi: item.defaultPtoEmi,
+            },
+          ],
+          bodegas: [],
+        });
+      } else {
+        existingItem.puntosEmision.push({
+          idPuntoEmision: item.idPuntoEmision,
+          ptoEmi: item.ptoEmi,
+          defaultPtoEmi: item.defaultPtoEmi,
+        });
+      }
+
+      return acc;
     }, [] as GroupedEstab[]);
 
     if (isGroupBodega) {
-        const estabsWithBodegas = tempEstabs.map((estab) => ({
-            ...estab,
-          bodegas: bodegas && bodegas
-                .filter((bodega) => bodega.idEstablecimiento === estab.idEstablecimiento)
-                .map((bodega) => ({
-                    idBodega: bodega.idBodega,
-                    bodega: bodega.bodega,
-                    descripcion: bodega.bodega,
-                    defaultBodega: bodega.defaultBodega,
-                })),
-        }));
-        return estabsWithBodegas;
+      groupEstabs = groupEstabs.map((estab) => ({
+        ...estab,
+        bodegas: bodegas?.filter((bodega) => bodega.idEstablecimiento === estab.idEstablecimiento).map((bodega) => ({
+          idBodega: bodega.idBodega,
+          bodega: bodega.bodega,
+          descripcion: bodega.bodega,
+          defaultBodega: bodega.defaultBodega,
+        })) || [],
+      }));
     }
-    return tempEstabs;
+  }
+
+  if (isGroupBodega && bodegas) {
+    groupEstabs = bodegas.reduce((acc, item) => {
+      const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+      if (!existingItem) {
+        acc.push({
+          idEstablecimiento: item.idEstablecimiento,
+          nombreComercial: item.nombreComercial,
+          codEstab: item.codEstab,
+          defaultEstab: item.defaultEstab,
+          puntosEmision: [],
+          bodegas: [
+            {
+              idBodega: item.idBodega,
+              descripcion: item.bodega,
+              defaultBodega: item.defaultBodega,
+            },
+          ],
+        });
+      } else {
+        existingItem.bodegas?.push({
+          idBodega: item.idBodega,
+          descripcion: item.bodega,
+          defaultBodega: item.defaultBodega,
+        });
+      }
+
+      return acc;
+    }, [] as GroupedEstab[]);
+  }
+
+  return groupEstabs;
 };

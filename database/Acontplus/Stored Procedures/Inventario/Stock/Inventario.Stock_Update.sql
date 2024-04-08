@@ -10,10 +10,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Inventario.Stock_Update', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Stock_Update
-GO
-CREATE PROCEDURE Inventario.Stock_Update @idArticulo AS INT ,@idBodega AS INT
+CREATE OR ALTER PROCEDURE Inventario.Stock_Update @idArticulo AS INT ,@idBodega AS INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -26,15 +23,11 @@ BEGIN
 	DECLARE @stock AS NUMERIC(15,5)
 	DECLARE @fechaEmision AS DATETIME
 	
-	SELECT TOP 1 @fechaEmision =  fechaRegistro, @cantidadActual =  cantidadEntrada 
-	FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
-	WHERE codTransaccion = 'A' AND idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
-	ORDER BY fechaRegistro DESC
+	SELECT TOP 1 @fechaEmision =  fechaConsolidacion, @cantidadActual =  consolidacion FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
 
-	 
 	IF @fechaEmision IS NOT NULL
 		BEGIN
-			SELECT @cantidadActual = @cantidadActual + ISNULL(sum(cantidadEntrada - cantidadSalida),0)
+			SELECT @cantidadActual = @cantidadActual + ISNULL(sum(stockEntrada - stockSalida),0)
 			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
 			WHERE idBodega = @idBodega 
 			  AND idArticulo = @idArticulo
@@ -45,7 +38,7 @@ BEGIN
 
 	ELSE   
 		BEGIN	
-			SELECT @cantidadActual = ISNULL(sum(cantidadEntrada - cantidadSalida),0)
+			SELECT @cantidadActual = ISNULL(sum(stockEntrada - stockSalida),0)
 			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
 			WHERE idBodega = @idBodega 
 			  AND idArticulo = @idArticulo 

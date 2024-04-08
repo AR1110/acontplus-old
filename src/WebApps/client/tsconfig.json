@@ -10,6 +10,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
@@ -30,9 +31,23 @@
       "@modules/*": [
         "src/app/modules/*"
       ],
+      "@inventory/*": [
+        "src/app/modules/inventory/*",
+        "src/app/modules/inventory/shared/*"
+      ],
+      "@purchase/*": [
+        "src/app/modules/purchase/*"
+      ],
+      "@sale/*": [
+        "src/app/modules/sale/*",
+        "src/app/modules/inventory/shared/*"
+      ],
+      "@restaurant/*": [
+        "src/app/modules/restaurant/*",
+      ],
       "@shared/*": [
         "src/app/shared/*"
-      ]
+      ],
     },
   },
   "angularCompilerOptions": {

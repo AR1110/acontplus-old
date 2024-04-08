@@ -592,7 +592,8 @@
                 onSelect: '&',
                 onKeyup: '&',
                 ngModel: '<',
-                functionTrigger: '&'
+                functionTrigger: '&',
+                tiposIdentificacion: '<'
             },
             require: 'ngModel',
             link: function (scope, element) {
@@ -612,6 +613,17 @@
                     if (numero.length === 13 && numero.slice(-3) !== "001") return;
 
                     return true;
+                }
+
+                function getIdTipoIdentificacion(codigo) {
+                    let idTipoIdentificacion = 0;
+                    if (Array.isArray(scope.tiposIdentificacion)) {
+                        let dataTipoIdentificacion = scope.tiposIdentificacion.find(ti => ti.codigoSri === codigo);
+                        if (dataTipoIdentificacion){
+                            idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
+                        }
+                    }
+                    return idTipoIdentificacion;
                 }
 
 
@@ -635,13 +647,14 @@
                         try {
                             showLoader();
 
-                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await commonService.checkClientSRIByRUC(textSearch);
+                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await clienteService.checkClientSRIByRUC(textSearch);
                             hideLoader();
                             if (!numeroRuc) {
                                 toastService.toastr('warning', error)
                                 return
                             }
 
+                            let codigoTipoIdentificacion = '04';
 
                             //retornamos datos al controlador principal donde llamamos la directiva
                             scope.functionTrigger({
@@ -654,7 +667,9 @@
                                     direccionComprador: direccion || null,
                                     telefono: telefono || null,
                                     email: email || null,
-                                    idCliente: 0
+                                    idCliente: 0,
+                                    codigoTipoIdentificacion,
+                                    idTipoIdentificacion: getIdTipoIdentificacion(codigoTipoIdentificacion)
                                 }
                             })
                             scope.$apply();
@@ -673,7 +688,7 @@
                     if (textSearch.length === 10) {
                         try {
                             showLoader();
-                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await commonService.checkClientSRIByCedula(textSearch)
+                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await clienteService.checkClientSRIByCedula(textSearch)
                             hideLoader();
                             if (!identificacion || !nombreCompleto) {
                                 toastService.toastr('warning', error)
@@ -681,6 +696,7 @@
                             }
 
 
+                            let codigoTipoIdentificacion = '05';
                             scope.functionTrigger({
                                 result: {
                                     nombreFiscal: textSearch,
@@ -691,7 +707,9 @@
                                     direccionComprador: direccion || null,
                                     telefono: telefono || null,
                                     email: email || null,
-                                    idCliente: 0
+                                    idCliente: 0,
+                                    codigoTipoIdentificacion,
+                                    idTipoIdentificacion: getIdTipoIdentificacion(codigoTipoIdentificacion)
                                 }
                             })
                             scope.$apply();
@@ -922,10 +940,12 @@
                         ranges: {
                             'Hoy': [moment(), moment()],
                             'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                            'Últimos 5 días': [moment().subtract(4, 'days'), moment()],
+                            'Últimos 10 días': [moment().subtract(9, 'days'), moment()],
                             'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
                             'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
                             'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                            'El mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                         },
                         eventHandlers: {
                             'apply.daterangepicker': function () {
@@ -1269,7 +1289,9 @@
                         let json = {
                             busqueda: textSearch,
                             condicion: false,
-                            fraccionado: false
+                            fraccionado: false,
+                            pageIndex: 1,
+                            pageSize: 50
                         }
                         return articuloService.search(json)
                             .catch(error => {
@@ -1669,11 +1691,11 @@
             },
             link: function (scope, element) {
                 let tS = toastService;
-                element.on('click', async function () {  
-                    if ( typeof scope.params ==='object' && scope.params.versionComp !== '2.0.0') { 
+                element.on('click', async function () {
+                    if (typeof scope.params === 'object' && scope.params.versionComp !== '2.0.0') {
                         tS.toastr('warning', 'No disponible');
                         return
-                    }  
+                    }
 
                     let { fileCtrl, controller, template } = nombreModalFactElect.RETENCION_ATS;
                     let ctrl = (await import(fileCtrl))[controller];
@@ -1701,5 +1723,24 @@
         }
     })
 
+    app.directive('btnCopy', function (toastService) {
+        return {
+            restrict: 'A',
+            scope: {
+                text: '='
+            },
+            link: function (scope, element) {
+                let tS = toastService
+                element.on('click', async function () {
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(scope.text);
+                        tS.toastr('info', 'Copiado: ' + scope.text)
+                    } else {
+                        console.log('API clipboard no soportado')
+                    }
+                });
+            }
+        }
+    })
 
 })(window.angular)

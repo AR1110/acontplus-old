@@ -21,12 +21,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.ComprobanteIngreso_Get', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.ComprobanteIngreso_Get
-GO
---{"tipo":1,"codEstab":"ESTAB-000000020","fechaInicio":"2023-06-13 00:00:00 AM","fechaFin":"2023-07-12 23:59:59 PM","checkBoxPersona":false,"checkBoxUsuario":false,"checkBoxEstado":false,"isSearchNroDoc":true,"nroSecuencialDoc":"861"}
--- Contabilidad.ComprobanteIngreso_Get 25, '{"tipo":1,"codEstab":"ESTAB-000000002","checkBoxFecha":true,"fechaInicio":"05-05-2022 12:00 AM","fechaFin":"04-07-2023 11:59 PM","checkBoxEstado":false,"byEstado":""}'
-CREATE PROCEDURE Contabilidad.ComprobanteIngreso_Get @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Contabilidad.ComprobanteIngreso_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -258,17 +253,16 @@ BEGIN
 			INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
 			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
 
-			SELECT hc.idComprobanteIngreso 
+			SELECT ci.idComprobanteIngreso 
 				  ,fechaEmision     = FORMAT(ci.fechaRegistro,'dd/MM/yyyy hh:mm')
 				  ,serieComprobante = 'CI' + '-' + es.estab + '-' + Helper.F_Auto_Sequential(ci.nroDocumento) 
 				  ,ci.total
 				  ,ci.abono
 				  ,ci.cambio
 				  ,estado           = CASE ci.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END 
-			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
-			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
-			INNER JOIN Sri.Establecimiento          es WITH (NOLOCK) ON es.codEstab             = ci.codEstab
-			WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
+			FROM dbo.ComprobanteIngreso     ci WITH (NOLOCK)
+			INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.codEstab = ci.codEstab
+			WHERE ci.idComprobanteIngreso IN (SELECT hc.idComprobanteIngreso FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar)
 
 			SELECT co.idComprobanteIngreso
 			      ,co.idCobro
@@ -295,7 +289,7 @@ BEGIN
 				  ,fechaVencimiento = FORMAT(cx.fechaVencimiento,'dd/MM/yyyy')
 				  ,cx.cuota
 				  ,cx.saldo
-				  ,cx.abono
+				  ,cc.abono
 			FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
 			INNER JOIN Contabilidad.Historial_Cobro hc WITH (NOLOCK) ON ci.idComprobanteIngreso   = hc.idComprobanteIngreso
 			INNER JOIN dbo.Cobro                    co WITH (NOLOCK) ON co.idComprobanteIngreso   = ci.idComprobanteIngreso

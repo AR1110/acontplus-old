@@ -14,5 +14,5 @@ namespace WebUI.Pages.Mechanical.Maintenance
             var url = _configuration["UrlApps:SveltekitApp"];
             ViewData["FrontEnd"] = url;
         }
-    } 
+    }
 }

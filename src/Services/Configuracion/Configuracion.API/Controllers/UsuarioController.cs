@@ -46,7 +46,7 @@ namespace Configuracion.API.Controllers
             }
             return Ok(_response);
         }
-         
+
 
         [HttpGet("Search")]
         public async Task<IActionResult> Search(string json)
@@ -54,7 +54,7 @@ namespace Configuracion.API.Controllers
 
             var _response = new ApiResponse();
             try
-            {                
+            {
                 await _db.SPExecute("App.Usuario_Search");
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -71,7 +71,7 @@ namespace Configuracion.API.Controllers
             }
             return Ok(_response);
         }
- 
+
 
         [HttpPost("{json}")]
         public async Task<IActionResult> Post(string json)

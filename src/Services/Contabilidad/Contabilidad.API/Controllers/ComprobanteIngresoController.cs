@@ -95,5 +95,32 @@ namespace Contabilidad.API.Controllers
             }
             return Ok(_response);
         }
+
+
+        //===========SE USA EN CHEQUE============
+        [HttpPut]
+        public async Task<IActionResult> Put(ApiRequest request)
+        {
+
+            var _response = new ApiResponse();
+            try
+            {
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Update");
+                _dbAccess.AddDynamicParam("userRoleId", idUsuarioRol);
+                _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
+                _response = _dbAccess.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on Comprobante Ingreso -> Update: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Update los Comprobantes de Ingreso");
+            }
+            finally
+            {
+                _dbAccess.Close();
+            }
+            return Ok(_response);
+        }
     }
 }

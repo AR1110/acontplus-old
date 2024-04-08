@@ -1346,7 +1346,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Valor Deuda</Value>
+                                  <Value>Total</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -1404,7 +1404,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Valor cobrado</Value>
+                                  <Value>Abono</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -1462,7 +1462,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Valor por cobrar</Value>
+                                  <Value>Saldo</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -1584,9 +1584,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!codDoc.Value</Value>
-                                  <Style>
-                                    <Color>CornflowerBlue</Color>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -1619,6 +1617,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1638,9 +1637,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!serieComprobante.Value</Value>
-                                  <Style>
-                                    <Color>CornflowerBlue</Color>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -1673,6 +1670,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1692,9 +1690,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!razonSocialComprador.Value</Value>
-                                  <Style>
-                                    <Color>CornflowerBlue</Color>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -1727,6 +1723,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1751,7 +1748,6 @@
                                   <Value>=Fields!fechaEmision.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <Color>CornflowerBlue</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1785,6 +1781,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1806,7 +1803,6 @@
                                   <Value>=Fields!fechaVencimiento.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <Color>CornflowerBlue</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1840,6 +1836,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1861,12 +1858,11 @@
                                   <Value>=Fields!importeTotal.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <Color>CornflowerBlue</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Right</TextAlign>
+                                <TextAlign>Center</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1895,6 +1891,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1916,12 +1913,11 @@
                                   <Value>=Fields!abono.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <Color>CornflowerBlue</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Right</TextAlign>
+                                <TextAlign>Center</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -1950,6 +1946,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1971,12 +1968,11 @@
                                   <Value>=Fields!saldo.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <Color>CornflowerBlue</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
-                                <TextAlign>Right</TextAlign>
+                                <TextAlign>Center</TextAlign>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
@@ -2005,6 +2001,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -2026,7 +2023,6 @@
                                   <Value>=Fields!estado.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <Color>CornflowerBlue</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2060,6 +2056,7 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>LightBlue</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -2121,7 +2118,6 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
-                            <BackgroundColor>Pink</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -4014,7 +4010,6 @@
                                     <Value>=Code.nroFila(RowNumber(Nothing))</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
-                                      <Color>CornflowerBlue</Color>
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
@@ -4048,6 +4043,7 @@
                                 <Style>Solid</Style>
                                 <Width>1pt</Width>
                               </RightBorder>
+                              <BackgroundColor>LightBlue</BackgroundColor>
                               <VerticalAlign>Middle</VerticalAlign>
                               <PaddingLeft>2pt</PaddingLeft>
                               <PaddingRight>2pt</PaddingRight>

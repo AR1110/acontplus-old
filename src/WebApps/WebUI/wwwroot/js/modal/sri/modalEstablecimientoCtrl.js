@@ -273,7 +273,7 @@ class ModalEstablecimientoConfigCtrl extends ModalBaseCtrl {
                 this.file = `data:${this.dataLogo.contentType};base64,${this.dataLogo.content}`
             }
             //Puntos Emisiones 
-            this.puntosEmision = resultsDataEstab[2];
+            this.puntosEmision = resultsDataEstab[1];
             this.$scope.$apply();
         } catch (error) {
             console.log(error)

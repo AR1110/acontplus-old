@@ -29,7 +29,7 @@ function modalArticuloCtrl(
     let pricingUtils = $injector.get("pricingUtils");
     let productPhotoService = $injector.get("productPhotoService");
 
-    const CODIGO_IVA = "IVA12";
+    const CODIGO_IVA = "4";
 
     $scope.data = {
         idTipoArticulo: 0,
@@ -571,6 +571,21 @@ function modalArticuloCtrl(
         }
     };
 
+    $scope.refreshSubFamilia = function(){
+        try {
+            showLoader();  
+            articuloSvc.getDataForForm().then(response=>{
+
+                $scope.subFamilias = response.subFamilias; 
+            }).catch(error=>{
+                console.log(error)
+            }).finally(()=>hideLoader())            
+        } catch (error) {
+            console.log(error)
+            hideLoader();
+        }
+    }
+
     $scope.resultModalMarca = async function (result) {
         try {
             if (typeof result !== "object") return;
@@ -607,6 +622,18 @@ function modalArticuloCtrl(
         }
     }
 
+    $scope.refreshMedida = async function(){
+        try { 
+            showLoader();
+            articuloSvc.getDataForForm().then(response => {
+                $scope.medidas = response.medidas;  
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())  
+        } catch (error) {
+            console.log(error);
+        }
+    }
     $scope.getBarcode = function () {
         // console.log(item)
         if (!$scope.data.codigoBarra || !$scope.data.descripcion) {
@@ -742,8 +769,7 @@ function modalArticuloCtrl(
             tS.toastr("warning", "Ingrese un número válido");
             return;
         }
-
-        console.log(opcionCalculate)
+ 
         if ($scope.data.precioCosto === 0) {
             tS.toastr("warning", "El valor mínimo en el precio de costo es 0.01");
             return;
@@ -1136,8 +1162,8 @@ function modalArticuloCtrl(
         }
         $scope.dataCodigoBarra.idArticulo = params.idArticulo;
         if ($scope.dataCodigoBarra.idArticuloCodigoBarra > 0) {
-            showLoader();
-            articuloCodigoBarraSvc.put($scope.data.idArticuloCodigoBarra, $scope.dataCodigoBarra)
+            showLoader(); 
+            articuloCodigoBarraSvc.put($scope.dataCodigoBarra.idArticuloCodigoBarra, $scope.dataCodigoBarra)
                 .then($scope.successReponseCodigoBarra)
                 .catch(err => {
                     console.log(err);
@@ -1151,10 +1177,10 @@ function modalArticuloCtrl(
     }
 
     $scope.successReponseCodigoBarra = function (response) {
-        if (response.id === '0') {
+        if (response.code === '0') {
             tS.toastr('warning', response.message, response.titleSms);
         }
-        if (response.id === '1') {
+        if (response.code === '1') {
             tS.toastr('success', response.message, response.titleSms);
             getCodigoBarraArticulo();
             $scope.dataCodigoBarra = {
@@ -1190,10 +1216,10 @@ function modalArticuloCtrl(
         if (isConfirmed) {
             showLoader();
             articuloCodigoBarraSvc.delete(item.idArticuloCodigoBarra).then((response) => {
-                if (response.id == "0") {
+                if (response.code == "0") {
                     tS.toastr('warning', response.message, response.titleSms);
                 }
-                if (response.id == "1") {
+                if (response.code == "1") {
                     tS.toastr('success', response.message, response.titleSms);
                     getCodigoBarraArticulo();
                     $scope.dataCodigoBarra = {};
@@ -1622,6 +1648,8 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         let query = {
             checkBoxFraccionado: true,
             bySearch: textSearch,
+            pageIndex: 1,
+            pageSize: 25
         };
         let articulos = articuloSvc.searchForFraccionado(query);
         return articulos;
@@ -1817,6 +1845,7 @@ ModalArticuloGeneralCtrl.$inject = [
     "$scope",
     "$uibModalInstance",
     "articuloService",
+    "productPhotoService",
     "modalService",
     "nombreModal",
 ];
@@ -1825,6 +1854,7 @@ function ModalArticuloGeneralCtrl(
     $scope,
     $uibModalInstance,
     artSvc,
+    productPhotoSvc,
     modalSvc,
     nombreModal
 ) {
@@ -1950,19 +1980,9 @@ function ModalArticuloGeneralCtrl(
         $uibModalInstance.close(data);
     };
 
-    //   //Presentacion del imagen
-    $scope.getImagen = async function (item) {
-        const { MODAL_CTRL, MODAL_IMAGEN_DETALLE_CSHTML } = nombreModal.articulo;
-        const { ModalArticuloImagenDetalleCtrl } = await import(
-            "./../modal/" + MODAL_CTRL
-        );
-        modalSvc.openModalCustom({
-            controller: ModalArticuloImagenDetalleCtrl,
-            template: `Articulo/${MODAL_IMAGEN_DETALLE_CSHTML}`,
-            size: "xl",
-            params: item,
-        });
-    };
+    $scope.previewImg = function (item) {
+        productPhotoSvc.previewImg(item.idArticulo)
+    }
 
     $scope.closeModal = function () {
         $uibModalInstance.close();

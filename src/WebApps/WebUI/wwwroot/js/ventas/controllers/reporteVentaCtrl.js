@@ -7,7 +7,7 @@
     reporteVentaCtrl.$inject = ['$scope', '$injector'];
 
     function reporteVentaCtrl($scope, $injector) {
-        const reporteVentaSvc = $injector.get('reporteVentaService');
+        const cuentaPorCobrarSvc = $injector.get('cuentaPorCobrarService');
         const decodeToken = $injector.get('decodeToken');
         const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
@@ -65,7 +65,7 @@
         function initiload() {
             try {
                 showLoader();
-                reporteVentaSvc.getDataForm().then(response => {
+                cuentaPorCobrarSvc.getDataFilter().then(response => {
                     let { estabs, estadosDoc, tiposDoc } = response;
                     $scope.establecimientos = estabs;
                     if ($scope.establecimientos.length > 0) {
@@ -107,7 +107,7 @@
         $scope.onChangeTipoDoc = function () {
             let dataEstado = $scope.tiposDoc.find(tipoDoc => tipoDoc.codigo === $scope.dataSearch.codigoTipoDoc);
 
-            console.log(dataEstado)
+            
         }
 
         $scope.onChangeEstab = function () {
@@ -128,8 +128,7 @@
         }
 
 
-        $scope.onKeyupCliente = function () {
-            console.log($scope.cliente)
+        $scope.onKeyupCliente = function () { 
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.identificacion = null;
 
@@ -137,7 +136,7 @@
         }
 
         $scope.onSelectCliente = function (data) {
-            console.log(data)
+            
             $scope.dataSearch.identificacion = data.numeroIdentificacion;
             $scope.dataSearch.idCliente = data.idCliente;
 
@@ -145,7 +144,7 @@
 
 
         $scope.onKeyupUser = function () {
-            console.log($scope.cliente)
+            
             if (!$scope.cliente.nombreUser) {
                 $scope.dataSearch.idUsuario = 0;
             }
@@ -233,7 +232,7 @@
                 fechaInicio: $scope.dataSearchEstadistica.fechaInicio,
                 fechaFin: $scope.dataSearchEstadistica.fechaFin
             }
-            reporteVentaSvc.getEstadisticas(params).then(response => {
+            cuentaPorCobrarSvc.getEstadisticas(params).then(response => {
                 $scope.estadisticas = response;
                 if ($scope.estadisticas.length > 0) {
                     drawChartAnual();

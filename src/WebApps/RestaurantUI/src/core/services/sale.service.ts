@@ -9,7 +9,7 @@ import {
     warehouseAdapter,
 } from "../adapters"
 
-import { PATHS } from "../constants"
+import { PATHS_API } from "../constants"
 import { ConfigSistema, Floor, Room, Vendedor } from "../models";
 import { Http } from "../utilities"
 
@@ -18,7 +18,7 @@ export const SaleService = {
     async getDataForForm(json: string) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.PRIVATE}${URL}`,
+            url: `${PATHS_API.PRIVATE}${URL}`,
             params: {
                 json
             }
@@ -26,7 +26,7 @@ export const SaleService = {
         const {
             subCategorias,
             configDecimal,
-            table,
+            tables,
             impuesto,
             tarifaImpuesto,
             bodega_Asign,
@@ -46,7 +46,7 @@ export const SaleService = {
         return {
             categories: categoryReadAdapter(subCategorias || []),
             decimal: decimalSaleReadAdapter(configDecimal[0]),
-            tables: tableReadAdapter(table || []),
+            tables: tableReadAdapter(tables || []),
             taxes: taxAdapter(impuesto),
             taxRates: taxRateAdapter(tarifaImpuesto),
             warehouses: warehouseAdapter(bodega_Asign || []),

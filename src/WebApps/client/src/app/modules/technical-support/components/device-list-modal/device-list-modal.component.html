@@ -1,0 +1,57 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    <fa-icon [icon]="'search'"></fa-icon> Dispositivos
+  </h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-hidden="false"
+    (click)="closeModal()"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Modelo</th>
+              <th>Año</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of devices; track $index) {
+            <tr>
+              <td>{{ item.name }}</td>
+              <td>{{ item.model }}</td>
+              <td>{{ item.year }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-outline-info btn-sm"
+                  title="Seleccionar Equipo"
+                  (click)="select(item)"
+                >
+                  <fa-icon [icon]="'hand-point-right'"></fa-icon>
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-outline-dark btn-sm"
+    (click)="closeModal()"
+  >
+    &times; Cerrar
+  </button>
+</div>

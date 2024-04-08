@@ -6,6 +6,7 @@
             multiple="{{options.multiSelect}}" ng-model="selectedArticulos">
             <thead md-head>
                 <tr md-row>
+                    <th md-column><span>Op.</span></th>
                     <th md-column><span>Img</span></th>
                     <th md-column><span>Código</span></th>
                     <th md-column><span>Descripción</span></th>
@@ -24,11 +25,12 @@
             <tbody md-body>
                 <tr md-row md-select="item" md-on-select="onChangeCheckBoxItem"
                     md-auto-select="options.autoSelect" ng-repeat="item in articulos track by $index">
-                    <td md-cell>
-                        <span ng-click="getImagen(item)" ng-show="item.imagen">
-                            <i class="text-success fas fa-file-image fa-lg"></i>
-                        </span>
+                    <td md-cell> 
                         <view-kardex params="item"></view-kardex>
+                    </td>
+                     <td md-cell style="vertical-align: middle">
+                        <img class="img-fluid img-thumbnail" ng-click="previewImg(item)" 
+                                width="50" src="{{item.s3ObjectUrl}}" />
                     </td>
                     <td md-cell>{{item.codigo}}</td>
                     <td md-cell>
@@ -58,7 +60,7 @@
 
                 </tr>
                 <tr ng-show="articulos.length==0" class="text-center">
-                    <td colspan="16">
+                    <td colspan="17">
                         No hay registros en esta tabla :)
                     </td>
                 </tr>

@@ -31,21 +31,21 @@ namespace Contabilidad.Application.Servicios
                 return DataConverters.DataSetToJSON(ds);
             }
         }
-         
+
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
-        {   
-            return await _repository.SPExecuteAsync("Contabilidad.Caja_Insert", parameters);
+        {
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Contabilidad.Caja_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-        { 
-            return await _repository.SPExecuteAsync("Contabilidad.Caja_Delete", parameters);
+        {
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
         }
     }
 }

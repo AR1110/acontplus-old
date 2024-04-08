@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
@@ -109,7 +110,7 @@ namespace Compras.API.Controllers
                             _db.AddDynamicParam("idDocumento", id);
                             _db.AddDynamicParam("jsonData", JsonConvert.SerializeObject(ceXml.detalles));
                             _db.AddDynamicParam("impuestos", JsonConvert.SerializeObject(ceXml.impuestos));
-                            _db.OnlyExecute();
+                            int affectedRows = await _db.OnlyExecuteAsync(false);
                         }
                         _response.payload = ceXml;
                     }
@@ -224,10 +225,10 @@ namespace Compras.API.Controllers
                 return Ok(response);
             }
             catch (Exception ex)
-            { 
+            {
                 _log.LogActivity("Error al importar el archivo: " + ex.ToString());
                 return BadRequest(ex.Message);
-            } 
+            }
         }
 
         [HttpPost("UploadXml")]
@@ -243,13 +244,30 @@ namespace Compras.API.Controllers
             }
             try
             {
-                XmlDocument xmlDocSri = new XmlDocument();
-                using (MemoryStream ms = new MemoryStream())
+                XDocument xmlDocSri = new XDocument();
+
+                using (MemoryStream str = new MemoryStream())
                 {
-                    file.CopyTo(ms);
-                    xmlDocSri.LoadXml(Encoding.UTF8.GetString(ms.ToArray()));
+                    await file.CopyToAsync(str);
+                    str.Position = 0;
+                    xmlDocSri = XDocument.Load(str);
                 }
-                XmlNode nodeAuth = xmlDocSri.GetElementsByTagName("autorizacion")[0];
+
+                //XmlDocument xmlDocSri = new XmlDocument();
+                //using (MemoryStream ms = new MemoryStream())
+                //{
+                //    file.CopyTo(ms);
+                //    xmlDocSri.LoadXml(Encoding.UTF8.GetString(ms.ToArray()));
+                //}
+
+                XmlDocument docNew = new XmlDocument();
+
+                using (var xmlReader = xmlDocSri.CreateReader())
+                {
+                    docNew.Load(xmlReader);
+                }
+
+                XmlNode nodeAuth = docNew.GetElementsByTagName("autorizacion")[0];
                 XmlNode nodeComp = nodeAuth.SelectSingleNode("comprobante");
                 if (nodeComp != null)
                 {
@@ -312,28 +330,32 @@ namespace Compras.API.Controllers
 
                     root.SelectSingleNode("comprobante").InnerText = xmlComp.OuterXml;
 
+                    using (var db = new DbAccess(_configuration))
+                    {
+                        await db.SPExecute("Recepcion.Documento_Upload_Xml");
+                        db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
+                        db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                        db.AddDynamicParam("codDoc", codDoc);
+                        db.AddDynamicParam("claveAcceso", claveAcceso);
+                        db.AddDynamicParam("versionComp", versionComp);
+                        db.AddDynamicParam("fechaEmision", fechaEmision);
+                        db.AddDynamicParam("XmlDoc", xmlTosave.OuterXml);
+                        _response = db.GetDefault();
+                    }
+                    return Ok(_response);
 
-                    await _db.SPExecute("Recepcion.Documento_Upload_Xml");
-                    _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                    _db.AddDynamicParam("codDoc", codDoc);
-                    _db.AddDynamicParam("claveAcceso", claveAcceso);
-                    _db.AddDynamicParam("versionComp", versionComp);
-                    _db.AddDynamicParam("fechaEmision", fechaEmision);
-                    _db.AddDynamicParam("XmlDoc", xmlTosave.OuterXml);
-                    _response = _db.GetDefault();
+                }
+                else
+                {
+                    _response.Create(code: "0", message: "Error al importar el archivo");
+                    return Ok(_response);
                 }
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error al importar el archivo: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al importar el archivo");
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
 
@@ -558,17 +580,6 @@ namespace Compras.API.Controllers
         //        return File(new DocElectPdf().PdfData(ceXml), "application/pdf", "report.pdf");
 
         //    }
-        //} 
-
-
-
-
-
-
-
-
-
-
-
+        //}
     }
 }

@@ -1,6 +1,10 @@
 USE AcontPlus
 GO
 
+--ALTER TABLE Inventario.Transaccion add cantidadTransaccion NUMERIC(18,5) NOT NULL
+
+--DELETE FROM Inventario.Transaccion
+
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('E', 'Entrada')
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('S', 'Salida')
 --INSERT INTO Inventario.TipoTransaccion(codigo, descripcion) VALUES ('T', 'Transferencia')
@@ -19,23 +23,22 @@ GO
 
 --GO
 
---INSERT INTO Inventario.Transaccion
---     (idTipoTransaccion
---     ,idArticulo
---     ,idBodega
---     ,idTipoDocumento
---     ,idDocumento
---     ,idMedida
---     ,idTarifa
---     ,cantidad
---     ,precioUnitario
---     ,precioCosto
---     ,total
---     ,fechaRegistro
---     ,idUsuario
---     ,estado)
-
-select COUNT(*) from (
+INSERT INTO Inventario.Transaccion
+     (idTipoTransaccion
+     ,idArticulo
+     ,idBodega
+     ,idTipoDocumento
+     ,idDocumento
+     ,idMedida
+     ,idTarifa
+     ,cantidad
+     ,cantidadTransaccion
+     ,precioUnitario
+     ,precioCosto
+     ,total
+     ,fechaRegistro
+     ,idUsuario
+     ,estado)
 
 SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHERE tt.codigo = 'S')                            as idTipoTransaccion
       ,fd.idArticulo                                                                                                           as idArticulo
@@ -44,10 +47,11 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,fd.idFactura                                                                                                            as idDocumento
 	  ,fd.idMedida                                                                                                             as idMedida
 	  ,fd.idTarifa                                                                                                             as idTarifa
-	  ,CAST(fd.cantidad * dbo.AFTConverFracc(fd.idArticulo,fd.idMedida) AS decimal(15,5))                                      as cantidad
-	  ,fd.precioVenta                                                                                                          as precioUnitario
+	  ,fd.cantidad                                                                                                             as cantidad
+	  ,CAST(fd.cantidad * dbo.AFTConverFracc(fd.idArticulo,fd.idMedida) AS decimal(15,5))                                      as cantidadTransaccion
+	  ,fd.precioUnitario                                                                                                       as precioUnitario
 	  ,fd.precioCosto                                                                                                          as precioCosto
-	  ,fd.total                                                                                                                as total
+	  ,fd.precioTotalSinImpuesto                                                                                               as total
 	  ,f.fechaEmision                                                                                                          as fechaRegistro
 	  ,f.idUsuario                                                                                                             as idUsuario                                    
 	  ,IIF((SELECT cc.codEstado FROM v_CuentaPorCobrar cc WHERE cc.idDocumento = fd.idFactura AND cc.codDoc = '01') = 'A',0,1) as estado
@@ -66,10 +70,11 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,nd.idNotaEntrega                                                                                                        as idDocumento 
 	  ,nd.idMedida                                                                                                             as idMedida
 	  ,nd.idTarifa                                                                                                             as idTarifa
-	  ,cantidad = CAST(nd.cantidad * dbo.AFTConverFracc(nd.idArticulo,nd.idMedida) AS decimal(15,5))
-	  ,nd.precioVenta
-	  ,ar.precioCosto
-	  ,nd.total
+	  ,nd.cantidad
+      ,cantidad = CAST(nd.cantidad * dbo.AFTConverFracc(nd.idArticulo,nd.idMedida) AS decimal(15,5))
+	  ,nd.precioUnitario
+	  ,ISNULL(ar.precioCosto,0)
+	  ,nd.precioTotalSinImpuesto
 	  ,ne.fechaEmision
 	  ,ne.idUsuario
 	  ,CASE WHEN (SELECT cc.codEstado FROM v_CuentaPorCobrar cc WHERE cc.idDocumento = nd.idNotaEntrega AND cc.codDoc = 'NE') = 'A' THEN 0 
@@ -82,8 +87,7 @@ INNER JOIN dbo.NotaEntrega ne WITH (NOLOCK) ON ne.idNotaEntrega = nd.idNotaEntre
 WHERE ar.llevaInventario = 1
    AND ar.estado = 1
 
-
-   UNION ALL
+UNION ALL
 
 SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHERE tt.codigo = 'S') as idTipoTransaccion
 	  ,td.idArticulo
@@ -91,8 +95,9 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,(SELECT TOP 1 td.idTipoDocumento FROM Inventario.TipoDocumento td WHERE td.codigo = 'TB') as idTipoDocumento
 	  ,idDocumento = tb.idTransferenciaBodega
 	  ,td.idMedida
-	  ,NULL
-	  ,cantidad = CAST(td.cantidad * dbo.AFTConverFracc(td.idArticulo,td.idMedida) AS decimal(15,5))
+	  ,NULL as idTarifa
+	  ,td.cantidad
+      ,cantidad = CAST(td.cantidad * dbo.AFTConverFracc(td.idArticulo,td.idMedida) AS decimal(15,5))
 	  ,td.precioCosto
 	  ,td.precioCosto
 	  ,td.total
@@ -115,10 +120,11 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,idDocumento = nc.idNotaCredito
 	  ,nd.idMedida
 	  ,nd.idTarifa
+      ,nd.cantidad
 	  ,cantidad = CAST(nd.cantidad * dbo.AFTConverFracc(nd.idArticulo,nd.idMedida) AS decimal(15,5)) * -1
+	  ,nd.precioUnitario
 	  ,nd.precioCosto
-	  ,nd.precioCosto
-	  ,nd.total
+	  ,nd.precioTotalSinImpuesto
 	  ,nc.fechaEmision
 	  ,nc.idUsuario
 	  ,estado = IIF(ep.codigo = 'A',0,1)
@@ -136,8 +142,9 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,(SELECT TOP 1 td.idTipoDocumento FROM Inventario.TipoDocumento td WHERE td.codigo = 'TB') as idTipoDocumento
 	  ,idDocumento = tb.idTransferenciaBodega
 	  ,td.idMedida
-	  ,NULL
-	  ,cantidad = CAST(td.cantidad * dbo.AFTConverFracc(td.idArticulo,td.idMedida) AS decimal(15,5))
+	  ,NULL as idTarifa
+	  ,td.cantidad
+      ,cantidad = CAST(td.cantidad * dbo.AFTConverFracc(td.idArticulo,td.idMedida) AS decimal(15,5))
 	  ,td.precioCosto
 	  ,td.precioCosto
 	  ,td.total
@@ -160,9 +167,10 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
        ,idDocumento = dd.idDocumentoIngreso
 	   ,dd.idMedida
 	   ,NULL
-	   ,cantidad = CAST(dd.cantidad * dbo.AFTConverFracc(dd.idArticulo,dd.idMedida) AS decimal(15,5))
+	   ,dd.cantidad
+       ,cantidad = CAST(dd.cantidad * dbo.AFTConverFracc(dd.idArticulo,dd.idMedida) AS decimal(15,5))
 	   ,dd.precioUnitario
-	   ,dd.costoNeto
+	   ,dd.precioUnitario as precioCosto
 	   ,dd.precioTotalSinImpuesto
 	   ,di.fechaEmision
 	   ,di.idUsuario
@@ -181,11 +189,12 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,(SELECT TOP 1 td.idTipoDocumento FROM Inventario.TipoDocumento td WHERE td.codigo = 'FF') as idTipoDocumento
 	  ,fd.idFacturaCompra
 	  ,fd.idMedida
-	  ,NULL
-	  ,cantidad = CAST(fd.cantidad * dbo.AFTConverFracc(fd.idArticulo,fd.idMedida) AS decimal(15,5))
-	  ,fd.precioCostoNeto
-	  ,fd.precioCosto
-	  ,fd.total
+	  ,NULL as idTarifa
+	  ,fd.cantidad
+      ,cantidad = CAST(fd.cantidad * dbo.AFTConverFracc(fd.idArticulo,fd.idMedida) AS decimal(15,5))
+	  ,fd.precioUnitario
+	  ,fd.precioUnitario
+	  ,fd.precioTotalSinImpuesto
 	  ,f.fechaEmision
 	  ,f.idUsuario 
 	  ,f.estado
@@ -204,8 +213,9 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,(SELECT TOP 1 td.idTipoDocumento FROM Inventario.TipoDocumento td WHERE td.codigo = IIF(f.codDoc = '01','FE','NC')) as idTipoDocumento 
 	  ,fd.idDocumento
 	  ,fd.idMedida
-	  ,NULL
-	  ,cantidad = CAST(fd.cantidad * dbo.AFTConverFracc(fd.idArticulo,fd.idMedida) AS decimal(15,5)) * IIF(f.codDoc = '01',1,-1)
+	  ,NULL as idTarifa
+	  ,fd.cantidad
+      ,cantidad = CAST(fd.cantidad * dbo.AFTConverFracc(fd.idArticulo,fd.idMedida) AS decimal(15,5)) * IIF(f.codDoc = '01',1,-1)
 	  ,fd.precioUnitario * IIF(f.codDoc = '01',1,-1) as precioUnitario
 	  ,costoNeto 
 	  ,fd.precioTotalSinImpuesto * IIF(f.codDoc = '01',1,-1) as precioTotalSinImpuesto
@@ -227,10 +237,11 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,lq.idLiquidacionCompra
 	  ,ld.idMedida
 	  ,NULL
-	  ,cantidad = CAST(ld.cantidad * dbo.AFTConverFracc(ld.idArticulo,ld.idMedida) AS decimal(15,5))
-	  ,ld.precioCostoNeto
-	  ,ld.precioCosto
-	  ,ld.total
+	  ,ld.cantidad
+      ,cantidad = CAST(ld.cantidad * dbo.AFTConverFracc(ld.idArticulo,ld.idMedida) AS decimal(15,5))
+	  ,ld.precioUnitario
+	  ,ld.precioUnitario
+	  ,ld.precioTotalSinImpuesto
 	  ,lq.fechaEmision
 	  ,lq.idUsuario
 	  ,estado = IIF((select cp.codEstado from v_cuentaporpagar cp where cp.codDoc = '03' and cp.idDocumento = lq.idLiquidacionCompra) = 'A',0,1)
@@ -249,7 +260,8 @@ SELECT (SELECT TOP 1 tt.idTipoTransaccion FROM Inventario.TipoTransaccion tt WHE
 	  ,cd.idConsolidacionInventario
 	  ,cd.idMedida
 	  ,NULL
-	  ,cantidad = CAST(cd.cantidad * dbo.AFTConverFracc(cd.idArticulo,cd.idMedida) AS decimal(15,5))
+	  ,cd.cantidad
+      ,cantidad = CAST(cd.cantidad * dbo.AFTConverFracc(cd.idArticulo,cd.idMedida) AS decimal(15,5))
 	  ,cd.precioActual
 	  ,cd.precioCosto
 	  ,cd.cantidad * cd.precioCosto
@@ -261,8 +273,7 @@ INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = cd.idArticulo
 INNER JOIN dbo.ConsolidacionInventario ci WITH (NOLOCK) ON ci.idConsolidacionInventario = cd.idConsolidacionInventario
 INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ci.idEstadoDocumento
 WHERE ar.llevaInventario = 1
-and cd.estado = 1 ) as dt 
+and cd.estado = 1 
 
 
-
-----SELECT * FROM Inventario.Transaccion WITH (NOLOCK)
+--SELECT cantidad,cantidadTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE cantidad != cantidadTransaccion

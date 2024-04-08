@@ -69,7 +69,14 @@ namespace Contabilidad.API
                 }
             });
 
-            app.UseHttpsRedirection();
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+            {
+                app.Urls.Add("http://*:5005"); // 👈 Add the URL
+            }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 
@@ -79,7 +86,7 @@ namespace Contabilidad.API
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", context =>
+                _ = endpoints.MapGet("/", context =>
                 {
                     context.Response.Redirect("swagger");
                     return Task.CompletedTask;

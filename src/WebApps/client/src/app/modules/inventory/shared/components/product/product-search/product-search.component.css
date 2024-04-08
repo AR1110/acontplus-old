@@ -1,0 +1,103 @@
+.table-container {
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto; /* Enable horizontal scrolling on smaller screens */
+}
+
+.header-row, .data-container {
+  display: flex;
+}
+
+.header-row {
+  position: sticky;
+  top: 0;
+  background-color: #f0f0f0;
+  z-index: 1;
+}
+
+.column {
+  /* flex: 1; */
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.cell {
+  flex: 1;
+  /* padding: 10px; */
+  /* border: 1px solid #ccc; */
+}
+
+.data-row {
+  display: flex!important;
+  align-items: center; /* Align content vertically centered */
+  border-bottom: 1px solid #349034;
+  font-size:12px;
+}
+
+/* Add any additional styles for mat-option or other elements as needed */
+/* Establece anchos fijos para cada columna */
+.column-codigo {
+  width: 9rem; /* ajusta el valor según sea necesario */
+  /* flex:1 */
+}
+
+.column-descripcion {
+  width: 250px; /* ajusta el valor según sea necesario */
+  flex:1
+}
+
+.column-stock {
+  width: 20px; /* ajusta el valor según sea necesario */
+  text-align:center;
+  flex:1;
+}
+
+.column-medida {
+  width: 250px; /* ajusta el valor según sea necesario */
+}
+
+.cell-codigo {
+  width: 9rem; /* ajusta el valor según sea necesario */
+  /* flex:1 */
+}
+
+.cell-descripcion {
+  width: 250px; /* ajusta el valor según sea necesario */
+  flex:1
+}
+
+.cell-stock {
+  width: 20px; /* ajusta el valor según sea necesario */
+  text-align:center;
+  flex:1;
+}
+
+.cell-medida {
+  width: 250px; /* ajusta el valor según sea necesario */
+}
+ 
+
+/* app.component.css */
+
+.item-container {
+  display: flex;
+  align-items: center;
+  font-size: 12px; 
+}
+
+.left-column {
+  margin-right: 10px;
+  /* Adjust spacing between image and text */
+}
+
+.right-column {
+  flex-grow: 1;
+  /* Allow the right column to grow and take available space */
+}
+
+.right-container {
+  display: flex;
+
+  flex-direction: column;
+  gap:1;
+}

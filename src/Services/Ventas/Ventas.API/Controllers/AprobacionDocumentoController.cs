@@ -1,5 +1,4 @@
 ﻿using Common.Core.Models;
-using Common.Core.Models.Ventas;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +53,7 @@ namespace Ventas.API.Controllers
                 var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Aprob_Document_Insert");
                 _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));                 
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -24,16 +24,16 @@ BEGIN
 
 
 	DECLARE @Comprobantes AS TABLE( 
-	     comprobante VARCHAR(50) NOT NULL 
-	    ,serieComprobante VARCHAR(50) NOT NULL
-	    ,rucEmisor VARCHAR(15) NOT NULL
-	    ,razonSocialEmisior VARCHAR(250) NOT NULL
-	    ,fechaEmision VARCHAR(50) NOT NULL
-	    ,fechaAutorizacion VARCHAR(50) NOT  NULL
-	    ,tipoEmision VARCHAR(20)  NOT NULL
+	     comprobante VARCHAR(50)  NULL 
+	    ,serieComprobante VARCHAR(50)  NULL
+	    ,rucEmisor VARCHAR(15)  NULL
+	    ,razonSocialEmisior VARCHAR(250)  NULL
+	    ,fechaEmision VARCHAR(50)  NULL
+	    ,fechaAutorizacion VARCHAR(50)   NULL
+	    ,tipoEmision VARCHAR(20)   NULL
 	    ,identificacionReceptor VARCHAR(15) NULL
-	    ,claveAcceso VARCHAR(50) UNIQUE NOT NULL
-	    ,numeroAutorizacion VARCHAR(50) NOT NULL
+	    ,claveAcceso VARCHAR(50) UNIQUE  NULL
+	    ,numeroAutorizacion VARCHAR(50)  NULL
 	    ,importeTotal VARCHAR(50) NULL
 	)
 
@@ -41,12 +41,14 @@ BEGIN
         
         --> Informacion general
         SELECT TOP 1 @idUsuario = idUsuario ,@idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+        SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
         
         SELECT  @codEstab = codEstab, @jsonData = jsonData FROM OPENJSON(@json) WITH(codEstab VARCHAR(MAX) '$.codEstab', jsonData NVARCHAR(MAX) '$.comprobantes' AS JSON)
 
         INSERT INTO @Comprobantes
               (comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal)
-		SELECT comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,CASE WHEN LEN(Ltrim(rtrim(importeTotal))) > 0 THEN Ltrim(rtrim(importeTotal)) ELSE NULL END
+		SELECT comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,ISNULL(identificacionReceptor,@identificacionReceptor),claveAcceso,numeroAutorizacion,CASE WHEN LEN(Ltrim(rtrim(importeTotal))) > 0 THEN Ltrim(rtrim(importeTotal)) ELSE NULL END
 		FROM OPENJSON(@jsonData) WITH
         ( 
 			 comprobante            VARCHAR(50) 
@@ -64,28 +66,14 @@ BEGIN
         WHERE t.claveAcceso NOT IN (SELECT c.claveAcceso FROM Recepcion.DocumentoRecibido c WITH (NOLOCK))
 
         --> Recupenrando informacion
-	    SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-
 	    SELECT TOP 1 @idEstab = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
         --> Validacion de informacion
         IF (SELECT COUNT(*) FROM @Comprobantes) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Error en la info de los comprobantes', DEFAULT)
+                SELECT [Common].[ufnSpResponse]('0','Los comprobantes ya se encuentran registrados', DEFAULT)
                 RETURN
             END  
-
-        --IF NOT EXISTS (SELECT 1 FROM @Comprobantes WHERE identificacionReceptor = @identificacionReceptor) 
-        --    BEGIN
-        --        SELECT [Common].[ufnSpResponse]('0','Los comprobantes no pertenecen al Contribuyente' + ' ' +  @identificacionReceptor, DEFAULT)
-        --        RETURN
-        --    END 
-
-        --IF NOT EXISTS (SELECT 1 FROM @Comprobantes WHERE identificacionReceptor = SUBSTRING(ltrim(rtrim(@identificacionReceptor)), 1, 10))
-        --    BEGIN
-        --        SELECT [Common].[ufnSpResponse]('0','Los comprobantes no pertenecen al Contribuyente' + ' ' +  @identificacionReceptor , DEFAULT)
-        --        RETURN
-        --    END 
 
 		BEGIN TRAN
 			

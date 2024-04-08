@@ -25,6 +25,7 @@ export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
+  @Input() textSearch = '';
   private modalService = inject(ModalService);
 
   customer: CompanyCustomerSearch = {
@@ -34,6 +35,7 @@ export class CompanyCustomerSearchComponent {
     telefono: '',
     direccion: '',
     correo: '',
+    numeroIdentificacion: ''
   };
 
   dataSearch = {
@@ -41,7 +43,7 @@ export class CompanyCustomerSearchComponent {
     razonSocial: '',
   };
 
-  textSearch = '';
+
   searching = false;
   searchFailed = false;
 
@@ -68,7 +70,11 @@ export class CompanyCustomerSearchComponent {
   onSelect($event: any) {
     this.customer = $event.item;
     this.dataSearch.idCliente = this.customer.idCliente;
-    this.onCustomerSelected.emit({ data: this.customer });
+    this.onCustomerSelected.emit({ data: {
+      ...this.customer,
+      razonSocialComprador: this.customer.nombreFiscal,
+      identificacionComprador: this.customer.numeroIdentificacion
+    } });
     setTimeout(() => {
       this.textSearch = this.customer.nombreFiscal;
     });

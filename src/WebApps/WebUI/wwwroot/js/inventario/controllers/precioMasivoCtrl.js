@@ -3,22 +3,18 @@
     app.controller('precioMasivoCtrl', precioMasivoCtrl)
     precioMasivoCtrl.$inject = [
         '$scope',
-        'mainService',
-        'toastService',
-        'commonService',
-        'articuloService',
-        'pricingUtils',
-        'formulario',
+        '$injector',
         '$interval',
-        '$log',
-        '$window',
-        'modalService',
         'uiGridConstants',
-        'proveedorService'
     ]
 
-    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log, $window, _modalSvc, uiGridConstants, proveedorSvc) {
-        _mS.detectDevice()
+    function precioMasivoCtrl($scope, $injector, $interval, uiGridConstants) {
+
+        const precioMasivoSvc = $injector.get('precioMasivoService');
+        const fS = $injector.get('formulario')
+        const tS = $injector.get('toastService')
+        const pricingUtils = $injector.get('pricingUtils');
+        const modalSvc = $injector.get('modalService');
 
         $scope.catalogs = [
             { code: 1, description: 'Articulo' },
@@ -33,11 +29,26 @@
         $scope.marcas = []
         $scope.tarifas = []
         $scope.config = {}
-        $scope.articles = []
+        $scope.articles = [];
+        $scope.decimal = {}
+        $scope.tarifasImpuesto = [];
+        $scope.tarifasImpuestoDestino = [];
 
-        $scope.mainForm = {}
+        $scope.mainForm = {
+            idTarifa: 0,
+            idSubFamilia: 0,
+            idTipoIva: 0,
+            idTipoIvaDestino: 0
+        };
 
-        $scope.search = ''
+        //Product 
+        $scope.dataSearchProduct = {
+            name: ''
+        }
+        //Proveedor 
+        $scope.dataSearchProveedor = {
+            name: ''
+        }
 
         $scope.mainForm.opcion = $scope.catalogs.find(x => x.code == '4').code
 
@@ -53,9 +64,11 @@
             showColumnFooter: false,
             showGridFooter: true,
             enableCellEdit: false,
-            enableFiltering: true,
+            enableFiltering: false,
         }
-        $scope.setColumnDefs = () => {
+
+
+        function setColumnDefs() {
             $scope.gridOptions.columnDefs = [
                 {
                     name: 'Op',
@@ -92,8 +105,25 @@
                     enableCellEdit: false,
                     enableFiltering: false,
                     width: '3%',
-                    minWidth: 100
+                    minWidth: 100,
+                    cellClass: function (grid, row) {
+                        return row.entity.idTipoOriginal !== row.entity.idTipoIva ? 'modifiedCell' : '';
+                    }
                 },
+                // {
+                //     name: 'I.V.A',
+                //     field: 'idTipoIva',
+                //     width: '8%',
+                //     minWidth: '100',
+                //     type: 'number',
+                //     editableCellTemplate: 'ui-grid/dropdownEditor',
+                //     cellFilter: 'cellFilterTipoIva:this',
+                //     editDropdownValueLabel: 'descripcion',
+                //     editDropdownIdLabel: 'idTipoIva',
+                //     enableCellEdit: true,
+                //     allowCellFocus: true,
+                //     enableCellEditOnFocus: true, 
+                // },
                 {
                     name: 'precioCosto',
                     field: 'precioCosto',
@@ -103,7 +133,7 @@
                     enableFiltering: false,
                     type: 'number',
                     width: '10%',
-                    minWidth: 100
+                    minWidth: 110
                 },
                 {
                     name: 'precioVenta',
@@ -184,6 +214,10 @@
                     }
                 }
             ]
+
+
+            // let indexTipoIva = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'idTipoIva');
+            // $scope.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tarifasImpuesto;
         }
 
         $scope.gridOptions.onRegisterApi = (gridApi) => {
@@ -197,19 +231,18 @@
             gridApi.edit.on.afterCellEdit($scope, afterCellEdit)
         }
         function afterCellEdit(rowEntity, colDef, newValue, oldValue) {
-            let msg = 'after cell edit ready '
-            $log.info(msg)
-            colDef.cellClass = function (grid, row, col, rowRenderIndex, colRenderIndex) {
-                row.entity.dirty = row.entity.dirty || {}
-                if (rowEntity.id === row.entity.id && newValue !== oldValue) {
-                    rowEntity.dirty[col.displayName] = true;
-                }
-                if (row.entity.dirty[col.displayName])
-                    return "modifiedCell";
-                return "";
-            };
 
-            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+            if ([null, "", undefined].includes(rowEntity[colDef.field])) {
+                rowEntity[colDef.field] = oldValue;
+                return
+            }
+            //Validacion de numeros negativos
+            if (['precioVenta', 'precioConIva', "porcentajeUtilidad"].includes(colDef.field) && newValue < 0) {
+                rowEntity[colDef.field] = oldValue;
+                return
+            }
+            if (oldValue === newValue) return
+
 
             const index = $scope.gridOptions.data.indexOf(rowEntity) //Obtenemos indice 
 
@@ -219,72 +252,61 @@
             let ganancia = 0
 
             if (colDef.field === "precioVenta") {
-                if ([null, undefined].includes(newValue)) {
-                    rowEntity.precioVenta = oldValue
-                }
-                if (rowEntity.precioVenta > 0) {
-                    if (rowEntity.precioVenta < rowEntity.precioCosto) {
-                        rowEntity[colDef.field] = oldValue
-                    }
+                if (rowEntity.precioVenta < rowEntity.precioCosto) {
+                    rowEntity[colDef.field] = oldValue
+                    tS.toastr('warning', 'El precio de venta no puede ser menor a precio costo!');
+                    return
                 }
             }
 
             if (colDef.field === "precioConIva") {
-                if ([null, undefined].includes(newValue)) {
-                    rowEntity.precioConIva = oldValue
+                if (rowEntity.precioConIva < $scope.precioCosto) {
+                    rowEntity.precioConIva = oldValue;
+                    tS.toastr('warning', 'El precio con IVA no puede ser menor a precio costo!');
+                    return
                 }
-
-                if (rowEntity.precioConIva > 0) {
-                    if (rowEntity.precioConIva < $scope.precioCosto) {
-                        rowEntity.precioConIva = oldValue
-                    }
-                }
-            }
-
-            if (colDef.field === "porcentajeUtilidad" && newValue === undefined || newValue === null) {
-                rowEntity.porcentajeUtilidad = oldValue
             }
 
             //Calculos 
             switch (colDef.field) {
                 case "precioVenta":
-                    precioConIva = _pricingUtils.calcularPrecioConIva(rowEntity.precioVenta, rowEntity.porcentajeIva)
-                    porcentajeUtilidad = _pricingUtils.campoPorcentajeUtilidad(rowEntity.precioCosto, rowEntity.precioVenta)
+                    precioConIva = pricingUtils.calcularPrecioConIva(rowEntity.precioVenta, rowEntity.porcentajeIva)
+                    porcentajeUtilidad = pricingUtils.campoPorcentajeUtilidad(rowEntity.precioCosto, rowEntity.precioVenta)
 
-                    $scope.gridOptions.data[index].precioVenta = _form.roundNumber(rowEntity.precioVenta, $scope.config.nroPrecio)
-                    $scope.gridOptions.data[index].precioConIva = _form.roundNumber(precioConIva, $scope.config.nroPrecio)
-                    $scope.gridOptions.data[index].porcentajeUtilidad = _form.roundNumber(porcentajeUtilidad, 5)
+                    $scope.gridOptions.data[index].precioVenta = fS.roundNumber(rowEntity.precioVenta, $scope.config.nroPrecio)
+                    $scope.gridOptions.data[index].precioConIva = fS.roundNumber(precioConIva, $scope.config.nroPrecio)
+                    $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(porcentajeUtilidad, 5)
                     if (rowEntity.precioVenta != oldValue) {
                         $scope.gridOptions.data[index].modified = true
                     }
-
                     break
 
                 case "precioConIva":
-                    precioVenta = _pricingUtils.calcularPrecioVenta(rowEntity.precioConIva, rowEntity.porcentajeIva)
-                    porcentajeUtilidad = _pricingUtils.campoPorcentajeUtilidad(rowEntity.precioCosto, precioVenta)
+                    precioVenta = pricingUtils.calcularPrecioVenta(rowEntity.precioConIva, rowEntity.porcentajeIva)
+                    porcentajeUtilidad = pricingUtils.campoPorcentajeUtilidad(rowEntity.precioCosto, precioVenta)
 
-                    $scope.gridOptions.data[index].precioConIva = _form.roundNumber(rowEntity.precioConIva, $scope.config.nroPrecio)
-                    $scope.gridOptions.data[index].precioVenta = _form.roundNumber(precioVenta, $scope.config.nroPrecio)
-                    $scope.gridOptions.data[index].porcentajeUtilidad = _form.roundNumber(porcentajeUtilidad, 5)
+                    $scope.gridOptions.data[index].precioConIva = fS.roundNumber(rowEntity.precioConIva, $scope.config.nroPrecio)
+                    $scope.gridOptions.data[index].precioVenta = fS.roundNumber(precioVenta, $scope.config.nroPrecio)
+                    $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(porcentajeUtilidad, 5)
                     if (rowEntity.precioConIva != oldValue) {
                         $scope.gridOptions.data[index].modified = true
                     }
                     break
                 case "porcentajeUtilidad":
-                    precioVenta = _pricingUtils.calcularPorcentajeUtilidad(rowEntity.precioCosto, rowEntity.porcentajeUtilidad)
-                    precioConIva = _pricingUtils.calcularPrecioConIva(precioVenta, rowEntity.porcentajeIva)
+                    precioVenta = pricingUtils.calcularPorcentajeUtilidad(rowEntity.precioCosto, rowEntity.porcentajeUtilidad)
+                    precioConIva = pricingUtils.calcularPrecioConIva(precioVenta, rowEntity.porcentajeIva)
 
-                    $scope.gridOptions.data[index].precioVenta = _form.roundNumber(precioVenta, $scope.config.nroPrecio)
-                    $scope.gridOptions.data[index].precioConIva = _form.roundNumber(precioConIva, $scope.config.nroPrecio)
+                    $scope.gridOptions.data[index].precioVenta = fS.roundNumber(precioVenta, $scope.config.nroPrecio)
+                    $scope.gridOptions.data[index].precioConIva = fS.roundNumber(precioConIva, $scope.config.nroPrecio)
                     if (rowEntity.porcentajeUtilidad != oldValue) {
                         $scope.gridOptions.data[index].modified = true
                     }
                     break
             }
+
             ganancia = rowEntity.precioVenta - rowEntity.precioCosto
             //$scope.update(rowEntity)
-            $scope.gridOptions.data[index].ganancia = _form.roundNumber(ganancia, 5)
+            $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, 5)
 
             for (const d of $scope.gridOptions.data) {
                 if (d.modified) {
@@ -298,111 +320,132 @@
                     }
                 }
             }
-            if ($scope.articlesToSave.length > 50) {
-                _tS.toastr("info", "Existen más de 50 articulos modificados, le recomendamos guardar los cambios")
-            }
-           
-        }
-        $scope.setColumnDefs()
 
-        $scope.initialLoad = () => {
-            // _commonSvc.getEstabAsign().then(
-            //     response => {
-            //         $scope.establecimientos = response
-            //         $scope.mainForm.codEstab = $scope.establecimientos.find(x => x.predeterminado == true).codEstab
-            //         $scope.getFilters()
-            //     }
-            // )
-            showLoader()
-            $scope.mainForm.tipo = 1
-            _mS.getData('get', 'Inventario/PrecioMasivo/?json=' + JSON.stringify($scope.mainForm), null, true).then(
-                response => {
-                    if (response.code == '1') {
-                        let temp = JSON.parse(response.payload)
-                        $scope.familias = temp[0]
-                        $scope.subfamilias = temp[1]
-                        $scope.tarifas = temp[2]
-                        $scope.config = JSON.parse(temp[3][0].jsonConfig).find(x => x.codTransaccion == 'AL')
 
-                        //console.log($scope.tarifas)
-                        $scope.mainForm.idTarifa = $scope.tarifas.find(x => x.predeterminada == true).idTarifa
-                    }
-                    hideLoader()
+            //Notificacion de celdas modificadas
+            colDef.cellClass = function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                row.entity.dirty = row.entity.dirty || {}
+                if (rowEntity.id === row.entity.id && newValue !== oldValue) {
+                    rowEntity.dirty[col.displayName] = true;
                 }
-            ).catch(error => {
-                hideLoader()
-                console.log(error)
-            })
+                if (row.entity.dirty[col.displayName])
+                    return "modifiedCell";
+                return "";
+            };
+
+            $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+
+            if ($scope.articlesToSave.length > 50) {
+                tS.toastr("info", "Existen más de 50 articulos modificados, le recomendamos guardar los cambios")
+            }
+
         }
-        $scope.initialLoad()
+        setColumnDefs();
+
+        initLoad();
+
+        function initLoad() {
+            try {
+                showLoader();
+                precioMasivoSvc.getDataForm().then(response => {
+                    const {
+                        familias,
+                        decimal,
+                        tarifasImpuesto,
+                        tarifas,
+                        subFamilias
+                    } = response;
+
+                    $scope.familias = familias;
+                    $scope.subfamilias = subFamilias;
+                    $scope.tarifas = tarifas;
+                    $scope.decimal = decimal;
+
+                    $scope.tarifasImpuesto = tarifasImpuesto;
+                    $scope.mainForm.idTarifa = $scope.tarifas.find(x => x.predeterminada).idTarifa;
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader())
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
         $scope.resultModalArticleEdit = (result) => {
             console.log(result)
         }
 
-        let isTriggered = false
 
         $scope.onChangeTarifa = () => {
-            if (isTriggered) {
-                $scope.getArticles()
-            }
-        }
-
-        $scope.proveedorSearch = (textSearch) => proveedorSvc.search(textSearch)
-        $scope.selectProveedorFiltro = (item) => {
-            $scope.mainForm.rucProveedor = item.numeroIdentificacion
             $scope.getArticles()
         }
 
-        $scope.articuloSearch = (item) => {
-            if (item.length >= 3) {
-                return _articleSvc.search({ busqueda: item })
-            }
+        $scope.onKeyupProduct = function () {
+            console.log('search product')
         }
-
-        $scope.articleSelected = (item) => {
-            $scope.mainForm.idArticulo = item.idArticulo
+        $scope.onSelectProduct = function (result) {
+            $scope.mainForm.idArticulo = result.idArticulo
             $scope.getArticles()
         }
+
+        $scope.onKeyupProveedor = function () {
+
+        }
+        $scope.onSelectProveedor = function (result) {
+            $scope.mainForm.rucProveedor = result.numeroIdentificacion
+            $scope.getArticles()
+        }
+
         $scope.articlesBackup = []
 
-        $scope.fillGrid = (articles) => {
-            $scope.gridOptions.data = articles.map(item => {
+        function fillGrid() {
+            $scope.gridOptions.data = $scope.articles.map(item => {
+                let dataTarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.idTipoIva === item.idTipoIva);
                 return {
                     ...item,
-                porcentajeIva: item.iva,
-                ganancia: _form.roundNumber((Number(item.precioVenta) - item.precioCosto), $scope.config.nroPrecio),
-                estado: item.estadoTarifa,
-                modified: false
-            } 
+                    porcentajeIva: dataTarifaImpuesto.porcentaje,
+                    ganancia: fS.roundNumber((Number(item.precioVenta) - item.precioCosto), 5),
+                    estado: item.estadoTarifa,
+                    modified: false
+                }
             })
+        }
+
+        $scope.onChangeSubFamilia = () => {
+            $scope.mainForm.idTipoOriginal = 0;
+            $scope.mainForm.idTipoIva = 0;
+            $scope.getArticles();
+        }
+        $scope.onChangeOpciones = function () {
+            $scope.mainForm.idTipoOriginal = 0;
+            $scope.mainForm.idTipoIva = 0;
         }
 
         $scope.getArticles = () => {
-            showLoader()
-            $scope.search = ''
-            isTriggered = false
             $scope.articles = []
             $scope.articlesBackup = []
-            $scope.mainForm.tipo = 2
-            _mS.getData('get', 'Inventario/PrecioMasivo/?json=' + JSON.stringify($scope.mainForm), null, true).then(
-                response => {
-                    if (response.code == '0') {
-                        _tS.toastr('warning', response.message)
-                    }
-                    if (response.code == '1') {
-                        isTriggered = true
-                        let temp = JSON.parse(response.payload)
-                        $scope.articles = temp[0]
-                        $scope.articlesBackup = JSON.parse(JSON.stringify(temp[0]))
-                        $scope.fillGrid(temp[0])
-                    }
-                    hideLoader()
-                }
-            ).catch(error => {
-                hideLoader()
-                console.log(error)
+            $scope.articlesToSave = [];
+            $scope.mainForm.tipo = 2;
+
+
+            showLoader();
+            let dataSearch = {
+                opcion: $scope.mainForm.option,
+                idTarifa: $scope.mainForm.idTarifa,
+                rucProveedor: $scope.mainForm.rucProveedor,
+                idSubFamilia: $scope.mainForm.idSubFamilia
+            }
+            precioMasivoSvc.getProducts(dataSearch).then(response => {
+                $scope.articles = response;
+                $scope.articlesBackup = structuredClone($scope.articles);
+
+                fillGrid($scope.articles)
             })
+                .catch(error => {
+                    console.log(error)
+                })
+                .finally(() => hideLoader());
         }
         $scope.rollbackChanges = async () => {
             let { isConfirmed } = await Swal.fire({
@@ -416,40 +459,42 @@
             })
             if (isConfirmed) {
                 $scope.articlesToSave = []
-                $scope.articles = []
-                $scope.articles = JSON.parse(JSON.stringify($scope.articlesBackup))
+                $scope.articles = [];
+                $scope.mainForm.idTipoOriginal = 0;
+                $scope.mainForm.idTipoIva = 0;
+                $scope.articles = structuredClone($scope.articlesBackup)
                 $scope.gridOptions.data = []
                 $scope.gridApi.core.refresh();
 
-                $scope.setColumnDefs()
-                $scope.fillGrid($scope.articles)
-            } 
+                setColumnDefs()
+                fillGrid($scope.articles)
+            }
         }
         $scope.update = (item, option = null) => {
             // if (option == 1) {
-            //     item.precioConIva = _form.roundNumber(_pricingUtils.calcularPrecioConIva(item.precioVenta, item.iva), $scope.config.nroPrecio)
-            //     item.porcentajeUtilidad = _form.roundNumber(_pricingUtils.campoPorcentajeUtilidad(item.precioCosto, item.precioVenta), 5)
+            //     item.precioConIva = fS.roundNumber(pricingUtils.calcularPrecioConIva(item.precioVenta, item.iva), $scope.config.nroPrecio)
+            //     item.porcentajeUtilidad = fS.roundNumber(pricingUtils.campoPorcentajeUtilidad(item.precioCosto, item.precioVenta), 5)
             // }
             // if (option == 2) {
-            //     item.precioVenta = _form.roundNumber(_pricingUtils.calcularPrecioVenta(item.precioConIva, item.iva), $scope.config.nroPrecio)
-            //     item.porcentajeUtilidad = _form.roundNumber(_pricingUtils.campoPorcentajeUtilidad(item.precioCosto, item.precioVenta), 5)
+            //     item.precioVenta = fS.roundNumber(pricingUtils.calcularPrecioVenta(item.precioConIva, item.iva), $scope.config.nroPrecio)
+            //     item.porcentajeUtilidad = fS.roundNumber(pricingUtils.campoPorcentajeUtilidad(item.precioCosto, item.precioVenta), 5)
             // }
             // if (option == 3) {
-            //     item.precioVenta = _form.roundNumber(_pricingUtils.calcularPorcentajeUtilidad(item.precioCosto, item.porcentajeUtilidad), $scope.config.nroPrecio)
-            //     item.precioConIva = _form.roundNumber(_pricingUtils.calcularPrecioConIva(item.precioVenta, item.iva), $scope.config.nroPrecio)
+            //     item.precioVenta = fS.roundNumber(pricingUtils.calcularPorcentajeUtilidad(item.precioCosto, item.porcentajeUtilidad), $scope.config.nroPrecio)
+            //     item.precioConIva = fS.roundNumber(pricingUtils.calcularPrecioConIva(item.precioVenta, item.iva), $scope.config.nroPrecio)
             // }
             showLoader()
             let method = "PUT"
-            if (item.idArticuloPvp == 0) {
+            if (item.idArticuloPvP == 0) {
                 method = "POST"
             }
-            _mS.getData(method, "Inventario/PrecioMasivo/", { data: item }, true).then(
+            mS.getData(method, "Inventario/PrecioMasivo/", { data: item }, true).then(
                 response => {
                     if (response.code == "0") {
-                        _tS.toastr('warning', response.message)
+                        tS.toastr('warning', response.message)
                     }
                     if (response.code == "1") {
-                        _tS.toastr('success', response.message)
+                        tS.toastr('success', response.message)
                     }
                     hideLoader()
                 }
@@ -459,9 +504,85 @@
             })
         }
 
+        $scope.onChangeTipoIvaInicial = function () {
+            if (!$scope.articles.some(d => d.idTipoIva === $scope.mainForm.idTipoIva)) {
+                Swal.fire({
+                    icon: 'warning',
+                    html: '<small>No hay ningún artículo que posee este tipo Iva</small>'
+                })
+                $scope.mainForm.idTipoIvaDestino = 0;
+                $scope.tarifasImpuestoDestino = [];
+                return
+            }
+
+            $scope.tarifasImpuestoDestino = $scope.tarifasImpuesto.filter(ti => ti.idTipoIva !== $scope.mainForm.idTipoIva)
+        }
+
+        $scope.onChangeTipoIvaDestino = function () {
+            try {
+            //    let tarifaImpuestoInicialDesc = $scope.tarifasImpuesto.find(ti => ti.idTipoIva === $scope.mainForm.idTipoIva);
+                let { descripcion: tarifaImpuestoDestinoDesc } = $scope.tarifasImpuestoDestino.find(ti => ti.idTipoIva === $scope.mainForm.idTipoIvaDestino);
+
+                Swal.fire({
+                    title: "Modificar los precios",
+                    html: `Se realizará cálculo de los precios, teniendo en cuenta el tipo de IVA: <b>${tarifaImpuestoDestinoDesc}</b> como factor determinante.`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Continuar!",
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        applyTarifaImpuestoDestino();
+                    }
+                });
+
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        function applyTarifaImpuestoDestino() {
+            let { porcentaje } = $scope.tarifasImpuestoDestino.find(ti => ti.idTipoIva === $scope.mainForm.idTipoIvaDestino);
+            $scope.articlesToSave = [];
+
+            for (let item of $scope.articles) {
+                if (item.idTipoOriginal === $scope.mainForm.idTipoIva) {
+                    let precioVenta = pricingUtils.calcularPrecioVenta(item.precioConIva, porcentaje);
+                    item.precioVenta = fS.roundNumber(precioVenta, $scope.decimal.nroPrecio);
+
+                    let precioConIva = pricingUtils.calcularPrecioConIva(item.precioVenta, porcentaje);
+
+                    item.precioConIva = fS.roundNumber(precioConIva, $scope.decimal.nroPrecio);
+
+                    let porcentajeUtilidad = pricingUtils.campoPorcentajeUtilidad(item.precioCosto, precioVenta);
+
+                    item.porcentajeUtilidad = fS.roundNumber(porcentajeUtilidad, 5);
+
+                    // let ganancia = item.precioVenta - item.precioCosto;
+
+                    // item.ganancia = fS.roundNumber(ganancia, 5);
+                    // console.log('teststst')
+                    item.idTipoIva = $scope.mainForm.idTipoIvaDestino;
+                    $scope.articlesToSave.push(item)
+                }
+
+            }
+            fillGrid();
+            tS.toastr('success', 'Aplicado correctamente');
+
+        }
+
         $scope.save = async () => {
             if ($scope.articlesToSave.length == 0) {
-                _tS.toastr("warning", "Usted no poseen ningun articulo modificado")
+                tS.toastr("warning", "Usted no poseen ningun articulo modificado")
+                return
+            }
+
+            if ($scope.articlesToSave.length > 50) {
+                tS.toastr("warning", "La cantidad de artículos permitidos es 50")
                 return
             }
             let message
@@ -486,9 +607,9 @@
             message += `</tbody></table>`
             let { isConfirmed } = await Swal.fire({
                 title: 'Esta seguro de actualizar el precio de los siguientes articulos?',
-                html:message,
-                //html: `Esta seguro de actualizar los <b>${$scope.articlesToSave.length}</b> articulos modificados?, esto no se podra revertir!`,
-                width: '800px',
+                //    html: message,
+                html: `Esta seguro de actualizar los <b>${$scope.articlesToSave.length}</b> articulos modificados?, esto no se podra revertir!`,
+               // width: '400px',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -498,31 +619,41 @@
                 allowOutsideClick: false
             })
             if (isConfirmed) {
-                showLoader()
+                let results = $scope.articlesToSave.map(item => {
+
+                    return {
+                        idTipoIva: item.idTipoIva,
+                        idArticuloPvP: item.idArticuloPvP,
+                        idArticulo: item.idArticulo,
+                        idTarifa: item.idTarifa,
+                        precioVenta: item.precioVenta,
+                        precioConIva: item.precioConIva,
+                        porcentajeUtilidad: item.porcentajeUtilidad,
+                    }
+                })
+
                 let data = {
                     tipo: 2,
-                    articles: JSON.stringify($scope.articlesToSave)
+                    articles: results
                 }
-                _mS.getData('PUT', 'Inventario/PrecioMasivo/', { data: data }, true).then(
-                    response => {
-                        if (response.code == "0") {
-                            _tS.toastr("warning", response.message)
-                        }
-                        if (response.code == "1") {
-                            $scope.articlesToSave = []
-                            _tS.toastr("info", response.message)
-                        }
-                        hideLoader()
+                showLoader()
+                precioMasivoSvc.put(data).then(response => {
+                    if (response.code == "0") {
+                        tS.toastr("warning", response.message)
                     }
+                    if (response.code == "1") {
+                        $scope.articlesToSave = []
+                        tS.toastr("success", response.message)
+                    }
+                }
                 ).catch(error => {
-                    hideLoader()
-                    $log.error(error)
-                })
+                    console.log(error)
+                }).finally(() => hideLoader());
             }
         }
 
         $scope.refresh = () => {
-            $window.location.href = '/PrecioMasivo/Index';
+            window.location.href = '/PrecioMasivo/Index';
         }
 
     }

@@ -1,3 +1,4 @@
+import { formatDateMoment } from './../../../../../core/utils/format-date-moment';
 import { Component, inject } from '@angular/core';
 import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ModalService } from '@core/services/modal.service';
@@ -40,8 +41,8 @@ export class AnticipoComponent {
     maxSize: 5,
     codEstab: '',
     customerId: 0,
-    fromDate: '',
-    toDate: ''
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date())
   }
   totalRecords = 0;
   getAnticipos() {
@@ -102,6 +103,7 @@ export class AnticipoComponent {
   onDateRangeSelection(range: { from: string, to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
+    this.getAnticipos()
   }
 
 

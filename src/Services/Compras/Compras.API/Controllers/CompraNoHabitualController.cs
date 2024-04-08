@@ -1,10 +1,6 @@
-﻿using Azure.Core;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Common.Infrastructure.Repository;
 using Compras.API.Interfaces;
-using Compras.API.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;

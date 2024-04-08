@@ -1,4 +1,3 @@
-import { data } from 'jquery';
 import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { AccountingModule } from '@modules/accounting/accounting.module';

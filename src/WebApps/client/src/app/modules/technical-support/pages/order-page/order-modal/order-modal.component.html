@@ -1,8 +1,8 @@
-<form [formGroup]="orderForm">
+<form [formGroup]="orderForm" (ngSubmit)="save()">
   <div class="modal-header">
-    <h5 class="modal-title">
+    <h4 class="modal-title">
       <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
-    </h5>
+    </h4>
     <button
       type="button"
       class="btn-close"
@@ -60,52 +60,84 @@
       </div>
       <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="form-group">
-          <label for="encargado">
+          <label for="userId">
             Responsable: <span class="text-danger">*</span>
           </label>
           <select
-            formControlName="encargado"
-            id="encargado"
-            class="form-control border-select"
+            formControlName="userId"
+            id="userId"
+            class="form-select border-select"
             required
           >
-            <option value=""></option>
+            @for (item of users; track $index) {
+            <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
+            }
           </select>
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="col-6">
-        <div class="card rounded border border-info">
-          <div class="card-header">Datos cliente:</div>
-          <div class="card-body">
-            <!--Start section customer -->
-            <div class="form-group">
-              <label for="customerSearch"
-                >Cliente:
-                <span class="text-danger">*</span>
-              </label>
-              <app-company-customer-search
-                (onCustomerSelected)="onCustomerSelected($event)"
-              ></app-company-customer-search>
-            </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="customerSearch">Cliente: </label>
+          <app-company-customer-search
+            (onCustomerSelected)="onCustomerSelected($event)"
+          ></app-company-customer-search>
+        </div>
+      </div>
+    </div>
 
-            <!--Start Form register-update customer-->
-            <!-- @if(showForm){
-                <CustomerFormFast />
-                } -->
-          </div>
+    <!--End Form register-update customer-->
+    @if (order.customerCompanyId > 0) {
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <app-device-search (onDeviceSelected)="onDeviceSelected($event)" />
+        </div>
+      </div>
+      <div class="col">
+        <button
+          type="button"
+          class="btn btn-outline-success btn-sm"
+          title="Ver Historial de equipos del cliente"
+          (click)="getDevices()"
+        >
+          <fa-icon [icon]="'history'"></fa-icon> Historial
+        </button>
+      </div>
+    </div>
+    } @if (orderDetails.length > 0) {
+    <div class="row">
+      <div class="col">
+        <app-tabulator
+          [columnNames]="columnNames"
+          [tableData]="orderDetails"
+        ></app-tabulator>
+      </div>
+    </div>
+    }
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="observación">Observación:</label>
+          <textarea
+            id="obs"
+            formControlName="obs"
+            class="form-control border-select"
+            aria-label="obs"
+          ></textarea>
         </div>
       </div>
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-success btn-sm">
+    <button type="submit" class="btn btn-outline-success" title="Guardar Orden">
       <fa-icon [icon]="'save'"></fa-icon> Guardar
     </button>
     <button
-      type="submit"
-      class="btn btn-outline-dark btn-sm"
+      type="button"
+      class="btn btn-outline-dark"
+      title="Cancelar Orden"
       (click)="closeModal()"
     >
       &times; Cancelar

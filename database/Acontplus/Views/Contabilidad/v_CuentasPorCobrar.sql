@@ -31,6 +31,7 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		  ,cc.importeTotal
 		  ,cc.abono
 		  ,cc.saldo
+          ,cc.diasMora
 		  ,usuario                 = us.nombreUsuario
 		  ,tiempoCredito           = tc.tipo
           ,tc.descripcion as tipoTiempoCredito

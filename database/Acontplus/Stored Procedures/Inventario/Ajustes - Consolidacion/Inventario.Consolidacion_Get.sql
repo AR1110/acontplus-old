@@ -10,50 +10,44 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Inventario.Consolidacion_Get', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Consolidacion_Get
-GO
-CREATE PROCEDURE Inventario.Consolidacion_Get @idUsuarioRol INT 
-,@json VARCHAR(MAX) = NULL
+CREATE OR ALTER PROCEDURE Inventario.Consolidacion_Get 
+     @userRoleId INT
+    ,@json VARCHAR(MAX)
+    ,@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @idEntidad INT
-	,@tipo INT
-	,@id INT
-	,@opcion INT
-	,@idArticulo INT 
-	,@rucProveedor VARCHAR(25)
-	,@idSubFamilia INT
-	,@nroDocumento VARCHAR(25)
-	,@sql NVARCHAR(MAX) 
-	,@params NVARCHAR(MAX)
-    ,@pageIndex INT   
-    ,@pageSize INT    
-    ,@ckFecha BIT 
-    ,@fechaInicio DATETIME2 
-    ,@fechaFin DATETIME2
+
+    --> Global
+    DECLARE @tipo INT ,@idEntidad INT
+
+    --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+
+    --> Filters
+	DECLARE @id             INT
+	       ,@opcion         INT
+	       ,@idArticulo     INT 
+	       ,@rucProveedor   VARCHAR(25)
+	       ,@idSubFamilia   INT
+	       ,@nroDocumento   VARCHAR(25)
+           ,@ckFecha        BIT 
+           ,@fechaInicio    DATETIME2 
+           ,@fechaFin       DATETIME2
+           ,@idPuntoEmision INT
 
 
-	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
-	
-	SELECT @tipo = tipo FROM OPENJSON (@json) WITH (tipo INT)
-
-	--> DataForm
-    IF @tipo = 1
-		BEGIN
-			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
-			SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
-			SELECT * FROM SubFamilia     WITH(NOLOCK) WHERE idEntidad = @idEntidad
-			SELECT * FROM Config.Sistema WITH(NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD' 
-
-            RETURN 
-		END
+	--> Variables
+	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId;
+    
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT)
 
     --> Get
-	IF @tipo = 2
+	IF @tipo = 1
 		BEGIN
+            
+            SET @tableNames = 'consolidaciones'
 
             SELECT @pageIndex   = pageIndex  
                   ,@pageSize    = pageSize
@@ -70,25 +64,25 @@ BEGIN
             )
 			
             SET @sql = 'SELECT ci.idConsolidacionInventario
-				              ,FORMAT(ci.fechaEmision, ''dd/MM/yyyy HH:mm'')           as fechaEmision
+				              ,FORMAT(ci.fechaEmision, ''dd/MM/yyyy HH:mm'')            as fechaEmision
 				              ,observacion 
 				              ,ci.total
-				              ,dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ci.nroDoc) as nroDoc
-				              ,ep.descripcion                                          as estadoDoc
-				              ,ep.codigo                                               as codDoc
-				              ,u.nombreUsuario                                         as usuario
-				              ,IIF(ep.codigo = ''A'',''table-danger'','''')            as style
-                              ,COUNT(*) OVER()                                         as totalRecords
+				              ,dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,ci.nroDoc) as nroDoc
+				              ,ep.descripcion                                           as estadoDoc
+				              ,ep.codigo                                                as codDoc
+				              ,us.nombreUsuario                                         as usuario
+				              ,IIF(ep.codigo = ''A'',''table-danger'','''')             as style
+                              ,COUNT(*) OVER()                                          as totalRecords
 			            FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
 			            INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision = ci.idPuntoEmision
-			            INNER JOIN Sri.Establecimiento    s WITH (NOLOCK) ON s.codEstab        = pe.codEstab
-			            INNER JOIN dbo.Usuario            u WITH (NOLOCK) ON u.idUsuario       = ci.idUsuario
+			            INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
+			            INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario      = ci.idUsuario
 			            INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago   = ci.idEstadoDocumento
 			            WHERE ci.idEntidad = @idEntidad '
 
             SET @params = '@idEntidad   INT
-                          ,@fechaInicio DATETIME
-                          ,@fechaFin    DATETIME
+                          ,@fechaInicio DATETIME2
+                          ,@fechaFin    DATETIME2
                           ,@pageIndex   INT
                           ,@pageSize    INT'
 
@@ -108,59 +102,61 @@ BEGIN
 
             RETURN
 		END
-    
-    --> Get Id For Edit
+
+	--> DataForm
+    IF @tipo = 2
+		BEGIN
+            
+            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales'
+
+			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+			
+            SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+			
+            SELECT * FROM SubFamilia     WITH(NOLOCK) WHERE idEntidad = @idEntidad
+			
+            SELECT * FROM Config.v_Sistema_Decimal WITH(NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL' 
+
+            RETURN 
+		END
+
+    --> Ver Detalle
 	IF @tipo = 3
 		BEGIN
             
+            SET @tableNames = 'comprobante,detalles'
+
             SELECT @id = id FROM OPENJSON (@json) WITH (id INT)
 
-			SELECT 
-				 idConsolidacionInventario = ci.idConsolidacionInventario
-				,fechaEmision = CAST(ci.fechaEmision AS date)
-				,observacion  = ISNULL(ci.observacion,'Ninguna') 
-				,total        = ci.total
-				,idPuntoEmision = ci.idPuntoEmision
-				,codEstab       = es.codEstab
-			FROM dbo.ConsolidacionInventario ci
-			INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = ci.idPuntoEmision
-			INNER JOIN Sri.Establecimiento es ON es.codEstab = pe.codEstab
+			SELECT ci.idConsolidacionInventario
+				  ,ci.fechaEmision 
+				  ,ci.observacion
+				  ,ci.total
+				  ,es.nombreComercial
+                  ,es.estab + '-' + pe.ptoEmi as ptoEmi 
+			FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
+			INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision = ci.idPuntoEmision
+			INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
 			WHERE ci.idConsolidacionInventario = @id
 
-			SELECT 
-				 idConsolidacionInventarioDetalle = cid.idConsolidacionInventarioDetalle
-				,idBodega = cid.idBodega
-				,idArticulo = cid.idArticulo
-				,idMedida = cid.idMedida
-				,descripcion = cid.descripcion
-				,cantidad = cid.cantidad
-				,precioCosto = cid.precioCosto
-				,precioActual = cid.precioActual
-				,codigo = a.codigo
-				,codigoTipoIva = ti.codigo
-				,nombreTipoIva = ti.descripcion
-				,stock = a.stock
-				,a.fraccionado
-				,m.descripcion medida
-				,total = (cantidad * cid.precioActual)				
-			FROM ConsolidacionInventarioDetalle cid WITH(NOLOCK) 
-			INNER JOIN Inventario.v_Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo
-			INNER JOIN Medida m WITH(NOLOCK) ON m.idMedida = cid.idMedida
-			INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = a.idTipoIva
-			WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
-
-			SELECT 
-				 cid.idConsolidacionInventarioDetalle
-				,a.idMedida 
-				,a.medida
-				,precioCosto = cid.precioCosto
-				,medidasTemp = (CASE WHEN a.fraccionado = 1 THEN (SELECT cid.idConsolidacionInventarioDetalle, af.idMedida, m.descripcion, af.precioCostoFraccionado precioCosto FROM ArticuloFraccionado af WITH (NOLOCK) 
-																												   INNER JOIN Medida m WITH (NOLOCK) ON af.idMedida = m.idMedida 
-																												   WHERE af.idArticulo = a.idArticulo FOR JSON PATH) ELSE '[]' END)
-			FROM ConsolidacionInventarioDetalle cid WITH(NOLOCK) 
-			INNER JOIN v_Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo 
-			WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
-
+			SELECT cd.idConsolidacionInventarioDetalle
+				  ,ar.codigo
+                  ,cd.descripcion
+                  ,ar.stock
+                  ,cd.cantidad
+                  ,me.descripcion as medida
+                  ,bo.descripcion as bodega
+                  ,cd.precioActual
+                  ,cd.precioCosto
+                  ,CAST(cd.precioCosto * cd.cantidad as numeric(18,5)) as total
+			FROM dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) 
+			INNER JOIN dbo.Articulo                 ar WITH (NOLOCK) ON ar.idArticulo = cd.idArticulo
+			INNER JOIN dbo.Medida                   me WITH (NOLOCK) ON me.idMedida   = cd.idMedida
+            INNER JOIN dbo.Bodega                   bo WITH (NOLOCK) ON bo.idBodega   = cd.idBodega
+			WHERE cd.idConsolidacionInventario = @id 
+              AND cd.estado = 1
+            ORDER BY cd.idConsolidacionInventarioDetalle ASC
+			
             RETURN 
 
 		END
@@ -169,6 +165,8 @@ BEGIN
 	IF @tipo = 4
 		BEGIN
             
+            SET @tableNames = 'articulos'
+
             SELECT @opcion       = opcion 
 	              ,@idArticulo   = idArticulo
 	              ,@rucProveedor = rucProveedor
@@ -189,7 +187,8 @@ BEGIN
 				           @idSubFamilia INT,
 				           @nroDocumento VARCHAR(25) '
 
-	        SET @sql = 'SELECT a.idArticulo
+	        SET @sql = 'SELECT TOP 100
+                               a.idArticulo
 				              ,codigo
 				              ,codigoAuxiliar
 				              ,codigoBarra
@@ -198,46 +197,96 @@ BEGIN
 				              ,precioCosto
 				              ,estado
 				              ,iva
-				              ,cantidad = 1
+				              ,cantidad = a.stock
 				              ,llevaInventario
 				              ,ISNULL(idMedida,0) idMedida
 				              ,ISNULL(a.medida, ''SIN MEDIDA'') medida
 				              ,ISNULL(tipoIva, ''SIN IVA'') AS nombreTipoIva
-				              ,a.fraccionado
-				              ,CASE WHEN a.fraccionado = 1 THEN (SELECT af.idMedida, m.descripcion, af.precioCostoFraccionado precioCosto FROM ArticuloFraccionado af WITH (NOLOCK) 
-																												               INNER JOIN Medida m WITH (NOLOCK) ON af.idMedida = m.idMedida WHERE af.idArticulo = a.idArticulo FOR JSON PATH)
-				              ELSE ''[]'' END medidas
+				              ,ISNULL
+                               ((SELECT me.idMedida 
+			                           ,me.descripcion 
+			                           ,orden = IIF(af.gestionVenta = 1,1,3)
+                                       ,af.conversion
+			                     FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			                     INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida = af.idMedida
+			                     WHERE af.idArticulo = a.idArticulo
+                                   AND af.estado = 1
+                                   FOR JSON PATH),''[]''
+                               ) as fraccionado
+                              ,(
+                                 SELECT me.idMedida
+			                           ,me.descripcion 
+			                           ,orden = 2
+                                       ,1 as conversion
+			                     FROM dbo.Articulo     ar WITH (NOLOCK)
+			                     INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida
+			                     WHERE ar.idArticulo = a.idArticulo 
+                                  FOR JSON PATH
+                                ) as principal
+
 				         FROM Inventario.v_Articulo a 
 				         WHERE a.estado = 1 
 				           AND a.idEntidad = @idEntidad
 				           AND a.llevaInventario = 1 '
 
-			IF (@opcion = 1)
+			IF @opcion = 1
 				BEGIN 
 					SET @sql = @sql + 'AND a.idArticulo = @idArticulo '
 				END
-			IF (@opcion = 3)
+
+			IF @opcion = 3
 				BEGIN
 					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
 				END
-			IF (@opcion = 4)
+
+			IF @opcion = 4
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE rucClienteProveedor = @rucProveedor) '
 				END
-			IF (@opcion = 5)
+
+			IF @opcion = 5
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
 				END
 
-		    SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
+            IF @opcion = 6
+                BEGIN
+                    SET @sql = @sql + 'AND a.importacion = 1 
+                                       AND a.stock > 0
+                                       AND a.idArticulo NOT IN (
+                                                                SELECT cd.idArticulo
+                                                                FROM dbo.ConsolidacionInventario              ci WITH (NOLOCK)
+                                                                INNER JOIN dbo.EstadoPago                     ep WITH (NOLOCK) ON ep.idEstadoPago              = ci.idEstadoDocumento
+                                                                INNER JOIN dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) ON cd.idConsolidacionInventario = ci.idConsolidacionInventario
+                                                                WHERE ci.idEntidad = @idEntidad
+                                                                  AND ep.codigo = ''AC''
+                                                               ) '
+                END 
+
+		    SET @sql = @sql + 'ORDER BY a.idArticulo ASC '
 		
 		    EXEC sp_executesql @sql,@params
-							   ,@idEntidad    = @idEntidad 
-							   ,@idArticulo   = @idArticulo
-							   ,@idSubFamilia = @idSubFamilia
-							   ,@rucProveedor = @rucProveedor
-							   ,@nroDocumento = @nroDocumento
+							       ,@idEntidad    = @idEntidad 
+							       ,@idArticulo   = @idArticulo
+							       ,@idSubFamilia = @idSubFamilia
+							       ,@rucProveedor = @rucProveedor
+							       ,@nroDocumento = @nroDocumento
             RETURN 
 		END
- 
+    
+    --> Serie Comprobante
+    IF @tipo = 5
+        BEGIN
+            
+            SET @tableNames = 'serieComprobante'
+
+            SELECT @idPuntoEmision = idPuntoEmision FROM OPENJSON(@json) WITH(idPuntoEmision INT)
+               
+            SELECT TOP 1 [Common].[ufnGetSerieDocument](cd.estab,cd.ptoEmi,secuencial,0) as serieComprobante  
+            FROM Config.v_ConfigDocumento cd WITH (NOLOCK) 
+			WHERE cd.idPuntoEmision = @idPuntoEmision
+			  AND cd.codDoc = 'CIV'
+
+            RETURN
+        END 
 END

@@ -122,7 +122,7 @@
                     <div class="form-group">
                         <span>Buscar</span>
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                               ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
+                               ng-model="dataSearch.bySearch" placeholder="...">
                     </div>
                 </div>
             </div>
@@ -192,12 +192,18 @@
                                             </md-button>
                                         </md-menu-item>
 
-
                                         <md-menu-item ng-if="accion.reporte">
                                             <md-button ng-click="getReport(item)">
-                                                <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
+                                                <span md-menu-align-target><i class="ti-file"></i> PDF</span>
                                             </md-button>
                                         </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.reporte">
+                                            <md-button ng-click="getReportHistorial(item)">
+                                                <span md-menu-align-target><i class="ti-receipt"></i> PDF Historial</span>
+                                            </md-button>
+                                        </md-menu-item>
+
                                     </md-menu-content>
                                 </md-menu>
                             </td>

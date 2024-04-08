@@ -227,7 +227,6 @@
             try {
                 showLoader();
                 $scope.aprobComprobantes = [];
-                console.log($scope.dataSearch.byEstado)
                 let dataSearch = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
@@ -271,12 +270,13 @@
             try {
                 showLoader();
                 aprobacionDocSvc.getDataFilter().then(response => {
+                    console.log(response)
                     $scope.establecimientos = response.estabs;
-                    $scope.estadoDocumentos = response.estadoDocs; 
-                    if($scope.establecimientos.length>0){
+                    $scope.estadoDocumentos = response.estadoDocs;
+                    if ($scope.establecimientos.length > 0) {
                         $scope.dataSearch.codEstab = $scope.establecimientos.find(item => (item.defaultEstab)).codEstab;
                         $scope.getAprobComprobantes();
-                    }else{
+                    } else {
                         tS.toastr('warning', 'No tienes asignado Establecimiento!')
                     }
                 })
@@ -472,6 +472,7 @@
                     id: item.idAprob_Document,
                     codEstab: item.codEstab,
                     codDoc: item.docDestino,
+                    tipo : 1
                 }
 
                 const parameters = {
@@ -494,6 +495,36 @@
             }
         }
 
+        $scope.getReportHistorial = function (item) {
+            try {
+
+                let format = 'pdf';
+                let dataParms = {
+                    id: item.idAprob_Document,
+                    codEstab: item.codEstab,
+                    codDoc: item.docDestino,
+                    tipo : 2
+                }
+
+                const parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo : "RHA",
+                        codEstab: item.codEstab,
+                        format,
+                        aditionalParams: []
+                    }),
+                    dataParams: JSON.stringify(dataParms)
+                }
+                commonSvc.getReport({
+                    parameters,
+                    formatType: format
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
     }
 
 
@@ -1862,11 +1893,11 @@
                 let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
                 let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
                 if (dataMedidaFraccionado) {
-                    let conversionFraccionadaSum = item.cantidad * dataMedida.conversion;
+                    let conversionFraccionadaSum = item.cantidad * dataMedidaFraccionado.conversion;
                     total.totalCantidadFraccionada += conversionFraccionadaSum;
                 }
                 if (dataMedidaPrincipal) {
-                    let conversionPrincipalSum = item.cantidad * dataMedida.conversion;
+                    let conversionPrincipalSum = item.cantidad * dataMedidaPrincipal.conversion;
                     total.totalCantidadPrincipal += conversionPrincipalSum;
                 }
                 return total;
@@ -2035,12 +2066,11 @@
 
         function calculateTotalItems(items) {
             return items.map(item => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.valorDescuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle),
                     porcentajeDescuento: fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje)
                 }
@@ -2107,18 +2137,9 @@
             }
         }
 
-        function setColumnDefs() {
-            let defaultPermission = Object.freeze({
-                tarifa: true,
-                medida: true,
-                tipoIva: true,
-                porcentajeDescuento: true,
-                descuento: true,
-                precioUnitario: true,
-                precioConIva: true,
-            })
+        function setColumnDefs() { 
 
-            const ventaDetailPermission = $scope.permisoDetalleVenta ? $scope.permisoDetalleVenta : defaultPermission;
+            const ventaDetailPermission = $scope.permisoDetalleVenta 
 
             $scope.gridOptionsDetalle.columnDefs = [{
                 name: 'Op.',
@@ -2467,6 +2488,8 @@
                 entity.productoFraccionable = articulo.productoFraccionable;
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                entity.precioCosto = dataMedida.precioCosto;
+
 
                 //Datos Adicionales 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
@@ -2600,6 +2623,7 @@
         }
 
 
+
         $scope.askToSave = async function () {
             try {
 
@@ -2711,13 +2735,16 @@
 
     function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, articuloSvc, params) {
         let { docOrigenDesc, docDestinoDesc, data } = params
-        let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
+        let { comprobante, cliente, detalles, datosAdicionalesArticulo, formasPago, config } = data;
 
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
 
         $scope.data = comprobante;
-        $scope.cliente = cliente;
+
+        $scope.mostrarFormasPago = $scope.data.docDestino === DOC_TYPE.FV_SRI;
+
+        $scope.cliente = cliente; 
 
         $scope.dataClone = {};
         $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
@@ -2740,6 +2767,16 @@
         }))
 
         $scope.infoAdicionalDocumento = [];
+
+        $scope.formasPago = formasPago;
+        $scope.config = config;
+        
+        $scope.dataFormaPago = {
+            idFormaPagoSri: 0,
+            idTiempoCredito: 0,
+            plazo: 1,
+            total: 0
+        }
 
         //GridOptions Invoice 
         $scope.gridOptionsDetalle = {
@@ -2979,6 +3016,9 @@
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
                 $scope.data.irbpnr = irbpnr
                 $scope.data.propina = propina;
+
+                //Formas pago 
+                $scope.dataFormaPago.total = importeTotal;
             } catch (error) {
                 console.log(error);
             }
@@ -2986,12 +3026,11 @@
 
         function calculateTotalItems(items) {
             return items.map(item => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.valorDescuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle),
                     porcentajeDescuento: fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje)
                 }
@@ -3020,8 +3059,7 @@
                  * Establecimiento - Impuesto Tarifa 
                  */
                 $scope.establecimientos = estabs;
-                const codEstab = $scope.establecimientos.flatMap((dt) => dt.puntosEmision)
-                    .find((dt) => dt.idPuntoEmision === $scope.data.idPuntoEmision).codEstab;
+                const codEstab = $scope.establecimientos.flatMap((dt) => dt.puntosEmision).find((dt) => dt.idPuntoEmision === $scope.data.idPuntoEmision).codEstab;
 
                 let dataEstab = $scope.establecimientos.find(item => (item.codEstab === codEstab))
 
@@ -3052,8 +3090,18 @@
 
                 $scope.tiempoCreditos = tiemposCredito;
                 if ($scope.tiempoCreditos.length > 0) {
-                    $scope.data.idTiempoCredito = $scope.tiempoCreditos[0].idTiempoCredito;
+                    let dataTiempoCredito = $scope.tiempoCreditos[0];
+                    $scope.data.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+
+                    //Formas Pago 
+                    $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
+                }
+
+                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO 
+                if ($scope.formasPago.length > 0) {
+                    setDataFormaPagoSri();
                 }
 
                 //Permisos para detalle y documento    
@@ -3062,6 +3110,8 @@
 
                 //Vendedores-usuarios
                 $scope.vendedores = vendedores;
+
+
 
                 setColumnDefs();
                 $scope.gridOptionsDetalle.data = calculateTotalItems(detalles);
@@ -3079,19 +3129,9 @@
 
         $scope.initiload();
 
-        function setColumnDefs() {
+        function setColumnDefs() { 
 
-            let defaultPermission = Object.freeze({
-                tarifa: true,
-                medida: true,
-                tipoIva: true,
-                porcentajeDescuento: true,
-                descuento: true,
-                precioUnitario: true,
-                precioConIva: true,
-            })
-
-            const ventaDetailPermission = $scope.permisoDetalleVenta ? $scope.permisoDetalleVenta : defaultPermission;
+            const ventaDetailPermission = $scope.permisoDetalleVenta  
 
             $scope.gridOptionsDetalle.columnDefs = [{
                 name: 'Op.',
@@ -3341,15 +3381,19 @@
                     fechaVencimientoEscrita
                 } = fS.sumarDiasAFecha(fechaEmision, diasCredito);
 
-                var formattedDateTime = moment(fechaVencimiento).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
+                // var formattedDateTime = moment(fechaVencimiento).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
 
-                $scope.data.fechaVencimiento = new Date(formattedDateTime);
+                $scope.data.fechaVencimiento = new Date(fechaVencimiento);
                 $scope.data.fechaEmisionEscrita = fechaEmisionEscrita;
                 $scope.data.fechaVencimientoEscrita = fechaVencimientoEscrita;
 
                 //Variables temporales
                 $scope.dataClone.fechaEmision = fechaEmision;
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+
+                //Formas pago
+                $scope.dataFormaPago.idTiempoCredito = $scope.data.idTiempoCredito;
+                $scope.dataFormaPago.plazo = diasCredito;
             }
         }
 
@@ -3538,6 +3582,8 @@
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto   
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+
 
                 //Datos Adicionales 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
@@ -3546,7 +3592,6 @@
                 entity.articuloTarifas = dataMedida.tarifas;
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
                 entity.idTarifa = $scope.data.idTarifa;
-                entity.precioCosto = articulo.precioCosto;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
@@ -3667,6 +3712,36 @@
 
         $scope.resultModalInfoAdicional = function (result) {
             $scope.infoAdicionalDocumento = result;
+        }
+        
+        function setDataFormaPagoSri() {
+            let dataFormaPago = {};
+            if ($scope.cliente.idFormaPagoSri > 0) {
+                dataFormaPago = findFormaPagoById($scope.cliente.idFormaPagoSri);
+            }
+            else if ($scope.dataFormaPago.idFormaPagoSri > 0) {
+                dataFormaPago = findFormaPagoById($scope.dataFormaPago.idFormaPagoSri);
+            } else {
+                dataFormaPago = $scope.formasPago.find(item => {
+                    if ($scope.config.idFormaPagoSri > 0) {
+                        return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
+                    } else {
+                        return (item.codigo === '01');
+                    }
+                }) || {};
+            }
+            $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+            $scope.dataFormaPago.infoReferencia = dataFormaPago.infoReferencia;
+
+            function findFormaPagoById(idFormaPagoSri) {
+                return $scope.formasPago.find(item => item.idFormaPagoSri === idFormaPagoSri) || {};
+            }
+
+        }
+
+        $scope.onChangeFormaPago = function () {
+            $scope.cliente.idFormaPagoSri = 0;
+            setDataFormaPagoSri();
         }
 
 
@@ -3801,10 +3876,9 @@
                         let detalles = checkStockDetalle($scope.gridOptionsDetalle.data)
                         let query = facturaSvc.queryMapper({
                             data: $scope.data,
-                            cliente: {
-                                idCliente: $scope.cliente.idCliente
-                            },
+                            cliente: $scope.cliente,
                             detalles,
+                            dataFormaPago: $scope.dataFormaPago,
                             itemsDeleted: [],
                             infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                             historyDatosAdicionales: $scope.historyDatosAdicionales,
@@ -3946,13 +4020,12 @@
 
         function calculateTotalItems(items) {
             return items.map((item, index) => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
                 let porcentajeDescuento = item.precioUnitario === 0 ? 0 : (item.descuento / item.precioUnitario) * 100;
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     n: index + 1,
                     ...item,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle),
                     porcentajeDescuento: fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje),
                     valorDescuento: item.descuento,

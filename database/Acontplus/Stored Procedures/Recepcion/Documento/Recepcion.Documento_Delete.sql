@@ -22,22 +22,29 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	DECLARE @idUsuario INT 
 
-	SET @idUsuario = (SELECT idUsuario FROM dbo.Rol WHERE idRol = @idRol)
-		IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND complete = 1)
+	
+	BEGIN TRY
+        
+        SET @idUsuario = (SELECT idUsuario FROM dbo.Rol WHERE idRol = @idRol)
+		
+        IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND complete = 1)
 			 BEGIN
 				SELECT '0' code, 'Imposible eliminar, este archivo ya ha sido importado' as 'message'
 				RETURN
 			 END
-	BEGIN TRY
+
 		BEGIN TRAN
 				
 			 DELETE FROM FactElect.DocRelacionado WHERE idDocumentoRecibido = @idDocumento
 
-			 DELETE FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
-			 
+             DELETE FROM Recepcion.DocumentoImpuesto WHERE DocumentoRecibidoId = @idDocumento
+			
+             DELETE FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
+
 		COMMIT TRAN
         SELECT '1' code, 'Eliminado Exitosamente' as 'message'
 	END TRY
+
 	BEGIN CATCH
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)

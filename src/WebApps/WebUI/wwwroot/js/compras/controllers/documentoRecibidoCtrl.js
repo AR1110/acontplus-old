@@ -1101,7 +1101,9 @@
                 try {
                     let data = {
                         condicion: false,
-                        busqueda: item
+                        busqueda: item,
+                        pageIndex: 1,
+                        pageSize: 25
                     }
                     //Api Inventario
                     return articuloSvc.search(data)

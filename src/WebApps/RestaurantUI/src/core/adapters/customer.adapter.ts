@@ -1,4 +1,5 @@
 import { CustomerDataForm, CustomerReadDto, RawCustomerData } from "../models";
+import { isValidField } from "../utilities";
 
 function customerReadAdapter(customers: RawCustomerData): CustomerReadDto;
 function customerReadAdapter(customers: RawCustomerData[]): CustomerReadDto[];
@@ -65,9 +66,9 @@ function dataFormReadAdapter(inputObject: CustomerDataForm): CustomerDataForm {
     }
     return obj;
 }
+ 
 
-
-export {
+export { 
     customerReadAdapter,
-    dataFormReadAdapter
+    dataFormReadAdapter,
 }

@@ -51,7 +51,8 @@ function cityAdapter(cities: RawCityData[]): Array<City> {
 
 function voucherQuotaAdapter(voucherQuotas: any): Array<VoucherQuota> {
     return voucherQuotas.map((voucherItem: any) => {
-        const cuotas = JSON.parse(voucherItem.cuotas);
+        // const cuotas = JSON.parse(voucherItem.cuotas);
+        const cuotas = voucherItem.cuotas;
         return {
             ...voucherItem,
             cuotas: structuredClone(cuotas),
@@ -61,11 +62,11 @@ function voucherQuotaAdapter(voucherQuotas: any): Array<VoucherQuota> {
 }
 
 
-function comprobanteAdpater(comprobante: any): Voucher {
+function comprobanteAdpater(comprobante: any): Voucher { 
     return {
         customerCompanyId: comprobante.idCliente,
-        customerIdentification: comprobante.numeroIdentificacion,
-        customerName: comprobante.nombreFiscal,
+        customerIdentification: comprobante.identificacionComprador,
+        customerName: comprobante.razonSocialComprador,
         payingAmount: comprobante.importeTotal,
         receivedAmount: comprobante.saldo,
         changeReturn: 0,

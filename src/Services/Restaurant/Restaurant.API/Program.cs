@@ -3,10 +3,9 @@ using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
+using Restaurant.API.Data;
 using Restaurant.API.Extensions;
-using Restaurant.Infrastructure.Data;
 using Services.Common;
-using Services.Common.Logs;
 using Services.Common.Middleware;
 
 internal class Program
@@ -40,14 +39,21 @@ internal class Program
 
         var app = builder.Build();
 
+        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        {
+            app.Urls.Add("http://*:5011"); // 👈 Add the URL
+        }
+        else
+        {
+            app.UseHttpsRedirection();
+        }
+
         app.UseMiddleware<ExceptionMiddleware>();
 
         // Configure the HTTP request pipeline.
         app.UseSwaggerDocumentation();
 
         app.UseRouting();
-
-        app.UseHttpsRedirection();
 
         app.UseAuthentication();
 

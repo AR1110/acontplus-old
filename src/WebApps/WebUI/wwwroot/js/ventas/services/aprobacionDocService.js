@@ -7,6 +7,10 @@
         let url = 'Venta/AprobacionDocumento/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
+        const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
+
         let service = {}
 
         service.getDataFilter = function () {
@@ -19,7 +23,7 @@
                 }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
-            
+
                     let tempEstabsAndPtosEmision = mainData[0];
                     let estadoDocs = mainData[1];
                     let dataToGroup = {
@@ -46,7 +50,7 @@
                 }
                 if (response.code === "1") {
                     const mainData = JSON.parse(response.payload);
-         
+
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -54,8 +58,8 @@
 
                     let tempEstabsAndPtosEmision = mainData[4];
                     let tempBodegas = mainData[5];
-                    let vendedores = mainData[6];
-                    let { permisoVenta } = fS.getDataUserRol();
+                    let vendedores = mainData[6]; 
+                    let { sales: permisoVenta } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
@@ -133,6 +137,8 @@
                     let historialRepository = dataRepository[3];
                     let infoAdicionalDocumento = dataRepository[4];
                     let datosAdicionalesArticulo = dataRepository[5];
+                    let formasPago = dataRepository[6];
+                    let config = dataRepository[7] ? dataRepository[7][0] : {}
 
                     let compMapper = {
                         idAprob_Document: compRepository.idAprob_Document,
@@ -161,7 +167,14 @@
                         nombreComercial: clienteRepository.nombreComercial,
                         nombreFiscal: clienteRepository.nombreFiscal,
                         numeroIdentificacion: clienteRepository.numeroIdentificacion,
-                        direccion: clienteRepository.direccion
+                        direccion: clienteRepository.direccion,
+
+                        idTipoIdentificacion: clienteRepository.idTipoIdentificacion,
+                        codigoSriTipoIdentificacion: clienteRepository.tipoIdentificacion,
+                        identificacionComprador: clienteRepository.numeroIdentificacion,
+                        razonSocialComprador: clienteRepository.nombreFiscal,
+
+                        idFormaPagoSri: clienteRepository.idFormaPagoSri
                     }
 
                     let items = detalleRepository.map((itemPrincipal, index) => {
@@ -190,6 +203,8 @@
                             }))
                         }
 
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+
                         let obj = {
                             n: index + 1,
                             idAprob_Document_Detailt: restItem.idAprob_Document_Detailt,
@@ -211,6 +226,7 @@
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
                             precioCosto: restItem.precioCosto,
                             precioUnitario: restItem.precioUnitario,
+                            precioConIva: precioConIva || 0,
                             tarifa: restItem.tarifa,//✅
                             valorDescuento: restItem.descuento,
                             valorImpuesto: restItem.valorImpuesto,//✅
@@ -222,7 +238,8 @@
                             estado: 1,
                             datosAdicionalesArticulo: restItem.datosAdicionalesArticulo || [],
                             fechaEmision: fechaEmision && fS.formatDate(fechaEmision) || null,
-                            datosAdicionales: restItem.datosAdicionales
+                            datosAdicionales: restItem.datosAdicionales,
+                            nota: restItem.nota || null
                         }
 
                         return obj;
@@ -243,7 +260,9 @@
                             jsonAdicional: JSON.parse(item.jsonAdicional),
                             selected: item.selected,
                             estado: item.estado
-                        }))
+                        })),
+                        formasPago: fS.mapperFromFormaPago(formasPago),
+                        config
                     }
                 }
             }).catch(error => {
@@ -300,10 +319,20 @@
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                     }
+
+
+                    let resultsItems = itemsTemp.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
+
                     return {
                         comprobante: data,
                         cliente,
-                        items: itemsTemp,
+                        items: resultsItems,
                         historial: historialRepository || [],
                         tarifasImpuesto
                     }
@@ -382,7 +411,8 @@
                     valorImpuesto: item.valorImpuesto,//✅
                     llevaInventario: item.llevaInventario,
                     idBodega: item.idBodega,
-                    fechaEmision: fS.formatDateTimeZone(item.fechaEmision)
+                    fechaEmision: fS.formatDateTimeZone(item.fechaEmision),
+                    nota: item.nota
                 }
                 tempDetail.push(obj);
             }
@@ -411,7 +441,7 @@
                 ice: 0,
                 idBodega: 0,
                 total: 0,
-                nota: "S/N",
+                nota: null,
                 llevaInventario: false,
                 datosAdicionales: false,
                 estado: 1

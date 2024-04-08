@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using Common.Core.Models;
 using Common.Core.Models.Ventas;
-using Common.Core.ViewModels;
 using Common.Core.ViewModels.Ventas;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +18,7 @@ namespace Common.Infrastructure.Repository
             _config = config;
             _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new ApiResponse();
-        } 
+        }
         public async Task<ApiResponse> GetSaleAsync(int idRol, int idTipoDocumento, int idComprobante)
         {
             var listar = new List<RetencionVentaDetalleViewModel>();
@@ -80,6 +79,6 @@ namespace Common.Infrastructure.Repository
             }
 
             return _gr;
-        } 
+        }
     }
 }

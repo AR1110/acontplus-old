@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebUI.Pages.Restaurant.Reports
 {
@@ -12,7 +11,7 @@ namespace WebUI.Pages.Restaurant.Reports
         }
         public void OnGet()
         {
-            var url = _configuration["UrlApps:SveltekitApp"];
+            var url = _configuration["UrlApps:AngularApp"];
             ViewData["FrontEnd"] = url;
         }
     }

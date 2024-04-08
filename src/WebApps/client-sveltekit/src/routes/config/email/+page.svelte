@@ -3,7 +3,6 @@
 	import { client } from '$utils/axiosClient';
 	import { onMount } from 'svelte';
 	import Swal from 'sweetalert2';
-	import { options } from 'toastr';
 
 	let url = 'Config/EmailConfig/';
 
@@ -27,11 +26,11 @@
 	let onLoad = function () {
 		try {
 			client.get(url + 'Get?json=' + JSON.stringify({ tipo: 1 })).then((response: any) => {
-				if (response.code === '0') {
+				if (response.data.code === '0') {
 					console.log(response);
 				}
-				if (response.code === '1') {
-					data = JSON.parse(response.payload)[0][0];
+				if (response.data.code === '1') {
+					data = JSON.parse(response.data.payload)[0][0];
 				}
 			});
 		} catch (error) {
@@ -48,7 +47,7 @@
 			const swalWithBootstrapButtons = Swal.mixin({
 				customClass: {
 					confirmButton: 'btn btn-success',
-					cancelButton: 'btn btn-danger ml-2'
+					cancelButton: 'btn btn-danger ml-2',
 				},
 				buttonsStyling: false
 			});
@@ -67,11 +66,12 @@
 						client
 							.put(url + '?id=' + data.idEmailConfig, { data })
 							.then((response: any) => {
-								if (response.code === '0') {
-									swalWithBootstrapButtons.fire('', response.message, 'warning');
+								if (response.data.code === '0') {
+									swalWithBootstrapButtons.fire('', response.data.message, 'warning');
 								}
-								if (response.code === '1') {
-									swalWithBootstrapButtons.fire('', response.message, 'success');
+								if (response.data.code === '1') {
+									console.log(response.data);
+									swalWithBootstrapButtons.fire('', response.data.message, 'success');
 									onLoad();
 								}
 							})

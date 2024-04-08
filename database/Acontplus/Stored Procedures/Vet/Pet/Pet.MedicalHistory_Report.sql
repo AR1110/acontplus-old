@@ -22,7 +22,7 @@ BEGIN
 
     SELECT @id = id FROM OPENJSON (@json) WITH(id INT '$.id')
 
-	SET @tableNames = 'mainDataSet,healthChecks,behaviorTests'
+	SET @tableNames = 'mainDataSet,behaviorTests,healthChecks'
 
 	--Main DS
 		SELECT CASE 
@@ -51,6 +51,17 @@ BEGIN
 		LEFT JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id 
 	WHERE mh.Id = @id
 
+        --Behavior
+
+    SELECT [bs].[Name] behaviorStatus
+		,[b].[Name] behavior
+		,bs.[Order]
+		,CASE WHEN bt.BehaviorStatusId= bs.Id AND bt.BehaviorId = b.Id THEN 'x' ELSE '' END behaviorSelected
+	FROM Pet.BehaviorTest bt WITH(NOLOCK)
+		INNER JOIN Pet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id
+		CROSS JOIN Pet.BehaviorStatus bs
+	WHERE bt.MedicalHistoryId = @id
+
 	--Diseases
 	
     SELECT [d].[Name] disease
@@ -61,16 +72,5 @@ BEGIN
 		INNER JOIN Pet.Disease d WITH(NOLOCK) ON hc.DiseaseId = d.Id
 		CROSS JOIN Pet.DiseaseStatus ds
 	WHERE hc.MedicalHistoryId = @id
-
-    --Behavior
-
-    SELECT [bs].[Name] behaviorStatus
-		,[b].[Name] behavior
-		,bs.[Order]
-		,CASE WHEN bt.BehaviorStatusId= bs.Id AND bt.BehaviorId = b.Id THEN 'x' ELSE '' END behaviorSelected
-	FROM Pet.BehaviorTest bt WITH(NOLOCK)
-		INNER JOIN Pet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id
-		CROSS JOIN Pet.BehaviorStatus bs
-	WHERE bt.MedicalHistoryId = @id
 END
 GO

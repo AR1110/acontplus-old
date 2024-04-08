@@ -20,10 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Contabilidad.CuentaPorPagar_Update_Status', N'P') IS NOT NULL
-DROP PROCEDURE Contabilidad.CuentaPorPagar_Update_Status
-GO
-CREATE PROCEDURE Contabilidad.CuentaPorPagar_Update_Status @idCuentaPorPagar INT, @importeTotal NUMERIC(18,5)
+CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorPagar_Update_Status @idCuentaPorPagar INT, @importeTotal NUMERIC(18,5)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -34,14 +31,22 @@ BEGIN
 	DECLARE @idEstadoPago INT
 	DECLARE @residuo AS NUMERIC(18,5)
 
-	SELECT @posfechado = SUM(pd.abono)
-	FROM dbo.PagoDetalle pd WITH (NOLOCK)
-	INNER JOIN Contabilidad.CuotaPorPagar pp WITH (NOLOCK) ON pp.idCuotaPorPagar = pd.idCuotaPorPagar
-	INNER JOIN dbo.Pago pa WITH (NOLOCK) ON pa.idPago = pd.idPago
-	INNER JOIN dbo.ComprobanteEgreso ce WITH (NOLOCK) ON ce.idComprobanteEgreso = pa.idComprobanteEgreso
-	WHERE pp.idCuentaPorPagar = @idCuentaPorPagar  AND ce.estado = 1 AND cobro = 0
-	
-	SELECT @abono = SUM(abono) FROM Contabilidad.CuotaPorPagar WHERE idCuentaPorPagar = @idCuentaPorPagar AND estado = 1
+    SELECT @posfechado = SUM(hp.abono) 
+    FROM dbo.ComprobanteEgreso ce WITH (NOLOCK) 
+    INNER JOIN Contabilidad.Historial_Pago hp ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+    INNER JOIN dbo.Pago                    pa ON pa.idPago              = hp.idPago
+    WHERE ce.estado = 1
+      AND hp.idCuentaPorPagar = @idCuentaPorPagar
+      AND pa.posfechado = 1
+      AND pa.cobro = 1
+
+    SELECT @abono = SUM(hp.abono) 
+    FROM dbo.ComprobanteEgreso ce WITH (NOLOCK) 
+    INNER JOIN Contabilidad.Historial_Pago hp ON ce.idComprobanteEgreso = hp.idComprobanteEgreso
+    INNER JOIN dbo.Pago                    pa ON pa.idPago              = hp.idPago
+    WHERE ce.estado = 1
+      AND hp.idCuentaPorPagar = @idCuentaPorPagar
+      AND pa.cobro = 1
 
 	SELECT @residuo = ISNULL(@importeTotal,0) - ISNULL(@abono,0)
 
@@ -52,9 +57,14 @@ BEGIN
 
 	IF ISNULL(@posfechado,0) <= 0
 		BEGIN 
-			IF @residuo = 0  
+			IF @residuo <= 0  
 				BEGIN
 					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PA'
+
+                    IF @residuo < 0 
+                        BEGIN
+                            SET @abono = @importeTotal
+                        END 
 				END 
 
 			IF @residuo > 0 

@@ -1,4 +1,4 @@
-use AcontPlus
+USE AcontPlus
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -19,160 +19,236 @@ GO
 -- Create date: 2023-05-16
 -- Description:	SP FOR GET ALL PRICES OF ARTICLES
 -- =============================================
-IF OBJECT_ID(N'Inventario.PrecioMasivo_Get', N'P') IS NOT NULL
-	DROP PROCEDURE Inventario.PrecioMasivo_Get
-GO
-CREATE PROCEDURE Inventario.PrecioMasivo_Get @idUsuarioRol INT
-,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.PrecioMasivo_Get 
+     @userRoleId INT
+    ,@json VARCHAR(MAX)
+    ,@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
+    SET LANGUAGE SPANISH;
 
-	DECLARE @tipo INT
-	,@opcion INT
-	,@idArticulo INT
-	,@idTarifa Int
-	,@rucProveedor VARCHAR(25)
-	,@idFamilia INT
-	,@idSubFamilia INT
-	,@nroDocumento VARCHAR(25)
-	,@sql NVARCHAR(MAX)
-	,@idEntidad INT
-	,@params NVARCHAR(MAX)
+     --> Global
+	DECLARE @tipo INT ,@idEntidad INT
 
-	SET @idEntidad = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+    --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX)
 
-	SET @params = '@idEntidad INT,
-				   @idArticulo INT,
-				   @idTarifa INT,
-				   @rucProveedor VARCHAR(25),
-				   @idFamilia INT,
-				   @idSubFamilia INT,
-				   @nroDocumento VARCHAR(25) '
+	DECLARE @idArticulo   INT 
+           ,@idTarifa     INT
+	       ,@rucProveedor VARCHAR(25)
+	       ,@idSubFamilia INT
+	       ,@nroDocumento VARCHAR(25)
+           ,@subFamiliasChecked VARCHAR(250) 
 
+    --> Filters
+	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
-	SET @sql = 'SELECT a.idArticulo
-				,codigo
-				,codigoAuxiliar
-				,codigoBarra
-				,descripcion
-				,stock
-				,precioCosto
-				,estado
-				,@idTarifa idTarifa
-				,iva
-				,idArticuloPvp = ISNULL((SELECT TOP 1 ap.idArticuloPvp FROM v_ArticuloPvp ap
-														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.idTarifa = @idTarifa), 0)
-				,precioVenta = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.idTarifa = @idTarifa), 0)
-				
-				,precioConIva = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.idTarifa = @idTarifa), 0)
-				,porcentajeUtilidad = ISNULL((SELECT TOP 1 ap.porcentajeUtilidad FROM v_ArticuloPvp ap
-														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.idTarifa = @idTarifa), 0)
-				,estadoTarifa = ISNULL((SELECT TOP 1 ap.estado FROM v_ArticuloPvp ap
-														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.idTarifa = @idTarifa), 0)
-				,tarifa = ISNULL((SELECT TOP 1 ap.tarifa FROM v_ArticuloPvp ap
-														WHERE ap.idArticulo = a.idArticulo 
-														AND ap.idTarifa = @idTarifa), '''')
-				--,pvp1 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-				--										WHERE ap.idArticulo = a.idArticulo 
-				--										AND ap.codTarifa = ''1''), 0)
-				--,pvp2 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-				--										WHERE ap.idArticulo = a.idArticulo 
-				--										AND ap.codTarifa = ''2''), 0)
-				--,pvp3 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-				--											WHERE ap.idArticulo = a.idArticulo 
-				--											AND ap.codTarifa = ''3''), 0)
-				--,pvp4 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-				--											WHERE ap.idArticulo = a.idArticulo 
-				--											AND ap.codTarifa = ''4''), 0)
-				--,pvp5 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
-				--											WHERE ap.idArticulo = a.idArticulo 
-				--											AND ap.codTarifa = ''5''), 0)
-				--,pvpIva1 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-				--										WHERE ap.idArticulo = a.idArticulo 
-				--										AND ap.codTarifa = ''1''), 0)
-				--,pvpIva2 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-				--										WHERE ap.idArticulo = a.idArticulo 
-				--										AND ap.codTarifa = ''2''), 0)
-				--,pvpIva3 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-				--											WHERE ap.idArticulo = a.idArticulo 
-				--											AND ap.codTarifa = ''3''), 0)
-				--,pvpIva4 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-				--											WHERE ap.idArticulo = a.idArticulo 
-				--											AND ap.codTarifa = ''4''), 0)
-				--,pvpIva5 = ISNULL((SELECT TOP 1 ap.precioConIva FROM v_ArticuloPvp ap
-				--											WHERE ap.idArticulo = a.idArticulo 
-				--											AND ap.codTarifa = ''5''), 0)
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-				FROM Inventario.v_Articulo a 
-				WHERE a.estado = 1 
-				AND a.idEntidad = @idEntidad '
-	
-	SELECT @tipo = tipo
-	,@opcion = opcion
-	,@idTarifa = idTarifa
-	,@idArticulo = idArticulo
-	,@rucProveedor = rucProveedor
-	,@idFamilia = idFamilia
-	,@idSubFamilia = idSubFamilia
-	,@nroDocumento = nroDocumento
-	FROM OPENJSON(@json) WITH (
-		tipo INT '$.tipo',
-		opcion INT '$.opcion',
-		idTarifa INT '$.idTarifa',
-		idArticulo INT '$.idArticulo',
-		rucProveedor VARCHAR(25) '$.rucProveedor',
-		idFamilia INT '$.idFamilia',
-		idSubFamilia INT '$.idSubFamilia',
-		nroDocumento VARCHAR(25) '$.nroDocumento'
-	)
-
-	IF (@tipo = 1)
+    --> Filters
+	IF @tipo = 1
 		BEGIN
-			SELECT * FROM Familia WITH (NOLOCK) --WHERE idEntidad = @idEntidad
-			SELECT * FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad
+            
+            SET @tableNames = 'subfamilias,tarifas,decimales,impuestos'
+
+            SELECT sf.idSubFamilia
+                  ,sf.descripcion as subFamilia
+                  ,sf.codigo 
+                  ,familia = ISNULL(fa.descripcion, 'Ninguna')
+                  ,fa.idFamilia
+            FROM dbo.SubFamilia    sf WITH (NOLOCK) 
+            LEFT JOIN dbo.Familia fa WITH (NOLOCK) ON fa.idFamilia = sf.idFamilia
+            WHERE idEntidad = @idEntidad
+              AND sf.estado = 1
+
 			SELECT * FROM Tarifa WITH (NOLOCK) WHERE idEntidad = @idEntidad
-			SELECT * FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD' --AND JSON_VALUE(jsonConfig, '$[0].codTransaccion') = 'AL'
+
+			SELECT * FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL'
+
+            SELECT * FROM dbo.TipoIva WITH (NOLOCK) WHERE estado = 1 
+
+            RETURN 
 		END
-	IF (@tipo = 2)
+
+    --> Get Articulos 
+	IF @tipo = 2
 		BEGIN
-			IF (@opcion = 1)
+            
+            SET @tableNames = 'articulos'
+
+            SELECT @idTarifa     = idTarifa
+	              ,@idArticulo   = idArticulo
+	              ,@rucProveedor = rucProveedor
+	              ,@idSubFamilia = idSubFamilia
+	              ,@nroDocumento = nroDocumento
+                  ,@subFamiliasChecked = subFamiliasChecked
+	        FROM OPENJSON(@json) WITH 
+            (
+		        idTarifa           INT 
+		       ,idArticulo         INT
+		       ,rucProveedor       VARCHAR(25)
+		       ,idSubFamilia       INT 
+		       ,nroDocumento       VARCHAR(25) 
+               ,subFamiliasChecked VARCHAR(250) 
+	        )
+
+            SET @params = '@idEntidad          INT
+				          ,@idArticulo         INT
+				          ,@idTarifa           INT
+				          ,@rucProveedor       VARCHAR(25)
+				          ,@idSubFamilia       INT
+				          ,@nroDocumento       VARCHAR(25)
+                          ,@subFamiliasChecked VARCHAR(250)'
+
+
+	        SET @sql = 'SELECT a.idArticulo
+                              ,a.idTipoIva
+				              ,codigo
+				              ,codigoAuxiliar
+				              ,codigoBarra
+				              ,descripcion
+				              ,stock
+				              ,precioCosto
+				              ,estado
+				              ,iva
+				              ,ISNULL((SELECT       ap.idArticuloPvp
+                                                   ,ap.idArticulo
+                                                   ,ap.idTarifa
+                                                   ,ap.precioVenta
+                                                   ,ap.precioConIva
+                                                   ,ap.porcentajeUtilidad
+                                                   ,ap.tarifa
+                                       FROM v_ArticuloPvp ap
+									   WHERE ap.idArticulo = a.idArticulo
+                                         AND ap.precioVenta > 0 
+                                       ORDER BY ap.predeterminada DESC
+                                       FOR JSON PATH
+                                       ), ''[]'') as tarifas
+				        FROM Inventario.v_Articulo a 
+				        WHERE a.estado = 1 
+				          AND a.idEntidad = @idEntidad '
+
+			IF @idArticulo > 0
 				BEGIN 
 					SET @sql = @sql + 'AND a.idArticulo = @idArticulo '
 				END
-			IF (@opcion = 2)
-				BEGIN 
-					PRINT CAST(@IDFAMILIA AS VARCHAR(4))
-					SET @sql = @sql + 'AND a.idFamilia = @idFamilia '
-				END
-			IF (@opcion = 3)
-				BEGIN
-					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
-				END
-			IF (@opcion = 4)
+
+            IF @subFamiliasChecked IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + 'AND a.idSubFamilia IN (SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+                END 
+
+			IF @rucProveedor IS NOT NULL
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE rucClienteProveedor = @rucProveedor) '
 				END
-			IF (@opcion = 5)
+
+			IF @nroDocumento IS NOT NULL
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
 				END
-		SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
-		EXEC sp_executesql @sql, @params
-							   ,@idEntidad = @idEntidad
-							   ,@idTarifa = @idTarifa
-							   ,@idArticulo = @idArticulo
-							   ,@idFamilia = @idFamilia
-							   ,@idSubFamilia = @idSubFamilia
-							   ,@rucProveedor = @rucProveedor
-							   ,@nroDocumento = @nroDocumento
+
+		    SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC  '
+
+		    EXEC sp_executesql @sql,@params
+							       ,@idEntidad          = @idEntidad
+							       ,@idTarifa           = @idTarifa
+							       ,@idArticulo         = @idArticulo
+							       ,@idSubFamilia       = @idSubFamilia
+							       ,@rucProveedor       = @rucProveedor
+							       ,@nroDocumento       = @nroDocumento
+                                   ,@subFamiliasChecked = @subFamiliasChecked
+            RETURN 
 		END
-END
+
+    IF @tipo = 3
+	    BEGIN
+            
+            SET @tableNames = 'articulos'
+
+            SELECT @idTarifa           = idTarifa
+	              ,@idArticulo         = idArticulo
+	              ,@rucProveedor       = rucProveedor
+	              ,@idSubFamilia       = idSubFamilia
+	              ,@nroDocumento       = nroDocumento
+                  ,@subFamiliasChecked = subFamiliasChecked
+	        FROM OPENJSON(@json) WITH 
+            (
+		         idTarifa           INT 
+		        ,idArticulo         INT
+		        ,rucProveedor       VARCHAR(25)
+		        ,idSubFamilia       INT 
+		        ,nroDocumento       VARCHAR(25) 
+                ,subFamiliasChecked VARCHAR(250) 
+	        )
+
+            SET @params = '@idEntidad          INT
+				          ,@idArticulo         INT
+				          ,@idTarifa           INT
+				          ,@rucProveedor       VARCHAR(25)
+				          ,@idSubFamilia       INT
+				          ,@nroDocumento       VARCHAR(25)
+                          ,@subFamiliasChecked VARCHAR(250)'
+
+
+	        SET @sql = 'SELECT af.idArticuloFraccionado
+                              ,af.idTipoIva
+                              ,af.idArticulo
+				              ,af.codigo  
+				              ,descripcion = af.articulo
+                              ,medida = af.medidaFraccionada
+				              ,af.stock
+				              ,precioCosto = af.precioCostoFraccionado
+				              ,af.estado
+				              ,af.iva
+				              ,ISNULL((SELECT afp.idArticuloFraccionadoPvP 
+                                             ,afp.idArticuloFraccionado
+                                             ,afp.idTarifa
+                                             ,afp.precioVenta
+                                             ,afp.precioConIva
+                                             ,afp.porcentajeUtilidad
+                                             ,tarifa = t.descripcion
+                                      FROM dbo.ArticuloFraccionadoPvp afp WITH (NOLOCK)
+                                      INNER JOIN dbo.Tarifa             t WITH (NOLOCK) ON t.idTarifa = afp.idTarifa
+									  WHERE afp.idArticuloFraccionado = af.idArticuloFraccionado
+                                        AND afp.precioVenta > 0 
+                                      ORDER BY afp.idArticuloFraccionadoPvP DESC
+                                      FOR JSON PATH ), ''[]'') as tarifas
+				        FROM v_articulo_fraccionado  af WITH (NOLOCK)
+				        WHERE af.estado = 1  AND af.idEntidad = @idEntidad '
+
+		    IF @idArticulo > 0
+			    BEGIN 
+				    SET @sql = @sql + 'AND af.idArticulo = @idArticulo '
+			    END
+
+            IF @subFamiliasChecked IS NOT NULL
+                BEGIN 
+                    SET @sql = @sql + 'AND af.idSubFamilia IN (SELECT value FROM STRING_SPLIT(@subFamiliasChecked, '',''))'
+                END 
+
+		    IF @rucProveedor IS NOT NULL
+			    BEGIN
+				    SET @sql = @sql + 'AND af.idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE rucClienteProveedor = @rucProveedor) '
+			    END
+
+		    IF @nroDocumento IS NOT NULL
+			    BEGIN
+				    SET @sql = @sql + 'AND af.idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
+			    END
+
+		    SET @sql = @sql + 'ORDER BY af.idArticuloFraccionado DESC  '
+
+		    EXEC sp_executesql @sql,@params
+							        ,@idEntidad          = @idEntidad
+							        ,@idTarifa           = @idTarifa
+							        ,@idArticulo         = @idArticulo
+							        ,@idSubFamilia       = @idSubFamilia
+							        ,@rucProveedor       = @rucProveedor
+							        ,@nroDocumento       = @nroDocumento
+                                    ,@subFamiliasChecked = @subFamiliasChecked
+            RETURN 
+	    END
+    END
 GO

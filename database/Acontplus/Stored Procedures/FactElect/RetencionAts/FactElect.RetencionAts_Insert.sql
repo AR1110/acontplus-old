@@ -264,6 +264,12 @@ BEGIN
 			INNER JOIN dbo.TipoDocumento td ON cd.idTipoDocumento = td.idTipoDocumento
 			WHERE cd.idPuntoEmision = @idPuntoEmision 
 			AND td.codigoSri = '07'
+
+            IF (@secuencial IS NULL)
+                BEGIN
+                    SELECT '0' code, 'Por configure el número de secuencia para este documento' as 'message'
+                    RETURN
+                END
 			
 			SET @fechaEmision = (SELECT fechaEmision FROM @tblInfoCompRet)
 	
@@ -283,7 +289,7 @@ BEGIN
 			
 			IF @claveAcceso IS NULL
 				BEGIN
-					SELECT '0' as code, 'Error al generar clave acceso ' as 'message' 
+					SELECT '0' as code, 'Error al generar clave acceso '   as 'message' 
 					RETURN
 				END
 

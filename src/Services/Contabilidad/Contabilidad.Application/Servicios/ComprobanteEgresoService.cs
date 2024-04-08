@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Core.Interfaces;
+﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Contabilidad.Core.Interfaces;
@@ -11,7 +6,7 @@ using Contabilidad.Infrastructure.Data;
 
 namespace Contabilidad.Application.Servicios
 {
-    public class ComprobanteEgresoService: IComprobanteEgresoService
+    public class ComprobanteEgresoService : IComprobanteEgresoService
     {
         private readonly IADORepository _repository;
         private readonly ContabilidadContext _context;
@@ -26,7 +21,7 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("GestFinanc.ComprobanteEgreso_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("Contabilidad.ComprobanteEgreso_Get", parameters);
             if (ds.Tables.Count == 0)
             {
                 return null;
@@ -40,13 +35,20 @@ namespace Contabilidad.Application.Servicios
 
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("GestFinanc.ComprobanteEgreso_Insert", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Insert", parameters);
         }
-         
+
+        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+        {
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Update", parameters);
+        }
+
 
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("GestFinanc.ComprobanteEgreso_Update_Cancel", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.ComprobanteEgreso_Update_Cancel", parameters);
         }
+
+
     }
 }

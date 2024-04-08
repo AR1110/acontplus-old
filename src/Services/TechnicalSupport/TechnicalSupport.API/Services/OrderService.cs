@@ -28,11 +28,19 @@ namespace TechnicalSupport.API.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("TechnicalSupport.Order_Insert", parameters);
+            try
+            {
+                return await _repository.SPExecuteDeprecatedAsync("TechnicalSupport.Order_Insert", parameters);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("TechnicalSupport.Order_Update", parameters);
+            return await _repository.SPExecuteDeprecatedAsync("TechnicalSupport.Order_Update", parameters);
         }
         public async Task<bool> DeleteAsync(int id)
         {

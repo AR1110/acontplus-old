@@ -13,6 +13,7 @@ import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 
 @Component({
   selector: 'app-reception-reports-page',
@@ -46,10 +47,26 @@ export class ReceptionReportsPageComponent {
     supplierName: '',
     userName: '',
     numeroIdentificacion: '',
-    fromDate: '',
-    toDate: '',
-    userId: 0
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date()),
+    userId: 0,
+    ckRetencion: null
   }
+
+  estadosRetencion = [
+    {
+      estado: null,
+      descripcion: 'Todos'
+    },
+    {
+      estado: false,
+      descripcion: 'Sin Retención'
+    }, {
+      estado: true,
+      descripcion: 'Con Retención'
+    }
+  ]
+
 
   ngOnInit() {
     showLoader()
@@ -122,6 +139,10 @@ export class ReceptionReportsPageComponent {
     } //Factura por defecto
   }
 
+  onChangeDocType(){
+    this.dataSearch.ckRetencion = null;
+  }
+
   getReport(format: FORMAT_REPORT.PDF | FORMAT_REPORT.EXCEL) {
     if (this.dataSearch.supplierChecked && !isValidField(this.dataSearch.numeroIdentificacion)) {
       this.tS.toastr({
@@ -147,6 +168,7 @@ export class ReceptionReportsPageComponent {
       identificacion: this.dataSearch.supplierChecked && isValidField(this.dataSearch.numeroIdentificacion) || null,
       //  codEstado: isValidField(this.dataSearch.codEstado),
       idUsuario: isValidField(this.dataSearch.userId),
+      ckRetencion: isValidField(this.dataSearch.ckRetencion),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate
     }
@@ -154,8 +176,7 @@ export class ReceptionReportsPageComponent {
     const parameters = {
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo,
-        codEstab: this.dataSearch.codEstab,
+        codigo, 
         format,
         aditionalParams: []
       }),

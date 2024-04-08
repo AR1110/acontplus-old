@@ -318,16 +318,16 @@
                   <Width>6.05802cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.51506cm</Width>
+                  <Width>1.77964cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.36229cm</Width>
+                  <Width>2.05021cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>4.19333cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>9.90972cm</Width>
+                  <Width>8.95722cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>3.16146cm</Width>
@@ -346,11 +346,12 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>F.Emision        </Value>
+                                  <Value>Fecha Emisión        </Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -384,6 +385,8 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>#d61672</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -405,6 +408,7 @@
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -438,6 +442,8 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>#d61672</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -459,6 +465,7 @@
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -492,6 +499,8 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>#d61672</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -514,6 +523,7 @@
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -547,6 +557,8 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>#d61672</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -569,6 +581,7 @@
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -602,6 +615,8 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>#d61672</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -619,11 +634,12 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Forma Ing/Egr</Value>
+                                  <Value>Sub Entidad Financiera</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -657,6 +673,8 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>#d61672</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -679,6 +697,7 @@
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -712,6 +731,8 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>#d61672</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -734,6 +755,7 @@
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -767,6 +789,8 @@
                               <Style>Solid</Style>
                               <Width>1pt</Width>
                             </RightBorder>
+                            <BackgroundColor>#d61672</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -1296,6 +1320,7 @@
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1350,6 +1375,7 @@
                                   <Value>=Sum(Fields!egreso.Value)</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1480,7 +1506,6 @@
             </TablixRowHierarchy>
             <DataSetName>detailDs</DataSetName>
             <Top>3.67729cm</Top>
-            <Left>0cm</Left>
             <Height>1.8cm</Height>
             <Width>31.7926cm</Width>
             <ZIndex>6</ZIndex>
@@ -1537,7 +1562,7 @@
       <Width>31.7926cm</Width>
       <Page>
         <PageFooter>
-          <Height>1.38113cm</Height>
+          <Height>1.29483cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1558,7 +1583,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox12</rd:DefaultName>
-              <Top>0.69483cm</Top>
+              <Top>0.14111cm</Top>
               <Left>0.09953cm</Left>
               <Height>0.6cm</Height>
               <Width>2.5cm</Width>
@@ -1591,7 +1616,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox4</rd:DefaultName>
-              <Top>0.69483cm</Top>
+              <Top>0.14111cm</Top>
               <Left>10.07748cm</Left>
               <Height>0.6cm</Height>
               <Width>10.13267cm</Width>
@@ -1644,7 +1669,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox14</rd:DefaultName>
-              <Top>0.69483cm</Top>
+              <Top>0.14111cm</Top>
               <Left>24.64046cm</Left>
               <Height>0.6cm</Height>
               <Width>7.15214cm</Width>
@@ -1659,18 +1684,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Line Name="Line1">
-              <Top>0.28787cm</Top>
-              <Left>0.09953cm</Left>
-              <Height>0cm</Height>
-              <Width>31.69307cm</Width>
-              <ZIndex>3</ZIndex>
-              <Style>
-                <Border>
-                  <Style>Solid</Style>
-                </Border>
-              </Style>
-            </Line>
           </ReportItems>
           <Style>
             <Border>

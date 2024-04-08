@@ -3,14 +3,15 @@
 	import { GlobalRoutes } from '$constants/global-routes';
 	import { getEnumValueByKey } from '$utils/constant-value';
 	import { onMount } from 'svelte';
-    import { base } from "$app/paths";
+	import { base } from '$app/paths';
 	// import Header from '$modules/home/layout/Header.svelte';
 	// import Sidebar from '$modules/home/layout/Sidebar.svelte';
 	// import RightSidebar from '$modules/home/layout/RightSidebar.svelte';
 	// import Footer from '$modules/home/layout/Footer.svelte';
-    import '@fortawesome/fontawesome-free/css/all.css'
-    import 'simple-line-icons/css/simple-line-icons.css'
-    import 'weathericons/css/weather-icons.css' 
+	import '@fortawesome/fontawesome-free/css/all.css';
+	import 'simple-line-icons/css/simple-line-icons.css';
+	import 'weathericons/css/weather-icons.css';
+	//import "bootstrap/dist/css/bootstrap.css";
 	import '../assets/css/style.css';
 	import 'toastr/build/toastr.min.css';
 	import 'tabulator-tables/dist/css/tabulator.css';
@@ -36,7 +37,8 @@
 				localStorage.removeItem('token');
 			}
 			localStorage.setItem('token', token);
-            let moduleRoute = `${base}${getEnumValueByKey(GlobalRoutes, route)}` 
+			let moduleRoute = `${base}${getEnumValueByKey(GlobalRoutes, route)}`;
+			console.log(moduleRoute);
 			goto(moduleRoute);
 		}
 	});

@@ -14,6 +14,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { isValidField } from '@core/utils/utils';
 import { EmployeeSearchComponent } from '@modules/sale/components/employee-search/employee-search.component';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -34,8 +35,8 @@ export class EgresoIngresoCajaComponent {
     pageSize: 25,
     maxSize: 5,
     codEstab: '',
-    fromDate: '',
-    toDate: '',
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date()),
     employeeId: 0,
     codEstado: ''
   }
@@ -97,6 +98,7 @@ export class EgresoIngresoCajaComponent {
   onDateRangeSelection(range: { from: string, to: string }) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
+    this.getMovimientosCaja()
   }
 
   refresh() {

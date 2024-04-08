@@ -1,8 +1,13 @@
-﻿namespace Identity.API.Interfaces
+﻿using Common.Core.Models;
+using Identity.API.Entities;
+
+namespace Identity.API.Interfaces
 {
     public interface IAccountService
     {
-        Task<string> LoginAsync(string username, string password);
+        Task AddNotificationAsync(LoginHistory loginHistory);
+        Task<ApiResponse> AuthenticateAsync(AccessAuthorization accessAuthorization);
+        Task<ApiResponse> LoginAsync(string username, string password);
         Task<string> LoginAppAsync(string username, string password);
         Task<string> LoginRestaurantAsync(string username, string password);
     }

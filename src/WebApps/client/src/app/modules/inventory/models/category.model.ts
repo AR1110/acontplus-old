@@ -8,3 +8,4 @@ export interface Category {
 export interface CategoryRead extends Category {
   totalRecords: number
 }
+

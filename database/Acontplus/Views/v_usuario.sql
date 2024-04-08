@@ -1,31 +1,6 @@
 use AcontPlus
-go
---USAR ESTE UNA VEZ ACTUALIZADO TODO
-IF OBJECT_ID(N'v_usuario', N'V') IS NOT NULL
-	DROP VIEW v_usuario
 GO
-
---CREATE VIEW v_usuario AS (
---	SELECT u.idUsuario
---	,u.nombreUsuario
---	,u.nombreCompleto
---	,u.nroIdentificacion
---	,u.estado estadoUsuario
---	,u.registro registroUsuario
---	,u.actualizacion actualizacionUsuario
---	,ur.idUsuarioRol
---	,ur.idEntidad
---	,ur.idRol
---	,e.razonSocial entidad
---	,r.codigo codRol
---	,r.descripcion rol
---	FROM Seguridad.Usuario u WITH (NOLOCK)
---	INNER JOIN Seguridad.UsuarioRol ur WITH (NOLOCK) ON u.idUsuario = ur.idUsuario
---	INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
---	INNER JOIN Seguridad.Rol r WITH (NOLOCK) ON ur.idRol = r.idRol
---)
-
-CREATE VIEW v_usuario AS (
+CREATE OR ALTER VIEW v_usuario AS (
 	SELECT u.idUsuario
 	,u.nombreUsuario
 	,u.nombreCompleto
@@ -39,10 +14,10 @@ CREATE VIEW v_usuario AS (
     ,e.nombreComercial
     ,e.telefono
     ,e.direccion
-	,r.codigo codRol
-	,r.descripcion rol
-	FROM Usuario u WITH (NOLOCK)
+	,r.Code codRol
+	,r.[Name] rol
+	FROM dbo.Usuario u WITH (NOLOCK)
 	INNER JOIN App.UsuarioRol ur WITH (NOLOCK) ON u.idUsuario = ur.idUsuario
-	INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
-	INNER JOIN Politica r WITH (NOLOCK) ON ur.idRol = r.idPolitica
+	INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+	INNER JOIN AcontplusAdmin.Seguridad.[Role] r WITH (NOLOCK) ON ur.RoleId = r.Id
 ) 

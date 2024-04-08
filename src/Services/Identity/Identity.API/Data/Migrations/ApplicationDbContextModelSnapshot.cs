@@ -17,10 +17,54 @@ namespace Identity.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Identity.API.Entities.AccessAuthorization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccessAuthorization", "Seguridad");
+                });
 
             modelBuilder.Entity("Identity.API.Entities.ForgotPassword", b =>
                 {

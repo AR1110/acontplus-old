@@ -37,6 +37,7 @@ BEGIN
 	       ,@estado         VARCHAR(5)
 	       ,@usuario      VARCHAR(150)
            ,@codEstab     VARCHAR(100)
+           
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
@@ -185,10 +186,10 @@ BEGIN
 							  ,CAST(ar.precioCosto AS NUMERIC(18,2)) as precioCosto
 							  ,ar.idBodega
 							  ,ar.bodega
-							  ,ar.cantidad as stock
+							  ,CAST(ar.cantidad as numeric(15, 2)) as stock
 							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad 
-							  ,CAST(ar.stock AS NUMERIC(18,2)) as stockTotal
-							  ,CAST(ar.stock * ar.precioCosto as numeric(15, 2)) as totalInventario
+							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) as numeric(15, 2)) as stockTotal
+							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) * ar.precioCosto as numeric(15, 2)) as totalInventario
                               ,ar.idEstablecimiento 
                               ,ar.nombreComercial
 						FROM Inventario.v_Articulo_Stock ar
@@ -241,12 +242,15 @@ BEGIN
 	IF @tipo = 4
 		BEGIN 
 			
-			SET @params =  '@idArticulo INT
-	                       ,@idUsuario INT
-                           ,@idBodega INT
-						   ,@fechaInicio DATETIME
-						   ,@fechaFin DATETIME
-						   ,@idEntidad INT
+            
+			SET @params =  '@idArticulo     INT
+	                       ,@idUsuario      INT
+                           ,@codEstab       VARCHAR(100)
+                           ,@idBodega       INT
+                           ,@idSubFamilia   INT
+						   ,@fechaInicio    DATETIME2
+						   ,@fechaFin       DATETIME2
+						   ,@idEntidad      INT
 						   ,@codTransaccion VARCHAR(5)'
 
 			SET @sql = 'SELECT tt.articulo
@@ -262,32 +266,41 @@ BEGIN
 																				ELSE ''''
 														 END 
 							  ,tt.clienteProveedor
+                              ,tt.rucClienteProveedor
 							  ,fechaRegistro           = FORMAT(tt.fechaRegistro, ''dd/MM/yyyy HH:mm'')
 							  ,tt.codDoc
 							  ,serieComprobante = tt.nroDocumento
+                              ,tt.usuario
+                              ,tt.bodega
+                              ,tt.medidaSalida
+                              ,tt.subFamilia
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
 						WHERE tt.idEntidad = @idEntidad AND tt.estado = 1 '
 
 			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-			SELECT @checkBoxFecha       = checkBoxFecha
-				  ,@idArticulo          = idArticulo
-				  ,@idUsuario           = idUsuario
-				  ,@codTransaccion      = codTransaccion
-				  ,@fechaFin            = fechaFin
-				  ,@fechaInicio         = fechaInicio
-                  ,@idBodega            = idBodega
+			SELECT @checkBoxFecha  = checkBoxFecha
+				  ,@idArticulo     = idArticulo
+				  ,@idUsuario      = idUsuario
+                  ,@idSubFamilia   = idSubFamilia
+				  ,@codTransaccion = codTransaccion
+				  ,@fechaFin       = fechaFin
+				  ,@fechaInicio    = fechaInicio
+                  ,@idBodega       = idBodega
+                  ,@codEstab       = codEstab 
 			FROM OPENJSON(@json) WITH 
-				(
-				 checkBoxArticulo      BIT '$.checkBoxArticulo'
-				,checkBoxFecha         BIT '$.checkBoxFecha'
-				,idArticulo            INT '$.idArticulo'
-				,idUsuario             INT '$.idUsuario'
-				,codTransaccion VARCHAR(5) '$.codTransaccion'
-				,fechaInicio      DATETIME '$.fechaInicio'
-				,fechaFin         DATETIME '$.fechaFin'
-                ,idBodega              INT '$.idBodega' 
-				)
+			(
+				checkBoxArticulo BIT 
+		       ,checkBoxFecha    BIT 
+		       ,idArticulo       INT 
+		       ,idUsuario        INT
+               ,idSubFamilia     INT
+		       ,codTransaccion   VARCHAR(5) 
+		       ,fechaInicio      DATETIME2
+		       ,fechaFin         DATETIME2 
+               ,idBodega         INT  
+               ,codEstab         VARCHAR(100)
+			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
 
@@ -301,6 +314,11 @@ BEGIN
 					SET @sql = @sql + 'AND tt.idArticulo = @idArticulo '
 				END 
 
+            IF @idSubFamilia > 0
+                BEGIN
+                    SET @sql = @sql + 'AND tt.idSubFamilia = @idSubFamilia '
+                END 
+
 			IF @codTransaccion IS NOT NULL
 				BEGIN
 					SET @sql = @sql + 'AND tt.codTransaccion = @codTransaccion '
@@ -310,6 +328,11 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + 'AND tt.idUsuario = @idUsuario '
 				END
+
+             IF @codEstab IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND tt.codEstab = @codEstab '
+                END 
 
             IF @idBodega > 0 
                 BEGIN
@@ -333,9 +356,11 @@ BEGIN
 			EXEC sp_executesql @sql
 							  ,@params
 							  ,@idArticulo     = @idArticulo
+                              ,@codEstab       = @codEstab
                               ,@idBodega       = @idBodega
 							  ,@idEntidad      = @idEntidad
 							  ,@idUsuario      = @idUsuario
+                              ,@idSubFamilia   = @idSubFamilia
 							  ,@codTransaccion = @codTransaccion
 							  ,@fechaInicio    = @fechaInicio
 							  ,@fechaFin       = @fechaFin
@@ -457,7 +482,6 @@ BEGIN
 							  ,@ubicacion    = @ubicacion
 			RETURN
 		END 
-    
 
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 

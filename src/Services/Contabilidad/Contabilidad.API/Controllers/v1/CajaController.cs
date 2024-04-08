@@ -1,10 +1,9 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace Contabilidad.API.Controllers.v1
 {
@@ -40,7 +39,7 @@ namespace Contabilidad.API.Controllers.v1
                 _log.LogActivity("Error en get " + ex.Message);
                 return BadRequest("Error en get " + ex.Message);
             }
-        } 
+        }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)

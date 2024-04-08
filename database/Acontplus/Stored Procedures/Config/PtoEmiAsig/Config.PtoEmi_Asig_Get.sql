@@ -19,10 +19,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Config.PtoEmi_Asig_Get ', N'P') IS NOT NULL
-DROP PROCEDURE Config.PtoEmi_Asig_Get 
-GO
-CREATE PROCEDURE Config.PtoEmi_Asig_Get @idRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Config.PtoEmi_Asig_Get @userRoleId INT, @json VARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -34,6 +31,8 @@ BEGIN
 	SELECT @codEstab_Asig = codEstab_Asig FROM OPENJSON(@json) WITH (codEstab_Asig VARCHAR(150) '$.codEstab_Asig')
 
 	SELECT @codEstab = codEstab FROM Config.Estab_Asig WHERE codEstab_Asig = @codEstab_Asig
+
+     SET @tableNames = 'puntosEmisionAsignadas'
 
 	SELECT 
 		a.idPtoEmi_Asig

@@ -1,0 +1,278 @@
+﻿@page
+@model WebUI.Pages.FactElect.GuiaRemision.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="guiaRemisionCtrl">
+    <div>
+        <div class="row page-titles">
+            <div class="col-lg-5 align-self-center">
+                <h5 class="color-themecolor">Gestión de Guía de Remisión</h5>
+            </div>
+            <div class="col-lg-7 align-self-center text-right">
+                <div class="d-flex justify-content-end align-items-center">
+                    <button type="button" class="btn btn-info m-l-15" ng-click="openModalNew()">
+                        <i class="ti-plus"></i>
+                        Nuevo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                <div class="form-gorup">
+                                    <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
+                                    <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                                        class="form-control  border-select" ng-change="estabFilter()">
+                                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                            {{item.nombreComercial}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                <span for="date-range-filter">Rango Fechas: </span>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <div class="custom-control custom-checkbox mr-sm-2">
+                                                <input type="checkbox" ng-model="dataSearch.checkBoxDate"
+                                                    ng-disabled="!(dataSearch.byCliente>0)" class="custom-control-input"
+                                                    id="checkBoxDate">
+                                                <label class="custom-control-label" for="checkBoxDate"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <date-range-filter current-date="dataSearch.fechaInicio"
+                                        start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                        result-range-date="resultRangeFilter(result)"></date-range-filter>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <span for="clienteFiltro">Cliente</span>
+                                    <input type="text" id="customerInputSearch" class="form-control border-select"
+                                        ng-model="cliente.nombreCliente" cliente-search-drtv
+                                        on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                                        placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                                    <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                        </div>
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                                <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                                        <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                                        ng-click="getGuiasRemision()">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row justify-content-between" ng-if="moreSearchOptions">
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                        <div class="form-gorup">
+                            <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
+                            <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
+                                class="form-control  border-select" ng-change="getGuiasRemision()">
+                                <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                    {{item.ptoEmi}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <div class="form-group">
+                            <span for="usuario">Usuario</span> 
+                                    <input type="text" id="userInputSearch" class="form-control border-select"
+                                        ng-model="usuario.nombreUsuario" user-search-drtv
+                                        on-select="selectedUsuarioSearch(result)" on-keyup="onKeyupUsuarioSearch()"
+                                        placeholder="..." onclick="select();">
+
+                            <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                                <div class="autocomplete-suggestion-uib-typeahead">
+                                    <span class="item-title">
+                                        {{match.model.nombreCompleto}}
+                                    </span>
+                                </div>
+                            </script>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <span>Buscar por Nro. Doc.:</span>
+                            <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                                placeholder="Ej: 123 o 1-30" />
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                        <div class="form-group">
+                            <span>Estado:</span>
+                            <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.codEstado"
+                                ng-change="getGuiasRemision()">
+                                <option value="">Todos</option>
+                                <option ng-value="item.codigo" ng-repeat="item in estadosDocumento">
+                                    {{item.descripcion}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <span>Buscar</span>
+                            <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
+                                ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 d-flex justify-content-start">
+                        <span class="form-group pull-left page-size form-inline">
+                            <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            </select>
+                        </span>
+                    </div>
+
+                    <div class="col-6 d-flex justify-content-end">
+                        <!-- <form class="form-material">
+                            <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter"
+                                placeholder="Buscar">
+                        </form> -->
+                    </div>
+                </div>
+
+                <md-table-container style=" max-height: 400px;">
+                    <table resize master md-table>
+                        <thead md-trim-column-names fix-head md-head>
+                            <tr md-row>
+                                <th md-column
+                                    ng-if="accion.editar || accion.anular || accion.reporte || accion.enviarSri || accion.enviarCorreo">
+                                    Op.
+                                </th>
+                                <th md-column>F. Emisión</th>
+                                <th md-column>Serie Comprobante</th>
+                                <th md-column>Fecha Inicio</th>
+                                <th md-column>Fecha Llegada</th>
+                                <th md-column>Cliente</th>
+                                <th md-column>Factura</th>
+                                <th md-column>Estado</th>
+                                <th md-column>Transportista</th>
+                                <th md-column>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat="item in guiasRemision" ng-class="item.style">
+                                <td md-cell
+                                    ng-if="accion.editar || accion.anular || accion.reporte || accion.enviarSri || accion.enviarCorreo">
+                                    <md-menu>
+                                        <md-button aria-label="Open demo menu" class="md-icon-button"
+                                            ng-click="$mdMenu.open($event)">
+                                            <icon class="mdi mdi-menu"></icon>
+                                        </md-button>
+                                        <md-menu-content class="md-dense">
+                                            <md-menu-item>
+                                                <md-button ng-click="openModalDetalle(item)">
+                                                    <span md-menu-align-target>
+                                                        <i class="ti-menu"></i>
+                                                        Detalle
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item ng-if="accion.editar">
+                                                <md-button ng-click="openModalEdit(item)"
+                                                    ng-disabled="item.anulada || item.autorizada">
+                                                    <span md-menu-align-target>
+                                                        <i class="ti-pencil"></i>
+                                                        Editar
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item ng-if="accion.anular">
+                                                <md-button ng-click="askToDelete(item)" ng-disabled="item.anulada">
+                                                    <span md-menu-align-target>
+                                                        <i class="ti-close"></i>
+                                                        Anular
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item ng-if="accion.reporte">
+                                                <md-button ng-click="getReport(item)">
+                                                    <span md-menu-align-target>
+                                                        <i class=" ti-file"></i>
+                                                        PDF
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button btn-copy text="item.claveAcceso">
+                                                    <span md-menu-align-target>
+                                                        <i class="fas fa-copy"></i>
+                                                        Copiar Clave Acceso
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            
+
+                                        </md-menu-content>
+                                    </md-menu>
+                                </td>
+                                <td md-cell>{{item.fechaEmision}}</td>
+                                <td md-cell>{{item.serieComprobante}}</td>
+                                <td md-cell>{{item.fechaInicio}}</td>
+                                <td md-cell>{{item.fechaFin}}</td>
+                                <td md-cell>{{item.razonSocialDestinatario}}</td>
+                                <td md-cell>{{item.serieFactura}}</td>
+                                <td md-cell>{{item.estado}}</td>
+                                <td md-cell>{{item.razonSocialTransportista}}</td>
+                                <td md-cell>{{item.usuario}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+
+            </div>
+              <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
+        </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/logistica/services/logisticaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/logistica/controllers/guiaRemisionCtrl.js" asp-append-version="true"></script>
+}

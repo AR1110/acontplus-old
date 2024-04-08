@@ -1,0 +1,246 @@
+<form [formGroup]="deviceForm" (ngSubmit)="isUpdate ? onUpdate() : onSave()">
+  <div class="modal-header">
+    <h4 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="categoryId"
+            >Categoria:
+            <span class="text-danger">*</span>
+          </label>
+          <select
+            formControlName="categoryId"
+            id="categoryId"
+            class="form-select"
+          >
+            @for (item of categories; track $index) {
+            <option [ngValue]="item.id">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="productName"
+            >Nombre Producto:
+            <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            id="productName"
+            formControlName="name"
+            class="form-control border-select"
+          />
+        </div>
+      </div>
+
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="brand"
+            >Marca:
+            <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="brand"
+            id="brand"
+            class="form-control border-select"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="model">Modelo: </label>
+          <input
+            type="text"
+            formControlName="model"
+            id="model"
+            class="form-control border-select"
+          />
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="year">Año: </label>
+          <input
+            type="number"
+            formControlName="year"
+            id="year"
+            class="form-control border-select"
+            maxlength="4"
+          />
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="color">Color: </label>
+          <input
+            type="text"
+            formControlName="color"
+            id="color"
+            class="form-control border-select"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <form [formGroup]="specForm">
+          <div class="card rounded border border-success">
+            <div class="card-header">
+              <h5 class="card-title">Especificaciones</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <form [formGroup]="specTypeForm">
+                    <div class="form-group">
+                      <label for="specName">Categoría:</label>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          formControlName="specName"
+                          id="specName"
+                          class="form-control"
+                          (keydown.enter)="addSpecTypeDevice()"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-success btn-sm"
+                          (click)="addSpecTypeDevice()"
+                        >
+                          <fa-icon [icon]="'plus'"></fa-icon>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              @if(deviceSpec.length > 0){
+              <div ngbAccordion [closeOthers]="true">
+                @for (item of deviceSpec; track $index) {
+                <div ngbAccordionItem [collapsed]="$index !== 0">
+                  <h2 ngbAccordionHeader>
+                    <button
+                      ngbAccordionButton
+                      (click)="filterAccordion(item.uuid)"
+                    >
+                      {{ item.name }}
+                    </button>
+                  </h2>
+                  <div ngbAccordionCollapse>
+                    <div ngbAccordionBody>
+                      <ng-template>
+                        <div class="row">
+                          <div class="col-md-6 col-12">
+                            <div class="form-group">
+                              <label for="name">Nombre:</label>
+                              <input
+                                #inputNameSpec
+                                type="text"
+                                id="name"
+                                formControlName="name"
+                                class="form-control"
+                              />
+                            </div>
+                          </div>
+                          <div class="col-md-6 col-12">
+                            <div class="form-group">
+                              <label for="value">Valor:</label>
+                              <div class="input-group">
+                                <input
+                                  type="tex"
+                                  formControlName="value"
+                                  id="value"
+                                  class="form-control"
+                                  (keydown.enter)="addSpecsDevice(item.uuid)"
+                                />
+                                <button
+                                  type="button"
+                                  class="btn btn-success btn-sm"
+                                  (click)="addSpecsDevice(item.uuid)"
+                                  [disabled]="!specForm.valid"
+                                >
+                                  <fa-icon [icon]="'plus'"></fa-icon>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        @if (item.specs.length > 0){
+                        <div class="row">
+                          <div class="col">
+                            <div class="table-responsive">
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th>Nombre</th>
+                                    <th>Valor</th>
+                                    <th></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @for (spec of item.specs; track $index){
+                                  <tr>
+                                    <td>{{ spec.name }}</td>
+                                    <td>{{ spec.value }}</td>
+                                    <th>
+                                      <button
+                                        type="button"
+                                        class="btn btn-outline-danger btn-sm"
+                                        (click)="removeSpec($index, item.uuid)"
+                                      >
+                                        <fa-icon
+                                          [icon]="'trash'"
+                                        ></fa-icon>
+                                      </button>
+                                    </th>
+                                  </tr>
+                                  }
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                        }
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-outline-success btn-lg">
+      <fa-icon [icon]="'save'"></fa-icon> Guardar
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-dark btn-lg"
+      (click)="closeModal()"
+    >
+      &times; Cancelar
+    </button>
+  </div>
+</form>

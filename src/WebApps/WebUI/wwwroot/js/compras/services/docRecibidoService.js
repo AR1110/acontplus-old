@@ -133,8 +133,15 @@
                     }
                     if (response.code == "1") {
                         let tempDetail = JSON.parse(response.payload);
+                        console.log(tempDetail)
 
                         tempDetail = tempDetail.map(item => {
+                            const { principal, fraccionado, etiquetas, ...restItem } = item;
+                            let medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                            //let dataMedida = medidas.find(medida => medida.idMedida === restItem.idMedida);
+
+
                             let tempEtiquetas = JSON.parse(item.etiquetas) || [];
 
                             let etiquetasMapper = tempEtiquetas.map(etiquet => {
@@ -145,7 +152,8 @@
                             })
 
                             return {
-                                ...item,
+                                ...restItem,
+                                medidas,
                                 etiquetas: etiquetasMapper
                             }
                         })
@@ -269,43 +277,5 @@
         }
 
 
-        //Proveedor 
-        // service.getProveedor = function (params) {
-        //     return mS.getData('get', `${URL_PROVEEDOR}${JSON.stringify(params)}`, null, true).then(response => {
-
-        //         if (response.code === '0') {
-        //             return response;
-        //         }
-        //         if (response.code === '1') {
-        //             let mainData = JSON.parse(response.payload)
-        //             if (params.tipo === 1) {
-        //                 return mainData;
-        //             }
-
-        //             if (params.tipo === 2) {
-        //                 const tiposIdentificacion = mainData[0];
-        //                 const tiposProveedor = mainData[1];
-        //                 const tiposEntidad = mainData[2];
-        //                 const contribuyentes = mainData[3];
-        //                 const tiemposCredito = mainData[4];
-        //                 const ciudades = mainData[5]
-        //                 return {
-        //                     tiposIdentificacion,
-        //                     tiposProveedor,
-        //                     tiposEntidad,
-        //                     contribuyentes,
-        //                     tiemposCredito,
-        //                     ciudades,
-        //                 }
-        //             }
-        //         }
-        //     })
-        // }
-
-        // service.saveProveedor = function(params){
-        //     return mS.getData('post', `${URL_PROVEEDOR}?json=${JSON.stringify(params)}`, null, true);
-        // }
-
-        return service;
     })
 })(window.angular)

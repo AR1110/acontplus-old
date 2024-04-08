@@ -19,6 +19,11 @@ app.constant('nombreModalCommon', {
         templates: {
             ME: 'Shared/Common/_ModalSendMail.cshtml',
         },
+    },
+    KEY_REQUEST_MODAL: {
+        fileCtrl: '/js/common/modals/keyRequestCtrl.js' + CHANGE_VERSION(),
+        controllers: "keyRequestCtrl",
+        template: '~/Pages/Common/_KeyRequestModal.cshtml',        
     }
 })
 
@@ -88,13 +93,13 @@ app.constant('nombreModalInventario', {
             MF: '~/Pages/Kardex/Shared/_ModalFiltroKardex.cshtml'
         }
     },
-    CONSOLIDACION_INVENTARIO: {
-        fileCtrl: '/js/modal/inventario/modalConsolidacionInventarioCtrl.js' + CHANGE_VERSION(),
+    CONSOLIDACION: {
+        fileCtrl: '/js/inventario/modals/modalConsolidacionDetalleCtrl.min.js' + CHANGE_VERSION(),
         controllers: {
-            D: 'ModalConsolidacionDetalleCtrl',
+            D: 'modalConsolidacionDetalleCtrl',
         },
         templates: {
-            D: 'ConsolidacionInventario/_ModalDetalle.cshtml',
+            D: '~/Areas/Consolidacion/Pages/Shared/_ModalDetalle.cshtml',
         }
     },
     TRANSFERENCIA_BODEGA: {
@@ -313,6 +318,17 @@ app.constant('nombreModalContabilidad', {
             MC: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalCuota.cshtml',
             MM: '~/Pages/Contabilidad/CuentaPorCobrar/Shared/_ModalMora.cshtml',
         }
+    },
+    PAGO: {
+        fileCtrl: '/js/contabilidad/modals/modalPagoCtrl.js' + CHANGE_VERSION(),
+        controllers: {
+            MPL: 'modalPagoLoteCtrl',
+            MFP: 'modalFormaPagoCtrl'
+        },
+        templates: {
+            MPL: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalPagoLote.cshtml',
+            MFP: '~/Pages/Contabilidad/CuentaPorPagar/Shared/_ModalFormaPago.cshtml'
+        }
     }
 })
 
@@ -339,7 +355,7 @@ app.constant('nombreModal', {
         MODAL_SEND_MAIL_CTRL: '/js/common/modals/modalMailCtrl.js' + CHANGE_VERSION(),
         MODAL_STATUS_MAIL_CSHTML: '~/Pages/FactElect/DocumentoElectronico/Shared/_ModalStatusEmail.cshtml',
 
-        MODAL_SEND_WHATSAPP_CTRL: '/js/modal/common/ModalWhatsAppCtrl.js' + CHANGE_VERSION(),
+        MODAL_SEND_WHATSAPP_CTRL: '/js/modal/common/modalWhatsAppCtrl.min.js' + CHANGE_VERSION(),
         MODAL_SEND_WHATSAPP_CSHTML: '~/Pages/Common/WhatsApp/Shared/_ModalWhatsApp.cshtml',
 
         MODAL_INFO_ADICIONAL_DOC: {
@@ -842,17 +858,20 @@ app.constant('TAX_RATE_CODE', {
 })
 
 app.constant('DOC_TYPE', {
+    FE : 'FE',  //Factura Electrónica
     FV_SRI: '01',
     FV: 'FV',
     NE: 'NE',
     PR: 'PR',
     NC: 'NC',
     NC_SRI: '04',
-    APROB_DOC: '',
+    APROB_DOC: 'APR',
     LC: 'LC',
     FC: 'FC',
     CNH: 'CNH',
-    OC: 'OC'
+    OC: 'OC',
+    GR_SRI: '06',
+    R_SRI: '07'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",
@@ -876,5 +895,7 @@ app.constant('CODE_REPORT', {
     RCD: 'RCD', //Reporte Compra detalle
     RFC: 'RFC', //Reporte Factura Compra
     RCNH: 'RCNH', //PDF compra no habitual
-    ROC: 'ROC' //Orden Compra 
+    ROC: 'ROC', //Orden Compra 
+    RGR: 'RGR', //Reporte Guia Remision 
+    FCRRG: 'FCRRG' //Facturación Retención Reporte General
 })

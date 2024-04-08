@@ -1,10 +1,6 @@
-﻿using Azure.Core;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
-using Common.Infrastructure.Repository;
 using Compras.API.Interfaces;
-using Compras.API.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -16,7 +12,7 @@ namespace Compras.API.Controllers
     public class LiquidacionCompraController : ControllerBase
     {
         private IConfiguration _configuration;
-        private ILiquidacionCompraService _liquidacionCompraSvc; 
+        private ILiquidacionCompraService _liquidacionCompraSvc;
         private LogWriter _log;
 
         public LiquidacionCompraController(IConfiguration configuration, ILiquidacionCompraService liquidacionCompraSvc, LogWriter log)
@@ -32,9 +28,9 @@ namespace Compras.API.Controllers
         {
             try
             {
-                var response = await _liquidacionCompraSvc.GetAsync(new Dictionary<string, object> { 
-                    { "userRoleId", User.GetUserRoleId() }, 
-                    { "json", SqlStringParam.Sanitize(json) } 
+                var response = await _liquidacionCompraSvc.GetAsync(new Dictionary<string, object> {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(json) }
                 });
                 if (response == null) { return NoContent(); };
                 return Ok(new { code = "1", payload = response });
@@ -68,9 +64,9 @@ namespace Compras.API.Controllers
         {
             try
             {
-                var response = await _liquidacionCompraSvc.GetByIdAsync(new Dictionary<string, object> { 
-                    { "userRoleId", User.GetUserRoleId() }, 
-                    { "id", id } 
+                var response = await _liquidacionCompraSvc.GetByIdAsync(new Dictionary<string, object> {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "id", id }
                 });
                 if (response == null) { return NoContent(); };
                 return Ok(new { code = "1", payload = response });

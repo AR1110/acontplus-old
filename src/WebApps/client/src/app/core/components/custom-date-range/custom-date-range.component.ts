@@ -1,65 +1,153 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
 import {
-  NgbCalendar,
-  NgbDate,
-  NgbDateParserFormatter,
-  NgbDatepickerModule,
-} from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+  Component,
+  ViewChild,
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  Output,
+  EventEmitter,
+  inject
+} from "@angular/core";
+import { NgbDate, NgbCalendar, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
+import { FormControl } from "@angular/forms";
+
+import { debounceTime, takeWhile } from "rxjs/operators";
+import { AppModule } from "src/app/app.module";
 
 @Component({
   selector: 'app-custom-date-range',
   standalone: true,
-  imports: [NgbDatepickerModule, FormsModule, JsonPipe, FontAwesomeModule],
+  imports: [AppModule],
   templateUrl: './custom-date-range.component.html',
-  styleUrl: './custom-date-range.component.scss',
+  styles: `.custom-day {
+      text-align: center;
+      padding: 0.185rem 0.25rem;
+      display: inline-block;
+      height: 2rem;
+      width: 2rem;
+    }
+    .custom-day.focused {
+      background-color: #e6e6e6;
+    }
+    .custom-day.range, .custom-day:hover {
+      background-color: rgb(2, 117, 216);
+      color: white;
+    }
+    .custom-day.faded {
+      background-color: rgba(2, 117, 216, 0.5);
+    }
+    .ngb-datepicker {
+
+    border-color: transparent;
+    border-radius: 0;
+    display: inline-block;
+
+}`
 })
 export class CustomDateRangeComponent {
-  @Output() onChangeDateRange = new EventEmitter<{
-    fromDate: any;
-    toDate: any;
-  }>();
+  @Output() onChangeDateRange = new EventEmitter<{ from: string, to: string }>();
+  private formatter = inject(NgbDateParserFormatter);
 
-  calendar = inject(NgbCalendar);
-  formatter = inject(NgbDateParserFormatter);
-
+  @ViewChild("rangeID", { static: false, read: ElementRef })
+  rangeInput!: ElementRef;
   hoveredDate: NgbDate | null = null;
-  fromDate: NgbDate | null = this.calendar.getToday();
-  toDate: NgbDate | null = this.calendar.getNext(
-    this.calendar.getToday(),
-    'd',
-    10
-  );
 
-  ngAfterViewInit() {
-    this.onChangeDateRange.emit({
-      fromDate: this.formatter.format(this.fromDate),
-      toDate: this.formatter.format(this.toDate),
-    });
+  fromDate: NgbDate | null;
+  toDate: NgbDate | null;
+
+  range: FormControl = new FormControl();
+  alive: boolean = true;
+
+  constructor(calendar: NgbCalendar) {
+    this.fromDate = calendar.getToday();
+    this.toDate = calendar.getNext(calendar.getToday(), "d", 10);
   }
+  ngOnInit() {
+    this.range.setValue(this.formatRange(this.fromDate, this.toDate));
+    this.range.valueChanges
+      .pipe(
+        takeWhile(() => this.alive),
+        debounceTime(500)
+      )
+      .subscribe(res => this.change(res));
+    this.emit()
+  }
+  ngOnDestroy() {
+    this.alive = false;
+  }
+  open(isOpen: boolean, dp: any) {
+    if (isOpen) {
+      console.log(dp.navigateTo(this.fromDate));
+    }
+  }
+  change = (range: string) => {
+    // let start = this.rangeInput.nativeElement.selectionStart;
+    let value = range.replace(/[^0-9]+/g, "").split("").slice(0, 16);
+    let valueJoin = value.join("");
+    let valueFormated = "";
+    let fromDate: any = null;
+    let toDate: any = null;
 
-  onDateSelection(date: NgbDate) {
+    if (value.length >= 8)
+      fromDate = new NgbDate(
+        +valueJoin.substring(0, 4),
+        +valueJoin.substring(4, 6),
+        +valueJoin.substring(6, 8)
+      );
+
+    if (value.length == 16)
+      toDate = new NgbDate(
+        +valueJoin.substring(8, 12),
+        +valueJoin.substring(12, 14),
+        +valueJoin.substring(14)
+      );
+
+    value.forEach((c, index) => {
+      valueFormated += c;
+      switch (index) {
+        case 3:
+        case 5:
+        case 11:
+        case 13:
+          valueFormated += "-";
+          break;
+        case 7:
+          valueFormated += " a ";
+      }
+    });
+    this.range.setValue(valueFormated, { emitEvent: false });
+    this.fromDate = fromDate;
+    this.toDate = toDate;
+    this.emit()
+  }
+  onDateSelection(date: any, drop: any) {
+    console.log(date)
     if (!this.fromDate && !this.toDate) {
       this.fromDate = date;
-    } else if (
-      this.fromDate &&
-      !this.toDate &&
-      date &&
-      date.after(this.fromDate)
-    ) {
+    } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
       this.toDate = date;
+      // this.emit()
+      drop.close();
     } else {
       this.toDate = null;
       this.fromDate = date;
     }
-
-    this.onChangeDateRange.emit({
-      fromDate: this.formatter.format(this.fromDate),
-      toDate: this.formatter.format(this.toDate),
-    });
+    this.range.setValue(this.formatRange(this.fromDate, this.toDate));
   }
+
+  private emit(close?: boolean) {
+    const dateRange = {
+      from: this.formatter.format(this.fromDate),
+      to: this.formatter.format(this.toDate),
+    };
+    this.onChangeDateRange.emit(dateRange);
+
+    // if (close) {
+    //   this.isOpen = false;
+    //   this.datePicker.close();
+    // }
+  }
+
 
   isHovered(date: NgbDate) {
     return (
@@ -72,35 +160,36 @@ export class CustomDateRangeComponent {
   }
 
   isInside(date: NgbDate) {
-    return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
+    return date.after(this.fromDate) && date.before(this.toDate);
   }
 
   isRange(date: NgbDate) {
     return (
       date.equals(this.fromDate) ||
-      (this.toDate && date.equals(this.toDate)) ||
+      date.equals(this.toDate) ||
       this.isInside(date) ||
       this.isHovered(date)
     );
   }
-
-  validateInput(
-    currentValue: NgbDate | null,
-    input: string,
-    tipoFecha: 'fromDate' | 'toDate'
-  ): NgbDate | null {
-    const parsed = this.formatter.parse(input);
-    // let fromDate = this.formatter.format(this.fromDate);
-    // let toDate = this.formatter.format(this.toDate);
-
-    this.onChangeDateRange.emit({
-      fromDate:
-        tipoFecha === 'fromDate' ? input : this.formatter.format(this.fromDate),
-      toDate:
-        tipoFecha === 'toDate' ? input : this.formatter.format(this.toDate),
-    });
-    return parsed && this.calendar.isValid(NgbDate.from(parsed))
-      ? NgbDate.from(parsed)
-      : currentValue;
+  formatRange(fromDate: any, toDate: any) {
+    return (
+      (fromDate
+        ? "" +
+        fromDate.year +
+        "-" +
+        ("00" + fromDate.month).slice(-2) +
+        "-" +
+        ("00" + fromDate.day).slice(-2)
+        : "") +
+      " a " +
+      (toDate
+        ? "" +
+        toDate.year +
+        "-" +
+        ("00" + toDate.month).slice(-2) +
+        "-" +
+        ("00" + toDate.day).slice(-2)
+        : "")
+    );
   }
 }

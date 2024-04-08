@@ -1,0 +1,49 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Usuario Roles</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <h5>Usuario: {{params.nombreCompleto}}</h5>
+  <br>
+  <div ngbAccordion [closeOthers]="true">
+    @for (item of userCustomerRoles; track item) {
+    <div ngbAccordionItem  (shown)="showAcordeon(item)">
+        <button ngbAccordionButton class="d-flex flex-row">
+          <div class="p-2 bd-highlight">
+            <b>{{item.ruc}}</b> - {{ item.razonSocial }}
+          </div>
+          <div class="p-2 bd-highlight">
+            Rol: <b>{{item.roleName}}</b>
+          </div>
+        </button>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs" (navChange)="onNavChange(item)" >
+              <li [ngbNavItem]="1">
+                <button ngbNavLink  >Establecimientos</button>
+                <ng-template ngbNavContent>
+                   <div class="card">
+                    <div class="card-body shadow">
+                      <app-user-customer-role-estab   />
+                    </div>
+                   </div>
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="2">
+                <button ngbNavLink>Permisos</button>
+                <ng-template ngbNavContent>
+                    <app-user-customer-role-permission/>
+                </ng-template>
+              </li>
+            </ul>
+
+            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+<div class="modal-footer"></div>

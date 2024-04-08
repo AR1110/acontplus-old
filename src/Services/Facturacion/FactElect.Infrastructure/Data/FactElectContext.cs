@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using Common.Core.Entities;
 using Common.Infrastructure.Data;
+using FactElect.Core.Entities;
+using FactElect.Infrastructure.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,6 +17,7 @@ namespace FactElect.Infrastructure.Data
 
         }
 
+        public DbSet<AppCustomer> Customers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -41,12 +44,12 @@ namespace FactElect.Infrastructure.Data
                            p => p.ClrType == typeof(string)    // Entity is a string
                         && p.GetColumnType() == null           // No column type is set
                                                                // Next line only required if using ASP.Net Identity:
-                        && !p.DeclaringEntityType.GetTableName().StartsWith("AspNet")
+
                     ))
             {
                 property.SetIsUnicode(false);
             }
-
+            builder.ApplyConfiguration(new CustomerConfiguration());
             builder.ApplyUtcDateTimeConverter();
 
         }

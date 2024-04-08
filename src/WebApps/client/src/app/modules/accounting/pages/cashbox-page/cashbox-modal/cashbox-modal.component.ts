@@ -8,7 +8,6 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Turno } from '@modules/accounting/models/turno.model';
 import { CashboxService } from '@modules/accounting/services/cashbox.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { data } from 'jquery';
 import { AppModule } from 'src/app/app.module';
 
 @Component({

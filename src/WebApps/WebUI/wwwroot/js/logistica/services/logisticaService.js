@@ -2,111 +2,254 @@
 
     'use strict';
 
-    app.factory('guiaRemisionService', function ($injector) {
+    app.factory('guiaRemisionService', ['$injector', function ($injector) {
         let url = 'Logistica/GuiaRemision/';
         let mS = $injector.get('mainService');
-        let service = {};
+        let fS = $injector.get('formulario');
 
-        service.get = function (query) {
-            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
-                if (response.code === '0') {
-                    throw response
+        return {
+            getDataForm,
+            getDataFilter,
+            getAll,
+            getDocs,
+            generateSerieComprobante,
+            mapperTo,
+            getId,
+            post,
+            put,
+            anular
+        }
+
+        function getDataForm() {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+                if (!response) return {}
+                const {
+                    ptoEmision,
+                    tipoDocumento
+                } = response;
+
+                const estabs = fS.groupingEstab({
+                    estabs: ptoEmision
+                })
+                return {
+                    estabs: estabs || [],
+                    tiposDoc: tipoDocumento
                 }
-                if (response.code === '1') {
-                    let mainData = JSON.parse(response.payload) || [];
+            })
+        }
+        function getDataFilter() {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (!response) return {};
+                const { ptoEmision, estadoDocumento } = response;
 
-                    if (query.tipo === 1) {
-                        let guiasRemision = mainData[0]
-                        return guiasRemision.map(item => {
-                            return {
-                                idGuiaRemision: item.idGuiaRemision,
-                                fechaEmision: item.fechaEmision,
-                                fechaInicio: item.fechaInicio,
-                                fechaFin: item.fechaFin,
-                                claveAcceso: item.claveAcceso,
-                                autorizada: item.autorizada,
-                                anulada: item.anulada,
-                                nroDoc: item.nroDoc,
-                                serieComprobante: item.nroDoc,
-                                cliente: item.cliente,
-                                correos: item.correos,
-                                nroFactura: item.nroFactura,
-                                transportista: item.transportista,
-                                estadoSri: item.estadoSri,
-                                usuario: item.usuario,
-                                style: item.style,
-                                codEstab: item.codEstab,
-                            }
-                        })
-                    }
-
-                    if (query.tipo === 2) {
-                        let tempEstabsAndPtosEmision = mainData[0];
-                        let estadosDoc = mainData[1];
-
-                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                            if (!existingItem) {
-                                acc.push({
-                                    idEstablecimiento: item.idEstablecimiento,
-                                    nombreComercial: item.nombreComercial,
-                                    codEstab: item.codEstab,
-                                    defaultEstab: item.defaultEstab,
-                                    puntosEmision: [{
-                                        idPuntoEmision: item.idPuntoEmision,
-                                        ptoEmi: item.ptoEmi,
-                                        defaultPtoEmi: item.defaultPtoEmi
-                                    }]
-                                });
-                            } else {
-                                existingItem.puntosEmision.push({
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                });
-                            }
-                            return acc;
-                        }, []);
-
-
-                        return {
-                            estabs,
-                            estadosDoc
-                        }
-                    }
+                const estabs = fS.groupingEstab({
+                    estabs: ptoEmision
+                })
+                return {
+                    estabs,
+                    estadosDoc: estadoDocumento
                 }
-            }).catch(error => {
-                console.log(error)
-                throw error
             })
         }
 
-        service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true)
-                .catch(errorResponse => {
-                    throw errorResponse
+        function getAll(obj) {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj, tipo: 1 }), null, true).then(response => {
+                if (!response) [];
+
+                let guiasRemision = response.guias || [];
+
+                return guiasRemision.map(item => {
+                    return {
+                        idGuiaRemision: item.idGuiaRemision,
+                        codEstab: item.codEstab,
+                        fechaEmision: item.fechaEmision,
+                        fechaInicio: item.fechaInicio,
+                        fechaFin: item.fechaFin,
+                        claveAcceso: item.claveAcceso,
+                        serieFactura: item.serieFactura,
+                        razonSocialDestinatario: item.razonSocialDestinatario,
+                        identificacionDestinatario: item.identificacionDestinatario,
+                        serieComprobante: item.serieComprobante,
+                        razonSocialTransportista: item.razonSocialTransportista,
+                        estado: item.estado,
+                        usuario: item.usuario,
+                        style: item.style,
+                        totalRecords: item.totalRecords,
+                    }
                 })
+            })
         }
 
-        service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true)
-                .catch(errorResponse => {
-                    throw errorResponse
-                })
+        function getDocs(obj) {
+            return mS.getData('get', url + '?json=' + JSON.stringify({ ...obj }), null, true).then(response => {
+                let docs = [];
+                if (response !== null && typeof response === 'object') {
+                    let tempData = [];
+                    if ("notas" in response) {
+                        tempData = response.notas || [];
+                    }
+                    if ("facturas" in response) {
+                        tempData = response.facturas || [];
+                    }
+                    if ("aprobaciones" in response) {
+                        tempData = response.aprobaciones || [];
+                    } 
+                    docs = tempData.map(doc => {
+                        let detalles = JSON.parse(doc.detalles);
+                        return {
+                            idDocumento: doc.idDocumento,
+                            serieComprobante: doc.serieComprobante,
+                            razonSocialComprador: doc.razonSocialComprador,
+                            fechaEmision: doc.fechaEmision,
+                            importeTotal: doc.importeTotal,
+                            nameDoc: doc.nameDoc,
+                            detalles,
+                            totalRecords: doc.totalRecords,
+                        }
+                    })
+
+                }
+                return docs;
+            })
         }
 
-        service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true)
-                .catch(errorResponse => {
-                    throw errorResponse
-                })
+        function generateSerieComprobante(query) {
+            return mS.getData('get', url + '?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+                let result = null;
+                if (response !== null && typeof response === 'object') {
+                    let { serieComprobante } = response;
+                    if (serieComprobante.length > 0) {
+                        result = serieComprobante[0].serieComprobante;
+                    }
+                }
+                return result;
+            })
         }
-        return service;
-    });
+
+        function mapperTo(obj) {
+            const { data, detalles, infoAdicionalDocumento, deletedItems } = obj;
 
 
-    app.factory('transportistaService', function ($injector) {
+            const infoGuiaRemision = infoComprobanteMapperTo(data);
+            const detallesResult = detalleMapperTo(detalles);
+            const deletedItemsResult = detalleMapperTo(deletedItems);
+
+            const mergeItems = [
+                ...detallesResult,
+                ...deletedItemsResult
+            ]
+
+            return {
+                infoGuiaRemision,
+                detalles: mergeItems,
+                infoAdicional: infoAdicionalDocumento
+            }
+        }
+
+        function infoComprobanteMapperTo(data) {
+            return {
+                idPuntoEmision: data.idPuntoEmision,
+                idCliente: data.idCliente,
+                idTransportista: data.idTransportista,
+                idVehiculo: data.idVehiculo,
+                idEmpleado: data.idEmpleado,
+                idFactura: data.idFactura,
+                fechaEmision: fS.formatDateMoment(data.fechaEmision),
+                fechaInicio: fS.formatDateMoment(data.fechaInicio),
+                fechaFin: fS.formatDateMoment(data.fechaFin),
+                docAduanero: data.docAduanero,
+                ptoPartida: data.ptoPartida,
+                ptoLlegada: data.ptoLlegada,
+                ruta: data.ruta,
+                estableDestino: fS.isValidField(data.estableDestino),
+                entregar: data.entregar,
+                motivo: data.motivo,
+                idFactura: fS.isValidField(data.idDocumento)
+            }
+        }
+
+        function detalleMapperTo(items) {
+            let arr = items.map((item, index) => {
+                return {
+                    idGuiaRemisionDetalle: item.idGuiaRemisionDetalle || 0,
+                    orderIndex: index,
+                    idArticulo: item.idArticulo,
+                    cantidad: item.cantidad,
+                    descripcion: item.descripcion,
+                    estado: item.estado
+                }
+            })
+            return arr;
+        }
+
+        function getId(id) {
+            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code == "1") {
+                    let { cliente, detalles, empleado, guia, infoAdicional, transportista, vehiculo } = JSON.parse(response.payload);
+
+                    let comprobante = guia[0];
+                    let resultComprobante = {
+
+                        idGuiaRemision: comprobante.idGuiaRemision,
+                        codEstab: comprobante.codEstab,
+                        idPuntoEmision: comprobante.idPuntoEmision,
+                        serieComprobante: comprobante.serieComprobante,
+                        fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
+                        fechaEmision: fS.formatDate(comprobante.fechaEmision),
+                        fechaInicio: fS.formatDate(comprobante.fechaInicio),
+                        fechaFin: fS.formatDate(comprobante.fechaFin),
+                        docAduanero: comprobante.docAduanero,
+                        ptoPartida: comprobante.ptoPartida,
+                        ptoLlegada: comprobante.ptoLlegada,
+                        ruta: comprobante.ruta,
+                        estableDestino: comprobante.estableDestino,
+                        entregar: comprobante.entregar,
+                        motivo: comprobante.motivo,
+                        idDocumento: comprobante.idFactura
+                    }
+
+                    let resultDetalles = detalles.map((item, index) => {
+                        return {
+                            n: index + 1,
+                            idGuiaRemisionDetalle: item.idGuiaRemisionDetalle,
+                            idArticulo: item.idArticulo,
+                            cantidad: item.cantidad,
+                            descripcion: item.descripcion,
+                            codigo: item.codigo,
+                            estado: true
+                        }
+                    })
+
+                    return {
+                        comprobante: resultComprobante,
+                        detalles: resultDetalles,
+                        cliente: cliente[0] || {},
+                        empleado: empleado[0] || {},
+                        infoAdicionalDocumento: infoAdicional,
+                        transportista: transportista[0] || {},
+                        vehiculo: vehiculo[0] || {}
+                    }
+                }
+            })
+        }
+
+        function post(data) {
+            return mS.getData('post', url, { data }, true)
+        }
+
+        function put(id, data) {
+            return mS.getData('put', url + id, { data }, true)
+        }
+        function anular(id) {
+            return mS.getData('delete', url + id, null, true)
+        }
+    }]);
+
+
+    app.factory('transportistaService', ["$injector", function ($injector) {
         let url = 'Logistica/Transportista/';
         let mS = $injector.get('mainService');
         let service = {};
@@ -195,13 +338,13 @@
         }
 
         service.getDataForm = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tyList : 4}), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tyList: 4 }), null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload);
-                    return  results;
+                    return results;
                 }
             }).catch(error => {
                 throw error;
@@ -209,10 +352,10 @@
         }
         return service;
 
-    })
+    }])
 
 
-    app.factory('vehiculoService', function ($injector) {
+    app.factory('vehiculoService', ["$injector", function ($injector) {
         let url = 'Logistica/Vehiculo/';
         let mS = $injector.get('mainService');
         let service = {};
@@ -329,7 +472,7 @@
 
         return service;
 
-    })
+    }])
 
 
 

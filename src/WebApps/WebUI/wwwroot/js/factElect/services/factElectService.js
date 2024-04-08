@@ -109,10 +109,13 @@
     })
 
 
-    app.factory('facturaService', function ($injector) {
+    app.factory('facturaService', ['$injector', function ($injector) {
         let url = `${URL_API}Factura/`
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
+        const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
         let service = {
             data: {}
         }
@@ -126,6 +129,7 @@
 
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
+
                     let decimal = mainData[0][0];
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
@@ -160,60 +164,35 @@
                     let tempBodegas = mainData[10];
 
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
-                    let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
+                    let { sales, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
+                
 
                     // Transforma datos temporales en un formato estructurado para establecimientos y puntos de emisión
-                    const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
+                        bodegas: tempBodegas, // Establecimientos con bodegas
+                        isGroupBodega: true
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
 
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                puntosEmision: [{
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                }]
-                            });
-                        } else {
-                            existingItem.puntosEmision.push({
-                                idPuntoEmision: item.idPuntoEmision,
-                                ptoEmi: item.ptoEmi,
-                                defaultPtoEmi: item.defaultPtoEmi
-                            });
-                        }
-                        return acc;
-                    }, []);
-
-                    // Organiza establecimientos y sus almacenes correspondientes
-                    let estabs = tempEstabs.map(estab => ({
-                        ...estab,
-                        bodegas: tempBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
-                            .map(bodega => ({
-                                idBodega: bodega.idBodega,
-                                bodega: bodega.bodega,
-                                descripcion: bodega.bodega,
-                                defaultBodega: bodega.defaultBodega,
-                            }))
-                    }));
-
+                    let formasPago = mainData[11]; 
+                    let tiposIdentificacion = mainData[12]
                     // Devuelve los datos finales estructurados
                     return {
                         estabs,
                         tarifasImpuesto,
                         tiemposCredito,
                         tarifas,
-                        permisoVenta,
+                        permisoVenta: sales,
                         notificacionVenta,
                         decimal,
                         config,
                         vendedores,
                         articuloDefault,
                         clienteDefault,
-                        permisoEditarDoc
+                        permisoEditarDoc,
+                        formasPago: fS.mapperFromFormaPago(formasPago),
+                        tiposIdentificacion
                     };
 
                 }
@@ -231,32 +210,10 @@
                     let tempEstabsAndPtosEmision = mainData[0];
                     let estadosDoc = mainData[1];
 
-                    const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                puntosEmision: [{
-                                    idPuntoEmision: item.idPuntoEmision,
-                                    ptoEmi: item.ptoEmi,
-                                    defaultPtoEmi: item.defaultPtoEmi
-                                }]
-                            });
-                        } else {
-                            existingItem.puntosEmision.push({
-                                idPuntoEmision: item.idPuntoEmision,
-                                ptoEmi: item.ptoEmi,
-                                defaultPtoEmi: item.defaultPtoEmi
-                            });
-                        }
-                        return acc;
-                    }, []);
-
-
+                    let dataToGroup = {
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision 
+                    }
+                    let estabs = fS.groupingEstab(dataToGroup);
                     return {
                         estabs,
                         estadosDoc
@@ -286,6 +243,7 @@
                         return {
                             codigoTipoDoc: 'FV',//📛
                             comprobante: 'Factura',
+                            idCliente: item.idCliente,
                             idDocumento: item.idDocumento,
                             idCuentaPorCobrar: item.idCuentaPorCobrar,
                             codEstab: item.codEstab,
@@ -372,13 +330,15 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainDataApi = JSON.parse(response.payload);
+                    let mainDataApi = JSON.parse(response.payload); 
 
                     let dataTemp = mainDataApi[0][0];
                     let cliente = mainDataApi[1][0];
                     let items = mainDataApi[2];
                     let infoAdicionalDocumento = mainDataApi[3];
                     let tarifasImpuesto = mainDataApi[4];
+                    let formasPago = mainDataApi[5];
+
                     let { nombreComercial, fechaEmision, fechaVencimiento, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -388,12 +348,22 @@
                         fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                         fechaVencimientoEscrita: fS.getFechaEscrita(fS.formatDate(fechaVencimiento))
                     }
+
+                    let resultsItems = items.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
+
                     return {
                         data,
                         cliente,
-                        items,
+                        items: resultsItems,
                         infoAdicionalDocumento: infoAdicionalDocumento || [],
-                        tarifasImpuesto
+                        tarifasImpuesto,
+                        formasPago
                     }
 
                 }
@@ -421,15 +391,24 @@
                 }
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
-                    const [
+                    let [
                         comprobanteApi,
                         clienteTempApi,
                         itemsApi,
                         infoAdicionalDocumento,
-                        datosAdicionalesArticuloTemp
+                        datosAdicionalesArticuloTemp,
+                        formasPagoTemp,
+                       // cuenta,
+                      //  cuotas
                     ] = mainDataApi;
+                     
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
+                    cliente = {
+                        ...cliente,
+                        identificacionComprador: cliente.numeroIdentificacion,
+                        razonSocialComprador: cliente.nombreFiscal
+                    }
 
 
                     let items = itemsApi.map((itemPrincipal, index) => {
@@ -460,6 +439,7 @@
                             }))
                         }
 
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
                         let obj = {
                             n: index + 1,
                             idFacturaDetalle: restItem.idFacturaDetalle,
@@ -481,11 +461,13 @@
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
                             precioCosto: restItem.precioCosto,
                             precioUnitario: restItem.precioUnitario,
+                            precioConIva: precioConIva || 0,
                             tarifa: restItem.tarifa,//✅
                             valorDescuento: restItem.valorDescuento,
                             valorImpuesto: restItem.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -501,10 +483,22 @@
                         serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
-                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
-                        irbpnr: comprobanteTemp.irbpnr || 0
+                        irbpnr: comprobanteTemp.irbpnr || 0,
+                       // idTiempoCredito : cuenta[0].idTiempoCredito,
+                        //    fechaVencimiento: fS.formatDate(cuenta[0].fechaVencimiento),
+                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
                     }
+
+                    // cuotas = cuotas.map(item => {
+                    //     return {
+                    //         idCuotaPorCobrar: item.idCuotaPorCobrar,
+                    //         nroCuota: item.nroCuota,
+                    //         fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                    //         cuota: item.cuota,
+                    //         entrada: item.entrada,
+                    //     }
+                    // })
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
                         idDocumento: item.idDocumento,
@@ -517,12 +511,25 @@
                         estado: item.estado
                     }))
 
+                    let formasPago = formasPagoTemp.map(fp => {
+                        return {
+                            idFormaPagoFactura: fp.idFormaPagoFactura,
+                            idFormaPagoSri: fp.idFormaPagoSri,
+                            idFactura: fp.idFactura,
+                            idTiempoCredito: fp.idTiempoCredito,
+                            total: fp.total,
+                            plazo: fp.plazo,
+                        }
+                    });
+
                     return {
                         comprobante,
                         cliente,
                         items,
                         infoAdicionalDocumento,
-                        datosAdicionalesArticulo
+                        datosAdicionalesArticulo,
+                        formasPago,
+                        cuotas: []
                     }
                 }
             })
@@ -569,7 +576,8 @@
                             }))
                         }
 
-                        let precioConIva = itemPrincipal.precioUnitario + itemPrincipal.valorImpuesto;
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+
                         let precioTotalSinImpuesto = ((itemPrincipal.precioUnitario * itemPrincipal.cantidad)) - itemPrincipal.valorDescuento;
                         let total = precioTotalSinImpuesto + itemPrincipal.valorImpuesto;
 
@@ -668,10 +676,12 @@
             const {
                 data,
                 cliente,
+                dataFormaPago,
                 detalles,
                 itemsDeleted,
                 infoAdicionalDocumento,
                 historyDatosAdicionales,
+                cuotas,
                 fromAprobacion = false
             } = params;
 
@@ -685,6 +695,7 @@
             }
 
             factura.idCliente = cliente.idCliente;
+            factura.idTipoIdentificacion = cliente.idTipoIdentificacion;
             factura.fechaEmision = fS.formatDateTimeZone(data.fechaEmision);
             factura.fechaVencimiento = fS.formatDateTimeZone(data.fechaVencimiento);
             factura.identificacionComprador = cliente.identificacionComprador;
@@ -708,7 +719,9 @@
                 detalles: mergeItems,
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumento || [],
-                infoAdicionalArticulo: historyDatosAdicionales
+                infoAdicionalArticulo: historyDatosAdicionales,
+                formaPago: dataFormaPago,
+                cuotas
             }
         }
 
@@ -731,6 +744,7 @@
                 total: data.total,
                 observacion: data.observacion,
                 placa: data.placa,
+                idTipoIdentificacion: data.idTipoIdentificacion,
                 identificacionComprador: data.identificacionComprador,
                 razonSocialComprador: data.razonSocialComprador,
                 direccionComprador: data.direccionComprador,
@@ -766,17 +780,15 @@
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
                     precioSinSubsidio: item.precioSinSubsidio || 0,
-                    precioCostoNeto: item.precioCostoNeto,
                     precioUnitario: item.precioUnitario,
-                    precioConIva: item.precioConIva,
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
                     porcentajeDescuento: item.porcentajeDescuento,
-                    total: item.total,
                     nota: item.nota,
-                    cantidadStock: 0,
                     llevaInventario: item.llevaInventario,
                     precioCosto: item.precioCosto,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
+                    conversion : item.conversion,
                     cantidadTransaccion: fromAprobacion ? item.cantidadTransaccion : item.cantidad * item.conversion,
                     estado: item.estado,
                     valorImpuesto: item.valorImpuesto //✅
@@ -788,7 +800,7 @@
 
         return service;
 
-    })
+    }])
 
 
 
@@ -820,9 +832,13 @@
         return estabs;
     }
 
-    app.factory('notaCreditoService', function ($injector) {
+    app.factory('notaCreditoService',['$injector', function ($injector) {
         const mS = $injector.get('mainService');
         const fS = $injector.get('formulario');
+        const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
+
         const URL = 'FactElect/NotaCredito/'
         const service = {};
 
@@ -855,7 +871,8 @@
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
                     // Obtiene el permiso de venta a partir de los datos del rol del usuario
-                    let { permisoVenta } = fS.getDataUserRol();
+                    let { sales: permisoVenta } = userCustomerPermissionSvc.userPermissionAdapter();
+
 
                     return {
                         estabs,
@@ -967,11 +984,19 @@
                         fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                     }
 
+                    let resultsItems = mainDetalle.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
+
                     return {
                         data: comprobante,
                         factura: mainDataFactura.length > 0 ? mainDataFactura[0] : {},
                         cliente: mainDataCliente[0],
-                        items: mainDetalle,
+                        items: resultsItems,
                         infoAdicionalDocumento: mainInfoAdicional
                     }
 
@@ -1020,6 +1045,7 @@
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
                         let obj = {
                             n: index + 1,
@@ -1039,7 +1065,7 @@
                             llevaInventario: itemPrincipal.llevaInventario,
                             nota: itemPrincipal.nota,
                             porcentajeDescuento: itemPrincipal.porcentajeDescuento,
-                            precioConIva: itemPrincipal.precioConIva,
+                            precioConIva: precioConIva || 0,
                             precioCosto: itemPrincipal.precioCosto,
                             precioUnitario: itemPrincipal.precioUnitario,
                             tarifa: itemPrincipal.tarifa,//✅
@@ -1161,7 +1187,7 @@
 
 
 
-    });
+    }]);
 
 
 

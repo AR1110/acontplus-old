@@ -14,9 +14,10 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
     $scope.correos = [];
     $scope.telefonos = [];
     $scope.placas = [];
-
+    $scope.formasPagoSri = [];
     $scope.isDisableInputIdentificacion = false;
     $scope.isDisableSelectIdentificacion = false;
+    $scope.isDisableInput = false;
 
     $scope.onKeyupEmail = clienteSvc.onKeyupEmail
     $scope.transformChipEmail = clienteSvc.transformChipEmail;
@@ -45,7 +46,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     ciudades,
                     tiposCliente,
                     empresas,
-                    cargos
+                    cargos,
+                    formasPagoSri
                 } = response;
 
                 $scope.tiposIdentificacion = tipoIdentificacion;
@@ -53,10 +55,12 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 $scope.tiempoCreditos = tiempoCreditos;
                 $scope.ciudades = ciudades;
 
+
                 // $scope.tiposEntidad = tiposEntidad;
                 $scope.tiposCliente = tiposCliente;
                 $scope.empresas = empresas;
                 $scope.cargos = cargos;
+                $scope.formasPagoSri = formasPagoSri;
 
                 if ($scope.tipoRegistro === 1) {
                     let { idTipoIdentificacion, codigo } = $scope.tiposIdentificacion.find(item => item.codigo === 'R');
@@ -83,7 +87,11 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                         estado
                     } = response;
 
-                    $scope.isDisableInputIdentificacion = false;
+                    $scope.isDisableInputIdentificacion = true;
+                    $scope.isDisableSelectIdentificacion = true;
+                    $scope.isDisableInput = true;
+                   
+
 
                     $scope.data = response;
                     $scope.tempIdTipoIdentificacion = $scope.data.idTipoIdentificacion;
@@ -101,13 +109,19 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                         $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
                     }
 
+                    let codigoIdentificacion = $scope.dataFindByIdTipoIdentificacion().codigo;
+                    
+                    if (codigoIdentificacion === "P") {
+                        $scope.isDisableInput = false;
+                    }
+
                     $("#nombreComercial").focus();
 
 
                     //Cuando actualizan desde factura o nota entrega realizar busqueda de dato del cliente a SRI 
-                    if (params.isUpdateDataCustomerFromSRI){
+                    if (params.isUpdateDataCustomerFromSRI) {
                         let dataIdentificacion = $scope.dataFindByIdTipoIdentificacion();
-                        $scope.consultaIdentificacionSRI(dataIdentificacion.codigo, params);                
+                        $scope.consultaIdentificacionSRI(dataIdentificacion.codigo, params);
                     }
 
                 }).catch(error => {
@@ -135,6 +149,31 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
     $scope.dataFindByIdTipoIdentificacion = function () {
         return $scope.tiposIdentificacion.find(item => item.idTipoIdentificacion === $scope.data.idTipoIdentificacion) || {}
+    }
+
+    $scope.getCompanyCustomerSri = function () {
+        let codigoIdentificacion = $scope.dataFindByIdTipoIdentificacion().codigo;
+        //SI ES PASAPORTE NO VALIDA
+        if (codigoIdentificacion === "P") return
+
+        if ($scope.data.idCliente > 0) {
+            Swal.fire({
+                title: "Validar datos al SRI",
+                html: `Esta seguro de validar datos del cliente desde el SRI?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si!",
+                cancelButtonText: 'No!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $scope.consultaIdentificacionSRI(codigoIdentificacion, $scope.data)
+                }
+            });
+        } else {
+            $scope.validarNumeroIdentificacion();
+        }
     }
 
     $scope.onChangeTipoIdentificacion = function () {
@@ -289,6 +328,9 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             })
         }
 
+        if($scope.data.isManual){
+            return 
+        }
         if (codigoIdentificacion === 'C') {
             showLoader();
             clienteSvc.checkClientSRIByCedula($scope.data.numeroIdentificacion).then(response => {
@@ -340,6 +382,16 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
         }
     }
 
+    $scope.askToManual = function(){
+        if($scope.data.isManual){
+            Swal.fire({
+                //title: "Are you sure?",
+                text: "En caso de cédula, no se realizará ninguna validación de datos del cliente; por ende, revise que el número de identificación ingresado sea correcto.",
+                icon: "warning",            
+            })
+        }
+    }
+
     function updateDataWithSRI(id, dataSRI) {
         clienteSvc.findById(id).then(response => {
             let {
@@ -348,7 +400,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 estado
             } = response;
 
-            $scope.isDisableInputIdentificacion = false;
+            $scope.isDisableInputIdentificacion = $scope.data.idCliente > 0;
 
             $scope.data = Object.assign($scope.data, {
                 nombreComercial: dataSRI.razonSocial,
@@ -367,7 +419,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
             if (!($scope.data.idTiempoCredito > 0)) {
                 $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
-            } 
+            }
 
             $("#nombreComercial").focus();
 
@@ -379,6 +431,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
 
     $scope.copiarNombreComercial = function () {
+
         $scope.data.nombreComercial = $scope.data.nombreFiscal;
     }
 
@@ -477,30 +530,54 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 telefonos: $scope.telefonos,
                 placas: $scope.placas
             }
+ 
 
             if (!clienteSvc.validateForm(params)) return
 
-
-            showLoader();
-
-
-            if ($scope.tipoRegistro === 1) {
-                clienteSvc.save(params).then($scope.saveResponse).catch(error => {
-                    hideLoader();
-                    console.log(error)
-                })
+            if (!$scope.data.validationSri && $scope.data.isManual) {
+                Swal.fire({
+                    //title: "Are you sure?",
+                    text: "Revise que el número de identificación ingresada sea correcta!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Continuar!",
+                    cancelButtonText: 'Cancelar!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        saveUpdate(params);
+                    }
+                });
+                return
             }
 
-            if ($scope.tipoRegistro === 2) {
-                clienteSvc.update($scope.data.idCliente, params).then($scope.saveResponse).catch(error => {
-                    hideLoader();
-                    console.log(error)
-                })
+            if ($("#numeroIdentificacion").hasClass('is-invalid')) {
+                tS.toastr('warning', 'Ingrese el número de Identificación válido');
+                return
             }
+
+            saveUpdate(params);
 
         } catch (error) {
             hideLoader();
             console.log(error);
+        }
+    }
+
+    function saveUpdate(params) {
+        if ($scope.tipoRegistro === 1) {
+            showLoader();
+            clienteSvc.save(params).then($scope.saveResponse).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader());
+        }
+
+        if ($scope.tipoRegistro === 2) {
+            showLoader();
+            clienteSvc.update($scope.data.idCliente, params).then($scope.saveResponse).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader());
         }
     }
 
@@ -513,8 +590,14 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             hideLoader();
             tS.toastr('success', response.message);
 
-            let idCliente = $scope.tipoRegistro === 1 ? response.payload : $scope.data.idCliente;
-            let dataCliente = await clienteSvc.findById(idCliente) || {};
+
+            let idCliente = $scope.tipoRegistro === 1 ? JSON.parse(response.payload)[0].idCliente : $scope.data.idCliente;
+            let dataCliente = null;
+            if (idCliente > 0) {
+                dataCliente = await clienteSvc.findById(idCliente) || {};
+            } else {
+                dataCliente = response;
+            }
             $uibModalInstance.close(dataCliente);
         }
     }

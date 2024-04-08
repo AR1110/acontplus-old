@@ -1,4 +1,4 @@
-import { PATHS } from '@/core/constants';
+import { PATHS_API } from '@/core/constants';
 import { Http } from '@/core/utilities';
 import { ApiResponse, Measure, ProductSaleReadDto } from '../models';
 
@@ -11,7 +11,7 @@ export const MenuItemService = {
 
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.PRIVATE}${URL}`,
+            url: `${PATHS_API.PRIVATE}${URL}`,
             params: {
                 json 
             }

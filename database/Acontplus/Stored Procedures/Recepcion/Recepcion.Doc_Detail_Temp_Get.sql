@@ -56,6 +56,37 @@ BEGIN
 					WHERE ar.idArticulo = d.idArticulo
 				) FOR JSON PATH), '[]')
 	,datosAdicionales = ISNULL((SELECT top 1 ar.datosAdicionales FROM Articulo ar where ar.idArticulo = d.idArticulo), 0)
+    ----Medidas agregado por Emilio 
+    ,ISNULL
+        ((
+            SELECT af.idMedida
+                  ,IIF(af.gestionVenta = 1,1,3) as orden
+                  ,af.conversion
+                  ,af.precioCostoFraccionado
+                  ,ar.precioCosto
+			      ,me.descripcion               as descripcion 
+			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
+            INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+			WHERE af.idArticulo = d.idArticulo 
+            FOR JSON PATH
+                
+        ),'[]') as fraccionado
+
+        ,ISNULL
+        ((
+            SELECT sc.idMedida
+                  ,2              as orden
+                  ,1              as conversion
+			      ,sc.precioCosto as precioCostoFraccionado
+                  ,sc.precioCosto
+                  ,me.descripcion 
+			FROM dbo.Articulo     sc WITH (NOLOCK)
+			INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = sc.idMedida
+			WHERE sc.idArticulo = d.idArticulo 
+            FOR JSON PATH
+
+         ),'[]') as principal 
 	FROM Recepcion.Doc_Detalle_Temp d
 	WHERE d.idDocumento = @idDocumento
 	ORDER BY d.idDetalle ASC

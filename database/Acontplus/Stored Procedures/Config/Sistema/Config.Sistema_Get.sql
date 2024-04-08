@@ -11,7 +11,7 @@ GO
 -- Description:	GET para traer la configuracion del sistema
 -- =============================================
 
-CREATE OR ALTER PROCEDURE Config.Sistema_Get @idUsuarioRol INT, @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Config.Sistema_Get @userRoleId INT, @json VARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -22,7 +22,7 @@ BEGIN
 	DECLARE @jsonConfig AS VARCHAR(MAX)
 	DECLARE @idSistema AS INT
 
-	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	
 	SELECT @codConfig = codConfig FROM OPENJSON(@json) WITH (codConfig VARCHAR(5) '$.codConfig')
 
@@ -30,6 +30,8 @@ BEGIN
 
 	IF @codConfig = 'cv'
 		BEGIN
+
+              SET @tableNames = 'data,formasPagoSri'
 			SELECT idSistema = @idSistema
 				  ,customerDefault  = IIF(dt.idCliente IS NULL ,CAST(0 AS BIT),CAST(1 AS BIT))
 				  ,cl.idCliente 
@@ -42,9 +44,12 @@ BEGIN
 				  ,dt.printerAutomatic           
 				  ,dt.payAutomatic
 				  ,dt.multipleVendedor
+                  ,dt.detailDuplicate
 				  ,dt.configDeuda     
 				  ,dt.tipoConfig 
 				  ,dt.interes
+                  ,dt.idFormaPagoSri
+                  ,dt.idArticulo
 			FROM OPENJSON(@jsonConfig)
 			WITH (idCliente        INT '$.idCliente'
 			    ,idArticulo        INT '$.idArticulo'
@@ -52,16 +57,22 @@ BEGIN
 				,printerAutomatic  BIT '$.printerAutomatic'
 				,payAutomatic      BIT '$.payAutomatic'
 				,multipleVendedor  BIT '$.multipleVendedor'
+				,detailDuplicate   BIT '$.detailDuplicate'
 				,configDeuda       BIT '$.configInteres'
 				,tipoConfig VARCHAR(5) '$.infoInteres.tipoConfig'
 				,interes NUMERIC(18,5) '$.infoInteres.interes'
+                ,idFormaPagoSri INT
 				) as dt
 			LEFT JOIN dbo.Cliente  cl WITH (NOLOCK) ON cl.idCliente  = dt.idCliente
 			LEFT JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
+
+              SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
 		END 
 
 	IF @codConfig = 'CI'
 		BEGIN
+
+             SET @tableNames = 'data,metodosValoracion'
 			SELECT dt.idMetodoValoracion
 			      ,idSistema = @idSistema
 				  ,codMetodoValoracion = dt.codMetodoValoracion
@@ -77,6 +88,7 @@ BEGIN
 
 	IF @codConfig = 'CD'
 		BEGIN
+             SET @tableNames = 'data'
 			SELECT dt.*,idSistema = @idSistema
 			FROM OPENJSON(@jsonConfig)
 			WITH (codTransaccion      VARCHAR(5) '$.codTransaccion'
@@ -89,18 +101,21 @@ BEGIN
 				 ,nroDescuento               INT '$.nroDescuento'
 				 ,importeTotal               INT '$.importeTotal'
 				 ,nroIce                     INT '$.nroIce') as dt
+                 RETURN 
 		END 
 
 	IF @codConfig = 'CS'
 		BEGIN
+          SET @tableNames = 'notificaciones'
             SELECT vs.estado
                   ,ns.descripcion as notificacion
                   ,@idSistema     as idSistema
-                  ,vs.codigo 
+                  ,ns.codigo 
                   ,vs.idNotificacionSistema
             FROM Config.v_Sistema_Notificacion    vs WITH (NOLOCK)
             INNER JOIN Config.NotificacionSistema ns WITH (NOLOCK) ON ns.idNotificacionSistema = vs.idNotificacionSistema
             WHERE idEntidad = @idEntidad
+            RETURN 
 		END 
 END
 GO

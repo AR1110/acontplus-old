@@ -51,15 +51,80 @@ BEGIN
 			    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran
 
 			    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
-               
+                
                 --> Actualizar Stock por Bodega 
-			    UPDATE st SET st.cantidad = Inventario.f_Stock(st.idArticulo,st.idBodega)
-			    FROM Inventario.Stock             st WITH (ROWLOCK)
-			    INNER JOIN Inventario.Transaccion td WITH (ROWLOCK) ON td.idArticulo = st.idArticulo AND td.idBodega = st.idBodega
-			    WHERE td.idTipoTransaccion = @idTipoTransaccion
-				  AND td.idTipoDocumento   = @idTipoDocumento
-				  AND td.idDocumento       = @documentoId
 
+                --> Ajuste ID unico
+                IF @codTran = 'A'
+                    BEGIN
+                        UPDATE st 
+                           SET st.consolidacion = (
+                                                    SELECT TOP 1 dt.cantidadTransaccion    
+                                                    FROM Inventario.Transaccion              tr WITH (NOLOCK)
+                                                    INNER JOIN Inventario.TransaccionDetalle dt WITH (NOLOCK) ON dt.idTransaccion     = tr.idTransaccion
+                                                    INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
+                                                    INNER JOIN Inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
+                                                    WHERE dt.idArticulo = st.idArticulo
+                                                      AND dt.idBodega   = st.idBodega
+                                                      AND dt.estado     = 1
+                                                      AND tt.codigo     = 'A'
+                                                    ORDER BY tr.fechaEmision DESC
+                                                  )
+                              ,st.ConsolidacionId = (
+                                                        SELECT TOP 1 tr.idDocumento    
+                                                        FROM Inventario.Transaccion              tr WITH (NOLOCK)
+                                                        INNER JOIN Inventario.TransaccionDetalle dt WITH (NOLOCK) ON dt.idTransaccion     = tr.idTransaccion
+                                                        INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
+                                                        INNER JOIN Inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
+                                                        WHERE dt.idArticulo = st.idArticulo
+                                                          AND dt.idBodega   = st.idBodega
+                                                          AND dt.estado     = 1
+                                                          AND tt.codigo     = 'A'
+                                                        ORDER BY tr.fechaEmision DESC
+                                                     )
+                              ,st.fechaConsolidacion = (
+                                                            SELECT TOP 1 tr.fechaEmision    
+                                                            FROM Inventario.Transaccion              tr WITH (NOLOCK)
+                                                            INNER JOIN Inventario.TransaccionDetalle dt WITH (NOLOCK) ON dt.idTransaccion     = tr.idTransaccion
+                                                            INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
+                                                            INNER JOIN Inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
+                                                            WHERE dt.idArticulo = st.idArticulo
+                                                              AND dt.idBodega   = st.idBodega
+                                                              AND dt.estado     = 1
+                                                              AND tt.codigo     = 'A'
+                                                            ORDER BY tr.fechaEmision DESC
+                                                       )
+			            FROM Inventario.Stock                    st WITH (ROWLOCK)
+			            INNER JOIN Inventario.TransaccionDetalle td WITH (ROWLOCK) ON td.idArticulo    = st.idArticulo AND 
+                                                                                      td.idBodega      = st.idBodega
+                        INNER JOIN Inventario.Transaccion        tr WITH (ROWLOCK) ON tr.idTransaccion = td.idTransaccion
+			            WHERE tr.idTipoTransaccion = @idTipoTransaccion
+				          AND tr.idTipoDocumento   = @idTipoDocumento
+				          AND tr.idDocumento       = @documentoId
+                    END 
+
+                IF @codDoc = 'TB'
+                    BEGIN 
+                        UPDATE st SET st.cantidad = Inventario.f_Stock(st.idArticulo,st.idBodega)
+			            FROM Inventario.Stock                    st WITH (ROWLOCK)
+			            INNER JOIN Inventario.TransaccionDetalle td WITH (ROWLOCK) ON td.idArticulo    = st.idArticulo 
+                                                                                  AND td.idBodega      = st.idBodega
+                        INNER JOIN Inventario.Transaccion        tr WITH (ROWLOCK) ON tr.idTransaccion = td.idTransaccion
+			            WHERE tr.idTipoDocumento = @idTipoDocumento
+				          AND tr.idDocumento     = @documentoId
+                    END 
+                ELSE   
+                    BEGIN
+                        UPDATE st SET st.cantidad = Inventario.f_Stock(st.idArticulo,st.idBodega)
+			            FROM Inventario.Stock                    st WITH (ROWLOCK)
+			            INNER JOIN Inventario.TransaccionDetalle td WITH (ROWLOCK) ON td.idArticulo    = st.idArticulo 
+                                                                                  AND td.idBodega      = st.idBodega
+                        INNER JOIN Inventario.Transaccion        tr WITH (ROWLOCK) ON tr.idTransaccion = td.idTransaccion
+			            WHERE tr.idTipoTransaccion = @idTipoTransaccion
+				          AND tr.idTipoDocumento   = @idTipoDocumento
+				          AND tr.idDocumento       = @documentoId
+                    END 
+               
                 --> Actualizar Stock General
                 UPDATE ar
 			        SET ar.stock = (
@@ -67,8 +132,9 @@ BEGIN
 					               )
 			    FROM dbo.Articulo ar WITH (ROWLOCK)
 			    WHERE ar.idArticulo IN (
-					    SELECT t.idArticulo
-					    FROM Inventario.Transaccion t
+					    SELECT tr.idArticulo
+					    FROM Inventario.Transaccion              t  WITH (NOLOCK)
+                        INNER JOIN Inventario.TransaccionDetalle tr WITH (NOLOCK) ON tr.idTransaccion = t.idTransaccion
 					    WHERE t.idTipoTransaccion = @idTipoTransaccion
 						  AND t.idTipoDocumento   = @idTipoDocumento
 						  AND t.idDocumento       = @documentoId

@@ -18,6 +18,7 @@ const ButtonAction = ({ data, getOrderDocuments }: ActionsProps) => {
     const [openDialogWhatsApp, setDialogWhatsApp] = useState(false);
     const [openCheckout, setOpenCheckout] = useState(false)
 
+  
     const documentReport = () => {
         try {
             const format = 'pdf';
@@ -41,7 +42,7 @@ const ButtonAction = ({ data, getOrderDocuments }: ActionsProps) => {
                     }),
                     dataParams: JSON.stringify(dataParms)
                 }
-                SharedService.downloadExternal(parameters)
+                SharedService.downloadExternal(parameters, false, true)
                     .finally(() => setLoadingPDF(false));
             }
 
@@ -58,7 +59,7 @@ const ButtonAction = ({ data, getOrderDocuments }: ActionsProps) => {
                     }),
                     dataParams: JSON.stringify(dataParms)
                 }
-                SharedService.downloadExternal(parameters)
+                SharedService.downloadExternal(parameters, false, true)
                     .finally(() => setLoadingPDF(false));
             }
         } catch (error) {

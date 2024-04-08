@@ -1,7 +1,7 @@
 (function () {
 
     'use strict';
-    app.factory('userService', function ($injector) {
+    app.factory('userService',['$injector', function ($injector) {
         const mS = $injector.get('mainService');
         const URL = 'Config/Usuario/';
         const URL_ACCESO = 'Config/Acceso/'
@@ -54,5 +54,5 @@
         }
 
         return service;
-    })
+    }])
 })(window.angular)

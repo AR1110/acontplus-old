@@ -3,11 +3,35 @@
 
     'use strict';
 
-    app.factory('articuloService', ['mainService', 'formulario', function (mS, fS) {
+    app.factory('articuloService', ['$injector', function ($injector) {
+        let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario');
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
 
         let url = 'Inventario/Articulo/';
 
         let service = {};
+
+        service.getDataFilter = function () {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 11 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    return {
+                        subFamilias: mainData[0],
+                        medidas: mainData[1],
+                        marcas: mainData[2],
+                        modelos: mainData[3],
+                        tiposIva: mainData[4]
+                    }
+
+                }
+            })
+        }
 
         /**
          * 
@@ -55,7 +79,6 @@
                     }
 
                     if (params.tipo === 5) {
-                        console.log(mainData)
                         console.log('data form')
                     }
 
@@ -139,44 +162,14 @@
                     let tiposICE = mainData[9];
                     let tarifas = mainData[10];
                     let etiquetas = mainData[11];
-
-                    let userData = JSON.parse(localStorage.getItem("userData"));
+ 
+                    const dataPermission = userCustomerPermissionSvc.userPermissionAdapter();
+                    
                     let permission = {
-                        isUpdatePrice: true
-                    }
-                    if (userData) {
-                        let jsonDataPermission = userData.permissions.find(dt => dt.codModule === 'AR');
-                        if (jsonDataPermission) {
-                            let result = JSON.parse(jsonDataPermission.permission);
-                            permission.isUpdatePrice = result.precio.update;
-                        }
-                    }
-                    const establecimientos = tempEstabs.reduce((acc, item) => {
-                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
-
-                        if (!existingItem) {
-                            acc.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                nombreComercial: item.nombreComercial,
-                                codEstab: item.codEstab,
-                                defaultEstab: item.defaultEstab,
-                                bodegas: [{
-                                    idEstablecimiento: item.idEstablecimiento,
-                                    idBodega: item.idBodega,
-                                    bodega: item.bodega,
-                                    defaultBodega: item.defaultBodega,
-                                }]
-                            });
-                        } else {
-                            existingItem.bodegas.push({
-                                idEstablecimiento: item.idEstablecimiento,
-                                idBodega: item.idBodega,
-                                bodega: item.bodega,
-                                defaultBodega: item.defaultBodega,
-                            });
-                        }
-                        return acc;
-                    }, []);
+                        isUpdatePrice: dataPermission.product.precio
+                    }  
+                    const establecimientos = fS.groupEstabBodega(tempEstabs);
+                      
                     return {
                         establecimientos,
                         decimal,
@@ -191,19 +184,7 @@
                         tarifas,
                         etiquetas,
                         permission
-                    }
-                    // return {
-                    //     establecimientos: mainData[0],
-                    //     bodegas: mainData[1],
-                    //     subFamilias: mainData[2],
-                    //     familias: mainData[3],
-                    //     medidas: mainData[4],
-                    //     modelos: mainData[5],
-                    //     marcas: mainData[6],
-                    //     tiposArticulo: mainData[7],
-                    //     tarifasImpuesto: mainData[8],
-                    //     tarifas: mainData[9]
-                    // }
+                    } 
                 }
             })
         }
@@ -253,6 +234,7 @@
 
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
+
                     let articulos = mainData[0];
                     let totalRecords = mainData[0][0].totalRecords;
 
@@ -266,6 +248,7 @@
                                 code_unique: item.code_unique,
                                 codigo: item.codigo,
                                 descripcion: item.descripcion,
+                                codigoBarra: item.codigoBarra,
                                 precioCosto: item.precioCosto,
                                 estado: item.estado,
                                 stock: item.stock,
@@ -282,6 +265,8 @@
                                 stockMinimo: item.stockMinimo,
                                 tarifas,
                                 color: item.color,
+                                s3ObjectKey: item.s3ObjectKey,
+                                s3ObjectUrl: item.s3ObjectUrl
                             }
                         })
 
@@ -408,12 +393,12 @@
                 }
                 if (response.code === "1") {
                     let articulos = JSON.parse(response.payload) || [];
-
                     return articulos.map(item => {
                         let priceSales = JSON.parse(item.priceSale) || [];
                         let warehouses = JSON.parse(item.warehouses) || [];
 
                         return {
+                            s3ObjectUrl: item.s3ObjectUrl,
                             codigo: item.codigo,
                             descripcion: item.descripcion,
                             idArticulo: item.idArticulo,
@@ -425,13 +410,15 @@
                             style: item.style,
                             subFamilia: item.subFamilia,
                             fraccionado: item.fraccionado,
+                            llevaInventario: item.llevaInventario,
                             priceSales: priceSales.map(item => {
                                 return {
                                     tarifa: item.tarifa,
                                     precio: item.precio,
                                 }
                             }),
-                            warehouses
+                            warehouses,
+                            totalRecords: item.totalRecords
                         }
                     })
                 }
@@ -685,37 +672,8 @@
                     // Medida principal con las tarifas
                     let medidasPrincipalTemp = mainData[2];
 
-                    // Combinar los dos arrays de medidas en uno solo
-                    const medidasPrincipal = medidasPrincipalTemp.map(medidaPrincipal => ({
-                        ...medidaPrincipal,
-                        tipo: 'PRINCIPAL'
-                    }))
-                    const medidasFraccionado = medidasFraccionadoTemp.map(medidaFraccionado => ({
-                        ...medidaFraccionado,
-                        tipo: 'FRACCIONADO'
-                    }))
-                    const mergedMedidasArray = [...medidasFraccionado, ...medidasPrincipal];
-
-                    /**
-                     * Ordenar el array de medidas en función de la propiedad "orden" y 
-                     * establecer la propiedad "defaultMedida" en falso para todos los elementos 
-                     * */
-                    let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
-                        ...medida,
-                        defaultMedida: false
-                    }))
-                    // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
-                    orderMedidaArray[0].defaultMedida = true;
-
-                    // Crear un nuevo array de medidas con un formato específico
-                    let medidas = orderMedidaArray.map(item => ({
-                        idMedida: item.idMedida,
-                        conversion: item.conversion,
-                        descripcion: item.descripcion,
-                        defaultMedida: item.defaultMedida,
-                        tipo: item.tipo,
-                        tarifas: JSON.parse(item.tarifas)
-                    }))
+                    let medidas = fS.processAndSortMeasures(medidasPrincipalTemp,medidasFraccionadoTemp);
+            
 
                     let consolidacionesFecha = mainData[3] || [];
 
@@ -799,7 +757,7 @@
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', `${url}${id}`, null, true);
+            return mS.getData('delete', `${url}Delete/${id}`, null, true);
         }
 
 
@@ -812,7 +770,7 @@
                     }
                     if (response.code === "1") {
                         let [estabsTemp, subFamilias, marcas] = JSON.parse(response.payload);
-                        
+
                         const estabs = fS.groupEstabBodega(estabsTemp)
                         return {
                             estabs,
@@ -823,27 +781,30 @@
                 }
             )
         }
+
+
+
         return service;
 
     }])
 
     app.factory('articuloCodigoBarraService', function ($injector) {
-        const URL = '/CodigoBarraArticulo/';
+        const URL = 'Inventario/ArticuloCodigoBarra/';
 
         const mS = $injector.get('mainService');
         const service = {};
 
         service.post = function (data) {
-            return mS.getData("post", `${URL}Post`, data);
+            return mS.getData("post", `${URL}`, { data }, true);
         }
 
 
         service.put = function (id, data) {
-            return mS.getData("post", `${URL}Put?idArticuloCodigoBarra=${id}`, data);
+            return mS.getData("put", `${URL}${id}`, { data }, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', `${URL}Delete?idArticuloCodigoBarra=${id}`);
+            return mS.getData('delete', `${URL}${id}`, null, true);
         }
 
         return service;
@@ -941,11 +902,84 @@
         function _delete(id) {
             return mS.getData('DELETE', `${url}${id}`, null, true);
         }
+
+        function getPhotos(id) {
+            return mS.getData('GET', `${url}${id}`, null, true).then(response => {
+                let photos = [];
+                if (response.code === "1") {
+                    photos = response.payload;
+                }
+                return photos;
+
+            })
+        }
+
+        function previewImg(id) {
+            try {
+                showLoader();
+                getPhotos(id).then(photos => {
+                    hideLoader();
+                    if (photos.length === 0) {
+                        Swal.fire({
+                            icon: 'warning',
+                            html: '<small> El artículo no posee imágenes.</small> '
+                        })
+                        return
+                    }
+
+                    let sliderContent = `<div id="carouselPhotosProductControls" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner">`;
+                    let index = 0;
+                    for (const photo of photos) {
+                        sliderContent += `
+                                <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                    <img class="d-block w-100" src="${photo.s3ObjectUrl}" alt="First slide">
+                                </div>   
+                                `;
+                        index++;
+                    }
+
+                    sliderContent += `</div>
+                                    <a class="carousel-control-prev" href="javascript:void(0);" role="button" data-slide="prev" id="prevSlide">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="javascript:void(0);" role="button" data-slide="next" id="nextSlide">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>`
+
+                    Swal.fire({
+                        html: sliderContent,
+                        showConfirmButton: true,
+                        width: '50em'
+                    });
+
+                    document.getElementById('nextSlide').addEventListener('click', () => {
+                        $('#carouselPhotosProductControls').carousel('next');
+                    })
+                    document.getElementById('prevSlide').addEventListener('click', () => {
+                        $('#carouselPhotosProductControls').carousel('prev');
+                    })
+
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader())
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
+        }
+
         service.get = _get;
         service.post = _post;
         service.setDefault = _setDefault;
         service.update = _update;
         service.delete = _delete;
+
+        service.getPhotos = getPhotos
+        service.previewImg = previewImg;
         return service;
     }
 })(window.angular)

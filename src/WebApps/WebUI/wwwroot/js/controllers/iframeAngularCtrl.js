@@ -9,7 +9,8 @@
 
     function iframeAngularCtrl($scope, $location, $injector) {
         const mS = $injector.get('mainService');
-        const fS = $injector.get('formulario')
+        const fS = $injector.get('formulario');
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         mS.detectDevice();
 
         let frontend = document.getElementById('frontend').value
@@ -21,11 +22,15 @@
         let urlObj = new URL(url);
         let { pathname } = urlObj
         /*  console.log(pathname);*/
-        let totalRoutes = pathname.split('/');
+        let totalRoutes = pathname.split('/'); 
         let route;
         if (totalRoutes.length === 4) {
             route = totalRoutes[1] + totalRoutes[2]
-        } else {
+        } 
+        else if (totalRoutes.length === 5){
+            route = totalRoutes[1] + totalRoutes[2] + totalRoutes[3];
+        }
+        else {
             route = pathname.split('/')[1]
         }
         async function getSrc() {
@@ -34,7 +39,7 @@
             let { token } = JSON.parse(params);
             if (!token) { return; }
 
-            let permissions = fS.getDataUserRol();
+            let permissions = userCustomerPermissionSvc.userPermissionAdapter();
             // Create a new iframe element
             var iframe = document.createElement('iframe');
 

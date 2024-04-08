@@ -10,12 +10,14 @@ namespace Identity.API.Services
     public class TokenService : ITokenService
     {
         private readonly SymmetricSecurityKey _key;
-        public int _tokenExp;
+        public readonly bool _expInDays;
+        public readonly int _tokenExp;
         public TokenService(IConfiguration configuration)
         {
             //var tokenKey = Encoding.UTF8.GetBytes((_configuration["Token:Key"]).PadRight((512 / 8), '\0'));
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]));
             _tokenExp = Convert.ToInt32(configuration["Token:Exp"]);
+            _expInDays = Convert.ToBoolean(configuration["Token:ExpInDays"]);
         }
         public string CreateToken(UserData data)
         {
@@ -32,7 +34,7 @@ namespace Identity.API.Services
                     new Claim("idCardCompany", data.IDCardCompany),
                     new Claim("companyId", Convert.ToString(data.CompanyId)),
                     new Claim("tradeName", data.TradeName),
-                    new Claim("bussinesName", data.BussinesName),
+                    new Claim("businessName", data.BusinessName),
                     new Claim("urlGateway", data.UrlGateway),
                     //Legacy
                     new Claim("idUsuarioRol", Convert.ToString(data.UserRoleId)),
@@ -42,7 +44,7 @@ namespace Identity.API.Services
             var securityTokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claimsIdentiy,
-                Expires = DateTime.UtcNow.AddDays(_tokenExp),
+                Expires = _expInDays ? DateTime.UtcNow.AddDays(_tokenExp) : DateTime.UtcNow.AddHours(_tokenExp),
                 SigningCredentials = signingCredentials
             };
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();

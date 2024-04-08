@@ -62,6 +62,8 @@
                     rowEntity.porcentajeDescuento = 0;
                     rowEntity.valorDescuento = 0;
                     rowEntity.conversion = dataMedida.conversion;
+                    rowEntity.precioCosto = dataMedida.precioCosto;
+                    rowEntity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
                     //  this.setTotalRow(rowEntity, index);                                  
 
                 },
@@ -207,8 +209,8 @@
                         let totalIce = rowEntity.cantidad * rowEntity.ice;
 
                         //   rowEntity.totalDescuento = fS.roundNumber(totalDescuento, decimal.nroDescuentoDetalle)
-                        rowEntity.precioTotalSinImpuesto = fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle);
-                        rowEntity.valorImpuesto = fS.roundNumber(valorImpuesto, decimal.nroIva)
+                        rowEntity.precioTotalSinImpuesto = fS.roundNumber(precioTotalSinImpuesto, decimal.nroPrecio);
+                        rowEntity.valorImpuesto = fS.roundNumber(valorImpuesto, decimal.nroPrecio)
                         rowEntity.total = fS.roundNumber(total, decimal.nroTotalDetalle);
                         rowEntity.totalIce = fS.roundNumber(totalIce, decimal.nroIce)
                         // this.getTotales();
@@ -246,7 +248,8 @@
             let { totalPrecioTotalSinImpuesto, totalIce, totalDescuento, totalSinImpuesto } = items.reduce((acc, prev) => {
                 // Calcular el total neto con descuentos y el total de ICE
                 let totalSinImpuesto = prev.cantidad * prev.precioUnitario;
-                let precioTotalSinImpuesto = (prev.cantidad * prev.precioUnitario) - prev.valorDescuento;
+                let precioTotalSinImpuesto = ((prev.cantidad * prev.precioUnitario) - prev.valorDescuento);
+
                 let totalIce = prev.cantidad * prev.ice;
 
                 // Acumular totales generales
@@ -286,12 +289,15 @@
                 });
 
                 // Construir el HTML para la tabla de impuestos
-                htmlImpuestoTotal += `<tr>
-                                <td class="left">
-                                    <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
-                                </td>
-                                <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
-                            </tr>`;
+                if(totalNetoIva>0){
+                    htmlImpuestoTotal += `<tr>
+                                    <td class="left">
+                                        <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
+                                    </td>
+                                    <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
+                                </tr>`;
+
+                }
 
                 if (dataTarifaImpuesto.tarifa > 0) {
                     let { totalIva } = filteredItems.reduce((acc, prev) => {
@@ -304,18 +310,20 @@
                     });
 
                     sumTotalIva += totalIva;
+                    if(totalIva>0){
+                        htmlIvaTotal += `
+                                    <tr>
+                                        <td class="left">
+                                            <span class="text-dark">${dataTarifaImpuesto.descripcion}</span>
+                                        </td>
+                                        <td class="right">$${fS.roundNumber(totalIva, decimal.nroIva)}</td>
+                                    </tr>`
 
-                    htmlIvaTotal += `
-                                <tr>
-                                    <td class="left">
-                                        <span class="text-dark">${dataTarifaImpuesto.descripcion}</span>
-                                    </td>
-                                    <td class="right">$${fS.roundNumber(totalIva, decimal.nroIva)}</td>
-                                </tr>`
+                    }
+
                 }
             }
-            console.log(sumTotalIva)
-
+        
             const importeTotal = totalPrecioTotalSinImpuesto + sumTotalIva;
             if (totalSinImpuesto > 0) {
                 totalPorcentajeDescuento = ((totalSinImpuesto - totalPrecioTotalSinImpuesto) * 100) / totalSinImpuesto;
@@ -705,12 +713,15 @@
                 });
 
                 // Construir el HTML para la tabla de impuestos
-                htmlImpuestoTotal += `<tr>
-                                <td class="left">
-                                    <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
-                                </td>
-                                <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
-                            </tr>`;
+                if (totalNetoIva>0){
+
+                    htmlImpuestoTotal += `<tr>
+                                    <td class="left">
+                                        <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
+                                    </td>
+                                    <td class="right">$${fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
+                                </tr>`;
+                }
 
                 if (dataTarifaImpuesto.tarifa > 0) {
                     let { totalIva } = filteredItems.reduce((acc, prev) => {
@@ -724,13 +735,16 @@
 
                     sumTotalIva += totalIva;
 
-                    htmlIvaTotal += `
-                                <tr>
-                                    <td class="left">
-                                        <span class="text-dark">${dataTarifaImpuesto.descripcion}</span>
-                                    </td>
-                                    <td class="right">$${fS.roundNumber(totalIva, decimal.nroIva)}</td>
-                                </tr>`
+                    if (totalIva>0){
+                        htmlIvaTotal += `
+                                    <tr>
+                                        <td class="left">
+                                            <span class="text-dark">${dataTarifaImpuesto.descripcion}</span>
+                                        </td>
+                                        <td class="right">$${fS.roundNumber(totalIva, decimal.nroIva)}</td>
+                                    </tr>`
+
+                    }
                 }
             }
 

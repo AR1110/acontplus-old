@@ -162,7 +162,7 @@ BEGIN
                 ,TaxId
                 ,oi.TaxPercentId
                 ,FeeId
-                ,TaxValue
+                ,ij.taxValue
                 ,ij.quantity
                 ,Cost
                 ,ij.price
@@ -182,13 +182,14 @@ BEGIN
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
             INNER JOIN Restaurant.[Order] o ON oi.OrderId = o.ID
 			INNER JOIN Restaurant.v_Item i ON oi.ItemId = i.Id
-            JOIN (SELECT uuid, quantity, price, discount, total FROM OPENJSON(@itemsToPay)
+            JOIN (SELECT uuid, quantity, price, discount, total, taxValue FROM OPENJSON(@itemsToPay)
                     WITH (
                         uuid        UNIQUEIDENTIFIER '$.uuid',
                         quantity    NUMERIC(18,2) '$.quantity',
                         price       NUMERIC(18,5) '$.price',
                         discount    NUMERIC(18,5) '$.discount',
-                        total       NUMERIC(18,5) '$.total'
+                        total       NUMERIC(18,5) '$.total',
+                        taxValue    NUMERIC(18,2) '$.taxValue'
                     )
             ) AS ij ON ij.uuid = oi.uuid
             WHERE oi.Deleted IS NULL
@@ -197,13 +198,15 @@ BEGIN
             INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
             SELECT oi.Uuid
                 , TaxId
-                , TaxPercentId
-                , Price
-                , TaxValue
+                , TaxPercentId 
+                 ,CAST((ij.Quantity * oi.Price) AS numeric(18,5)) AS taxBase
+                , ij.taxValue
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
-            JOIN (SELECT uuid FROM OPENJSON(@itemsToPay)
+            JOIN (SELECT uuid, quantity, taxValue FROM OPENJSON(@itemsToPay)
                                     WITH (
-                                            uuid UNIQUEIDENTIFIER '$.uuid'
+                                            uuid UNIQUEIDENTIFIER '$.uuid',
+                                            quantity NUMERIC(18,2) '$.quantity',
+                                            taxValue NUMERIC(18,2) '$.taxValue'
                                             )
                         ) AS ij ON ij.uuid = oi.uuid
             WHERE oi.Deleted IS NULL
@@ -278,8 +281,8 @@ BEGIN
             INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
             SELECT Uuid
                 , TaxId
-                , TaxPercentId
-                , Price
+                , TaxPercentId 
+                , CAST((oi.Quantity * oi.Price) AS numeric(18,5)) AS taxBase
                 , TaxValue
             FROM Restaurant.OrderItem oi
             WHERE OrderId = @orderId
@@ -438,7 +441,7 @@ BEGIN
             )
 
         INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    
-            , valorDescuento, porcentajeDescuento, precioTotalSinImpuesto, nota, descripcion, precioCosto, idTipoIva, tarifa        
+            , valorDescuento, porcentajeDescuento, precioTotalSinImpuesto, nota, descripcion, precioCosto, idTipoIva, codigoPorcentaje, tarifa        
             , valorImpuesto, uuid, envioSri)
 
         SELECT i.idArticulo 
@@ -456,6 +459,7 @@ BEGIN
             ,i.description
             ,0                         AS precioCosto
             ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS VARCHAR(1)) = sti.codigo) AS idTipoIva
+            ,(SELECT TOP 1  codigoPorcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS VARCHAR(1)) = sti.codigo) AS idTipoIva
             ,(SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS VARCHAR(1)) = sti.codigo) AS idTipoIva
             ,i.taxValue                AS iva
             ,i.uuid
@@ -686,8 +690,8 @@ BEGIN
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
 
                    INSERT INTO Inventario.Transaccion 
-                           (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
-			        SELECT @idTipoTransaccion,idArticulo,idBodega, @idTipoDocumentoIv,@documentoId,medidaId,idTarifa,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto,@fechaEmision,@userId 
+                           (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
+			        SELECT @idTipoTransaccion,idArticulo,idBodega, @idTipoDocumentoIv,@documentoId,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto,@fechaEmision,@userId 
                     FROM @tblInventory
 
                    EXEC dbo.Transaccion_Handler_Init 'S', @codDocTran, @documentoId, DEFAULT

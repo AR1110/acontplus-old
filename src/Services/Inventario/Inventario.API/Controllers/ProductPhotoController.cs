@@ -1,13 +1,11 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
-using Common.Core.Utils;
 using Inventario.Core.Entities;
 using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Inventario.API.Controllers
 {
@@ -102,7 +100,7 @@ namespace Inventario.API.Controllers
         {
             try
             {
-                var response = await _productPhoto.SetDefaultAsync(id, isDefault, User.GetUserId()); 
+                var response = await _productPhoto.SetDefaultAsync(id, isDefault, User.GetUserId());
                 return Ok(response);
             }
             catch (Exception ex)

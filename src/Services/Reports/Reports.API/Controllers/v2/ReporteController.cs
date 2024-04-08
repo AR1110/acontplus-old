@@ -1,11 +1,11 @@
-﻿using Common.Core.Utils;
+﻿using System.Data;
+using Asp.Versioning;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Reports.API.Dtos;
+using Reports.Core.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
-using System.Data;
-using Asp.Versioning;
-using Reports.Core.Interfaces;
 
 namespace Reports.API.Controllers.v2
 {
@@ -39,7 +39,7 @@ namespace Reports.API.Controllers.v2
                     return BadRequest("Can't get report params");
                 }
 
-                storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure"); 
+                storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure");
 
                 var dataParams = new Dictionary<string, object>();
                 if (!data.hasService)
@@ -49,7 +49,7 @@ namespace Reports.API.Controllers.v2
 
                 dataParams["json"] = SqlStringParam.Sanitize(data.dataParams);
 
-                var ds = await _reportService.GetDataAsync(storedProcedure, dataParams, false);
+                using var ds = await _reportService.GetDataAsync(storedProcedure, dataParams, false);
 
                 if (ds.Tables[0].Rows.Count == 0)
                 {
@@ -59,12 +59,14 @@ namespace Reports.API.Controllers.v2
 
                 var response = _rdlcreport.GetReport(dsParams, ds);
 
-                if (response == null)
+                switch (response)
                 {
-                    _log.LogActivity($"Error in rdlc generation \n ReportProps: {data.reportParams}");
-                    return BadRequest($"Error in rdlc generation");
+                    case null:
+                        _log.LogActivity($"Error in rdlc generation \n ReportProps: {data.reportParams}");
+                        return BadRequest($"Error in rdlc generation");
+                    default:
+                        return File(response.FileContents, response.ContentType, response.FileDownloadName);
                 }
-                return File(response.FileContents, response.ContentType, response.FileDownloadName);
             }
             catch (Exception ex)
             {

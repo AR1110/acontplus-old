@@ -21,13 +21,13 @@
     [(ngModel)]="textSearch"
     [ngbTypeahead]="search"
     [resultTemplate]="rt"
-     [class.is-invalid]="searchFailed"
+    [class.is-invalid]="searchFailed"
     (selectItem)="onSelect($event)"
     onclick="select();"
     (keyup)="onKeyupSearch()"
     placeholder="Buscar cliente"
   />
-
+  @if(dataSearch.idCliente == 0){
   <button
     type="button"
     class="btn btn-outline-secondary btn-sm"
@@ -35,7 +35,7 @@
   >
     <fa-icon [icon]="'plus'"></fa-icon>
   </button>
-  @if (dataSearch.idCliente > 0) {
+  } @if (dataSearch.idCliente > 0) {
   <button
     type="button"
     class="btn btn-outline-secondary btn-sm"

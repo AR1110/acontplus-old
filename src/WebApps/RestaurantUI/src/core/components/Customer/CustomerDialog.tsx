@@ -4,12 +4,12 @@ import { customerService, SharedService } from '@/core/services'
 import { SnackbarUtility } from '@/core/utilities'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
 
-
 import { useFormik } from 'formik'
 import { MuiChipsInput, MuiChipsInputChip } from 'mui-chips-input'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import * as yup from 'yup';
 import { showLoader, hideLoader } from '@/spinner'
+import companyCustomerAdapter from '@/core/adapters/company-customer.adapter'
 type CustomDialogProp = {
     id?: number
     open: boolean
@@ -104,7 +104,8 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
         correo: "",
         telefono: "",
         emails: [],
-        telefonos: []
+        telefonos: [],
+            
     }
 
     const successResponse = async (response: any) => {
@@ -114,7 +115,7 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
         }
         if (response.code === "1") {
             SnackbarUtility.success(response.message);
-            const customerCompanyId = id > 0 ? id : response.payload;
+            const customerCompanyId = id > 0 ? id : JSON.parse(response.payload)[0].idCliente;
             const customerData = await customerService.getId(customerCompanyId);
             handleClose(customerData);
         }
@@ -124,37 +125,37 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
         initialValues,
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            showLoader()
-            const data = {
-                idCliente: values.idCliente,
-                idTipoIdentificacion: values.idTipoIdentificacion,
-                numeroIdentificacion: values.numeroIdentificacion,
-                nombreFiscal: values.nombreFiscal,
-                nombreComercial: values.nombreComercial,
-                direccion: values.direccion,
-                telefono: values.telefonos.length > 0 ? values.telefonos.join(';') : "",
-                correo: values.emails.length > 0 ? values.emails.join(';') : "",
-                idSubContribuyente: values.idSubContribuyente,
-                idTiempoCredito: values.idTiempoCredito,
-                placa: "",
-                estado: true
-            }
-
-            if (id > 0) {
-                customerService.put(values.idCliente, data)
-                    .then(successResponse)
-                    .finally(() => hideLoader())
-            }
-            if (!(id > 0)) {
-                customerService.post(data)
-                    .then(successResponse)
-                    .finally(() => hideLoader())
+            try {
+                showLoader()
+                const data = {
+                    ...values,
+                    validationSri: isSearchSRI,
+                    correos: values.emails,
+                    
+                }
+                const params = companyCustomerAdapter.mapperTo(data);
+                if (id > 0) {
+                    customerService.put(values.idCliente, params)
+                        .then(successResponse)
+                        .finally(() => hideLoader())
+                }
+                if (!(id > 0)) {
+                    customerService.post(params)
+                        .then(successResponse)
+                        .finally(() => hideLoader())
+                }
+            } catch (error) {
+                console.log(error)
+                hideLoader()
             }
         },
     });
 
     const onLoad = async () => {
-        showLoader()
+        let idTipoIdentificacion = 0;
+        let idSubContribuyente = 0;
+        let idTiempoCredito = 0;
+        showLoader(); 
         await customerService.getDataForm().then(response => {
             setTiposIdentificacion(() => response.tipoIdentificacion)
             setTipoContribuyentes(response.tipoContribuyentes)
@@ -165,25 +166,29 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
 
 
                 if (response.tipoIdentificacion.length > 0) {
-                    // formik.setValues() 
-                    formik.setFieldValue(
-                        "idTipoIdentificacion",
-                        response.tipoIdentificacion.find(obj => obj.codigoSri === "04")?.idTipoIdentificacion
-                    )
+                    // formik.setValues()  
+                    idTipoIdentificacion = response.tipoIdentificacion.find(obj => obj.codigoSri === SRI_IDENTIFITION_CODE.RUC)?.idTipoIdentificacion || 0
                 }
                 if (response.tipoContribuyentes.length > 0) {
-                    formik.setFieldValue(
-                        "idSubContribuyente",
-                        response.tipoContribuyentes.find(obj => obj.codigo === "06")?.idSubContribuyente
-                    )
+                    idSubContribuyente = response.tipoContribuyentes.find(obj => obj.codigo === SRI_IDENTIFITION_CODE.LICENSE)?.idSubContribuyente || 0;
                 }
 
                 if (response.tiempoCreditos.length > 0) {
-                    formik.setFieldValue(
-                        "idTiempoCredito",
-                        response.tiempoCreditos[0]?.idTiempoCredito
-                    )
+                    const dataTiempoCredito = response.tiempoCreditos[0];
+
+                    if (dataTiempoCredito) {
+                        idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+
+                    }
                 }
+                formik.setValues(state => {
+                    return {
+                        ...state,
+                        idTipoIdentificacion,
+                        idSubContribuyente,
+                        idTiempoCredito
+                    }
+                })
 
             }
 
@@ -218,13 +223,15 @@ const CustomerDialog = ({ id = 0, open, handleClose, dataCustomerSRI }: CustomDi
                     return {
                         ...state,
                         direccion: direccion,
-                        idCliente: 0,
-                        idTipoIdentificacion: idTipoIdentificacion,
+                        idCliente: 0, 
                         numeroIdentificacion: numeroRuc,
                         nombreFiscal: razonSocial,
                         nombreComercial: razonSocial,
                         emails: email ? email.split(';') : [],
                         telefonos: telefono ? telefono.split(';') : [],
+                        idTipoIdentificacion,
+                        idSubContribuyente,
+                        idTiempoCredito
                     }
                 })
             }

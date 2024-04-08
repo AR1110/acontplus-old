@@ -17,12 +17,12 @@ namespace TechnicalSupport.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.Category", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,8 +33,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(8)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -52,8 +51,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -70,7 +68,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Category", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.Device", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,13 +76,16 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Brand")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Color")
                         .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -99,40 +100,20 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("Marca")
-                        .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
-
                     b.Property<string>("Model")
                         .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
-
-                    b.Property<string>("Serie")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
-
-                    b.Property<string>("Specs")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("Warranty")
-                        .HasColumnType("numeric(18,2), not null");
 
                     b.Property<int?>("Year")
                         .HasColumnType("int");
@@ -144,7 +125,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Device", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.DeviceCustomer", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceCustomer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -171,6 +152,57 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Warranty")
+                        .HasColumnType("numeric(18,2), not null");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId")
+                        .IsUnique()
+                        .HasDatabaseName("UI_TS_DC_DeviceId");
+
+                    b.ToTable("DeviceCustomer", "TechnicalSupport");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceSpecs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Specs")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -179,12 +211,14 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId");
+                    b.HasIndex("DeviceId")
+                        .IsUnique()
+                        .HasDatabaseName("UI_TS_DS_DeviceId");
 
-                    b.ToTable("DeviceCustomer", "TechnicalSupport");
+                    b.ToTable("DeviceSpecs", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.Order", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -214,10 +248,12 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("FechaEmision")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
@@ -231,8 +267,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Serie")
                         .IsRequired()
                         .HasMaxLength(18)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(18)");
+                        .HasColumnType("nvarchar(18)");
 
                     b.Property<decimal?>("Tax")
                         .HasColumnType("numeric(18,5), null");
@@ -240,7 +275,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<decimal?>("Tip")
                         .HasColumnType("numeric(18,5), null");
 
-                    b.Property<decimal>("Total")
+                    b.Property<decimal?>("Total")
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -259,7 +294,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Order", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.OrderDetail", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -285,8 +320,7 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -309,7 +343,80 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("OrderDetail", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.OrderStatus", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderMaintenance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BodegaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<bool?>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("FeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedidaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Obs")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("OrderDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<int>("TaxId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaxPercentId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TaxValue")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderDetailId");
+
+                    b.ToTable("OrderMaintenance", "TechnicalSupport");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -320,8 +427,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(5)");
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -339,8 +445,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -360,51 +465,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("OrderStatus", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.TechSpec", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.Device", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<bool?>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("DeviceId")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Specs")
-                        .IsRequired()
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId");
-
-                    b.ToTable("TechSpec", "TechnicalSupport");
-                });
-
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.Device", b =>
-                {
-                    b.HasOne("TechnicalSupport.Core.Entities.Category", "Category")
+                    b.HasOne("TechnicalSupport.API.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -413,10 +476,10 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.DeviceCustomer", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceCustomer", b =>
                 {
-                    b.HasOne("TechnicalSupport.Core.Entities.Device", "Device")
-                        .WithMany()
+                    b.HasOne("TechnicalSupport.API.Entities.Device", "Device")
+                        .WithMany("Customers")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -424,9 +487,20 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.Order", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceSpecs", b =>
                 {
-                    b.HasOne("TechnicalSupport.Core.Entities.OrderStatus", "OrderStatus")
+                    b.HasOne("TechnicalSupport.API.Entities.Device", "Device")
+                        .WithOne("Specs")
+                        .HasForeignKey("TechnicalSupport.API.Entities.DeviceSpecs", "DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.Order", b =>
+                {
+                    b.HasOne("TechnicalSupport.API.Entities.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -435,15 +509,15 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("OrderStatus");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.OrderDetail", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDetail", b =>
                 {
-                    b.HasOne("TechnicalSupport.Core.Entities.Device", "Device")
+                    b.HasOne("TechnicalSupport.API.Entities.Device", "Device")
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TechnicalSupport.Core.Entities.Order", "Order")
+                    b.HasOne("TechnicalSupport.API.Entities.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -454,20 +528,32 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.TechSpec", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderMaintenance", b =>
                 {
-                    b.HasOne("TechnicalSupport.Core.Entities.Device", "Device")
-                        .WithMany()
-                        .HasForeignKey("DeviceId")
+                    b.HasOne("TechnicalSupport.API.Entities.OrderDetail", "OrderDetail")
+                        .WithMany("OrderMaintenances")
+                        .HasForeignKey("OrderDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Device");
+                    b.Navigation("OrderDetail");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.Core.Entities.Order", b =>
+            modelBuilder.Entity("TechnicalSupport.API.Entities.Device", b =>
+                {
+                    b.Navigation("Customers");
+
+                    b.Navigation("Specs");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDetail", b =>
+                {
+                    b.Navigation("OrderMaintenances");
                 });
 #pragma warning restore 612, 618
         }

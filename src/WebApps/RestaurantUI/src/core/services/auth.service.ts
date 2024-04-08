@@ -1,11 +1,11 @@
 import { Http } from "@/core/utilities";
 import { ApiResponse } from "../models";
-import { PERSIS_USER, PATHS } from "../constants";
+import { PERSIS_USER, PATHS_API } from "../constants";
 
 const login = async (username: string, password: string, userAgent: string): Promise<ApiResponse> => {
   const response = await Http({
     method: "post",
-    url: PATHS.ACCOUNT,
+    url: PATHS_API.ACCOUNT,
     data: {
       username,
       password,
@@ -20,7 +20,7 @@ const login = async (username: string, password: string, userAgent: string): Pro
 const createToken = async (data: any) => {
   const response = await Http({
     method: "post",
-    url: PATHS.CREATE_TOKEN,
+    url: PATHS_API.CREATE_TOKEN,
     data,
   });
   return response.data;

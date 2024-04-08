@@ -23,7 +23,7 @@ BEGIN
             ,@forPromotion BIT
             ,@idEntidad INT
                         
-    SET @params = N'@textSearch VARCHAR(20), @idEntidad INT'
+    SET @params = '@textSearch VARCHAR(20), @idEntidad INT'
     SELECT @textSearch = textSearch FROM OPENJSON(@json) WITH(textSearch VARCHAR(20) '$.textSearch')
     SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
@@ -37,7 +37,7 @@ BEGIN
                 ,ISNULL(m.ForPromotion, CAST(0 AS BIT)) AS ForPromotion
 	        FROM Restaurant.Menu m WITH (NOLOCK)
             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            WHERE a.idEntidad = @idEntidad '
+            WHERE a.idEntidad = @idEntidad AND a.estado = 1'
    
      IF @textSearch IS NOT NULL
         BEGIN

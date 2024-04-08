@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Config\User\**" />
+    <Content Remove="Pages\Config\User\**" />
+    <EmbeddedResource Remove="Pages\Config\User\**" />
+    <None Remove="Pages\Config\User\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
   </ItemGroup>
 
@@ -23,6 +30,7 @@
 
   <ItemGroup>
     <Folder Include="Pages\Compras\DocumentoRecibido\Shared\" />
+    <Folder Include="Pages\Inventario\Product\" />
   </ItemGroup>
 
 </Project>

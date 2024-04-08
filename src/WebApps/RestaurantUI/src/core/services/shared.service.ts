@@ -1,6 +1,6 @@
 
 import Swal from "sweetalert2"
-import { PATHS } from "../constants"
+import { PATHS_API } from "../constants"
 import { ApiResponse, CustomerCedulaSRI, CustomerRucSRI } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
 import FileSaver from "file-saver"
@@ -9,10 +9,11 @@ type ParamsPrint = { id: number, documentoId: number, tipo: 1 | 2 | 3 | 4 }
 
 
 class Shared {
+    private url = `${PATHS_API.FACT_ELECT}Consultas/`
     async checkClientSRIByRUC(identificacion: string): Promise<CustomerRucSRI> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.CONSULTA}GetRucSRI`,
+            url: `${this.url}GetRucSRI`,
             params: {
                 Ruc: identificacion
             }
@@ -23,7 +24,7 @@ class Shared {
     async checkClientSRIByCedula(identificacion: string): Promise<CustomerCedulaSRI> {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.CONSULTA}GetCedulaSri`,
+            url: `${this.url}GetCedulaSri`,
             params: {
                 Ruc: identificacion
             }
@@ -31,11 +32,12 @@ class Shared {
         return resultAxios.data;
     }
 
-    async downloadExternal(parameters: object, returnData = false) {
+    async downloadExternal(parameters: object, returnData = false, oldVersion=false) {
+        const url = oldVersion? PATHS_API.REPORT_V1 : PATHS_API.REPORT_V2
 
         const resultAxios = await Http({
             method: 'post',
-            url: `${PATHS.REPORT}Download`,
+            url: `${url}Download`,
             data: JSON.stringify(parameters),
             responseType: 'blob'
         })
@@ -82,7 +84,7 @@ class Shared {
     async getPrinter(obj: ParamsPrint) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.PRIVATE}Order/Print/${JSON.stringify(obj)}`,
+            url: `${PATHS_API.PRIVATE}Order/Print/${JSON.stringify(obj)}`,
         })
 
         const response: ApiResponse = resultAxios.data;
@@ -93,7 +95,7 @@ class Shared {
             this.print(JSON.parse(response.payload));
         }
     }
-    async print(params: any) {
+    async print<T extends { urlPrinter : string}>(params: T[]) {
         for (const param of params) {
             const resultAxios = await Http({
                 method: 'post',

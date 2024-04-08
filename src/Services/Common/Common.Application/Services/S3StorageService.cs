@@ -16,9 +16,9 @@ namespace Common.Application.Services
             AWSConfigs.AWSRegion = obj.Region;
             var _response = new S3Response();
             try
-            { 
+            {
                 using (var ms = new MemoryStream(obj.Content))
-                { 
+                {
                     var uploadRequest = new TransferUtilityUploadRequest()
                     {
                         InputStream = ms,
@@ -63,7 +63,7 @@ namespace Common.Application.Services
                         CannedACL = S3CannedACL.NoACL
                     };
                     PutObjectResponse response = await client.PutObjectAsync(request);
-                } 
+                }
                 _response.StatusCode = 201;
                 _response.Message = $"El archivo {obj.S3ObjectKey} se subio correctamente a amazon s3";
             }
@@ -92,7 +92,7 @@ namespace Common.Application.Services
                     BucketName = obj.BucketName,
                     Key = obj.S3ObjectKey
                 };
-                DeleteObjectResponse response = await client.DeleteObjectAsync(request);  
+                DeleteObjectResponse response = await client.DeleteObjectAsync(request);
                 _response.StatusCode = 201;
                 _response.Message = $"El archivo {obj.S3ObjectKey} se elimino correctamente de amazon s3";
             }

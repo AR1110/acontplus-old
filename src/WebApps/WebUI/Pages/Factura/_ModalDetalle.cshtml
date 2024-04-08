@@ -100,11 +100,9 @@
         </div>
 
         <div class="row mt-1">
-            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-                <div class="row"> 
-                </div> 
+            <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12"> 
                 <div class="row mt-2">
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>% Descuento</label>
                             <div class="input-group">
@@ -118,7 +116,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Descuento</label>
                             <div class="input-group">
@@ -131,25 +129,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
 
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label>Transporte</label>
-                            <input type="text" decimal ng-model="data.transporte" class="form-control border-select"
-                                disabled placeholder="0.00" />
-                        </div>
-                    </div>
-
-                    <div class="col-lg-2 col-md-6 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label>Rercargo</label>
-                            <input type="text" decimal ng-model="data.recargo" class="form-control border-select"
-                                disabled placeholder="0.00" />
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Observacion</label>
                             <textarea class="form-control border-select" ng-model="data.observacion" touppercase
@@ -157,6 +139,43 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                    <div class="card border">
+                        <!-- <div class="card-header">
+                            <span class="card-title">FORMA DE PAGO</span>
+                        </div> -->
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Forma de Pago</th>
+                                            <th>Plazo</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                 {{dataFormaPago.formaPago}}
+                                            </td>
+                                            <td width="100px">
+                                                {{dataFormaPago.plazo}} {{dataFormaPago.plazo>1?'Días': 'Día'}}
+                                            </td>
+                                            <td width="100px">
+                                                ${{dataFormaPago.total}}
+                                            </td> 
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                </div>
+            </div> 
             </div>
 
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -176,11 +195,7 @@
 
     </div>
 
-    <div class="modal-footer">
-        <div class="icheck-success icheck-inline">
-            <input type="checkbox" ng-model="showSubtotales" id="showSubTotales" />
-            <label for="showSubTotales">Mas datos</label>
-        </div>
+    <div class="modal-footer"> 
         <button type="button" class="btn btn-dark" ng-click="closeModal()">
             &times; Cerrar
         </button>

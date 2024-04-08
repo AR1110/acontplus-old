@@ -11,6 +11,11 @@ export const routes: Routes = [
         loadChildren: () => import('@modules/purchase/purchase.routes').then(r => r.routes)
       },
       {
+        path: 'config',
+        title: 'App - Config',
+        loadChildren: () => import('@modules/config/config.routes').then(r => r.routes)
+      },
+      {
         path: 'technical-support',
         title: 'App - Soporte Técnico',
         loadChildren: () => import('@modules/technical-support/technical-support.routes').then(r => r.routes)
@@ -24,6 +29,16 @@ export const routes: Routes = [
         path: 'inventory',
         title: 'App - Inventario',
         loadChildren: () => import('@modules/inventory/inventory.routes').then(r => r.routes)
+      },
+      {
+        path: 'sale',
+        title: 'App - Venta',
+        loadChildren: () => import('@sale/sale.routes').then(r => r.routes)
+      },
+      {
+        path: 'restaurant',
+        title: 'App - Restaurante',
+        loadChildren: () => import('@restaurant/restaurant.routes').then(r => r.routes)
       }
     ]
   }

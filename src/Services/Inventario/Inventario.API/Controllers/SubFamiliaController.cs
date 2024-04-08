@@ -1,10 +1,8 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
-using Common.Core.Models.Almacen;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
 
@@ -53,14 +51,14 @@ namespace Inventario.API.Controllers
 
         [HttpPost("Post")]
         public async Task<IActionResult> Post(string json, IFormFile file)
-        { 
+        {
             ApiResponse _response = new ApiResponse();
             DbAccess _db = new DbAccess(_configuration);
-            
+
             try
             {
                 if (file != null)
-                { 
+                {
                     await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/subfamilias/", file);
                 }
                 int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -72,7 +70,7 @@ namespace Inventario.API.Controllers
 
                 _response = _db.GetDefault();
                 if (_response.code == "1" && file != null)
-                { 
+                {
                     var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
                 }
             }
@@ -96,7 +94,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> Put(int id, string json)
         {
             ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration); 
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
                 int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -104,7 +102,7 @@ namespace Inventario.API.Controllers
                 _db.AddDynamicParam("userRoleId", userRoleId);
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDefault(); 
+                _response = _db.GetDefault();
             }
             catch (Exception ex)
             {

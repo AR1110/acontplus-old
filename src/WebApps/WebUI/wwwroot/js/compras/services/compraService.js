@@ -18,7 +18,7 @@
                     if (response.code === "0") {
                         throw response;
                     }
-                    if (response.code === "1") {
+                    if (response.code === "1") { 
                         let { proveedores } = JSON.parse(response.payload);
 
                         return proveedores.map(proveedor => (
@@ -1291,12 +1291,12 @@
                             idPuntoEmision: comprobante.idPuntoEmision,
                             codEstab: comprobante.codEstab,
                             ptoEmi: comprobante.ptoEmi,
-                            idTiempoCredito: cuentaPorPagar.idTiempoCredito,
+                            idTiempoCredito: cuentaPorPagar && cuentaPorPagar.idTiempoCredito || 0,
                             nombreComercial: comprobante.nombreComercial,
                             secuencial: comprobante.secuencial,
                             fechaEmision: fS.formatDate(comprobante.fechaEmision),
                             fechaEmisionDocCreado: fS.formatDate(comprobante.fechaEmision),
-                            fechaVencimiento: fS.formatDate(cuentaPorPagar.fechaVencimiento || comprobante.fechaEmision),
+                            fechaVencimiento: cuentaPorPagar && fS.formatDate(cuentaPorPagar.fechaVencimiento || comprobante.fechaEmision) || fS.formatDate(comprobante.fechaEmision),
                             subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
                             totalDescuento: comprobante.descuento,
                             porcentajeDescuento: comprobante.porcentajeDescuento || 0,
@@ -1362,11 +1362,23 @@
                             }
                         })
 
+                        infoAdicional = infoAdicional || []
+                        const datosAdicionalesArticulo = infoAdicional.map(item => {
+                            return {
+                                idArticulo: item.idArticulo,
+                                idEtiqueta: item.idEtiqueta,
+                                idInfoAdicional: item.idInfoAdicional,
+                                adicionales: JSON.parse(item.jsonAdicional),
+                                estado: item.estado,
+                            }
+                        })
+
+
                         return {
                             comprobante,
                             proveedor,
                             detalles,
-                            infoAdicionalDocumento: infoAdicional,
+                            infoAdicionalDocumento: datosAdicionalesArticulo,
                             cuotas
                         }
 
@@ -1451,7 +1463,7 @@
                     idArticulo: item.idArticulo,
                     idEtiqueta: item.idEtiqueta,
                     idInfoAdicional: item.idInfoAdicional || 0,
-                    jsonAdicional: JSON.stringify(item.adicionales)
+                    jsonAdicional: item.adicionales
                 }
             });
         }

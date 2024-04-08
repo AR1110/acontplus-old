@@ -3,7 +3,7 @@
 
 import { Http, loadAbort } from '@/core/utilities';
 import { ItemSearch } from '../models';
-import { PATHS } from '../constants';
+import { PATHS_API } from '../constants';
 
 const URL = 'Item/'
 export const ItemService = {
@@ -14,7 +14,7 @@ export const ItemService = {
         return {
             call: Http({
                 method: 'get',
-                url: `${PATHS.PRIVATE}${URL}`,
+                url: `${PATHS_API.PRIVATE}${URL}`,
                 params: {
                     json
                 },

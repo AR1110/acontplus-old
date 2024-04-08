@@ -136,25 +136,22 @@
             return mS.getData('get', 'Contabilidad/CuentaPorCobrar/?json=' + JSON.stringify(params), null, true)
                 .then(async response => {
                     hideLoader();
-                    if (response.code === "0") {
-                        console.log(response)
-                        return true;
-                    }
-                    if (response.code === "1") {
-                        let mainData = JSON.parse(response.payload);
-                        let pendientAccounts = mainData[0];
+                    if (!response) return true;
 
-                        if (pendientAccounts.length === 0) return false;
+                    const { deuda } = response;
+                    let pendientAccounts = deuda;
 
-                        let { totalImporteTotal, totalAbono, totalSaldo } = pendientAccounts.reduce((value, item) => {
-                            value.totalImporteTotal += item.importeTotal;
-                            value.totalAbono += item.abono;
-                            value.totalSaldo += item.saldo;
-                            return value;
+                    if (pendientAccounts.length === 0) return false;
 
-                        }, { totalImporteTotal: 0, totalAbono: 0, totalSaldo: 0 })
+                    let { totalImporteTotal, totalAbono, totalSaldo } = pendientAccounts.reduce((value, item) => {
+                        value.totalImporteTotal += item.importeTotal;
+                        value.totalAbono += item.abono;
+                        value.totalSaldo += item.saldo;
+                        return value;
 
-                        let html = `<div class="table-responsive">
+                    }, { totalImporteTotal: 0, totalAbono: 0, totalSaldo: 0 })
+
+                    let html = `<div class="table-responsive">
                     <table class="table table-hover table-bordered table-sm">
                         <thead>
                             <tr>
@@ -167,9 +164,9 @@
                         </thead>
                         <tbody>`;
 
-                        let index = 1;
-                        for (let pendientAccount of pendientAccounts) {
-                            html += ` <tr>
+                    let index = 1;
+                    for (let pendientAccount of pendientAccounts) {
+                        html += ` <tr>
                         <td>${index++}</td>
                         <td>${pendientAccount.documento}</td>                        
                         <td>$${pendientAccount.importeTotal}</td>
@@ -177,8 +174,8 @@
                         <td>$${pendientAccount.saldo}</td>
                     </tr>
                 `
-                        }
-                        html += `</tbody>
+                    }
+                    html += `</tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="2">Total:</td>
@@ -187,15 +184,14 @@
                                 <td>${totalSaldo.toFixed(2)}</td>
                             </tr>
                         </tfoot></table></div>`
-                        await Swal.fire({
-                            title: '<small>Cuentas pendientes</small>',
-                            icon: 'info',
-                            html,
-                            width: 800
-                        })
+                    await Swal.fire({
+                        title: '<small>Cuentas pendientes</small>',
+                        icon: 'info',
+                        html,
+                        width: 800
+                    })
+                    return true;
 
-                        return true;
-                    }
                 })
                 .catch(error => {
                     hideLoader();
@@ -209,10 +205,12 @@
      * Nota Entrega 
      */
 
-    app.factory('notaEntregaService', function ($injector) {
+    app.factory('notaEntregaService',['$injector', function ($injector) {
         let url = `${URL_API}NotaEntrega/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
+        const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
         let service = {
             data: {}
@@ -230,11 +228,7 @@
                     let tarifasImpuesto = mainData[1];
                     let tarifas = mainData[2];
                     let tiemposCredito = mainData[3];
-                    // let articuloDefaultTemp = mainData[6];
-                    // let articuloDefault = {}
-                    // if(articuloDefaultTemp && articuloDefaultTemp.length>0){
-                    //     articuloDefault = articuloDefaultTemp[0];
-                    // }
+
                     let clienteDefaultTemp = mainData[5];
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
@@ -249,8 +243,7 @@
                     notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
                     let tempEstabsAndPtosEmision = mainData[9];
                     let tempBodegas = mainData[10];
-                    let tarifaImpuestoVigente = mainData[11][0];
-                    let { permisoVenta, permisonEditarDoc } = fS.getDataUserRol();
+                    let {sales: permisoVenta, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
@@ -258,9 +251,12 @@
                         isGroupBodega: true
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
+
+                    let formasPago = mainData[11];
+                    let tiposIdentificacion = mainData[12];
+
                     return {
                         estabs,
-                        tarifaImpuestoVigente,
                         tarifasImpuesto,
                         clienteDefault,
                         tiemposCredito,
@@ -270,7 +266,10 @@
                         decimal,
                         config,
                         vendedores,
-                        permisonEditarDoc
+                        permisoEditarDoc,
+                        formasPago: fS.mapperFromFormaPago(formasPago),
+                        tiposIdentificacion
+
                     }
                 }
             })
@@ -345,6 +344,7 @@
 
                     let notaEntregas = notaEntregaRepos.map(item => {
                         return {
+                            idCliente: item.idCliente,
                             comprobante: 'Nota de Entrega',
                             idDocumento: item.idDocumento,
                             idNotaEntrega: item.idNotaEntrega,
@@ -369,6 +369,8 @@
                             codEstado: item.codEstado,
                             tiempoCredito: item.tiempoCredito,
                             esContado: item.tiempoCredito,
+                            disabledUpdate: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.anulada,
+                            disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR'
                         }
                     })
 
@@ -395,7 +397,7 @@
         }
 
         service.queryMapper = function (params) {
-            const { data, cliente, detalles, itemsDeleted, historyDatosAdicionales, infoAdicionalDocumento } = params;
+            const { data, cliente, detalles, itemsDeleted, historyDatosAdicionales, infoAdicionalDocumento, cuotas } = params;
             //data que se usara dentro de la función "getCantidadStock"
             service.data = Object.assign({}, data);
 
@@ -408,6 +410,7 @@
                 throw new Error("Datos de cliente no proporcionados")
             }
 
+            notaEntrega.idTipoIdentificacion = cliente.idTipoIdentificacion;
             notaEntrega.idCliente = cliente.idCliente;
             notaEntrega.identificacionComprador = cliente.identificacionComprador;
             notaEntrega.razonSocialComprador = cliente.razonSocialComprador;
@@ -429,7 +432,8 @@
                 detalles: mergeItems,
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumento || [],
-                infoAdicionalArticulo: historyDatosAdicionales
+                infoAdicionalArticulo: historyDatosAdicionales,
+                cuotas
             }
         }
 
@@ -453,6 +457,7 @@
                 total: data.total,
                 observacion: data.observacion,
                 placa: data.placa,
+                idTipoIdentificacion: data.idTipoIdentificacion,
                 identificacionComprador: data.identificacionComprador,
                 razonSocialComprador: data.razonSocialComprador,
                 direccionComprador: data.direccionComprador,
@@ -491,10 +496,11 @@
                     valorDescuento: item.valorDescuento,
                     precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
                     porcentajeDescuento: item.porcentajeDescuento,
-                    total: item.total,
-                    nota: item.nota,
+                    nota: item.nota || undefined,
                     llevaInventario: item.llevaInventario,
                     precioCosto: item.precioCosto,
+                    conversion : item.conversion,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
                     cantidadTransaccion,
                     estado: item.estado,
                     valorImpuesto: item.valorImpuesto
@@ -650,16 +656,23 @@
                 if (response.code === "1") {
                     let mainDataApi = JSON.parse(response.payload);
 
-                    const [
+                    let [
                         comprobanteApi,
                         clienteTempApi,
                         itemsApi,
                         infoAdicionalDocumento,
-                        datosAdicionalesArticuloTemp
+                        datosAdicionalesArticuloTemp,
+                        // cuentaPorCobrar,
+                        // cuotas,
                     ] = mainDataApi;
 
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
+                    cliente = {
+                        ...cliente,
+                        razonSocialComprador: cliente.nombreFiscal,
+                        identificacionComprador: cliente.numeroIdentificacion,                        
+                    }
 
                     let items = itemsApi.map((itemPrincipal, index) => {
 
@@ -687,6 +700,9 @@
                             }))
                         }
 
+
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+
                         let obj = {
                             n: index + 1,
                             idNotaEntregaDetalle: itemPrincipal.idNotaEntregaDetalle,
@@ -708,11 +724,13 @@
                             precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
                             precioCosto: itemPrincipal.precioCosto,
                             precioUnitario: itemPrincipal.precioUnitario,
+                            precioConIva,
                             tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
                             medidas,
                             conversion: dataMedida.conversion,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             articuloTarifas: dataMedida.tarifas,
                             consolidacionesFecha,
                             estado: 1,
@@ -728,10 +746,22 @@
                         serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
-                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
-                        irbpnr: comprobanteTemp.irbpnr || 0
+                        irbpnr: comprobanteTemp.irbpnr || 0,
+                        // idTiempoCredito : cuentaPorCobrar[0].idTiempoCredito,
+                        // fechaVencimiento: fS.formatDate(cuentaPorCobrar[0].fechaVencimiento),
+                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
                     }
+
+                    // cuotas = cuotas.map(item => {
+                    //     return {
+                    //         idCuotaPorCobrar: item.idCuotaPorCobrar,
+                    //         nroCuota: item.nroCuota,
+                    //         fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                    //         cuota: item.cuota,
+                    //         entrada: item.entrada,
+                    //     }
+                    // })
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
                         idDocumento: item.idDocumento,
@@ -749,7 +779,8 @@
                         cliente,
                         items,
                         infoAdicionalDocumento,
-                        datosAdicionalesArticulo
+                        datosAdicionalesArticulo,
+                        cuotas: []
                     }
                 }
             })
@@ -782,10 +813,17 @@
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaVencimiento: fS.formatDate(fechaVencimiento),
                     }
+                    let resultsItems = items.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
                     return {
                         data,
                         cliente,
-                        items,
+                        items: resultsItems,
                         infoAdicionalDocumento,
                         tarifasImpuesto
                     }
@@ -803,7 +841,6 @@
                 if (response.code === "1") {
                     let [itemsApi] = JSON.parse(response.payload);
                     let items = itemsApi.map((itemPrincipal, index) => {
-                        console.log(itemPrincipal)
 
                         const { fraccionado, principal, ...restItem } = itemPrincipal;
 
@@ -902,15 +939,17 @@
 
         return service;
 
-    })
+    }])
 
     /**
      * Proforma 
      */
-    app.factory('proformaService', function ($injector) {
+    app.factory('proformaService',['$injector', function ($injector) {
         let url = `${URL_API}Proforma/`;
         let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario')
+        let fS = $injector.get('formulario');
+        const pricingUtils = $injector.get('pricingUtils')
+        const userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
         let service = {};
 
@@ -940,8 +979,8 @@
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
                     let tempEstabsAndPtosEmision = mainData[8];
-                    let tempBodegas = mainData[9];
-                    let { permisoVenta, permisoEditarDoc } = fS.getDataUserRol();
+                    let tempBodegas = mainData[9]; 
+                    let { sales: permisoVenta, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
@@ -1037,8 +1076,10 @@
                             codDoc: item.codDoc,
                             rowColor: item.rowColor,
                             codEstado: item.codEstado,
+                            disabledUpdate: item.codEstado === 'TRA' || item.codEstado==='CR' || item.anulada
                         }
                     })
+                 
                     return {
                         proformas,
                         dataTotals: { totalRecords, totalDocument }
@@ -1098,6 +1139,7 @@
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
                         let obj = {
                             n: index + 1,
                             idProformaDetalle: restItem.idProformaDetalle,
@@ -1119,6 +1161,7 @@
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
                             precioCosto: 0,
                             precioUnitario: restItem.precioUnitario,
+                            precioConIva: precioConIva || 0,
                             tarifa: restItem.tarifa,//✅
                             valorDescuento: restItem.valorDescuento,
                             valorImpuesto: restItem.valorImpuesto,//✅
@@ -1176,10 +1219,19 @@
                         fechaEmision: fS.formatDate(fechaEmision),
                         fechaEmisionEscrita: fS.getFechaEscrita(fS.formatDate(fechaEmision)),
                     }
+
+                    let resultsItems = items.map(item => {
+                        let precioConIva = pricingUtils.calcularPrecioConIva(item.precioUnitario, item.tarifa);
+                        return {
+                            ...item,
+                            precioConIva
+                        }
+                    })
+
                     return {
                         data,
                         cliente,
-                        items,
+                        items: resultsItems,
                         tarifasImpuesto
                     }
 
@@ -1202,6 +1254,9 @@
 
                         let dataMedida = medidas.find(m => m.idMedida === restItem.idMedida) || {};
 
+
+                        let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
+
                         let obj = {
                             n: index + 1,
                             idProformaDetalle: itemPrincipal.idProformaDetalle,
@@ -1223,6 +1278,7 @@
                             precioSinSubsidio: itemPrincipal.precioSinSubsidio || 0,
                             precioCosto: 0,
                             precioUnitario: itemPrincipal.precioUnitario,
+                            precioConIva: precioConIva || 0,
                             tarifa: itemPrincipal.tarifa,//✅
                             valorDescuento: itemPrincipal.valorDescuento,
                             valorImpuesto: itemPrincipal.valorImpuesto,//✅
@@ -1314,7 +1370,7 @@
                 totalDescuento: data.totalDescuento || 0,
                 porcentajeDescuento: data.porcentajeDescuento || 0,
                 irbpnr: data.irbpnr || 0,
-                propina: data.propina ||  0,
+                propina: data.propina || 0,
                 recargo: data.recargo || 0,
                 transporte: data.transporte || 0,
                 total: data.total,
@@ -1365,12 +1421,12 @@
 
         return service;
 
-    })
+    }])
 
 
     //---------------------------------Cliente------------------------------------------
-    app.factory('clienteService', function ($injector) {
-        let url = `${URL_API}Cliente/`;
+    app.factory('clienteService', ['$injector',function ($injector) {
+        let url = `FactElect/CompanyCustomer/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         let tS = $injector.get('toastService');
@@ -1378,14 +1434,14 @@
         let service = {};
 
         service.getDataForm = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true)
+            return mS.getData('get', url + '?json=' + JSON.stringify({ tipo: 2 }), null, true)
                 .then(response => {
                     if (response.code === '0') {
                         console.log('Status code 0: Get Data Form Customer')
                         throw response
                     }
                     if (response.code === '1') {
-                        let mainDataRepository = JSON.parse(response.payload)
+                        let mainDataRepository = JSON.parse(response.payload) 
                         return {
                             tipoIdentificacion: mainDataRepository[0],
                             tipoContribuyentes: mainDataRepository[1],
@@ -1394,17 +1450,16 @@
                             tiposCliente: mainDataRepository[4] || [],
                             empresas: mainDataRepository[5] || [],
                             cargos: mainDataRepository[6] || [],
+                            formasPagoSri: mainDataRepository[7] || []
                         }
                     }
-                }).catch(response => {
-                    throw response;
-                })
+                }) 
 
         }
 
         service.getAll = function (query) {
             query.tipo = 1;
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true)
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true)
                 .then(response => {
                     if (response.code == "0") {
                         throw response;
@@ -1436,72 +1491,89 @@
                 })
         }
 
+        service.mapperTo = function (data) {
+
+            return {
+                idCliente: fS.isValidField(data.idCliente),
+                idEmpleado: fS.isValidField(data.idEmpleado),
+                idTipoIdentificacion: data.idTipoIdentificacion,
+                idTipoClienteProveedor: fS.isValidField(data.idTipoClienteProveedor),
+                idTipoEntidad: fS.isValidField(data.idTipoEntidad),
+                idCiudad: fS.isValidField(data.idCiudad),
+                idSubContribuyente: fS.isValidField(data.idSubContribuyente),
+                idTiempoCredito: data.idTiempoCredito,
+                idEmpresa: fS.isValidField(data.idEmpresa),
+                idCargo: fS.isValidField(data.idCargo),
+                numeroIdentificacion: data.numeroIdentificacion,
+                nombreFiscal: data.nombreFiscal,
+                nombreComercial: data.nombreComercial,
+                direccion: fS.isValidField(data.direccion),
+                telefono: fS.isValidField(data.telefono),
+                correo: fS.isValidField(data.correo),
+                placa: fS.isValidField(data.placa),
+                montoCredito: fS.isValidField(data.montoCredito),
+                nota: fS.isValidField(data.nota),
+                validationSri: data.validationSri,
+                idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
+                estado: data.estado || true
+            }
+
+        }
+
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true)
-                .catch(error => {
-                    console.log('Error service save customer: ' + error)
-                    throw error;
-                })
+            const params = service.mapperTo(data);
+            return mS.getData('post', url, { data: params }, true)
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true)
-                .catch(error => {
-                    console.log('Error service update customer: ' + error)
-                    throw error;
-                })
+            const params = service.mapperTo(data);
+            return mS.getData('put', url + id, { data: params }, true)
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true)
-                .catch(error => {
-                    console.log('Error service delete customer: ' + error)
-                    throw error;
-                })
+            return mS.getData('delete', url + id, null, true)
         }
 
         service.findById = function (id) {
-            return mS.getData('get', url + 'FindById/' + id, null, true)
-                .then(response => {
-                    if (response.code === "0") {
-                        throw response;
-                    }
-                    if (response.code === "1") {
-                        let dataRepository = JSON.parse(response.payload)[0];
+            return mS.getData('get', url + 'GetId/' + id, null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let dataRepository = JSON.parse(response.payload)[0];
 
-                        return {
-                            idCliente: dataRepository.idCliente,
-                            idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
-                            idTipoEntidad: dataRepository.idTipoEntidad,
-                            idSubContribuyente: dataRepository.idSubContribuyente,
-                            idTiempoCredito: dataRepository.idTiempoCredito,
-                            idTipoIdentificacion: dataRepository.idTipoIdentificacion,
-                            idCiudad: dataRepository.idCiudad,
-                            numeroIdentificacion: dataRepository.numeroIdentificacion,
-                            nombreFiscal: dataRepository.nombreFiscal,
-                            montoCredito: dataRepository.montoCredito,
-                            nombreComercial: dataRepository.nombreComercial,
-                            direccion: dataRepository.direccion,
-                            telefono: dataRepository.telefono,
-                            correo: dataRepository.correo,
-                            estado: dataRepository.estado,
-                            idEmpleado: dataRepository.idEmpleado,
-                            diasCredito: dataRepository.diasCredito,
-                            empleado: dataRepository.empleado,
-                            idEmpresa: dataRepository.idEmpresa,
-                            idCargo: dataRepository.idCargo,
-                            placa: dataRepository.placa,
-                            validationSri: dataRepository.validationSri,
-                            correos: dataRepository.correo ? dataRepository.correo.split(';') : [],
-                            telefonos: dataRepository.telefono ? dataRepository.telefono.split(';') : [],
-                            placas: dataRepository.placa !== '' ? dataRepository.placa.split(';') : []
-                        }
+                    return {
+                        idCliente: dataRepository.idCliente,
+                        idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
+                        idTipoEntidad: dataRepository.idTipoEntidad,
+                        idSubContribuyente: dataRepository.idSubContribuyente,
+                        idTiempoCredito: dataRepository.idTiempoCredito,
+                        idTipoIdentificacion: dataRepository.idTipoIdentificacion,
+                        idCiudad: dataRepository.idCiudad,
+                        numeroIdentificacion: dataRepository.numeroIdentificacion,
+                        identificacionComprador: dataRepository.numeroIdentificacion,
+                        razonSocialComprador: dataRepository.nombreFiscal,
+                        nombreFiscal: dataRepository.nombreFiscal,
+                        montoCredito: dataRepository.montoCredito,
+                        nombreComercial: dataRepository.nombreComercial,
+                        direccion: dataRepository.direccion,
+                        telefono: dataRepository.telefono,
+                        correo: dataRepository.correo,
+                        estado: dataRepository.estado,
+                        idEmpleado: dataRepository.idEmpleado,
+                        diasCredito: dataRepository.diasCredito,
+                        empleado: dataRepository.empleado,
+                        idEmpresa: dataRepository.idEmpresa,
+                        idCargo: dataRepository.idCargo,
+                        placa: dataRepository.placa,
+                        validationSri: dataRepository.validationSri,
+                        correos: dataRepository.correo ? dataRepository.correo.split('|') : [],
+                        telefonos: dataRepository.telefono ? dataRepository.telefono.split('|') : [],
+                        placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : [],
+                        idFormaPagoSri: dataRepository.idFormaPagoSri
                     }
-                })
-                .catch(error => {
-                    console.log('Error service get customer Find by Id: ' + error)
-                    throw error;
-                })
+                }
+            })
         }
 
         /**
@@ -1559,10 +1631,10 @@
                 return;
             }
 
-            if ($("#numeroIdentificacion").hasClass('is-invalid')) {
-                tS.toastr('warning', 'Ingrese el número de Identificación válido');
-                return
-            }
+            // if ($("#numeroIdentificacion").hasClass('is-invalid')) {
+            //     tS.toastr('warning', 'Ingrese el número de Identificación válido');
+            //     return
+            // }
 
             if (data.codigoIdentificacion === "CF" && data.numeroIdentificacion.length !== 13) {
                 tS.toastr('warning', 'Número de Consumidor Final tiene que ser de 13 dígitos');
@@ -1611,16 +1683,16 @@
 
 
             data.direccion = data.direccion ? fS.letterInline(data.direccion) : "";
-            data.telefono = data.telefonos.length > 0 ? data.telefonos.join(';') : "";
-            data.correo = data.correos.length > 0 ? data.correos.join(';') : "";
-            data.placa = data.placas.length > 0 ? data.placas.join(';') : "";
+            data.telefono = data.telefonos.length > 0 ? data.telefonos.join('|') : "";
+            data.correo = data.correos.length > 0 ? data.correos.join('|') : "";
+            data.placa = data.placas.length > 0 ? data.placas.join('|') : "";
 
 
             return true;
         }
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback, id) {
-            mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     callback(codigoIdentificacion)
                     // return response;
@@ -1676,11 +1748,11 @@
         }
 
         service.checkClientSRIByRUC = function (identificacion) {
-            return mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true)
+            return mS.getData('get', 'FactElect/Consultas/GetRucSRI?Ruc=' + identificacion, null, true)
         }
 
         service.checkClientSRIByCedula = function (identificacion) {
-            return mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true)
+            return mS.getData('get', 'FactElect/Consultas/GetCedulaSri?Ruc=' + identificacion, null, true)
         }
 
 
@@ -1697,7 +1769,7 @@
         }
         return service;
 
-    })
+    }])
 
 
     app.factory('empleadoService', function ($injector) {
@@ -1769,10 +1841,6 @@
                         }))
                     }
                 })
-                .catch(error => {
-                    console.log(error)
-                    throw error;
-                })
         }
 
         function deleteEmployee(id) {
@@ -1781,18 +1849,10 @@
 
         function save(data) {
             return mS.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true)
-                .catch(error => {
-                    console.log(error)
-                    throw error;
-                })
         }
 
         function update(id, data) {
             return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data), null, true)
-                .catch(error => {
-                    console.log(error)
-                    throw error;
-                })
         }
 
     })

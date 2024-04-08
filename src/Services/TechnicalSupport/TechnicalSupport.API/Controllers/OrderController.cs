@@ -1,9 +1,11 @@
-﻿using Common.Core.Utils;
+﻿using AutoMapper;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
+using TechnicalSupport.API.Dtos;
 using TechnicalSupport.API.Entities;
 using TechnicalSupport.API.Interfaces;
 
@@ -11,10 +13,12 @@ namespace TechnicalSupport.API.Controllers
 {
     public class OrderController : BaseApiController
     {
+        private readonly IMapper _mapper;
         private readonly IOrderService _orderService;
         private readonly LogWriter _log;
-        public OrderController(IOrderService orderService, LogWriter log)
+        public OrderController(IOrderService orderService, LogWriter log, IMapper mapper)
         {
+            _mapper = mapper;
             _orderService = orderService;
             _log = log;
         }
@@ -34,14 +38,15 @@ namespace TechnicalSupport.API.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Order order)
+        public async Task<IActionResult> Post([FromBody] OrderDto orderDto)
         {
             try
             {
+                //var order = _mapper.Map<Order>(orderDto);
                 var response = await _orderService.AddAsync(new Dictionary<string, object>
                 {
                     { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(order,
+                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(orderDto,
                                                                                         new JsonSerializerSettings
                                                                                         {
                                                                                             ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () },
@@ -91,8 +96,8 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-
-                return Ok();
+                var response = await _orderService.DeleteAsync(id);
+                return Ok(response);
             }
             catch (Exception ex)
             {

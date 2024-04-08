@@ -1,46 +1,64 @@
 <div class="table-responsive mt-2">
-  <table class="table table-bordered">
+  <table class="table table-hover">
     <thead>
       <tr>
+        <th>#</th>
+        <th>Acciones</th>
         <th>Nombre</th>
         <th>Marca</th>
         <th>Modelo</th>
         <th>Año</th>
         <th>Color</th>
-        <th>Acciones</th>
+        <th>Estado</th>
       </tr>
     </thead>
     <tbody>
       @for (item of devices; track $index) {
       <tr>
-        <td>
-          {{ item.name }}
-        </td>
-        <td>
-          {{ item.marca }}
-        </td>
-        <td>
-          {{ item.model }}
-        </td>
-        <td>
-          {{ item.year }}
-        </td>
-        <td>
-          {{ item.color }}
-        </td>
+        <td>{{ $index + 1 }}</td>
         <td>
           <button
             type="button"
             class="btn btn-outline-warning btn-sm btn-rounded"
+            title="Editar"
+            (click)="edit(item)"
           >
-            <i class="ti-pencil"></i>
+            <fa-icon [icon]="'edit'"></fa-icon>
           </button>
           <button
             type="button"
-            class="btn btn-outline-danger btn-sm btn-rounded m-l-5"
+            class="btn btn-outline-danger btn-sm btn-rounded m-lg-1"
+            title="Eliminar"
+            (click)="askToDelete(item)"
           >
-            <i class="ti-trash"></i>
+            <fa-icon [icon]="'trash'"></fa-icon>
           </button>
+          <button
+            type="button"
+            class="btn btn-outline-info btn-sm btn-rounded m-lg-1"
+            title="Clientes"
+            (click)="getCustomers(item.id)"
+          >
+            <fa-icon [icon]="'users-line'"></fa-icon>
+          </button>
+        </td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.brand }}</td>
+        <td>{{ item.model }}</td>
+        <td>{{ item.year }}</td>
+        <td>{{ item.color }}</td>
+        <td>
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="flexSwitchCheckChecked"
+              [checked]="item.enabled == 1 ? true : false"
+              (change)="updateStatus(item)"
+            />
+            <label class="form-check-label" for="flexSwitchCheckChecked"></label>
+          </div>
         </td>
       </tr>
       }

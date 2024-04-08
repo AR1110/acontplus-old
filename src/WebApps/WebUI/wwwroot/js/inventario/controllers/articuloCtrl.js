@@ -8,13 +8,14 @@
         '$scope',
         'mainService',
         'articuloService',
+        'productPhotoService',
         'modalService', 
         'nombreModalInventario',
         'formulario'
     ];
 
 
-    function articuloCtrl($scope, mS, articuloSvc, modalSvc, nombreModalInventario, form) {
+    function articuloCtrl($scope, mS, articuloSvc, productPhotoSvc, modalSvc, nombreModalInventario, form) {
         const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO
 
         $scope.recordsQuantity = [10, 25, 50, 100];
@@ -76,7 +77,7 @@
                 }
 
                 showLoader();
-                articuloSvc.get(dataSearch).then(response => {
+                articuloSvc.getAll(dataSearch).then(response => {
                     hideLoader();
                     let {
                         totalRecords,
@@ -97,7 +98,7 @@
 
         initiload();
         function initiload() {
-            articuloSvc.get({ tipo: 11 }).then(response => {
+            articuloSvc.getDataFilter().then(response => {
                 let {
                     subFamilias,
                     medidas,
@@ -201,8 +202,7 @@
                     showLoader();
                     articuloSvc.delete(item.idArticulo).then(
                         response => {
-                            if (response.code === "0") {
-                                hideLoader();
+                            if (response.code === "0") { 
                                 form.sweetAlert('warning', response.message, response.titleSms);
                             }
                             if (response.code === "1") {
@@ -212,10 +212,9 @@
                             }
 
                         }
-                    ).catch(error => {
-                        hideLoader()
+                    ).catch(error => { 
                         console.log(error);
-                    })
+                    }).finally(()=>hideLoader())
                 }
             } catch (error) {
                 hideLoader()
@@ -271,5 +270,10 @@
                 )
             }
         } 
+
+
+        $scope.previewImg = function(item){
+            productPhotoSvc.previewImg(item.idArticulo)
+        }
     }
 })(window.angular) 

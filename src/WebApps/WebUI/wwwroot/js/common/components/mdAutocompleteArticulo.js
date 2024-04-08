@@ -19,6 +19,8 @@ class BaseSearchArticulo {
         this._modalSvc = _modalSvc;
         this._nombreModalConst = _nombreModalConst;
         this.tS = tS;
+
+        this.productsFound = []
     }
 
 
@@ -46,7 +48,7 @@ class BaseSearchArticulo {
                 return
             }
 
-            if (this.searchText.length < 3) return
+            if (this.searchText.length < 2) return
 
             /**
              * return object {idArticulo: 0}
@@ -239,8 +241,21 @@ class BaseSearchArticulo {
 //Buscador de articulo general con pvp contado 
 class MdArticuloCtrl extends BaseSearchArticulo {
 
-    static $inject = ['articuloService', 'mainService', '$rootScope', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'nombreModalInventario', 'toastService']
-    constructor(articuloSvc, _mS, $rootScope, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, nombreModalInventario, tS) {
+    static $inject = [
+        'articuloService',
+        'productPhotoService',
+        'mainService',
+        '$rootScope',
+        '$scope',
+        '$timeout',
+        '$q',
+        'commonService',
+        'modalService',
+        'nombreModal',
+        'nombreModalInventario',
+        'toastService'
+    ]
+    constructor(articuloSvc, productPhotoSvc, _mS, $rootScope, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, nombreModalInventario, tS) {
         super({
             _mS,
             $rootScope,
@@ -254,6 +269,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         })
 
         this.articuloSvc = articuloSvc;
+        this.productPhotoSvc = productPhotoSvc;
         this.placeholder = this.placeholder || "Buscar articulo"
 
         this.nombreModalInventario = nombreModalInventario;
@@ -263,7 +279,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
             tipo: 1,
             bySearch: '',
             pageIndex: 1,
-            pageSize: 20
+            pageSize: 15
         }
 
         this.$scope.$on("editArticulo", (e, itemArticulo) => {
@@ -280,68 +296,159 @@ class MdArticuloCtrl extends BaseSearchArticulo {
                     $("#clienteSearchInvoice").focus();
                 }
             })
+
+            const autocompleteImput = document.getElementsByClassName('md-autocomplete-suggestions-container')[0]
+
+            autocompleteImput.addEventListener('scroll', () => {
+                var scrollTop = autocompleteImput.scrollTop;
+                var scrollHeight = autocompleteImput.scrollHeight;
+                var clientHeight = autocompleteImput.clientHeight;
+
+                // Verificar si se ha llegado al principio (top)
+                if (scrollTop === 0) {
+
+                }
+
+                // Verificar si se ha llegado al final (bottom)
+                if (scrollTop + clientHeight === scrollHeight) {
+                    this.getProductPaginationSearch()
+
+                }
+            });
+
         }, 500)
 
     }
 
-
-    $onInit() {
-
-        if (this.isDefaultArticle) {
-            setTimeout(() => {
-                this._commonSvc.getDataFormVenta().then(response => {
-                    let mainData = response;
-                    let articulo = mainData[6];
-
-                    if (this.isDefaultArticle && articulo.length > 0) {
-                        this.searchTextSimple = articulo[0].descripcion;
-                        this.selectArticleSearch(articulo[0])
-                    }
-                })
-
-            }, 200)
-        }
-
-    }
-
-    getDynamicSearchArticles() {
-
+    async searchTextChange() {
         let json = {
             busqueda: this._commonSvc.removeAccents(this.searchText),
             condicion: false,
             fraccionado: false,
+            pageIndex: 1,
+            pageSize: 15
         }
 
-        if (json.busqueda.length < 3) return [];
+        this.dataSearch.pageIndex = 1;
+        this.dataSearch.pageSize = 15;
 
+
+        if (json.busqueda.length < 2) return [];
+
+        // this.productsFound = Promise.resolve([]); 
+        this.productsFound = []
         return this.articuloSvc.search(json).then(articulos => {
-            if (articulos.length > 0) {
-                articulos.unshift({
-                    showHeader: true,
-                    priceSale: articulos[0].priceSales,
-                    warehouses: articulos[0].warehouses
-
-                })
-
-                articulos = articulos.map(item => {
-                    if (!("showHeader" in item)) {
-                        item.priceSale = item.priceSales;
-                    }
-                    return item;
-                })
-                return articulos;
-            }
+            let results = this.formatProduct(articulos)
+            this.productsFound = results;
+            return results
         }).catch(error => {
             hideLoader();
             console.log(error)
-            return [];
+            return []
         })
+    }
+
+    formatProduct(products) {
+        let results = [];
+        if (products.length > 0) {
+            products.unshift({
+                showHeader: true,
+                priceSale: products[0].priceSales,
+                warehouses: products[0].warehouses
+
+            })
+
+            results = products.map(item => {
+                if (!("showHeader" in item)) {
+                    item.priceSale = item.priceSales;
+                }
+                return item;
+            })
+        }
+        return results;
+    }
+
+    getProductPaginationSearch() {
+
+
+        let cloneProductsFound = [...this.productsFound]
+        if (cloneProductsFound.length > 0) {
+            cloneProductsFound.shift();
+            if (cloneProductsFound[0].totalRecords === cloneProductsFound.length) return
+        }
+
+        showLoader();
+        this.dataSearch.pageIndex += 1;
+        let json = {
+            busqueda: this._commonSvc.removeAccents(this.searchText),
+            condicion: false,
+            fraccionado: false,
+            pageIndex: this.dataSearch.pageIndex,
+            pageSize: this.dataSearch.pageSize
+        }
+
+        this.articuloSvc.search(json).then(articulos => {
+            let resultProducts = articulos.map(item => {
+                item.priceSale = item.priceSales;
+                return item;
+            })
+            if (resultProducts.length > 0) {
+                //this.productsFound = this.productsFound.concat(resultProducts)
+                // var autocompleteCtrl = angular.element(document.querySelector('md-autocomplete')).controller('mdAutocomplete');
+                // var matchesList = autocompleteCtrl.matches;
+                // console.log(matchesList);
+
+                // console.log(autocompleteCtrl);
+                this.productsFound.push.apply(this.productsFound, resultProducts);
+
+            }
+        }).catch(error => {
+            console.log(error)
+        }).finally(() => hideLoader())
+    }
+
+    getDynamicSearchArticles() {
+
+        // let json = {
+        //     busqueda: this._commonSvc.removeAccents(this.searchText),
+        //     condicion: false,
+        //     fraccionado: false,
+        //     pageIndex: this.dataSearch.pageIndex,
+        //     pageSize: this.dataSearch.pageSize
+        // }
+
+        // if (json.busqueda.length < 3) return [];
+
+        // return this.articuloSvc.search(json).then(articulos => {
+        //     if (articulos.length > 0) {
+        //         articulos.unshift({
+        //             showHeader: true,
+        //             priceSale: articulos[0].priceSales,
+        //             warehouses: articulos[0].warehouses
+
+        //         })
+
+        //         articulos = articulos.map(item => {
+        //             if (!("showHeader" in item)) {
+        //                 item.priceSale = item.priceSales;
+        //             }
+        //             return item;
+        //         })
+        //         return articulos;
+        //     }
+        // }).catch(error => {
+        //     hideLoader();
+        //     console.log(error)
+        //     return [];
+        // })
     }
 
     async getDynamicSearchArticlesSimple(textSearch) {
         let results = await this.articuloSvc.search({
             textSearch,
-            condicion: false
+            condicion: false,
+            pageIndex: 1,
+            pageSize: 25
         })
 
 
@@ -415,6 +522,12 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         } catch (error) {
             console.log(error)
         }
+
+    }
+
+    async previewImg($event, data) {
+        $event.stopPropagation(); 
+        this.productPhotoSvc.previewImg(data.idArticulo)
 
     }
 

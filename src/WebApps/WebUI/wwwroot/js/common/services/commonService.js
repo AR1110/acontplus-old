@@ -196,14 +196,7 @@ export class CommonService {
         //return str.replace(/[^a-z0-9]/gi, '');
         return str.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "");
     }
-
-    //revisar y eliminar posteriormente
-    getAllTiempoCredito(gestion) {
-        return this.$http.get("/TiempoCredito/OptionTiempoCredito?gestion=" + gestion)
-            .then(({
-                data: response
-            }) => response.data);
-    }
+ 
 
     getEstadoDocByCodDoc(codDoc) {
         return this.mS.getData("get", "Config/EstadoDocumento/?json=" + JSON.stringify({
@@ -386,115 +379,6 @@ export class CommonService {
             return item;
         })
 
-    }
-
-    async getDataTipoDocCompra({
-        id,
-        codigoDocumento
-    }) {
-        let isComplete = false;
-        let proveedor = {};
-        let dataTipoDocumento = {};
-        let dataDocumento = {};
-        let factura = {}
-        let detalleDocumento = [];
-        let infoAdicionalDocumento = [];
-        let datosAdicionalesArticulo = [];
-
-        // const TIPO_DOC = this.tipoDoc[codigoDocumento];
-
-        if (!(id > 0)) {
-            throw "ID DOCUMENTO NO VÁLIDO"
-        }
-
-        switch (codigoDocumento) {
-            
-
-            case "IB": 
-
-            case 'NCP':
-                showLoader();
-                await this.mS.getData('get', '/NotaCreditoProveedor/GetId?id=' + id).then(response => {
-                    if (response.code === '0') {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-                    if (response.code === '1') {
-                        let dataMain = JSON.parse(response.payload);
-
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        factura = dataMain[1][0]
-
-                        proveedor = dataMain[2][0];
-
-                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[3]);
-                        isComplete = true;
-                    }
-                })
-                break
-
-
-            case 'OC':
-                await this.mS.getData('get', '/OrdenCompra/GetId?id=' + id).then(response => {
-
-                    if (response.code === '0') {
-                        this.form.sweetAlert('warning', response.message)
-                        throw response.message
-                    }
-                    if (response.code === '1') {
-                        let dataMain = JSON.parse(response.payload) || [];
-
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-                        proveedor = dataMain[1][0];
-                        detalleDocumento = this.setUiGridDetalleCompra(dataMain[2]);
-                        infoAdicionalDocumento = dataMain[3];
-
-                        isComplete = true;
-                    }
-                })
-                break
-
-            case "RC":
-                showLoader();
-                await this.mS.getData('get', '/RetencionCompra/GetId?id=' + id).then(response => {
-                    if (response.code == "0") {
-                        hideLoader();
-                        form.sweetAlert("warning", response.message, response.titleSms);
-                    }
-                    if (response.code === '1') {
-                        let dataMain = JSON.parse(response.payload)
-
-                        dataDocumento = dataMain[0][0];
-                        dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision);
-
-                        proveedor = dataMain[1][0];
-
-                        detalleDocumento = dataMain[2];
-
-                        infoAdicionalDocumento = dataMain[3];
-
-                        isComplete = true;
-                        hideLoader();
-                    }
-                })
-                break
-            default:
-                toastr.warning('Código de Documento No Existe')
-                break
-        }
-
-        return {
-            proveedor,
-            dataTipoDocumento,
-            dataDocumento,
-            factura,
-            detalleDocumento,
-            infoAdicionalDocumento,
-            datosAdicionalesArticulo,
-            isComplete,
-        }
     }
  
     /*  
@@ -1043,54 +927,80 @@ export class CommonService {
             //    .catch((error) => {
             //        console.log(error);
             //    });
-            this.getPrinter(parameters)
+            //this.getPrinter(parameters)
+            this.print(parameters);
         }
     }
 
     getPrinter(parameters) {
         try {
-            let url = `Config/Print/?json=${parameters}`
-            this.mS.getData('get', url, null, true).then(
-                response => {
-                    if (response.code === '0') {
-                        toastr.warning(response.message)
-                    }
-                    if (response.code === '1') {
-                        this.print(JSON.parse(response.payload))
-                    }
-                }
-            ).catch(error => {
-                console.log(error)
-            })
+            //let url = `Config/Print/?json=${parameters}`
+            //this.mS.getData('get', url, null, true).then(
+            //    response => {
+            //        if (response.code === '0') {
+            //            toastr.warning(response.message)
+            //        }
+            //        if (response.code === '1') {
+            //            this.print(JSON.parse(response.payload))
+            //        }
+            //    }
+            //).catch(error => {
+            //    console.log(error)
+            //})
+            this.print(parameters);
         } catch (error) {
             console.log(error)
             toastr.error(error)
         }
     }
 
-    async print(params) {
+    async print(parameters) {
         try {
-            let urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
-            this.mS.getData('POST', urlPrinter).then(data => {
-                if (data.code == "0") {
-                    toastr.warning(data.message, '', {
-                        positionClass: 'toast-bottom-right',
-                        closeButton: true,
-                        preventDuplicates: true,
-                        progressBar: true
-                    })
-                }
-                if (data.code == "1") {
-                    toastr.success(data.message, '', {
-                        positionClass: 'toast-bottom-right',
-                        closeButton: true,
-                        preventDuplicates: true,
-                        progressBar: true
-                    })
-                }
-            }).catch(function (error) {
-                console.log('Hubo un problema al imprimir:' + error.message);
-            })
+
+            this.mS
+                .getData("POST", "https://acontplusprint.com/Print", parameters)
+                .then((response) => {
+                    if (response.code === "0") {
+                        toastr.warning(response.message, "", {
+                            positionClass: "toast-bottom-right",
+                            closeButton: true,
+                            preventDuplicates: true,
+                            progressBar: true,
+                        });
+                    }
+                    if (response.code === "1") {
+                        toastr.success(response.message, "", {
+                            positionClass: "toast-bottom-right",
+                            closeButton: true,
+                            preventDuplicates: true,
+                            progressBar: true,
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            //let urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
+            //this.mS.getData('POST', urlPrinter).then(data => {
+            //    if (data.code == "0") {
+            //        toastr.warning(data.message, '', {
+            //            positionClass: 'toast-bottom-right',
+            //            closeButton: true,
+            //            preventDuplicates: true,
+            //            progressBar: true
+            //        })
+            //    }
+            //    if (data.code == "1") {
+            //        toastr.success(data.message, '', {
+            //            positionClass: 'toast-bottom-right',
+            //            closeButton: true,
+            //            preventDuplicates: true,
+            //            progressBar: true
+            //        })
+            //    }
+            //}).catch(function (error) {
+            //    console.log('Hubo un problema al imprimir:' + error.message);
+            //})
         } catch (error) {
             hideLoader()
             console.log(error)
@@ -1247,79 +1157,7 @@ export class CommonService {
                         data: response,
                     }
 
-                    break
-
-
-                case "FF":
-                    fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
-                    ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
-                    template = this.nombreModalCompra.FACTURA_FISICA.templates['D']
-                    controller = (await import(fileCtrl))[ctrl];
-                    response = await this.getDataTipoDocCompra({
-                        id,
-                        codigoDocumento: 'FC'
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response
-                    }
-
-                    break
-
-                case "IV":
-                    let modalParams = {}, {
-                        MODAL_FILE_PATH,
-                        MODAL_DETALLE
-                    } = this._nombreModalConst.compra_no_habitual;
-                    isRenderRazorPartial = true;
-
-
-                    controller = (await import('./../../' + MODAL_FILE_PATH))[MODAL_DETALLE['controller']]
-                    template = MODAL_DETALLE['template']
-
-                    showLoader();
-
-                    await this.mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
-                        idDocumentoIngreso: id,
-                        typeList: 4
-                    }), null, true).then(response => {
-                        if (response.code === "0") {
-                            console.log(response)
-                            hideLoader();
-                        }
-
-                        if (response.code === "1") {
-                            modalParams.params = JSON.parse(response.payload);
-                            hideLoader();
-                        }
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: modalParams.params
-                    }
-
-
-                    break
-                case "IB":
-                    let {
-                        ingreso_bodega
-                    } = this._nombreModalConst;
-                    controller = (await import('./../' + ingreso_bodega.MODAL_FILE_CTRL))[ingreso_bodega.MODAL_DETALLE['controller']];
-                    template = ingreso_bodega.MODAL_DETALLE['template'];
-
-                    response = await this.getDataTipoDocCompra({
-                        id,
-                        codigoDocumento
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response
-                    }
-
-                    break
+                    break 
 
 
                 case "CI":
@@ -1438,44 +1276,6 @@ export class CommonService {
 
                     break
 
-
-                case "FC":
-                    isRenderRazorPartial = true;
-                    fileCtrl = this.nombreModalCompra.FACTURA_FISICA.fileCtrl;
-                    ctrl = this.nombreModalCompra.FACTURA_FISICA.controllers['D']
-                    template = this.nombreModalCompra.FACTURA_FISICA.templates['D']
-                    controller = (await import(fileCtrl))[ctrl];
-                    response = await this.getDataTipoDocCompra({
-                        id,
-                        codigoDocumento
-                    })
-
-                    params = {
-                        TIPO_REGISTRO: 'DETALLE',
-                        data: response
-                    }
-
-                    break
-
-                case "IB":
-                    // fileCtrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.fileCtrl;
-                    // ctrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.controllers['D']
-                    // template = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.templates['D']
-
-
-                    // response = await this.getDataTipoDocCompra({
-                    //     id,
-                    //     codigoDocumento
-                    // })
-
-                    // params = {
-                    //     TIPO_REGISTRO: 'DETALLE',
-                    //     data: response
-                    // }
-
-                    break
-
-
                 case "CI":
                     fileCtrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.fileCtrl;
                     ctrl = this.nombreModalInventario.CONSOLIDACION_INVENTARIO.controllers['D']
@@ -1527,7 +1327,12 @@ export class CommonService {
 
 
 
-    //Permiso para editar o anular Doc. Venta 
+    //Permiso para editar o anular Doc. Venta  
+    /**
+     * NO USAR 
+     * @param {*} codigoAccion 
+     * @returns 
+     */
     async checkHasPermissionToEditOrDelete(codigoAccion) {
         let jsonParams = {
             typeList: 2,
@@ -1553,6 +1358,11 @@ export class CommonService {
     }
 
 
+    /**
+     * NO USAR 
+     * @param {*} codigoAccion 
+     * @returns 
+     */
     async requestAuthorizationKey(codigoAccion) {
         let textMotivo = codigoAccion === 'E' ? 'Editar' : 'Anular';
         Swal.fire({
@@ -1596,6 +1406,11 @@ export class CommonService {
     }
 
 
+    /**
+     * NO USAR 
+     * @param {*} codigoAccion 
+     * @returns 
+     */
     updateRequestKey(codigoAccion) {
         this.mS.getData('put', 'Config/Solicitud/Put/' + JSON.stringify({
             codigoAccion,

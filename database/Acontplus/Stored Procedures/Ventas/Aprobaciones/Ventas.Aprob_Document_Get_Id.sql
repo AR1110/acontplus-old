@@ -19,13 +19,14 @@ BEGIN
 	DECLARE @uniqueId VARCHAR(300)
 
 	DECLARE @idTipoDocumento INT 
+    DECLARE @idEntidad INT 
 	
-	SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+	SELECT TOP 1 @uniqueId = uniqueId,  @idEntidad = idEntidad   FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
 
 	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-	SELECT 
-		d.idAprob_Document
+	SELECT  
+	   d.idAprob_Document
 	   ,d.uniqueId
 	   ,idTiempoCredito = ISNULL(cl.idTiempoCredito, 0)
 	   ,d.idPuntoEmision
@@ -46,11 +47,13 @@ BEGIN
 	WHERE d.idAprob_Document = @id
 
 	SELECT cl.idCliente
+          ,cl.FormaPagoSriId       as idFormaPagoSri
 		  ,cl.nombreComercial
 		  ,cl.nombreFiscal
 		  ,cl.numeroIdentificacion
 		  ,direccion = ISNULL(cl.direccion,'')
 	      ,tipoIdentificacion = ti.codigoSri 
+          ,cl.idTipoIdentificacion
 	FROM Ventas.Aprob_Document    ad
 	INNER JOIN Cliente            cl WITH(NOLOCK) ON cl.idCliente            = ad.idCliente
 	 LEFT JOIN TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
@@ -106,6 +109,7 @@ BEGIN
             ,a.llevaInventario
             ,a.precioCosto
             ,dt.fechaEmision
+            ,dt.nota
 	FROM Ventas.Aprob_Document_Detailt dt WITH (NOLOCK)
 	INNER JOIN dbo.Articulo             a WITH (NOLOCK) ON a.idArticulo = dt.idArticulo
 	INNER JOIN dbo.Medida               m WITH (NOLOCK) ON m.idMedida   = dt.idMedida
@@ -131,6 +135,12 @@ BEGIN
 	SELECT h.idDocumento, h.idHistoryInfoAdicional, selected = CAST(1 as BIT), i.* FROM Ventas.HistoryInfoAdicional h WITH(NOLOCK)
 	INNER JOIN Compra.InfoAdicional i WITH(NOLOCK) ON i.idInfoAdicional = h.idInfoAdicional
 	WHERE h.codDoc='APR' AND h.idDocumento = @id
+
+    SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
+    SELECT  
+           CAST(idFormaPagoSri   AS INT) as idFormaPagoSri
+	FROM Config.v_Sistema_Ventas gs
+    WHERE gs.idEntidad = @idEntidad
 
 END
 

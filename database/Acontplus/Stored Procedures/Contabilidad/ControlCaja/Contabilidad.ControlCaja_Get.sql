@@ -82,6 +82,11 @@ BEGIN
 				    SET @sql = @sql + 'AND CAST(fechaApertura AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
 			    END 
 
+            IF @checkBoxDate = 0 
+                BEGIN
+                    SET @sql = @sql + 'AND idControlCaja IN (SELECT MAX(idControlCaja) FROM dbo.ControlCaja mc WITH (NOLOCK) WHERE estado = 1 AND idCaja = @idCaja) '
+                END 
+
 		    IF @statusMovement IN (0,1)
 			    BEGIN
 				    SET @sql = @sql + 'AND estado = @statusMovement '
@@ -104,9 +109,11 @@ BEGIN
     IF @tipo = 2
         BEGIN
             
-            SET @tableNames = 'formaPagos'
+            SET @tableNames = 'formaPagos,tipoDocumento'
 
             SELECT idEntidadFinanciera,codigo,descripcion FROM EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
+
+            SELECT idTipoDocumento,codigo,descripcion FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE codigo IN ('FV','NE','EC','IC')
 
             RETURN 
         END 
@@ -125,45 +132,17 @@ BEGIN
 
 		    RETURN 
         END 
-        
-        ----Operacion para abrir caja de moneda fisica 
-		--IF @typeList = 1
-		--	BEGIN 	
-		--		DECLARE @codEstab VARCHAR(100) = (SELECT top 1 codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol AND predeterminado = 1)
-		--		DECLARE @urlPrinter VARCHAR(40)
-		--		DECLARE @dataSources VARCHAR(MAX)
-		--		DECLARE @rdlcProps VARCHAR(MAX)
+      
+    --> Filter for Report 
+    IF @tipo = 5
+        BEGIN
+            
+            SET @tableNames = 'usuario,estadoPago'
 
-		--		SELECT TOP 1 @urlPrinter = ipMaquina
-		--		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
-		--		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
-		--		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-		--		WHERE i.codEstab = (SELECT codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol AND predeterminado = 1)
+            SELECT idUsuario, nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
 
-		--		SET @rdlcProps = (
-		--							SELECT  i.nombreImpresora printerName
-		--									,CAST(0 AS bit) isThermal
-		--								    ,ti.formato
-		--								   ,ti.deviceInfo
-		--								   ,i.nombreEquipo computerName
-		--								   ,rdlcName = 'Blank.rdl'
-		--								   ,copyPrint = 1
-		--							FROM ApiPrinter.Impresora i
-		--							INNER JOIN ApiPrinter.TipoImpresora ti ON ti.idTipoImpresora = i.idTipoImpresora
-		--							WHERE i.codEstab = @codEstab AND ti.codigo != 'AT'
-		--							 FOR JSON PATH
-		--							)
+            SELECT idEstadoPago, codigo as codEstado, descripcion FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('NCBR')
 
-		--		SET @dataSources = (SELECT test = 'test' FOR JSON PATH)
-
-		--		IF NOT EXISTS(SELECT 1 FROM ApiPrinter.Impresora i
-		--									INNER JOIN ApiPrinter.TipoImpresora ti ON ti.idTipoImpresora = i.idTipoImpresora
-		--									WHERE i.codEstab = @codEstab)
-		--				BEGIN							
-		--					SELECT '0' code, 'No tienes configurada ninguna impresora' as 'message'
-		--				END 
-
-		--		SELECT '1' code, '' as 'message', payload = (SELECT 'http://' + @urlPrinter urlPrinter, @rdlcProps rdlcProps, dataSources= '[{"mainDs":"[{\"test\":\"test\"}]"}]' FOR JSON PATH)
-		--		RETURN 
-		--	END 
+            RETURN 
+        END 
 END

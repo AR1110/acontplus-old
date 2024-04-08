@@ -4,7 +4,6 @@ using Common.Core.Utils;
 using Inventario.Core.Entities;
 using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
-using Inventario.Infrastructure.Data.Migrations;
 
 namespace Inventario.Application.Services
 {
@@ -30,7 +29,7 @@ namespace Inventario.Application.Services
         {
             try
             {
-                if (!_context.SubcategorytPhotos.Any(x=>x.SubcategoryId == data.SubcategoryId))
+                if (!_context.SubcategorytPhotos.Any(x => x.SubcategoryId == data.SubcategoryId))
                 {
                     data.IsDefault = true;
                 }

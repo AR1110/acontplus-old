@@ -38,7 +38,7 @@ namespace Common.Core.Models
         {
             this.BucketName = _configuration["S3Bucket:Name"];
             this.Region = _configuration["S3Bucket:Region"];
-            this.S3ObjectKey = s3ObjectKey; 
+            this.S3ObjectKey = s3ObjectKey;
             this.AwsCredentials = new AwsCredentials
             {
                 Key = _configuration["AwsConfiguration:AWSAccessKey"],

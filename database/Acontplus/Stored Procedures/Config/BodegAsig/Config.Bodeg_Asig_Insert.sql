@@ -1,3 +1,4 @@
+USE AcontPlus
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -18,14 +19,11 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID(N'Config.Bodeg_Asig_Insert', N'P') IS NOT NULL
-DROP PROCEDURE Config.Bodeg_Asig_Insert
-GO
-CREATE PROCEDURE Config.Bodeg_Asig_Insert 
-	 @idRol INT
-	,@id INT
-	,@codEstab_Asig VARCHAR(150)
-	,@idBodega INT
+ 
+CREATE OR ALTER PROCEDURE Config.Bodeg_Asig_Insert 
+	 @userRoleId INT
+	,@json VARCHAR(MAX)
+	
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -36,9 +34,24 @@ BEGIN
 	DECLARE @predeterminado BIT 
 	DECLARE @message VARCHAR(150)
 
+    DECLARE @id INT
+    DECLARE @codEstab_Asig VARCHAR(150)
+	DECLARE @idBodega INT
+
+    SELECT 
+         @id = idBodeg_Asig
+         ,@codEstab_Asig = codEstab_Asig
+	     ,@idBodega = idBodega
+    FROM OPENJSON(@json)
+    WITH(
+        idBodeg_Asig INT
+        ,codEstab_Asig VARCHAR(150)
+	    ,idBodega INT
+    )
+
 	BEGIN TRY
 		
-		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
 		SELECT @usuario = nombreUsuario FROM dbo.Usuario WHERE idUsuario = @idUsuario
 
@@ -56,13 +69,13 @@ BEGIN
 					DELETE FROM Config.Bodeg_Asig WHERE idBodeg_Asig = @id
 					SET @message = 'Eliminado Correctamente'
 				END 
-		COMMIT TRAN 
-		SELECT '1'code,@message as 'message'
+		COMMIT TRAN  
+         SELECT [Common].[ufnSpResponse]('1',@message,DEFAULT)
 		RETURN 
 	END TRY 
 
-	BEGIN CATCH	
-		SELECT '0'code,ERROR_MESSAGE() as 'message'
+	BEGIN CATCH	 
+         SELECT [Common].[ufnSpResponse]('1',ERROR_MESSAGE() ,DEFAULT)
 		IF (@@TRANCOUNT > 0)
 			BEGIN
 				ROLLBACK TRAN

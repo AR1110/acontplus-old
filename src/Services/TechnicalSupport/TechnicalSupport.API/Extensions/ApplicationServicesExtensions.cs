@@ -11,8 +11,16 @@ namespace TechnicalSupport.API.Extensions
             services.AddDbContextPool<TechnicalSupportContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddScoped<IDeviceSpecService, DeviceSpecService>();
             services.AddScoped<IDeviceService, DeviceService>();
             services.AddScoped<IOrderService, OrderService>();
+            //var config = new AutoMapper.MapperConfiguration(cfg =>
+            //{
+            //    cfg.AddProfile(new MappingProfiles());
+            //});
+            //var mapper = config.CreateMapper();
+            //services.AddSingleton(mapper);
+            services.AddAutoMapper(typeof(MappingProfiles));
             return services;
         }
     }

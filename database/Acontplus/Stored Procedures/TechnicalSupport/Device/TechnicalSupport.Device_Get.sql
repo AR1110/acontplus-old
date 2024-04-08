@@ -18,27 +18,77 @@ BEGIN
 	SET NOCOUNT ON;
 
     DECLARE @tipo INT
+    ,@textSearch VARCHAR(100)
+    ,@customerCompanyId INT
     
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT '$.tipo')
+    SELECT @tipo            = tipo
+        ,@textSearch        = textSearch
+        ,@customerCompanyId = customerCompanyId
+    FROM OPENJSON(@json) WITH 
+    (
+        tipo INT '$.tipo',
+        textSearch VARCHAR(100) '$.textSearch',
+        customerCompanyId INT '$.customerCompanyId'
+    )
 
     IF (@tipo = 1)
         BEGIN
-            SET @tableNames = 'establecimientos'
-              SELECT idEstablecimiento
-                      ,nombreComercial
-                      ,codEstab
-                      ,idPuntoEmision
-                      ,ptoEmi + '-' + estab as ptoEmi
-                      ,defaultEstab
-                      ,defaultPtoEmi 
-                FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+            SET @tableNames = 'establecimientos,categorias'
+            SELECT idEstablecimiento
+                    ,nombreComercial
+                    ,codEstab
+                    ,idPuntoEmision
+                    ,ptoEmi + '-' + estab as ptoEmi
+                    ,defaultEstab
+                    ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK)
+            WHERE idUsuarioRol = @userRoleId 
+            ORDER BY defaultEstab DESC
+
+            SELECT
+                tc.Id
+               ,tc.Code
+               ,tc.Name
+               ,tc.CreatedAt
+            FROM TechnicalSupport.Category tc WITH(NOLOCK)
+            WHERE tc.[Enabled] = 1
+            ORDER BY tc.CreatedAt DESC
+
             RETURN
         END
 
     IF (@tipo = 2)
         BEGIN
 	        SET @tableNames = 'devices'
-	        SELECT * FROM TechnicalSupport.Device
+	        SELECT d.*
+                ,dc.CustomerCompanyId
+                ,dc.SerialNumber        AS Serie
+                ,dc.Warranty
+                ,ds.Id                  AS DeviceSpecId
+                ,ISNULL(ds.Specs, '{}') AS Specs
+            FROM TechnicalSupport.Device d
+            LEFT JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
+            LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
+            RETURN
+        END
+     IF (@tipo = 3)
+        BEGIN
+        	SET @tableNames = 'devices'
+
+            SELECT * 
+            FROM TechnicalSupport.Device 
+            WITH (NOLOCK) WHERE [Name] LIKE '%' + @textSearch + '%'
+            RETURN
+        END
+    IF (@tipo = 4)
+        BEGIN
+        	SET @tableNames = 'devices'
+            SELECT d.*, dc.Id DeviceCustomerId, dc.CustomerCompanyId, dc.SerialNumber DeviceSerie, dc.Warranty DeviceWarranty, ISNULL(ds.Specs, '{}') Specs
+            
+            FROM TechnicalSupport.Device d  WITH (NOLOCK)
+            INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
+            LEFT JOIN TechnicalSupport.DeviceSpecs ds WITH(NOLOCK) ON d.id = ds.DeviceId
+            WHERE dc.CustomerCompanyId = @customerCompanyId
             RETURN
         END
 END

@@ -82,10 +82,10 @@ BEGIN
 																			ELSE ''''
 															END 
 										FROM Contabilidad.CuentaPorPagar pp WITH (NOLOCK)
-										INNER JOIN dbo.Proveedor      p WITH (NOLOCK) ON p.idProveedor      = pp.idProveedor
-										INNER JOIN Sri.Establecimiento es WITH(NOLOCK) ON es.idEstablecimiento = pp.idEstablecimiento
-   										LEFT JOIN dbo.TiempoCredito tc WITH (NOLOCK) ON tc.idTiempoCredito = pp.idTiempoCredito
-										INNER JOIN dbo.EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago    = pp.idEstadoPago
+										INNER JOIN dbo.Proveedor          p WITH (NOLOCK) ON p.idProveedor        = pp.idProveedor
+										INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = pp.idEstablecimiento
+   										 LEFT JOIN dbo.TiempoCredito     tc WITH (NOLOCK) ON tc.idTiempoCredito   = pp.idTiempoCredito
+										INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago      = pp.idEstadoPago
 										WHERE pp.idEntidad = @idEntidad '
 
 			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT,
@@ -93,8 +93,8 @@ BEGIN
 												@codDoc VARCHAR(5),
 												@codEstado VARCHAR(10),
 												@idProveedor INT,
-												@dateStart DATETIME,
-												@dateEnd DATETIME'
+												@dateStart DATETIME2,
+												@dateEnd DATETIME2'
 
 			SELECT 
 				@checkboxFecha = checkboxFecha,
@@ -128,22 +128,22 @@ BEGIN
 					SET @sql = @sql + ' AND CAST(pp.fechaEmision AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
 				END 
 
-			IF @checkboxEstab = 1
+			IF  @codEstab IS NOT NULL
 				BEGIN
 					SET @sql = @sql + ' AND es.codEstab = @codEstab'
 				END 
 
-			IF @checkboxTipoDoc = 1
+			IF @codDoc is not null
 				BEGIN
 					SET @sql = @sql + ' AND pp.codDoc= @codDoc '
 				END 
 
-			IF @checkboxEstado = 1
+			IF @codEstado is not null
 				BEGIN
 					SET @sql = @sql + ' AND ep.codigo= @codEstado'
 				END 
 
-			IF @checkboxProveedor = 1
+			IF @idProveedor IS NOT NULL
 				BEGIN
 					SET @sql = @sql + ' AND pp.idProveedor= @idProveedor'
 				END 
@@ -160,6 +160,8 @@ BEGIN
 				 ,@idProveedor  = @idProveedor
 				 ,@dateStart    = @dateStart
 				 ,@dateEnd      = @dateEnd
+
+            RETURN 
 		END 
 
 	IF @tipo = 2
@@ -171,6 +173,7 @@ BEGIN
 				BEGIN 
 					SELECT 
 						 c.idCuotaPorPagar
+                        ,c.idCuentaPorPagar
 						,fechaVencimiento = Format(c.fechaVencimiento, 'yyyy-MM-dd')
 						,c.nroCuota
 						,c.cuota
@@ -188,6 +191,7 @@ BEGIN
 				BEGIN 
 					SELECT 
 						 c.idCuotaPorPagar
+                        ,c.idCuentaPorPagar
 						,fechaVencimiento = Format(c.fechaVencimiento, 'yyyy-MM-dd')
 						,c.nroCuota
 						,c.cuota
@@ -379,7 +383,6 @@ BEGIN
             
             RETURN 
         END 
-
     
 END
 GO

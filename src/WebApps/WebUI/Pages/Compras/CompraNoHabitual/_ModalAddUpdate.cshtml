@@ -40,7 +40,7 @@
                 <div class="form-group">
                     <label for="tiempoCredito">Tiempo Credito <span class="text-danger">*</span></label>                     
                     <select name="tiempoCredito" id="tiempoCredito" class="form-control border-select"
-                        ng-model="data.idTiempoCredito" ng-disabled="data.idDocumentoIngreso>0" ng-change="onChangeTiempoCredito()">
+                        ng-model="data.idTiempoCredito" ng-disabled="data.idDocumentoIngreso>0 && (data.idTiempoCredito>0)" ng-change="onChangeTiempoCredito()">
                         <option ng-value="item.idTiempoCredito" ng-repeat="item in tiemposCredito">
                             {{item.descripcion}}
                         </option>

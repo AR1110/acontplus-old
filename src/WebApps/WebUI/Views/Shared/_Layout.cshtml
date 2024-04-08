@@ -136,7 +136,7 @@
                     <div class="navbar-nav d-lg-block m-md-block d-none mx-auto text-white">
                         <div class="d-flex flex-column">
                             <div class="p-0 text-white">{{userData.tradeName}}</div>
-                            <div class="p-0 text-white"><small>{{userData.bussinesName}}</small></div>
+                            <div class="p-0 text-white"><small>{{userData.businessName}}</small></div>
                         </div>
                     </div>
 
@@ -155,7 +155,7 @@
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right animated flipInY">
-                                <a href="/Usuario/Perfil" class="dropdown-item">
+                                <a href="/Config/UserProfile/Index" class="dropdown-item">
                                     <icon class="ti-user"></icon> Mi perfil
                                 </a>
 
@@ -262,7 +262,7 @@
         </footer>
 
     </div>
-    @await Html.PartialAsync("_ModalSession")
+@*     @await Html.PartialAsync("_ModalSession") *@
 
     <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/popper/popper.min.js" asp-append-version="true"></script>
@@ -354,7 +354,10 @@
     <script src="~/dist/js/custom.min.js" asp-append-version="true"></script>
 
     <script src="~/js/app/acontPlusApp.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/layoutCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/services/userPermissionService.min.js" asp-append-version="true"></script>
+
+    @* <script src="~/js/controllers/layoutCtrl.min.js" asp-append-version="true"></script> *@
+    <script src="~/js/controllers/layoutCtrl.js" asp-append-version="true"></script>
     <!--Common Directives---->
     <script src="~/js/common/directives/commonDirective.js" asp-append-version="true"></script>
     @* <script src="~/js/common/filters/commonFilter.min.js" asp-append-version="true"></script> *@
@@ -380,6 +383,7 @@
 
     <!--------------------------Fact Elect------------------------------>
     <script src="~/js/factElect/services/factElectService.js" asp-append-version="true"></script>
+    <script src="~/js/config/services/configService.min.js" asp-append-version="true"></script>
 
 
     <!--Components-->
@@ -393,7 +397,8 @@
     <script src="~/lib/UAParser.js/ua-parser.min.js" asp-append-version="true"></script>
 
     <script src="~/lib/axios/axios.min.js" asp-append-version="true"></script>
-
+    <script src="~/js/contabilidad/services/contabilidadService.min.js" asp-append-version="true"></script>
+    
     <script>
 
 

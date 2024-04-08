@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Core.Interfaces;
+using Restaurant.API.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
 

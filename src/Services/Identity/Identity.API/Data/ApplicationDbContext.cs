@@ -14,6 +14,7 @@ namespace Identity.API.Data
         public DbSet<ForgotPassword> ForgotPasswords { get; set; }
         public DbSet<LoginHistory> LoginHistories { get; set; }
         public DbSet<LoginFailed> LoginFaileds { get; set; }
+        public DbSet<AccessAuthorization> AccessAuthorizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,12 +39,16 @@ namespace Identity.API.Data
                            p => p.ClrType == typeof(string)    // Entity is a string
                         && p.GetColumnType() == null           // No column type is set
                                                                // Next line only required if using ASP.Net Identity:
-                        && !p.DeclaringEntityType.GetTableName().StartsWith("AspNet")
+                        //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
                     ))
                 {
                     property.SetIsUnicode(false);
                 }
             }
+
+            builder.Entity<AccessAuthorization>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<AccessAuthorization>().Property(p => p.Enabled).HasDefaultValue(true);
+
 
             builder.Entity<LoginHistory>().Property(p => p.LoginDate).HasDefaultValueSql("GETDATE()");
             builder.Entity<LoginHistory>().Property(x => x.IsLoggedIn).HasDefaultValue(true);

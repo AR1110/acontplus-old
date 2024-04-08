@@ -1,7 +1,5 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Reports.API.Extensions;
 using Services.Common;
@@ -43,11 +41,6 @@ namespace Reports.API
 
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
-            builder.Services.AddSingleton<LogWriter>();
-
-            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
-
             var app = builder.Build();
 
             var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
@@ -64,8 +57,15 @@ namespace Reports.API
 
             app.UseRouting();
 
-            app.UseHttpsRedirection();
 
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+            {
+                app.Urls.Add("http://*:5010"); // 👈 Add the URL
+            }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseAuthentication();
 
             app.UseAuthorization();

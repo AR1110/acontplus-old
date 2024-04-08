@@ -12,14 +12,12 @@ import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { SupplierSearchComponent } from '@modules/purchase/components/supplier-search/supplier-search.component';
-import { TestComponent } from '../test/test.component';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 
 @Component({
   selector: 'app-reports-page',
   standalone: true,
-  imports: [AppModule, PurchaseModule, SupplierSearchComponent, DateRangeSelectionComponent, TestComponent],
+  imports: [AppModule, PurchaseModule],
   templateUrl: './reports-page.component.html',
   styleUrl: './reports-page.component.scss'
 })
@@ -40,8 +38,8 @@ export class ReportsPageComponent {
     codDoc: '',
     idProveedor: 0,
     codEstado: '',
-    fromDate: '',
-    toDate: '',
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date()),
     supplierChecked: false,
     supplierName: ''
   }
@@ -66,7 +64,8 @@ export class ReportsPageComponent {
             const [estabs, estadosDoc, tiposDoc] = JSON.parse(response.payload as string);
 
             this.establecimientos = groupEstabUtil({
-              estabs
+              estabs,
+              isGroupPuntoEmision: true
             })
             const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
             if (dataEstab) {
@@ -78,8 +77,6 @@ export class ReportsPageComponent {
               }
             }
             this.tiposDoc = tiposDoc;
-
-            console.log(this.tiposDoc)
             this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FC)?.codDoc || '';
             //console.log(this.tiposDoc)
             this.estadosDoc = estadosDoc;
@@ -95,7 +92,7 @@ export class ReportsPageComponent {
 
 
   ngOnInit() {
-    this.initialed()
+     this.initialed()
   }
 
   onSupplierSelected<T extends { data: any }>($event: T) {
@@ -185,7 +182,6 @@ export class ReportsPageComponent {
       reportParams: JSON.stringify({
         hasParams: false,
         codigo: CODE_REPORT.RCP,
-        codEstab: this.dataSearch.codEstab,
         format,
         aditionalParams: []
       }),

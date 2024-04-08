@@ -63,7 +63,6 @@
                 showLoader();
                 docElectSvc.getDataFilter().then(response => {
                     let { estabs, estadosDoc, tiposDoc } = response;
-                    console.log(response)
                     $scope.establecimientos = estabs;
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
@@ -72,11 +71,7 @@
                     $scope.tiposDoc = tiposDoc;
                     const dataTipoDoc = $scope.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FV_SRI);
                     $scope.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
-                    $scope.estadosDoc = [...estadosDoc, {
-                        codDoc: '0',
-                        idTipoDocumento: 0,
-                        descripcion: 'NO AUTORIZADO'
-                    }]
+                    $scope.estadosDoc = estadosDoc
                 })
                     .catch(error => {
                         console.log(error)
@@ -95,7 +90,6 @@
             if (dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE.FV_SRI) {
                 $scope.showField = true;
             }
-            console.log('test')
         }
 
         $scope.resultRangeFilter = function (item) {
@@ -116,7 +110,6 @@
 
 
         $scope.onKeyupCliente = function () {
-            console.log($scope.cliente)
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.identificacion = null;
 
@@ -124,14 +117,12 @@
         }
 
         $scope.onSelectCliente = function (data) {
-            console.log(data)
             $scope.dataSearch.identificacion = data.numeroIdentificacion;
 
         }
 
 
         $scope.onKeyupUser = function () {
-            console.log($scope.cliente)
             if (!$scope.cliente.nombreUser) {
                 $scope.dataSearch.idUsuario = 0;
             }
@@ -159,6 +150,10 @@
             [DOC_TYPE.NC_SRI]: {
                 tipo: 3,
                 codigo: CODE_REPORT.NCRG
+            },
+            [DOC_TYPE.R_SRI]: {
+                tipo: 5,
+                codigo: CODE_REPORT.FCRRG
             }
         }
 
@@ -205,7 +200,7 @@
                 }
                 commonSvc.getReport({
                     parameters,
-                    formatType: format
+                    formatType: format,
                 })
             } catch (error) {
                 console.log(error)

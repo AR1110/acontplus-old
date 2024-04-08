@@ -8,7 +8,7 @@
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
             <strong>Proveedor:</strong>
             <br>                        
-            <p class="text-muted">{{data.nombreFiscal}}</p>
+            <p class="text-muted">{{data.razonSocialComprador}}</p>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
             <strong>Nro. Documento:</strong>
@@ -35,7 +35,7 @@
                             <option ng-value="item.idTiempoCredito" ng-repeat="item in tiempoCreditos">{{item.descripcion}}</option>
                     </select>
                     <div class="input-group-append">                        
-                        <button ng-disabled = "data.codPago!='PE'" type="button" ng-click="generarNuevaCuota()" class="btn btn-outline-secondary btn-sm">
+                        <button ng-disabled = "data.codPago!='PE'" type="button" ng-click="generarNuevaCuota()" class="btn btn-secondary btn-sm">
                             <i class=" fas fa-redo fa-xs"></i>
                         </button>
                         @* <button type="button" ng-click="openModalTiempoCredito()" class="btn btn-outline-secondary btn-sm">

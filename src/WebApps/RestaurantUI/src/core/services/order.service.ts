@@ -1,4 +1,4 @@
-import { PATHS } from "../constants"
+import { PATHS_API } from "../constants"
 import { ApiResponse } from "../models"
 import { Http, loadAbort } from "../utilities"
 
@@ -7,7 +7,7 @@ const orderService = {
     async get(obj: object, cancelToken?:any) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.PRIVATE}${URL}`,
+            url: `${PATHS_API.PRIVATE}${URL}`,
             params: {
                 json: JSON.stringify(obj)
             },
@@ -27,7 +27,7 @@ const orderService = {
         return {
             call: Http({
                 method: 'get',
-                url: `${PATHS.PRIVATE}${URL}`,
+                url: `${PATHS_API.PRIVATE}${URL}`,
                 params: {
                     json
                 },
@@ -39,7 +39,7 @@ const orderService = {
     // async getDataFilter() {
     //     const resultAxios = await Http({
     //         method: 'get',
-    //         url: `${PATHS.PRIVATE}${URL}`,
+    //         url: `${PATHS_API.PRIVATE}${URL}`,
     //         data: { 
     //             json: JSON.stringify({tipo: 4})
     //          }
@@ -52,7 +52,7 @@ const orderService = {
     async post(data: object) {
         const resultAxios = await Http({
             method: 'post',
-            url: `${PATHS.PRIVATE}${URL}`,
+            url: `${PATHS_API.PRIVATE}${URL}`,
             data: { data }
         })
 
@@ -64,7 +64,7 @@ const orderService = {
         console.log(data)
         const resultAxios = await Http({
             method: 'put',
-            url: `${PATHS.PRIVATE}${URL}/${id}`,
+            url: `${PATHS_API.PRIVATE}${URL}/${id}`,
             data: { data }
         })
 
@@ -75,7 +75,7 @@ const orderService = {
     async updateState(id: number) {
         const resultAxios = await Http({
             method: 'put',
-            url: `${PATHS.PRIVATE}${URL}`,
+            url: `${PATHS_API.PRIVATE}${URL}`,
             params: {
                 id
             }
@@ -88,7 +88,7 @@ const orderService = {
     async delete(id: number) {
         const resultAxios = await Http({
             method: 'delete',
-            url: `${PATHS.PRIVATE}${URL}/${id}`,
+            url: `${PATHS_API.PRIVATE}${URL}/${id}`,
              
         })
 

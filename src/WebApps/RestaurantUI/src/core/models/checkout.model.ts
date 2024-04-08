@@ -42,8 +42,8 @@ export interface Payment {
     referencia?: string
     aprobacion?: string
     lote?: string
-    cityId?: number
-    idBanco?: number
+    cityId?: number |null
+    idBanco?: number | null
     posfechado?: boolean
 }
 
@@ -69,7 +69,7 @@ export interface CheckoutSubTotal {
  * Datos cobro 
  */
 export interface MultiplesPaymentType extends Payment  {
-    idCuentaBancaria:number
+    idCuentaBancaria:number | null
     paymentSubTypeName: string
     infoCobro?: string
 }
@@ -82,6 +82,7 @@ export interface Checkout {
     dataSubTotal: CheckoutSubTotal
     multiplesPaymentType: Array<MultiplesPaymentType>
     paymentDetails: Array<PaymentDetail>
+    historialCuentas: Array<PaymentHistory>
 }
 
 export interface PaymentDetail {
@@ -94,13 +95,16 @@ export interface PaymentDetail {
     cuota: number
     saldo: number
     secuencial: number
+    saldoOriginal: number
 }
 
 export interface PaymentHistory {
     idCuentaPorCobrar: number
     abono: number,
     diasMora: number
-    mora: number
+    mora: number,
+    saldo: number
+    secuencial: number
 }
 
 //Context Checkout
@@ -214,7 +218,8 @@ export const initialCheckoutState: Checkout = {
         totalSaldoDoc: 0
     },
     multiplesPaymentType: [],
-    paymentDetails: []
+    paymentDetails: [],
+    historialCuentas: []
 }
 
 

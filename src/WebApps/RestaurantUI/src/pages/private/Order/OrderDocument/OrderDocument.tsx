@@ -68,6 +68,7 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
             const resultAxios = await dataFetch.call;
 
             const response = resultAxios.data;
+            
             setOrderDocuments(response.orderDocuments)
 
             hideLoader();

@@ -1,11 +1,11 @@
-﻿using Asp.Versioning;
-using System.Data;
+﻿using System.Data;
+using Asp.Versioning;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Reports.API.Dtos;
+using Reports.Core.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
-using Reports.Core.Interfaces;
 
 namespace Reports.API.Controllers.v1
 {

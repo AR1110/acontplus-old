@@ -8,14 +8,28 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Application\Common.Application.csproj" />
+    <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
-    <ProjectReference Include="..\Restaurant.Application\Restaurant.Application.csproj" />
-    <ProjectReference Include="..\Restaurant.Infrastructure\Restaurant.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
-    <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
   
   <ItemGroup>

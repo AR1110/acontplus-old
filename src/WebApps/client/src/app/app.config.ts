@@ -7,7 +7,8 @@ import { provideToastr } from 'ngx-toastr';
 import { InjectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes),
+  providers: [
+    provideRouter(routes),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: InjectSessionInterceptor,
@@ -17,6 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideToastr({
       preventDuplicates: true
-    })
+    }), 
   ]
 };

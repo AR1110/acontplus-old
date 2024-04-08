@@ -121,8 +121,8 @@ namespace Ventas.API.Controllers
             catch (Exception ex)
             {
 
-                _log.LogActivity("Error al eliminar la factura: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar la fcatura");
+                _log.LogActivity("Error al anular la nota entrega: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al anular la nota entrega");
             }
             finally
             {

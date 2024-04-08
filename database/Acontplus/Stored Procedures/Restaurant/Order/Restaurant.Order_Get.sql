@@ -144,6 +144,7 @@ BEGIN
                 itemId INT NULL,
                 taxId               INT NOT NULL,
                 taxPercentId        INT NOT NULL,
+                taxPercent          INT NOT NULL,
                 feeId               INT NOT NULL,
                 idArticulo          INT NULL DEFAULT 0,
                 medidaId            INT NOT NULL,
@@ -185,12 +186,12 @@ BEGIN
              WHERE o.Id = @id 
             
             --ARTICULO- ITEMS 
-            INSERT INTO @tblOrderItems(uuid, id, orderId, itemId, taxId, taxPercentId, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
+            INSERT INTO @tblOrderItems(uuid, id, orderId, itemId, taxId, taxPercentId, taxPercent, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
                                         llevaInventario, taxRateCode, priceWithVat, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid,
                                         itemTypeCode, remainingQuantity, medidasFraccionado, medidasPrincipal, medida
                                         )
-            SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, 
-                    va.descripcion, va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = CAST((o_i.Price + o_i.TaxValue) as numeric(18,5)),
+            SELECT  o_i.uuid, o_i.Id, o_i.orderId, o_i.itemId, o_i.taxId, o_i.taxPercentId, sti.porcentaje, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, 
+                    va.descripcion, va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = CAST((o_i.Price * (sti.porcentaje/100)) + o_i.Price as numeric(18,5)),
                     o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
                     
                     ISNULL(
@@ -234,12 +235,12 @@ BEGIN
             WHERE o_i.OrderId = @id AND ISNULL(o_i.[Enabled], 0) = 1
 
             --MENÚ- ITEMS 
-            INSERT INTO @tblOrderItems(uuid,  id, orderId, itemTypeId, menuId, taxId, taxPercentId, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
+            INSERT INTO @tblOrderItems(uuid,  id, orderId, itemTypeId, menuId, taxId, taxPercentId, taxPercent, feeId,  idArticulo, medidaId, codigoArticulo, descripcion, s3ObjectUrl,
                llevaInventario, taxRateCode, priceWithVat, summary, taxValue, quantity, cost, price, discount, total, obs, bodegaId, paid, itemTypeCode, remainingQuantity,
                medidasFraccionado, medidasPrincipal, medida
             )
-            SELECT o_i.uuid, o_i.id, o_i.orderId, o_i.ItemTypeId, o_i.MenuId, o_i.taxId, o_i.taxPercentId, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, va.descripcion,
-                va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat = cast((o_i.Price + o_i.TaxValue) as numeric(18,5)),
+            SELECT o_i.uuid, o_i.id, o_i.orderId, o_i.ItemTypeId, o_i.MenuId, o_i.taxId, o_i.taxPercentId, sti.porcentaje, o_i.feeId, va.idArticulo, o_i.medidaId, va.codigo, va.descripcion,
+                va.s3ObjectUrl, va.llevaInventario, taxRateCode = sti.codigo, priceWithVat =CAST((o_i.Price * (sti.porcentaje/100)) + o_i.Price as numeric(18,5)),
                 m.Summary, o_i.taxValue, o_i.quantity, o_i.cost, o_i.price, o_i.discount, o_i.total, o_i.obs, o_i.bodegaId, o_i.Paid, i_t.Code, o_i.RemainingQuantity,
                   ISNULL(
                             (SELECT idMedida      = m.idMedida 
@@ -317,7 +318,19 @@ BEGIN
     --Order Filters 
     IF (@tipo = 4)
         BEGIN
-            SET @tableNames = 'tables,usuarios'
+            SET @tableNames = 'establecimientos,tables,usuarios'
+
+            SELECT idEstablecimiento
+                ,nombreComercial
+                ,codEstab
+                ,idPuntoEmision
+                ,ptoEmi + '-' + estab as ptoEmi
+                ,defaultEstab
+                ,defaultPtoEmi 
+        FROM v_PtoEmi_Asign WITH(NOLOCK) 
+        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+         
+
             SELECT Id, [NumberTable], [Description], [Floor], roomDescription FROM Restaurant.v_Table vt INNER JOIN Entidad e WITH(NOLOCK) ON vt.ruc = e.ruc where e.idEntidad = @idEntidad
             SELECT 
 				u.idUsuario, 

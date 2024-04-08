@@ -656,6 +656,32 @@
             return fechaEmisionModificada;
         }
 
+        formSvc.ajustarFechaEmisionConsolidacion = function (isActualizacion, fechaEmision, fechaEmisionDocCreado) {
+            let fechaEmisionModificada = new Date(fechaEmision);
+            let fechaActual = new Date();
+
+            let dataFechaAnterior = formSvc.sonFechasIguales(fechaEmisionModificada, fechaEmisionDocCreado);
+
+            if (isActualizacion && dataFechaAnterior.esMismaFecha) {
+                return fechaEmisionDocCreado;
+            }
+
+            let dataFechaActual = formSvc.sonFechasIguales(fechaEmisionModificada, fechaActual);
+
+            if ((isActualizacion || !isActualizacion) && dataFechaActual.esMismaFecha) {
+                fechaEmisionModificada.setHours(
+                    fechaActual.getHours(),
+                    fechaActual.getMinutes(),
+                    fechaActual.getSeconds(),
+                    fechaActual.getMilliseconds()
+                );
+            } else {
+                fechaEmisionModificada.setHours(23, 59, 0, 0);
+            }
+
+            return fechaEmisionModificada;
+        }
+
 
         /**
          * 
@@ -681,16 +707,16 @@
             } else {
                 medidasFraccionadoTemp = medidasFraccionado;
             }
-
-
             const medidasPrincipalMapper = medidasPrincipalTemp.map(medidaPrincipal => ({
                 ...medidaPrincipal,
                 precioCosto: medidaPrincipal.precioCosto || 0,
+                precioCostoFraccionado: medidaPrincipal.precioCostoFraccionado || 0,
                 tipo: 'PRINCIPAL'
             }))
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
-                precioCosto: medidaFraccionado.precioCostoFraccionado || 0,
+                precioCosto: medidaFraccionado.precioCosto || 0,
+                precioCostoFraccionado : medidaFraccionado.precioCostoFraccionado || 0,
                 tipo: 'FRACCIONADO'
             }))
 
@@ -715,9 +741,12 @@
                 ...medida,
                 defaultMedida: false
             }));
+            orderMedidaArray = orderMedidaArray || []
 
             // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
-            orderMedidaArray[0].defaultMedida = true;
+            if (orderMedidaArray[0]) {
+                orderMedidaArray[0].defaultMedida = true;
+            }
 
 
             // Crear un nuevo array de medidas con un formato específico
@@ -728,7 +757,8 @@
                 defaultMedida: item.defaultMedida,
                 tipo: item.tipo,
                 precioCosto: item.precioCosto,
-                tarifas: item.tarifas || []
+                precioCostoFraccionado: item.precioCostoFraccionado,
+                tarifas: (typeof item.tarifas === "string" ? JSON.parse(item.tarifas) : item.tarifas) || []
             }))
 
             return medidas;
@@ -845,7 +875,8 @@
                         cuota: formSvc.roundNumber(valorCuota, 5),
                         fechaVencimiento: formSvc.formatDateTimeZone(fechaVencimiento),
                         entrada: cuota.entrada,
-                        idCuotaPorPagar: cuota.idCuotaPorPagar
+                        idCuotaPorPagar: cuota.idCuotaPorPagar,
+                        idCuotaPorCobrar : cuota.idCuotaPorCobrar
                     };
                 }
 
@@ -854,7 +885,8 @@
                     cuota: cuota.cuota,
                     fechaVencimiento: formSvc.formatDateTimeZone(cuota.fechaVencimiento),
                     entrada: cuota.entrada,
-                    idCuotaPorPagar: cuota.idCuotaPorPagar
+                    idCuotaPorPagar: cuota.idCuotaPorPagar,
+                    idCuotaPorCobrar : cuota.idCuotaPorCobrar
                 };
             });
 
@@ -867,11 +899,95 @@
         }
 
 
+        //Merge Item Detalle Documento Venta 
+        formSvc.mergeItemStock = function (items, rowEntity) {
+            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
+            let foundItemByArticuloAndBodega = items.filter(item => (
+                item.idArticulo === rowEntity.idArticulo &&
+                item.idBodega === rowEntity.idBodega
+            ))
+
+            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
+                let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO')
+                let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
+                if (dataMedidaFraccionado) {
+                    let conversionSum = item.cantidad * dataMedidaFraccionado.conversion;
+                    total.totalCantidadFraccionada += conversionSum;
+                }
+                if (dataMedidaPrincipal) {
+                    let conversionSum = item.cantidad * dataMedidaPrincipal.conversion;
+                    total.totalCantidadPrincipal += conversionSum;
+                }
+                return total;
+            }, {
+                totalCantidadFraccionada: 0,
+                totalCantidadPrincipal: 0
+            });
+
+            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
+                itemPrevious.cantidad += itemCurrent.cantidad;
+                return itemPrevious;
+            }, {
+                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
+                ...rowEntity,
+                cantidad: 0,
+            });
+
+            // Devuelve el objeto resultante de la fusión. 
+            return {
+                idBodega: dataItemMerge.idBodega,
+                cantidad: dataItemMerge.cantidad,
+                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
+                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+            };
+        }
+
+        formSvc.getCantidadStock = function (rowEntity, fechaEmision) {
+            try {
+                let fechaEmisionValidate = fechaEmision;
+                let cantidadStock = rowEntity.cantidadStock;
+
+                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+                )
+
+                if (dataConsolidacionFecha && formSvc.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                        return 0;
+                    }
+                }
+
+                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+                return resultCantStock;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+
+        formSvc.mapperFromFormaPago = function (formasPago) {
+            let results = formasPago.map(item => {
+                let infoReferencia = '';
+                if (item.codigo === "01") {
+                    infoReferencia = 'Ref.: EFECTIVO'
+                }
+                if (item.codigo === "20") {
+                    infoReferencia = 'Ref.: TRANSFERENCIAS, CHEQUES'
+                }
+                return {
+                    idFormaPagoSri: item.idFormaPagoSri,
+                    descripcion: item.descripcion,
+                    codigo: item.codigo,
+                    infoReferencia
+                }
+            })
+            return results;
+        }
+
 
 
 
         return formSvc;
     }
-
 
 })(window.angular)

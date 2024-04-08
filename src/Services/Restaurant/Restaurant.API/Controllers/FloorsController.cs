@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Restaurant.Core.Entities;
-using Restaurant.Infrastructure.Data;
+using Restaurant.API.Data;
+using Restaurant.API.Entities;
 using Services.Common;
 
 namespace Restaurant.API.Controllers
@@ -90,7 +90,7 @@ namespace Restaurant.API.Controllers
 
             floor.Deleted = true;
             floor.Enabled = false;
-            floor.UserId = User.GetUserId(); 
+            floor.UserId = User.GetUserId();
             try
             {
                 _context.Update(floor);

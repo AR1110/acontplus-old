@@ -26,6 +26,8 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalVenta = $injector.get('nombreModalVenta');
+        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
         let DOC_TYPE = $injector.get('DOC_TYPE');
         const CODE_REPORT = $injector.get('CODE_REPORT');
         tipoDoc = {
@@ -34,11 +36,7 @@
 
         $scope.typeSend = 'GenericFile';
         $scope.typeSendToMail = 'N';
-
-        const PERMISSION_KEY_ACTIONS = {
-            E: 'E',
-            A: 'A',
-        }
+ 
 
         $scope.permisoEditarDoc = {}
 
@@ -214,7 +212,7 @@
                     $scope.dataSearch.codEstab = dataEstab.codEstab;
                     $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
                     $scope.getProformas();
-                }else{
+                } else {
                     tS.toastr('warning', 'No tienes asignado Establecimiento!')
                 }
 
@@ -298,11 +296,35 @@
         }
 
 
+        function getParamsPermission(item, codigoAccion) {
+            let paramsPermission = {
+                idDocumento: item.idDocumento,
+                codDoc: item.codDoc,
+                codigoAccion,
+                tipoDoc: 'Proforma',
+                serieComprobante: item.serieComprobante,
+                jsonData: JSON.stringify({
+                    idDocumento: item.idDocumento,
+                    codDoc: item.codDoc,
+                    tipoDoc: 'Proforma',
+                    serieComprobante: item.serieComprobante,
+                    codEstab: item.codEstab
+                })
+            }
+            return paramsPermission;
+        }
+
+
         $scope.openModalEdit = async (item) => {
             try {
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+         
+                let paramsPermission = getParamsPermission(item, 'E');
+                let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
+
+                if (!response) return
+
+                if (response && response.code === "2") {
+                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
                 }
 
@@ -323,7 +345,7 @@
                         if (typeof result === 'object') {
                             $scope.getProformas();
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)     
                             }
 
                         }
@@ -379,11 +401,15 @@
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
                 }
-                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
-                if (result.code === "2") {
-                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
+                let paramsPermission = getParamsPermission(item, 'A');
+                let response = await userCustomerPermissionSvc.checkHasPermissionToDelete(paramsPermission);
+
+                if (!response) return
+
+                if (response && response.code === "2") {
+                    userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
-                }
+                } 
 
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
@@ -417,7 +443,7 @@
 
                             //Una vez actualizado el documento  
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)    
                             }
 
                             $scope.getProformas();
@@ -515,8 +541,8 @@
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let storageSvc = $injector.get('storageService');
         let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
-
-        console.log('modal proforma')
+        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+ 
 
         $scope.tipoDoc = tipoDoc;
         $scope.infoEstabPtoEmi = {};
@@ -635,18 +661,38 @@
 
         function calculateTotalItems(items) {
             return items.map(item => {
-                let precioConIva = item.precioUnitario + item.valorImpuesto;
                 let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
                 let total = precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
                     idProformaDetalle: params.action === "DUPLICAR" ? 0 : item.idProformaDetalle,
-                    precioConIva: fS.roundNumber(precioConIva, $scope.decimal.nroPrecio),
+                    precioConIva: fS.roundNumber(item.precioConIva, $scope.decimal.nroPrecio),
                     precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, $scope.decimal.nroTotalDetalle),
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle)
                 }
 
             })
+        }
+
+        $scope.refreshUserPermission = function () {
+            showLoader();
+            userCustomerPermissionSvc.fetchUserPermission().then(response=>{
+                const { porcentajeDescuento, descuento }  = response.detalle;
+        
+                for (let item of $scope.gridOptions.columnDefs) {
+                    if (["porcentajeDescuento"].includes(item.field)) {
+                        item.visible = porcentajeDescuento; 
+                    }
+                    if (item.field === "valorDescuento") {
+                        item.visible = descuento;
+                      
+                         
+                    }
+                }
+                    $scope.gridApi.core.refresh();
+            }).catch(error=>{
+                console.log(error)
+            }).finally(()=>hideLoader())
         }
 
 
@@ -823,18 +869,9 @@
 
         }
 
-        function setColumnDefs() {
-            let defaultPermission = Object.freeze({
-                tarifa: true,
-                medida: true,
-                tipoIva: true,
-                porcentajeDescuento: true,
-                descuento: true,
-                precioUnitario: true,
-                precioConIva: true,
-            })
+        function setColumnDefs() { 
 
-            const ventaDetailPermission = $scope.permisoDetalleVenta ? $scope.permisoDetalleVenta : defaultPermission;
+            const ventaDetailPermission = $scope.permisoDetalleVenta;
             const CELL_TEMPLATE_OPTION = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
 
         <a  update-article ng-click="grid.appScope.openModalArticle(row.entity)" id="btnEditArticuloDetalle" style="cursor:pointer;" class= "btn btn-success btn-xs text-white" title = "Editar Articulo" > <i class="fa fa-edit"></i></a >`;
@@ -983,23 +1020,30 @@
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit: ventaDetailPermission.porcentajeDescuento,
-                allowCellFocus: ventaDetailPermission.porcentajeDescuento,
-                enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
+                // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
+                // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                enableCellEdit: true,
+                allowCellFocus: true,
+                enableCellEditOnFocus: true,
                 min: 0,
                 width: '4%',
                 minWidth: '60',
                 // cellFilter: "currency:'%'",
                 visible: ventaDetailPermission.porcentajeDescuento || false,
                 type: 'number',
+                 
                 /*cellFilter: "limitTo:3",*/
             },
             {
                 name: 'Desc.',
                 field: 'valorDescuento',
-                enableCellEdit: ventaDetailPermission.descuento,
-                enableCellEditOnFocus: ventaDetailPermission.descuento,
-                allowCellFocus: ventaDetailPermission.descuento,
+                // enableCellEdit: ventaDetailPermission.descuento,
+                // enableCellEditOnFocus: ventaDetailPermission.descuento,
+                // allowCellFocus: ventaDetailPermission.descuento,
+                enableCellEdit: true,
+                enableCellEditOnFocus: true,
+                allowCellFocus: true,
                 min: 0,
                 type: 'number',
                 width: '4%',
@@ -1474,6 +1518,8 @@
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+
 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
                 entity.consolidacionesFecha = consolidacionesFecha;
@@ -1483,7 +1529,6 @@
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
                 entity.idTarifa = $scope.data.idTarifa;
                 entity.precioSinSubsidio = articulo.precioSinSubsidio;
-                entity.precioCosto = articulo.precioCosto;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
