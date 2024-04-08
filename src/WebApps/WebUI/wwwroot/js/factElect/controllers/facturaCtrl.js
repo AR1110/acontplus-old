@@ -2464,9 +2464,9 @@
                     throw "Invalid form!";
                 }
 
-                let cuotas = validateCuota();
+                // let cuotas = validateCuota();
 
-                if (cuotas && cuotas.length === 0) return
+                // if (cuotas && cuotas.length === 0) return
 
                 if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
                     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
@@ -2524,7 +2524,7 @@
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
                     infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                     historyDatosAdicionales: $scope.historyDatosAdicionales,
-                    cuotas 
+                    cuotas: []
                 })
 
 
