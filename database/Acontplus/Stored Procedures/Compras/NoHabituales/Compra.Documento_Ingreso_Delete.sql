@@ -60,19 +60,19 @@ BEGIN
 			--> Inventario
 			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 				BEGIN 
-					
-                    IF EXISTS (SELECT 1 FROM Inventario.v_Articulo_Transaccion WHERE idDocumento = @id AND codDoc = 'IV' AND codTransaccion = 'E' AND estado = 1)
-                        BEGIN 
-                            DECLARE @idTipoDocumento INT ,@idTipoTransaccion INT 
+                    DECLARE @idTipoDocumento INT ,@idTipoTransaccion INT ,@idTransaccion INT
 
-                            SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
+                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
 
-                            SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
                             
-                            UPDATE Inventario.Transaccion WITH (ROWLOCK) SET estado = 0 WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = idTipoDocumento AND idDocumento = @id
+                    SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @id
+                            
+                    UPDATE Inventario.Transaccion WITH (ROWLOCK) SET estado = 0 WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = idTipoDocumento AND idDocumento = @id
 
-                            EXEC dbo.Transaccion_Handler_Init 'E', 'IV', @id ,3
-				        END
+                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
+
+                    EXEC dbo.Transaccion_Handler_Init 'E', 'IV', @id ,3
 				END 
 
 		COMMIT TRAN 
@@ -85,11 +85,10 @@ BEGIN
 			    ROLLBACK TRAN
             END 
 
-        SELECT [Common].[ufnSpResponse]('0','Info: Error en el procedimiento',DEFAULT)
-
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'DocumentoIngreso/Delete', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	    
+        SELECT [Common].[ufnSpResponse]('0','Info: Error en el procedimiento',DEFAULT)
     END CATCH 
 
 
