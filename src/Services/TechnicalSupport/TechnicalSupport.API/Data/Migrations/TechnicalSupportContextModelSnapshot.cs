@@ -17,7 +17,7 @@ namespace TechnicalSupport.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -33,7 +33,8 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(8)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -51,7 +52,8 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -78,14 +80,16 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Brand")
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Color")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -102,12 +106,14 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Model")
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -155,7 +161,8 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -201,7 +208,8 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Specs")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -253,7 +261,8 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
@@ -267,7 +276,8 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Serie")
                         .IsRequired()
                         .HasMaxLength(18)
-                        .HasColumnType("nvarchar(18)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(18)");
 
                     b.Property<decimal?>("Tax")
                         .HasColumnType("numeric(18,5), null");
@@ -320,7 +330,8 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -377,7 +388,8 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Obs")
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<int>("OrderDetailId")
                         .HasColumnType("int");
@@ -427,7 +439,8 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -445,7 +458,8 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
