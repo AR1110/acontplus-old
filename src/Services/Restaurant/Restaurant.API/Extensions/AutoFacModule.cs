@@ -2,7 +2,7 @@
 using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
-using Restaurant.Infrastructure.Data;
+using Restaurant.API.Data;
 
 namespace Restaurant.API.Extensions
 {

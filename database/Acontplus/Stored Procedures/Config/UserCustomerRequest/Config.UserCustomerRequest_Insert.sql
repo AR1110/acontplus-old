@@ -30,6 +30,7 @@ BEGIN
 	DECLARE @tbUsersAdmin as Table (
 		userRoleIdApprover INT NOT NULL UNIQUE
 	) 
+    DECLARE @rowguid UNIQUEIDENTIFIER = NEWID()
    
 
 	SELECT 
@@ -70,8 +71,8 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN 	 
-			INSERT INTO Config.Solicitud (idUsuarioRolAprobante, idUsuarioRolSolictante, observacion, codigoAccion, codEstado, jsonData, fechaRegistro)
-			SELECT  userRoleIdApprover, @userRoleId, UPPER(@motivo), @codigoAccion, 'P', @jsonData, dbo.ufnGetDateEcuador()
+			INSERT INTO Config.Solicitud (idUsuarioRolAprobante, idUsuarioRolSolicitante, observacion, codigoAccion, codEstado, jsonData, fechaRegistro, idEntidad, rowguid)
+			SELECT  userRoleIdApprover, @userRoleId, UPPER(@motivo), @codigoAccion, 'P', @jsonData, dbo.ufnGetDateEcuador(), @idEntidad, @rowguid
 			FROM @tbUsersAdmin  
              SET  @userCustomerRequestId = @@IDENTITY
             EXEC Config.UserCustomerRequest_SendMail @userRoleId, @userCustomerRequestId

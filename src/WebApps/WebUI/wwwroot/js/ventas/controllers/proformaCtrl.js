@@ -307,7 +307,8 @@
                     idDocumento: item.idDocumento,
                     codDoc: item.codDoc,
                     tipoDoc: 'Proforma',
-                    serieComprobante: item.serieComprobante
+                    serieComprobante: item.serieComprobante,
+                    codEstab: item.codEstab
                 })
             }
             return paramsPermission;
@@ -540,6 +541,7 @@
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let storageSvc = $injector.get('storageService');
         let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
+        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
  
 
         $scope.tipoDoc = tipoDoc;
@@ -670,6 +672,27 @@
                 }
 
             })
+        }
+
+        $scope.refreshUserPermission = function () {
+            showLoader();
+            userCustomerPermissionSvc.fetchUserPermission().then(response=>{
+                const { porcentajeDescuento, descuento }  = response.detalle;
+        
+                for (let item of $scope.gridOptions.columnDefs) {
+                    if (["porcentajeDescuento"].includes(item.field)) {
+                        item.visible = porcentajeDescuento; 
+                    }
+                    if (item.field === "valorDescuento") {
+                        item.visible = descuento;
+                      
+                         
+                    }
+                }
+                    $scope.gridApi.core.refresh();
+            }).catch(error=>{
+                console.log(error)
+            }).finally(()=>hideLoader())
         }
 
 
@@ -997,23 +1020,30 @@
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit: ventaDetailPermission.porcentajeDescuento,
-                allowCellFocus: ventaDetailPermission.porcentajeDescuento,
-                enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
+                // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
+                // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                enableCellEdit: true,
+                allowCellFocus: true,
+                enableCellEditOnFocus: true,
                 min: 0,
                 width: '4%',
                 minWidth: '60',
                 // cellFilter: "currency:'%'",
                 visible: ventaDetailPermission.porcentajeDescuento || false,
                 type: 'number',
+                 
                 /*cellFilter: "limitTo:3",*/
             },
             {
                 name: 'Desc.',
                 field: 'valorDescuento',
-                enableCellEdit: ventaDetailPermission.descuento,
-                enableCellEditOnFocus: ventaDetailPermission.descuento,
-                allowCellFocus: ventaDetailPermission.descuento,
+                // enableCellEdit: ventaDetailPermission.descuento,
+                // enableCellEditOnFocus: ventaDetailPermission.descuento,
+                // allowCellFocus: ventaDetailPermission.descuento,
+                enableCellEdit: true,
+                enableCellEditOnFocus: true,
+                allowCellFocus: true,
                 min: 0,
                 type: 'number',
                 width: '4%',

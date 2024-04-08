@@ -350,6 +350,7 @@
                     idDocumento: item.idDocumento,
                     codDoc: item.codDoc,
                     tipoDoc: 'Nota Entrega',
+                    codEstab: item.codEstab,
                     serieComprobante: item.serieComprobante
                 })
             }
@@ -959,7 +960,24 @@
         }
 
         $scope.refreshUserPermission = function(){
-            userCustomerPermissionSvc.fetchUserPermission();
+            showLoader();
+            userCustomerPermissionSvc.fetchUserPermission().then(response => {
+                const { porcentajeDescuento, descuento } = response.detalle;
+
+                for (let item of $scope.gridOptions.columnDefs) {
+                    if (["porcentajeDescuento"].includes(item.field)) {
+                        item.visible = porcentajeDescuento;
+                    }
+                    if (item.field === "valorDescuento") {
+                        item.visible = descuento;
+
+
+                    }
+                }
+                $scope.gridApi.core.refresh();
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())
         }
 
         $scope.setInfoEstabPtoEmi = function () {
@@ -1458,10 +1476,14 @@
             },
             {
                 name: '%',
-                field: 'porcentajeDescuento',
-                enableCellEdit: ventaDetailPermission.porcentajeDescuento,
-                allowCellFocus: ventaDetailPermission.porcentajeDescuento,
-                enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                field: 'porcentajeDescuento', 
+                // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
+                // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
+                // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                enableCellEdit: true,
+                allowCellFocus: true,
+                enableCellEditOnFocus: true,
+
                 min: 0,
                 width: '4%',
                 minWidth: '60',
@@ -1473,9 +1495,12 @@
             {
                 name: 'Desc.',
                 field: 'valorDescuento',
-                enableCellEdit: ventaDetailPermission.descuento,
-                enableCellEditOnFocus: ventaDetailPermission.descuento,
-                allowCellFocus: ventaDetailPermission.descuento,
+                // enableCellEdit: ventaDetailPermission.descuento,
+                // enableCellEditOnFocus: ventaDetailPermission.descuento,
+                // allowCellFocus: ventaDetailPermission.descuento,
+                enableCellEdit: true,
+                enableCellEditOnFocus: true,
+                allowCellFocus: true,
                 min: 0,
                 type: 'number',
                 width: '4%',
@@ -2324,9 +2349,9 @@
                     throw "Invalid form!";
                 }
 
-                let cuotas = validateCuota();
+                // let cuotas = validateCuota();
 
-                if (cuotas && cuotas.length === 0) return
+                // if (cuotas && cuotas.length === 0) return
 
                 if (isRegister()) {
                     showLoader();
@@ -2377,7 +2402,7 @@
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
                     infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                     historyDatosAdicionales: $scope.historyDatosAdicionales,
-                    cuotas 
+                    cuotas : []
                 })
 
 
@@ -2441,9 +2466,9 @@
                     throw "Invalid form!";
                 }
 
-                let cuotas = validateCuota();
+                // let cuotas = validateCuota();
 
-                if (cuotas && cuotas.length === 0) return
+                // if (cuotas && cuotas.length === 0) return
 
                 if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
                     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
@@ -2562,7 +2587,7 @@
                                 itemsDeleted: $scope.gridOptionsItemsDeleted,
                                 infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                                 historyDatosAdicionales: $scope.historyDatosAdicionales,
-                                cuotas
+                                cuotas: []
                             })
 
 

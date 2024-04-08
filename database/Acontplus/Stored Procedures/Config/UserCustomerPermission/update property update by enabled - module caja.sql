@@ -1,4 +1,4 @@
-
+USE Acontplus
 DECLARE @codModule NVARCHAR(255) = 'C';
  
  -- Actualizar la propiedad "verOtrasCajas"  

@@ -364,6 +364,7 @@
                 jsonData: JSON.stringify({
                     idDocumento: item.idDocumento,
                     codDoc: item.codDoc,
+                    codEstab: item.codEstab,
                     tipoDoc: 'Factura Electrónica',
                     serieComprobante: item.serieComprobante
                 })
@@ -768,6 +769,8 @@
         let storageSvc = $injector.get('storageService');
         let articuloSvc = $injector.get('articuloService');
         let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
+        let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
+
 
         const FORM_PAGO_SRI_ACCION = {
             DEFAULT: 'DEFAULT',
@@ -1006,6 +1009,28 @@
 
             })
         }
+
+        $scope.refreshUserPermission = function () {
+            showLoader();
+            userCustomerPermissionSvc.fetchUserPermission().then(response => {
+                const { porcentajeDescuento, descuento } = response.detalle;
+
+                for (let item of $scope.gridOptions.columnDefs) {
+                    if (["porcentajeDescuento"].includes(item.field)) {
+                        item.visible = porcentajeDescuento;
+                    }
+                    if (item.field === "valorDescuento") {
+                        item.visible = descuento;
+
+
+                    }
+                }
+                $scope.gridApi.core.refresh();
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())
+        }
+
 
         initiload();
         setColumnDefs();
@@ -1434,9 +1459,12 @@
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit: ventaDetailPermission.porcentajeDescuento,
-                allowCellFocus: ventaDetailPermission.porcentajeDescuento,
-                enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
+                // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
+                // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                enableCellEdit: true,
+                allowCellFocus: true,
+                enableCellEditOnFocus: true,
                 min: 0,
                 width: '4%',
                 minWidth: '60',
@@ -1448,9 +1476,12 @@
             {
                 name: 'Desc.',
                 field: 'valorDescuento',
-                enableCellEdit: ventaDetailPermission.descuento,
-                enableCellEditOnFocus: ventaDetailPermission.descuento,
-                allowCellFocus: ventaDetailPermission.descuento,
+                // enableCellEdit: ventaDetailPermission.descuento,
+                // enableCellEditOnFocus: ventaDetailPermission.descuento,
+                // allowCellFocus: ventaDetailPermission.descuento,
+                enableCellEdit: true,
+                enableCellEditOnFocus: true,
+                allowCellFocus: true,
                 min: 0,
                 type: 'number',
                 width: '4%',
@@ -2433,9 +2464,9 @@
                     throw "Invalid form!";
                 }
 
-                let cuotas = validateCuota();
+                // let cuotas = validateCuota();
 
-                if (cuotas && cuotas.length === 0) return
+                // if (cuotas && cuotas.length === 0) return
 
                 if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
                     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');
@@ -2493,7 +2524,7 @@
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
                     infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                     historyDatosAdicionales: $scope.historyDatosAdicionales,
-                    cuotas 
+                    cuotas: []
                 })
 
 

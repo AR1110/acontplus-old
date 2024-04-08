@@ -1,6 +1,6 @@
 ﻿using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Core.Interfaces;
+using Restaurant.API.Interfaces;
 using Services.Common;
 
 namespace Restaurant.API.Controllers

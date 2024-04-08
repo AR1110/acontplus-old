@@ -3,8 +3,8 @@ using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
+using Restaurant.API.Data;
 using Restaurant.API.Extensions;
-using Restaurant.Infrastructure.Data;
 using Services.Common;
 using Services.Common.Middleware;
 

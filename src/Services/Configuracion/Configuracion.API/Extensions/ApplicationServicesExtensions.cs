@@ -1,6 +1,8 @@
 ﻿using Configuracion.API.Data;
 using Configuracion.API.Interfaces;
+using Configuracion.API.Interfaces.Sri;
 using Configuracion.API.Services;
+using Configuracion.API.Services.Sri;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
 
@@ -27,6 +29,7 @@ namespace Configuracion.API.Extensions
             services.AddScoped<IUserCustomerRequestService, UserCustomerRequestService>(); 
             services.AddScoped<IUserCustomerPermissionService, UserCustomerPermissionService>();
             services.AddScoped<IUserProfileService, UserProfileService>();
+            services.AddScoped<IEstablishmentService, EstablishmentService>();
 
             services.AddSingleton<LogWriter>();
 
