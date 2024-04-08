@@ -2,9 +2,9 @@
 using Common.Core.Interfaces;
 using Common.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using Restaurant.Application.Services;
-using Restaurant.Core.Interfaces;
-using Restaurant.Infrastructure.Data;
+using Restaurant.API.Data;
+using Restaurant.API.Interfaces;
+using Restaurant.API.Services;
 using Services.Common.Logs;
 
 namespace Restaurant.API.Extensions

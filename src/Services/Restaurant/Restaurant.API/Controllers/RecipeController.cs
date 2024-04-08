@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Core.Entities;
-using Restaurant.Core.Interfaces;
+using Restaurant.API.Entities;
+using Restaurant.API.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
 
