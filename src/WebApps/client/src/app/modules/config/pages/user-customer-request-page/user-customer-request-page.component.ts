@@ -94,7 +94,7 @@ export class UserCustomerRequestPageComponent {
       codDoc: isValidField(this.dataSearch.codDoc),
       codEstado: isValidField(this.dataSearch.codEstado)
     }
-    console.log(this.dataSearch)
+
     this.userCustomerRequests = [];
     this.userCustomerRequestSvc.getAll(params).subscribe({
       next: (response) => {

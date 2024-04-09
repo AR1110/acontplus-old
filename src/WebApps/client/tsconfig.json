@@ -31,6 +31,9 @@
       "@modules/*": [
         "src/app/modules/*"
       ],
+      "@technical-support/*": [
+        "src/app/modules/technical-support/*",
+      ],
       "@inventory/*": [
         "src/app/modules/inventory/*",
         "src/app/modules/inventory/shared/*"

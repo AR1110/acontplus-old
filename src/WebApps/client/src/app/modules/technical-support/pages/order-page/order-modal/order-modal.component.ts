@@ -1,33 +1,19 @@
-import { Component, ViewChild, ViewEncapsulation, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { IForm } from '@core/Types/form-types';
+import { Component, inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
-import { IconProp, icon } from '@fortawesome/fontawesome-svg-core';
+import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
-import {
-  Device,
-  DeviceSpecs,
-} from '@modules/technical-support/models/device.model';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
-import { DeviceService } from '@modules/technical-support/services/device.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';

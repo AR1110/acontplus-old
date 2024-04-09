@@ -9,6 +9,8 @@ import { INVENTORY_PATHS } from '../enums/inventory.enum';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { groupSubCategoryUtil } from '../utils/group-sub-category.util';
 import { ProductAdapter } from '../adapters/product.adapter';
+import { mergeMeasureUtil } from '../utils/merge-measure.util';
+import { MedidaProducto } from '../shared/models/measure.model';
 
 @Injectable({
   providedIn: 'root',
@@ -113,6 +115,46 @@ export class ProductService {
           data.marcas = marcas;
           data.tarifas = tarifas;
           data.tiposDoc = tempTipoDocumento;
+        }
+        return data;
+      })
+    )
+  }
+
+
+  getForSale(id: number) {
+    let params = {
+      json: JSON.stringify({ idArticulo: id, tipo: 6 })
+    }
+    return this.http.get(`${this.url}Get`, {
+      params
+    }).pipe(
+      map((response) => {
+        let data = {
+          product: {} as any,
+          medidas: [] as MedidaProducto[],
+          consolidacionesFecha: [] as any[]
+        }
+        if (isApiResponse(response)) {
+          if (response.code === "1") {
+            let [
+              product,
+              medidasFraccionadoTemp,
+              medidasPrincipalTemp,
+              consolidacionesFechaTemp
+            ] = JSON.parse(response.payload as string)
+
+            data.product = product[0];
+
+            data.medidas = mergeMeasureUtil(medidasPrincipalTemp, medidasFraccionadoTemp);
+
+
+            data.consolidacionesFecha = consolidacionesFechaTemp.map((data: any) => ({
+              ...data,
+              fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+            }))
+
+          }
         }
         return data;
       })

@@ -27,13 +27,23 @@ export class TechnicalSupportPageComponent {
   private modalRef = inject(ModalService);
   active = 2;
 
+
+
   openOrderModal() {
     const modalResp = this.modalRef.openModalCustom(OrderModalComponent, {
       centered: true,
       size: 'xl',
     });
     modalResp.result.then((response) => {
-      this.child.get();
+      if(response!==null && typeof response==='object'){
+        this.child.get();
+      }
     });
+  }
+
+  onNavChange($event: any){
+    setTimeout(()=>{
+      this.child.get();
+    }, 400)
   }
 }
