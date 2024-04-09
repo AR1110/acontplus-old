@@ -222,6 +222,7 @@ BEGIN
                ,ap.totalDescuento          = tb.totalDescuento
                ,ap.propina                 = tb.propina
                ,ap.importeTotal            = tb.importeTotal
+               ,ap.observacion             = tb.observacion 
             FROM Ventas.Aprob_Document ap
 			INNER JOIN @tbComprobante tb ON idAprob_Document  = @id
 
