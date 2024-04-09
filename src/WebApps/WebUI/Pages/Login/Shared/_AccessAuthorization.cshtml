@@ -29,32 +29,45 @@
 <div id="accessAuthorizationModal" class="modal fade in" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="card-auth2F">
-                <div class="card-body px-lg-5 py-lg-5 text-center">
-                    <img src="https://www.academiaparaguayadehistoria.org.py/sitio/wp-content/themes/academia/nophoto.jpg"
-                         class="rounded-circle avatar-lg img-thumbnail mb-4" alt="profile-image">
-                    <h2 class="text-info">2FA Seguridad</h2>
-                    <p class="mb-4">Ingrese el código de 6 dígitos que le reenvia el administrador del sistema</p>
-                    <form ng-submit="authenticate()" autocomplete="off">
-                        <div class="row mb-4">
-                            <div class="col-lg-2 col-md-2 col-2 ps-0 ps-md-2" ng-repeat="index in [0, 1, 2, 3, 4, 5]">
-                                <input type="text"
-                                    maxlength="1"
-                                    class="form-control text-lg text-center"
-                                    placeholder="_"
-                                    ng-model="codes[index]"
-                                    id="code_auth2f{{index + 1}}"
-                                    value=""
-                                    ng-keydown="skipCodeFields($event, index)"
-                                    aria-label="2fa">
+            <div class="modal-body">
+                <div class="card-auth2F">
+                    <div class="card-body px-lg-5 py-lg-5 text-center">
+                        <img src="https://www.academiaparaguayadehistoria.org.py/sitio/wp-content/themes/academia/nophoto.jpg"
+                             class="rounded-circle avatar-lg img-thumbnail mb-4" alt="profile-image">
+                        <h2 class="text-info">Solicitud de Acceso</h2><br />
+                        <div class="row">
+                            <div class="col-8">
+                                <p><b>Empresa:</b> <h4 ng-if="hasManyRoles">{{roleSelected.businessName}}</h4><h4 ng-if="!hasManyRoles">{{mainResponse[0].businessName}}</h4></p>
+
+                            </div>
+                            <div class="col-4">
+                                <p><b>Rol:</b> <h4 ng-if="hasManyRoles">{{roleSelected.role}}</h4><h4 ng-if="!hasManyRoles">{{mainResponse[0].role}}</h4></p>
                             </div>
                         </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-arrow-right"></i> Continuar</button>
-                        </div>
-                    </form>
+                        <p class="mb-4">Ingrese el código de 6 dígitos que le reenvia el administrador del sistema</p>
+                        <form ng-submit="authenticate()" autocomplete="off">
+                            <div class="row mb-4">
+                                <div class="col-lg-2 col-md-2 col-2 ps-0 ps-md-2" ng-repeat="index in [0, 1, 2, 3, 4, 5]">
+                                    <input type="text"
+                                           maxlength="1"
+                                           class="form-control text-lg text-center"
+                                           placeholder="_"
+                                           ng-model="codes[index]"
+                                           id="code_auth2f{{index + 1}}"
+                                           value=""
+                                           ng-keydown="skipCodeFields($event, index)"
+                                           aria-label="2fa">
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-arrow-right"></i> Continuar</button>
+                                <button type="button" class="btn btn-dark btn-lg" ng-click="askToCancel()">&times; Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

@@ -32,10 +32,24 @@
         $scope.ver = false;
         $scope.data = {};
         $scope.hasManyRoles = false;
+        $scope.roleSelected = {}
 
         let parser = new UAParser(navigator.userAgent)
         let parserResults = parser.getResult()
-
+        $scope.askToCancel = () => {
+            swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Esta seguro de salir de esta ventana, eliminara esta solicitud',
+                showCancelButton: true,
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No'
+            }).then(response => {
+                if (response.isConfirmed) {
+                    $("#accessAuthorizationModal").modal('hide');
+                }
+            })
+        }
         $scope.verContrasenia = function (ver) {
             let contra = $("#password")
             if (!ver) {
@@ -47,8 +61,8 @@
             }
         }
 
-        $scope.loginMultiple = (item) => {
-            showLoader();
+        $scope.authMultiple = () => {
+            let item = $scope.roleSelected;
             item.userAgent = JSON.stringify({ userAgent: JSON.stringify(parserResults), ipAddress: customerIp });
             $http.post(`${urlService}seguridad/account/createToken`, item).then(
                 response => {
@@ -75,6 +89,23 @@
                 })
         }
 
+        $scope.loginMultiple = (item) => {
+            $scope.roleSelected = item;
+            if ($scope.roleSelected.needAuthorization) {
+                $http.post(`${urlService}seguridad/account/requestaccess`, { uuid: $scope.roleSelected.uuid, userRoleId: $scope.roleSelected.userRoleId }).then(
+                    response => {
+                        if (response.data.code == '1') {
+                            $("#accessAuthorizationModal").modal('show');
+                        }
+                    }
+                ).catch(error => {
+                    console.log(error)
+                })
+            } else {
+                $scope.authMultiple();
+            }
+        }
+
         $scope.login = function () {
             try {
                 showLoader();
@@ -90,10 +121,11 @@
                         return;
                     };
                     if (response.data.code == "1") {
-                        $scope.mainResponse = JSON.parse(response.data.payload);
-                        console.log($scope.mainResponse)
+                        $scope.mainResponse = JSON.parse(response.data.payload); 
                         if ($scope.mainResponse.length == 1) {
                             if ($scope.mainResponse[0].needAuthorization) {
+                                hideLoader();
+                                $scope.roleSelected = $scope.mainResponse[0];
                                 $("#accessAuthorizationModal").modal('show');
                                 return;
                             }
@@ -115,12 +147,6 @@
                             $scope.hasManyRoles = true;
                             $scope.usuarioEntidades = $scope.mainResponse;
                             toastr.info(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
-
-                            if ($scope.mainResponse[0].needAuthorization) {
-                                $("#accessAuthorizationModal").modal('show');
-                                return;
-                            }
-
                             $("#modalLoginUsuarioEntidad").modal('show');
                         }
                     }
@@ -141,7 +167,7 @@
 
         $scope.skipCodeFields = function (event, index) {
             let newIndex = (index + 1)
-            let id = `code_auth2f${newIndex }`
+            let id = `code_auth2f${newIndex}`
             document.getElementById(id).addEventListener('input', function () {
                 // Check if the input length matches the desired value length
                 console.log(this.value)
@@ -170,11 +196,7 @@
                 if (response.data.code == "1") {
                     hideLoader();
                     $("#accessAuthorizationModal").modal('hide');
-                    if ($scope.hasManyRoles) {
-                        $("#modalLoginUsuarioEntidad").modal('show');
-                        return;
-                    }
-                    $scope.loginMultiple($scope.mainResponse[0]);
+                    $scope.authMultiple();
                 }
             }).catch(error => {
                 hideLoader();
