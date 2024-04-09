@@ -12,8 +12,8 @@ namespace Inventario.API.Controllers
     public class ModeloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public ModeloController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ModeloController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

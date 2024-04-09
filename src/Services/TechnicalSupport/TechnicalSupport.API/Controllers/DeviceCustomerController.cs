@@ -11,9 +11,9 @@ namespace TechnicalSupport.API.Controllers
     public class DeviceCustomerController : ControllerBase
     {
         private IDeviceCustomerService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public DeviceCustomerController(IDeviceCustomerService service, LogWriter log)
+        public DeviceCustomerController(IDeviceCustomerService service, ICustomLogger log)
         {
             _log = log;
             _service = service;

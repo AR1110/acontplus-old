@@ -14,9 +14,9 @@ namespace Inventario.API.Controllers
     public class PrecioMasivoController : ControllerBase
     {
         private readonly IPrecioMasivoService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public PrecioMasivoController(IPrecioMasivoService service, LogWriter log)
+        public PrecioMasivoController(IPrecioMasivoService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

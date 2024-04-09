@@ -14,8 +14,8 @@ namespace Contabilidad.API.Controllers.v2
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _dbAccess;
-        private readonly LogWriter _log;
-        public ComprobanteIngresoController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ComprobanteIngresoController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _dbAccess = new DbAccess(_configuration);

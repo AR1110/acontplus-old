@@ -13,9 +13,9 @@ namespace Compras.API.Controllers
     {
         private IConfiguration _configuration;
         private INotaCreditoService _ncpSvc;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public NotaCreditoController(IConfiguration configuration, INotaCreditoService ncpSvc, LogWriter log)
+        public NotaCreditoController(IConfiguration configuration, INotaCreditoService ncpSvc, ICustomLogger log)
         {
             _configuration = configuration;
             _ncpSvc = ncpSvc;

@@ -9,8 +9,8 @@ namespace Configuracion.API.Controllers
     public class EstabAsigController : BaseApiController
     {
         private readonly IEstablecimientoAsignacionService _estab;
-        private readonly LogWriter _log;
-        public EstabAsigController(IEstablecimientoAsignacionService service, LogWriter log)
+        private readonly ICustomLogger _log;
+        public EstabAsigController(IEstablecimientoAsignacionService service, ICustomLogger log)
         {
             _estab = service;
             _log = log;

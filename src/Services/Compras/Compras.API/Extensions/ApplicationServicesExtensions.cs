@@ -22,7 +22,7 @@ namespace Compras.API.Extensions
             services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
             services.AddScoped<IDocumentoRecibidoService, DocumentoRecibidoService>();
 
-            services.AddSingleton<LogWriter>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             return services;
         }
     }

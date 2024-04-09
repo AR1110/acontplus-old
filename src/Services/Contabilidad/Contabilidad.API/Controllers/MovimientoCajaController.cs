@@ -12,9 +12,9 @@ namespace Contabilidad.API.Controllers
     public class MovimientoCajaController : ControllerBase
     {
         private IMovimientoCajaService _movSvc;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public MovimientoCajaController(IMovimientoCajaService movSvc, LogWriter log)
+        public MovimientoCajaController(IMovimientoCajaService movSvc, ICustomLogger log)
         {
             _movSvc = movSvc;
             _log = log;

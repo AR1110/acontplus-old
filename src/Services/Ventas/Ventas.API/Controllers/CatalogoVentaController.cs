@@ -11,8 +11,8 @@ namespace Ventas.API.Controllers
     public class CatalogoVentaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public CatalogoVentaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public CatalogoVentaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

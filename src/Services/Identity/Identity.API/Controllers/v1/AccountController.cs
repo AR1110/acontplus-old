@@ -18,12 +18,12 @@ namespace Identity.API.Controllers.v1
     public class AccountController : BaseApiController
     {
         private readonly IConfiguration _config;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         private readonly ApplicationDbContext _context;
         private readonly ITokenService _tokenService;
         private readonly IAccountService _accountService;
 
-        public AccountController(ITokenService tokenService, IConfiguration config, LogWriter log, ApplicationDbContext context, IAccountService accountService)
+        public AccountController(ITokenService tokenService, IConfiguration config, ICustomLogger log, ApplicationDbContext context, IAccountService accountService)
         {
             _tokenService = tokenService;
             _config = config;

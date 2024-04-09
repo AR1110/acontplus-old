@@ -13,8 +13,8 @@ namespace Compras.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        private readonly LogWriter _log;
-        public Doc_Rec_DetailTempController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public Doc_Rec_DetailTempController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _db = new DbAccess(configuration);

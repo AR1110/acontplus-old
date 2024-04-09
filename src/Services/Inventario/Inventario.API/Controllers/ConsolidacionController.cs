@@ -14,9 +14,9 @@ namespace Inventario.API.Controllers
     public class ConsolidacionController : ControllerBase
     {
         private readonly IConsolidacionService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public ConsolidacionController(IConsolidacionService service, LogWriter log)
+        public ConsolidacionController(IConsolidacionService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

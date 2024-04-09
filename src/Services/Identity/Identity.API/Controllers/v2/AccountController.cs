@@ -18,10 +18,10 @@ namespace Identity.API.Controllers.v2
         private readonly IConfiguration _config;
         private readonly ITokenService _tokenService;
         private readonly IAccountService _accountService;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         public AccountController(IConfiguration config,
                 ITokenService tokenService,
-                LogWriter log,
+                ICustomLogger log,
                 IAccountService accountService)
         {
             _config = config;

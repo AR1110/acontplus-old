@@ -9,10 +9,10 @@ namespace Restaurant.API.Controllers
     public class MenuItemController : BaseApiController
     {
         private readonly IMenuItemService _menuItem;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
 
-        public MenuItemController(IMenuItemService menuItem, LogWriter log)
+        public MenuItemController(IMenuItemService menuItem, ICustomLogger log)
         {
             _menuItem = menuItem;
             _log = log;

@@ -9,8 +9,8 @@ namespace Restaurant.API.Controllers
     public class OrderController : BaseApiController
     {
         private readonly IOrderService _orderService;
-        private readonly LogWriter _log;
-        public OrderController(IOrderService orderService, LogWriter log)
+        private readonly ICustomLogger _log;
+        public OrderController(IOrderService orderService, ICustomLogger log)
         {
             _orderService = orderService;
             _log = log;

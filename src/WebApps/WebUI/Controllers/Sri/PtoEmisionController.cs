@@ -11,8 +11,8 @@ namespace WebUI.Controllers.Sri
         // GET: Establecimiento
         private readonly IConfiguration _configuration;
         private TipoAmbienteDao _tipA;
-        private readonly LogWriter _log;
-        public PtoEmisionController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public PtoEmisionController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

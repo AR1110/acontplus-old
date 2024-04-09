@@ -15,9 +15,9 @@ namespace Contabilidad.API.Controllers.v2
     public class CajaController : ControllerBase
     {
         private readonly ICajaService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public CajaController(ICajaService service, LogWriter log)
+        public CajaController(ICajaService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

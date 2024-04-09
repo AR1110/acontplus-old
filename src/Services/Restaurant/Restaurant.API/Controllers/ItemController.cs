@@ -11,9 +11,9 @@ namespace Restaurant.API.Controllers
     public class ItemController : ControllerBase
     {
         private readonly IItemService _item;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public ItemController(IItemService item, LogWriter log)
+        public ItemController(IItemService item, ICustomLogger log)
         {
             _item = item;
             _log = log;

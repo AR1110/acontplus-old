@@ -12,8 +12,8 @@ namespace Configuracion.API.Controllers
     {
 
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public TipoDocumentoController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public TipoDocumentoController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

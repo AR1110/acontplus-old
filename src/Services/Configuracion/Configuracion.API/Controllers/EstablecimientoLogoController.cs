@@ -12,10 +12,10 @@ namespace Configuracion.API.Controllers
     {
         private readonly IEstablecimientoLogoService _establecimientoLogoService;
         private readonly IMapper _mapper;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         public EstablecimientoLogoController(IEstablecimientoLogoService establecimientoLogoService,
             IMapper mapper,
-            LogWriter logWriter)
+            ICustomLogger logWriter)
         {
             _establecimientoLogoService = establecimientoLogoService;
             _mapper = mapper;

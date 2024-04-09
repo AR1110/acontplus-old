@@ -27,11 +27,11 @@ namespace Compras.API.Controllers
 
         private IConfiguration _configuration;
         private IDocumentoRecibidoService _docRecibidoSvc;
-        private LogWriter _log;
+        private ICustomLogger _log;
         private readonly FileTxt _txtComp;
         private readonly DbAccess _db;
 
-        public DocumentoRecibidoController(IConfiguration configuration, IDocumentoRecibidoService docRecibidoSvc, FileTxt txtComp, LogWriter log)
+        public DocumentoRecibidoController(IConfiguration configuration, IDocumentoRecibidoService docRecibidoSvc, FileTxt txtComp, ICustomLogger log)
         {
             _configuration = configuration;
             _docRecibidoSvc = docRecibidoSvc;

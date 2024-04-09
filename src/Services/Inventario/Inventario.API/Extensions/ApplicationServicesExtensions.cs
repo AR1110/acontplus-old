@@ -30,7 +30,7 @@ namespace Inventario.API.Extensions
             services.AddScoped<IConsolidacionService, ConsolidacionService>();
             services.AddScoped<ILotPriceService, LotPriceService>();
 
-            services.AddSingleton<LogWriter>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddSingleton<S3ObjectCustom>();
             return services;
         }

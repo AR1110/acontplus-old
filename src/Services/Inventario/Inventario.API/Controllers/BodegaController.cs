@@ -11,9 +11,9 @@ namespace Inventario.API.Controllers
     public class BodegaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         private readonly DbAccess _db;
-        public BodegaController(IConfiguration configuration, LogWriter log)
+        public BodegaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

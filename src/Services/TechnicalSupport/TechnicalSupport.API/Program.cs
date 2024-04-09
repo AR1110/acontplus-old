@@ -4,8 +4,9 @@ using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Errors;
 using Services.Common.Logs;
-using Services.Common.Middleware;
+
 using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Extensions;
 
@@ -34,7 +35,9 @@ internal class Program
 
         builder.Services.AddSwaggerDocumentation();
 
-        builder.Services.AddSingleton<LogWriter>();
+        builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
+        builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
@@ -42,7 +45,7 @@ internal class Program
 
         var app = builder.Build();
 
-        app.UseMiddleware<ExceptionMiddleware>();
+        app.UseStatusCodePages();
 
         // Configure the HTTP request pipeline.
         app.UseSwaggerDocumentation();

@@ -8,9 +8,9 @@ namespace Restaurant.API.Controllers
     public class ConfigPrinterController : BaseApiController
     {
         private readonly IConsumptionConfigService _configService;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public ConfigPrinterController(IConsumptionConfigService configService, LogWriter log)
+        public ConfigPrinterController(IConsumptionConfigService configService, ICustomLogger log)
         {
             _configService = configService;
             _log = log;

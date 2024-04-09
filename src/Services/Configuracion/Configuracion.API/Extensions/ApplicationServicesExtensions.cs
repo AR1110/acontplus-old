@@ -31,7 +31,7 @@ namespace Configuracion.API.Extensions
             services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<IEstablishmentService, EstablishmentService>();
 
-            services.AddSingleton<LogWriter>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
 
             services.AddAutoMapper(typeof(MappingProfiles));
             return services;

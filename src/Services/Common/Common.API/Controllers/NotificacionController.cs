@@ -8,8 +8,8 @@ namespace Common.API.Controllers
     public class NotificacionController : BaseApiController
     {
         private readonly INotificacionService _notificacion;
-        private readonly LogWriter _log;
-        public NotificacionController(INotificacionService notificacion, LogWriter log)
+        private readonly ICustomLogger _log;
+        public NotificacionController(INotificacionService notificacion, ICustomLogger log)
         {
             _notificacion = notificacion;
             _log = log;

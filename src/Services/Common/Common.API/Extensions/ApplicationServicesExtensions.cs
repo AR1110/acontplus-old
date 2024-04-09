@@ -16,7 +16,7 @@ namespace Common.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<INotificacionService, NotificacionService>();
-            services.AddSingleton<LogWriter>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             return services;
         }
     }

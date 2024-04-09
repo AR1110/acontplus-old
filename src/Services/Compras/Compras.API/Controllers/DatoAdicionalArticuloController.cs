@@ -11,8 +11,8 @@ namespace Compras.API.Controllers
     public class DatoAdicionalArticuloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public DatoAdicionalArticuloController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public DatoAdicionalArticuloController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

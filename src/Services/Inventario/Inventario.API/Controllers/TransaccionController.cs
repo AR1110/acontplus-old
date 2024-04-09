@@ -10,8 +10,8 @@ namespace Inventario.API.Controllers
     public class TransaccionController : BaseApiController
     {
         private readonly ITransaccionService _transaccionService;
-        private readonly LogWriter _logWriter;
-        public TransaccionController(ITransaccionService transaccionService, LogWriter logWriter)
+        private readonly ICustomLogger _logWriter;
+        public TransaccionController(ITransaccionService transaccionService, ICustomLogger logWriter)
         {
             _transaccionService = transaccionService;
             _logWriter = logWriter;
