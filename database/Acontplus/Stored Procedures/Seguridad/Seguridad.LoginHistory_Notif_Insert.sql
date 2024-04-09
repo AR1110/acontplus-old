@@ -97,8 +97,22 @@ BEGIN
                                 receptor VARCHAR(100) NOT NULL
                                 )
 
-                            DECLARE @requesting_user VARCHAR(300) = (SELECT UPPER(nombreCompleto) FROM Acontplus.dbo.Usuario WHERE idUsuario = @userId)
+                            DECLARE @requesting_user VARCHAR(300)
+                                ,@username VARCHAR(100)
+                                ,@company VARCHAR(300)
+                                ,@role VARCHAR(25)
+                                 
                             
+                                SELECT @company = IIF(e.nombreComercial IS NULL, e.razonSocial, e.nombreComercial)
+                                    ,@role = r.[Name]
+                                    ,@username = u.nombreUsuario
+                                    ,@requesting_user = UPPER(u.nombreCompleto)
+                                FROM Acontplus.App.UsuarioRol ur 
+                                INNER JOIN Acontplus.dbo.Entidad e ON ur.idEntidad = e.idEntidad
+                                INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
+                                INNER JOIN Acontplus.dbo.Usuario u ON ur.idUsuario = u.idUsuario
+                                WHERE ur.idUsuarioRol = @userRoleId
+
                             INSERT INTO @userToSendEmail(emailData, params, receptor)
 							SELECT  
                                 (SELECT body = (SELECT @requesting_user requesting_user
@@ -107,6 +121,9 @@ BEGIN
                                                 ,@os os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
+                                                ,@username username
+                                                ,@company company
+                                                ,@role AS 'role'
                                                 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
 			                        ,ISNULL(@cc,'') as 'cc' 						  
 							         ,EnableSsl =@enableSsl

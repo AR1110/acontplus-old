@@ -403,19 +403,18 @@
 
 
 
-    app.directive('totalesVentaView', function () {
+    app.directive('totalesVentaView', function ($rootScope) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
-                scope.$watch(attrs.totalesVentaView, function (obj) {
-                    if (typeof obj === 'object' && !obj.additional.totalesVenta.view) {
-                        // Aquí puedes aplicar la lógica de la directiva cuando el objeto tenga un valor
-                        // Por ejemplo, mostrar el elemento, modificar su estilo, etc.
-                        element.remove();
-                    }
-                });
-
-                // element.remove();
+                scope.$watch(attrs.totalesVentaView, function (obj) { 
+                    if ($rootScope.usuarioPermiso!==null && typeof $rootScope.usuarioPermiso==='object'){
+                        let { sales } = $rootScope.usuarioPermiso;
+                        if (sales.adicionales && !sales.adicionales.totalesVenta){
+                            element.remove();
+                        }
+                    } 
+                }); 
             }
         };
     })

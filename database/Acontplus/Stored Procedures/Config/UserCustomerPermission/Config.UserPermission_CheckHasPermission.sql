@@ -33,7 +33,7 @@ BEGIN
 			
 			SET @contraseniaEncryptada = HASHBYTES('SHA2_512', @clave)
 
-			IF EXISTS (SELECT 1 FROM dbo.Usuario WHERE idUsuario = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol) AND contrasenia = @contraseniaEncryptada )
+			IF EXISTS (SELECT 1 FROM dbo.Usuario WHERE idUsuario = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @idUsuarioRol) AND contrasenia = @contraseniaEncryptada )
 				BEGIN
 					SELECT '1'code, 'Clave correcta' as 'message'
 					RETURN
