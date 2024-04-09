@@ -10,8 +10,8 @@ namespace Common.API.Controllers
     public class DashboardController : BaseApiController
     {
         private readonly IDashboardService _dashboard;
-        private readonly LogWriter _log;
-        public DashboardController(IDashboardService dashboard, LogWriter log)
+        private readonly ICustomLogger _log;
+        public DashboardController(IDashboardService dashboard, ICustomLogger log)
         {
             _dashboard = dashboard;
             _log = log;

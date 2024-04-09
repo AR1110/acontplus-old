@@ -12,9 +12,9 @@ namespace Contabilidad.API.Controllers
     public class ComprobanteEgresoController : ControllerBase
     {
         private readonly IComprobanteEgresoService _svc;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public ComprobanteEgresoController(IComprobanteEgresoService service, LogWriter log)
+        public ComprobanteEgresoController(IComprobanteEgresoService service, ICustomLogger log)
         {
             _svc = service;
             _log = log;

@@ -9,8 +9,8 @@ namespace Configuracion.API.Controllers.Sri
     public class EstablecimientoController : BaseApiController
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public EstablecimientoController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public EstablecimientoController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

@@ -13,9 +13,9 @@ namespace Configuracion.API.Controllers
     public class GeneralConfigController : ControllerBase
     {
         private readonly IGeneralConfigService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public GeneralConfigController(IGeneralConfigService service, LogWriter log)
+        public GeneralConfigController(IGeneralConfigService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

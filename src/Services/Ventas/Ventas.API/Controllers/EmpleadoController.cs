@@ -11,8 +11,8 @@ namespace Ventas.API.Controllers
     public class EmpleadoController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public EmpleadoController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public EmpleadoController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

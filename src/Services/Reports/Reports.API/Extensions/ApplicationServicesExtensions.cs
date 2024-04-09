@@ -13,7 +13,7 @@ namespace Reports.API.Extensions
             services.AddScoped<IADOSqlServer, ADOSqlServer>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IRdlcReportService, RdlcReportService>();
-            services.AddSingleton<LogWriter>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             return services;
         }
     }

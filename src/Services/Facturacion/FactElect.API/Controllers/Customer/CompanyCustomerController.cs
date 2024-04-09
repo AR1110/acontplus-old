@@ -10,8 +10,8 @@ namespace FactElect.API.Controllers.Customer
     public class CompanyCustomerController : BaseApiController
     {
         private readonly ICompanyCustomerService _companyCustomer;
-        private LogWriter _logWriter;
-        public CompanyCustomerController(ICompanyCustomerService companyCustomer, LogWriter logWriter)
+        private ICustomLogger _logWriter;
+        public CompanyCustomerController(ICompanyCustomerService companyCustomer, ICustomLogger logWriter)
         {
             _companyCustomer = companyCustomer;
             _logWriter = logWriter;

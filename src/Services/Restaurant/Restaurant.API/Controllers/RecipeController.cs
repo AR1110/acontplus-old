@@ -11,9 +11,9 @@ namespace Restaurant.API.Controllers
     public class RecipeController : BaseApiController
     {
         private readonly IRecipe _recipe;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public RecipeController(IRecipe recipe, LogWriter log)
+        public RecipeController(IRecipe recipe, ICustomLogger log)
         {
             _recipe = recipe;
             _log = log;

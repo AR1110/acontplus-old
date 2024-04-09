@@ -8,8 +8,8 @@ namespace Inventario.API.Controllers
     public class StockController : BaseApiController
     {
         private readonly IStockService _stockService;
-        private readonly LogWriter _log;
-        public StockController(IStockService stockService, LogWriter log)
+        private readonly ICustomLogger _log;
+        public StockController(IStockService stockService, ICustomLogger log)
         {
             _stockService = stockService;
             _log = log;

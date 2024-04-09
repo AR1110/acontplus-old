@@ -13,9 +13,9 @@ namespace Configuracion.API.Controllers
     public class UserCustomerController : ControllerBase
     {
         private readonly IUserCustomerService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public UserCustomerController(IUserCustomerService service, LogWriter log)
+        public UserCustomerController(IUserCustomerService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

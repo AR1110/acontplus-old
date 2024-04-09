@@ -15,12 +15,12 @@ namespace Contabilidad.API.Controllers.v1
     public class CuentaPorCobrarController : ControllerBase
     {
         private readonly ICuentaPorCobrarService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
 
-        public CuentaPorCobrarController(ICuentaPorCobrarService service, LogWriter log, IConfiguration configuration)
+        public CuentaPorCobrarController(ICuentaPorCobrarService service, ICustomLogger log, IConfiguration configuration)
         {
             _service = service;
             _log = log;

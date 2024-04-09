@@ -15,11 +15,11 @@ namespace Inventario.API.Controllers
         private readonly ISubcategoryPhotoService _subcategoryPhoto;
         private readonly IS3StorageService _storageService;
         private readonly S3ObjectCustom _s3ObjectCustom;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         public SubcategoryPhotoController(ISubcategoryPhotoService subcategoryPhoto,
             IS3StorageService storageService,
             S3ObjectCustom s3ObjectCustom,
-            LogWriter log)
+            ICustomLogger log)
         {
             _subcategoryPhoto = subcategoryPhoto;
             _storageService = storageService;

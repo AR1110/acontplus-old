@@ -13,8 +13,8 @@ namespace FactElect.API.Controllers.RetencionAts.v2
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        private readonly LogWriter _log;
-        public RetencionAtsController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public RetencionAtsController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);

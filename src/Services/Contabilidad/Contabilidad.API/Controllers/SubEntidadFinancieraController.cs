@@ -12,9 +12,9 @@ namespace Contabilidad.API.Controllers
     public class SubEntidadFinancieraController : ControllerBase
     {
          private readonly ISubEntidadFinancieraService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public SubEntidadFinancieraController(ISubEntidadFinancieraService service, LogWriter log)
+        public SubEntidadFinancieraController(ISubEntidadFinancieraService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

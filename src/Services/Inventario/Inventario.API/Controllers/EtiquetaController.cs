@@ -11,8 +11,8 @@ namespace Inventario.API.Controllers
     {
         public readonly IConfiguration _configuration;
         public readonly DbAccess _db;
-        private readonly LogWriter _log;
-        public EtiquetaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public EtiquetaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _db = new DbAccess(configuration);

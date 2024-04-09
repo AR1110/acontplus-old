@@ -12,9 +12,9 @@ namespace Contabilidad.API.Controllers
     public class ChequeController : ControllerBase
     {
         private readonly IChequeService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public ChequeController(IChequeService service, LogWriter log)
+        public ChequeController(IChequeService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

@@ -9,8 +9,8 @@ namespace FactElect.API.Controllers
     public class DocumentoElectronicoErrorController : ControllerBase
     {
         private readonly IDocumentoElectronicoErrorService _docElect;
-        private readonly LogWriter _log;
-        public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService docElect, LogWriter log)
+        private readonly ICustomLogger _log;
+        public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService docElect, ICustomLogger log)
         {
 
             _docElect = docElect;

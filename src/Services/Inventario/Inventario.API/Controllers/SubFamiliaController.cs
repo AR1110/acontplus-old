@@ -13,10 +13,10 @@ namespace Inventario.API.Controllers
         private readonly IConfiguration _configuration;
         private readonly S3ObjectCustom _s3ObjectCustom;
         private readonly IS3StorageService _storageService;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         public SubFamiliaController(IConfiguration configuration,
             S3ObjectCustom s3ObjectCustom,
-            IS3StorageService storageService, LogWriter log)
+            IS3StorageService storageService, ICustomLogger log)
         {
             _configuration = configuration;
             _s3ObjectCustom = s3ObjectCustom;

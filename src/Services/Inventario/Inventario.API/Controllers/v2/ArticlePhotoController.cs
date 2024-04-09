@@ -12,8 +12,8 @@ namespace Inventario.API.Controllers.v2
     public class ArticlePhotoController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public ArticlePhotoController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ArticlePhotoController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

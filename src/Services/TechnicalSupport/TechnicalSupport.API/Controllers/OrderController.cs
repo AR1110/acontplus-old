@@ -15,8 +15,8 @@ namespace TechnicalSupport.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IOrderService _orderService;
-        private readonly LogWriter _log;
-        public OrderController(IOrderService orderService, LogWriter log, IMapper mapper)
+        private readonly ICustomLogger _log;
+        public OrderController(IOrderService orderService, ICustomLogger log, IMapper mapper)
         {
             _mapper = mapper;
             _orderService = orderService;

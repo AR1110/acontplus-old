@@ -13,9 +13,9 @@ namespace Contabilidad.API.Controllers
     {
 
         private IAnticipoService _anticipoSvc;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public AnticipoController(IAnticipoService anticipoSvc, LogWriter log)
+        public AnticipoController(IAnticipoService anticipoSvc, ICustomLogger log)
         {
             _anticipoSvc = anticipoSvc;
             _log = log;

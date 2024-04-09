@@ -11,8 +11,8 @@ namespace Restaurant.API.Controllers
     public class ConsumoAnuladoTpvController : BaseApiController
     {
         private readonly IConsumptionCancelledService _cancelledService;
-        private readonly LogWriter _log;
-        public ConsumoAnuladoTpvController(IConsumptionCancelledService cancelledService, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ConsumoAnuladoTpvController(IConsumptionCancelledService cancelledService, ICustomLogger log)
         {
             _cancelledService = cancelledService;
             _log = log;

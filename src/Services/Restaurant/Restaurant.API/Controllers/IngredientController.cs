@@ -9,8 +9,8 @@ namespace Restaurant.API.Controllers
     public class IngredientController : BaseApiController
     {
         private readonly IIngredientService _ingredient;
-        private readonly LogWriter _log;
-        public IngredientController(IIngredientService ingredient, LogWriter log)
+        private readonly ICustomLogger _log;
+        public IngredientController(IIngredientService ingredient, ICustomLogger log)
         {
             _ingredient = ingredient;
             _log = log;

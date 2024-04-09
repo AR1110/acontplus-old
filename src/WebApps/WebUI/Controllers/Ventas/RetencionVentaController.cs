@@ -11,8 +11,8 @@ namespace WebUI.Controllers.Ventas
     {
         private readonly IConfiguration _configuration;
         private RetencionVentaDao _rv;
-        private readonly LogWriter _log;
-        public RetencionVentaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public RetencionVentaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

@@ -5,7 +5,7 @@ using Mechanical.API.Extensions;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
-using Services.Common.Middleware;
+
 
 internal class Program
 {
@@ -33,14 +33,14 @@ internal class Program
 
         builder.Services.AddSwaggerDocumentation();
 
-        builder.Services.AddSingleton<LogWriter>();
+        builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
         var app = builder.Build();
 
-        app.UseMiddleware<ExceptionMiddleware>();
+        app.UseStatusCodePages();
 
         // Configure the HTTP request pipeline.
         app.UseSwaggerDocumentation();

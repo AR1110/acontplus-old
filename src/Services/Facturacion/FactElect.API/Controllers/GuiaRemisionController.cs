@@ -13,8 +13,8 @@ namespace FactElect.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IGuiaRemisionService _svc;
-        private readonly LogWriter _log;
-        public GuiaRemisionController(IConfiguration configuration, IGuiaRemisionService service, LogWriter log)
+        private readonly ICustomLogger _log;
+        public GuiaRemisionController(IConfiguration configuration, IGuiaRemisionService service, ICustomLogger log)
         {
             _configuration = configuration;
             _svc = service;

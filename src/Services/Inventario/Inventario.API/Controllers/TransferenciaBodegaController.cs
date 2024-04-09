@@ -12,9 +12,9 @@ namespace Inventario.API.Controllers
     public class TransferenciaBodegaController : ControllerBase
     {
         private readonly ITransferenciaBodegaService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public TransferenciaBodegaController(ITransferenciaBodegaService service, LogWriter log)
+        public TransferenciaBodegaController(ITransferenciaBodegaService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

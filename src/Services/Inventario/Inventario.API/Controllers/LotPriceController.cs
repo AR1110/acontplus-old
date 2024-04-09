@@ -16,9 +16,9 @@ namespace Inventario.API.Controllers
     public class LotPriceController : ControllerBase
     {
         private readonly ILotPriceService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public LotPriceController(ILotPriceService service, LogWriter log)
+        public LotPriceController(ILotPriceService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

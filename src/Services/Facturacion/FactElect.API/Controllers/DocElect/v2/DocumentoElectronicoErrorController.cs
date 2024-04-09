@@ -12,9 +12,9 @@ namespace FactElect.API.Controllers.DocElect.v2
     public class DocumentoElectronicoErrorController : ControllerBase
     {
         private readonly IDocumentoElectronicoErrorService _factElect;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService factElect, LogWriter log)
+        public DocumentoElectronicoErrorController(IDocumentoElectronicoErrorService factElect, ICustomLogger log)
         {
             _factElect = factElect;
             _log = log;

@@ -13,9 +13,9 @@ namespace Compras.API.Controllers
     {
         private IConfiguration _configuration;
         private ILiquidacionCompraService _liquidacionCompraSvc;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public LiquidacionCompraController(IConfiguration configuration, ILiquidacionCompraService liquidacionCompraSvc, LogWriter log)
+        public LiquidacionCompraController(IConfiguration configuration, ILiquidacionCompraService liquidacionCompraSvc, ICustomLogger log)
         {
             _configuration = configuration;
             _liquidacionCompraSvc = liquidacionCompraSvc;

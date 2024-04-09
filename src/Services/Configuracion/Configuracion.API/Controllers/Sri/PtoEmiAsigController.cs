@@ -12,9 +12,9 @@ namespace Configuracion.API.Controllers.Sri
     public class PtoEmiAsigController : ControllerBase
     {
         private readonly IPuntoEmisionAsignacionService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public PtoEmiAsigController(IPuntoEmisionAsignacionService service, LogWriter log)
+        public PtoEmiAsigController(IPuntoEmisionAsignacionService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

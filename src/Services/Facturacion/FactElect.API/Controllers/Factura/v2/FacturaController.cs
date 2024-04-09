@@ -14,8 +14,8 @@ namespace FactElect.API.Controllers.Factura.v2
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        private readonly LogWriter _log;
-        public FacturaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public FacturaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);

@@ -12,9 +12,9 @@ namespace Mechanical.API.Controllers
     public class VehicleController : BaseApiController
     {
         private readonly IVehicleService _vehicleService;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public VehicleController(IVehicleService vehicleService, LogWriter log)
+        public VehicleController(IVehicleService vehicleService, ICustomLogger log)
         {
             _vehicleService = vehicleService;
             _log = log;

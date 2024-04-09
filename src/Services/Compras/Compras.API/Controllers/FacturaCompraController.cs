@@ -13,9 +13,9 @@ namespace Compras.API.Controllers
     {
         private IConfiguration _configuration;
         private IFacturaCompraService _facturaCompraSvc;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public FacturaCompraController(IConfiguration configuration, IFacturaCompraService facturaCompraSvc, LogWriter log)
+        public FacturaCompraController(IConfiguration configuration, IFacturaCompraService facturaCompraSvc, ICustomLogger log)
         {
             _configuration = configuration;
             _facturaCompraSvc = facturaCompraSvc;

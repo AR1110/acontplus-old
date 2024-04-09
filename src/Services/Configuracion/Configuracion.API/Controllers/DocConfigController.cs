@@ -13,9 +13,9 @@ namespace Configuracion.API.Controllers
     public class DocConfigController : ControllerBase
     {
         private readonly IDocConfigService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public DocConfigController(IDocConfigService service, LogWriter log)
+        public DocConfigController(IDocConfigService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

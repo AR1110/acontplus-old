@@ -30,7 +30,7 @@ namespace Restaurant.API.Extensions
             services.AddScoped<IConsumptionService, ConsumptionService>();
             services.AddScoped<IConsumptionCancelledService, ConsumptionCancelledService>();
 
-            services.AddSingleton<LogWriter>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddSingleton<S3ObjectCustom>();
             return services;
         }

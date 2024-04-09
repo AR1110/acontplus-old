@@ -14,11 +14,11 @@ namespace Inventario.API.Controllers
         private readonly IProductPhotoService _productPhoto;
         private readonly IS3StorageService _storageService;
         private readonly S3ObjectCustom _s3ObjectCustom;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         public ProductPhotoController(IProductPhotoService productPhoto,
             IS3StorageService storageService,
             S3ObjectCustom s3ObjectCustom,
-            LogWriter log)
+            ICustomLogger log)
         {
             _productPhoto = productPhoto;
             _storageService = storageService;

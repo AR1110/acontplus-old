@@ -13,9 +13,9 @@ namespace Inventario.API.Controllers
     public class MassiveTaxController : ControllerBase
     {
         private readonly IMassiveTaxService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public MassiveTaxController(IMassiveTaxService service, LogWriter log)
+        public MassiveTaxController(IMassiveTaxService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

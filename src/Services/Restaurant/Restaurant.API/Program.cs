@@ -6,7 +6,7 @@ using Newtonsoft.Json.Serialization;
 using Restaurant.API.Data;
 using Restaurant.API.Extensions;
 using Services.Common;
-using Services.Common.Middleware;
+
 
 internal class Program
 {
@@ -48,7 +48,7 @@ internal class Program
             app.UseHttpsRedirection();
         }
 
-        app.UseMiddleware<ExceptionMiddleware>();
+        app.UseStatusCodePages();
 
         // Configure the HTTP request pipeline.
         app.UseSwaggerDocumentation();

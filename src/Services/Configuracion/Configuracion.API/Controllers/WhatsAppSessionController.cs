@@ -11,8 +11,8 @@ namespace Configuracion.API.Controllers
     public class WhatsAppSessionController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public WhatsAppSessionController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public WhatsAppSessionController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

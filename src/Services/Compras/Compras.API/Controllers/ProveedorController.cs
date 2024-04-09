@@ -15,9 +15,9 @@ namespace Compras.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         private readonly IProveedorService _proveedorService;
-        public ProveedorController(IConfiguration configuration, LogWriter log, IProveedorService proveedorService)
+        public ProveedorController(IConfiguration configuration, ICustomLogger log, IProveedorService proveedorService)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
