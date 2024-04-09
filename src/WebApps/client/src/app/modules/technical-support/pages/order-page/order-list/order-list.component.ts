@@ -19,6 +19,7 @@ import { CODE_REPORT } from '@core/constants/global.constants';
   templateUrl: './order-list.component.html',
   styles: ``,
 })
+
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
   private modalService = inject(ModalService);
