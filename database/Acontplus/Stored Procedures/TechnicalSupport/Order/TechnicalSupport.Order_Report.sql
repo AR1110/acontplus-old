@@ -52,6 +52,7 @@ BEGIN
     ,   dc.SerialNumber             AS DeviceSerie
     ,   dc.Warranty                 AS DeviceWarranty
     ,   od.Obs                      AS Obs
+    ,   od.CreatedAt                AS CreatedAt
     --- OrderMantenaince ----
     ,   b.descripcion               AS Bodega
     ,   m.descripcion               AS Medida
@@ -63,13 +64,14 @@ BEGIN
     ,   ISNULL(orm.Discount, 0)     AS Discount
     ,   ISNULL(orm.Total, 0)        AS Total
     ,   orm.Obs                     AS ObsMaintenance
-    FROM TechnicalSupport.OrderDetail od                WITH(NOLOCK)
+    FROM TechnicalSupport.OrderMaintenance orm    WITH(NOLOCK)
+    INNER JOIN dbo.Bodega b                             WITH(NOLOCK) ON b.idBodega          = orm.BodegaId
+    INNER JOIN dbo.Medida m                             WITH(NOLOCK) ON m.idMedida          = orm.MedidaId
+    INNER JOIN dbo.Articulo a                           WITH(NOLOCK) ON a.idArticulo        = orm.ProductId
+    INNER JOIN TechnicalSupport.OrderDetail od          WITH(NOLOCK)  ON od.Id               = orm.OrderDetailId
     INNER JOIN TechnicalSupport.Device d                WITH(NOLOCK) ON od.DeviceId         = d.Id
     INNER JOIN TechnicalSupport.DeviceCustomer dc       WITH(NOLOCK) ON d.Id                = dc.DeviceId
-    LEFT  JOIN TechnicalSupport.OrderMaintenance orm    WITH(NOLOCK) ON orm.OrderDetailId   = orm.Id
-    LEFT JOIN dbo.Bodega b                              WITH(NOLOCK) ON b.idBodega          = orm.BodegaId
-    LEFT JOIN dbo.Medida m                              WITH(NOLOCK) ON m.idMedida          = orm.MedidaId
-    LEFT JOIN dbo.Articulo a                            WITH(NOLOCK) ON a.idArticulo        = orm.ProductId
     WHERE od.OrderId = @id
+    ORDER BY orm.OrderDetailId DESC
 END
 GO
