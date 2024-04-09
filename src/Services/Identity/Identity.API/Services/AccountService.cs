@@ -2,9 +2,9 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using Identity.API.Data;
+using Identity.API.Dtos;
 using Identity.API.Entities;
 using Identity.API.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Services
 {
@@ -67,6 +67,32 @@ namespace Identity.API.Services
                 { "password", password }
             });
         }
+
+        public async Task<ApiResponse> RequestAccessAsync(RequestAccessDto accessAuthorization)
+        {
+            try
+            { 
+                var response =  await _repository.OnlyExecuteAsync("Seguridad.AccessAuthorization_Insert", new Dictionary<string, object> { { "uuid", accessAuthorization.Uuid }, { "userRoleId", accessAuthorization.UserRoleId } });
+                if (response == 0)
+                {
+                    return new ApiResponse
+                    {
+                        code = "0",
+                        message = "Código no válido"
+                    };
+                }
+                return new ApiResponse
+                {
+                    code = "1",
+                    message = "Código válido"
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<string> LoginAppAsync(string username, string password)
         {
             return await _repository.SPExecuteDeprecatedAsync("App.Account_Login", new Dictionary<string, object> {
