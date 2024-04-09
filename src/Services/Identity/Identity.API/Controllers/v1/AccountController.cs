@@ -175,7 +175,21 @@ namespace Identity.API.Controllers.v1
                 return BadRequest("Error on login");
             }
         }
-
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> RequestAccess([FromBody] RequestAccessDto data)
+        {
+            try
+            {
+                var response = await _accountService.RequestAccessAsync(data);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error while verify code into Acontplus ERP: " + ex.ToString());
+                return BadRequest("Error on verify code");
+            }
+        }
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Authenticate([FromBody] AccessAuthorization data)
