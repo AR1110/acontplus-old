@@ -20,6 +20,7 @@ import { OrderModalComponent } from '../order-modal/order-modal.component';
   templateUrl: './order-list.component.html',
   styles: ``,
 })
+
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
   private modalService = inject(ModalService);
