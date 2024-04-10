@@ -27,8 +27,6 @@ export class TechnicalSupportPageComponent {
   private modalRef = inject(ModalService);
   active = 2;
 
-
-
   openOrderModal() {
     const modalResp = this.modalRef.openModalCustom(OrderModalComponent, {
       centered: true,
@@ -39,11 +37,5 @@ export class TechnicalSupportPageComponent {
         this.child.get();
       }
     });
-  }
-
-  onNavChange($event: any){
-    setTimeout(()=>{
-      this.child.get();
-    }, 400)
   }
 }
