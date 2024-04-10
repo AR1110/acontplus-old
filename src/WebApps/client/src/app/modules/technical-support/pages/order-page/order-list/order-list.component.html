@@ -18,27 +18,20 @@
       @for (item of orders; track $index) {
       <tr>
         <td scope="row" class="text-center">{{ $index + 1 }}</td>
-        <td>
-          <button type="button" class="btn btn-outline-success btn-sm mx-1" title="Editar" (click)="edit(item)">
-            <fa-icon [icon]="'edit'"></fa-icon>
-          </button>
-
-          <button type="button" class="btn btn-outline-danger btn-sm mx-1" title="Eliminar" (click)="askToDelete(item)">
-            <fa-icon [icon]="'trash'"></fa-icon>
-          </button>
-          <button type="button" class="btn btn-outline-danger btn-sm mx-1" title="Reporte" (click)="getReport(item)">
-            <fa-icon [icon]="'file-pdf'"></fa-icon>
-          </button>
-
-          <button type="button" class="btn btn-outline-primary btn-sm mx-1" title="Iniciar Reparaciones"
-            (click)="openModalMaintenance(item.id)">
-            <fa-icon [icon]="'cogs'"></fa-icon>
-          </button>
-
-          <button type="button" class="btn btn-outline-success btn-sm mx-1" title="Iniciar Reparaciones"
-            (click)="openModalMaintenance(item.id)">
-            <fa-icon [icon]="'cogs'"></fa-icon>
-          </button>
+        <td class="overflow-hidden">
+          <div ngbDropdown container="body">
+            <button type="button" class="btn btn-outline-success btn-sm" ngbDropdownToggle>
+              <fa-icon [icon]="'cog'"></fa-icon>
+            </button>
+            <div ngbDropdownMenu>
+              <button ngbDropdownItem (click)="edit(item)">Actualizar</button>
+              <button ngbDropdownItem (click)="askToDelete(item)">Eliminar</button>
+              <button ngbDropdownItem (click)="getReport(item)">Reporte</button>
+              <div class="dropdown-divider"></div>
+              <button ngbDropdownItem (click)="openModalMaintenance(item.id)">Iniciar reparación</button>
+              <button ngbDropdownItem (click)="askToConvertDoc(item)">Conversión</button>
+            </div>
+          </div>
         </td>
         <td>{{ item.nombreFiscal }}</td>
         <td>{{ item.sequence }}</td>
