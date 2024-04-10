@@ -521,7 +521,7 @@ BEGIN
 			SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'CD'
 
 			SELECT idFamilia
-                    , descripcion 
+                  ,descripcion 
             FROM dbo.Familia WITH (NOLOCK) 
             WHERE ActividadEconomicaId IN (SELECT ea.ActividadEconomicaId FROM v_Estab_Asign ea WITH (NOLOCK) WHERE ea.idUsuarioRol = @idRol)
             AND estado = 1
@@ -545,6 +545,61 @@ BEGIN
 
 			RETURN 
 		END 
+
+    --> Data Compra
+    IF @tipo = 9
+        BEGIN
+            
+            SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
+
+            SELECT ar.idArticulo
+                  ,ar.idTipoIva
+                  ,ar.codigoAuxiliar
+				  ,ar.descripcion
+                  ,IIF(ti.porcentaje > 0,'*','') + ar.codigo as codigoArticulo
+				  ,ar.stock
+				  ,ar.cantMinimaVentaPorMayor
+				  ,ISNULL(ar.valorIce,0)                     as valorIce
+				  ,ar.llevaInventario
+				  ,ISNULL(ar.datosAdicionales, 0)            as datosAdicionales 
+				  ,ar.productoFraccionable
+				  ,ar.precioCosto
+				  ,ISNULL(ar.precioSinSubsidio,0)            as precioSinSubsidio
+				  ,ti.descripcion                            as nombreTipoIva
+				  ,ti.porcentaje                             as tarifa
+				  ,CAST(ti.codigoPorcentaje as varchar)      as codigoPorcentaje
+			FROM dbo.Articulo      ar WITH (NOLOCK) 
+			INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = ar.idTipoIva
+			 LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = ar.idMedida
+			WHERE ar.idArticulo = @idArticulo
+
+            SELECT ar.idMedida 
+                  ,1              as conversion
+                  ,ar.precioCosto
+                  ,me.descripcion as medida
+            FROM Articulo     ar WITH (NOLOCK) 
+            INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
+            WHERE ar.idArticulo = @idArticulo
+
+            SELECT af.idMedida
+                  ,af.conversion
+                  ,af.precioCostoFraccionado as precioCosto
+                  ,me.descripcion            as medida
+            FROM ArticuloFraccionado af WITH (NOLOCK) 
+            INNER JOIN dbo.Medida    me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+            INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+            WHERE af.idArticulo = @idArticulo 
+              and af.estado = 1
+
+            SELECT et.idEtiqueta
+                  ,et.descripcion
+                  ,et.etiquetas
+            FROM Inventario.Etiqueta et WITH (NOLOCK)
+            INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idEtiqueta = et.idEtiqueta
+            WHERE ar.idArticulo = @idArticulo
+
+            RETURN 
+        END
 
     --> Resturante Orden
     IF @tipo = 10
@@ -642,63 +697,6 @@ BEGIN
            RETURN 
         END 
 
-    --> Data Compra
-    IF @tipo = 14
-        BEGIN
-            
-            SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
-
-            SELECT ar.idArticulo
-                  ,ar.idTipoIva
-                  ,ar.codigoAuxiliar
-				  ,ar.descripcion
-                  ,IIF(ti.porcentaje > 0,'*','') + ar.codigo as codigoArticulo
-				  ,ar.stock
-				  ,ar.cantMinimaVentaPorMayor
-				  ,ISNULL(ar.valorIce,0)                     as valorIce
-				  ,ar.llevaInventario
-				  ,ISNULL(ar.datosAdicionales, 0)            as datosAdicionales 
-				  ,ar.productoFraccionable
-				  ,ar.precioCosto
-				  ,ISNULL(ar.precioSinSubsidio,0)            as precioSinSubsidio
-				  ,ti.descripcion                            as nombreTipoIva
-				  ,ti.porcentaje                             as tarifa
-				  ,CAST(ti.codigoPorcentaje as varchar)      as codigoPorcentaje
-			FROM dbo.Articulo      ar WITH (NOLOCK) 
-			INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = ar.idTipoIva
-			 LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = ar.idMedida
-			WHERE ar.idArticulo = @idArticulo
-
-            SELECT ar.idMedida 
-                  ,1 as conversion
-                  ,ar.precioCosto as precioCostoFraccionado
-                  ,ar.precioCosto
-                  ,me.descripcion as medida
-            FROM Articulo     ar WITH (NOLOCK) 
-            INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
-            WHERE ar.idArticulo = @idArticulo
-
-            SELECT af.idMedida
-                  ,af.conversion
-                  ,ar.precioCosto            as precioCostoFraccionado
-                  ,af.precioCostoFraccionado as precioCosto
-                  ,me.descripcion            as medida
-            FROM ArticuloFraccionado af WITH (NOLOCK) 
-            INNER JOIN dbo.Medida    me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
-            INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
-            WHERE af.idArticulo = @idArticulo 
-              and af.estado = 1
-
-            SELECT et.idEtiqueta
-                  ,et.descripcion
-                  ,et.etiquetas
-            FROM Inventario.Etiqueta et WITH (NOLOCK)
-            INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idEtiqueta = et.idEtiqueta
-            WHERE ar.idArticulo = @idArticulo
-
-            RETURN 
-        END 
-	
     SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END

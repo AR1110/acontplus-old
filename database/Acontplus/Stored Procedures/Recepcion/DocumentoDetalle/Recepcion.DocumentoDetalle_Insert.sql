@@ -34,14 +34,16 @@ BEGIN
 	DECLARE @fechaEmision DATETIME
 	DECLARE @codDoc VARCHAR(2)
 	
+    DECLARE @CustomerId INT ,@serieComprobante VARCHAR(30)
+
     print convert(varchar, @idArticulo)
 	BEGIN TRY
 	
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 		
-		SELECT TOP 1 @rucProv = rucEmisor, @fechaEmision = CAST(fechaEmision AS date), @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
+		SELECT TOP 1 @serieComprobante = serieComprobante ,@rucProv = rucEmisor, @fechaEmision = CAST(fechaEmision AS date), @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
 		
-		SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
+		SELECT TOP 1 @idProveedor = idProveedor,@CustomerId = ISNULL(CustomerId,0) FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
 
 		IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
 			BEGIN
@@ -127,7 +129,7 @@ BEGIN
 			IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle t INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo WHERE t.idDocumento = @idDocumento  AND a.llevaInventario = 1)
 				BEGIN
 					DECLARE @codDocInv VARCHAR(2) ,@multiplier INT
-                           ,@idTipoDocumento INT ,@idTipoTransaccion INT 
+                           ,@idTipoDocumento INT ,@idTipoTransaccion INT ,@idTransaccion INT
 					
                     DECLARE @tblDetails AS TABLE (
 							idArticulo  INT NOT NULL
@@ -164,22 +166,30 @@ BEGIN
 
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
-					INSERT INTO Inventario.Transaccion 
-                                    (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
-			        SELECT @idTipoTransaccion
-                           ,idArticulo
+                    --> Transaccion
+                    INSERT INTO Inventario.Transaccion
+                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                    SELECT @idTipoTransaccion,@fechaEmision,@idTipoDocumento,@idDocumento,@CustomerId,@idUsuario,@idEntidad,@serieComprobante 
+
+                    SET @idTransaccion = SCOPE_IDENTITY()
+
+					INSERT INTO Inventario.TransaccionDetalle
+                           (idArticulo
                            ,idBodega
-                           ,@idTipoDocumento
-                           ,@idDocumento
+                           ,idMedida
+                           ,cantidad
+                           ,cantidadTransaccion
+                           ,precioUnitario
+                           ,precioCosto
+                           ,total)
+			        SELECT  idArticulo
+                           ,idBodega
                            ,idMedida
                            ,td.cantidad
                            ,(ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af WITH (NOLOCK) WHERE af.idArticulo = td.idArticulo AND af.idMedida = td.idMedida ),1) * td.cantidad) * @multiplier
                            ,precioUnitario
                            ,precioUnitario
                            ,precioTotalSimImpuestos
-                           ,@fechaEmision
-                           ,@idUsuario 
-
                     FROM @tblDetails td
 
                     EXEC dbo.Transaccion_Handler_Init 'E', @codDocInv, @idDocumento, DEFAULT

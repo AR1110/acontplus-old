@@ -40,7 +40,7 @@ BEGIN
     WHERE ci.estado = 1
       AND hc.idCuentaPorCobrar = @idCuentaPorCobrar
       AND co.posfechado = 1
-      AND co.cobro = 1
+      AND co.cobro = 0
 
     SELECT @abono = SUM(hc.abono) 
     FROM dbo.ComprobanteIngreso ci WITH (NOLOCK) 

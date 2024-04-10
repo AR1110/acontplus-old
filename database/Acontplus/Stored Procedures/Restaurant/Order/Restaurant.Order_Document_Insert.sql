@@ -53,6 +53,7 @@ BEGIN
     ,@transporte DECIMAL(18,5)
     ,@itemsToPay NVARCHAR(MAX)
     ,@customDetail NVARCHAR(MAX)
+    ,@CustomerId INT
 
     
     DECLARE @tblItems AS TABLE(
@@ -149,6 +150,8 @@ BEGIN
     SELECT TOP 1 @estadoPagoId = idEstadoPago 
     FROM dbo.EstadoPago WITH(NOLOCK) 
     WHERE codigo = 'PE'
+
+    SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM Cliente WITH (NOLOCK) WHERE idCliente = @customerCompanyId
 
     IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
         BEGIN
@@ -681,25 +684,32 @@ BEGIN
 
             SET @codDocTran = (SELECT IIF(@codDoc = 'FV', 'FE', 'NE'))
             
+            SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
+
             IF EXISTS (SELECT 1 FROM @tblInventory)
                 BEGIN
-                    DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT
+                    DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT ,@idTransaccion INT
 
                     SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDocTran
 
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
 
-                   INSERT INTO Inventario.Transaccion 
-                           (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
-			        SELECT @idTipoTransaccion,idArticulo,idBodega, @idTipoDocumentoIv,@documentoId,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto,@fechaEmision,@userId 
+                    --> Transaccion
+                    INSERT INTO Inventario.Transaccion
+                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                    SELECT @idTipoTransaccion,@fechaEmision,@idTipoDocumentoIv,@documentoId,@customerId,@userId,@companyId,@serieDocument 
+                    
+                    SET @idTransaccion = SCOPE_IDENTITY()
+
+                    INSERT INTO Inventario.TransaccionDetalle
+                           (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total)
+			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto 
                     FROM @tblInventory
 
                    EXEC dbo.Transaccion_Handler_Init 'S', @codDocTran, @documentoId, DEFAULT
                 END
 
         END
-
-    SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
 
         --------------------END DOCUMENTOS---------------------
     DECLARE @codDocCuentaCobrar VARCHAR(2)

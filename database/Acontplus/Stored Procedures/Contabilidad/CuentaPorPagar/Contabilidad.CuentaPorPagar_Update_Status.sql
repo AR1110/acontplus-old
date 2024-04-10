@@ -38,7 +38,7 @@ BEGIN
     WHERE ce.estado = 1
       AND hp.idCuentaPorPagar = @idCuentaPorPagar
       AND pa.posfechado = 1
-      AND pa.cobro = 1
+      AND pa.cobro = 0
 
     SELECT @abono = SUM(hp.abono) 
     FROM dbo.ComprobanteEgreso ce WITH (NOLOCK) 
