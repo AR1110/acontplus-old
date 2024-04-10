@@ -284,7 +284,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>obs</rd:DefaultName>
-            <Top>12.84675cm</Top>
+            <Top>12.52925cm</Top>
             <Left>0.00001cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
@@ -317,7 +317,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>obs</rd:DefaultName>
-            <Top>13.55258cm</Top>
+            <Top>13.23508cm</Top>
             <Left>0.00001cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
@@ -655,45 +655,8 @@
                       <RowSpan>2</RowSpan>
                     </CellContents>
                   </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox166">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>OBSERVACIÓN</Value>
-                                <Style>
-                                  <FontWeight>Bold</FontWeight>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox166</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Color>LightGrey</Color>
-                            <Style>Solid</Style>
-                          </Border>
-                          <VerticalAlign>Middle</VerticalAlign>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                      <RowSpan>2</RowSpan>
-                    </CellContents>
-                  </TablixCornerCell>
                 </TablixCornerRow>
                 <TablixCornerRow>
-                  <TablixCornerCell />
                   <TablixCornerCell />
                 </TablixCornerRow>
               </TablixCornerRows>
@@ -707,12 +670,15 @@
                   <Width>2.98683cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>5.45167cm</Width>
+                  <Width>3.589cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>4.99767cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>3.7115cm</Height>
+                  <Height>3.22467cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -720,30 +686,30 @@
                           <TablixBody>
                             <TablixColumns>
                               <TablixColumn>
-                                <Width>3.50929cm</Width>
+                                <Width>4.913cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.40371cm</Width>
+                                <Width>1.31905cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.33911cm</Width>
+                                <Width>1.34246cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.02269cm</Width>
+                                <Width>1.25664cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.19653cm</Width>
+                                <Width>1.39263cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.18533cm</Width>
+                                <Width>1.26504cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>3.69483cm</Width>
+                                <Width>4.99767cm</Width>
                               </TablixColumn>
                             </TablixColumns>
                             <TablixRows>
                               <TablixRow>
-                                <Height>2.52708cm</Height>
+                                <Height>2.05083cm</Height>
                                 <TablixCells>
                                   <TablixCell>
                                     <CellContents>
@@ -1009,7 +975,7 @@
                                 </TablixCells>
                               </TablixRow>
                               <TablixRow>
-                                <Height>1.18442cm</Height>
+                                <Height>1.17384cm</Height>
                                 <TablixCells>
                                   <TablixCell>
                                     <CellContents>
@@ -1210,7 +1176,7 @@
                                               </TextRun>
                                             </TextRuns>
                                             <Style>
-                                              <TextAlign>Left</TextAlign>
+                                              <TextAlign>Center</TextAlign>
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
@@ -1309,9 +1275,10 @@
                             </Border>
                           </Style>
                         </Tablix>
-                        <ColSpan>3</ColSpan>
+                        <ColSpan>4</ColSpan>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell />
                     <TablixCell />
                     <TablixCell />
                   </TablixCells>
@@ -1578,6 +1545,85 @@
                         </TablixMember>
                       </TablixMembers>
                     </TablixMember>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>0.74817cm</Size>
+                        <CellContents>
+                          <Textbox Name="Textbox2">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>OBSERVACIÓN</Value>
+                                    <Style>
+                                      <FontFamily>Arial</FontFamily>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style>
+                                  <TextAlign>Center</TextAlign>
+                                </Style>
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Textbox2</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <VerticalAlign>Middle</VerticalAlign>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                      <TablixMembers>
+                        <TablixMember>
+                          <TablixHeader>
+                            <Size>0.6cm</Size>
+                            <CellContents>
+                              <Textbox Name="obs1">
+                                <CanGrow>true</CanGrow>
+                                <KeepTogether>true</KeepTogether>
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value>=Fields!obs.Value</Value>
+                                        <Style>
+                                          <FontFamily>Arial</FontFamily>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style>
+                                      <TextAlign>Center</TextAlign>
+                                    </Style>
+                                  </Paragraph>
+                                </Paragraphs>
+                                <rd:DefaultName>obs1</rd:DefaultName>
+                                <Style>
+                                  <Border>
+                                    <Color>LightGrey</Color>
+                                    <Style>Solid</Style>
+                                  </Border>
+                                  <VerticalAlign>Middle</VerticalAlign>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                  <PaddingRight>2pt</PaddingRight>
+                                  <PaddingTop>2pt</PaddingTop>
+                                  <PaddingBottom>2pt</PaddingBottom>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
+                        </TablixMember>
+                      </TablixMembers>
+                    </TablixMember>
                   </TablixMembers>
                 </TablixMember>
               </TablixMembers>
@@ -1645,54 +1691,7 @@
                         </SortExpression>
                       </SortExpressions>
                       <TablixMembers>
-                        <TablixMember>
-                          <Group Name="deviceName1">
-                            <GroupExpressions>
-                              <GroupExpression>=Fields!deviceName.Value</GroupExpression>
-                            </GroupExpressions>
-                          </Group>
-                          <SortExpressions>
-                            <SortExpression>
-                              <Value>=Fields!deviceName.Value</Value>
-                            </SortExpression>
-                          </SortExpressions>
-                          <TablixHeader>
-                            <Size>3.135cm</Size>
-                            <CellContents>
-                              <Textbox Name="obs1">
-                                <CanGrow>true</CanGrow>
-                                <KeepTogether>true</KeepTogether>
-                                <Paragraphs>
-                                  <Paragraph>
-                                    <TextRuns>
-                                      <TextRun>
-                                        <Value>=Fields!obs.Value</Value>
-                                        <Style>
-                                          <FontSize>9pt</FontSize>
-                                        </Style>
-                                      </TextRun>
-                                    </TextRuns>
-                                    <Style>
-                                      <TextAlign>Center</TextAlign>
-                                    </Style>
-                                  </Paragraph>
-                                </Paragraphs>
-                                <rd:DefaultName>obs1</rd:DefaultName>
-                                <Style>
-                                  <Border>
-                                    <Color>LightGrey</Color>
-                                    <Style>Solid</Style>
-                                  </Border>
-                                  <VerticalAlign>Middle</VerticalAlign>
-                                  <PaddingLeft>2pt</PaddingLeft>
-                                  <PaddingRight>2pt</PaddingRight>
-                                  <PaddingTop>2pt</PaddingTop>
-                                  <PaddingBottom>2pt</PaddingBottom>
-                                </Style>
-                              </Textbox>
-                            </CellContents>
-                          </TablixHeader>
-                        </TablixMember>
+                        <TablixMember />
                       </TablixMembers>
                     </TablixMember>
                   </TablixMembers>
@@ -1701,7 +1700,7 @@
             </TablixRowHierarchy>
             <DataSetName>orderDetails</DataSetName>
             <Top>7.71737cm</Top>
-            <Height>5.05967cm</Height>
+            <Height>4.57284cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>13</ZIndex>
             <Style>
