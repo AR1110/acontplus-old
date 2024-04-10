@@ -127,7 +127,7 @@ export class OrderListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.get();
+    this.get();
   }
   onChangePageSize() {
     this.dataSearch.pageIndex = 1;

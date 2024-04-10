@@ -53,6 +53,15 @@
           >
             <fa-icon [icon]="'cogs'"></fa-icon>
           </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-success btn-sm mx-1"
+            title="Iniciar Reparaciones"
+            (click)="openModalMaintenance(item.id)"
+          >
+            <fa-icon [icon]="'cogs'"></fa-icon>
+          </button>
         </td>
         <td>{{ item.nombreFiscal }}</td>
         <td>{{ item.sequence }}</td>
