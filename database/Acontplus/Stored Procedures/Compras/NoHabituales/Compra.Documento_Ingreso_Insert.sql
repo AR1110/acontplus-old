@@ -78,6 +78,9 @@ BEGIN
 		,descripcion VARCHAR(255) NOT NULL
         ,llevaInventario BIT NOT NULL
         ,cantidadTransaccion NUMERIC(18,5) NOT NULL
+        ,conversion NUMERIC(18,5) NOT NULL
+        ,precioCosto NUMERIC(18,5) NOT NULL
+        ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
 	)
 
 	DECLARE @tbTaxes AS TABLE (
@@ -124,7 +127,6 @@ BEGIN
             ,cuotas             NVARCHAR(MAX) as json
         )
 
-
 		INSERT INTO @document 
 		      (idPuntoEmision,idProveedor,idTiempoCredito,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
 		SELECT idPuntoEmision,idProveedor,idTiempoCredito,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
@@ -144,8 +146,8 @@ BEGIN
 		) as dt
 		
 		INSERT INTO @tblDetails
-              (orderIndex,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion)
-		SELECT orderIndex,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion 
+              (orderIndex,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,precioCosto,conversion,precioCostoFraccionado)
+		SELECT orderIndex,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,precioCosto,conversion,precioCostoFraccionado 
 		FROM OPENJSON (@detalles) WITH 
         (
 		     orderIndex             INT 
@@ -167,6 +169,9 @@ BEGIN
 		    ,descripcion            VARCHAR(255)
             ,llevaInventario        BIT
             ,cantidadTransaccion    NUMERIC(15,5)
+            ,precioCosto            NUMERIC(15,5)
+            ,conversion             NUMERIC(15,5)
+            ,precioCostoFraccionado NUMERIC(15,5)
 		)
 		
 		INSERT INTO @tbTaxes
@@ -318,8 +323,8 @@ BEGIN
                             SET @idTransaccion = SCOPE_IDENTITY()
 
                              INSERT INTO Inventario.TransaccionDetalle
-                                    (idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total)
-			                 SELECT  idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto 
+                                    (idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total)
+			                 SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,precioTotalSinImpuesto 
                              FROM @tblDetails 
                              WHERE llevaInventario = 1
 
