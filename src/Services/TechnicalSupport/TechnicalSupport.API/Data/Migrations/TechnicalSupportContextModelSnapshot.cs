@@ -374,6 +374,12 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
+
                     b.Property<decimal>("Discount")
                         .HasColumnType("numeric(18,5), null");
 
