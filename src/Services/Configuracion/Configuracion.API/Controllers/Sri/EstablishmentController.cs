@@ -14,9 +14,9 @@ namespace Configuracion.API.Controllers.Sri
     public class EstablishmentController : ControllerBase
     {
         private readonly IEstablishmentService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public EstablishmentController(IEstablishmentService service, LogWriter log)
+        public EstablishmentController(IEstablishmentService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

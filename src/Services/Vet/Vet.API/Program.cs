@@ -4,7 +4,7 @@ using Common.Core.Utils;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
-using Services.Common.Middleware;
+
 using Vet.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +29,7 @@ builder.Services.AddSwaggerDocumentation();
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<LogWriter>();
+builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
@@ -45,7 +45,7 @@ else
     app.UseHttpsRedirection();
 }
 
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseStatusCodePages();
 
 // Configure the HTTP request pipeline.
 app.UseSwaggerDocumentation();

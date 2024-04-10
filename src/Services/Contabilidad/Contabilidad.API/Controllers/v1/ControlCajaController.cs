@@ -11,10 +11,10 @@ namespace Contabilidad.API.Controllers.v1
     [Route("api/[controller]")]
     public class ControlCajaController : ControllerBase
     {
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         private readonly IControlCajaService _service;
 
-        public ControlCajaController(LogWriter log, IControlCajaService service)
+        public ControlCajaController(ICustomLogger log, IControlCajaService service)
         {
             _log = log;
             _service = service;

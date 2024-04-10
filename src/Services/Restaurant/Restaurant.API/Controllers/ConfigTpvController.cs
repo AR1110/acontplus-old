@@ -11,8 +11,8 @@ namespace Restaurant.API.Controllers
     {
         private readonly IConsumptionConfigService _configService;
 
-        private readonly LogWriter _log;
-        public ConfigTpvController(IConsumptionConfigService configService, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ConfigTpvController(IConsumptionConfigService configService, ICustomLogger log)
         {
             _configService = configService;
             _log = log;

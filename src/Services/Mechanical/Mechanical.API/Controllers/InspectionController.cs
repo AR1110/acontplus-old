@@ -12,8 +12,8 @@ namespace Mechanical.API.Controllers
     public class InspectionController : BaseApiController
     {
         public readonly IInspectionService _inspectionService;
-        public readonly LogWriter _log;
-        public InspectionController(IInspectionService inspectionService, LogWriter log)
+        public readonly ICustomLogger _log;
+        public InspectionController(IInspectionService inspectionService, ICustomLogger log)
         {
             _inspectionService = inspectionService;
             _log = log;

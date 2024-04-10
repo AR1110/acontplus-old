@@ -1,4 +1,4 @@
-import { TarifaProductSearch } from "./tarifa.model";
+import { TarifaProductSearch } from "../shared/models/tarifa.model";
 
 export interface Product {
   descripcion: string;

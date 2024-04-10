@@ -12,8 +12,8 @@ namespace Ventas.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        private readonly LogWriter _log;
-        public EmpresaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public EmpresaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);

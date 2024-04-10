@@ -9,8 +9,8 @@ namespace TechnicalSupport.API.Controllers
     public class CategoryController : BaseApiController
     {
         private readonly TechnicalSupportContext _context;
-        private readonly LogWriter _log;
-        public CategoryController(TechnicalSupportContext context, LogWriter log)
+        private readonly ICustomLogger _log;
+        public CategoryController(TechnicalSupportContext context, ICustomLogger log)
         {
             _context = context;
             _log = log;

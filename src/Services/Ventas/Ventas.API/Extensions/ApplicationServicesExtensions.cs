@@ -15,7 +15,7 @@ namespace Ventas.API.Extensions
 
             services.AddScoped<INotaEntregaService, NotaEntregaService>();
 
-            services.AddSingleton<LogWriter>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             return services;
         }
     }

@@ -7,7 +7,7 @@ import { hideLoader, showLoader } from "@core/utils/loader";
 import { LotPriceService } from "@modules/inventory/services/lot-price.service";
 import { SubCategorySelectMultipleComponent } from "@modules/inventory/shared/components/sub-category/sub-category-select-multiple/sub-category-select-multiple.component";
 import { SupplierSearchComponent } from "@modules/purchase/components/supplier-search/supplier-search.component";
-import { TarifaSelectHtmlOnly } from "@modules/inventory/models/tarifa.model";
+import { TarifaSelectHtmlOnly } from "@modules/inventory/shared/models/tarifa.model";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { isValidField } from "@core/utils/utils";

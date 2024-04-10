@@ -11,8 +11,8 @@ namespace Inventario.API.Controllers
     public class TarifaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public TarifaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public TarifaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

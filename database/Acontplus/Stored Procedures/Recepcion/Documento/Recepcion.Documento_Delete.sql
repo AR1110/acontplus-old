@@ -10,10 +10,8 @@ GO
 -- Create date: 2022-10-31
 -- Description:	SP PARA ELIMINAR LOS COMPROBANTES ELECTRONICOS DEL SRI
 -- =============================================
-IF OBJECT_ID(N'Recepcion.Documento_Delete', N'P') IS NOT NULL
-DROP PROCEDURE Recepcion.Documento_Delete 
-GO
-CREATE PROCEDURE Recepcion.Documento_Delete @idRol INT
+
+CREATE OR ALTER PROCEDURE Recepcion.Documento_Delete @idRol INT
 ,@idDocumento INT
 ,@backendInfo VARCHAR(MAX) = NULL
 AS
@@ -25,7 +23,7 @@ BEGIN
 	
 	BEGIN TRY
         
-        SET @idUsuario = (SELECT idUsuario FROM dbo.Rol WHERE idRol = @idRol)
+        SET @idUsuario = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @idRol)
 		
         IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND complete = 1)
 			 BEGIN
@@ -52,6 +50,6 @@ BEGIN
 		DECLARE @method VARCHAR(200)
 		SET @method = (SELECT method FROM OPENJSON(@backendInfo) WITH(method VARCHAR(200) '$.methodName'))
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
-		VALUES (NEWID(), @method, ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
+		VALUES (NEWID(), 'DocumentoRecibido/Delete', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH 
 END

@@ -15,8 +15,8 @@ namespace Ventas.API.Controllers.v1
     public class ClienteController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public ClienteController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ClienteController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

@@ -3,6 +3,8 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EstablishmentServiceService } from '@modules/config/services/sri/establishment-service.service';
 import { Tabulator } from 'tabulator-tables';
+import { EstabAddEditModalComponent } from './components/estab-add-edit-modal/estab-add-edit-modal.component';
+import { ModalService } from '@core/services/modal.service';
 
 @Component({
   selector: 'app-establishment-page',
@@ -12,11 +14,11 @@ import { Tabulator } from 'tabulator-tables';
     BreadcrumbComponent
   ],
   templateUrl: './establishment-page.component.html',
-  styleUrl:"./establishment-page.component.scss"
 })
 export class EstablishmentPageComponent {
 
   private estabSvc = inject(EstablishmentServiceService);
+  private modalSvc = inject(ModalService)
 
   getEstabs(){
     this.estabSvc.getAll({}).subscribe({
@@ -32,5 +34,11 @@ export class EstablishmentPageComponent {
 
   ngOnInit() {
     this.getEstabs()
+  }
+
+  openModalAddEdit(){
+    const modalRef = this.modalSvc.openModalCustom(EstabAddEditModalComponent, {
+      size: 'lg'
+    })
   }
 }

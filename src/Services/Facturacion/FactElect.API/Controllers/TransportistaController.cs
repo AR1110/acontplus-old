@@ -12,8 +12,8 @@ namespace FactElect.API.Controllers
     public class TransportistaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public TransportistaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public TransportistaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

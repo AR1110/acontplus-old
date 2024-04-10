@@ -13,9 +13,9 @@ namespace Compras.API.Controllers
     {
         private IConfiguration _configuration;
         private IOrdenCompraService _ordeCompraSvc;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public OrdenCompraController(IConfiguration configuration, IOrdenCompraService ordeCompraSvc, LogWriter log)
+        public OrdenCompraController(IConfiguration configuration, IOrdenCompraService ordeCompraSvc, ICustomLogger log)
         {
             _configuration = configuration;
             _ordeCompraSvc = ordeCompraSvc;

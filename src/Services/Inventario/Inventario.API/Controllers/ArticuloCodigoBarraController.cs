@@ -12,9 +12,9 @@ namespace Inventario.API.Controllers
     public class ArticuloCodigoBarraController : ControllerBase
     {
         private readonly IArticuloCodigoBarraService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public ArticuloCodigoBarraController(IArticuloCodigoBarraService service, LogWriter log)
+        public ArticuloCodigoBarraController(IArticuloCodigoBarraService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

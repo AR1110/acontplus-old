@@ -12,8 +12,8 @@ namespace Inventario.API.Controllers
     public class MedidaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public MedidaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public MedidaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

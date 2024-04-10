@@ -9,8 +9,8 @@ namespace Configuracion.API.Controllers
     public class PrintController : BaseApiController
     {
         private readonly IPrintService _print;
-        private readonly LogWriter _log;
-        public PrintController(LogWriter log, IPrintService print)
+        private readonly ICustomLogger _log;
+        public PrintController(ICustomLogger log, IPrintService print)
         {
             _print = print;
             _log = log;

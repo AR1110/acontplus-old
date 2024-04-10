@@ -16,8 +16,8 @@ namespace Reports.API.Controllers.v2
     {
         private readonly IReportService _reportService;
         private readonly IRdlcReportService _rdlcreport;
-        private readonly LogWriter _log;
-        public ReporteController(IReportService reportService, IRdlcReportService report, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ReporteController(IReportService reportService, IRdlcReportService report, ICustomLogger log)
         {
             _reportService = reportService;
             _rdlcreport = report;

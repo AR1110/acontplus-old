@@ -14,8 +14,8 @@ namespace WebUI.Controllers.Config
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
 
 
-        private readonly LogWriter _log;
-        public EstabAsigController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public EstabAsigController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
 

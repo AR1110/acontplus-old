@@ -57,6 +57,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
         })) || [],
       }));
     }
+    return groupEstabs
   }
 
   if (isGroupBodega && bodegas) {

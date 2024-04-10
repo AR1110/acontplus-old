@@ -12,9 +12,9 @@ namespace Configuracion.API.Controllers
     public class BodegaAsignacionController : ControllerBase
     {
         private readonly IBodegaAsignacionService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public BodegaAsignacionController(IBodegaAsignacionService service, LogWriter log)
+        public BodegaAsignacionController(IBodegaAsignacionService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

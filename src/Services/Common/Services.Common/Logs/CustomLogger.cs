@@ -3,14 +3,18 @@ using Microsoft.Extensions.Configuration;
 
 namespace Services.Common.Logs
 {
-    public sealed class LogWriter
+    public interface ICustomLogger
     {
-        private IConfiguration _configuration;
-        public LogWriter(IConfiguration configuration)
+        void LogActivity(string message, string status = "");
+    }
+    public class CustomLogger: ICustomLogger
+    {
+        private readonly IConfiguration _configuration;
+        public CustomLogger(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-        public void LogActivity(string message, string status = "")
+        public void LogActivity(string message, string status)
         {
             try
             {

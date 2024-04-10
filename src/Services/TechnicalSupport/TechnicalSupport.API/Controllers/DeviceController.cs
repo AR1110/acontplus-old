@@ -10,8 +10,8 @@ namespace TechnicalSupport.API.Controllers
     public class DeviceController : BaseApiController
     {
         private IDeviceService _deviceService;
-        private readonly LogWriter _log;
-        public DeviceController(LogWriter log, IDeviceService deviceService)
+        private readonly ICustomLogger _log;
+        public DeviceController(ICustomLogger log, IDeviceService deviceService)
         {
             _log = log;
             _deviceService = deviceService;

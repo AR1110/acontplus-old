@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <label for="nombreComercial">Nombre Comercial: <span class="text-danger">*</span></label>
+    <input type="text" name="nombreComercial" id="nombreComercial" class="form-control">
+  </div>
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="nroEstab">Nro. Establecimiento</label>
+        <input type="text" name="nroEstab" id="nroEstab" class="form-control">
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="tipoContribuyente">Tipo Contribuyente: <span class="text-danger">*</span></label>
+        <select name="tipoContribuyente" id="tipoContribuyente" class="form-select">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+</div>

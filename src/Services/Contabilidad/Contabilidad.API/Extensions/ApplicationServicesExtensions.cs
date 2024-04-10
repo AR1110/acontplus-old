@@ -25,7 +25,7 @@ namespace Contabilidad.API.Extensions
 
 
 
-            services.AddSingleton<LogWriter>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             return services;
         }
     }

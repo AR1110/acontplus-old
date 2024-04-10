@@ -12,9 +12,9 @@ namespace Configuracion.API.Controllers
     public class UserProfileController : ControllerBase
     {
         private readonly IUserProfileService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public UserProfileController(IUserProfileService service, LogWriter log)
+        public UserProfileController(IUserProfileService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

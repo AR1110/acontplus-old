@@ -10,8 +10,8 @@ namespace Configuracion.API.Controllers
     public class TipoEntidadController : ControllerBase
     {
         public readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public TipoEntidadController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public TipoEntidadController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

@@ -17,7 +17,7 @@ namespace TechnicalSupport.API.Services
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             var ds = await _repository.GetDataSetAsync("TechnicalSupport.Order_Get", parameters);
-            if (DataValidation.DataSetIsNull(ds))
+            if (DataValidation.DataSetIsNull(ds, true))
             {
                 return new ApiResponse { code = "0", message = "No se encontraron datos" };
             }

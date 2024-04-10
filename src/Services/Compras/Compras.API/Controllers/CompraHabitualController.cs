@@ -11,8 +11,8 @@ namespace Compras.API.Controllers
     public class CompraHabitualController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public CompraHabitualController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public CompraHabitualController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

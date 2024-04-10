@@ -18,12 +18,12 @@ namespace FactElect.API.Controllers.Customer
         private readonly RucService _cConsultaSri;
         private readonly CedulaService _cedulasSri;
         private readonly FactElectContext _customerContext;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
         public ConsultasController(RucService cConsultaSri,
             CedulaService cedulasSri,
             IConfiguration configuration,
             FactElectContext customerContext,
-            LogWriter log
+            ICustomLogger log
             )
         {
             _cConsultaSri = cConsultaSri;

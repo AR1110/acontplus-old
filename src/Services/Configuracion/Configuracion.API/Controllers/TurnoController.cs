@@ -10,8 +10,8 @@ namespace Configuracion.API.Controllers
     public class TurnoController : ControllerBase
     {
         private readonly ITurnoService _turnoSvc;
-        private readonly LogWriter _log;
-        public TurnoController(ITurnoService turnoSvc, LogWriter log)
+        private readonly ICustomLogger _log;
+        public TurnoController(ITurnoService turnoSvc, ICustomLogger log)
         {
             _turnoSvc = turnoSvc;
             _log = log;

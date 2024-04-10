@@ -7,8 +7,8 @@ namespace Configuracion.API.Controllers
     public class EstadoDocumentoController : BaseApiController
     {
         private readonly IEstadoDocumentoService _estadoDoc;
-        private readonly LogWriter _logWriter;
-        public EstadoDocumentoController(IEstadoDocumentoService estadoDocumento, LogWriter log)
+        private readonly ICustomLogger _logWriter;
+        public EstadoDocumentoController(IEstadoDocumentoService estadoDocumento, ICustomLogger log)
         {
             _estadoDoc = estadoDocumento;
             _logWriter = log;

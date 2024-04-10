@@ -12,8 +12,8 @@ namespace Ventas.API.Controllers
     public class ProformaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public ProformaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public ProformaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

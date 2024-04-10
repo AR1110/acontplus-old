@@ -1,16 +1,17 @@
-import { Component, Input, OnInit, inject, input } from '@angular/core';
+import { Component, inject, input, Input, OnInit } from '@angular/core';
+import { CODE_REPORT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
+import { ModalService } from '@core/services/modal.service';
+import { SharedService } from '@core/services/shared.service';
+import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { ORDER_STATUS_CODE } from '@modules/technical-support/constants/tech-support.constants';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { AppModule } from 'src/app/app.module';
-import { OrderModalComponent } from '../order-modal/order-modal.component';
-import { ModalService } from '@core/services/modal.service';
 import swal from 'sweetalert2';
-import { ToasterService } from '@core/services/toaster.service';
+
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
-import { SharedService } from '@core/services/shared.service';
-import { CODE_REPORT } from '@core/constants/global.constants';
+import { OrderModalComponent } from '../order-modal/order-modal.component';
 
 @Component({
   selector: 'app-order-list',
@@ -138,7 +139,7 @@ export class OrderListComponent implements OnInit {
   openModalMaintenance(id: number) {
     const modalRef = this.modalService.openModalCustom(
       OrderMaintenanceModalComponent,
-      { centered: true, size: 'xl' }
+      {  size: 'xl' }
     );
     modalRef.componentInstance.params = { id };
   }

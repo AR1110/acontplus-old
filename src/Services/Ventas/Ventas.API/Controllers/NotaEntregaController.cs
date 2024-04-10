@@ -12,8 +12,8 @@ namespace Ventas.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly INotaEntregaService _notaEntrega;
-        private readonly LogWriter _log;
-        public NotaEntregaController(IConfiguration configuration, INotaEntregaService notaEntrega, LogWriter log)
+        private readonly ICustomLogger _log;
+        public NotaEntregaController(IConfiguration configuration, INotaEntregaService notaEntrega, ICustomLogger log)
         {
             _configuration = configuration;
             _notaEntrega = notaEntrega;

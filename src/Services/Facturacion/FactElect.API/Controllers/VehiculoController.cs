@@ -12,8 +12,8 @@ namespace FactElect.API.Controllers
     public class VehiculoController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public VehiculoController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public VehiculoController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

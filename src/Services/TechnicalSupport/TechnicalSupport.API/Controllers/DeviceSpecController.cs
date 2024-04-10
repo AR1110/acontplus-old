@@ -12,9 +12,9 @@ namespace TechnicalSupport.API.Controllers
     public class DeviceSpecController : ControllerBase
     {
         private IDeviceSpecService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public DeviceSpecController(IDeviceSpecService service, LogWriter log)
+        public DeviceSpecController(IDeviceSpecService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

@@ -12,8 +12,8 @@ namespace Mechanical.API.Controllers
     public class SupportController : BaseApiController
     {
         public readonly ISupportService _supportService;
-        public readonly LogWriter _log;
-        public SupportController(ISupportService supportService, LogWriter log)
+        public readonly ICustomLogger _log;
+        public SupportController(ISupportService supportService, ICustomLogger log)
         {
             _supportService = supportService;
             _log = log;

@@ -1,0 +1,67 @@
+ <div ngbAccordion [closeOthers]="true">
+    @for (item of orderDetails(); track $index) {
+    <div ngbAccordionItem  >
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          {{ item.deviceName }}
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="row">
+                  <div class="form-group">
+                    <label for="productSearch">Buscar producto: </label>
+                    <app-product-search (onProductSelected)="onProductSelected($event)" [props]="{
+                                        isSearchSimple: true
+                                      }" />
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="row">
+                  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                      <label for="warehouse">Bodega: </label>
+                      <select name="warehouse" id="warehouse" class="form-select">
+                        @for (item of bodegas(); track $index) {
+                          <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                      <label for="feed">Tarifa: </label>
+                      <select name="feed" id="feed" class="form-select">
+                        @for (item of feeds(); track $index) {
+                          <option [ngValue]="item.idTarifa">{{item.descripcion}}</option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col">
+                <div class="table-responsive">
+                  <app-tabulator
+                    [columnNames]="columnNames"
+                    [tableData]="orderMaintenances()"
+                  ></app-tabulator>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    }
+  </div>

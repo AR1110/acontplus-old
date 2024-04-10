@@ -10,6 +10,9 @@ namespace TechnicalSupport.API.Entities
         public int BodegaId { get; set; }
         public int FeeId { get; set; }
         public int MedidaId { get; set; }
+        [Required]
+        [MaxLength(300)]
+        public string Descripcion { get; set; }
         public OrderDetail OrderDetail { get; set; }
         public int OrderDetailId { get; set; }
         public int ProductId { get; set; }

@@ -13,9 +13,9 @@ namespace Compras.API.Controllers
     {
         private IConfiguration _configuration;
         private ICompraNoHabitualService _compraNoHabSvc;
-        private LogWriter _log;
+        private ICustomLogger _log;
 
-        public CompraNoHabitualController(IConfiguration configuration, ICompraNoHabitualService compraNoHabSvc, LogWriter log)
+        public CompraNoHabitualController(IConfiguration configuration, ICompraNoHabitualService compraNoHabSvc, ICustomLogger log)
         {
             _configuration = configuration;
             _compraNoHabSvc = compraNoHabSvc;

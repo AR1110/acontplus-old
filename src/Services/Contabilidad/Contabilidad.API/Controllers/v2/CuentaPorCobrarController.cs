@@ -14,9 +14,9 @@ namespace Contabilidad.API.Controllers.v2
     public class CuentaPorCobrarController : ControllerBase
     {
         private readonly ICuentaPorCobrarService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public CuentaPorCobrarController(ICuentaPorCobrarService service, LogWriter log)
+        public CuentaPorCobrarController(ICuentaPorCobrarService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

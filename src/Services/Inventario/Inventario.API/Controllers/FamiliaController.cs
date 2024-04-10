@@ -11,8 +11,8 @@ namespace Inventario.API.Controllers
     public class FamiliaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public FamiliaController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public FamiliaController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

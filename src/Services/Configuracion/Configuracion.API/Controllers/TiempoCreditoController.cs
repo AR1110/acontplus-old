@@ -10,8 +10,8 @@ namespace Configuracion.API.Controllers
     public class TiempoCreditoController : ControllerBase
     {
         public readonly IConfiguration _configuration;
-        private readonly LogWriter _log;
-        public TiempoCreditoController(IConfiguration configuration, LogWriter log)
+        private readonly ICustomLogger _log;
+        public TiempoCreditoController(IConfiguration configuration, ICustomLogger log)
         {
             _configuration = configuration;
             _log = log;

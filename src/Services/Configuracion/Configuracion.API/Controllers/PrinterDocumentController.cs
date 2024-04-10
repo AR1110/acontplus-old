@@ -9,8 +9,8 @@ namespace Configuracion.API.Controllers
     public class PrinterDocumentController : BaseApiController
     {
         private readonly ConfigContext _context;
-        private readonly LogWriter _log;
-        public PrinterDocumentController(ConfigContext context, LogWriter log)
+        private readonly ICustomLogger _log;
+        public PrinterDocumentController(ConfigContext context, ICustomLogger log)
         {
             _context = context;
             _log = log;

@@ -15,9 +15,9 @@ namespace Configuracion.API.Controllers
     public class UserCustomerRoleController : ControllerBase
     {
         private readonly IUserCustomerRoleService _service;
-        private readonly LogWriter _log;
+        private readonly ICustomLogger _log;
 
-        public UserCustomerRoleController(IUserCustomerRoleService service, LogWriter log)
+        public UserCustomerRoleController(IUserCustomerRoleService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

@@ -45,7 +45,7 @@ namespace WebUI
 
             //builder.Services.AddHttpContextAccessor();
 
-            builder.Services.AddSingleton<LogWriter>();
+            builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
             var app = builder.Build();
 
