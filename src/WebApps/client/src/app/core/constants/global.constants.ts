@@ -76,7 +76,7 @@ export enum CODE_REPORT {
   CCP = 'CCP', //Contabilidad Cartera Proveedor
   CCPC = 'CCPC', //Contabilidad Cartera Proveedor Cuota
   CDCC = 'CDCC', //Contabilidad Detalle Control Caja
-  RTS = 'RTS',
+  RTS = 'RTS', // Technical Support Report
 }
 
 export enum CODE_ESTADO {
