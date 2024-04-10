@@ -1,4 +1,4 @@
-<form>
+<form [formGroup]="fbConvertDoc" (ngSubmit)="convert()">
   <div class="modal-header">
     <h4 class="modal-title">
       <fa-icon [icon]="'sync-alt'"></fa-icon> Convertir
@@ -8,10 +8,18 @@
   <div class="modal-body">
     <div class="col-lg">
       <div class="form-floating">
-        <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+        <select class="form-select"
+            formControlName="code"
+            name="code"
+            id="floatingSelect"
+            aria-label="Floating label select example"
+          >
           <option selected disabled>::SELECCIONE::</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+          @for (item of tipoDocumento; track $index) {
+          <option [ngValue]="item.code">
+            {{ item.code }} - {{ item.name }}
+          </option>
+          }
         </select>
         <label for="floatingSelect">Tipo Documento</label>
       </div>

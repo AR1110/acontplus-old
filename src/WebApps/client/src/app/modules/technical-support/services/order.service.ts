@@ -78,6 +78,13 @@ export class OrderService {
       .get(`${this.url}?json=${params}`)
       .pipe(map((response) => response));
   }
+
+  convert(data: any) {
+    return this.http
+      .post(`${this.url}Convert`, data)
+      .pipe(map((response) => response));
+  }
+
   post(data: any) {
     return this.http
       .post(`${this.url}`, data)
