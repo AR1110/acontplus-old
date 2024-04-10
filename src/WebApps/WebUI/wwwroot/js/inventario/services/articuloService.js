@@ -449,7 +449,7 @@
          * ✅
          */
         service.getForPurchase = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 14 }), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ ...query, tipo: 9 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
