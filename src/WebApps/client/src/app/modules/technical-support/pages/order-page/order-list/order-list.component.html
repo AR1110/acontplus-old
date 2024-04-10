@@ -19,47 +19,24 @@
       <tr>
         <td scope="row" class="text-center">{{ $index + 1 }}</td>
         <td>
-          <button
-            type="button"
-            class="btn btn-outline-success btn-sm mx-1"
-            title="Editar"
-            (click)="edit(item)"
-          >
+          <button type="button" class="btn btn-outline-success btn-sm mx-1" title="Editar" (click)="edit(item)">
             <fa-icon [icon]="'edit'"></fa-icon>
           </button>
 
-          <button
-            type="button"
-            class="btn btn-outline-danger btn-sm mx-1"
-            title="Eliminar"
-            (click)="askToDelete(item)"
-          >
+          <button type="button" class="btn btn-outline-danger btn-sm mx-1" title="Eliminar" (click)="askToDelete(item)">
             <fa-icon [icon]="'trash'"></fa-icon>
           </button>
-          <button
-            type="button"
-            class="btn btn-outline-danger btn-sm mx-1"
-            title="Reporte"
-            (click)="getReport(item)"
-          >
+          <button type="button" class="btn btn-outline-danger btn-sm mx-1" title="Reporte" (click)="getReport(item)">
             <fa-icon [icon]="'file-pdf'"></fa-icon>
           </button>
 
-          <button
-            type="button"
-            class="btn btn-outline-primary btn-sm mx-1"
-            title="Iniciar Reparaciones"
-            (click)="openModalMaintenance(item.id)"
-          >
+          <button type="button" class="btn btn-outline-primary btn-sm mx-1" title="Iniciar Reparaciones"
+            (click)="openModalMaintenance(item.id)">
             <fa-icon [icon]="'cogs'"></fa-icon>
           </button>
 
-          <button
-            type="button"
-            class="btn btn-outline-success btn-sm mx-1"
-            title="Iniciar Reparaciones"
-            (click)="openModalMaintenance(item.id)"
-          >
+          <button type="button" class="btn btn-outline-success btn-sm mx-1" title="Iniciar Reparaciones"
+            (click)="openModalMaintenance(item.id)">
             <fa-icon [icon]="'cogs'"></fa-icon>
           </button>
         </td>
@@ -71,13 +48,11 @@
         <td class="text-end">$ {{ item.total }}</td>
         <td>{{ item.obs }}</td>
         <td>
-          <span
-            [ngClass]="{
+          <span [ngClass]="{
               badge: true,
               'bg-success': item.enabled == 1,
               'bg-danger': item.enabled == 0
-            }"
-          >
+            }">
             {{ item.enabled == 1 ? "Activo" : "Inactivo" }}
           </span>
         </td>
@@ -92,15 +67,9 @@
     <tfoot>
       <tr>
         <td align="center" colspan="10">
-          <ngb-pagination
-            [collectionSize]="dataSearch.totalRecords"
-            [(page)]="dataSearch.pageIndex"
-            [maxSize]="dataSearch.maxSize"
-            [pageSize]="dataSearch.pageSize"
-            [rotate]="true"
-            (pageChange)="onPageChanged()"
-            [boundaryLinks]="true"
-          />
+          <ngb-pagination [collectionSize]="dataSearch.totalRecords" [(page)]="dataSearch.pageIndex"
+            [maxSize]="dataSearch.maxSize" [pageSize]="dataSearch.pageSize" [rotate]="true"
+            (pageChange)="onPageChanged()" [boundaryLinks]="true" />
         </td>
       </tr>
     </tfoot>
