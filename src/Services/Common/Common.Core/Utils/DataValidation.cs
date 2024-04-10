@@ -21,18 +21,25 @@ namespace Common.Core.Utils
             }
             return isNull;
         }
-        public static bool DataSetIsNull(DataSet ds, bool checkFirstTable = false)
+        public static bool DataSetIsNull(DataSet ds, bool removeEmptyDt = false)
         {
-            if (checkFirstTable)
+            if (removeEmptyDt)
             {
-                if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                List<DataTable> tablesToRemove = new List<DataTable>();
+
+                foreach (DataTable dt in ds.Tables)
                 {
-                    return true;
+                    if (dt.Rows.Count == 0)
+                    {
+                        tablesToRemove.Add(dt);
+                    }
                 }
-                else
+
+                foreach (DataTable dt in tablesToRemove)
                 {
-                    return false;
+                    ds.Tables.Remove(dt);
                 }
+
             }
             if (ds == null || ds.Tables.Count == 0)
             {
