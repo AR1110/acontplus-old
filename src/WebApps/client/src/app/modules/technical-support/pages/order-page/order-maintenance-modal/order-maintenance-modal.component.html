@@ -4,37 +4,81 @@
 </div>
 <div class="modal-body">
   <div class="row">
-  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-    <div class="form-group">
-      <label for="establishment">Establecimiento <span class="text-danger">*</span></label>
-      <select name="establishment" id="establishment" class="form-select" [(ngModel)]="order.establecimientoId">
-        @for (item of establecimientos; track $index) {
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="establishment">Establecimiento <span class="text-danger">*</span></label>
+        <select name="establishment" id="establishment" class="form-select" [(ngModel)]="order.establecimientoId">
+          @for (item of establecimientos; track $index) {
           <option [ngValue]="item.idEstablecimiento">{{item.nombreComercial}}</option>
-        }
-      </select>
-    </div>
+          }
+        </select>
+      </div>
 
-  </div>
-  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-    <div class="form-group">
-      <label for="puntoEmision">Punto Emisión <span class="text-danger">*</span></label>
-      <select name="puntoEmision" id="puntoEmision" class="form-select" [(ngModel)]="order.puntoEmisionId">
-        @for (item of puntosEmision; track $index) {
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="puntoEmision">Punto Emisión <span class="text-danger">*</span></label>
+        <select name="puntoEmision" id="puntoEmision" class="form-select" [(ngModel)]="order.puntoEmisionId">
+          @for (item of puntosEmision; track $index) {
           <option [ngValue]="item.idPuntoEmision">{{item.ptoEmi}}</option>
-        }
-      </select>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
+        <input type="date" name="fechaEmision" id="fechaEmision" class="form-control">
+      </div>
     </div>
   </div>
-  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-    <div class="form-group">
-      <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-      <input type="date" name="fechaEmision" id="fechaEmision" class="form-control">
+
+  <div class="row">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="warehouse">Bodega: </label>
+        <select name="warehouse" id="warehouse" class="form-select">
+          @for (item of bodegas; track $index) {
+          <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="feed">Tarifa: </label>
+        <select name="feed" id="feed" class="form-select">
+          @for (item of feeds; track $index) {
+          <option [ngValue]="item.idTarifa">{{item.descripcion}}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+
     </div>
   </div>
-</div>
 
-<app-order-maintenance-detail/>
+  <app-order-maintenance-detail [orderDetails]="orderDetails" [orderMaintenances]="orderMaintenances"
+    [bodegas]="bodegas" [feeds]="feeds" [taxes]="taxes" [taxPercents]="taxPercents" [decimal]="decimal"
+    (drawTaxTotalEvent)="drawImpuestoTotales()"
+    />
+  <div class="row">
+    <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
 
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="mt-2">
+        <app-draw-tax-total
+              [subTotalSinImpuesto]="order.subTotalSinImpuesto"
+          [htmlImpuestoTotal]="htmlImpuestoTotal"
+          [discount]="order.discount"
+          [htmlIvaTotal]="htmlIvaTotal"
+          [importeTotal]="order.total"
+        />
+      </div>
+    </div>
+  </div>
 
 </div>
 <div class="modal-footer">
