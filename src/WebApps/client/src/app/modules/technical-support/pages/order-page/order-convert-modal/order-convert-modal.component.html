@@ -1,0 +1,28 @@
+<form>
+  <div class="modal-header">
+    <h4 class="modal-title">
+      <fa-icon [icon]="'sync-alt'"></fa-icon> Convertir
+    </h4>
+    <button type="button" class="btn-close" aria-hidden="true" aria-label="btn-close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="col-lg">
+      <div class="form-floating">
+        <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+          <option selected disabled>::SELECCIONE::</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+        <label for="floatingSelect">Tipo Documento</label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-outline-success" title="Guardar Orden">
+      <fa-icon [icon]="'save'"></fa-icon> Guardar
+    </button>
+    <button type="button" class="btn btn-outline-dark" title="Cancelar Orden" (click)="closeModal()">
+      &times; Cancelar
+    </button>
+  </div>
+</form>
