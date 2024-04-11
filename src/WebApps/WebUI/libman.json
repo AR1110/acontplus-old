@@ -87,11 +87,11 @@
       "destination": "wwwroot/lib/jquery-sparklines/"
     },
     {
-      "library": "font-awesome@6.5.1",
+      "library": "font-awesome@6.5.2",
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
-      "library": "limonte-sweetalert2@11.10.2",
+      "library": "limonte-sweetalert2@11.10.7",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -103,7 +103,7 @@
       "destination": "wwwroot/lib/Chart.js/"
     },
     {
-      "library": "moment-timezone@0.5.43",
+      "library": "moment-timezone@0.5.45",
       "destination": "wwwroot/lib/moment-timezone/"
     },
     {
@@ -119,7 +119,7 @@
       "destination": "wwwroot/lib/ngMask/"
     },
     {
-      "library": "MaterialDesign-Webfont@7.3.67",
+      "library": "MaterialDesign-Webfont@7.4.47",
       "destination": "wwwroot/assets/icons/MaterialDesign-Webfont/"
     },
     {
@@ -143,7 +143,7 @@
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "library": "axios@1.6.5",
+      "library": "axios@1.6.8",
       "destination": "wwwroot/lib/axios/"
     },
     {
@@ -151,7 +151,7 @@
       "destination": "wwwroot/assets/icons/material-design-iconic-font/"
     },
     {
-      "library": "tabulator@5.5.2",
+      "library": "tabulator@6.2.0",
       "destination": "wwwroot/lib/tabulator/",
       "files": [
         "js/tabulator.min.js",
