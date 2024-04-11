@@ -8,7 +8,7 @@ import { UserCustomerService } from "@modules/config/services/user-customer/user
 
 import { UserCustomerAddEditModalComponent } from "./components/user-customer-add-edit-modal/user-customer-add-edit-modal.component";
 import { UserCustomerRoleModalComponent } from "./components/user-customer-role-modal/user-customer-role-modal.component";
-import { Pagination } from "@shared/class/Pagination";
+import { Pagination } from "@shared/class/pagination";
 import { FormsModule } from "@angular/forms";
 import { NgbPaginationModule } from "@ng-bootstrap/ng-bootstrap";
 import { Router } from "@angular/router";

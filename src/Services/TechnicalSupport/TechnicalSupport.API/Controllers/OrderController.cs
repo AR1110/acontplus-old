@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -37,6 +38,7 @@ namespace TechnicalSupport.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] OrderDto orderDto)
         {
@@ -64,6 +66,30 @@ namespace TechnicalSupport.API.Controllers
                 return BadRequest("Error on post");
             }
         }
+
+        [HttpPost("Convert")]
+        public async Task<IActionResult> Convert(ApiRequest request)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(request.Data)) }
+                };
+
+                var response = await _orderService.ConvertAsync(parameters);
+                if (response == null) { return BadRequest(); }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on convert doc: " + ex.ToString());
+                return BadRequest("Error on convert doc");
+            }
+        }
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Order order)
         {

@@ -18,7 +18,7 @@ AS(
     CROSS APPLY OPENJSON (up.jsonPermission)
     WITH(
 	     verOtrasCajas BIT '$.verOtrasCajas.enabled'  
-	    ,reporteMovimiento BIT '$.reporteMovimiento.enabled'  
+	    ,reporteMovimiento BIT '$.reporteMovimientoCaja.enabled'  
 	    ,cerrarCaja BIT '$.cerrarCaja.enabled'  
 	    ,enterKey BIT '$.enterKey.enabled'  
     )

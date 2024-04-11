@@ -55,6 +55,7 @@
                   <app-tabulator
                     [columnNames]="columnNames"
                     [tableData]="orderMaintenances()"
+                    (cellEdited)="cellEdited($event)"
                   ></app-tabulator>
                 </div>
               </div>

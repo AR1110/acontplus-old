@@ -60,7 +60,7 @@
                             <th md-column>Conversión</th>
                             <th md-column>P. Costo Fraccionado</th>
                             <th md-column>Medida</th>
-                            <th md-column>Gestión</th>
+                           
                             <th md-column>Estado</th>
                         </tr>
                     </thead>
@@ -80,9 +80,7 @@
                             <td md-cell>{{af.conversion}}</td>
                             <td md-cell>${{af.precioCostoFraccionado}}</td>
                             <td md-cell>{{af.medida}}</td>
-                            <td md-cell>
-                                <span> {{af.fraccionado.gestionVenta?'Venta':'Compra'}} </span>
-                            </td>
+                            
                             <td md-cell ng-bind-html="af.estado | estadoPrimario"></td>
                         </tr>
                         <tr md-row class="text-center" ng-show="articuloFraccionados.length===0">

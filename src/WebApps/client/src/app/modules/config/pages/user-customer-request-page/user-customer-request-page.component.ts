@@ -13,7 +13,7 @@ import { UserCustomerRequest } from "@modules/config/models/user-customer/user-c
 import { UserCustomerRole } from "@modules/config/models/user-customer/user-customer-role.model";
 import { UserCustomerRequestService } from "@modules/config/services/user-customer/user-customer-request.service";
 import { NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap";
-import { Pagination } from '@shared/class/Pagination';
+import { Pagination } from '@shared/class/pagination';
 import Swal from "sweetalert2";
 
 @Component({
