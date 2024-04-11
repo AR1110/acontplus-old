@@ -8,8 +8,9 @@ namespace TechnicalSupport.API.Entities
     public class Order : BaseEntity
     {
         public Guid Uuid { get; set; }
-        public DateTime FechaEmision { get; set; }
         public int EstablecimientoId { get; set; }
+        public DateTime FechaEmision { get; set; }
+        public bool Finished { get; set; }
         public int PuntoEmisionId { get; set; }
         public int Sequence { get; set; }
         [Required]
@@ -28,6 +29,7 @@ namespace TechnicalSupport.API.Entities
         public string Obs { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public int OrderStatusId { get; set; }
+        public int? TaxPercentId { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
     }
 }

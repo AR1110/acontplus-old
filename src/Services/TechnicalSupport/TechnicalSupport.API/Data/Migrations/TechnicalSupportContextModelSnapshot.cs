@@ -259,6 +259,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<DateTime>("FechaEmision")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("Finished")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -281,6 +284,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<decimal?>("Tax")
                         .HasColumnType("numeric(18,5), null");
+
+                    b.Property<int?>("TaxPercentId")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("Tip")
                         .HasColumnType("numeric(18,5), null");
