@@ -173,11 +173,6 @@ export class MovimientoCajaModalComponent {
   }
 
   verReporteMovimientoCaja(estado: boolean) {
-
-    if (this.dataPermisosCaja.verOtrasCajas) {
-      return true;
-    }
-
     return (!estado && this.dataPermisosCaja.reporteMovimientoCaja);
   }
 

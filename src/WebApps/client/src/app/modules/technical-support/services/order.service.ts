@@ -4,9 +4,13 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { isValidField } from '@core/utils/utils';
+import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
+import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
 
 import { TECH_SUPPORT_PATHS } from '../constants/tech-support.constants';
+import { OrderMaintenance } from '../models/order-maintenance.model';
 
 @Injectable({
   providedIn: 'root',
@@ -36,10 +40,11 @@ export class OrderService {
             orderDetails: [] as any,
             feeds: [] as any,
             taxes: [] as any[],
-            taxPercents: [] as any[]
+            taxPercents: [] as any[],
+            decimal: {} as any
           }
-          if(isApiResponse(response)){
-            if(response.code==="1"){
+          if (isApiResponse(response)) {
+            if (response.code === "1") {
               let {
                 order,
                 orderDetails,
@@ -48,14 +53,59 @@ export class OrderService {
                 bodegas,
                 feeds,
                 taxes,
-                taxPercents
+                taxPercents,
+                decimalsConfig
               } = JSON.parse(response.payload as string)
 
               data.order = order[0];
               data.orderDetails = orderDetails;
-              data.orderMaintenances = orderMaintenances;
 
-              console.log(orderMaintenances)
+              data.orderMaintenances = orderMaintenances.map((item: any, index: number) => {
+                const { fraccionado, principal, consolidacion, ...restItem } = item;
+
+                let consolidacionesBodega = consolidacion && JSON.parse(consolidacion) || [];
+                consolidacionesBodega = consolidacionesBodega.map((data:any) => ({
+                  idArticulo: data.idArticulo,
+                  idBodega: data.idBodega,
+                  fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                }))
+
+                const medidas = mergeMeasureUtil(principal, fraccionado);
+
+                let dataMedida = medidas.find(m => m.idMedida === restItem.medidaId) || {} as MedidaProducto;
+                console.log(medidas)
+                console.log(restItem)
+
+                let obj: OrderMaintenance = {
+                  index: index + 1,
+                  bodegaId: restItem.bodegaId,
+                  feeId: restItem.feeId,
+                  medidaId: restItem.medidaId,
+                  orderDetailId: restItem.orderDetailId,
+                  productId: restItem.productId,
+                  taxId: restItem.taxId,
+                  taxPercentId: restItem.taxPercentId,
+                  quantity: restItem.quantity,
+                  descripcion: restItem.descripcion,
+                  codigo: restItem.codigo,
+                  cost: restItem.cost,
+                  taxValue: restItem.taxValue,
+                  price: restItem.price,
+                  precioConIva: 0,
+                  percentageDiscount: 0,
+                  discount: restItem.discount,
+                  precioTotalSinImpuesto: 0,
+                  total: restItem.total,
+                  obs: isValidField(restItem.obs),
+                  medidas: medidas || [],
+                  tarifas: dataMedida.tarifas || [],
+                  costoFraccionado: dataMedida.precioCostoFraccionado || 0,
+                  conversion: dataMedida.conversion || 1,
+                  consolidacionesBodega: consolidacionesBodega
+                }
+                return obj;
+              })
+
 
               data.feeds = feeds;
               data.taxes = taxes;
@@ -66,6 +116,8 @@ export class OrderService {
                 isGroupPuntoEmision: true,
                 isGroupBodega: true
               })
+
+              data.decimal = decimalsConfig[0]
 
             }
           }

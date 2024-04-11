@@ -1,6 +1,6 @@
 import { computed, signal, Signal } from '@angular/core';
 
-export class OrderMaintenanceStoreService<T> {
+export class GenericStoreSignalService<T> {
   readonly state = signal({} as T);
 
   constructor() { }

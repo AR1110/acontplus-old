@@ -5522,11 +5522,11 @@ fieldset:disabled .btn {
   margin-bottom: 0;
 }
 
-.accordion-item {
+/* .accordion-item {
   background-color: #f8f9fa;
   color: #495057;
   border: 1px solid #dee2e6;
-}
+} */
 
 .accordion-item:first-of-type {
   border-top-left-radius: 0.25rem;
