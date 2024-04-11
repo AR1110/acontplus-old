@@ -405,6 +405,7 @@ BEGIN
                               ,pv.precioConIva
                               ,UPPER(ta.descripcion) as tarifa
                               ,ta.ventaPorMayor
+                              ,ta.predeterminada
 					    FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
 					    INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
 					    WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
@@ -429,6 +430,7 @@ BEGIN
                               ,ap.precioConIva
                               ,UPPER(ta.descripcion) as tarifa
                               ,ta.ventaPorMayor 
+                              ,ta.predeterminada
 					    FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 					    INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 					    WHERE ap.idArticulo = ar.idArticulo

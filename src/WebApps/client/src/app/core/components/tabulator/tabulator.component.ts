@@ -67,7 +67,6 @@ export class TabulatorComponent implements OnChanges, OnInit {
       table.appendChild(this.tab);
       if(this.cellEdited){
         this.refTabulator.on("cellEdited", (cell)=>{
-          console.log(cell)
           this.cellEdited.emit(cell)
         })
       }

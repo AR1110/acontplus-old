@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -82,7 +83,7 @@ export class OrderService {
                 let percentageDiscount = pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento, restItem.discount);
 
                 let obj: OrderMaintenance = {
-                  index: index + 1,
+                  rowguid: generateUuidv4(),
                   bodegaId: restItem.bodegaId,
                   feeId: restItem.feeId,
                   medidaId: restItem.medidaId,

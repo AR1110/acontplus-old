@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { GroupedEstabBodega } from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTimesRectangle, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
@@ -46,6 +47,10 @@ export class OrderMaintenanceDetailComponent {
     nroDescuento: 0,
     importeTotal: 0,
     nroIce: 0
+  }
+  @Input() order = {
+    feeId: 0,
+    bodegaId: 0
   }
 
   @Output() drawTaxTotalEvent = new EventEmitter();
@@ -182,15 +187,21 @@ export class OrderMaintenanceDetailComponent {
         cancelButtonText: 'No!'
       }).then((result) => {
         if (result.isConfirmed) {
-          let index = this.orderMaintenances.indexOf(data);
-          this.orderMaintenances.splice(index, 1);
-          this.tabulatorComponent.refTabulator.setData(this.orderMaintenances);
-          this.drawTaxTotalEvent.emit()
+          let rows = this.tabulatorComponent.refTabulator.getData().filter(r => r.rowguid !== data.rowguid);
+          this.tabulatorComponent.refTabulator.setData(rows).then(r => {
+            this.emitRecalculateTaxTotal()
+          })
         }
       });
     } catch (error) {
       console.log(error)
     }
+  }
+
+  emitRecalculateTaxTotal() {
+    this.drawTaxTotalEvent.emit({
+      items: this.tabulatorComponent.refTabulator.getData()
+    })
   }
 
   openModalProductEdit(data: OrderMaintenance) {
@@ -209,24 +220,15 @@ export class OrderMaintenanceDetailComponent {
     },
     {
       title: 'Op.',
-      // formatter: function (cell: any, formatterParams: any) {
-      //   const deleteButton = `<button class='btn btn-danger btn-sm delete-btn' title='Eliminar'>${icon(
-      //     faTrashAlt
-      //   ).html.join('')}</button>`;
-      //   const editButton = `<button class='btn btn-success btn-sm edit-btn' title='Editar producto'>${icon(
-      //     faEdit
-      //   ).html.join('')}</button>`;
-      //   return deleteButton + editButton;
-      // },
       formatter: (cell: any) => {
         //let cellEl = cell.getElement();
-        let rowData = cell.getRow().getData();
+        let rowDataMain = cell.getRow().getData();
 
         //create edit button
         let editBtn = document.createElement("button");
         editBtn.type = "button";
         editBtn.innerHTML = `${icon(faEdit).html.join('')}`
-        editBtn.classList.add("btn", "btn-success", "btn-sm");
+        editBtn.classList.add("btn", "btn-success", "btn-xs");
         editBtn.addEventListener("click", () => {
           let rowData = cell.getRow().getData();
           this.openModalProductEdit(rowData)
@@ -236,7 +238,7 @@ export class OrderMaintenanceDetailComponent {
         let delBtn = document.createElement("button");
         delBtn.type = "button";
         delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
-        delBtn.classList.add("btn", "btn-danger", "btn-sm");
+        delBtn.classList.add("btn", "btn-danger", "btn-xs");
         delBtn.addEventListener("click", () => {
           let rowData = cell.getRow().getData();
           this.askToDelete(rowData)
@@ -246,7 +248,7 @@ export class OrderMaintenanceDetailComponent {
         let kardexBtn = document.createElement("button");
         kardexBtn.type = "button";
         kardexBtn.innerHTML = `${icon(faListAlt).html.join('')}`;
-        kardexBtn.classList.add("btn", "btn-info", "btn-sm");
+        kardexBtn.classList.add("btn", "btn-info", "btn-xs");
         kardexBtn.addEventListener("click", () => {
           let rowData = cell.getRow().getData();
           this.askToDelete(rowData)
@@ -256,7 +258,7 @@ export class OrderMaintenanceDetailComponent {
         buttonHolder.appendChild(delBtn);
         buttonHolder.appendChild(editBtn);
 
-        if (rowData.llevaInventario) {
+        if (rowDataMain.llevaInventario) {
           buttonHolder.appendChild(kardexBtn)
         }
 
@@ -474,6 +476,36 @@ export class OrderMaintenanceDetailComponent {
 
   ];
 
+  getDataRowEmpty() {
+    let dataOrderMaintenance: OrderMaintenance = {
+      rowguid: generateUuidv4(),
+      bodegaId: 0,
+      feeId: 0,
+      medidaId: 0,
+      orderDetailId: 0,
+      productId: 0,
+      descripcion: '',
+      codigo: '',
+      taxId: 0,
+      taxPercentId: 0,
+      quantity: 1,
+      cost: 0,
+      precioConIva: 0,
+      taxValue: 0,
+      price: 0,
+      percentageDiscount: 0,
+      discount: 0,
+      precioTotalSinImpuesto: 0,
+      total: 0,
+      obs: '',
+      medidas: [],
+      tarifas: [],
+      consolidacionesBodega: [],
+      costoFraccionado: 0,
+      conversion: 0
+    }
+    return dataOrderMaintenance;
+  }
 
   onProductSelected($event: any) {
     let { data } = $event;
@@ -484,30 +516,39 @@ export class OrderMaintenanceDetailComponent {
           next: (response) => {
             const { product, medidas, consolidacionesFecha } = response;
             let taxPercents = this.taxPercents;
-            let dataOrderMaintenance = {} as OrderMaintenance;
+            let row = this.getDataRowEmpty()
             let dataTaxPercent = taxPercents.find(d => d.codigo === product.codigoPorcentaje);
             let dataMedida = medidas.find(m => m.defaultMedida);
 
+            row.codigo = product.codigoArticulo;
+            row.descripcion = product.descripcion;
+            row.bodegaId = this.order.bodegaId;
+
             if (dataTaxPercent) {
-              let dataTax = this.taxes.find(t => t.codigo === dataTaxPercent?.codImpuesto);
-              dataOrderMaintenance.taxPercentId = dataTaxPercent.idTarifaImpuesto;
-              dataOrderMaintenance.taxId = dataTax?.idImpuesto ?? 0;
+              row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
+              row.taxId = dataTaxPercent.idImpuesto;
             }
 
             if (dataMedida) {
-              dataOrderMaintenance.tarifas = dataMedida.tarifas;
-              dataOrderMaintenance.medidaId = dataMedida.idMedida;
-              dataOrderMaintenance.cost = dataMedida.precioCosto;
-              dataOrderMaintenance.costoFraccionado = dataMedida.precioCostoFraccionado;
-              dataOrderMaintenance.conversion = dataMedida.conversion;
+              row.medidas = medidas;
+              row.tarifas = dataMedida.tarifas;
+              row.medidaId = dataMedida.idMedida;
+              row.cost = dataMedida.precioCosto;
+              row.costoFraccionado = dataMedida.precioCostoFraccionado;
+              row.conversion = dataMedida.conversion;
 
-              let dataTarifa = dataOrderMaintenance.tarifas.find(t => t.defaultTarifa);
+              let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
+              console.log(row.tarifas)
+              console.log(dataTarifa)
 
-              dataOrderMaintenance.feeId = dataTarifa?.idTarifa ?? 0;
-              dataOrderMaintenance.price = dataTarifa?.precioVenta ?? 0;
+              row.feeId = dataTarifa?.idTarifa ?? 0;
+              row.price = dataTarifa?.precioVenta ?? 0;
             }
-            let orderMaintenances = this.orderMaintenances
-            orderMaintenances.push(dataOrderMaintenance);
+
+            this.tabulatorComponent.refTabulator.addRow(row).then((r) => {
+              this.setCalculoTotales("price", row, 0, r)
+            });
+
 
 
           },
@@ -528,7 +569,7 @@ export class OrderMaintenanceDetailComponent {
       data: data,
       column,
       oldValue,
-      feeId: 1,
+      feeId: this.order.feeId,
       decimal: this.decimal,
       columnDefs: this.tabulatorComponent.refTabulator.getColumnDefinitions()
     });
@@ -537,8 +578,9 @@ export class OrderMaintenanceDetailComponent {
       ...row,
       ...obj
     })
+
     //recalculateTotalsSimple();
-    this.drawTaxTotalEvent.emit()
+    this.emitRecalculateTaxTotal();
   }
 
   cellEdited(cell: any) {

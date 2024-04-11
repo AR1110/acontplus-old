@@ -11,12 +11,12 @@ import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
 import { OrderMaintenance } from '@modules/technical-support/models/order-maintenance.model';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
 import { Impuesto } from '@shared/models/impuesto.model';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
+import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 
 import { OrderMaintenanceDetailComponent } from './components/order-maintenance-detail/order-maintenance-detail.component';
-import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
-import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
 
 @Component({
   selector: 'app-order-maintenance-modal',
@@ -73,7 +73,21 @@ export class OrderMaintenanceModalComponent implements OnInit {
     discount: 0,
     percentageDiscount: 0,
     total: 0,
-    tip: 0
+    tip: 0,
+    bodegaId: 0,
+    feeId: 0
+  }
+
+  cloneOrder = {
+    establecimientoId: 0,
+    puntoEmisionId: 0,
+    subTotalSinImpuesto: 0,
+    discount: 0,
+    percentageDiscount: 0,
+    total: 0,
+    tip: 0,
+    bodegaId: 0,
+    feeId: 0
   }
 
   //Draw Totals Tax
@@ -103,7 +117,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     cell.getRow().update({ total: total });
   }
 
-  drawImpuestoTotales() {
+  drawImpuestoTotales({ items }: any) {
+    console.log('addiend funciotno', this.orderMaintenances)
     try {
       let {
         subTotalSinImpuesto,
@@ -116,7 +131,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         percentageDiscount,
         propina,
       } = this.salesDetailCalculationSvc.getTaxTotals({
-        items: this.orderMaintenances,
+        items: items,
         decimal: this.decimal,
         tarifasImpuesto: this.taxPercents,
       })
@@ -136,21 +151,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
   closeModal() {
     this.modalRef.close();
   }
-  deleteButton(cell: any, formatterParams: any) {
-    //cell - the cell component
-    //formatterParams - parameters set for the column
-
-    //get the row data
-    let data = cell.getRow().getData();
-
-    //return the HTML code for the button, using Bootstrap classes and Angular routerLink
-    return `<button class='btn btn-danger btn-sm' title='Eliminar'>${icon(
-      faTrashAlt
-    ).html.join('')}</button>
-    <button class='btn btn-warning btn-sm' title='Editar producto'>${icon(
-      faEdit
-    ).html.join('')}</button>`;
-  }
 
   getId() {
 
@@ -158,20 +158,34 @@ export class OrderMaintenanceModalComponent implements OnInit {
       next: (response) => {
         this.establecimientos = response.establecimientos;
         this.order = response.order;
-        let dataEstab = this.establecimientos.find((e) => e.idEstablecimiento === this.order.establecimientoId)
-        if (dataEstab) {
-          this.puntosEmision = dataEstab.puntosEmision;
-          //   this.bodegas = dataEstab.bodegas;
-        }
-
         this.orderDetails = response.orderDetails;
         this.orderMaintenances = response.orderMaintenances;
-        this.bodegas = dataEstab?.bodegas || [];
+
         this.feeds = response.feeds;
         this.taxes = response.taxes;
         this.taxPercents = response.taxPercents;
         this.decimal = response.decimal;
-        this.drawImpuestoTotales();
+
+        let dataEstab = this.establecimientos.find((e) => e.idEstablecimiento === this.order.establecimientoId)
+        if (dataEstab) {
+          this.puntosEmision = dataEstab.puntosEmision;
+          this.bodegas = dataEstab.bodegas;
+          let dataBodega = this.bodegas.find(b=>b.defaultBodega);
+          if(dataBodega){
+            this.order.bodegaId = dataBodega.idBodega;
+            this.cloneOrder.bodegaId = this.order.bodegaId;
+          }
+        }
+
+        let dataTarifa = this.feeds.find(t=>t.predeterminada)
+        if(dataTarifa){
+          this.order.feeId = dataTarifa.idTarifa;
+          this.cloneOrder.feeId = dataTarifa.idTarifa;
+        }
+
+        this.drawImpuestoTotales({
+          items: this.orderMaintenances
+        });
       },
     })
   }

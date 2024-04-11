@@ -145,6 +145,7 @@ export class SalesDetailCalculationService {
       'price': function () {
         try {
 
+          console.log(data)
           if (data.price === oldValue) return;
 
           let precioConIva = pricingCalculateUtil.calculatePriceWithVat(data.price, dataTarifaImpuesto.porcentaje);
