@@ -8,3 +8,6 @@ export class Pagination {
 
   pageSizeOptions = [10,25, 50, 75, 100]
 }
+
+
+
