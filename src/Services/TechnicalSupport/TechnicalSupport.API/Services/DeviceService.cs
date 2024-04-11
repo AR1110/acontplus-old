@@ -21,7 +21,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                if (_context.Products.Any(p => p.Name == device.Name && p.Model == device.Model))
+                if (_context.Devices.Any(p => p.Name == device.Name && p.Model == device.Model))
                 {
                     return new ApiResponse { code = "0", message = "El equipo ya existe en la base de datos" };
                 }
@@ -30,7 +30,7 @@ namespace TechnicalSupport.API.Services
                     foreach (var product in device.Customers) { product.UserId = device.UserId; };
                 }
                 device.Specs.UserId = device.UserId;
-                _context.Products.Add(device);
+                _context.Devices.Add(device);
                 await _context.SaveChangesAsync();
                 device.Id = device.Id;
                 return new ApiResponse { code = "1", message = "Registrado exitosamente", payload = device };
@@ -46,7 +46,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                var device = await _context.Products.FindAsync(id);
+                var device = await _context.Devices.FindAsync(id);
                 if (device == null)
                 {
                     return new ApiResponse { code = "0", message = "No existe el equipo" };
@@ -93,7 +93,7 @@ namespace TechnicalSupport.API.Services
                 {
                     return new ApiResponse { code = "0", message = "El id no coincide" };
                 }
-                var productFounded = await _context.Products.FindAsync(id);
+                var productFounded = await _context.Devices.FindAsync(id);
                 productFounded.CategoryId = device.CategoryId;
                 productFounded.Brand = device.Brand;
                 productFounded.Color = device.Color;
