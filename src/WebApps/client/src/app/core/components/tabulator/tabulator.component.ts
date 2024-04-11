@@ -1,18 +1,6 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  TabulatorFull as Tabulator,
-  PageModule,
-  ReactiveDataModule,
-} from 'tabulator-tables';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabulator-tables';
+
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
 @Component({
@@ -79,6 +67,7 @@ export class TabulatorComponent implements OnChanges, OnInit {
       table.appendChild(this.tab);
       if(this.cellEdited){
         this.refTabulator.on("cellEdited", (cell)=>{
+          console.log(cell)
           this.cellEdited.emit(cell)
         })
       }

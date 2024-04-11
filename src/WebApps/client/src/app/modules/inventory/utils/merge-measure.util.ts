@@ -1,6 +1,6 @@
+import { MedidaProducto } from "../shared/models/measure.model";
 
-
-export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionadoMedidas: unknown) {
+export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionadoMedidas: unknown): MedidaProducto[] {
 
   const parseMedidas = (medidas: unknown): any[] => {
     if (typeof medidas === 'string') {

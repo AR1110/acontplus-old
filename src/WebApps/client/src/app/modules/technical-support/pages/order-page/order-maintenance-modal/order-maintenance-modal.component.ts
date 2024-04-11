@@ -12,6 +12,7 @@ import { ProductService } from '@modules/inventory/services/product.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { OrderMaintenanceStateService } from '@technical-support/store/order-maintenance/order-maintenance-state.service';
+
 import { OrderMaintenanceDetailComponent } from './components/order-maintenance-detail/order-maintenance-detail.component';
 
 @Component({
@@ -65,7 +66,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     {
       editor: this.selectBodega,
       formatter: this.formatterBodega,
-      field: 'idBodega',
+      field: 'bodegaId',
       hozAlign: 'center',
       title: 'Bodega',
       width: '250',
@@ -74,7 +75,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       editor: this.selectFee,
       formatter: this.formatterFee,
       cellEdited: this.calculateTotal,
-      field: 'idTarifa',
+      field: 'feeId',
       hozAlign: 'center',
       title: 'Tarifa',
       typeNumber: true,
@@ -231,7 +232,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
           bodegas: dataEstab?.bodegas || [],
           feeds: response.feeds,
           taxes: response.taxes,
-          taxPercents: response.taxPercents
+          taxPercents: response.taxPercents,
+          decimal: response.decimal
         })
       },
     })
