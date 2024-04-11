@@ -294,7 +294,7 @@
         };
         $scope.puntosEmision = [];
         $scope.tiposTransaccion = [];
-
+        $scope.tipoDocumento = [];
         let itemsDeleted = [];
 
         $scope.gridOptions = {
@@ -497,6 +497,7 @@
                 $scope.establecimientosOrigen = structuredClone(mainDataForm.estabs);
                 $scope.establecimientosDestino = structuredClone(mainDataForm.estabs);
                 $scope.tiposTransaccion = mainDataForm.tiposTransaccion;
+                $scope.tipoDocumento = mainDataForm.tipoDocumento;
 
                 if ($scope.establecimientosOrigen.length === 0) {
                     tS.toastr('info', 'No tienes asignado ningún Establecimiento');
@@ -878,6 +879,7 @@
                     data: $scope.data,
                     detalles: $scope.gridOptions.data,
                     tiposTransaccion: $scope.tiposTransaccion,
+                    tipoDocumento : $scope.tipoDocumento,
                     itemsDeleted
                 })
                 showLoader();

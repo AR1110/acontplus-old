@@ -78,6 +78,9 @@ BEGIN
 		,descripcion VARCHAR(255) NOT NULL
         ,llevaInventario BIT NOT NULL
         ,cantidadTransaccion NUMERIC(18,5) NOT NULL
+        ,conversion NUMERIC(18,5) NOT NULL
+        ,precioCosto NUMERIC(18,5) NOT NULL
+        ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
         ,estado BIT NOT NULL
 	)
 
@@ -144,8 +147,8 @@ BEGIN
 		) as dt
 		
 		INSERT INTO @tblDetails
-              (orderIndex,idDocumentoIngresoDetail,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,estado)
-		SELECT orderIndex,idDocumentoIngresoDetail,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,estado 
+              (orderIndex,idDocumentoIngresoDetail,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,precioCosto,conversion,precioCostoFraccionado,estado)
+		SELECT orderIndex,idDocumentoIngresoDetail,idArticulo,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,descuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,precioCosto,conversion,precioCostoFraccionado,estado 
 		FROM OPENJSON (@detalles) WITH 
         (
 		     orderIndex               INT 
@@ -167,7 +170,10 @@ BEGIN
 		    ,nota                     VARCHAR(100) 
 		    ,descripcion              VARCHAR(255) 
             ,llevaInventario          BIT 
-            ,cantidadTransaccion      NUMERIC(15,5) 
+            ,cantidadTransaccion      NUMERIC(15,5)
+            ,precioCosto              NUMERIC(15,5)
+            ,conversion               NUMERIC(15,5)
+            ,precioCostoFraccionado   NUMERIC(15,5)
             ,estado                   BIT 
 		)
 		
@@ -329,8 +335,8 @@ BEGIN
                     IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
 				        BEGIN
                              INSERT INTO Inventario.TransaccionDetalle 
-                                   (idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total)
-			                 SELECT idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioUnitario,precioTotalSinImpuesto
+                                    (idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total)
+			                 SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,precioTotalSinImpuesto
                              FROM @tblDetails 
                              WHERE llevaInventario = 1
                                AND estado = 1
