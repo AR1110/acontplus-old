@@ -69,7 +69,6 @@ export class DrawTaxTotalComponent {
                                 `;
 
     if (element) {
-      console.log(htmlString)
       element.innerHTML = htmlString;
     }
   }

@@ -118,7 +118,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
   }
 
   drawImpuestoTotales({ items }: any) {
-    console.log('addiend funciotno', this.orderMaintenances)
     try {
       let {
         subTotalSinImpuesto,

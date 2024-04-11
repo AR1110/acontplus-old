@@ -121,8 +121,7 @@ export class OrderMaintenanceDetailComponent {
     }
 
     if (column === "taxPercentId") {
-      let dataImpuesto = this.taxes.find(i => i.idImpuesto === Number(data.taxId));
-      let taxPercents = editorParams.filter((ti: any) => ti.codImpuesto === dataImpuesto?.codigo);
+      let taxPercents = editorParams.filter((ti: any) => ti.idImpuesto === Number(data.taxId));
 
       for (let ti of taxPercents) {
         let opt = document.createElement('option');
@@ -214,6 +213,14 @@ export class OrderMaintenanceDetailComponent {
     }
   }
 
+  openModalProductKardex(data: OrderMaintenance) {
+    try {
+      this.openModalProductSvc.openKardex({ id: data.productId })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   columnNames = [
     {
       formatter: "rownum", headerSort: false, hozAlign: "center",
@@ -251,16 +258,16 @@ export class OrderMaintenanceDetailComponent {
         kardexBtn.classList.add("btn", "btn-info", "btn-xs");
         kardexBtn.addEventListener("click", () => {
           let rowData = cell.getRow().getData();
-          this.askToDelete(rowData)
+          this.openModalProductKardex(rowData)
         });
 
         let buttonHolder = document.createElement("span");
         buttonHolder.appendChild(delBtn);
         buttonHolder.appendChild(editBtn);
 
-        if (rowDataMain.llevaInventario) {
+      //  if (rowDataMain.llevaInventario) {
           buttonHolder.appendChild(kardexBtn)
-        }
+      //  }
 
         return buttonHolder;
       },
@@ -538,8 +545,7 @@ export class OrderMaintenanceDetailComponent {
               row.conversion = dataMedida.conversion;
 
               let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
-              console.log(row.tarifas)
-              console.log(dataTarifa)
+
 
               row.feeId = dataTarifa?.idTarifa ?? 0;
               row.price = dataTarifa?.precioVenta ?? 0;
@@ -620,7 +626,9 @@ export class OrderMaintenanceDetailComponent {
       } else {
         let cellInOtherColumn = row.getCell("taxPercentId");
         // Establecer el foco en la celda
+        cellInOtherColumn.edit()
         cellInOtherColumn.getElement().focus();
+        return
       }
     }
 
