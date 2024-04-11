@@ -392,6 +392,9 @@
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
+                    precioCosto : item.precioUnitario,
+                    precioCostoFraccionado : item.precioUnitario,
+                    conversion : item.conversion,
                     estado: item.estado
                 }
 
@@ -983,6 +986,9 @@
                     nota: item.nota,
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
+                    precioCosto : item.precioUnitario,
+                    precioCostoFraccionado : item.precioUnitario,
+                    conversion : item.conversion,
                     cantidadTransaccion: cantidadTransaccion,
                     estado: item.estado
                 }
@@ -1256,6 +1262,9 @@
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
+                    precioCosto : item.precioUnitario,
+                    precioCostoFraccionado : item.precioUnitario,
+                    conversion : item.conversion,
                     estado: item.estado
                 }
 

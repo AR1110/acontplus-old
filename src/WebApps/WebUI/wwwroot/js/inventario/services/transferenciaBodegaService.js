@@ -44,10 +44,11 @@
             return mS.getData('get', `${url}?json=${JSON.stringify({ tipo: 3 })}`, null, true).then(response => {
                 const data = {
                     estabs: [],
-                    tiposTransaccion: []
+                    tiposTransaccion: [],
+                    tipoDocumento : [],
                 }
                 if (response !== null && typeof response === 'object') {
-                    const { ptoEmision, bodega, tipoTransaccion } = response;
+                    const { ptoEmision, bodega, tipoTransaccion,tipoDocumento } = response;
                     const dataToGroup = {
                         estabs: ptoEmision,
                         bodegas: bodega,
@@ -55,6 +56,7 @@
                     }
                     data.estabs = fS.groupingEstab(dataToGroup);
                     data.tiposTransaccion = tipoTransaccion;
+                    data.tipoDocumento = tipoDocumento;
                 }
 
                 return data;
@@ -102,15 +104,17 @@
         }
 
         function mapTo(obj) {
-            const { data, detalles, tiposTransaccion, itemsDeleted } = obj;
+            const { data, detalles, tiposTransaccion,tipoDocumento, itemsDeleted } = obj;
 
             const idTipoTransaccionOrigen = tiposTransaccion.find(item => item.codigo === 'S').idTipoTransaccion
             const idTipoTransaccionDestino = tiposTransaccion.find(item => item.codigo === 'E').idTipoTransaccion
+            const idTipoDocumento = tipoDocumento.find(item => item.codigo === 'TB').idTipoDocumento
+            
             data.total = detalles.reduce((acc, curr) => acc + curr.total, 0);
 
             const comprobante = mapComprobanteTo(data);
-            const resultsDetalleOrigen = mapDetalleOrigen(detalles, idTipoTransaccionOrigen, data.idBodegaOrigen)
-            const resultsDetalleDestino = mapDetalleDestino(detalles, idTipoTransaccionDestino, data.idBodegaDestino)
+            const resultsDetalleOrigen = mapDetalleOrigen(detalles, idTipoTransaccionOrigen,idTipoDocumento, data.idBodegaOrigen)
+            const resultsDetalleDestino = mapDetalleDestino(detalles, idTipoTransaccionDestino,idTipoDocumento, data.idBodegaDestino)
             const mergeDetalle = [...resultsDetalleOrigen, ...resultsDetalleDestino].map((item, index) => ({ ...item, orderIndex: index + 1 }))
 
 
@@ -121,7 +125,19 @@
             return ({
                 comprobante,
                 detalles: mergeDetalleOrigen,
-                transaccion: mergeDetalle,
+                transaccion : [
+                        {
+                            idTipoTransaccion: idTipoTransaccionOrigen,
+                            idTipoDocumento,
+                            fechaEmision : comprobante.fechaEmision
+                        },
+                        {
+                            idTipoTransaccion: idTipoTransaccionDestino,
+                            idTipoDocumento,
+                            fechaEmision : comprobante.fechaEmision
+                        }  
+                ],
+                transaccionDetalle: mergeDetalle,
             })
 
         }
@@ -137,41 +153,45 @@
 
         }
 
-        function mapDetalleOrigen(detalles, idTipoTransaccionOrigen, idBodega) {
+        function mapDetalleOrigen(detalles, idTipoTransaccionOrigen,idTipoDocumento,idBodega) {
             let results = detalles.map((item, index) => {
                 return {
                     orderIndex: index + 1,
                     idTransferenciaBodegaDetalle: item.idTransferenciaBodegaDetalle,
                     idTipoTransaccion: idTipoTransaccionOrigen,
+                    idTipoDocumento,
                     idArticulo: item.idArticulo,
                     idBodega: idBodega,
                     idMedida: item.idMedida,
                     descripcion: item.descripcion,
                     cantidad: item.cantidad,
+                    conversion : item.conversion,
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion),
-                    precioUnitario: item.precioUnitario,
-                    precioCosto: item.precioCosto,
                     precioUnitario: item.precioCosto,
+                    precioCosto: item.precioCosto,
+                    precioCostoFraccionado: item.precioCosto,
                     total: item.total,
                     estado: item.estado
                 }
             })
             return results;
         }
-        function mapDetalleDestino(detalles, idTipoTransaccionDestino, idBodega) {
+        function mapDetalleDestino(detalles, idTipoTransaccionDestino,idTipoDocumento, idBodega) {
             let results = detalles.map((item, index) => {
                 return {
                     orderIndex: index + 1,
                     idTransferenciaBodegaDetalle: item.idTransferenciaBodegaDetalle,
                     idTipoTransaccion: idTipoTransaccionDestino,
+                    idTipoDocumento,
                     idArticulo: item.idArticulo,
                     idBodega: idBodega,
                     idMedida: item.idMedida,
                     cantidad: item.cantidad,
+                    conversion : item.conversion,
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion),
-                    precioUnitario: item.precioUnitario,
-                    precioCosto: item.precioCosto,
                     precioUnitario: item.precioCosto,
+                    precioCosto: item.precioCosto,
+                    precioCostoFraccionado: item.precioCosto,
                     total: item.total,
                     descripcion: item.descripcion,
                     estado: item.estado
