@@ -114,7 +114,8 @@ BEGIN
                   ,om.FeeId
                   ,om.MedidaId
                   ,om.Quantity
-                  ,om.Price 
+                  ,om.Price
+                  ,taxPercentage = ti.porcentaje
                   ,om.Cost
                   ,om.TaxId
                   ,om.TaxPercentId
@@ -141,6 +142,7 @@ BEGIN
                                           ,pv.precioConIva
                                           ,UPPER(ta.descripcion) as tarifa
                                           ,ta.ventaPorMayor
+                                          ,ta.predeterminada
 					                FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
 					                INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
 					                WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
@@ -170,6 +172,7 @@ BEGIN
                                           ,ap.precioConIva
                                           ,UPPER(ta.descripcion) as tarifa
                                           ,ta.ventaPorMayor 
+                                          ,ta.predeterminada
 					                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 					                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 					                WHERE ap.idArticulo = sc.idArticulo
@@ -194,6 +197,7 @@ BEGIN
             INNER JOIN TechnicalSupport.[OrderDetail] od ON om.OrderDetailId = od.Id
             INNER JOIN dbo.Bodega bo            WITH (NOLOCK) ON bo.idBodega   = om.BodegaId
             INNER JOIN Inventario.v_Articulo a WITH (NOLOCK) ON a.idArticulo = om.ProductId
+            INNER JOIN Sri.TarifaImpuesto ti WITH(NOLOCK) ON ti.idTarifaImpuesto = om.taxPercentId
             WHERE od.OrderId = @Id
             
             SELECT idTarifa

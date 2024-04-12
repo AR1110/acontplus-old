@@ -35,6 +35,11 @@ type CalculateColDefProps = {
   columnDefs: any
 }
 
+type TaxTotalProps = {
+  items: Data[]
+  decimal: any
+  tarifasImpuesto: TarifaImpuesto[]
+}
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +58,9 @@ export class SalesDetailCalculationService {
     let quantity = Number(data.quantity);
     let feeId = Number(data.feeId);
 
-    const calculoColumnas:any = {
+
+
+    const calculoColumnas: any = {
       'quantity': function () {
 
         if (data.quantity === oldValue) return
@@ -89,6 +96,9 @@ export class SalesDetailCalculationService {
           data.conversion = dataMedida?.precioCosto ?? 0;
           data.costoFraccionado = dataMedida?.precioCostoFraccionado ?? 0;
         }
+
+      },
+      'taxId': function(){
 
       },
 
@@ -135,6 +145,7 @@ export class SalesDetailCalculationService {
       'price': function () {
         try {
 
+          console.log(data)
           if (data.price === oldValue) return;
 
           let precioConIva = pricingCalculateUtil.calculatePriceWithVat(data.price, dataTarifaImpuesto.porcentaje);
@@ -241,12 +252,12 @@ export class SalesDetailCalculationService {
           let precioTotalSinImpuesto = ((data.price * data.quantity)) - data.discount;
           let valorImpuesto = pricingCalculateUtil.calculateTaxValue(precioTotalSinImpuesto, dataTarifaImpuesto.porcentaje);
           let total = precioTotalSinImpuesto + valorImpuesto;
-         // let totalIce = data.cantidad * rowEntity.ice;
+          // let totalIce = data.cantidad * rowEntity.ice;
 
           data.precioTotalSinImpuesto = roundNumber(precioTotalSinImpuesto, decimal.nroPrecio);
           data.taxValue = roundNumber(valorImpuesto, decimal.nroPrecio)
           data.total = roundNumber(total, decimal.nroTotalDetalle);
-          console.log(data)
+
         } catch (error) {
           self.tS.toastr({
             type: 'error',
@@ -264,4 +275,111 @@ export class SalesDetailCalculationService {
 
     return data;
   }
+
+
+
+  getTaxTotals(obj: TaxTotalProps) {
+    // Desestructurar el objeto de entrada
+    let { items, decimal, tarifasImpuesto } = obj;
+
+    if (!decimal) {
+      decimal = {
+        nroTotalSubTotal: 2,
+        nroIva: 2,
+        importeTotal: 2
+      }
+    }
+
+    // Inicializar las variables para almacenar los totales de impuestos
+    let htmlImpuestoTotal = '', htmlIvaTotal = '', sumTotalIva = 0, totalPorcentajeDescuento = 0;
+
+    // Calcular totales generales
+    let { totalPrecioTotalSinImpuesto, totalIce, totalDescuento, totalSinImpuesto } = items.reduce((acc, prev) => {
+      // Calcular el total neto con descuentos y el total de ICE
+      let totalSinImpuesto = prev.quantity * prev.price;
+      let precioTotalSinImpuesto = ((prev.quantity * prev.price) - prev.discount);
+
+      let totalIce = prev.quantity * 0;
+
+      // Acumular totales generales
+      acc.totalIce += totalIce;
+      acc.totalPrecioTotalSinImpuesto += precioTotalSinImpuesto;
+      acc.totalDescuento += prev.discount;
+      acc.totalSinImpuesto += totalSinImpuesto;
+      return acc;
+    }, {
+      totalPrecioTotalSinImpuesto: 0,
+      totalIce: 0,
+      totalDescuento: 0,
+      totalSinImpuesto: 0
+
+    });
+
+    // Calcular totales específicos por tarifa de impuesto
+    for (let dataTarifaImpuesto of tarifasImpuesto) {
+      let filteredItems = items.filter(item => item.taxPercentId === dataTarifaImpuesto.idTarifaImpuesto);
+
+      let { totalNetoIva } = filteredItems.reduce((acc, prev) => {
+        let precioTotalSinImpuesto = (prev.price * prev.quantity) - prev.discount;
+        acc.totalNetoIva += precioTotalSinImpuesto;
+        return acc;
+      }, {
+        totalNetoIva: 0
+      });
+
+      // Construir el HTML para la tabla de impuestos
+      if (totalNetoIva > 0) {
+        htmlImpuestoTotal += `<tr>
+                                    <td class="left">
+                                        <span class="text-dark">Subtotal ${dataTarifaImpuesto.descripcion}</span>
+                                    </td>
+                                    <td class="right">$${roundNumber(totalNetoIva, decimal.nroTotalSubTotal)}</td>
+                                </tr>`;
+
+      }
+
+      if (dataTarifaImpuesto.porcentaje > 0) {
+        let { totalIva } = filteredItems.reduce((acc, prev) => {
+          let precioTotalSinImpuesto = (prev.price * prev.quantity) - prev.discount;
+          if (dataTarifaImpuesto.idTarifaImpuesto == prev.taxPercentId) {
+            acc.totalIva += pricingCalculateUtil.calculateTaxValue(precioTotalSinImpuesto, dataTarifaImpuesto.porcentaje);
+          }
+          return acc;
+        }, {
+          totalIva: 0,
+        });
+
+        sumTotalIva += totalIva;
+        if (totalIva > 0) {
+          htmlIvaTotal += `
+                                    <tr>
+                                        <td class="left">
+                                            <span class="text-dark">${dataTarifaImpuesto.descripcion}</span>
+                                        </td>
+                                        <td class="right">$${roundNumber(totalIva, decimal.nroIva)}</td>
+                                    </tr>`
+
+        }
+
+      }
+    }
+
+    const importeTotal = totalPrecioTotalSinImpuesto + sumTotalIva;
+    if (totalSinImpuesto > 0) {
+      totalPorcentajeDescuento = ((totalSinImpuesto - totalPrecioTotalSinImpuesto) * 100) / totalSinImpuesto;
+    }
+    // Retornar los totales calculados
+    return {
+      subTotalSinImpuesto: roundNumber(totalPrecioTotalSinImpuesto, decimal.nroTotalSubTotal),
+      totalIce,
+      irbpnr: 0,
+      propina: 0,
+      discount: roundNumber(totalDescuento, decimal.nroTotalSubTotal),
+      percentageDiscount: roundNumber(totalPorcentajeDescuento, 1),
+      htmlImpuestoTotal,
+      htmlIvaTotal,
+      importeTotal: roundNumber(importeTotal, decimal.importeTotal)
+    };
+  };
+
 }

@@ -1,0 +1,54 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Kardex</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xl-9 col-lg-9 col-md-12 col-12">
+      <mat-chip-listbox aria-label="Fish selection">
+        <mat-chip-option>Fecha</mat-chip-option>
+        <mat-chip-option>Buscar consolidaciones de Inventario</mat-chip-option>
+        <mat-chip-option>Buscar a partir de la ultima consolidación</mat-chip-option>
+      </mat-chip-listbox>
+
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-12 col-12">
+      <mat-slide-toggle>Transacciones anuladas</mat-slide-toggle>
+
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="establecimiento">Establecimiento</label>
+        <select name="" id="" class="form-select">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="bodega">Bodega</label>
+        <select name="" id="" class="form-select">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="product">Producto</label>
+        <input type="text" class="form-control">
+      </div>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="code">Código</label>
+        <input type="text" class="form-control" readonly>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+</div>

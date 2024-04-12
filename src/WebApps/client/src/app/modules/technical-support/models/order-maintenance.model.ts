@@ -3,7 +3,7 @@ import { MedidaProducto } from "@modules/inventory/shared/models/measure.model"
 import { TarifaProducto } from "@modules/inventory/shared/models/tarifa.model"
 
 export interface OrderMaintenance {
-  index?: number
+  rowguid: string
   bodegaId: number
   feeId: number
   medidaId: number

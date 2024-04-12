@@ -82,6 +82,19 @@ export enum CODE_REPORT {
 export enum CODE_ESTADO {
   NCBR = 'NCBR',
 }
-// Example usage:
-// const reportType: CODE_REPORT = CODE_REPORT.RF;
-// console.log(reportType);
+
+
+export enum TAX_RATE_CODE {
+  ZERO_PERCENT = "0",
+  TWELVE_PERCENT = "2",
+  FOURTEEN_PERCENT = "3",
+  NOT_SUBJECT_TO_TAX = "6",
+  TAX_EXEMPT = "7",
+  DIFFERENTIATED_TAX = "8",
+}
+
+export enum TAX_CODE {
+  IVA = '2',
+  ICE = '3',
+  IRBPNR = '5'
+}

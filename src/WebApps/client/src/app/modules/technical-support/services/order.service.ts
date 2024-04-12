@@ -3,7 +3,10 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
+import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
 import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
@@ -73,11 +76,14 @@ export class OrderService {
                 const medidas = mergeMeasureUtil(principal, fraccionado);
 
                 let dataMedida = medidas.find(m => m.idMedida === restItem.medidaId) || {} as MedidaProducto;
-                console.log(medidas)
-                console.log(restItem)
+
+                let precioConIva = pricingCalculateUtil.calculatePriceWithVat(restItem.price, restItem.taxPercentage)
+                let precioTotalSinImpuesto = ((restItem.price * restItem.quantity)) - restItem.discount;
+                let subTotalSinDescuento = ((restItem.price * restItem.quantity))
+                let percentageDiscount = pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento, restItem.discount);
 
                 let obj: OrderMaintenance = {
-                  index: index + 1,
+                  rowguid: generateUuidv4(),
                   bodegaId: restItem.bodegaId,
                   feeId: restItem.feeId,
                   medidaId: restItem.medidaId,
@@ -91,10 +97,10 @@ export class OrderService {
                   cost: restItem.cost,
                   taxValue: restItem.taxValue,
                   price: restItem.price,
-                  precioConIva: 0,
-                  percentageDiscount: 0,
+                  precioConIva: roundNumber(precioConIva, 4),
+                  percentageDiscount: roundNumber(percentageDiscount, 4),
                   discount: restItem.discount,
-                  precioTotalSinImpuesto: 0,
+                  precioTotalSinImpuesto: roundNumber(precioTotalSinImpuesto, 4),
                   total: restItem.total,
                   obs: isValidField(restItem.obs),
                   medidas: medidas || [],

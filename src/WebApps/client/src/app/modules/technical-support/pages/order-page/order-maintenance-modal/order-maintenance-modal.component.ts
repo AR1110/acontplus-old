@@ -1,17 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProductSearchComponent } from '@core/components/product-search/product-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { ProductService } from '@modules/inventory/services/product.service';
+import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
+import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
+import { OrderMaintenance } from '@modules/technical-support/models/order-maintenance.model';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { OrderMaintenanceStateService } from '@technical-support/store/order-maintenance/order-maintenance-state.service';
+import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
+import { Impuesto } from '@shared/models/impuesto.model';
+import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
+import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 
 import { OrderMaintenanceDetailComponent } from './components/order-maintenance-detail/order-maintenance-detail.component';
 
@@ -23,14 +26,12 @@ import { OrderMaintenanceDetailComponent } from './components/order-maintenance-
     FontAwesomeModule,
     NgbAccordionModule,
     OrderMaintenanceDetailComponent,
+    DrawTaxTotalComponent,
     ProductSearchComponent,
     ReactiveFormsModule,
     TabulatorComponent,
   ],
   templateUrl: './order-maintenance-modal.component.html',
-  styles: ``,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [OrderMaintenanceStateService],
 })
 export class OrderMaintenanceModalComponent implements OnInit {
   params = {
@@ -40,85 +41,59 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   private modalRef = inject(NgbActiveModal);
   private orderSvc = inject(OrderService);
-  private productService = inject(ProductService);
 
-  //store
-  private orderMaintenanceState = inject(OrderMaintenanceStateService);
+  private salesDetailCalculationSvc = inject(SalesDetailCalculationService)
+
+
+  orderDetails: any[] = []
+  orderMaintenances: OrderMaintenance[] = [];
+  bodegas: GroupedEstabBodega[] = []
+  feeds: Tarifa[] = []
+  taxes: Impuesto[] = []
+  taxPercents: TarifaImpuesto[] = []
+  decimal: DecimalSale = {
+    nroPrecio: 0,
+    nroCantidad: 0,
+    nroIva: 0,
+    nroDescuentoDetalle: 0,
+    nroTotalDetalle: 0,
+    nroTotalSubTotal: 0,
+    nroDescuento: 0,
+    importeTotal: 0,
+    nroIce: 0
+  }
+
 
   establecimientos: Array<GroupedEstab> = [];
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
   order = {
     establecimientoId: 0,
-    puntoEmisionId: 0
+    puntoEmisionId: 0,
+    subTotalSinImpuesto: 0,
+    discount: 0,
+    percentageDiscount: 0,
+    total: 0,
+    tip: 0,
+    bodegaId: 0,
+    feeId: 0
   }
 
-  columnNames = [
-    {
-      field: 'id',
-      visible: false,
-    },
-    {
-      title: 'Producto / Servicio',
-      field: 'productName',
-      width: '250',
-      editor: true,
-    },
-    {
-      editor: this.selectBodega,
-      formatter: this.formatterBodega,
-      field: 'bodegaId',
-      hozAlign: 'center',
-      title: 'Bodega',
-      width: '250',
-    },
-    {
-      editor: this.selectFee,
-      formatter: this.formatterFee,
-      cellEdited: this.calculateTotal,
-      field: 'feeId',
-      hozAlign: 'center',
-      title: 'Tarifa',
-      typeNumber: true,
-      width: '250',
-    },
-    {
-      title: 'Cantidad',
-      field: 'quantity',
-      width: '250',
-      editor: true,
-    },
-    {
-      title: 'Precio',
-      field: 'price',
-      width: '150',
-    },
-    {
-      title: 'Impuesto',
-      field: 'tax',
-      width: '150',
-      editor: true,
-    },
-    {
-      title: 'Total',
-      field: 'total',
-      width: '150',
-    },
-    {
-      cellClick: (e: any, cell: any) => {
-        this.removeFromList(cell.getData().deviceId);
-        cell.getRow().delete();
-      },
-      formatter: this.deleteButton,
-      hozAlign: 'center',
-      resizable: false,
-      title: 'Opción',
-      width: 100,
-    },
-  ];
+  cloneOrder = {
+    establecimientoId: 0,
+    puntoEmisionId: 0,
+    subTotalSinImpuesto: 0,
+    discount: 0,
+    percentageDiscount: 0,
+    total: 0,
+    tip: 0,
+    bodegaId: 0,
+    feeId: 0
+  }
 
-  medidas: any = [];
-  orderDetails: any = [];
-  orderMaintenances: any = [];
+  //Draw Totals Tax
+  htmlImpuestoTotal = '';
+  htmlIvaTotal = '';
+
 
   calculateTotal(cell: any) {
     let row = cell.getRow().getData();
@@ -141,77 +116,40 @@ export class OrderMaintenanceModalComponent implements OnInit {
     let total = row.priceIva * row.quantity;
     cell.getRow().update({ total: total });
   }
+
+  drawImpuestoTotales({ items }: any) {
+    try {
+      let {
+        subTotalSinImpuesto,
+        htmlImpuestoTotal,
+        htmlIvaTotal,
+        irbpnr,
+        totalIce,
+        importeTotal,
+        discount,
+        percentageDiscount,
+        propina,
+      } = this.salesDetailCalculationSvc.getTaxTotals({
+        items: items,
+        decimal: this.decimal,
+        tarifasImpuesto: this.taxPercents,
+      })
+
+      this.order.subTotalSinImpuesto = subTotalSinImpuesto;
+      this.order.total = importeTotal;
+      this.order.discount = discount;
+      this.order.percentageDiscount = percentageDiscount;
+      this.order.tip = propina;
+      this.htmlImpuestoTotal = htmlImpuestoTotal;
+      this.htmlIvaTotal = htmlIvaTotal;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   closeModal() {
     this.modalRef.close();
   }
-  deleteButton(cell: any, formatterParams: any) {
-    //cell - the cell component
-    //formatterParams - parameters set for the column
-
-    //get the row data
-    let data = cell.getRow().getData();
-
-    //return the HTML code for the button, using Bootstrap classes and Angular routerLink
-    return `<button class='btn btn-danger btn-sm' title='Eliminar'>${icon(
-      faTrashAlt
-    ).html.join('')}</button>
-    <button class='btn btn-warning btn-sm' title='Editar producto'>${icon(
-      faEdit
-    ).html.join('')}</button>`;
-  }
-
-  formatterBodega(cell: any) {
-    let bodegas = [];
-    let row = cell.getRow().getData();
-    let value = cell.getValue();
-
-    if (row.bodegas != undefined && value != undefined) {
-      bodegas = row.bodegas;
-
-      return bodegas.find((x: any) => x.idBodega == value).bodega;
-    }
-    return 'SELECCIONE';
-  }
-
-  formatterFee(cell: any) {
-    let fees = [];
-    let row = cell.getRow().getData();
-    let value = cell.getValue();
-
-    if (row.fees != undefined && value != undefined) {
-      fees = row.fees;
-
-      return fees.find((x: any) => x.idTarifa == value).tarifa;
-    }
-    return '';
-  }
-  // get() {
-  //   showLoader();
-  //   this.orderService
-  //     .get(JSON.stringify({ tipo: 4, id: this.params.id }))
-  //     .subscribe({
-  //       next: (response) => {
-  //         if (isApiResponse(response)) {
-  //           let dataTemp = JSON.parse(response.payload as string);
-  //           console.log(dataTemp);
-  //           this.orderDetails = dataTemp['orderDetails'];
-  //           this.orderMaintenances = dataTemp['orderMaintenances'] || [];
-  //           this.establecimientos = dataTemp['estabs'] || [];
-  //           this.bodegas = dataTemp['bodegas'] || [];
-  //           if (this.orderMaintenances.length > 0) {
-  //             this.orderMaintenances = [...this.orderMaintenances];
-  //           }
-  //         }
-  //       },
-  //       complete() {
-  //         hideLoader();
-  //       },
-  //       error(err) {
-  //         console.log(err);
-  //         hideLoader();
-  //       },
-  //     });
-  // }
 
   getId() {
 
@@ -219,22 +157,34 @@ export class OrderMaintenanceModalComponent implements OnInit {
       next: (response) => {
         this.establecimientos = response.establecimientos;
         this.order = response.order;
-        console.log(this.order)
+        this.orderDetails = response.orderDetails;
+        this.orderMaintenances = response.orderMaintenances;
+
+        this.feeds = response.feeds;
+        this.taxes = response.taxes;
+        this.taxPercents = response.taxPercents;
+        this.decimal = response.decimal;
+
         let dataEstab = this.establecimientos.find((e) => e.idEstablecimiento === this.order.establecimientoId)
         if (dataEstab) {
           this.puntosEmision = dataEstab.puntosEmision;
-       //   this.bodegas = dataEstab.bodegas;
+          this.bodegas = dataEstab.bodegas;
+          let dataBodega = this.bodegas.find(b=>b.defaultBodega);
+          if(dataBodega){
+            this.order.bodegaId = dataBodega.idBodega;
+            this.cloneOrder.bodegaId = this.order.bodegaId;
+          }
         }
-        console.log(response.orderDetails)
-        this.orderMaintenanceState.setState({
-          orderDetails: response.orderDetails,
-          orderMaintenances: response.orderMaintenances,
-          bodegas: dataEstab?.bodegas || [],
-          feeds: response.feeds,
-          taxes: response.taxes,
-          taxPercents: response.taxPercents,
-          decimal: response.decimal
-        })
+
+        let dataTarifa = this.feeds.find(t=>t.predeterminada)
+        if(dataTarifa){
+          this.order.feeId = dataTarifa.idTarifa;
+          this.cloneOrder.feeId = dataTarifa.idTarifa;
+        }
+
+        this.drawImpuestoTotales({
+          items: this.orderMaintenances
+        });
       },
     })
   }
@@ -242,128 +192,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
   ngOnInit(): void {
     this.getId();
   }
-  onProductSelected($event: any) {
-    let { data } = $event;
-    console.log(data);
-    if (data.idArticulo > 0) {
-      this.productService
-        .get(JSON.stringify({ idArticulo: data.idArticulo, tipo: 6 }))
-        .subscribe({
-          next: (response) => {
-            if (isApiResponse(response)) {
-              let productData = JSON.parse(response.payload as string);
-              console.log(productData);
-              let fees =
-                this.orderMaintenances.push({
-                  productId: data.idArticulo,
-                  productName: data.descripcion,
-                  quantity: 1,
-                //  bodegas: this.bodegas,
-                  fees: JSON.parse(productData[2][0]['tarifas']),
-                  price: 0,
-                });
-            }
-          },
-        });
-    }
-    // this.orderMaintenances.push({
-    //   productId: data.idArticulo,
-    //   productName: data.descripcion,
-    // });
-  }
-  removeFromList(deviceId: number) {
-    let newArray = this.orderMaintenances.filter(
-      (x: { deviceId: number }) => x.deviceId !== deviceId
-    );
-    this.orderMaintenances = newArray;
-  }
 
-  selectBodega(cell: any, onRendered: any, success: any, cancel: any) {
-    let bodegas = [];
-    let rows = cell.getRow().getData();
-
-    if (rows.bodegas != undefined || rows.bodegas != null) {
-      bodegas = rows.bodegas;
-    }
-
-    let selectList = document.createElement('select');
-    selectList.style.width = '100%';
-    selectList.style.boxSizing = 'border-box';
-
-    onRendered(function () {
-      selectList.focus();
-      selectList.style.height = '100%';
-    });
-
-    function onChange() {
-      if (selectList.selectedOptions[0].value != rows) {
-        success(selectList.selectedOptions[0].value);
-
-        cell.getElement().dataset.bodega = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idBodega =
-          selectList.selectedOptions[0].value;
-      } else {
-        cancel();
-      }
-    }
-
-    selectList.addEventListener('blur', onChange);
-
-    for (let i = 0; i < bodegas.length; i++) {
-      let option = document.createElement('option');
-
-      option.value = bodegas[i].idBodega.toString();
-      option.text = bodegas[i].bodega;
-      if (bodegas[i].idBodega === rows) {
-        option.selected = true;
-      }
-      selectList.appendChild(option);
-    }
-    console.log(selectList);
-    return selectList;
-  }
-
-  selectFee(cell: any, onRendered: any, success: any, cancel: any) {
-    let fees = [];
-    let rows = cell.getRow().getData();
-
-    if (rows.tarifas != undefined || rows.tarifas != null) {
-      fees = rows.tarifas;
-    }
-
-    let selectList = document.createElement('select');
-    selectList.style.width = '100%';
-    selectList.style.boxSizing = 'border-box';
-
-    onRendered(function () {
-      selectList.focus();
-      selectList.style.height = '100%';
-    });
-
-    function onChange() {
-      if (selectList.selectedOptions[0].value != rows) {
-        success(selectList.selectedOptions[0].value);
-
-        cell.getElement().dataset.tarifa = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.feeId = selectList.selectedOptions[0].value;
-      } else {
-        cancel();
-      }
-    }
-
-    selectList.addEventListener('blur', onChange);
-
-    for (let i = 0; i < fees.length; i++) {
-      let option = document.createElement('option');
-
-      option.value = fees[i].idTarifa.toString();
-      option.text = fees[i].tarifa;
-      if (fees[i].idTarifa === rows) {
-        option.selected = true;
-      }
-      selectList.appendChild(option);
-    }
-    return selectList;
-  }
   save() { }
 }
