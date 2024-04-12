@@ -2694,17 +2694,7 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Details5">
-                    <Filters>
-                      <Filter>
-                        <FilterExpression>=Fields!subTotal.Value</FilterExpression>
-                        <Operator>NotEqual</Operator>
-                        <FilterValues>
-                          <FilterValue DataType="Integer">0</FilterValue>
-                        </FilterValues>
-                      </Filter>
-                    </Filters>
-                  </Group>
+                  <Group Name="Details5" />
                   <TablixMembers>
                     <TablixMember />
                   </TablixMembers>
@@ -2997,17 +2987,7 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Details6">
-                    <Filters>
-                      <Filter>
-                        <FilterExpression>=Fields!iva.Value</FilterExpression>
-                        <Operator>NotEqual</Operator>
-                        <FilterValues>
-                          <FilterValue DataType="Integer">0</FilterValue>
-                        </FilterValues>
-                      </Filter>
-                    </Filters>
-                  </Group>
+                  <Group Name="Details6" />
                 </TablixMember>
                 <TablixMember>
                   <KeepWithGroup>Before</KeepWithGroup>
