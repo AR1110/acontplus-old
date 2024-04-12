@@ -52,7 +52,8 @@ namespace TechnicalSupport.API.Controllers
                     { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(request.Data))}
                 };
                 var response = await _service.AddAsync(parameters);
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
+
+                if (response == null) { return BadRequest("No response"); }
                 return Ok(response);
             }
             catch (Exception ex)
@@ -76,13 +77,28 @@ namespace TechnicalSupport.API.Controllers
 
                 var response = await _service.UpdateAsync(parameters);
 
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
+                if (response == null) { return BadRequest("No response"); }
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error on put: " + ex.ToString());
                 return BadRequest("Error on put");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var response = await _service.DeleteAsync(id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on delete: " + ex.ToString());
+                return BadRequest("Error on delete");
             }
         }
     }
