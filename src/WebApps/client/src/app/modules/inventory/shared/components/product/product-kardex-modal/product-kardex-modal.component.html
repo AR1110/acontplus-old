@@ -1,19 +1,19 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-basic-title">Kardex</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
 </div>
 <div class="modal-body">
   <div class="row">
     <div class="col-xl-9 col-lg-9 col-md-12 col-12">
-      <mat-chip-listbox aria-label="Fish selection">
-        <mat-chip-option>Fecha</mat-chip-option>
-        <mat-chip-option>Buscar consolidaciones de Inventario</mat-chip-option>
-        <mat-chip-option>Buscar a partir de la ultima consolidación</mat-chip-option>
+      <mat-chip-listbox aria-label="Option selection" [(ngModel)]="dataSearch.option">
+        <mat-chip-option [value]="1" color="accent"> Fecha</mat-chip-option>
+        <mat-chip-option [value]="2" color="accent">Buscar consolidaciones de Inventario</mat-chip-option>
+        <mat-chip-option [value]="3" color="accent">Buscar a partir de la ultima consolidación</mat-chip-option>
       </mat-chip-listbox>
 
     </div>
     <div class="col-xl-3 col-lg-3 col-md-12 col-12">
-      <mat-slide-toggle>Transacciones anuladas</mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="dataSearch.estado">Transacciones anuladas</mat-slide-toggle>
 
     </div>
   </div>
@@ -21,34 +21,94 @@
   <div class="row">
     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
       <div class="form-group">
-        <label for="establecimiento">Establecimiento</label>
-        <select name="" id="" class="form-select">
-          <option value=""></option>
+        <label for="establecimiento">Establecimiento. <span class="text-danger">*</span></label>
+        <select name="establecimiento" id="establecimiento" class="form-select" [(ngModel)]="dataSearch.codEstab" (change)="getBodegas()">
+          @for (item of establecimientos; track $index) {
+            <option [ngValue]="item.codEstab">{{item.nombreComercial}}</option>
+          }
         </select>
       </div>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
       <div class="form-group">
         <label for="bodega">Bodega</label>
-        <select name="" id="" class="form-select">
-          <option value=""></option>
+        <select name="bodega" id="bodega" class="form-select" [(ngModel)]="dataSearch.idBodega" (change)="searchKardex()">
+          @for (item of bodegas; track $index) {
+            <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
+          }
         </select>
       </div>
     </div>
-    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
       <div class="form-group">
-        <label for="product">Producto</label>
-        <input type="text" class="form-control">
+        <label for="dateRange">Rango Fechas: </label>
+        <app-date-range-selection [from]="dataSearch.fechaInicio" [to]="dataSearch.fechaFin"  (onChangeDateRange)="onDateRangeSelection($event)" />
       </div>
     </div>
-    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
       <div class="form-group">
-        <label for="code">Código</label>
-        <input type="text" class="form-control" readonly>
+        <label for="tiposTransaccion">Tipo Transacción</label>
+        <select name="tiposTransaccion" id="tiposTransaccion" [(ngModel)]="dataSearch.tipoTransaccion" class="form-select" (change)="searchKardex()">
+          <option value="">Todos</option>
+          @for (item of tiposTransaccion; track $index) {
+          <option [ngValue]="item.codigo">{{item.descripcion}}</option>
+          }
+        </select>
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="product">Producto</label>
+            <app-product-search [textSearch]=" dataArticulo.descripcion" (onProductSelected)="onProductSelected($event)" [props]="{
+                                                    isSearchSimple: true,
+                                                  }" />
+          </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="code">Código</label>
+            <input type="text" class="form-control" [(ngModel)]="dataArticulo.codigo" readonly>
+          </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="code">Stock Anterior</label>
+            <input type="text" class="form-control" [(ngModel)]="dataArticulo.stock" readonly>
+          </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="code">Medida</label>
+            <input type="text" class="form-control" [(ngModel)]="dataArticulo.medida" readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+      <div class="d-grid gap-2 d-md-flex justify-content-end mt-4">
+
+          <button type="button" class="btn btn-info" (click)="searchKardex()">
+            <i class="ti-search"></i> Buscar
+          </button>
+          <button type="button" class="btn btn-secondary" ng-click="getReport()">
+            <fa-icon [icon]="'file-download'"></fa-icon> Reporte
+          </button>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-12">
+        <app-tabulator [columnNames]="columns"   [options]="tabulatorOptions"></app-tabulator>
     </div>
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+  <button type="button" class="btn btn-dark" (click)="modal.close()">
+      &times; Cerrar
+  </button>
 </div>

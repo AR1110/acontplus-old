@@ -15,7 +15,7 @@ export class OpenModalProductService {
     let modalRef = this.modalSvc.openModalCustom(ProductAddEditModalComponent, {
       size: 'xl'
     })
-    modalRef.componentInstance.data = {
+    modalRef.componentInstance.params = {
       id: data?.id
     }
 
@@ -26,10 +26,12 @@ export class OpenModalProductService {
   }
 
   async openKardex<T extends { id: number }>(data?: T) {
+    console.log(data)
     let modalRef = this.modalSvc.openModalCustom(ProductKardexModalComponent, {
-      size: 'xl'
+      size: 'xl',
+      scrollable: true
     })
-    modalRef.componentInstance.data = {
+    modalRef.componentInstance.params = {
       id: data?.id
     }
 

@@ -527,6 +527,7 @@ export class OrderMaintenanceDetailComponent {
             let dataTaxPercent = taxPercents.find(d => d.codigo === product.codigoPorcentaje);
             let dataMedida = medidas.find(m => m.defaultMedida);
 
+            row.productId = product.idArticulo;
             row.codigo = product.codigoArticulo;
             row.descripcion = product.descripcion;
             row.bodegaId = this.order.bodegaId;
