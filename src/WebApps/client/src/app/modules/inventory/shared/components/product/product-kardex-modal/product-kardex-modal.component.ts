@@ -15,6 +15,8 @@ import { TransactionService } from '@modules/inventory/shared/services/transacti
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { ProductSearchComponent } from '../product-search/product-search.component';
+import Swal from 'sweetalert2';
+import { SharedService } from '@core/services/shared.service';
 
 @Component({
   selector: 'app-product-kardex-modal',
@@ -39,6 +41,7 @@ export class ProductKardexModalComponent {
 
   transactionSvc = inject(TransactionService)
   tS = inject(ToasterService);
+  sharedSvc = inject(SharedService);
 
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
@@ -321,8 +324,8 @@ export class ProductKardexModalComponent {
 
 
   getBodegas() {
-    let dataEstab =this.establecimientos.find(item => item.codEstab === this.dataSearch.codEstab);
-    if(dataEstab){
+    let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataSearch.codEstab);
+    if (dataEstab) {
       this.bodegas = dataEstab.bodegas;
       let dataBodega = this.bodegas.find(estab => (estab.defaultBodega));
 
@@ -435,6 +438,69 @@ export class ProductKardexModalComponent {
     this.getDataKardex()
   }
 
+
+  async getReport() {
+    if (this.transacciones.length === 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No hay registros para el reporte'
+      })
+      return
+    }
+
+    const {
+      value: formatType
+    } = await Swal.fire({
+      icon: 'warning',
+      title: 'Tipo Formato',
+      input: 'radio',
+      inputOptions: {
+        pdf: 'PDF',
+        excel: 'EXCEL'
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Seleccione el Tipo de Formato!'
+        }
+        return null;
+      },
+      confirmButtonText: '<i class="mdi mdi-download"></i> Descargar',
+      showDenyButton: true,
+      denyButtonText: 'No, cancelar',
+      allowOutsideClick: false,
+      showLoaderOnDeny: true,
+      allowEscapeKey: false
+    })
+
+    if (!formatType) return
+
+    let dataParams =  {
+      tipo: 1,
+      checkBoxFecha: this.dataSearch.option === 1,
+      checkBoxUltimaConsolidacion: this.dataSearch.option === 3,
+      checkBoxConsolidacion: this.dataSearch.option === 2,
+      movement: isValidField(this.dataSearch.tipoTransaccion),
+      byBodega: isValidField(this.dataSearch.idBodega),
+      byArticulo: this.dataSearch.idArticulo,
+      fechaInicio: this.dataSearch.fechaInicio,
+      fechaFin: this.dataSearch.fechaFin,
+      estado: this.dataSearch.estado,
+    }
+    let parameters = {
+      hasIdUsuarioRol: true,
+      reportParams: JSON.stringify({
+        codigo: "RK",
+        format: formatType,
+        codEstab: this.dataSearch.codEstab,
+        hasParams: true,
+        aditionalParams: []
+      }),
+
+      dataParams: JSON.stringify(dataParams)
+    }
+
+    this.sharedSvc.getReport(parameters, formatType)
+  }
 
 
 }
