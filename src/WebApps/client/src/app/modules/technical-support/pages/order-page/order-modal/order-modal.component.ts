@@ -254,33 +254,26 @@ export class OrderModalComponent {
         message: 'Debe de añadir los detalles a la orden',
       });
     }
-    console.log(data);
     this.orderService.post(data).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
-          if (response.code === '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message!,
-            });
-          }
+          this.tS.toastr({
+            type: response.code == '1' ? 'success' : 'warning',
+            message: response.message!,
+          });
           if (response.code === '1') {
             this.orderForm.patchValue({});
             this.orderDetails = [];
             this.order = {};
-            this.tS.toastr({
-              type: 'success',
-              message: response.message!,
-            });
-            this.modalRef.close();
+            this.modalRef.close(response);
           }
         }
       },
-      complete() {
-        hideLoader();
-      },
       error(err) {
         console.log(err);
+        hideLoader();
+      },
+      complete() {
         hideLoader();
       },
     });

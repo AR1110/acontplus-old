@@ -6,50 +6,63 @@ import { CompanyCustomerSearch } from '@modules/customer/company-customer/models
 import { Observable, map } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CompanyCustomerService {
   //For customers of Acontplus Customers (cliente)
-  url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`
-  constructor(private http: HttpClient) { }
+  url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
+  constructor(private http: HttpClient) {}
 
   async checkExistence(params: any) {
-    return this.http.get(`${this.url}?json=${JSON.stringify({ ...params, tipo: 3 })}`).pipe(map((response) => response))
+    return this.http
+      .get(`${this.url}?json=${JSON.stringify({ ...params, tipo: 3 })}`)
+      .pipe(map((response) => response));
   }
 
   get(params: any) {
-    return this.http.get(`${this.url}?json=${JSON.stringify({ ...params, tipo: 1 })}`).pipe(map((response: any) => response))
+    return this.http
+      .get(`${this.url}?json=${JSON.stringify({ ...params, tipo: 1 })}`)
+      .pipe(map((response: any) => response));
   }
 
   getById(id: number) {
-    return this.http.get(this.url + id).pipe(map((response) => response))
+    return this.http.get(this.url + id).pipe(map((response) => response));
   }
 
   getDataForm() {
-    return this.http.get(this.url + '?json=' + JSON.stringify({ tipo: 2 })).pipe(map((response) => response))
+    return this.http
+      .get(this.url + '?json=' + JSON.stringify({ tipo: 2 }))
+      .pipe(map((response) => response));
   }
 
   post(data: any) {
-    return this.http.post(this.url, data).pipe(map((response) => response))
+    return this.http
+      .post(this.url, { data: data })
+      .pipe(map((response) => response));
   }
 
   put(id: number, data: any) {
-    return this.http.put(this.url + id, data).pipe(map((response) => response))
+    return this.http.put(this.url + id, data).pipe(map((response) => response));
   }
 
-  search<T extends { textSearch: string }>(data: T): Observable<Array<CompanyCustomerSearch>> {
+  search<T extends { textSearch: string }>(
+    data: T
+  ): Observable<Array<CompanyCustomerSearch>> {
     let query = {
       textSearch: data.textSearch,
-    }
-    return this.http.get(`${this.url}Search?json=${JSON.stringify(query)}`)
+    };
+    return this.http
+      .get(`${this.url}Search?json=${JSON.stringify(query)}`)
       .pipe(
-        map(response => {
+        map((response) => {
           if (isApiResponse(response)) {
-            let customers = response.payload && JSON.parse(response.payload as string) || [];
+            let customers =
+              (response.payload && JSON.parse(response.payload as string)) ||
+              [];
             return customers || [];
           }
-          return []
+          return [];
         })
-      )
+      );
   }
 }
