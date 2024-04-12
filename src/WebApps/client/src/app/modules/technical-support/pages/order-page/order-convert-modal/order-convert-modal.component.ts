@@ -57,6 +57,7 @@ export class OrderConvertModalComponent {
               type: 'success',
               message: response.message,
             });
+            this.modalRef.close(response);
           }
         }
       },

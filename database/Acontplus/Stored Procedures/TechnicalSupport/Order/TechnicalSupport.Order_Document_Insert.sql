@@ -114,13 +114,13 @@ BEGIN
 
     IF @orderId = 0
     BEGIN 
-        SELECT Common.ufnSpResponse('0', 'El OrderId no puede ser un valor 0 o nulo', NULL)
+        SELECT '0' as code, 'El OrderId no puede ser un valor 0 o nulo' as 'message'
         RETURN
     END
 
     IF @codDoc IS NULL OR @codDoc = '' 
     BEGIN 
-        SELECT Common.ufnSpResponse('0', 'El CodDoc no puede ser un valor 0 o nulo', NULL)
+        SELECT '0' as code, 'El CodDoc no puede ser un valor 0 o nulo' as 'message'
         RETURN
     END
         
@@ -136,7 +136,7 @@ BEGIN
             , @userId               = tso.UserId
     FROM TechnicalSupport.[Order] tso
     WHERE tso.Id = @orderId
-        
+
     SET @fechaEmision = (SELECT dbo.ufnGetDateEcuador())
 
     SELECT TOP 1 @estadoPagoId = idEstadoPago FROM dbo.EstadoPago WITH(NOLOCK) WHERE codigo = 'PE'
@@ -190,10 +190,11 @@ BEGIN
 	INNER JOIN TechnicalSupport.[Order] o             WITH (NOLOCK) ON o.Id   = od.OrderId
     WHERE o.Id = @orderId
     AND om.Deleted IS NULL
+    -- AND om.[Enabled] = 1
     
     IF NOT EXISTS(SELECT TOP 1 1 FROM @tblItems)
     BEGIN
-        SELECT Common.ufnSpResponse('0', 'No se pudieron recuperar los detalles', NULL)
+        SELECT '0' as code, 'No se pudieron recuperar los detalles' as 'message'
         RETURN
     END
 
@@ -451,22 +452,8 @@ BEGIN
 
                 --------------------END DOCUMENTOS---------------------
             DECLARE @codDocCuentaCobrar VARCHAR(2)
-
             SET @codDocCuentaCobrar = (SELECT IIF(@codDoc = 'FV', '01', 'NE'))
    
-            EXEC Contabilidad.CuentaPorCobrar_Insert @codDocCuentaCobrar
-                                                    , @documentoId
-                                                    , @puntoEmisionId
-                                                    , 1
-                                                    , @customerCompanyId
-                                                    , @nroDocumento
-                                                    , @serieDocument
-                                                    , @fechaEmision
-                                                    , @fechaEmision
-                                                    , @total
-                                                    , @companyId
-                                                    , @userId
-
             --------------------PAYLOADS------------------
             DECLARE @payAutomatic BIT
             ,@printerAutomatic BIT
@@ -496,19 +483,19 @@ BEGIN
                                 ,payAutomatic       = @payAutomatic
                                 ,printerAutomatic   = @printerAutomatic
                                 ,orderId            = @orderId
-                            FOR JSON PATH)
-
+                            FOR JSON PATH
+           )
         COMMIT TRAN
-        SELECT Common.ufnSpResponse('1', 'Parece exitoso', @payload)
+        SELECT '1' as code, 'Parece exitoso' as 'message', @payload as payload
     END TRY
     BEGIN CATCH
-        SELECT Common.ufnSpResponse('0', 'Error al guardar el orden', NULL)
+        SELECT '0' as code, 'Error al guardar el orden' as 'message', NULL as payload
         
         IF (@@TRANCOUNT > 0) ROLLBACK TRAN
 
         INSERT INTO ErroresSistema
         (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
 		VALUES
-        (NEWID(), 'Order/Convert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
+        (NEWID(), 'TechnicalSupport.Order/Convert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
     END CATCH
 END
