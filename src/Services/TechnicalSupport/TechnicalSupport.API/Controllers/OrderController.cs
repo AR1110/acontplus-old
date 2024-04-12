@@ -49,13 +49,12 @@ namespace TechnicalSupport.API.Controllers
                 {
                     { "userRoleId", User.GetUserRoleId() },
                     { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(orderDto,
-                                                                                        new JsonSerializerSettings
-                                                                                        {
-                                                                                            ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () },
-                                                                                            Formatting = Formatting.Indented
-                                                                                        })
-                                                                                    )
-                    }
+                        new JsonSerializerSettings
+                        {
+                            ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () },
+                            Formatting = Formatting.Indented
+                        })
+                    )}
                 });
                 if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
                 return Ok(response);
