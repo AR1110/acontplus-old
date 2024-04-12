@@ -26,7 +26,12 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-success" title="Guardar Orden">
+    <button
+      type="submit"
+      class="btn btn-outline-success"
+      title="Guardar Orden"
+      [disabled]="!fbConvertDoc.valid"
+    >
       <fa-icon [icon]="'save'"></fa-icon> Guardar
     </button>
     <button type="button" class="btn btn-outline-dark" title="Cancelar Orden" (click)="closeModal()">

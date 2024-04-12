@@ -54,14 +54,15 @@ namespace TechnicalSupport.API.Services
             return true;
         }
 
-        public async Task<ApiResponse> ConvertAsync(Dictionary<string, object> parameters)
+        public async Task<string> ConvertAsync(Dictionary<string, object> parameters)
         {
             try
             {
-                return await _repository.SPExecuteAsync("TechnicalSupport.Order_Document_Insert", parameters);
+                return await _repository.SPExecuteDeprecatedAsync("TechnicalSupport.Order_Document_Insert", parameters);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
         }
