@@ -50,16 +50,29 @@ namespace TechnicalSupport.API.Services
             }
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<ApiResponse> DeleteAsync(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null) return false;
-            order.Enabled = false;
-            order.Deleted = true;
+            try
+            {
+                var order = await _context.Orders.FindAsync(id);
 
-            _context.Orders.Update(order);
-            await _context.SaveChangesAsync();
-            return true;
+                if (order != null)
+                {
+                    return new ApiResponse { code = "0", message = "No se ha encontrado item para eliminar" };
+                }
+
+                order.Enabled = false;
+                order.Deleted = true;
+
+                _context.Orders.Update(order);
+                await _context.SaveChangesAsync();
+
+                return new ApiResponse { code = "1", message = "Eliminado exitosamente" };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse { code = "0", message = ex.Message };
+            }
         }
     }
 }
