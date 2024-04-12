@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
 
   get() {
     const self = this;
-    this.orderService.get(JSON.stringify({ tipo: 3 })).subscribe({
+    this.orderService.get({ tipo: 5 }).subscribe({
       next(response) {
         console.log(response);
       },

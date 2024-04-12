@@ -3,7 +3,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import {
+  GroupedEstab,
+  GroupedEstabPuntoEmision,
+} from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
@@ -41,7 +44,7 @@ export class OrderModalComponent {
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
 
-  columnNames: any[] = [
+  columnNames = [
     { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
     {
       title: 'deviceCustomerId',
@@ -49,8 +52,8 @@ export class OrderModalComponent {
       width: 150,
       visible: false,
     },
-    { title: 'Equipo', field: 'deviceName', width: 200 },
-    { title: 'Serie', field: 'deviceSerie', width: 180, editor: true },
+    { title: 'Equipo', field: 'deviceName', width: 225 },
+    { title: 'Serie', field: 'deviceSerie', width: 200, editor: true },
     {
       title: 'Garantia',
       field: 'deviceWarranty',
@@ -58,7 +61,7 @@ export class OrderModalComponent {
       validator: ['numeric', 'min:0'],
       editor: true,
     },
-    { title: 'Obs.', field: 'obs', width: 300, editor: true },
+    { title: 'Obs.', field: 'obs', width: 450, editor: true },
     {
       cellClick: (e: any, cell: any) => {
         this.removeFromList(cell.getData().deviceId);
@@ -121,23 +124,28 @@ export class OrderModalComponent {
     let data = cell.getRow().getData();
 
     //return the HTML code for the button, using Bootstrap classes and Angular routerLink
-    return `<button class='btn btn-danger'>${icon(faTrashAlt).html.join(
+    return `<button class='btn btn-danger btn-sm'>${icon(faTrashAlt).html.join(
       ''
     )}</button>`;
   }
 
   get() {
     showLoader();
-    this.orderService.get(JSON.stringify({ tipo: 1 })).subscribe({
+    let parameters = { tipo: 1, id: this.data.id };
+    if (this.data.id > 0) {
+      this.modalTitle = 'Editar Orden';
+      this.modalIcon = 'edit';
+    }
+    this.orderService.get(parameters).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
+          console.log(response);
           if (response.code == '1') {
-            let { puntosEmision, categories, users } = JSON.parse(
-              response.payload as string
-            );
+            let parsedResponse = JSON.parse(response.payload as string);
+            let { puntosEmision, users } = parsedResponse;
             this.establecimientos = groupEstabUtil({
               estabs: puntosEmision,
-              isGroupPuntoEmision: true
+              isGroupPuntoEmision: true,
             });
             const dataEstab = this.establecimientos.find(
               (estab) => estab.defaultEstab
@@ -158,14 +166,18 @@ export class OrderModalComponent {
               }
             }
             this.users = users;
+            if (this.data.id > 0) {
+              let { order, orderDetails } = parsedResponse;
+              this.orderDetails = orderDetails || [];
+            }
           }
         }
       },
-      complete() {
-        hideLoader();
-      },
       error(error) {
         console.log(error);
+        hideLoader();
+      },
+      complete() {
         hideLoader();
       },
     });
