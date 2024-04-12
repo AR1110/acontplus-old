@@ -175,9 +175,7 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId")
-                        .IsUnique()
-                        .HasDatabaseName("UI_TS_DC_DeviceId");
+                    b.HasIndex("DeviceId");
 
                     b.ToTable("DeviceCustomer", "TechnicalSupport");
                 });
