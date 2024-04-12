@@ -97,7 +97,7 @@ export class OrderListComponent implements OnInit {
 
   get() {
     showLoader();
-    this.orderService.get(JSON.stringify({tipo: 2, orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode], ...this.dataSearch,}))
+    this.orderService.get({tipo: 2, orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode], ...this.dataSearch,})
       .subscribe({
         next: (response) => {
           if (isApiResponse(response)) {

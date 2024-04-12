@@ -20,16 +20,37 @@
         <td scope="row" class="text-center">{{ $index + 1 }}</td>
         <td class="overflow-hidden">
           <div ngbDropdown container="body">
-            <button type="button" class="btn btn-outline-success btn-sm" ngbDropdownToggle>
+            <button
+              type="button"
+              class="btn btn-outline-success btn-sm"
+              ngbDropdownToggle
+            >
               <fa-icon [icon]="'cog'"></fa-icon>
             </button>
             <div ngbDropdownMenu>
-              <button ngbDropdownItem (click)="edit(item)">Actualizar</button>
-              <button ngbDropdownItem (click)="askToDelete(item)">Eliminar</button>
-              <button ngbDropdownItem (click)="getReport(item)">Reporte</button>
-              <div class="dropdown-divider"></div>
-              <button ngbDropdownItem (click)="openModalMaintenance(item.id)">Iniciar reparación</button>
-              <button ngbDropdownItem (click)="askToConvertDoc(item)">Conversión</button>
+              <button ngbDropdownItem (click)="edit(item)" title="Editar">
+                <fa-icon [icon]="'edit'"></fa-icon> Editar
+              </button>
+              <button
+                ngbDropdownItem
+                (click)="askToDelete(item)"
+                title="Anular"
+              >
+                <fa-icon [icon]="'lock'"></fa-icon> Anular
+              </button>
+              <button ngbDropdownItem (click)="getReport(item)" title="Reporte">
+                <fa-icon [icon]="'file-pdf'"></fa-icon> Reporte
+              </button>
+              <button
+                ngbDropdownItem
+                (click)="openModalMaintenance(item.id)"
+                title="Iniciar Reparaciones"
+              >
+                <fa-icon [icon]="'cogs'"></fa-icon> Mantenimiento
+              </button>
+              <button ngbDropdownItem (click)="askToConvertDoc(item)">
+                Conversión
+              </button>
             </div>
           </div>
         </td>
@@ -41,11 +62,13 @@
         <td class="text-end">$ {{ item.total }}</td>
         <td>{{ item.obs }}</td>
         <td>
-          <span [ngClass]="{
+          <span
+            [ngClass]="{
               badge: true,
               'bg-success': item.enabled == 1,
               'bg-danger': item.enabled == 0
-            }">
+            }"
+          >
             {{ item.enabled == 1 ? "Activo" : "Inactivo" }}
           </span>
         </td>
@@ -60,9 +83,15 @@
     <tfoot>
       <tr>
         <td align="center" colspan="10">
-          <ngb-pagination [collectionSize]="dataSearch.totalRecords" [(page)]="dataSearch.pageIndex"
-            [maxSize]="dataSearch.maxSize" [pageSize]="dataSearch.pageSize" [rotate]="true"
-            (pageChange)="onPageChanged()" [boundaryLinks]="true" />
+          <ngb-pagination
+            [collectionSize]="dataSearch.totalRecords"
+            [(page)]="dataSearch.pageIndex"
+            [maxSize]="dataSearch.maxSize"
+            [pageSize]="dataSearch.pageSize"
+            [rotate]="true"
+            (pageChange)="onPageChanged()"
+            [boundaryLinks]="true"
+          />
         </td>
       </tr>
     </tfoot>
