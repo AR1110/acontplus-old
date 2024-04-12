@@ -228,6 +228,7 @@ export class AddEditModalComponent implements OnInit {
     const self = this;
     const dataForm = {
       ...this.customerForm.value,
+      validationSri: false,
     };
     console.log(dataForm);
 

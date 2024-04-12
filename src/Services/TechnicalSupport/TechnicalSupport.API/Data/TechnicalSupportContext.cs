@@ -63,7 +63,6 @@ namespace TechnicalSupport.API.Data
 
             builder.Entity<DeviceCustomer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<DeviceCustomer>().Property(x => x.Enabled).HasDefaultValue(true);
-            builder.Entity<DeviceCustomer>().HasIndex(x => x.DeviceId).HasDatabaseName("UI_TS_DC_DeviceId").IsUnique();
 
             builder.Entity<DeviceSpecs>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<DeviceSpecs>().Property(x => x.Enabled).HasDefaultValue(true);

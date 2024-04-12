@@ -2,15 +2,16 @@
 @import "tabulator-tables/dist/css/tabulator.min.css";
 
 /* Define the hover background color for the table rows */
-.tabulator .tabulator-row.tabulator-selectable:hover .tabulator-cell {
-  //background-color: gray;
-}
+// .tabulator .tabulator-row.tabulator-selectable:hover .tabulator-cell {
+//   background-color: gray;
+// }
 
 /* Define the selected background color for the table rows */
-.tabulator .tabulator-row.tabulator-selected .tabulator-cell {
-  // background-color: darkblue;
-}
+// .tabulator .tabulator-row.tabulator-selected .tabulator-cell {
+//   background-color: darkblue;
+// }
 
+<<<<<<< HEAD
  .tabulator-header .tabulator-col {
       font-size: 12px; /* Adjust this value as needed */
   }
@@ -27,3 +28,8 @@
 .table-saldos {
     background-color: rgba(46,155,92,.34);
 }
+=======
+// .tabulator-header .tabulator-col {
+//   font-size: 12px; /* Adjust this value as needed */
+// }
+>>>>>>> origin/ivan_work

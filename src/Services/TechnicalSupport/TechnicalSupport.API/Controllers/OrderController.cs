@@ -56,7 +56,7 @@ namespace TechnicalSupport.API.Controllers
                         })
                     )}
                 });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
+                if (response == null) { return BadRequest("No response"); }
                 return Ok(response);
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace TechnicalSupport.API.Controllers
                                                                                     )
                     }
                 });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
+                if (response == null) { return BadRequest("No response"); }
                 return Ok(response);
             }
             catch (Exception ex)
@@ -121,7 +121,7 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                var response = await _orderService.DeleteAsync(id);
+                var response = await _orderService.DeleteAsync(User.GetUserId(), id);
                 return Ok(response);
             }
             catch (Exception ex)

@@ -115,8 +115,10 @@ BEGIN
 				END
 			
 			INSERT INTO Cliente WITH (ROWLOCK)
-			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,idUsuario,idEntidad,customerId)
-			SELECT idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,@idUsuario,@idEntidad,@customerId
+			      (idTipoIdentificacion,idEmpleado,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,
+                  idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,idUsuario,idEntidad,customerId)
+			SELECT idTipoIdentificacion,idEmpleado,IIF(idTipoClienteProveedor = 0, NULL, idTipoClienteProveedor),idTipoEntidad,idCiudad,IIF(idSubContribuyente = 0, NULL, idSubContribuyente),
+                IIF(idTiempoCredito = 0, NULL, idTiempoCredito),IIF(idEmpresa = 0, NULL, idEmpresa), IIF(idCargo = 0, NULL, idCargo),idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,@idUsuario,@idEntidad,@customerId
             FROM @tbCliente
 
 		    SET @idCliente = @@IDENTITY

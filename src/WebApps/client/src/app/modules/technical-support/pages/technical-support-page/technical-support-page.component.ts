@@ -33,7 +33,7 @@ export class TechnicalSupportPageComponent {
       size: 'xl',
     });
     modalResp.result.then((response) => {
-      if(response!==null && typeof response==='object'){
+      if (response !== null && typeof response === 'object') {
         this.child.get();
       }
     });
