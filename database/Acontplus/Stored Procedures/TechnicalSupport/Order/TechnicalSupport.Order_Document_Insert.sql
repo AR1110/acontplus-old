@@ -112,15 +112,17 @@ BEGIN
     
     SELECT @orderId = id, @codDoc = code FROM OPENJSON(@json) WITH (id INT '$.id',code VARCHAR(5) '$.code')
 
-    IF @orderId = 0
+    IF ((@orderId = 0) OR (@codDoc IS NULL OR @codDoc = ''))
     BEGIN 
-        SELECT '0' as code, 'El OrderId no puede ser un valor 0 o nulo' as 'message'
+        SELECT '0' as code, 'El identificador o código documento no puede ser vacío' as 'message'
         RETURN
     END
 
-    IF @codDoc IS NULL OR @codDoc = '' 
-    BEGIN 
-        SELECT '0' as code, 'El CodDoc no puede ser un valor 0 o nulo' as 'message'
+    IF EXISTS(SELECT TOP 1 1 FROM TechnicalSupport.[Order] tso              WITH (NOLOCK)
+                             INNER JOIN TechnicalSupport.OrderStatus tsos   WITH (NOLOCK) ON tsos.Id = tso.OrderStatusId
+                             WHERE tso.Id = @orderId AND Finished = 1 AND tsos.Code = 'PE')
+    BEGIN
+        SELECT '0' as code, 'La orden ya ha sido convertida.' as 'message'
         RETURN
     END
         
@@ -137,6 +139,11 @@ BEGIN
     FROM TechnicalSupport.[Order] tso
     WHERE tso.Id = @orderId
 
+    UPDATE TechnicalSupport.[Order]
+    SET Finished            = 1
+        , OrderStatusId     =  (SELECT Id FROM TechnicalSupport.OrderStatus WHERE Code = 'PE')
+    WHERE Id = @orderId
+ 
     SET @fechaEmision = (SELECT dbo.ufnGetDateEcuador())
 
     SELECT TOP 1 @estadoPagoId = idEstadoPago FROM dbo.EstadoPago WITH(NOLOCK) WHERE codigo = 'PE'

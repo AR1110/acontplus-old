@@ -43,9 +43,6 @@ export class OrderConvertModalComponent {
     this.orderService.convert({ data: data }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
-          console.log("==============response======================")
-          console.log(response)
-
           if (response.code == '0') {
             this.tS.toastr({
               type: 'warning',
