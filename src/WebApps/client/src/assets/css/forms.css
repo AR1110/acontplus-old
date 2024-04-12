@@ -10,14 +10,3 @@
   padding: 1rem;
   margin-bottom: 1rem;
 }
-.form-group {
-  margin-bottom: 1rem;
-}
-label {
-  display: block;
-  margin-bottom: .5rem;
-}
-select {
-  width: 100%;
-  padding: .5rem;
-}
