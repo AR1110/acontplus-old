@@ -28,7 +28,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-        <input type="date" name="fechaEmision" id="fechaEmision" class="form-control">
+        <input type="date" name="fechaEmision" id="fechaEmision" [ngModel]="order.fechaEmision | date:'yyyy-MM-dd'"  class="form-control">
       </div>
     </div>
   </div>
@@ -59,17 +59,52 @@
     </div>
   </div>
 
-  <app-order-maintenance-detail
-    [orderDetails]="orderDetails"
-    [orderMaintenances]="orderMaintenances"
-    [bodegas]="bodegas"
-    [feeds]="feeds"
-    [taxes]="taxes"
-    [taxPercents]="taxPercents"
-    [decimal]="decimal"
-    [order]="order"
-    (drawTaxTotalEvent)="drawImpuestoTotales($event)"
-    />
+   <div ngbAccordion [closeOthers]="true">
+    @for (item of orderDetails; track $index) {
+    <div ngbAccordionItem   >
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>
+          {{ item.deviceName }}
+        </button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="row">
+                  <div class="form-group">
+                    <!-- <label for="productSearch">Buscar producto: </label> -->
+                    <app-product-search (onProductSelected)="onProductSelected($event)" [props]="{
+                                        isSearchSimple: true
+                                      }" />
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col">
+                <div class="table-responsive">
+                  <app-tabulator
+                    [columnNames]="columnNames"
+                    [tableData]="orderMaintenances"
+                    (cellEdited)="cellEdited($event)"
+                  ></app-tabulator>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+
   <div class="row">
     <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
 

@@ -55,8 +55,8 @@ export class UserCustomerPageComponent {
   }
 
   ngOnInit() {
-   // this.router.navigate(['/', 'config', 'establishment-page'])
-   this.getUsersCustomer()
+    this.router.navigate(['/', 'accounting', 'cuenta-por-cobrar-page'])
+ //  this.getUsersCustomer()
   }
 
 

@@ -11,7 +11,7 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { AccountingModule } from '@modules/accounting/accounting.module';
-import { ACCOUNTING_PATHS } from '@modules/accounting/constants/accounting.constants';
+import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
 import { AppModule } from 'src/app/app.module';
 
 @Component({

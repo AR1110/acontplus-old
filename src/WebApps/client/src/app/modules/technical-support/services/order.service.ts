@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
+import { formatDate } from '@core/utils/date.util';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
@@ -58,7 +59,11 @@ export class OrderService {
               decimalsConfig,
             } = JSON.parse(response.payload as string);
 
-            data.order = order[0];
+            let tempOrder = order[0];
+            data.order = {
+              ...tempOrder,
+              fechaEmision: formatDate(tempOrder.fechaEmision)
+            }
             data.orderDetails = orderDetails;
 
             data.orderMaintenances = orderMaintenances.map(

@@ -17,3 +17,4 @@ export const getPermisosLocal = () => {
   }
   return dataPermisos;
 }
+
