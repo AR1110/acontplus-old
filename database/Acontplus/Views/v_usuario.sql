@@ -8,7 +8,6 @@ CREATE OR ALTER VIEW v_usuario AS (
 	,u.estado estadoUsuario
 	,ur.idUsuarioRol
 	,ur.idEntidad
-	,ur.idRol
 	,e.ruc rucEmpresa
 	,e.razonSocial entidad
     ,e.nombreComercial
@@ -16,6 +15,7 @@ CREATE OR ALTER VIEW v_usuario AS (
     ,e.direccion
 	,r.Code codRol
 	,r.[Name] rol
+    ,r.Id RoleId
 	FROM dbo.Usuario u WITH (NOLOCK)
 	INNER JOIN App.UsuarioRol ur WITH (NOLOCK) ON u.idUsuario = ur.idUsuario
 	INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
