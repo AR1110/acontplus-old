@@ -1,22 +1,26 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Route, Router, RouterOutlet } from '@angular/router';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+import { GlobalRoutes } from '@core/constants/global-routes';
+import { getEnumValueByKey } from '@core/utils/constant-value'
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
-import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
-import { getEnumValueByKey } from '@core/utils/constant-value'
+import { fas } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '@modules/auth/services/auth.service';
-import { GlobalRoutes } from '@core/constants/global-routes';
+import { PermissionStateService } from '@shared/store/permission-state.service';
+
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
   title = 'client';
+
+  permissionState = inject(PermissionStateService)
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -32,6 +36,17 @@ export class AppComponent implements OnInit {
 
       if (permission) {
         localStorage.setItem("permisos", permission);
+        let getPermission = localStorage.getItem("permisos");
+        if (getPermission){
+          let {acciones} = JSON.parse(getPermission);
+
+          this.permissionState.setState({
+            permission: permission,
+            accion: acciones,
+            acciones: []
+          })
+
+        }
       }
 
       if (token) {
@@ -39,7 +54,7 @@ export class AppComponent implements OnInit {
           localStorage.removeItem('access_token');
         }
         let route_page = getEnumValueByKey(GlobalRoutes, route);
-    
+
         console.log(route)
         localStorage.setItem('access_token', token);
         self.router.navigate(['/', ...route_page.split('/')]);

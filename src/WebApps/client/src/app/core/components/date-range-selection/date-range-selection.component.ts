@@ -1,11 +1,4 @@
-import {
-  Component,
-  ViewChild,
-  ElementRef,
-  Output,
-  EventEmitter,
-  Input
-} from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 
 declare var DateRangePicker: any;
 import moment from 'moment';
@@ -35,8 +28,8 @@ export class DateRangeSelectionComponent {
     (function (DateRangePicker) {
       let drp = new DateRangePicker(valorInput,
         {
-          startDate: self.from ? self.from :  null,
-          endDate: self.to ? self.to :null,
+          startDate: self.from ? self.from :  undefined,
+          endDate: self.to ? self.to :undefined,
           //minDate: '2021-07-15 15:00',
           //maxDate: '2021-08-16 15:00',
           //maxSpan: { "days": 9 },
