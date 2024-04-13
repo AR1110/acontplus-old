@@ -224,7 +224,8 @@
                             nota: restItem.nota,
                             porcentajeDescuento: restItem.porcentajeDescuento || 0,
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
-                            precioCosto: restItem.precioCosto,
+                            precioCosto: dataMedida.precioCosto,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             precioUnitario: restItem.precioUnitario,
                             precioConIva: precioConIva || 0,
                             tarifa: restItem.tarifa,//✅
