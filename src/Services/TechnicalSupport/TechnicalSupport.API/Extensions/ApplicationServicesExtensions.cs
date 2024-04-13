@@ -14,6 +14,7 @@ namespace TechnicalSupport.API.Extensions
             services.AddScoped<IDeviceSpecService, DeviceSpecService>();
             services.AddScoped<IDeviceService, DeviceService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IOrderMantenainceService, OrderMantenainceService>();
             //var config = new AutoMapper.MapperConfiguration(cfg =>
             //{
