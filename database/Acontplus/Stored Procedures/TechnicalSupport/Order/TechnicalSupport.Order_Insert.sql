@@ -28,6 +28,7 @@ BEGIN
            ,@serie              VARCHAR(18)
            ,@userId             INT
            ,@datetime           DATETIME
+           ,@orderStatusId      INT
 
     --> Data Json
     DECLARE @details VARCHAR(MAX)
@@ -36,11 +37,11 @@ BEGIN
         uuid VARCHAR(100) NOT NULL
        ,establecimientoId INT NOT NULL
        ,puntoEmisionId INT NOT NULL
-       ,customerCompanyId INT NOT NULL
-       ,orderStatusId INT NULL
+       ,customerCompanyId INT NOT NULL 
        ,obs VARCHAR(500) NULL
        ,userId INT NOT NULL
        ,fechaEmision DATETIME2 NOT NULL
+       ,assignedUserId INT
     )
 
     DECLARE @tbDetails AS TABLE(
@@ -50,6 +51,7 @@ BEGIN
        ,deviceSerie VARCHAR(300)
        ,deviceWarranty NUMERIC(18,2)
        ,obs VARCHAR(500) NULL
+       ,assignedUserId INT
     )
         
    
@@ -63,20 +65,26 @@ BEGIN
              --> Data Json 
         SELECT @details = orderDetails FROM OPENJSON(@json) WITH (orderDetails  NVARCHAR(MAX) AS JSON )
 
+        SET @orderStatusId = (SELECT CASE
+                                        WHEN 
+                                            (SELECT assignedUserId FROM @tbOrder) = 0 THEN  (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'PA')
+                                        ELSE 
+                                            (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'EP')
+                                        END )
         --> Insert to temp Table
         INSERT INTO @tbOrder
-              (uuid, establecimientoId, puntoEmisionId, customerCompanyId, orderStatusId, obs, userId, fechaEmision)
-        SELECT uuid, establecimientoId, puntoEmisionId, customerCompanyId, orderStatusId, obs, userId, fechaEmision
+              (uuid, establecimientoId, puntoEmisionId, customerCompanyId, obs, userId, fechaEmision, assignedUserId)
+        SELECT uuid, establecimientoId, puntoEmisionId, customerCompanyId, obs, userId, fechaEmision, assignedUserId
         FROM OPENJSON(@json) WITH
         (
             uuid                 VARCHAR(100)    '$.uuid'
             ,establecimientoId   INT             '$.establecimientoId'
             ,puntoEmisionId      INT             '$.puntoEmisionId'
-            ,customerCompanyId   INT             '$.customerCompanyId'
-            ,orderStatusId       INT             '$.orderStatusId'
+            ,customerCompanyId   INT             '$.customerCompanyId' 
             ,obs                 VARCHAR(100)    '$.obs'
             ,userId              INT             '$.userId'
             ,fechaEmision        DATETIME2       '$.fechaEmision'
+            ,assignedUserId      INT
         )
         
         ---> Validations order.
@@ -87,8 +95,8 @@ BEGIN
             END
 
         --> Insert to temp Table
-        INSERT INTO @tbDetails(uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs)
-        SELECT uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs
+        INSERT INTO @tbDetails(uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs, assignedUserId)
+        SELECT uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs, assignedUserId
                         FROM OPENJSON(@details) WITH
                         (
                             uuid         VARCHAR(100)    '$.uuid'
@@ -97,6 +105,7 @@ BEGIN
                             ,deviceSerie    VARCHAR(300)             '$.deviceSerie'
                             ,deviceWarranty    NUMERIC(18,2)             '$.deviceWarranty'
                             ,obs         VARCHAR(100)    '$.obs'
+                            ,assignedUserId INT
                         )
 
         ---> Validation details
@@ -132,8 +141,8 @@ BEGIN
 		BEGIN TRAN
             ---> Inser data - Order.
             INSERT INTO TechnicalSupport.[Order]
-                  (Uuid,FechaEmision,EstablecimientoId,PuntoEmisionId,[Sequence],Serie,CustomerCompanyId,Obs,OrderStatusId,CreatedAt,Enabled, UserId)
-            SELECT uuid,fechaEmision,establecimientoId,puntoEmisionId,@sequence ,@serie,customerCompanyId,obs,orderStatusId,@datetime,@enabled,@userId
+                  (Uuid,FechaEmision,EstablecimientoId,PuntoEmisionId,[Sequence],Serie,CustomerCompanyId,Obs,OrderStatusId,CreatedAt,[Enabled], UserId, AssignedUserId)
+            SELECT uuid,fechaEmision,establecimientoId,puntoEmisionId,@sequence ,@serie,customerCompanyId,obs,@orderStatusId,@datetime,@enabled,@userId, IIF(assignedUserId = 0, NULL, assignedUserId)
             FROM @tbOrder
 
             SET @orderId = @@IDENTITY
