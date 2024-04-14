@@ -70,7 +70,6 @@ export class TabulatorComponent implements OnChanges {
       ...this.options
     });
     let table = document.getElementById(`${this.uniqueIdTabulator}`);
-    console.log(table)
     if (table) {
       table.appendChild(this.tab);
       if(this.cellEdited){

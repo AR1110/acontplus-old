@@ -47,7 +47,7 @@ export class OrderDetailComponent {
         let editBtn = document.createElement('button');
         editBtn.type = 'button';
         editBtn.innerHTML = `${icon(faEdit).html.join('')}`;
-        editBtn.classList.add('btn', 'btn-success', 'btn-xs');
+        editBtn.classList.add('btn', 'btn-success', 'btn-sm');
         editBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
           // this.openEditDetail(rowData);
@@ -57,7 +57,7 @@ export class OrderDetailComponent {
         let delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
-        delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
+        delBtn.classList.add('btn', 'btn-danger', 'btn-sm');
         delBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
           console.log(rowData);
