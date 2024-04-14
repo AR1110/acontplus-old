@@ -1,0 +1,102 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Forma de Cobro</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div ngbAccordion [closeOthers]="true"  >
+    @for (item of entidadesFinanciera; track $index) {
+    <div ngbAccordionItem [collapsed]="item.codigo !== 'EFE'" (show)="onChangeTabEntidadFinanciera($index)">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>{{ item.descripcion }}</button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+
+            <!--TARJETA-->
+            @if (item.codigo==='TAR') {
+
+            <div class="row">
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                <app-sub-entidad-financiera [value]="data.idSubEntidadFinanciera" [subEntidadesFinanciera]="subEntidadesFinanciera" />
+              </div>
+
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                  <label>Fecha Emisión: <span class="text-danger">*</span></label>
+                  <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
+                </div>
+              </div>
+
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                  <label class="text-danger">Valor Abono: <span class="text-danger">*</span> </label>
+                  <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()"
+                    class="form-control border-select" onClick="select()" decimal placeholder="0.00" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                  <label for="Referencia">Referencia: </label>
+                  <input type="text" ng-model="data.referencia" class="form-control border-select" />
+                </div>
+              </div>
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                  <label>Aprobación </label>
+                  <input type="text" ng-model="data.aprobacion" class="form-control border-select" />
+                </div>
+              </div>
+
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                  <label for="lote">Lote: </label>
+                  <input type="text" ng-model="data.lote" class="form-control border-select" />
+                </div>
+              </div>
+            </div>
+            }
+
+
+            <!--EFECTIVO-->
+            @if (item.codigo==="EFE") {
+
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                <app-sub-entidad-financiera [value]="data.idSubEntidadFinanciera"
+                  [subEntidadesFinanciera]="subEntidadesFinanciera" />
+              </div>
+
+              <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                <div class="form-group">
+                  <label>Fecha Emisión: <span class="text-danger">*</span></label>
+                  <input type="date" ng-model="data.fechaEmision" class="form-control border-select">
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="form-group">
+                  <label class="text-danger">Valor Abono *</label>
+                  <input type="text" ng-model="data.valorAbono" ng-enter="addFormaPago()"
+                    class="form-control border-select" decimal placeholder="0.00" onClick="select()" />
+                </div>
+              </div>
+            </div>
+            }
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" ng-click="addFormaPago()" id="btnAddFormaPago">
+    Abonar
+  </button>
+  <button type="button" class="btn btn-dark" (click)="modal.dismiss()">
+    &times; Cerrar
+  </button>
+</div>
