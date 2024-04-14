@@ -8,12 +8,12 @@ using TechnicalSupport.API.Interfaces;
 
 namespace TechnicalSupport.API.Controllers
 {
-    public class OrderMantenainceController : BaseApiController
+    public class OrderMantenanceController : BaseApiController
     {
-        private readonly IOrderMantenainceService _service;
+        private readonly IOrderMantenanceService _service;
         private readonly ICustomLogger _log;
 
-        public OrderMantenainceController(IOrderMantenainceService service, ICustomLogger log)
+        public OrderMantenanceController(IOrderMantenanceService service, ICustomLogger log)
         {
             _service = service;
             _log = log;

@@ -831,7 +831,29 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
       let params = {
         order: this.order,
-        detalles: this.tabulatorComponent.refTabulator.getData()
+        detalles: this.tabulatorComponent.refTabulator.getData().map((d: any) => {
+          return {
+            idDetalleOrden: d.idDetalleOrden,
+            idOrden: d.idOrden,
+            idArticulo: d.idArticulo,
+            idTarifa: d.idTarifa,
+            cantidad: d.cantidad,
+            precio: d.precio,
+            precioConIva: d.precioConIva,
+            descuento: d.descuento,
+            porcentajeDescuento: d.porcentajeDescuento,
+            idImpuesto: d.idImpuesto,
+            idTarifaImpuesto: d.idTarifaImpuesto,
+            idBodega: d.idBodega,
+            observacion: d.observacion,
+            idMedida: d.idMedida,
+            costo: d.costo,
+            precioTotalSinImpuesto: d.precioTotalSinImpuesto,
+            precioTotal: d.precioTotal,
+            valorImpuesto: d.valorImpuesto,
+            total: d.total
+          }
+        })
       }
 
       this.orderMaintenanceSvc.post(params).subscribe({

@@ -12,11 +12,11 @@ export class OrderMaintenanceService {
   #url = `${PATHS_API.TECHSUPPORT}${TECH_SUPPORT_PATHS.ORDER_MAINTENANCE}`;
   #http = inject(HttpClient)
 
-  post<T>(data: T){
-    return this.#http.post(`${this.#url}`, {data})
+  post<T>(data: T) {
+    return this.#http.post(`${this.#url}`, { data: data })
   }
 
-  put<T>(id:number, data: T) {
+  put<T>(id: number, data: T) {
     return this.#http.put(`${this.#url}${id}`, { data })
   }
 
