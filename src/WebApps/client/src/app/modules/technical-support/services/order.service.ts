@@ -62,79 +62,80 @@ export class OrderService {
             let tempOrder = order[0];
             data.order = {
               ...tempOrder,
-              fechaEmision: formatDate(tempOrder.fechaEmision)
-            }
+              fechaEmision: formatDate(tempOrder.fechaEmision),
+            };
             data.orderDetails = orderDetails;
+            if (orderMaintenances) {
+              data.orderMaintenances = orderMaintenances.map(
+                (item: any, index: number) => {
+                  const { fraccionado, principal, consolidacion, ...restItem } =
+                    item;
 
-            data.orderMaintenances = orderMaintenances.map(
-              (item: any, index: number) => {
-                const { fraccionado, principal, consolidacion, ...restItem } =
-                  item;
-
-                let consolidacionesBodega =
-                  (consolidacion && JSON.parse(consolidacion)) || [];
-                consolidacionesBodega = consolidacionesBodega.map(
-                  (data: any) => ({
-                    idArticulo: data.idArticulo,
-                    idBodega: data.idBodega,
-                    fechaConsolidacion:
-                      data.fechaConsolidacion &&
-                      new Date(data.fechaConsolidacion),
-                  })
-                );
-
-                const medidas = mergeMeasureUtil(principal, fraccionado);
-
-                let dataMedida =
-                  medidas.find((m) => m.idMedida === restItem.medidaId) ||
-                  ({} as MedidaProducto);
-
-                let precioConIva = pricingCalculateUtil.calculatePriceWithVat(
-                  restItem.price,
-                  restItem.taxPercentage
-                );
-                let precioTotalSinImpuesto =
-                  restItem.price * restItem.quantity - restItem.discount;
-                let subTotalSinDescuento = restItem.price * restItem.quantity;
-                let percentageDiscount =
-                  pricingCalculateUtil.getValueDiscountPercentage(
-                    subTotalSinDescuento,
-                    restItem.discount
+                  let consolidacionesBodega =
+                    (consolidacion && JSON.parse(consolidacion)) || [];
+                  consolidacionesBodega = consolidacionesBodega.map(
+                    (data: any) => ({
+                      idArticulo: data.idArticulo,
+                      idBodega: data.idBodega,
+                      fechaConsolidacion:
+                        data.fechaConsolidacion &&
+                        new Date(data.fechaConsolidacion),
+                    })
                   );
 
-                let obj: OrderMaintenance = {
-                  rowguid: generateUuidv4(),
-                  bodegaId: restItem.bodegaId,
-                  feeId: restItem.feeId,
-                  medidaId: restItem.medidaId,
-                  orderDetailId: restItem.orderDetailId,
-                  productId: restItem.productId,
-                  taxId: restItem.taxId,
-                  taxPercentId: restItem.taxPercentId,
-                  quantity: restItem.quantity,
-                  descripcion: restItem.descripcion,
-                  codigo: restItem.codigo,
-                  cost: restItem.cost,
-                  taxValue: restItem.taxValue,
-                  price: restItem.price,
-                  precioConIva: roundNumber(precioConIva, 4),
-                  percentageDiscount: roundNumber(percentageDiscount, 4),
-                  discount: restItem.discount,
-                  precioTotalSinImpuesto: roundNumber(
-                    precioTotalSinImpuesto,
-                    4
-                  ),
-                  total: restItem.total,
-                  obs: isValidField(restItem.obs),
-                  medidas: medidas || [],
-                  tarifas: dataMedida.tarifas || [],
-                  costoFraccionado: dataMedida.precioCostoFraccionado || 0,
-                  conversion: dataMedida.conversion || 1,
-                  consolidacionesBodega: consolidacionesBodega,
-                };
-                return obj;
-              }
-            );
+                  const medidas = mergeMeasureUtil(principal, fraccionado);
+
+                  let dataMedida =
+                    medidas.find((m) => m.idMedida === restItem.medidaId) ||
+                    ({} as MedidaProducto);
+
+                  let precioConIva = pricingCalculateUtil.calculatePriceWithVat(
+                    restItem.price,
+                    restItem.taxPercentage
+                  );
+                  let precioTotalSinImpuesto =
+                    restItem.price * restItem.quantity - restItem.discount;
+                  let subTotalSinDescuento = restItem.price * restItem.quantity;
+                  let percentageDiscount =
+                    pricingCalculateUtil.getValueDiscountPercentage(
+                      subTotalSinDescuento,
+                      restItem.discount
+                    );
+
+                  let obj: OrderMaintenance = {
+                    rowguid: generateUuidv4(),
+                    bodegaId: restItem.bodegaId,
+                    feeId: restItem.feeId,
+                    medidaId: restItem.medidaId,
+                    orderDetailId: restItem.orderDetailId,
+                    productId: restItem.productId,
+                    taxId: restItem.taxId,
+                    taxPercentId: restItem.taxPercentId,
+                    quantity: restItem.quantity,
+                    descripcion: restItem.descripcion,
+                    codigo: restItem.codigo,
+                    cost: restItem.cost,
+                    taxValue: restItem.taxValue,
+                    price: restItem.price,
+                    precioConIva: roundNumber(precioConIva, 4),
+                    percentageDiscount: roundNumber(percentageDiscount, 4),
+                    discount: restItem.discount,
+                    precioTotalSinImpuesto: roundNumber(
+                      precioTotalSinImpuesto,
+                      4
+                    ),
+                    total: restItem.total,
+                    obs: isValidField(restItem.obs),
+                    medidas: medidas || [],
+                    tarifas: dataMedida.tarifas || [],
+                    costoFraccionado: dataMedida.precioCostoFraccionado || 0,
+                    conversion: dataMedida.conversion || 1,
+                    consolidacionesBodega: consolidacionesBodega,
+                  };
+                  return obj;
+                }
+              );
+            }
 
             data.feeds = feeds;
             data.taxes = taxes;
