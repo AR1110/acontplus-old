@@ -5,11 +5,11 @@ using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Interfaces;
 namespace TechnicalSupport.API.Services
 {
-    public class OrderMantenanceService : IOrderMantenanceService
+    public class OrderMaintenanceService : IOrderMaintenanceService
     {
         private readonly TechnicalSupportContext _context;
         private readonly IADORepository _repository;
-        public OrderMantenanceService(TechnicalSupportContext context, IADORepository repository)
+        public OrderMaintenanceService(TechnicalSupportContext context, IADORepository repository)
         {
             _context = context;
             _repository = repository;

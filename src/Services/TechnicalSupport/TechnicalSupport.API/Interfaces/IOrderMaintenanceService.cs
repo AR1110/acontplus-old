@@ -2,7 +2,7 @@
 
 namespace TechnicalSupport.API.Interfaces
 {
-    public interface IOrderMantenanceService
+    public interface IOrderMaintenanceService
     {
         Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
         Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
