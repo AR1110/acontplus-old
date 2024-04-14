@@ -13,7 +13,7 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
@@ -21,6 +21,7 @@ import { OrderService } from '@modules/technical-support/services/order.service'
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
+import { OrderDetailComponent } from './order-detail/order-detail.component';
 
 @Component({
   selector: 'app-order-modal',
@@ -30,6 +31,7 @@ import { v4 as uuidv4 } from 'uuid';
     CompanyCustomerSearchComponent,
     DeviceSearchComponent,
     NgbAccordionModule,
+    OrderDetailComponent,
     TabulatorComponent,
   ],
   templateUrl: './order-modal.component.html',
@@ -43,37 +45,6 @@ export class OrderModalComponent {
   private modalService = inject(ModalService);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
-
-  columnNames = [
-    { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
-    {
-      title: 'deviceCustomerId',
-      field: 'deviceCustomerId',
-      width: 150,
-      visible: false,
-    },
-    { title: 'Equipo', field: 'deviceName', width: 225 },
-    { title: 'Serie', field: 'deviceSerie', width: 200, editor: true },
-    {
-      title: 'Garantia',
-      field: 'deviceWarranty',
-      width: 150,
-      validator: ['numeric', 'min:0'],
-      editor: true,
-    },
-    { title: 'Obs.', field: 'obs', width: 450, editor: true },
-    {
-      cellClick: (e: any, cell: any) => {
-        this.removeFromList(cell.getData().deviceId);
-        cell.getRow().delete();
-      },
-      formatter: this.deleteButton,
-      hozAlign: 'center',
-      resizable: false,
-      title: 'Opción',
-      width: 100,
-    },
-  ];
   data: any = {};
   deviceFound: any = {};
   devices: any = [];
@@ -98,35 +69,32 @@ export class OrderModalComponent {
   });
 
   addDetail(device: any) {
-    (device.deviceId = device.id),
-      (device.deviceCustomerId = device.deviceCustomerId);
-    device.deviceName = !device.deviceName ? device.name : device.deviceName;
-    device.deviceSerie = !device.deviceSerie
+    let deviceToAdd: OrderDetail = {
+      id: 0,
+      deviceId: 0,
+      deviceName: '',
+      deviceSerie: '',
+      deviceWarranty: '',
+      uuid: '',
+    };
+    deviceToAdd.deviceId = device.id;
+    deviceToAdd.deviceCustomerId = device.deviceCustomerId;
+    deviceToAdd.deviceName = !device.deviceName
+      ? device.name
+      : device.deviceName;
+    deviceToAdd.deviceSerie = !device.deviceSerie
       ? device.serie
       : device.deviceSerie;
-    device.deviceWarranty = !device.deviceWarranty
+    deviceToAdd.deviceWarranty = !device.deviceWarranty
       ? device.warranty
       : device.deviceWarranty;
-    device.obs = '';
-    device.uuid = uuidv4();
-    this.orderDetails.push(device);
+    deviceToAdd.obs = '';
+    deviceToAdd.uuid = uuidv4();
+    this.orderDetails.push(deviceToAdd);
   }
 
   closeModal() {
     this.modalRef.close();
-  }
-
-  deleteButton(cell: any, formatterParams: any) {
-    //cell - the cell component
-    //formatterParams - parameters set for the column
-
-    //get the row data
-    let data = cell.getRow().getData();
-
-    //return the HTML code for the button, using Bootstrap classes and Angular routerLink
-    return `<button class='btn btn-danger btn-sm'>${icon(faTrashAlt).html.join(
-      ''
-    )}</button>`;
   }
 
   get() {
@@ -168,7 +136,12 @@ export class OrderModalComponent {
             this.users = users;
             if (this.data.id > 0) {
               let { order, orderDetails } = parsedResponse;
+              this.order = order[0];
+              console.log(this.order);
               this.orderDetails = orderDetails || [];
+              this.orderForm.patchValue({
+                customerCompanyId: order.customerCompanyId,
+              });
             }
           }
         }
@@ -234,11 +207,6 @@ export class OrderModalComponent {
   onDeviceSelected($event: any) {
     console.log($event);
     this.addDetail($event.data);
-  }
-
-  removeFromList(deviceId: number) {
-    let newArray = this.orderDetails.filter((x) => x.deviceId !== deviceId);
-    this.orderDetails = newArray;
   }
 
   save() {
