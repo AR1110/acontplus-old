@@ -1,6 +1,7 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Microsoft.EntityFrameworkCore;
 using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Interfaces;
 
@@ -34,6 +35,10 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
+                if (await _context.OrderMaintenances.AnyAsync(x=>x.OrderDetailId == id && x.Deleted == null))
+                {
+                    return new ApiResponse { code = "0", message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso" };
+                }
                 var detailFound = await _context.OrderDetails.FindAsync(id);
                 _context.Remove(detailFound);
                 await _context.SaveChangesAsync();
