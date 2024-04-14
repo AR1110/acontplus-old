@@ -13,7 +13,6 @@ import swal from 'sweetalert2';
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 import { OrderModalComponent } from '../order-modal/order-modal.component';
 import { CommonModule } from '@angular/common';
-import { OrderConvertModalComponent } from '../order-convert-modal/order-convert-modal.component';
 
 @Component({
   selector: 'app-order-list',
@@ -83,14 +82,6 @@ export class OrderListComponent implements OnInit {
     const modalRef = this.modalService.openModalCustom(OrderModalComponent, {
       size: 'xl',
       centered: true,
-    });
-    modalRef.componentInstance.data = item;
-  }
-
-  askToConvertDoc(item: any) {
-    const modalRef = this.modalService.openModalCustom(
-      OrderConvertModalComponent, {
-      centered: true
     });
     modalRef.componentInstance.data = item;
   }
