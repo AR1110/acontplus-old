@@ -541,7 +541,7 @@
                     conversion : item.conversion,
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion, 5),
                     precioUnitario: item.precioUnitario,
-                    precioCosto: item.precioCosto ,
+                    precioCosto: item.precioUnitario ,
                     precioCostoFraccionado: item.precioCostoFraccionado,
                     total: fS.roundNumber(item.total, 5),
                     nota: fS.isValidField(item.nota),
@@ -588,15 +588,14 @@
                             descripcion: restItem.descripcion,
                             cantidad: restItem.cantidad,
                             precioCosto: restItem.precioCosto,
-                            precioUnitario: restItem.precioCosto,
-                            precioActual: restItem.precioActual,
+                            precioUnitario: restItem.precioUnitario, 
                             precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             codigo: restItem.codigo,
                             stock: restItem.stock,
                             estado: restItem.estado,
                             conversion: dataMedida.conversion,
                             medidas,
-                            total: fS.roundNumber(restItem.cantidad * restItem.precioActual, 5),
+                            total: fS.roundNumber(restItem.cantidad * restItem.precioUnitario, 5),
                             estado: true
                         };
 
@@ -633,7 +632,7 @@
                         medida: item.medida,
                         bodega: item.bodega,
                         stock: item.stock,
-                        precioActual: item.precioActual,
+                        precioUnitario: item.precioUnitario,
                         precioCosto: item.precioCosto,
                         total: item.total,
                     }
