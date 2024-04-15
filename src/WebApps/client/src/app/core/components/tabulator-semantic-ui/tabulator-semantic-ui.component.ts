@@ -16,10 +16,6 @@ export class TabulatorSemanticUiComponent implements OnChanges {
 
   @Input() tableData: any[] = [];
   @Input() columnNames: any[] = [];
-  @Input() height: string = '311px';
-  @Input() dataTree: boolean = false;
-  @Input() dataTreeChildField: string = 'childRows';
-  @Input() dataTreeStartExpanded: boolean = false;
 
   @Input() options = {}
 
@@ -52,21 +48,11 @@ export class TabulatorSemanticUiComponent implements OnChanges {
       renderVerticalBuffer: 300,
       columns: this.columnNames,
       data: this.tableData,
-      dataTree: this.dataTree,
-      dataTreeSelectPropagate: true,
       headerSort: false,
-      // dataTreeChildField: this.dataTreeChildField,
-      dataTreeStartExpanded: this.dataTreeStartExpanded,
-      height: this.height,
       layout: 'fitData',
-      // reactiveData: true,
-      //responsiveLayout: true,
       autoResize: true, // prevent auto resizing of table
       placeholder: "Sin registro",
 
-      selectable: true,
-      // selectableRangeMode: "click",
-      // selectableRollingSelection: true,
       ...this.options
     });
     let table = document.getElementById(`${this.uniqueIdTabulator}`);

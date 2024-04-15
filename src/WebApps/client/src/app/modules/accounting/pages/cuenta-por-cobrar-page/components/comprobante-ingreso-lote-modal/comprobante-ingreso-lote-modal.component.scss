@@ -1,0 +1,26 @@
+.list-group a div {
+    margin-bottom: 9px;
+    font-size: 21px;
+    margin-top: 0;
+    font-weight: 300;
+    line-height: .5 !important;
+}
+
+.list-group-item.active {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.list-group-item.active,
+.list-group .list-group-item.active:hover {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.list-group a:not(.active) {
+    background-color: #dfe2e6;
+    color: #262d33 !important;
+    /*opacity: .10;*/
+}

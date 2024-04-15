@@ -12,8 +12,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
-import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
@@ -57,14 +56,14 @@ export class OrderModalComponent {
   users: any = [];
 
   orderForm = this.fb.group({
+    assignedUserId: 0,
     uuid: uuidv4(),
     establecimientoId: [0, Validators.required],
     puntoEmisionId: [0, Validators.required],
     customerCompanyId: [0, Validators.required],
     fechaEmision: '',
-    userId: 0,
     obs: [''],
-    orderStatusId: 1,
+    orderStatusId: 0,
     orderDetails: [],
   });
 
@@ -139,9 +138,7 @@ export class OrderModalComponent {
               this.order = order[0];
               console.log(this.order);
               this.orderDetails = orderDetails || [];
-              this.orderForm.patchValue({
-                customerCompanyId: order.customerCompanyId,
-              });
+              this.orderForm.patchValue(this.order);
             }
           }
         }
