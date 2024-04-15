@@ -65,30 +65,7 @@ namespace TechnicalSupport.API.Controllers
                 return BadRequest("Error on post");
             }
         }
-
-        [HttpPost("Convert")]
-        public async Task<IActionResult> Convert(ApiRequest request)
-        {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(request.Data)) }
-                };
-
-                var response = await _orderService.ConvertAsync(parameters);
-                if (response == null) { return BadRequest(); }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on convert doc: " + ex.ToString());
-                return BadRequest("Error on convert doc");
-            }
-        }
-
-
+                
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] OrderDto order)
         {
