@@ -13,8 +13,7 @@ GO
 CREATE OR ALTER PROC TechnicalSupport.Order_Document_Insert
 @userRoleId                 INT
 ,@orderId                   INT
-,@codDoc                    VARCHAR(5)
-,@subtotalSinImpuestos      NUMERIC(18,5)
+,@json                      NVARCHAR(MAX)
 ,@payload                   NVARCHAR(MAX) OUTPUT
 AS
 BEGIN
@@ -49,7 +48,11 @@ BEGIN
     ,@recargo               DECIMAL(18,5)
     ,@transporte            DECIMAL(18,5)
     ,@CustomerId            INT
-        
+    ,@subTotalSinImpuesto   NUMERIC(18,5)
+    ,@codDoc                VARCHAR(5)
+    ,@order                NVARCHAR(500)
+    ,@customDetail          NVARCHAR(MAX)
+            
     DECLARE @tblItems AS TABLE(
         uuid                    UNIQUEIDENTIFIER    NOT NULL,
         orderMantenainceId      INT                 NULL,
@@ -71,7 +74,8 @@ BEGIN
         remainingQuantity       NUMERIC(18,5)       NULL,
         cantidadStock           NUMERIC (18,5)      NOT NULL,
         cantidadTransaccion     NUMERIC(18,5)       NOT NULL,
-        medidaId                INT                 NOT NULL
+        medidaId                INT                 NOT NULL,
+        conversion              NUMERIC(18,5)       NOT NULL
     )
 
     DECLARE @tblTaxes AS TABLE (
@@ -104,77 +108,141 @@ BEGIN
         , uuid                      UNIQUEIDENTIFIER	NOT NULL
         , envioSri                  BIT                 NOT NULL
     )
+       
+    SELECT @order = orden, @customDetail = detalles 
+    FROM OPENJSON(@json) 
+    WITH( orden NVARCHAR(MAX) '$.order' AS JSON, detalles NVARCHAR(MAX) '$.detalles' AS JSON)
 
-    SELECT @establecimientoId       = tso.EstablecimientoId
-            , @puntoEmisionId       = tso.PuntoEmisionId
-            , @customerCompanyId    = tso.CustomerCompanyId
-            , @tax                  = ISNULL(tso.Tax, 0)
-            , @discount             = ISNULL(tso.Discount, 0)
-            , @tip                  = ISNULL(tso.Tip, 0)
-            , @total                = ISNULL(tso.Total, 0)
-            , @obs                  = tso.Obs
-            , @userId               = tso.UserId
-    FROM TechnicalSupport.[Order] tso
-    WHERE tso.Id = @orderId
-    
-    UPDATE TechnicalSupport.[Order]
-    SET Finished            = 1
-        , OrderStatusId     =  (SELECT Id FROM TechnicalSupport.OrderStatus WHERE Code = 'PE')
-    WHERE Id = @orderId
- 
+    SELECT @establecimientoId       = establecimientoId
+            , @puntoEmisionId       = puntoEmisionId
+            , @customerCompanyId    = customerCompanyId
+            , @subTotalSinImpuesto  = ISNULL(subTotalSinImpuesto, 0)
+            , @codDoc               = ISNULL(codDoc, '')
+            , @tax                  = ISNULL(tax, 0)
+            , @discount             = ISNULL(discount, 0)
+            , @tip                  = ISNULL(tip, 0)
+            , @total                = ISNULL(total, 0)
+            , @obs                  = obs
+    FROM OPENJSON(@order)
+    WITH(
+        establecimientoId       INT             '$.establecimientoId'
+        , puntoEmisionId        INT             '$.puntoEmisionId'
+        , customerCompanyId     INT             '$.customerCompanyId'
+        , subTotalSinImpuesto   NUMERIC(18,5)   '$.subTotalSinImpuesto'
+        , codDoc                VARCHAR(5)      '$.codDoc'
+        , tax                   NUMERIC(18,5)   '$.tax'
+        , discount              NUMERIC(18,5)   '$.discount'
+        , tip                   NUMERIC(18,5)   '$.tip'
+        , total                 NUMERIC(18,5)   '$.total'
+        , obs                   VARCHAR(500)    '$.obs'
+    )
+     
     SET @fechaEmision = (SELECT dbo.ufnGetDateEcuador())
 
     SELECT TOP 1 @estadoPagoId = idEstadoPago FROM dbo.EstadoPago WITH(NOLOCK) WHERE codigo = 'PE'
 
     SELECT TOP 1 @CustomerId = ISNULL(CustomerId,0) FROM Cliente WITH (NOLOCK) WHERE idCliente = @customerCompanyId  
-    
+        
     ---- ================ INSERT ITEMS ================ -----
-    INSERT INTO @tblItems
-    (uuid, bodegaId, orderMantenainceId, orderDetailId, taxId
-    , taxPercentId, feeId, taxValue, quantity, cost
-    , price, discount, total, medidaId, cantidadStock, cantidadTransaccion, envioSri)
-    
-    SELECT o.Uuid
-        ,om.BodegaId
-        ,om.Id
-        ,od.Id
-        ,om.TaxId
-        ,om.TaxPercentId
-        ,om.FeeId
-        ,om.TaxValue
-        ,om.Quantity
-        ,om.Cost
-        ,om.Price
-        ,om.Discount
-        ,om.Total
-        ,om.MedidaId
-        ,ISNULL(CASE
-				WHEN o.CreatedAt >= (SELECT s.fechaConsolidacion FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = om.ProductId AND idBodega = om.BodegaId)  
-				THEN ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = om.ProductId AND idMedida = om.MedidaID) * om.Quantity , om.Quantity) * -1
-				ELSE 0 END,0
-		) AS	cantidadStock
-		,ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = om.ProductId AND idMedida = om.MedidaID) * om.Quantity , om.Quantity)  AS cantidadTransaccion
-        ,1	AS envioSri
-    FROM TechnicalSupport.OrderMaintenance  om		  WITH (NOLOCK)
-    INNER JOIN TechnicalSupport.OrderDetail od        WITH (NOLOCK) ON od.Id  = om.OrderDetailId
-	INNER JOIN TechnicalSupport.[Order] o             WITH (NOLOCK) ON o.Id   = od.OrderId
-    WHERE o.Id = @orderId
-    AND om.Deleted IS NULL
-    AND om.[Enabled] = 1
+    IF (ISJSON(@customDetail) = 1 AND LEN(RTRIM(LTRIM(@customDetail))) > 0)
+        BEGIN
+            INSERT INTO @tblItems
+            (uuid, orderMantenainceId, orderDetailId, taxId, taxPercentId, feeId, taxValue,quantity,cost,price,discount
+            ,total,obs, bodegaId,envioSri,idArticulo,[description],remainingQuantity,cantidadStock,cantidadTransaccion,medidaId, conversion)
+            
+            SELECT uuid
+                , 0             AS orderMantenainceId
+                , 0             AS orderDetailId
+                , taxId
+                , taxPercentId
+                , feeId
+                , taxValue
+                , quantity
+                , cost
+                , price
+                , discount
+                , total
+                , ''            AS obs
+                , bodegaId
+                , 0             AS envioSri
+                , productId
+                , [description]
+                , 0             AS remainingQuantity
+                , 0             AS cantidadStock
+                , 0             AS cantidadTransaccion
+                , medidaId
+                , conversion
+            FROM OPENJSON(@customDetail)
+            WITH (
+                uuid                    UNIQUEIDENTIFIER    '$.rowguid',
+                bodegaId                INT                 '$.bodegaId',
+                taxId                   INT                 '$.taxId',
+                taxPercentId            INT                 '$.taxPercentId',
+                feeId                   INT                 '$.feeId',
+                taxValue                NUMERIC(18,5)       '$.taxValue',
+                quantity                NUMERIC(18,5)       '$.quantity',
+                cost                    NUMERIC(18,5)       '$.cost',
+                price                   NUMERIC(18,5)       '$.price',
+                discount                NUMERIC(18,5)       '$.discount',
+                total                   NUMERIC(18,5)       '$.total',
+                productId               INT                 '$.productId',
+                [description]           VARCHAR(500)        '$.descripcion',
+                medidaId                INT                 '$.medidaId',
+                conversion              NUMERIC(18,5)       '$.conversion'
+            )
 
-    ---- =========== INSERT TAXES =========== -----
-    INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
-    SELECT o.Uuid
-            , om.TaxId
-            , om.TaxPercentId
-            , CAST((om.Quantity * om.Price) AS NUMERIC(18,5)) AS taxBase
-            , om.TaxValue
-    FROM TechnicalSupport.OrderMaintenance  om		  WITH (NOLOCK)
-    INNER JOIN TechnicalSupport.OrderDetail od        WITH (NOLOCK) ON od.Id  = om.OrderDetailId
-	INNER JOIN TechnicalSupport.[Order] o             WITH (NOLOCK) ON o.Id   = od.OrderId
-    WHERE o.Id = @orderId
-    AND om.Deleted IS NULL
-    AND om.[Enabled] = 1
+            INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
+            SELECT uuid
+                    , taxId
+                    , taxPercentId
+                    , CAST((quantity * price) AS NUMERIC(18,5)) AS taxBase
+                    , taxValue
+            FROM OPENJSON(@customDetail)
+            WITH (
+                uuid                    UNIQUEIDENTIFIER    '$.rowguid',
+                taxId                   INT                 '$.taxId',
+                taxPercentId            INT                 '$.taxPercentId',
+                quantity                NUMERIC(18,5)       '$.quantity',
+                taxValue                NUMERIC(18,5)       '$.taxValue',
+                price                   NUMERIC(18,5)       '$.price'
+            )
+
+
+            ---------- INSERT NEW ---------------
+            INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    
+                                            , valorDescuento, porcentajeDescuento, precioTotalSinImpuesto, nota, descripcion, precioCosto
+                                            , idTipoIva,codigoPorcentaje,tarifa,valorImpuesto, uuid, envioSri)
+
+            SELECT a.idArticulo
+                ,i.feeId
+                ,i.bodegaId
+                ,i.medidaId
+                ,0
+                ,i.quantity
+                ,i.price
+                ,0
+                ,i.discount
+                ,0
+                ,i.total
+                ,i.obs
+                ,a.descripcion
+                ,a.precioCosto
+                ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
+                ,(SELECT TOP 1 codigoPorcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
+                ,(SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
+                , 0
+                ,i.uuid
+                ,0
+            FROM @tblItems i
+            INNER JOIN Sri.TarifaImpuesto sti               ON i.taxPercentId   = sti.idTarifaImpuesto
+            INNER JOIN Inventario.v_Articulo a				ON a.idArticulo		= i.idArticulo
+            
+            UPDATE TechnicalSupport.[Order]
+            SET Finished            = 1
+                , OrderStatusId     =  (SELECT Id FROM TechnicalSupport.OrderStatus WHERE Code = 'PE')
+            WHERE Id = @orderId
+
+        END
     
     IF NOT EXISTS(SELECT TOP 1 1 FROM @tblItems)
     BEGIN
@@ -184,10 +252,7 @@ BEGIN
 
     SELECT @companyId = idEntidad, @ruc = rucEmpresa FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
-    IF (@userId = 0)
-    BEGIN
-        SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
-    END
+    SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
     -------------------------DOCUMENTOS DE VENTA-------------------------------
     SELECT @nroDocumento     = cd.secuencial
@@ -200,7 +265,7 @@ BEGIN
     INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
     AND cd.idPuntoEmision = @puntoEmisionId
     WHERE pa.idUsuarioRol = @userRoleId AND cd.codDoc = @codDoc
-                     
+                         
     IF (@customerCompanyId = 0)
     BEGIN 
         SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente WHERE codIdentSri = '07'
@@ -208,43 +273,13 @@ BEGIN
 
     SET @taxPercent = (SELECT porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK) INNER JOIN TechnicalSupport.[Order] o WITH (NOLOCK) ON ti.idTarifaImpuesto = o.TaxPercentId WHERE o.Id = @orderId)
     
-    ---------- INSERT NEW ---------------
-    INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    
-                                    , valorDescuento, porcentajeDescuento, precioTotalSinImpuesto, nota, descripcion, precioCosto
-                                    , idTipoIva,codigoPorcentaje,tarifa,valorImpuesto, uuid, envioSri)
-
-    SELECT a.idArticulo
-        ,i.feeId
-        ,i.bodegaId
-        ,i.medidaId
-        ,0
-        ,i.quantity
-        ,i.price
-        ,0
-        ,i.discount
-        ,0
-        ,i.total
-        ,i.obs
-        ,a.descripcion
-        ,a.precioCosto
-        ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
-        ,(SELECT TOP 1 codigoPorcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
-        ,(SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
-        , 0
-        ,i.uuid
-        ,0
-    FROM @tblItems i
-    INNER JOIN TechnicalSupport.OrderMaintenance it ON it.Id            = i.orderMantenainceId
-    INNER JOIN Sri.TarifaImpuesto sti               ON i.taxPercentId   = sti.idTarifaImpuesto
-    INNER JOIN Inventario.v_Articulo a				ON a.idArticulo		= it.ProductId
-       
-
+    
     ---- NOTA DE ENTREGA ----
     IF @codDoc = 'NE'
         BEGIN             
             INSERT INTO NotaEntrega
             (idCliente, idPuntoEmision, nroDocumento, subTotalSinImpuestos, totalDescuento, porcentajeDescuento, propina, recargo, transporte, total, observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, idTipoDocumento)
-            SELECT @customerCompanyId,@puntoEmisionId, @nroDocumento, @subtotalSinImpuestos,@discount,0,0,0,0,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
+            SELECT @customerCompanyId,@puntoEmisionId, @nroDocumento, @subTotalSinImpuesto,@discount,0,0,0,0,@total,@obs,dbo.ufnGetDateEcuador(),@userId,@companyId, @fechaEmision,@tipoDocumentoId
             
             SET @documentoId = (SELECT SCOPE_IDENTITY())
 
@@ -274,9 +309,8 @@ BEGIN
                         ,dbo.ufnGetDateEcuador()
                         ,i.uuid
                     FROM @tblItems i
-                    INNER JOIN TechnicalSupport.OrderMaintenance om     ON om.Id            = i.orderMantenainceId
                     INNER JOIN Sri.TarifaImpuesto sti                   ON i.taxPercentId   = sti.idTarifaImpuesto
-                    INNER JOIN Inventario.v_Articulo a                  ON a.idArticulo     = om.ProductId
+                    INNER JOIN Inventario.v_Articulo a                  ON a.idArticulo     = i.idArticulo
 
                     INSERT INTO Ventas.NotaEntregaImpuesto(NotaEntregaId,TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId,Discount)                    
                     SELECT @documentoId
@@ -302,7 +336,7 @@ BEGIN
 
             INSERT INTO Factura 
             (idCliente, idPuntoEmision, idTipoDocumento, ambiente, idEntidad, idUsuario, claveAcceso, nroFactura, fechaEmision, subTotalSinImpuestos, totalDescuento, porcentajeDescuento, propina, recargo, transporte, total, observacion, fechaRegistro)
-            SELECT @customerCompanyId,@puntoEmisionId,@tipoDocumentoId,@ambiente,@companyId, @userId, @claveAcceso, @nroDocumento, @fechaEmision, @subtotalSinImpuestos, @discount, 0, @tip,0,0, @total, @obs, dbo.ufnGetdateEcuador()
+            SELECT @customerCompanyId,@puntoEmisionId,@tipoDocumentoId,@ambiente,@companyId, @userId, @claveAcceso, @nroDocumento, @fechaEmision, @subTotalSinImpuesto, @discount, 0, @tip,0,0, @total, @obs, dbo.ufnGetdateEcuador()
                                      
             SET @documentoId = (SELECT SCOPE_IDENTITY()) 
 
@@ -384,21 +418,22 @@ BEGIN
             ,@codDocTran                VARCHAR(2)
 
             DECLARE @tblInventory AS TABLE (
-                idArticulo                 INT
-                ,idBodega                  INT
-                ,medidaId                  INT
-                ,idTarifa                  INT
-                ,cantidad                  NUMERIC(18,2)
-                ,precioUnitario            NUMERIC(18,5)
-                ,precioCosto               NUMERIC(18,5) 
-                ,precioTotalSinImpuesto    NUMERIC(18,5)
-                ,cantidadStock NUMERIC (18,5) NOT NULL
-                ,cantidadTransaccion NUMERIC(18,5) NOT NULL
+                idArticulo                  INT
+                ,idBodega                   INT
+                ,medidaId                   INT
+                ,idTarifa                   INT
+                ,cantidad                   NUMERIC(18,2)
+                ,precioUnitario             NUMERIC(18,5)
+                ,precioCosto                NUMERIC(18,5) 
+                ,precioTotalSinImpuesto     NUMERIC(18,5)
+                ,cantidadStock              NUMERIC(18,5) NOT NULL
+                ,cantidadTransaccion        NUMERIC(18,5) NOT NULL
+                ,conversion                 NUMERIC(18,5) NOT NULL
             )
 
-            --INSERT ITEMS
-            INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
-            SELECT a.idArticulo, i.bodegaId, i.medidaId, i.feeId, i.quantity, i.price, a.precioCosto, i.total, cantidadStock, cantidadTransaccion
+            --INSERT ITEMS ----
+            INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion, conversion)
+            SELECT a.idArticulo, i.bodegaId, i.medidaId, i.feeId, i.quantity, i.price, a.precioCosto, i.total, cantidadStock, cantidadTransaccion, i.conversion
             FROM @tblItems i
             INNER JOIN TechnicalSupport.v_OrderMantenaince ri ON i.orderMantenainceId = ri.Id
             INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo 
@@ -424,8 +459,8 @@ BEGIN
                     SET @idTransaccion = SCOPE_IDENTITY()
 
                     INSERT INTO Inventario.TransaccionDetalle
-                            (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total)
-			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto 
+                            (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total, conversion)
+			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto, conversion
                     FROM @tblInventory
 
                     EXEC dbo.Transaccion_Handler_Init 'S', @codDocTran, @documentoId, DEFAULT

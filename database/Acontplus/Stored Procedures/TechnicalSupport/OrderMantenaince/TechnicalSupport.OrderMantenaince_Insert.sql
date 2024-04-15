@@ -10,7 +10,7 @@ GO
 -- Create date: 2024-04-12
 -- Description:	For insert and update OrderMantenaince
 -- =============================================
--- TechnicalSupport.OrderMantenaince_Insert 401, '{"order":{"id":1,"fechaEmision":"2024-04-08T05:00:00Z","establecimientoId":608,"puntoEmisionId":280,"uuid":"e5132dc0-f017-4d99-b35e-e64f8765a9eb","sequence":1,"serie":"001-002-000000001","tax":0,"discount":0,"tip":0,"total":606.72,"obs":"LA QUIERO PARA MAÑANA\n","enabled":true,"customerCompanyId":149070,"razonSocial":"SENGUANA WISUMA EMILIO YANKUAM","bodegaId":288,"feeId":1158,"subTotalSinImpuesto":606,"percentageDiscount":0,"codDoc":"FV"},"detalles":[{"rowguid":"d9603c1f-d466-4612-9a15-c68fe018b8b6","bodegaId":288,"feeId":1158,"medidaId":848,"orderDetailId":1,"productId":251478,"descripcion":"SERVICIOS INFORMÁTIVOS Y SOPORTE TÉCNICO","codigo":"SER1","taxId":1,"taxPercentId":1,"quantity":1,"cost":600,"precioConIva":600,"taxValue":0,"price":600,"percentageDiscount":0,"discount":0,"precioTotalSinImpuesto":600,"total":600,"obs":"","costoFraccionado":600,"conversion":1},{"rowguid":"72d660f6-659f-4050-94cc-bae2b4454c5e","bodegaId":288,"feeId":1158,"medidaId":848,"orderDetailId":1,"productId":259089,"descripcion":"INVENTARIO PRUEBA","codigo":"*SER2","taxId":1,"taxPercentId":2,"quantity":1,"cost":2,"precioConIva":6.72,"taxValue":0.72,"price":6,"percentageDiscount":0,"discount":0,"precioTotalSinImpuesto":6,"total":6.72,"obs":"","costoFraccionado":2,"conversion":1}]}'
+-- TechnicalSupport.OrderMantenaince_Insert 401, '{"order":{"id":12,"fechaEmision":"2024-04-15T05:00:00Z","establecimientoId":608,"puntoEmisionId":280,"uuid":"3856fb49-7c7e-4b03-87f0-c6645d6671e7","sequence":5,"serie":"001-002-000000005","tax":0,"discount":0,"tip":0,"total":600,"obs":"CHEVERE","enabled":true,"customerCompanyId":149070,"razonSocial":"SENGUANA WISUMA EMILIO YANKUAM","bodegaId":288,"feeId":1158,"subTotalSinImpuesto":600,"percentageDiscount":0,"codDoc":"FV"},"detalles":[{"rowguid":"0f44559e-b012-497e-981f-7f689a427d38","bodegaId":288,"feeId":1158,"medidaId":848,"orderDetailId":0,"productId":251478,"descripcion":"SERVICIOS INFORMÁTIVOS Y SOPORTE TÉCNICO","codigo":"SER1","taxId":1,"taxPercentId":1,"quantity":1,"cost":600,"precioConIva":600,"taxValue":0,"price":600,"percentageDiscount":0,"discount":0,"precioTotalSinImpuesto":600,"total":600,"obs":"","costoFraccionado":600,"conversion":1}]}'
 CREATE OR ALTER PROC TechnicalSupport.OrderMantenaince_Insert
 @userRoleId INT
 , @json VARCHAR(MAX)
@@ -156,7 +156,7 @@ BEGIN
             ----- ========= Transformar el documento ========= --------
             IF (@codDoc IS NOT NULL OR @codDoc != '')
                 BEGIN
-                    EXEC TechnicalSupport.Order_Document_Insert @userRoleId, @orderId, @codDoc, @subTotalSinImpuesto, @payload OUTPUT
+                    EXEC TechnicalSupport.Order_Document_Insert @userRoleId, @orderId, @json, @payload OUTPUT
                 END
         COMMIT TRAN
         SELECT '1' AS code, 'Registrado exitosamente' AS 'message', @payload AS payload
