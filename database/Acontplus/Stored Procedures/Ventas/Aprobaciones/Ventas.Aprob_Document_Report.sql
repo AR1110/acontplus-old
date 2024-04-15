@@ -12,7 +12,7 @@ BEGIN
     DECLARE @tipo INT
 
     --> Filters
-    DECLARE @id INT ,@codDoc VARCHAR(10) ,@uniqueId VARCHAR(200) ,@idTipoDocumento INT 
+    DECLARE @id INT ,@codDoc VARCHAR(10) ,@uniqueId VARCHAR(200) ,@idTipoDocumento INT ,@fechaEmision DATETIME2
 
     --> Variables
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
@@ -25,7 +25,7 @@ BEGIN
 
             SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-            SELECT TOP 1 @uniqueId = uniqueId FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
+            SELECT TOP 1 @uniqueId = uniqueId, @fechaEmision = fechaEmision FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idAprob_Document = @id
 
             IF @codDoc = '01'
                 BEGIN
@@ -141,7 +141,7 @@ BEGIN
 
                   ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK)
-            WHERE estado = 1
+            WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
 
             SELECT ti.descripcion as descripcion
@@ -154,7 +154,7 @@ BEGIN
                   ),0) as iva
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0 
-              AND estado = 1
+              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
         
             RETURN 
     END 

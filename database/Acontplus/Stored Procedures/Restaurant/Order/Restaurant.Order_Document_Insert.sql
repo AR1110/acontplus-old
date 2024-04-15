@@ -702,9 +702,18 @@ BEGIN
                     SET @idTransaccion = SCOPE_IDENTITY()
 
                     INSERT INTO Inventario.TransaccionDetalle
-                           (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total)
+                           (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,conversion,precioCostoFraccionado)
 			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto 
-                    FROM @tblInventory
+                           ,ISNULL((SELECT TOP 1 af.conversion
+                             FROM dbo.ArticuloFraccionado af WITH (NOLOCK)
+                             WHERE af.idArticulo = tb.idArticulo
+                               AND af.idMedida = tb.medidaId),1)
+
+                            ,ISNULL((SELECT TOP 1 af.precioCostoFraccionado
+                             FROM dbo.ArticuloFraccionado af WITH (NOLOCK)
+                             WHERE af.idArticulo = tb.idArticulo
+                               AND af.idMedida = tb.medidaId),tb.precioCosto)
+                    FROM @tblInventory tb
 
                    EXEC dbo.Transaccion_Handler_Init 'S', @codDocTran, @documentoId, DEFAULT
                 END

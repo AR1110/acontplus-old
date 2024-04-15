@@ -6,6 +6,8 @@ go
 
 --alter table Inventario.Transaccion add conversion numeric(18,2)
 
+--alter table Inventario.Transaccion drop column conversion numeric(18,2)
+
 --update tr set
 --	   tr.conversion = ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af with (nolock) where af.idArticulo = tr.idArticulo and af.idMedida = tr.idMedida),1) 
 --from Inventario.Transaccion tr
@@ -433,6 +435,9 @@ go
 --inner join Inventario.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
 --where td.codigo = 'NC'
 
-select * from Inventario.Transaccion
+select TOP 100 * from Inventario.Transaccion
+
+
+SELECT top 100 * FROM Inventario.TransaccionDetalle
 
 --ALTER TABLE Inventario.Transaccion  alter column serieComprobante VARCHAR(30) not null
