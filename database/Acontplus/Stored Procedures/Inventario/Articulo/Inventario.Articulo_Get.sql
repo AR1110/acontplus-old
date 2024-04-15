@@ -578,6 +578,7 @@ BEGIN
             SELECT ar.idMedida 
                   ,1              as conversion
                   ,ar.precioCosto
+                  ,ar.precioCosto as precioCostoFraccionado
                   ,me.descripcion as medida
             FROM Articulo     ar WITH (NOLOCK) 
             INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
@@ -585,7 +586,8 @@ BEGIN
 
             SELECT af.idMedida
                   ,af.conversion
-                  ,af.precioCostoFraccionado as precioCosto
+                  ,ar.precioCosto
+                  ,af.precioCostoFraccionado as precioCostoFraccionado
                   ,me.descripcion            as medida
             FROM ArticuloFraccionado af WITH (NOLOCK) 
             INNER JOIN dbo.Medida    me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
