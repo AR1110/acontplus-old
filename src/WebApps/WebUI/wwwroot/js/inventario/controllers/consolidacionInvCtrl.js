@@ -564,7 +564,7 @@
             },
             {
                 name: 'P. Costo',
-                field: 'precioUnitario',
+                field: 'precioCosto',
                 enableCellEditOnFocus: true,
                 enableColumnMenu: false,
                 type: 'number',
