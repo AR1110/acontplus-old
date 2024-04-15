@@ -2,6 +2,8 @@
 {
     public class OrderDto
     {
+        public int Id { get; set; }
+        public int AssignedUserId { get; set; }
         public int CustomerCompanyId { get; set; }
         public int EstablecimientoId { get; set; }
         public DateTime FechaEmision { get; set; }

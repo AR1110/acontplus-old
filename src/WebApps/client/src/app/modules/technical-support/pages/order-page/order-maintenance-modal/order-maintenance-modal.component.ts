@@ -809,8 +809,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
     this.getId();
   }
 
-
-
   save() {
     try {
       if (!(this.order.establecimientoId > 0)) {
@@ -831,7 +829,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
       let params = {
         order: this.order,
-        detalles: this.tabulatorComponent.refTabulator.getData()
+        detalles: this.getOnlyData(this.tabulatorComponent.refTabulator.getData())
       }
 
       this.orderMaintenanceSvc.post(params).subscribe({
@@ -857,5 +855,19 @@ export class OrderMaintenanceModalComponent implements OnInit {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  getOnlyData(data: any[]) {
+    const propiedadesExcluidas = ['_row', 'cells', 'component', 'data', 'element', 'height', 'initialized', 'modules', 'parent', 'outerHeader', 'outerTable', 'table', '__proto__'];
+
+    return data.map(objeto => {
+      const soloValores: any = {};
+      for (const key in objeto) {
+        if (!propiedadesExcluidas.includes(key)) {
+          soloValores[key] = objeto[key];
+        }
+      }
+      return soloValores;
+    });
   }
 }

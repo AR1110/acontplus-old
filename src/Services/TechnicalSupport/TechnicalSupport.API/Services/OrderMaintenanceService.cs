@@ -5,11 +5,11 @@ using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Interfaces;
 namespace TechnicalSupport.API.Services
 {
-    public class OrderMantenainceService : IOrderMantenainceService
+    public class OrderMaintenanceService : IOrderMaintenanceService
     {
         private readonly TechnicalSupportContext _context;
         private readonly IADORepository _repository;
-        public OrderMantenainceService(TechnicalSupportContext context, IADORepository repository)
+        public OrderMaintenanceService(TechnicalSupportContext context, IADORepository repository)
         {
             _context = context;
             _repository = repository;
@@ -31,7 +31,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                return await _repository.SPExecuteAsync("TechnicalSupport.OrderMantenaince_Insert", parameters);
+                 return await _repository.SPExecuteAsync("TechnicalSupport.OrderMantenaince_Insert", parameters);
             }
             catch (Exception ex)
             {

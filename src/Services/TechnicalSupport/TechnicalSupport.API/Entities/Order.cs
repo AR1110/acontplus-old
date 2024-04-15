@@ -7,6 +7,7 @@ namespace TechnicalSupport.API.Entities
     [Table("Order", Schema = "TechnicalSupport")]
     public class Order : BaseEntity
     {
+        public int? AssignedUserId { get; set; }
         public Guid Uuid { get; set; }
         public int EstablecimientoId { get; set; }
         public DateTime FechaEmision { get; set; }

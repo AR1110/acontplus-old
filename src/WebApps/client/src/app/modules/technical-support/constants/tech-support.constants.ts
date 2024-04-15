@@ -9,7 +9,8 @@ export enum TECH_SUPPORT_PATHS {
   DEVICE_CUSTOMER = 'DeviceCustomer/',
   DEVICE_SPEC = 'DeviceSpec/',
   ORDER = 'Order/',
-  ORDER_MAINTENANCE = 'OrderMaintenance/'
+  ORDER_DETAIL = 'OrderDetail/',
+  ORDER_MAINTENANCE = 'OrderMaintenance/',
 }
 
 export enum ORDER_STATUS_CODE {
@@ -21,4 +22,3 @@ export enum ORDER_STATUS_CODE {
   SS = 7,
   G = 8,
 }
-

@@ -90,7 +90,7 @@ namespace TechnicalSupport.API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Order order)
+        public async Task<IActionResult> Put(int id, [FromBody] OrderDto order)
         {
             try
             {
