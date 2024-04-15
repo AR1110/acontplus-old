@@ -104,21 +104,7 @@ BEGIN
         , uuid                      UNIQUEIDENTIFIER	NOT NULL
         , envioSri                  BIT                 NOT NULL
     )
-    
-    IF ((@orderId = 0) OR (@codDoc IS NULL OR @codDoc = ''))
-    BEGIN 
-        SELECT '0' as code, 'El identificador o código documento no puede ser vacío' as 'message'
-        RETURN
-    END
 
-    IF EXISTS(SELECT TOP 1 1 FROM TechnicalSupport.[Order] tso              WITH (NOLOCK)
-                             INNER JOIN TechnicalSupport.OrderStatus tsos   WITH (NOLOCK) ON tsos.Id = tso.OrderStatusId
-                             WHERE tso.Id = @orderId AND Finished = 1 AND tsos.Code = 'PE')
-    BEGIN
-        SELECT '0' as code, 'La orden ya ha sido convertida.' as 'message'
-        RETURN
-    END
-        
     SELECT @establecimientoId       = tso.EstablecimientoId
             , @puntoEmisionId       = tso.PuntoEmisionId
             , @customerCompanyId    = tso.CustomerCompanyId
@@ -130,9 +116,7 @@ BEGIN
             , @userId               = tso.UserId
     FROM TechnicalSupport.[Order] tso
     WHERE tso.Id = @orderId
-
-    select * from TechnicalSupport.[Order]
-
+    
     UPDATE TechnicalSupport.[Order]
     SET Finished            = 1
         , OrderStatusId     =  (SELECT Id FROM TechnicalSupport.OrderStatus WHERE Code = 'PE')
@@ -176,7 +160,7 @@ BEGIN
 	INNER JOIN TechnicalSupport.[Order] o             WITH (NOLOCK) ON o.Id   = od.OrderId
     WHERE o.Id = @orderId
     AND om.Deleted IS NULL
-    -- AND om.[Enabled] = 1
+    AND om.[Enabled] = 1
 
     ---- =========== INSERT TAXES =========== -----
     INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
@@ -190,7 +174,7 @@ BEGIN
 	INNER JOIN TechnicalSupport.[Order] o             WITH (NOLOCK) ON o.Id   = od.OrderId
     WHERE o.Id = @orderId
     AND om.Deleted IS NULL
-    -- AND om.[Enabled] = 1
+    AND om.[Enabled] = 1
     
     IF NOT EXISTS(SELECT TOP 1 1 FROM @tblItems)
     BEGIN

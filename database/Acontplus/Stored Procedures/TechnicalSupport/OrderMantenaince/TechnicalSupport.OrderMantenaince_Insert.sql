@@ -32,19 +32,19 @@ BEGIN
         , @tip                  NUMERIC(18,6)
         , @total                NUMERIC(18,6)
         , @codDoc               VARCHAR(5)
-        , @payload       NVARCHAR(MAX)
+        , @payload              NVARCHAR(MAX)
+        , @puntoEmisionId       INT
+        , @orderDetailId        INT
         
     BEGIN TRY
         DECLARE @orderMantenaince AS TABLE (
-            id                          INT             NULL
-            , bodegaId                  INT             NOT NULL
+            bodegaId                    INT             NOT NULL
             , codigo                    NVARCHAR(5)     NOT NULL
             , costoFraccionado          NUMERIC(18,6)   NOT NULL
             , precioConIva              NUMERIC(18,6)   NOT NULL
             , precioTotalSinImpuesto    NUMERIC(18,6)   NOT NULL
             , feeId                     INT             NOT NULL
             , medidaId                  INT             NOT NULL
-            , orderDetailId             INT             NOT NULL
             , productId                 INT             NOT NULL
             , taxId                     INT             NOT NULL
             , taxPercentId              INT             NOT NULL
@@ -68,6 +68,7 @@ BEGIN
                 , @tax                  = tax
                 , @tip                  = tip
                 , @total                = total
+                , @puntoEmisionId       = puntoEmisionId
         FROM OPENJSON(@order) WITH (
             orderId                 INT             '$.id'
             , bodegaId              INT             '$.bodegaId'
@@ -78,13 +79,13 @@ BEGIN
             , tax                   NUMERIC(18,6)   '$.tax'
             , tip                   NUMERIC(18,6)   '$.tip'
             , total                 NUMERIC(18,6)   '$.total'
+            , puntoEmisionId        INT             '$.puntoEmisionId'
         )
-                
-        INSERT INTO @orderMantenaince (id, bodegaId, codigo, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs)
-        SELECT ISNULL(id, 0), bodegaId, codigo, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs
+        
+        INSERT INTO @orderMantenaince (bodegaId, codigo, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs)
+        SELECT bodegaId, codigo, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs
         FROM OPENJSON(@detalles)
         WITH (
-            id                              INT             '$.id',
             bodegaId                        INT             '$.bodegaId',
             codigo                          VARCHAR(5)      '$.codigo',
             costoFraccionado                NUMERIC(18,6)   '$.costoFraccionado',
@@ -92,7 +93,6 @@ BEGIN
             precioTotalSinImpuesto          NUMERIC(18,6)   '$.precioTotalSinImpuesto',
             feeId                           INT             '$.feeId',
             medidaId                        INT             '$.medidaId',
-            orderDetailId                   INT             '$.orderDetailId',
             productId                       INT             '$.productId',
             taxId                           INT             '$.taxId',
             taxPercentId                    INT             '$.taxPercentId',
@@ -105,10 +105,37 @@ BEGIN
             obs                             VARCHAR(500)    '$.obs'
         );
 
+        IF NOT EXISTS(SELECT 1 FROM @orderMantenaince)
+        BEGIN
+            SELECT '0' AS code, 'No se pudo recuperar el detalle' AS 'message'
+            RETURN
+        END
+
+        IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
+				                      INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
+			                          WHERE pa.idUsuarioRol = @userRoleId
+			                          AND cd.codDoc = 'OTS')
+        BEGIN
+            SELECT '0' AS code, 'Aun no se ha configurado el secuencial, para ordenes de Soporte de Técnico' AS 'message'
+            RETURN
+        END
+        
+        IF EXISTS(SELECT TOP 1 1 FROM TechnicalSupport.[Order] tso              WITH (NOLOCK)
+                                 INNER JOIN TechnicalSupport.OrderStatus tsos   WITH (NOLOCK) ON tsos.Id = tso.OrderStatusId
+                                 WHERE tso.Id = @orderId AND Finished = 1 AND tsos.Code = 'PE')
+        BEGIN
+            SELECT '0' as code, 'La orden ya ha sido convertida.' as 'message'
+            RETURN
+        END
+
+        SELECT TOP 1 @orderDetailId = Id FROM TechnicalSupport.OrderDetail WHERE OrderId = @orderId
+
         BEGIN TRAN
-            IF EXISTS(SELECT TOP 1 1 FROM TechnicalSupport.OrderDetail tsod WITH(NOLOCK)
-                      INNER JOIN TechnicalSupport.[Order] tso               WITH(NOLOCK) ON tso.Id = tsod.OrderId
-                      WHERE tsod.OrderId = @orderId)
+            IF NOT EXISTS(SELECT 1 FROM TechnicalSupport.OrderMaintenance tsom	            WITH(NOLOCK)
+                                         INNER JOIN TechnicalSupport.OrderDetail tsod		WITH(NOLOCK) ON tsod.Id = tsom.OrderDetailId
+                                         INNER JOIN TechnicalSupport.[Order]		tso		WITH(NOLOCK) ON tso.Id = tsod.OrderId
+                                         WHERE tsod.OrderId = @orderId)
+
                 BEGIN
                     UPDATE TechnicalSupport.[Order]
                     SET CustomerCompanyId   = @customerCompanyId
@@ -117,32 +144,17 @@ BEGIN
                         , Total             = @total
                     WHERE Id = @orderId
                     
-                    MERGE INTO TechnicalSupport.OrderMaintenance AS target
-                    USING @orderMantenaince AS source ON target.id = source.id
-                    WHEN MATCHED THEN
-                        UPDATE SET
-                            target.bodegaId         = source.bodegaId,
-                            target.feeId            = source.feeId,
-                            target.medidaId         = source.medidaId,
-                            target.orderDetailId    = source.orderDetailId,
-                            target.productId        = source.productId,
-                            target.taxId            = source.taxId,
-                            target.taxPercentId     = source.taxPercentId,
-                            target.quantity         = source.quantity,
-                            target.cost             = source.cost,
-                            target.taxValue         = source.taxValue,
-                            target.price            = source.price,
-                            target.discount         = source.discount,
-                            target.total            = source.total,
-                            target.obs              = source.obs
-                    WHEN NOT MATCHED THEN
-                        INSERT (bodegaId, feeId, medidaId, orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, createdAt, enabled)
-                        VALUES (source.bodegaId, source.feeId, source.medidaId, source.orderDetailId, source.productId, source.taxId, source.taxPercentId, source.quantity, source.cost, source.taxValue, source.price, source.discount, source.total, source.obs, @date, 1);
+                    INSERT INTO TechnicalSupport.OrderMaintenance
+                    (bodegaId, feeId, medidaId, orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, createdAt, enabled)
+                    SELECT bodegaId, feeId, medidaId, @orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, @date, 1 
+                    FROM @orderMantenaince
 
+                    --- RETURN---
                     SET  @payload = (SELECT orderId = @orderId)
                 END
+
             ----- ========= Transformar el documento ========= --------
-            IF @codDoc IS NOT NULL
+            IF (@codDoc IS NOT NULL OR @codDoc != '')
                 BEGIN
                     EXEC TechnicalSupport.Order_Document_Insert @userRoleId, @orderId, @codDoc, @subTotalSinImpuesto, @payload OUTPUT
                 END

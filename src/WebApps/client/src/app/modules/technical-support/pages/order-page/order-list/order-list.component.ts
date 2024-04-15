@@ -139,5 +139,13 @@ export class OrderListComponent implements OnInit {
       {  size: 'xl' }
     );
     modalRef.componentInstance.params = { id };
+
+    modalRef.result.then((result) => {
+      if (result === undefined || result === null) return;
+
+      if (result["code"] === "1") {
+        this.get();
+      }
+    });
   }
 }

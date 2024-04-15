@@ -827,14 +827,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return
       }
 
-
       let params = {
         order: Object.assign({}, this.order, codDoc ? { codDoc } : {}),
-        detalles: this.getOnlyData(this.tabulatorComponent.refTabulator.getData(), this.params.id)
+        detalles: this.getOnlyData(this.tabulatorComponent.refTabulator.getData())
       }
-
-      console.log(params)
-      console.log("params")
 
       this.orderMaintenanceSvc.post(params).subscribe({
         next: (response) => {
@@ -861,7 +857,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
   }
 
-  getOnlyData(data: any[], orderDetailId: number) {
+  getOnlyData(data: any[]) {
     const propiedadesExcluidas = ['_row', 'cells', 'component', 'data', 'element', 'height', 'initialized', 'modules', 'parent', 'outerHeader', 'outerTable', 'table', '__proto__'];
 
     // También excluir listas de objetos, solamente objetos simples
@@ -872,9 +868,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
           soloValores[key] = objeto[key];
         }
       }
-
-      // orderDetailId en la lista de detalles
-      soloValores.orderDetailId = orderDetailId;
       return soloValores;
     });
   }
