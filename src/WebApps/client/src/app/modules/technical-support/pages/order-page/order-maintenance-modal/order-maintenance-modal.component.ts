@@ -809,7 +809,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     this.getId();
   }
 
-  save() {
+  save(codDoc?: string) {
     try {
       if (!(this.order.establecimientoId > 0)) {
         this.tS.toastr({
@@ -827,10 +827,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return
       }
 
+
       let params = {
-        order: this.order,
-        detalles: this.getOnlyData(this.tabulatorComponent.refTabulator.getData())
+        order: Object.assign({}, this.order, codDoc ? { codDoc } : {}),
+        detalles: this.getOnlyData(this.tabulatorComponent.refTabulator.getData(), this.params.id)
       }
+
+      console.log(params)
+      console.log("params")
 
       this.orderMaintenanceSvc.post(params).subscribe({
         next: (response) => {
@@ -857,17 +861,30 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
   }
 
-  getOnlyData(data: any[]) {
+  getOnlyData(data: any[], orderDetailId: number) {
     const propiedadesExcluidas = ['_row', 'cells', 'component', 'data', 'element', 'height', 'initialized', 'modules', 'parent', 'outerHeader', 'outerTable', 'table', '__proto__'];
 
+    // También excluir listas de objetos, solamente objetos simples
     return data.map(objeto => {
       const soloValores: any = {};
       for (const key in objeto) {
-        if (!propiedadesExcluidas.includes(key)) {
+        if (!propiedadesExcluidas.includes(key) && this.esObjetoSimple(objeto[key])) {
           soloValores[key] = objeto[key];
         }
       }
+
+      // orderDetailId en la lista de detalles
+      soloValores.orderDetailId = orderDetailId;
       return soloValores;
     });
+  }
+
+  esObjetoSimple(valor: any) {
+    let isValid = true;
+
+    if (typeof valor === 'object' || Array.isArray(valor)) {
+      isValid = false;
+    }
+    return isValid;
   }
 }
