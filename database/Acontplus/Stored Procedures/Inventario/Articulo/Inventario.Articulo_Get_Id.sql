@@ -109,7 +109,7 @@ BEGIN
 	INNER JOIN Articulo a WITH (NOLOCK) ON a.idArticulo = ap.idArticulo
 	LEFT JOIN TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva = a.idTipoIva
 	WHERE ap.idArticulo = @id 
-	ORDER BY ta.predeterminada DESC
+	ORDER BY ta.codigo ASC
         				
 	SELECT
         idArticuloCodigoBarra   = ac.idArticuloCodigoBarra

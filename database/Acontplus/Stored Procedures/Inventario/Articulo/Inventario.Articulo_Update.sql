@@ -26,7 +26,6 @@ BEGIN
 
 	DECLARE @idSubFamilia INT
 	DECLARE @idUsuario INT 
-	DECLARE @idOldMedida INT 
 	DECLARE @idMedida INT 
 	DECLARE @fraccionado BIT
 	DECLARE @idEntidad INT 
@@ -207,15 +206,14 @@ BEGIN
 		
 		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 
-		SELECT 
-			 @idSubFamilia = idSubFamilia
-			,@idMedida = idMedida
-			,@fraccionado = productoFraccionable
-			,@codigo = codigo
-			,@codigoBarra = codigoBarra
-			,@codigoAuxiliar = codigoAuxiliar
-			,@datosAdicionales = datosAdicionales
-			,@llevaInventario = llevaInventario
+		SELECT @idSubFamilia = idSubFamilia
+			  ,@idMedida = idMedida
+			  ,@fraccionado = productoFraccionable
+			  ,@codigo = codigo
+			  ,@codigoBarra = codigoBarra
+			  ,@codigoAuxiliar = codigoAuxiliar
+			  ,@datosAdicionales = datosAdicionales
+			  ,@llevaInventario = llevaInventario
 		FROM @tbArticle
 
 		--=============================================== Validaciones ======================================================================
@@ -255,13 +253,19 @@ BEGIN
 				RETURN 
 			END 
 
-		IF @idMedida != @idOldMedida 
+		IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idMedida != @idMedida AND idArticulo = @id)
 			BEGIN
 				IF EXISTS (SELECT 1 FROM ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @id)
 					BEGIN
 						SELECT '0'code,'Este Articulo se encuntra fraccionado, su medida no puede ser editada' as 'message'
 						RETURN;
 					END 
+
+                IF EXISTS(SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id AND estado = 1)
+                    BEGIN
+                        SELECT '0'code, 'El Articulo tiene realizada transacciones no pueden ser editado' as 'message'			
+			            RETURN 
+                    END
 			END 
 
 		IF @fraccionado = 0 
@@ -284,7 +288,7 @@ BEGIN
 
 		 IF @llevaInventario = 0 
 			BEGIN
-				IF EXISTS (SELECT 1 FROM Inventario.Transaccion WITH (NOLOCK) WHERE idArticulo = @id)
+				IF EXISTS (SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id)
 					BEGIN
 						SELECT '0'code,'Este Articulo tiene un historial de Inventario' as 'message'
 						RETURN;
@@ -435,8 +439,10 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-		SELECT '0'code,'Info: Error en el procedimiento' as 'message'
+		
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		VALUES(NEWID(),'/Articulo/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario)
+
+        SELECT '0'code,'Info: Error en el procedimiento' as 'message'
 	END CATCH
 END

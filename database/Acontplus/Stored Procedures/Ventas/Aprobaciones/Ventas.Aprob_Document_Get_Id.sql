@@ -77,32 +77,62 @@ BEGIN
        ,dt.tarifa
        ,dt.valorImpuesto
 	   ,a.datosAdicionales 
-       ,ISNULL((SELECT idMedida     = m.idMedida 
-			          ,descripcion  = m.descripcion
-			          ,tarifas      = (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor
-								       FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
-								       INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
-								       WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
-								       ORDER BY ta.predeterminada DESC FOR JSON PATH)
-			         ,orden = IIF(af.gestionVenta = 1,1,3)
-                     ,af.conversion
-			   FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
-			   INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
-			   WHERE af.idArticulo = dt.idArticulo AND af.estado = 1 FOR JSON PATH),'[]') as fraccionado
-             ,(
-                SELECT m.idMedida
-			          ,m.descripcion
-			          ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion), ta.ventaPorMayor 
-								        FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
-								        INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
-								        WHERE ap.idArticulo = ar.idArticulo
-								        ORDER BY ta.predeterminada DESC FOR JSON PATH)
-			          ,orden = 2
-                      ,1 as conversion
-			    FROM dbo.Articulo     ar WITH (NOLOCK)
-			    INNER JOIN dbo.Medida  m WITH (NOLOCK) ON m.idMedida = ar.idMedida
-			    WHERE ar.idArticulo = a.idArticulo FOR JSON PATH
-             ) as principal
+       ,ISNULL
+          ((
+                SELECT af.idMedida
+                      ,IIF(af.gestionVenta = 1,1,3) as orden
+                      ,af.conversion
+                      ,af.precioCostoFraccionado
+                      ,ar.precioCosto
+			          ,me.descripcion               as descripcion
+			          ,(
+                            SELECT pv.idTarifa
+                                  ,pv.precioVenta
+                                  ,pv.precioConIva
+                                  ,UPPER(ta.descripcion) as tarifa
+                                  ,ta.ventaPorMayor
+					        FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
+					        INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
+					        WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
+					        ORDER BY ta.predeterminada DESC 
+                            FOR JSON PATH
+
+                      ) as tarifas
+			    FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			    INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
+                INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+			    WHERE af.idArticulo = dt.idArticulo 
+                FOR JSON PATH
+                
+            ),'[]') as fraccionado
+
+           ,ISNULL
+            ((
+                SELECT sc.idMedida
+                      ,2              as orden
+                      ,1              as conversion
+			          ,sc.precioCosto as precioCostoFraccionado
+                      ,sc.precioCosto
+                      ,me.descripcion
+			          ,(
+                            SELECT ap.idTarifa
+                                  ,ap.precioVenta
+                                  ,ap.precioConIva
+                                  ,UPPER(ta.descripcion) as tarifa
+                                  ,ta.ventaPorMayor 
+					        FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+					        INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+					        WHERE ap.idArticulo = sc.idArticulo
+					        ORDER BY ta.predeterminada DESC 
+                            FOR JSON PATH
+
+                       ) as tarifas
+			    FROM dbo.Articulo     sc WITH (NOLOCK)
+			    INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = sc.idMedida
+			    WHERE sc.idArticulo = dt.idArticulo 
+                FOR JSON PATH
+
+            ),'[]') as principal
             ,(
                SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = a.idArticulo AND st.idBodega = dt.idBodega FOR JSON PATH
              ) as consolidacion
