@@ -167,7 +167,7 @@
                     cantidad: item.cantidad,
                     conversion : item.conversion,
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion),
-                    precioUnitario: item.precioCosto,
+                    precioUnitario: item.precioUnitario,
                     precioCosto: item.precioCosto,
                     precioCostoFraccionado: item.precioCostoFraccionado,
                     total: item.total,
@@ -189,7 +189,7 @@
                     cantidad: item.cantidad,
                     conversion : item.conversion,
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion),
-                    precioUnitario: item.precioCosto,
+                    precioUnitario: item.precioUnitario,
                     precioCosto: item.precioCosto,
                     precioCostoFraccionado: item.precioCostoFraccionado,
                     total: item.total,
@@ -239,6 +239,9 @@
                         const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
                         restItem.conversion = dataMedida.conversion;
                         restItem.medidas = medidas;
+                        restItem.precioCosto =dataMedida.precioCosto;
+                        restItem.precioUnitario = restItem.precioUnitario;
+                        restItem.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
                         return restItem;
                     })
 

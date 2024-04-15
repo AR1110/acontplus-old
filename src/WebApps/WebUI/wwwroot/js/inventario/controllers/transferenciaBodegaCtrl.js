@@ -334,6 +334,7 @@
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
                     rowEntity.precioCosto = dataMedida.precioCosto;
+                    rowEntity.precioUnitario = dataMedida.precioUnitario;
                     rowEntity.conversion = dataMedida.conversion;
                 }
 
@@ -351,7 +352,7 @@
 
         //Set Total Row 
         $scope.setTotal = function (rowEntity) {
-            let total = rowEntity.cantidad * rowEntity.precioCosto;
+            let total = rowEntity.cantidad * rowEntity.precioUnitario;
             rowEntity.total = fS.roundNumber(total, 5); //Total Precio Venta
         }
 
@@ -462,12 +463,12 @@
             //      }, aggregationLabel: "$",  
             // },
             {
-                name: 'P. Costo',
-                field: 'precioCosto',
+                name: 'P. Costo Unitario',
+                field: 'precioUnitario',
                 enableCellEditOnFocus: true,
                 enableColumnMenu: false,
                 type: 'number',
-                width: '8%',
+                width: '9%',
                 minWidth: '100',
                 // aggregationType: uiGridConstants.aggregationTypes.sum,
                 // footerCellFilter: 'number:2',
@@ -702,6 +703,7 @@
                 medidas: [],
                 stock: 0,
                 precioCosto: 0,
+                precioUnitario: 0,
                 total: 0,
                 estado: true,
                 conversion: 1,
@@ -709,7 +711,9 @@
         }
 
         $scope.addItem = function (entity, item, medidas) {
-            let dataMedida = medidas[0];
+            
+            let dataMedida = medidas.find(m=>m.defaultMedida);
+
             entity.codigo = item.codigoArticulo;
             entity.idArticulo = item.idArticulo;
             entity.descripcion = item.descripcion;
@@ -721,6 +725,7 @@
             entity.idMedida = dataMedida.idMedida; //Medida por defecto    
             entity.conversion = dataMedida.conversion;
             entity.precioCosto = dataMedida.precioCosto;
+            entity.precioUnitario = dataMedida.precioUnitario;
             entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
         }
 
