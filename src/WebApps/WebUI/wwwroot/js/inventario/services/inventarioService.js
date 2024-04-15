@@ -473,7 +473,10 @@
                             codigoBarra: restItem.codigoBarra,
                             descripcion: restItem.descripcion,
                             stock: restItem.stock,
-                            precioCosto: restItem.precioCosto,
+                            precioCosto: dataMedida.precioCosto,
+                            precioUnitario: dataMedida.precioUnitario,
+                            precioActual: dataMedida.precioActual,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             estado: restItem.estado,
                             iva: restItem.iva,
                             cantidad: restItem.cantidad,
@@ -537,13 +540,13 @@
                     cantidad: item.cantidad,
                     conversion : item.conversion,
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion, 5),
-                    precioUnitario: item.precioUnitario || item.precioCosto,
-                    precioCosto: item.precioUnitario || item.precioCosto,
-                    precioCostoFraccionado: item.precioUnitario || item.precioCosto,
+                    precioUnitario: item.precioUnitario,
+                    precioCosto: item.precioCosto ,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
                     total: fS.roundNumber(item.total, 5),
                     nota: fS.isValidField(item.nota),
                     descripcion: item.descripcion,
-                    estado: item.estado
+                    estado: item.estado, 
                 }
             })
             return results;
@@ -585,13 +588,14 @@
                             descripcion: restItem.descripcion,
                             cantidad: restItem.cantidad,
                             precioCosto: restItem.precioCosto,
-                            precioActual: restItem.precioActual,
+                            precioUnitario: restItem.precioUnitario, 
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             codigo: restItem.codigo,
                             stock: restItem.stock,
                             estado: restItem.estado,
                             conversion: dataMedida.conversion,
                             medidas,
-                            total: fS.roundNumber(restItem.cantidad * restItem.precioActual, 5),
+                            total: fS.roundNumber(restItem.cantidad * restItem.precioUnitario, 5),
                             estado: true
                         };
 
@@ -628,7 +632,7 @@
                         medida: item.medida,
                         bodega: item.bodega,
                         stock: item.stock,
-                        precioActual: item.precioActual,
+                        precioUnitario: item.precioUnitario,
                         precioCosto: item.precioCosto,
                         total: item.total,
                     }

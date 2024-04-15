@@ -392,8 +392,8 @@
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
-                    precioCosto : item.precioUnitario,
-                    precioCostoFraccionado : item.precioUnitario,
+                    precioCosto : item.precioCosto,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
                     conversion : item.conversion,
                     estado: item.estado
                 }
@@ -474,6 +474,8 @@
                                 datosAdicionales: item.datosAdicionales,
                                 medidas,
                                 conversion: dataMedida.conversion,
+                                precioCosto : dataMedida.precioCosto,
+                                precioCostoFraccionado : dataMedida.precioCostoFraccionado,
                                 ice: item.ice,
                                 estado: item.estado
                             }
@@ -862,6 +864,7 @@
                                 estado: restItem.estado,
                                 conversion: dataMedida.conversion,
                                 precioCosto: dataMedida.precioCosto,
+                                precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                                 medidas,
                                 etiquetas: etiquetasMapper
                             }
@@ -986,8 +989,8 @@
                     nota: item.nota,
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
-                    precioCosto : item.precioUnitario,
-                    precioCostoFraccionado : item.precioUnitario,
+                    precioCosto : item.precioCosto,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
                     conversion : item.conversion,
                     cantidadTransaccion: cantidadTransaccion,
                     estado: item.estado
@@ -1262,8 +1265,8 @@
                     descripcion: item.descripcion,
                     llevaInventario: item.llevaInventario,
                     cantidadTransaccion: cantidadTransaccion,
-                    precioCosto : item.precioUnitario,
-                    precioCostoFraccionado : item.precioUnitario,
+                    precioCosto : item.precioCosto,
+                    precioCostoFraccionado : item.precioCostoFraccionado,
                     conversion : item.conversion,
                     estado: item.estado
                 }
@@ -1356,7 +1359,9 @@
                                 estado: restItem.estado,
                                 ice: restItem.ice || 0,
                                 medidas,
-                                conversion: dataMedida.conversion | 1,
+                                conversion : dataMedida.conversion | 1,
+                                precioCosto : dataMedida.precioCosto ,
+                                precioCostoFraccionado : dataMedida.precioCostoFraccionado,
                                 etiquetas: etiquetasMapper,
                             }
                         })

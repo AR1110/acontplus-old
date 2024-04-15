@@ -20,7 +20,6 @@ BEGIN
 
      --> Global
     DECLARE @secuencia          VARCHAR(30)
-           ,@orderId            INT 
            ,@enabled            BIT 
            ,@idTipoDocumento    INT 
            ,@userId             INT
@@ -128,12 +127,11 @@ BEGIN
                 ,AssignedUserId = IIF(temp.assignedUserId = 0, NULL, temp.assignedUserId)
             FROM TechnicalSupport.[Order] o WITH (NOLOCK)
                 INNER JOIN @tbOrder temp ON o.Id = temp.id
-            SET @orderId = @@IDENTITY
 
             ---> Inser data - Details
             INSERT INTO TechnicalSupport.OrderDetail
                    (Uuid, OrderId, Deviceid, Obs, CreatedAt, [Enabled], UserId)
-            SELECT uuid, @orderId, deviceId, obs, @datetime, @enabled, @userId
+            SELECT uuid, @id, deviceId, obs, @datetime, @enabled, @userId
             FROM @tbDetails
             WHERE id = 0
         

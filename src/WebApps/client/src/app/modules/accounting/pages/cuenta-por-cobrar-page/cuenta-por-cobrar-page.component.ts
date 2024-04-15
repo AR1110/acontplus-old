@@ -1,86 +1,183 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { SelectionModel } from '@angular/cdk/collections';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { TabulatorSemanticUiComponent } from '@core/components/tabulator-semantic-ui/tabulator-semantic-ui.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { DOC_TYPE, DOC_TYPE_SRI } from '@core/constants/global.constants';
+import { GroupedEstab } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CuentaPorCobrarService } from '@modules/accounting/services/cuenta-por-cobrar.service';
 import { ComprobanteIngresoOpenModalService } from '@modules/accounting/shared/services/comprobante-ingreso-open-modal.service';
 import { Pagination } from '@shared/class/pagination';
 import { forkJoin } from 'rxjs';
 
+
+
 @Component({
   selector: 'app-cuenta-por-cobrar',
   standalone: true,
   imports: [
+
+    MatTableModule,
+    MatCheckboxModule,
     FormsModule,
     FontAwesomeModule,
     BreadcrumbComponent,
-    TabulatorSemanticUiComponent
+    DateRangeSelectionComponent
   ],
   templateUrl: './cuenta-por-cobrar-page.component.html',
   styles: ``
 })
 export class CuentaPorCobrarPageComponent {
 
-  @ViewChild(TabulatorSemanticUiComponent) _tabulatorComponent!: TabulatorSemanticUiComponent;
-
   tS = inject(ToasterService);
   cuentaPorCobrarSvc = inject(CuentaPorCobrarService);
   comprobanteIngresoOpenModalSvc = inject(ComprobanteIngresoOpenModalService)
 
-  pagination = new Pagination()
-  tabOptions = {
-    selectable: true
-  }
-  columns = [
-    {
-      headerSort: false, resizable: false, frozen: true, headerHozAlign: "center", hozAlign: "center", formatter: "rowSelection", titleFormatter: "rowSelection", cellClick: function (e: any, cell: any) {
-        cell.getRow().toggleSelect();
-      }
-    },
-    {
-      title: 'Nro.', formatter: "rownum", headerSort: false, hozAlign: "center",
-    },
-    { title: "Op", field: "name", headerHozAlign: "center", hozAlign: "center", headerSort: false, },
-    { title: "Cod. Doc", field: "codDoc", headerHozAlign: "center", hozAlign: "center", headerSort: false, },
-    { title: "Serie Comprobante", field: "serieComprobante", headerHozAlign: "center", headerSort: false, },
-    { title: "Razon Social Comprador", field: "razonSocialComprador", headerHozAlign: "center", tooltip: true, formatter: "textarea" },
-    { title: "Fecha Emisión", field: "fechaEmision", hozAlign: "center", headerHozAlign: "center", sorter: "date" },
-    { title: "Fecha Vcto", field: "fechaVencimiento", hozAlign: "center", headerHozAlign: "center", width: 150 },
-    { title: "Total", field: "importeTotal", hozAlign: "center", headerHozAlign: "center", width: 90 },
-    { title: "Abono", field: "abono", hozAlign: "center", headerHozAlign: "center", width: 90 },
-    { title: "Saldo", field: "saldo", hozAlign: "center", headerHozAlign: "center", width: 90 },
-    { title: "Tiempo Credito", field: "tiempoCredito", hozAlign: "center", headerHozAlign: "center", width: 150 },
-    { title: "Estado", field: "estado", hozAlign: "center", headerHozAlign: "center", width: 150 },
-  ]
+  displayedColumns: string[] = [
+    'select',
+    'index',
 
-  cuentasPorCobrar = [
-    {
-      "idCuentaPorCobrar": 469087,
-      "idCliente": 149070,
-      "codEstab": "ESTAB-000000269",
-      "codDoc": "FE",
-      "razonSocialComprador": "SENGUANA WISUMA EMILIO YANKUAM",
-      "identificacionComprador": "1450152325",
-      "serieComprobante": "001-002-000000003",
-      "fechaEmision": "12/04/2024",
-      "fechaVencimiento": "12/04/2024",
-      "importeTotal": 6.72,
-      "abono": 0.00,
-      "saldo": 6.72,
-      "diasMora": 0,
-      "mora": 0.00000,
-      "tiempoCredito": "VENTAS - CONTADO",
-      "estado": "Pendiente",
-      "totalRecords": 1,
-      "totalVenta": 6.72000,
-      "totalAbono": 0.00000,
-      "totalSaldo": 6.72000,
-      "codEstado": "PE"
+    'tipoDoc',
+    'serieComprobante',
+    'razonSocialComprador',
+    'fechaEmision',
+    'fechaVcto',
+    'total',
+    'abono',
+    'saldo',
+    'tiempoCredito',
+    'estado',
+  ];
+  dataSource = new MatTableDataSource<any>([]);
+  selection = new SelectionModel<any>(true, []);
+
+  pagination = new Pagination()
+
+
+  dataSearch = {
+    checkBoxFecha: true,
+    codEstado: null,
+    codEstab: null as (string | null),
+    fechaInicio: formatDateMoment(new Date()),
+    fechaFin: formatDateMoment(new Date()),
+    idCliente: 0,
+    ckCxcVencida: false,
+    idTipoDocumento: 0
+  }
+  establecimientos: GroupedEstab[] = [];
+  estadosDoc: any[] = [];
+  tiposDoc: any[] = []
+
+  getCodigoTipoDoc() {
+    let dataDoc = this.tiposDoc.find(doc => doc.idTipoDocumento === this.dataSearch.idTipoDocumento);
+    let codigo;
+    if (dataDoc) {
+      if (dataDoc.codigo === DOC_TYPE.FV) codigo = DOC_TYPE_SRI.F;
+      if (dataDoc.codigo === DOC_TYPE.NE) codigo = DOC_TYPE.NE
     }
-  ]
+    return codigo;
+  }
+
+  getCuentasPorCobrar() {
+    try {
+      showLoader();
+      let params = {
+        codEstab: this.dataSearch.codEstab,
+        pageIndex: this.pagination.pageIndex,
+        pageSize: this.pagination.pageSize,
+        ckFecha: this.dataSearch.checkBoxFecha,
+        fechaInicio: this.dataSearch.fechaInicio,
+        fechaFin: this.dataSearch.fechaFin,
+        codEstado: isValidField(this.dataSearch.codEstado),
+        idCliente: isValidField(this.dataSearch.idCliente),
+        codDoc: isValidField(this.getCodigoTipoDoc()),
+        ckCxcVencida: isValidField(this.dataSearch.ckCxcVencida)
+      }
+
+      this.selection = new SelectionModel<any>(true, []);
+      this.cuentaPorCobrarSvc.getAll(params).subscribe({
+        next: (response) => {
+          hideLoader()
+          let { cuentasPorCobrar } = response;
+          this.dataSource = new MatTableDataSource(cuentasPorCobrar);
+        },
+        error(err) {
+          console.log(err)
+          hideLoader()
+        },
+      })
+    } catch (error) {
+      console.log(error)
+      hideLoader()
+    }
+  }
+
+  getDataFilter() {
+    try {
+      this.cuentaPorCobrarSvc.getDataFilter().subscribe({
+        next: (response) => {
+          this.establecimientos = response.estabs;
+          this.estadosDoc = response.estadosDoc;
+          this.tiposDoc = response.tiposDoc;
+
+          if (this.estadosDoc.length > 0) {
+            let dataEstado = this.estadosDoc.find(e => e.codigo === "NCBR");
+            this.dataSearch.codEstado = dataEstado.codigo;
+          }
+
+          if (this.establecimientos.length > 0) {
+            let dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
+            this.dataSearch.codEstab = dataEstab?.codEstab ?? null;
+            this.getCuentasPorCobrar();
+          }
+        },
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  ngOnInit() {
+    this.getDataFilter()
+  }
+
+  onDateRangeSelection(range: { from: string, to: string }) {
+    this.dataSearch.fechaInicio = range.from;
+    this.dataSearch.fechaFin = range.to;
+    this.getCuentasPorCobrar()
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: any): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.index + 1}`;
+  }
 
   // Función para verificar si los valores de razonSocialComprador son los mismos
   verificarClienteIgual(selectedDocumentos: any[]) {
@@ -93,7 +190,7 @@ export class CuentaPorCobrarPageComponent {
   }
 
   openDocPaymentModal() {
-    let selectedDocumentos = this._tabulatorComponent.refTabulator.getSelectedData();
+    let selectedDocumentos = this.selection.selected
 
     if (selectedDocumentos.length === 0) {
       this.tS.toastr({

@@ -76,7 +76,14 @@ BEGIN
                         END 
 
                     -- TRAN 
-			        UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion AND idArticulo = @idArticulo
+                    UPDATE dt SET   
+                           dt.estado = 0
+                    FROM Inventario.TransaccionDetalle    dt WITH (ROWLOCK)
+                    INNER JOIN Inventario.Transaccion     it WITH (ROWLOCK) ON it.idTransaccion     = dt.idTransaccion
+                    WHERE it.idDocumento = @idDocumento 
+                      AND it.idTipoDocumento = @idTipoDocumento 
+                      AND it.idTipoTransaccion = @idTipoTransaccion 
+                      AND dt.idArticulo = @idArticulo
 
                     UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidadTransaccion,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 

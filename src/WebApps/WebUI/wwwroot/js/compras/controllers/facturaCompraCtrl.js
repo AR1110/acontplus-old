@@ -1091,13 +1091,13 @@
                     (ti) => ti.codigoPorcentaje === articulo.codigoPorcentaje
                 );
 
-                let precioCosto = dataMedida.precioCosto;
+                let precioUnitario = dataMedida.precioCostoFraccionado;
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
                 entity.precioUnitario = fS.roundNumber(
-                    precioCosto,
+                    precioUnitario,
                     $scope.decimal.nroPrecio
                 );
                 entity.etiquetas = etiquetas;
@@ -1106,6 +1106,9 @@
                 entity.medidas = medidas;
                 entity.idMedida = dataMedida.idMedida;
                 entity.conversion = dataMedida.conversion;
+                entity.precioCosto = dataMedida.precioCosto;
+                entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+
 
                 //IVA
                 entity.idImpuesto = dataTarifaImpuesto.idImpuesto;

@@ -174,21 +174,27 @@ BEGIN
                     SET @idTransaccion = SCOPE_IDENTITY()
 
 					INSERT INTO Inventario.TransaccionDetalle
-                           (idArticulo
+                           (idTransaccion
+                           ,idArticulo
                            ,idBodega
                            ,idMedida
                            ,cantidad
                            ,cantidadTransaccion
                            ,precioUnitario
                            ,precioCosto
+                           ,precioCostoFraccionado
+                           ,conversion
                            ,total)
-			        SELECT  idArticulo
+			        SELECT  @idTransaccion
+                           ,idArticulo
                            ,idBodega
                            ,idMedida
                            ,td.cantidad
                            ,(ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af WITH (NOLOCK) WHERE af.idArticulo = td.idArticulo AND af.idMedida = td.idMedida ),1) * td.cantidad) * @multiplier
                            ,precioUnitario
                            ,precioUnitario
+                           ,precioUnitario
+                           ,ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af WITH (NOLOCK) WHERE af.idArticulo = td.idArticulo AND af.idMedida = td.idMedida ),1)
                            ,precioTotalSimImpuestos
                     FROM @tblDetails td
 
@@ -223,12 +229,15 @@ BEGIN
 	END TRY
 
 	BEGIN CATCH
-		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)
-			ROLLBACK TRAN
+            BEGIN 
+			    ROLLBACK TRAN
+            END 
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'DocumentoDetalle/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
-	END CATCH
+	    
+        SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
+    END CATCH
 
 END
 GO

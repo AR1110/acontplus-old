@@ -271,18 +271,23 @@ BEGIN
                    ((
                         SELECT me.idMedida
                               ,me.descripcion as medida
+                              ,af.precioCostoFraccionado as precioUnitario
+                              ,ar.precioCosto
                               ,af.precioCostoFraccionado as precioCostoFraccionado
                               ,af.conversion
-                        FROM ArticuloFraccionado af WITH (NOLOCK) 
-                        INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida = af.idMedida 
-                        WHERE af.idArticulo = dt.idArticulo FOR JSON PATH
+                        FROM ArticuloFraccionado af WITH (NOLOCK)
+                        INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+                        INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+                        WHERE af.idArticulo = dt.idArticulo 
+                        FOR JSON PATH
 
                     ),'[]') as fraccionado 
                   ,(
                         SELECT me.idMedida 
                               ,me.descripcion as medida
                               ,a.precioCosto 
-                              ,1 as conversion
+                              ,a.precioCosto  as precioCostoFraccionado
+                              ,1              as conversion
                         FROM Articulo      a WITH (NOLOCK) 
                         INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = a.idMedida 
                         WHERE a.idArticulo = dt.idArticulo FOR JSON PATH

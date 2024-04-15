@@ -50,11 +50,16 @@ BEGIN
             IF (@id > 0)
                 BEGIN
                     SET @tableNames = @tableNames + ',order,orderDetails'
-                    SELECT * FROM TechnicalSupport.[Order] WITH (NOLOCK) WHERE Id = @id
-                    SELECT od.* 
+                    SELECT  [Id], [Uuid], CONVERT(VARCHAR, FORMAT([FechaEmision], 'yyyy-MM-dd'), 106) FechaEmision, [EstablecimientoId], [PuntoEmisionId], [Sequence],
+                    [Serie], [CustomerCompanyId], [Tax], [Discount], [Tip], [Total], [Obs], [OrderStatusId],
+                    [CreatedAt], [UpdatedAt], [Enabled], [Deleted], [UserId], [Finished], [TaxPercentId], ISNULL([AssignedUserId], 0) AssignedUserId
+                    FROM TechnicalSupport.[Order] WITH (NOLOCK) WHERE Id = @id
+                    SELECT od.[Id], od.[Uuid], od.[OrderId], od.[DeviceId], od.[Obs], od.[CreatedAt], od.[UpdatedAt], 
+                        od.[Enabled], od.[Deleted], od.[UserId], ISNULL(od.[AssignedUserId], 0) AssignedUserId
                         ,d.[Name] DeviceName
                         ,dc.SerialNumber DeviceSerie
                         ,dc.Warranty DeviceWarranty
+                        ,dc.Id DeviceCustomerId
                     FROM TechnicalSupport.[OrderDetail] od WITH (NOLOCK)
                         INNER JOIN TechnicalSupport.[Order] o WITH (NOLOCK) ON od.OrderId = o.Id
                         INNER JOIN TechnicalSupport.Device d WITH (NOLOCK) ON od.DeviceId = d.Id

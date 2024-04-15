@@ -42,6 +42,7 @@ BEGIN
     DECLARE @payments VARCHAR(MAX)
     DECLARE @taxesValue VARCHAR(MAX)
     DECLARE @taxes VARCHAR(MAX)
+    DECLARE @fechaEmision DATETIME2
     DECLARE @saldo NUMERIC(18,2)
 
     DECLARE @tbTaxes AS TABLE(
@@ -80,6 +81,9 @@ BEGIN
 
 	IF @codDoc = 'FV'
 		BEGIN
+            
+            SELECT TOP 1 @fechaEmision = fechaEmision FROM dbo.Factura WITH (NOLOCK) WHERE idFactura = @idDocument
+
 			SET @header = (
 					        SELECT 
 					             codDoc = 'FV'
@@ -156,7 +160,7 @@ BEGIN
 
                     ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK) 
-            WHERE estado = 1
+            WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             UNION ALL
 
@@ -169,7 +173,7 @@ BEGIN
                     ),0) 
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0 
-                AND estado = 1
+                AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)
 
@@ -178,6 +182,9 @@ BEGIN
 
 	IF @codDoc = 'NE'
 		BEGIN
+            
+            SELECT TOP 1 @fechaEmision = fechaEmision FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idNotaEntrega = @idDocument
+
 			SET @header = (SELECT 
 							
 							 codDoc = 'NE'
@@ -246,7 +253,7 @@ BEGIN
 
                     ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK)
-            WHERE estado = 1
+            WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             UNION ALL 
 
@@ -260,7 +267,7 @@ BEGIN
                   ),0) 
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0
-              AND estado = 1 
+              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date) 
 
             SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)
 
@@ -268,6 +275,9 @@ BEGIN
 
 	IF @codDoc ='PR'
 		BEGIN 
+            
+            SELECT TOP 1 @fechaEmision = fechaEmision FROM dbo.Proforma WITH (NOLOCK) WHERE idProforma = @idDocument
+
 			SET @header = (SELECT 
 								 codDoc = 'PR'
 								,idProforma = pr.idProforma
@@ -338,7 +348,7 @@ BEGIN
 
                     ),0) as subTotal
             FROM dbo.TipoIva ti WITH (NOLOCK)
-            WHERE estado = 1
+            WHERE CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             UNION ALL
 
@@ -352,7 +362,7 @@ BEGIN
                   ),0) 
             FROM dbo.TipoIva ti WITH (NOLOCK) 
             WHERE ti.porcentaje > 0 
-              AND estado = 1
+              AND CAST(@fechaEmision as date) BETWEEN CAST(fechaInicio as date) AND CAST(ISNULL(fechaExpiracion,GETDATE()) as date)
 
             SET @taxesValue = (SELECT * FROM @tbTaxes FOR JSON PATH)             
 		END 

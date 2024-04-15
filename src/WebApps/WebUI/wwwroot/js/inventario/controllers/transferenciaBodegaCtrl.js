@@ -714,13 +714,14 @@
             entity.idArticulo = item.idArticulo;
             entity.descripcion = item.descripcion;
             entity.stock = item.stock;
-            entity.precioCosto = dataMedida.precioCosto;
-            entity.precioActual = dataMedida.precioCosto;
+            entity.precioActual = dataMedida.precioCostoFraccionado;
             entity.total = dataMedida.precioCosto;
             entity.llevaInventario = item.llevaInventario;
             entity.medidas = medidas; //Lista Medida 
             entity.idMedida = dataMedida.idMedida; //Medida por defecto    
             entity.conversion = dataMedida.conversion;
+            entity.precioCosto = dataMedida.precioCosto;
+            entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
         }
 
 
