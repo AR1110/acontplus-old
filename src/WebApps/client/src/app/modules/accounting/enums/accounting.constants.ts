@@ -5,5 +5,6 @@ export const enum ACCOUNTING_PATHS {
   MOVIMIENTO_CAJA = 'MovimientoCaja/',
   ANTICIPO = 'Anticipo/',
   COMPROBANTE_INGRESO = 'ComprobanteIngreso/',
-  SUB_ENTIDAD_FINANCIERA = 'SubEntidadFinanciera/'
+  SUB_ENTIDAD_FINANCIERA = 'SubEntidadFinanciera/',
+  CUENTA_POR_COBRAR = 'CuentaPorCobrar/'
 }
