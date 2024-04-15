@@ -1,11 +1,35 @@
 // @import "tabulator-tables/dist/css/tabulator_bootstrap5.css";
 @import "tabulator-tables/dist/css/tabulator.min.css";
+
 /* Define the hover background color for the table rows */
-.tabulator .tabulator-row.tabulator-selectable:hover .tabulator-cell {
-  //background-color: gray;
-}
+// .tabulator .tabulator-row.tabulator-selectable:hover .tabulator-cell {
+//   background-color: gray;
+// }
 
 /* Define the selected background color for the table rows */
-.tabulator .tabulator-row.tabulator-selected .tabulator-cell {
-  // background-color: darkblue;
+// .tabulator .tabulator-row.tabulator-selected .tabulator-cell {
+//   background-color: darkblue;
+// }
+
+ 
+ .tabulator-header .tabulator-col {
+      font-size: 12px; /* Adjust this value as needed */
+  }
+
+  /*Kardex Colores de una columna de una Tabla */
+.table-entradas {
+    background-color: rgb(229 194 233 / 25%);
 }
+
+.table-salidas {
+    background-color: rgba(219,125,125,0.25);
+}
+
+.table-saldos {
+    background-color: rgba(46,155,92,.34);
+}
+ 
+// .tabulator-header .tabulator-col {
+//   font-size: 12px; /* Adjust this value as needed */
+// }
+ 

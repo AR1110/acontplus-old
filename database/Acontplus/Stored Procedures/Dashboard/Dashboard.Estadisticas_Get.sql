@@ -11,10 +11,7 @@ GO
 -- Create date: 2021-09-10
 -- Description:	SP para contar la cantidad de datos por empresa
 -- =============================================
-IF OBJECT_ID('Dashboard.Estadisticas_Get') IS NOT NULL
-DROP PROCEDURE Dashboard.Estadisticas_Get
-GO
-CREATE PROCEDURE Dashboard.Estadisticas_Get @idUsuarioRol INT
+CREATE OR ALTER PROCEDURE Dashboard.Estadisticas_Get @idUsuarioRol INT
 ,@json VARCHAR(MAX) = NULL
 AS
 BEGIN
@@ -108,7 +105,7 @@ BEGIN
 		@facturaVenta	   as cantidadFacturaV,
 		@facturaCompra	   as cantidadFacturaC,
 		@proforma		   as cantidadProforma,
-		@notaEntrega	   as cantidadNotaEntrega FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as 'statistics', @licenses licenses FOR JSON PATH
+		@notaEntrega	   as cantidadNotaEntrega FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as 'statistics', '[]' licenses FOR JSON PATH
 
 END
 

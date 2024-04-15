@@ -1,11 +1,23 @@
-import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { OrderMaintenanceStateService } from '@technical-support/store/order-maintenance/order-maintenance-state.service';
-import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { Component, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { GroupedEstabBodega } from '@core/models/estab.model';
+import { ModalService } from '@core/services/modal.service';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { icon } from '@fortawesome/fontawesome-svg-core';
+import { faEdit, faListAlt, faTimesRectangle, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
 import { ProductService } from '@modules/inventory/services/product.service';
-import { OrderMaintenance } from '@modules/technical-support/models/order-maintenance.model';
+import { ProductAddEditModalComponent } from '@modules/inventory/shared/components/product/product-add-edit-modal/product-add-edit-modal.component';
+import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
+import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
+import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
+import { ColOrderMaintenance, OrderMaintenance } from '@modules/technical-support/models/order-maintenance.model';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
+import { Impuesto } from '@shared/models/impuesto.model';
+import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
+import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-order-maintenance-detail',
@@ -17,22 +29,43 @@ import { OrderMaintenance } from '@modules/technical-support/models/order-mainte
     TabulatorComponent
   ],
   templateUrl: './order-maintenance-detail.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderMaintenanceDetailComponent {
+  @Input() orderDetails: any[] = []
+  @Input() orderMaintenances: OrderMaintenance[] = [];
+  @Input() bodegas: GroupedEstabBodega[] = []
+  @Input() feeds: Tarifa[] = []
+  @Input() taxes: Impuesto[] = []
+  @Input() taxPercents: TarifaImpuesto[] = []
+  @Input() decimal: DecimalSale = {
+    nroPrecio: 0,
+    nroCantidad: 0,
+    nroIva: 0,
+    nroDescuentoDetalle: 0,
+    nroTotalDetalle: 0,
+    nroTotalSubTotal: 0,
+    nroDescuento: 0,
+    importeTotal: 0,
+    nroIce: 0
+  }
+  @Input() order = {
+    feeId: 0,
+    bodegaId: 0
+  }
 
-  private orderMaintenanceState = inject(OrderMaintenanceStateService);
+  @Output() drawTaxTotalEvent = new EventEmitter();
+
   private productSvc = inject(ProductService)
+  private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
+  private openModalProductSvc = inject(OpenModalProductService)
 
-  orderDetails = this.orderMaintenanceState.select('orderDetails');
-  orderMaintenances = this.orderMaintenanceState.select('orderMaintenances');
-  bodegas = this.orderMaintenanceState.select('bodegas');
-  feeds = this.orderMaintenanceState.select('feeds');
-  taxes = this.orderMaintenanceState.select('taxes');
-  taxPercents = this.orderMaintenanceState.select('taxPercents');
+
+
+
+  @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
   getTaxEditorParams = () => {
-    const taxes = this.taxes();
+    const taxes = this.taxes;
     let values: any = {};
     for (let tax of taxes) {
       values[tax.idImpuesto] = tax.descripcion
@@ -42,12 +75,13 @@ export class OrderMaintenanceDetailComponent {
     }
   }
 
+
   getTaxFormatterParams = () => {
     return this.getTaxEditorParams().values
   }
 
-  getBodegaEditorParams = ()=>{
-    let bodegas = this.bodegas();
+  getBodegaEditorParams = () => {
+    let bodegas = this.bodegas;
     let values: any = {};
     for (let b of bodegas) {
       values[b.idBodega] = b.descripcion
@@ -56,19 +90,191 @@ export class OrderMaintenanceDetailComponent {
       values
     }
   }
-  getBodegaFormatterParams = ()=>{
+  getBodegaFormatterParams = () => {
     return this.getBodegaEditorParams().values
+  }
+
+  comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
+    let column: ColOrderMaintenance = cell.getColumn().getField();
+    let data: OrderMaintenance = cell.getData();
+    let oldValue = cell.getOldValue();
+    let value = cell.getValue();
+
+    let editor: any = document.createElement("select");
+
+    if (column === "medidaId") {
+      for (let m of data.medidas) {
+        let opt = document.createElement('option');
+        opt.value = m.idMedida.toString();
+        opt.innerHTML = m.descripcion;
+        editor.appendChild(opt);
+      }
+    }
+
+    if (column === 'taxId') {
+      for (let i of editorParams) {
+        let opt = document.createElement('option');
+        opt.value = i.idImpuesto;
+        opt.innerHTML = i.descripcion;
+        editor.appendChild(opt);
+      }
+    }
+
+    if (column === "taxPercentId") {
+      let taxPercents = editorParams.filter((ti: any) => ti.idImpuesto === Number(data.taxId));
+
+      for (let ti of taxPercents) {
+        let opt = document.createElement('option');
+        opt.value = ti.idTarifaImpuesto;
+        opt.innerHTML = ti.descripcion;
+        editor.appendChild(opt);
+      }
+    }
+
+    if (column === "feeId") {
+      for (let t of data.tarifas) {
+        let opt = document.createElement('option');
+        opt.value = t.idTarifa.toString();
+        opt.innerHTML = t.descripcion + ' - $' + t.precioConIva
+        editor.appendChild(opt);
+      }
+    }
+
+    if (column === "bodegaId") {
+      for (let b of this.bodegas) {
+        let opt = document.createElement('option');
+        opt.value = b.idBodega.toString();
+        opt.innerHTML = b.descripcion
+        editor.appendChild(opt);
+      }
+    }
+
+
+    editor.style.padding = "3px";
+    editor.style.width = "100%";
+    editor.style.boxSizing = "border-box";
+
+    editor.value = Number(cell.getValue());
+
+    onRendered(function () {
+      editor.focus();
+      editor.style.css = "100%";
+    });
+
+    function successFunc() {
+      success(editor.value);
+    }
+
+    editor.addEventListener("change", successFunc);
+    editor.addEventListener("blur", successFunc);
+
+    return editor;
+  };
+
+  validatorNumber = ["required", "number"]
+
+  askToDelete(data: OrderMaintenance) {
+    try {
+      Swal.fire({
+        // title: "Are you sure?",
+        html: `Esta seguro de eliminar este elemento <b>${data.descripcion}</b>`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si!",
+        cancelButtonText: 'No!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let rows = this.tabulatorComponent.refTabulator.getData().filter(r => r.rowguid !== data.rowguid);
+          this.tabulatorComponent.refTabulator.setData(rows).then(r => {
+            this.emitRecalculateTaxTotal()
+          })
+        }
+      });
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  emitRecalculateTaxTotal() {
+    this.drawTaxTotalEvent.emit({
+      items: this.tabulatorComponent.refTabulator.getData()
+    })
+  }
+
+  openModalProductEdit(data: OrderMaintenance) {
+    try {
+      this.openModalProductSvc.open({ id: data.productId }).then(response => {
+        console.log(response, 'closed produc')
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  openModalProductKardex(data: OrderMaintenance) {
+    try {
+      this.openModalProductSvc.openKardex({ id: data.productId })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   columnNames = [
     {
-      title: 'Nro',
-      field: 'index',
+      formatter: "rownum", headerSort: false, hozAlign: "center",
+    },
+    {
+      title: 'Op.',
+      formatter: (cell: any) => {
+        //let cellEl = cell.getElement();
+        let rowDataMain = cell.getRow().getData();
+
+        //create edit button
+        let editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.innerHTML = `${icon(faEdit).html.join('')}`
+        editBtn.classList.add("btn", "btn-success", "btn-xs");
+        editBtn.addEventListener("click", () => {
+          let rowData = cell.getRow().getData();
+          this.openModalProductEdit(rowData)
+        });
+
+        //create delete button
+        let delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
+        delBtn.classList.add("btn", "btn-danger", "btn-xs");
+        delBtn.addEventListener("click", () => {
+          let rowData = cell.getRow().getData();
+          this.askToDelete(rowData)
+        });
+
+        //create kardex button
+        let kardexBtn = document.createElement("button");
+        kardexBtn.type = "button";
+        kardexBtn.innerHTML = `${icon(faListAlt).html.join('')}`;
+        kardexBtn.classList.add("btn", "btn-info", "btn-xs");
+        kardexBtn.addEventListener("click", () => {
+          let rowData = cell.getRow().getData();
+          this.openModalProductKardex(rowData)
+        });
+
+        let buttonHolder = document.createElement("span");
+        buttonHolder.appendChild(delBtn);
+        buttonHolder.appendChild(editBtn);
+
+      //  if (rowDataMain.llevaInventario) {
+          buttonHolder.appendChild(kardexBtn)
+      //  }
+
+        return buttonHolder;
+      },
+      width: 100,
       headerSort: false,
       hozAlign: "center",
       headerHozAlign: "center",
-      width: "6px",
-
     },
     {
       title: 'Código',
@@ -76,26 +282,39 @@ export class OrderMaintenanceDetailComponent {
       headerSort: false,
       hozAlign: "center",
       headerHozAlign: "center",
-      width: "10px",
+      width: "7px",
 
     },
     {
       title: 'Producto / Servicio',
-      field: 'productName',
+      field: 'descripcion',
       editor: true,
       headerSort: false,
       hozAlign: "center",
       headerHozAlign: "center",
-      width: "30px",
+      width: "20px",
+      editable: function (cell: any) {
+        let data = cell.getRow().getData();
+        return !data.llevaInventario
+      }
 
     },
     {
       title: 'Cant.',
-      field: 'cantidad',
+      field: 'quantity',
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: "center",
       width: "7px",
+      editor: "input",
+      validator: ["required", "number"],
+      // editorEmptyValueFunc: (value: any, cl: any) => {
+      //   console.log(cl)
+      //   if (/\s/.test(value)) {
+      //     console.log(value)
+
+      //   }
+      // }
     },
     {
       title: 'Medida',
@@ -103,119 +322,241 @@ export class OrderMaintenanceDetailComponent {
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: "center",
-      width: "10px",
+      editor: this.comboEditor,
+      formatter: function (cell: any) {
+        let data = cell.getData();
+        for (let m of data.medidas) {
+          if (m.idMedida == cell.getValue()) {
+            return m.descripcion;
+          }
+        }
+      },
+      validator: "required",
+      width: "9px",
     },
     {
-      title: 'Impuesto',
+      title: 'Imp.',
       field: 'taxId',
       headerSort: false,
       headerHozAlign: "center",
-      width: "6px",
-      editor: "list",
-      editorParams: this.getTaxEditorParams,
-      formatter: "lookup",
-      formatterParams: this.getTaxFormatterParams
+      width: "7px",
+      editor: this.comboEditor,
 
+      editorParams: () => this.taxes,
+      formatter: function (cell: any, formatterParams: any) {
+        for (var i = 0; i < formatterParams.length; i++) {
+
+          if (formatterParams[i].idImpuesto == cell.getValue()) {
+            return formatterParams[i].descripcion;
+          }
+        }
+      },
+      formatterParams: () => this.taxes,
+      validator: "required"
     },
     {
-      field: 'idBodega',
-      title: 'Bodega',
+      title: 'T. Imp.',
+      field: 'taxPercentId',
       headerSort: false,
       headerHozAlign: "center",
-      width: "6px",
-      editor: "list",
-      editorParams: this.getBodegaEditorParams,
-      formatter: "lookup",
-      formatterParams: this.getBodegaFormatterParams
-
+      width: "8px",
+      editor: this.comboEditor,
+      editorParams: () => this.taxPercents,
+      formatter: function (cell: any, formatterParams: any) {
+        for (let ti of formatterParams) {
+          if (ti.idTarifaImpuesto == cell.getValue()) {
+            return ti.descripcion;
+          }
+        }
+      },
+      formatterParams: () => this.taxPercents,
+      validator: "required"
     },
     {
-
-      field: 'idTarifa',
-      hozAlign: 'center',
       title: 'Tarifa',
-      typeNumber: true,
+      field: 'feeId',
       headerSort: false,
       headerHozAlign: "center",
-      width: "6px",
-
+      width: "8px",
+      editor: this.comboEditor,
+      formatter: function (cell: any) {
+        let data = cell.getData();
+        for (let t of data.tarifas) {
+          if (t.idTarifa == cell.getValue()) {
+            return t.descripcion;
+          }
+        }
+      },
+      validator: "required"
     },
     {
-      title: 'Cantidad',
-      field: 'quantity',
-      editor: true,
-      headerSort: false,
-      hozAlign: "center",
-      headerHozAlign: "center",
-      width: "6px",
-
-    },
-    {
-      title: 'Precio',
+      title: 'Precio U.',
       field: 'price',
       headerSort: false,
       hozAlign: "center",
       headerHozAlign: "center",
-      width: "6px",
-
+      width: "8px",
+      editor: "input",
+      validator: this.validatorNumber
     },
     {
-      title: 'Impuesto',
-      field: 'tax',
-      width: '150',
-      editor: true,
+      title: 'Precio Iva.',
+      field: 'precioConIva',
       headerSort: false,
       hozAlign: "center",
       headerHozAlign: "center",
-
+      width: "8px",
+      editor: "input",
+      validator: this.validatorNumber
+    },
+    {
+      title: '%',
+      field: 'percentageDiscount',
+      headerSort: false,
+      hozAlign: "center",
+      headerHozAlign: "center",
+      width: "6px",
+      editor: "input",
+      validator: this.validatorNumber
+    },
+    {
+      title: 'Desc.',
+      field: 'discount',
+      headerSort: false,
+      hozAlign: "center",
+      headerHozAlign: "center",
+      width: "6px",
+      editor: "input",
+      validator: this.validatorNumber
+    },
+    {
+      title: 'Subtotal',
+      field: 'precioTotalSinImpuesto',
+      headerSort: false,
+      hozAlign: "center",
+      headerHozAlign: "center",
+      width: "6px",
+    },
+    {
+      title: 'Iva',
+      field: 'taxValue',
+      headerSort: false,
+      hozAlign: "center",
+      headerHozAlign: "center",
+      width: "6px",
     },
     {
       title: 'Total',
       field: 'total',
-      width: '150',
       headerSort: false,
       hozAlign: "center",
+      headerHozAlign: "center",
+      width: "6px",
     },
+    {
+      title: 'Nota',
+      field: 'obs',
+      headerSort: false,
+      hozAlign: "center",
+      headerHozAlign: "center",
+      width: "8px",
+      editor: "input"
+    },
+    {
+      title: 'Bodega',
+      field: 'bodegaId',
+      headerSort: false,
+      headerHozAlign: "center",
+      width: "9px",
+      editor: this.comboEditor,
+      editorParams: () => this.bodegas,
+      formatter: function (cell: any, formatterParams: any) {
+        for (let ti of formatterParams) {
+          if (ti.idBodega == cell.getValue()) {
+            return ti.descripcion;
+          }
+        }
+      },
+      formatterParams: () => this.bodegas,
+      validator: "required"
+    },
+
   ];
 
+  getDataRowEmpty() {
+    let dataOrderMaintenance: OrderMaintenance = {
+      rowguid: generateUuidv4(),
+      bodegaId: 0,
+      feeId: 0,
+      medidaId: 0,
+      orderDetailId: 0,
+      productId: 0,
+      descripcion: '',
+      codigo: '',
+      taxId: 0,
+      taxPercentId: 0,
+      quantity: 1,
+      cost: 0,
+      precioConIva: 0,
+      taxValue: 0,
+      price: 0,
+      percentageDiscount: 0,
+      discount: 0,
+      precioTotalSinImpuesto: 0,
+      total: 0,
+      obs: '',
+      medidas: [],
+      tarifas: [],
+      consolidacionesBodega: [],
+      costoFraccionado: 0,
+      conversion: 0
+    }
+    return dataOrderMaintenance;
+  }
 
   onProductSelected($event: any) {
     let { data } = $event;
-    console.log(data);
     if (data.idArticulo > 0) {
       this.productSvc
         .getForSale(data.idArticulo)
         .subscribe({
           next: (response) => {
-            const {product, medidas, consolidacionesFecha} = response;
-            let taxPercents = this.taxPercents();
-            let dataOrderMaintenance = {} as OrderMaintenance;
+            const { product, medidas, consolidacionesFecha } = response;
+            let taxPercents = this.taxPercents;
+            let row = this.getDataRowEmpty()
             let dataTaxPercent = taxPercents.find(d => d.codigo === product.codigoPorcentaje);
-            let dataMedida = medidas.find(m=>m.defaultMedida);
+            let dataMedida = medidas.find(m => m.defaultMedida);
 
-            if(dataTaxPercent){
-              let dataTax = this.taxes().find(t=>t.codigo===dataTaxPercent?.codImpuesto);
-              dataOrderMaintenance.taxPercentId = dataTaxPercent.idTarifaImpuesto;
-              dataOrderMaintenance.taxId = dataTax?.idImpuesto ?? 0;
+            row.productId = product.idArticulo;
+            row.codigo = product.codigoArticulo;
+            row.descripcion = product.descripcion;
+            row.bodegaId = this.order.bodegaId;
+
+            if (dataTaxPercent) {
+              row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
+              row.taxId = dataTaxPercent.idImpuesto;
             }
 
-            if(dataMedida){
-              dataOrderMaintenance.tarifas = dataMedida.tarifas;
-              dataOrderMaintenance.medidaId = dataMedida.idMedida;
-              dataOrderMaintenance.cost = dataMedida.precioCosto;
-              dataOrderMaintenance.costoFraccionado = dataMedida.precioCostoFraccionado;
-              dataOrderMaintenance.conversion = dataMedida.conversion;
+            if (dataMedida) {
+              row.medidas = medidas;
+              row.tarifas = dataMedida.tarifas;
+              row.medidaId = dataMedida.idMedida;
+              row.cost = dataMedida.precioCosto;
+              row.costoFraccionado = dataMedida.precioCostoFraccionado;
+              row.conversion = dataMedida.conversion;
 
-              let dataTarifa = dataOrderMaintenance.tarifas.find(t=>t.defaultTarifa);
+              let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
 
-              dataOrderMaintenance.feeId = dataTarifa?.idTarifa?? 0;
-              dataOrderMaintenance.price = dataTarifa?.precioVenta ?? 0;
+
+              row.feeId = dataTarifa?.idTarifa ?? 0;
+              row.price = dataTarifa?.precioVenta ?? 0;
             }
-            let orderMaintenances = this.orderMaintenances()
-            orderMaintenances.push(dataOrderMaintenance);
 
-            console.log(orderMaintenances)
-            this.orderMaintenanceState.set('orderMaintenances', orderMaintenances)
+            this.tabulatorComponent.refTabulator.addRow(row).then((r) => {
+              this.setCalculoTotales("price", row, 0, r)
+            });
+
+
 
           },
         });
@@ -223,6 +564,99 @@ export class OrderMaintenanceDetailComponent {
   }
 
 
+  /**
+        *
+        * @param {*} column nombre de la columnas
+        * @param {*} data  data row
+        * @param {*} oldValue valor anterior de la columna
+        */
+  setCalculoTotales(column: any, data: OrderMaintenance, oldValue: string | number, row: any) {
+
+    let obj = this.salesDetailCalculationSvc.calculateColDef({
+      data: data,
+      column,
+      oldValue,
+      feeId: this.order.feeId,
+      decimal: this.decimal,
+      columnDefs: this.tabulatorComponent.refTabulator.getColumnDefinitions()
+    });
+
+    row.update({
+      ...row,
+      ...obj
+    })
+
+    //recalculateTotalsSimple();
+    this.emitRecalculateTaxTotal();
+  }
+
+  cellEdited(cell: any) {
+
+    let row = cell.getRow();
+    let column: ColOrderMaintenance = cell.getColumn().getField();
+    let oldValue = parseFloat(cell.getOldValue());
+    let value = parseFloat(cell.getValue());
+
+    let data = cell.getData();
+    let quantity = parseFloat(data.quantity);
+    let medidaId = parseInt(data.medidaId);
+    let taxId = parseInt(data.taxId);
+    let taxPercentId = parseInt(data.taxPercentId);
+    let feeId = parseInt(data.feeId);
+    let price = parseFloat(data.price);
+    let precioConIva = parseFloat(data.precioConIva);
+    let percentageDiscount = parseFloat(data.percentageDiscount);
+    let discount = parseFloat(data.discount);
+
+    if (column === "descripcion" || column === "obs") return
+
+    if (value === oldValue) return
+
+    if (isNaN(value) || cell.getValue() === "") {
+      cell.setValue(oldValue);
+      return
+    }
+
+    if (value < 0) {
+      data[column] = oldValue;
+    }
+
+    if (column === "taxId") {
+      if (!this.taxPercents.some(t => t.idImpuesto === Number(value))) {
+        taxId = oldValue;
+      } else {
+        let cellInOtherColumn = row.getCell("taxPercentId");
+        // Establecer el foco en la celda
+        cellInOtherColumn.edit()
+        cellInOtherColumn.getElement().focus();
+        return
+      }
+    }
+
+    if (column === 'quantity') {
+      if (["", null, 0].includes(value)) {
+        cell.getRow().deselect();
+        cell.restoreOldValue();
+      }
+    }
+
+    let cloneData = {
+      ...data,
+      quantity,
+      medidaId,
+      taxId,
+      taxPercentId,
+      feeId,
+      price,
+      precioConIva,
+      percentageDiscount,
+      discount,
+    }
+
+    this.setCalculoTotales(column, cloneData, oldValue, row);
+
+
+  }
 
 
 }

@@ -17,7 +17,7 @@ namespace TechnicalSupport.API.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -175,9 +175,7 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId")
-                        .IsUnique()
-                        .HasDatabaseName("UI_TS_DC_DeviceId");
+                    b.HasIndex("DeviceId");
 
                     b.ToTable("DeviceCustomer", "TechnicalSupport");
                 });
@@ -234,6 +232,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AssignedUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -259,6 +260,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<DateTime>("FechaEmision")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("Finished")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Obs")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -281,6 +285,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<decimal?>("Tax")
                         .HasColumnType("numeric(18,5), null");
+
+                    b.Property<int?>("TaxPercentId")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("Tip")
                         .HasColumnType("numeric(18,5), null");
@@ -311,6 +318,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AssignedUserId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -354,6 +364,49 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("OrderDetail", "TechnicalSupport");
                 });
 
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("DocumentoId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TipoDocumentoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderDocument", "TechnicalSupport");
+                });
+
             modelBuilder.Entity("TechnicalSupport.API.Entities.OrderMaintenance", b =>
                 {
                     b.Property<int>("Id")
@@ -369,7 +422,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -384,7 +439,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("FeeId")
                         .HasColumnType("int");
@@ -544,6 +601,17 @@ namespace TechnicalSupport.API.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Device");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDocument", b =>
+                {
+                    b.HasOne("TechnicalSupport.API.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Order");
                 });

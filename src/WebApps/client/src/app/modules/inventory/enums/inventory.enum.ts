@@ -4,6 +4,7 @@ export const enum INVENTORY_PATHS {
   SUBCATEGORY = 'SubFamilia/',
   MASSIVE_TAX = 'MassiveTax/',
   LOT_PRICE = 'LotPrice/',
+  TRANSACTION = 'Transaccion/'
 }
 
 

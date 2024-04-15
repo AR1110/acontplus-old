@@ -16,7 +16,7 @@ import {
   DeviceSpecs,
 } from '@modules/technical-support/models/device.model';
 import { DeviceService } from '@modules/technical-support/services/device.service';
-import { DeviceSpecsService } from '@modules/technical-support/services/device.spec.service';
+import { DeviceSpecsService } from '@modules/technical-support/services/device-spec.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';

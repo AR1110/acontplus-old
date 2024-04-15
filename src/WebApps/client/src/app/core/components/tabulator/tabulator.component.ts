@@ -1,18 +1,7 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  TabulatorFull as Tabulator,
-  PageModule,
-  ReactiveDataModule,
-} from 'tabulator-tables';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabulator-tables';
+
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
 @Component({
@@ -23,7 +12,8 @@ Tabulator.registerModule([PageModule, ReactiveDataModule]);
   styleUrls: ['./tabulator.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TabulatorComponent implements OnChanges, OnInit {
+export class TabulatorComponent implements OnChanges {
+
   @Input() tableData: any[] = [];
   @Input() columnNames: any[] = [];
   @Input() height: string = '311px';
@@ -31,17 +21,21 @@ export class TabulatorComponent implements OnChanges, OnInit {
   @Input() dataTreeChildField: string = 'childRows';
   @Input() dataTreeStartExpanded: boolean = false;
 
+  @Input() options = {}
+
   @Output() cellEdited = new EventEmitter();
   @Output() cellClick = new EventEmitter();
 
 
+   uniqueIdTabulator= generateUuidv4()
   tab = document.createElement('div');
+
 
   refTabulator!: Tabulator
 
-  ngOnInit(): void {
-    this.drawTable();
-  }
+  // ngOnInit(): void {
+  //   this.drawTable();
+  // }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tableData']) {
@@ -49,7 +43,7 @@ export class TabulatorComponent implements OnChanges, OnInit {
     }
   }
 
-  ngOnit() {
+  ngAfterViewInit() {
     this.drawTable();
   }
 
@@ -68,13 +62,14 @@ export class TabulatorComponent implements OnChanges, OnInit {
       // reactiveData: true,
       //responsiveLayout: true,
       autoResize: true, // prevent auto resizing of table
-      placeholder: "No Data Set",
+      placeholder: "Sin registro",
 
        selectable: true,
       // selectableRangeMode: "click",
       // selectableRollingSelection: true,
+      ...this.options
     });
-    let table = document.getElementById('tabulatorTable');
+    let table = document.getElementById(`${this.uniqueIdTabulator}`);
     if (table) {
       table.appendChild(this.tab);
       if(this.cellEdited){

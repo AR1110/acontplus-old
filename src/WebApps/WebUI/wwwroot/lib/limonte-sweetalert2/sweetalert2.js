@@ -1,5 +1,5 @@
 /*!
-* sweetalert2 v11.10.2
+* sweetalert2 v11.10.7
 * Released under the MIT License.
 */
 (function (global, factory) {
@@ -8,6 +8,34 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Sweetalert2 = factory());
 })(this, (function () { 'use strict';
 
+  function _assertClassBrand(e, t, n) {
+    if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n;
+    throw new TypeError("Private element is not present on this object");
+  }
+  function _callSuper(t, o, e) {
+    return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e));
+  }
+  function _classPrivateFieldGet2(s, a) {
+    return s.get(_assertClassBrand(s, a));
+  }
+  function _classPrivateFieldSet2(s, a, r) {
+    return s.set(_assertClassBrand(s, a), r), r;
+  }
+  function _construct(t, e, r) {
+    if (_isNativeReflectConstruct()) return Reflect.construct.apply(null, arguments);
+    var o = [null];
+    o.push.apply(o, e);
+    var p = new (t.bind.apply(t, o))();
+    return r && _setPrototypeOf(p, r.prototype), p;
+  }
+  function _isNativeReflectConstruct() {
+    try {
+      var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+    } catch (t) {}
+    return (_isNativeReflectConstruct = function () {
+      return !!t;
+    })();
+  }
   function _iterableToArrayLimit(r, l) {
     var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
     if (null != t) {
@@ -109,32 +137,6 @@
     };
     return _setPrototypeOf(o, p);
   }
-  function _isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-  function _construct(Parent, args, Class) {
-    if (_isNativeReflectConstruct()) {
-      _construct = Reflect.construct.bind();
-    } else {
-      _construct = function _construct(Parent, args, Class) {
-        var a = [null];
-        a.push.apply(a, args);
-        var Constructor = Function.bind.apply(Parent, a);
-        var instance = new Constructor();
-        if (Class) _setPrototypeOf(instance, Class.prototype);
-        return instance;
-      };
-    }
-    return _construct.apply(null, arguments);
-  }
   function _assertThisInitialized(self) {
     if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -148,20 +150,6 @@
       throw new TypeError("Derived constructors may only return object or undefined");
     }
     return _assertThisInitialized(self);
-  }
-  function _createSuper(Derived) {
-    var hasNativeReflectConstruct = _isNativeReflectConstruct();
-    return function _createSuperInternal() {
-      var Super = _getPrototypeOf(Derived),
-        result;
-      if (hasNativeReflectConstruct) {
-        var NewTarget = _getPrototypeOf(this).constructor;
-        result = Reflect.construct(Super, arguments, NewTarget);
-      } else {
-        result = Super.apply(this, arguments);
-      }
-      return _possibleConstructorReturn(this, result);
-    };
   }
   function _superPropBase(object, property) {
     while (!Object.prototype.hasOwnProperty.call(object, property)) {
@@ -219,37 +207,6 @@
   }
   function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-  function _classPrivateFieldGet(receiver, privateMap) {
-    var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get");
-    return _classApplyDescriptorGet(receiver, descriptor);
-  }
-  function _classPrivateFieldSet(receiver, privateMap, value) {
-    var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set");
-    _classApplyDescriptorSet(receiver, descriptor, value);
-    return value;
-  }
-  function _classExtractFieldDescriptor(receiver, privateMap, action) {
-    if (!privateMap.has(receiver)) {
-      throw new TypeError("attempted to " + action + " private field on non-instance");
-    }
-    return privateMap.get(receiver);
-  }
-  function _classApplyDescriptorGet(receiver, descriptor) {
-    if (descriptor.get) {
-      return descriptor.get.call(receiver);
-    }
-    return descriptor.value;
-  }
-  function _classApplyDescriptorSet(receiver, descriptor, value) {
-    if (descriptor.set) {
-      descriptor.set.call(receiver, value);
-    } else {
-      if (!descriptor.writable) {
-        throw new TypeError("attempted to set read only private field");
-      }
-      descriptor.value = value;
-    }
   }
   function _checkPrivateRedeclaration(obj, privateCollection) {
     if (privateCollection.has(obj)) {
@@ -1827,9 +1784,9 @@
     icon.style.borderColor = params.iconColor;
     for (var _i2 = 0, _arr = ['.swal2-success-line-tip', '.swal2-success-line-long', '.swal2-x-mark-line-left', '.swal2-x-mark-line-right']; _i2 < _arr.length; _i2++) {
       var sel = _arr[_i2];
-      setStyle(icon, sel, 'backgroundColor', params.iconColor);
+      setStyle(icon, sel, 'background-color', params.iconColor);
     }
-    setStyle(icon, '.swal2-success-ring', 'borderColor', params.iconColor);
+    setStyle(icon, '.swal2-success-ring', 'border-color', params.iconColor);
   };
 
   /**
@@ -2293,9 +2250,10 @@
   // reader’s list of elements (headings, form controls, landmarks, etc.) in the document.
 
   var setAriaHidden = function setAriaHidden() {
+    var container = getContainer();
     var bodyChildren = Array.from(document.body.children);
     bodyChildren.forEach(function (el) {
-      if (el === getContainer() || el.contains(getContainer())) {
+      if (el.contains(container)) {
         return;
       }
       if (el.hasAttribute('aria-hidden')) {
@@ -2979,7 +2937,7 @@
       handleInputValidator(instance, inputValue, type);
     } else if (input && !input.checkValidity()) {
       instance.enableButtons();
-      instance.showValidationMessage(innerParams.validationMessage);
+      instance.showValidationMessage(innerParams.validationMessage || input.validationMessage);
     } else if (type === 'deny') {
       deny(instance, inputValue);
     } else {
@@ -3714,10 +3672,9 @@
   function mixin(mixinParams) {
     var MixinSwal = /*#__PURE__*/function (_this) {
       _inherits(MixinSwal, _this);
-      var _super = _createSuper(MixinSwal);
       function MixinSwal() {
         _classCallCheck(this, MixinSwal);
-        return _super.apply(this, arguments);
+        return _callSuper(this, MixinSwal, arguments);
       }
       _createClass(MixinSwal, [{
         key: "_main",
@@ -4282,7 +4239,7 @@
      * @returns {Promise<string | void>}
      */
     email: function email(string, validationMessage) {
-      return /^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]{2,24}$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid email address');
+      return /^[a-zA-Z0-9.+_'-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]+$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid email address');
     },
     /**
      * @param {string} string
@@ -4356,10 +4313,7 @@
       /**
        * @type {Promise<SweetAlertResult>}
        */
-      _classPrivateFieldInitSpec(this, _promise, {
-        writable: true,
-        value: void 0
-      });
+      _classPrivateFieldInitSpec(this, _promise, void 0);
       // Prevent run in Node env
       if (typeof window === 'undefined') {
         return;
@@ -4377,7 +4331,7 @@
 
       /** @type {boolean} */
       this.isAwaitingPromise = false;
-      _classPrivateFieldSet(this, _promise, this._main(currentInstance.params));
+      _classPrivateFieldSet2(_promise, this, this._main(currentInstance.params));
     }
     _createClass(SweetAlert, [{
       key: "_main",
@@ -4420,12 +4374,12 @@
     }, {
       key: "then",
       value: function then(onFulfilled) {
-        return _classPrivateFieldGet(this, _promise).then(onFulfilled);
+        return _classPrivateFieldGet2(_promise, this).then(onFulfilled);
       }
     }, {
       key: "finally",
       value: function _finally(onFinally) {
-        return _classPrivateFieldGet(this, _promise)["finally"](onFinally);
+        return _classPrivateFieldGet2(_promise, this)["finally"](onFinally);
       }
     }]);
     return SweetAlert;
@@ -4644,7 +4598,7 @@
     };
   });
   SweetAlert.DismissReason = DismissReason;
-  SweetAlert.version = '11.10.2';
+  SweetAlert.version = '11.10.7';
 
   var Swal = SweetAlert;
   // @ts-ignore

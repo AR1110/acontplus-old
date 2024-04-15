@@ -1,17 +1,17 @@
 import { Component, inject } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { ModalService } from "@core/services/modal.service";
 import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRead } from "@modules/config/models/user-customer/user-customer.model";
 import { UserCustomerService } from "@modules/config/services/user-customer/user-customer.service";
+import { NgbPaginationModule } from "@ng-bootstrap/ng-bootstrap";
+import { Pagination } from "@shared/class/pagination";
 
 import { UserCustomerAddEditModalComponent } from "./components/user-customer-add-edit-modal/user-customer-add-edit-modal.component";
 import { UserCustomerRoleModalComponent } from "./components/user-customer-role-modal/user-customer-role-modal.component";
-import { Pagination } from "@shared/class/Pagination";
-import { FormsModule } from "@angular/forms";
-import { NgbPaginationModule } from "@ng-bootstrap/ng-bootstrap";
-import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-user-customer-apge',
@@ -55,8 +55,8 @@ export class UserCustomerPageComponent {
   }
 
   ngOnInit() {
-    this.router.navigate(['/', 'config', 'establishment-page'])
-  // this.getUsersCustomer()
+    this.router.navigate(['/', 'accounting', 'cuenta-por-cobrar-page'])
+ //  this.getUsersCustomer()
   }
 
 

@@ -1,0 +1,95 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Nuevo cobro</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+      <div class="card border border-info">
+        <div class="card-header">
+          <span class="card-title">Cuotas</span>
+        </div>
+
+
+        <div class="card-body">
+          <app-tabulator [columnNames]="columns" [tableData]="selectedDocumentos" [options]="tabOptions"  />
+        </div>
+
+      </div>
+      <div class="card border border-success">
+        <div class="card-header">
+          <span class="card-title">Datos de cobro</span>
+        </div>
+        <div class="card-body">
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+      <div class="card">
+        <button type="button" class="btn btn-info btn-block" (click)="openModalFormaCobro()">
+          <i class="ti-plus"></i> Nuevo Abono
+        </button>
+
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Total:
+            <span>
+              <h5>
+
+              </h5>
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-info"
+            ng-if="data.totalAbonoAnterior>0">
+            Abono Anterior:
+            <span>
+
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Abono
+            <span>
+
+            </span>
+          </li>
+
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Saldo Doc
+            <span>
+
+            </span>
+
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Mora
+            <span>
+
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Saldo:
+            <span>
+
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger">
+            Cambio:
+            <span>
+
+            </span>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+
+
+  </div>
+
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="modal.close('Save click')">Guardar</button>
+  <button type="button" class="btn btn-dark" (click)="modal.close('Save click')">Cerrar</button>
+</div>

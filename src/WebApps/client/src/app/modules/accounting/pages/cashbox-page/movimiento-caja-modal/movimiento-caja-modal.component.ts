@@ -1,27 +1,27 @@
-import { Component, Input, ViewEncapsulation, inject, input } from '@angular/core';
+import { Component, inject, input, Input, ViewEncapsulation } from '@angular/core';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { CODE_ESTADO, CODE_REPORT, FORMAT_REPORT, FORMAT_TYPE } from '@core/constants/global.constants';
+import { isApiResponse } from '@core/models/api-response';
+import { TipoDoc } from '@core/models/tipo-doc.model';
+import { ModalService } from '@core/services/modal.service';
+import { SharedService } from '@core/services/shared.service';
+import { ToasterService } from '@core/services/toaster.service';
+import { formatDateMoment } from '@core/utils/format-date-moment';
+import { hideLoader, showLoader } from '@core/utils/loader';
+import { stringToDate } from '@core/utils/string-to-date';
+import { getPermisosLocal, isValidField } from '@core/utils/utils';
+import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ControlCaja } from '@modules/accounting/models/cashbox.model';
+import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
+import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import { NgbActiveModal, NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
-import { AccountingModule } from '@modules/accounting/accounting.module';
-import { ModalService } from '@core/services/modal.service';
-import { CashboxCloseModalComponent } from '../cashbox-close-modal/cashbox-close-modal.component';
-import { getPermisosLocal, isValidField } from '@core/utils/utils';
 import Swal from 'sweetalert2';
-import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
-import { isApiResponse } from '@core/models/api-response';
-import { SharedService } from '@core/services/shared.service';
-import { CODE_ESTADO, CODE_REPORT, FORMAT_REPORT, FORMAT_TYPE } from '@core/constants/global.constants';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { formatDateMoment } from '@core/utils/format-date-moment';
-import { ToasterService } from '@core/services/toaster.service';
-import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
-import { stringToDate } from '@core/utils/string-to-date';
-import { TipoDoc } from '@core/models/tipo-doc.model';
-import { FiltroDetalleCajaReportModal } from './components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
-import { FiltroControlCajaReportModal } from './components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
 
+import { CashboxCloseModalComponent } from '../cashbox-close-modal/cashbox-close-modal.component';
+import { FiltroControlCajaReportModal } from './components/filtro-control-caja-report-modal/filtro-control-caja-report-modal.component';
+import { FiltroDetalleCajaReportModal } from './components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
 
 @Component({
   selector: 'app-movimiento-caja-modal',
@@ -46,7 +46,7 @@ export class MovimientoCajaModalComponent {
   dataPermisosCaja = {
     cerrarCaja: false,
     verOtrasCajas: false,
-    reporteMovimientoCaja: false,
+    reporteMovimiento: false,
     enterKey: false
   }
   isReloadCaja = false;
@@ -173,12 +173,11 @@ export class MovimientoCajaModalComponent {
   }
 
   verReporteMovimientoCaja(estado: boolean) {
-
-    if (this.dataPermisosCaja.verOtrasCajas) {
+    if(!estado){
       return true;
     }
+    return this.dataPermisosCaja.reporteMovimiento
 
-    return (!estado && this.dataPermisosCaja.reporteMovimientoCaja);
   }
 
 

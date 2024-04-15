@@ -685,50 +685,7 @@
                 //UNIMOS TODOS LOS DETALLES DEL COMPROBANTE
 
                 let resultJoinItems = $scope.selectedDocuments.flatMap(item => item.subGridOptions.data);
-
-                //  let arrGroup = [];
-
-                //Si la Opcion es Agrupar Articulos del Detalle 
-                // console.log([...resultJoinDetails])
-                // resultJoinDetails = resultJoinDetails.reduce((arrGroup, current) => {
-                //     let thatItem = arrGroup.find(item => item.idArticulo === current.idArticulo && item.llevaInventario);
-                //     console.log(thatItem)
-                //     if (!thatItem) {
-                //         arrGroup = [...arrGroup, {
-                //             ...current
-                //         }]
-                //     } else {
-                //         let totalPrecioIVA = (thatItem.cantidad * thatItem.precioConIva);
-                //         console.log(totalPrecioIVA)
-                //         if (isNaN(thatItem.totalConImpuestos)){
-                //             thatItem.totalConImpuestos = 0;
-                //         }
-
-                //         thatItem.cantidad += current.cantidad;
-                //         thatItem.totalConImpuestos += (totalPrecioIVA += current.precioConIva)
-
-                //         // let precioVenta = thatItem.precioVenta += current.precioVenta;
-                //         // let precioConIva = thatItem.precioConIva += current.precioConIva;
-                //         // let porcentajeDescuento = thatItem.porcentajeDescuento += current.porcentajeDescuento;
-                //         // let valorDescuento = thatItem.valorDescuento += current.valorDescuento;
-                //         // let totalDescuento = thatItem.totalDescuento += current.totalDescuento;
-                //         // let subTotal = thatItem.subTotal += current.subTotal;
-                //         // let total = thatItem.total += current.total;
-
-                //         // thatItem.precioVenta = this._fS.roundNumber(precioVenta, this.decimal.nroPrecio);
-                //         // thatItem.precioConIva = this._fS.roundNumber(precioConIva, this.decimal.nroPrecio);
-                //         // thatItem.porcentajeDescuento = this._fS.roundNumber(porcentajeDescuento, this.decimal.nroPorcentaje);
-                //         // thatItem.valorDescuento = this._fS.roundNumber(valorDescuento, this.decimal.nroDescuento);
-                //         // thatItem.totalDescuento = this._fS.roundNumber(totalDescuento, this.decimal.nroDescuentoDetalle);
-                //         // thatItem.subTotal = this._fS.roundNumber(subTotal, 5);
-                //         // thatItem.total = this._fS.roundNumber(total, this.decimal.nroTotalDetalle);
-                //     }
-                //     return arrGroup
-                // }, [])
-                // console.log(resultJoinDetails)
-                // return 
-
-                // const resultMergeItems = mergeItems(resultJoinItems); 
+ 
 
                 //Agregamos Bodega e Indice
                 let index = 1;
@@ -772,48 +729,7 @@
             }
         }
 
-        // function mergeItems(array) {
-        //     return array.reduce((acc, current) => {
-        //         const totalConImpuestos = current.cantidad * current.precioConIva;
-        //         //  console.log(acc)
-        //         console.log('--------------------------------------------')
-        //         const foundItem = acc.find(it => it.idArticulo === current.idArticulo);
-
-        //         if (foundItem && current.llevaInventario) {
-        //             let totalCantidadSum = foundItem.cantidad += current.cantidad;
-        //             let totalConImpuestosSum = foundItem.totalConImpuestos += totalConImpuestos;
-        //             let totalDescuentoSum = foundItem.valorDescuento += current.valorDescuento;
-
-        //             let totalPrecioUnitario = pricingUtils.calcularPrecioVenta(totalConImpuestosSum, current.tarifa);
-        //             let totalConImpuestosRounded = fS.roundNumber(totalConImpuestosSum, $scope.decimal.nroTotalDetalle);
-        //             let precioConIva = totalConImpuestosSum / totalCantidadSum;
-        //             let precioUnitario = totalPrecioUnitario / totalCantidadSum;
-        //             let porcentajeDescuento = pricingUtils.getPorcentajeDescuento(precioUnitario, totalDescuentoSum);
-        //             let total = ((precioUnitario * totalCantidadSum)) - totalDescuentoSum;
-
-        //             foundItem.cantidad = totalCantidadSum;
-        //             foundItem.totalConImpuestos = totalConImpuestosRounded;
-        //             foundItem.precioUnitario = fS.roundNumber(precioUnitario, $scope.decimal.nroPrecio)
-        //             foundItem.precioConIva = fS.roundNumber(precioConIva, $scope.decimal.nroPrecio);
-        //             foundItem.total = fS.roundNumber(total, $scope.decimal.nroTotalDetalle);
-        //             foundItem.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, $scope.decimal.nroPorcentaje);
-        //             foundItem.valorDescuento = fS.roundNumber(totalDescuentoSum, $scope.decimal.nroDescuento);
-
-        //         } else {
-        //             acc.push({
-        //                 ...current,
-        //                 idArticulo: current.idArticulo,
-        //                 cantidad: current.cantidad,
-        //                 descripcion: current.descripcion,
-        //                 llevaInventario: current.llevaInventario,
-        //                 totalConImpuestos: fS.roundNumber(totalConImpuestos, 3),
-        //                 precioUnitario: fS.roundNumber(current.precioUnitario, $scope.decimal.nroPrecio)
-        //             });
-        //         }
-        //         return acc;
-        //     }, []);
-        // }
-
+      
 
         //Inicio 
         $scope.initiload = function () {
@@ -2454,25 +2370,7 @@
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
-
-
-                //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
-                // if (
-                //     $scope.dataTarifaImpuesto.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX &&
-                //     articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
-                // ) {
-
-                //     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.dataTarifaImpuesto.codigoPorcentaje);
-                //     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
-                //     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
-                //     entity.tarifa = dataImpuestoTarifa.tarifa;
-
-                // } else {
-                //     entity.idTipoIva = articulo.idTipoIva;
-                //     entity.codigoPorcentaje = articulo.codigoPorcentaje;
-                //     entity.tarifa = articulo.tarifa;
-
-                // }
+ 
 
                 let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === articulo.codigoPorcentaje);
                 entity.idImpuesto = dataImpuestoTarifa.idImpuesto;
@@ -2489,6 +2387,7 @@
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
                 entity.precioCosto = dataMedida.precioCosto;
+                entity.productoFraccionado = dataMedida.productoFraccionado;
 
 
                 //Datos Adicionales 
@@ -3834,10 +3733,47 @@
             return true;
         }
 
+
+        const validateCuota = function () {
+            let objParamsCuota = {
+                fechaEmision: $scope.data.fechaEmision,
+                tiemposCredito: $scope.tiemposCredito,
+                idTiempoCredito: $scope.data.idTiempoCredito,
+                montoTotal: $scope.data.total,
+                cuotas: $scope.cuotas
+            }
+            let cuotas = [];
+            let montoTotalCuota = 0;
+
+            if (isRegister()) {
+                let dataCuota = fS.calcularCuotas(objParamsCuota);
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+
+            }
+            if (isUpdate()) {
+                let dataCuota = fS.updateCuotas(objParamsCuota)
+                cuotas = dataCuota.cuotas;
+                montoTotalCuota = dataCuota.montoTotalCuota;
+            }
+
+            if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
+                tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
+                return [];
+            }
+
+            return cuotas;
+        }
+
+
         $scope.askToSaveDocDestino = async function () {
             try {
 
                 if (!isValidForm()) return
+
+                let cuotas = validateCuota();
+
+                if (cuotas && cuotas.length === 0) return   
 
                 let serieComprobante = null;
                 if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
@@ -3882,7 +3818,8 @@
                             itemsDeleted: [],
                             infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                             historyDatosAdicionales: $scope.historyDatosAdicionales,
-                            fromAprobacion: true
+                            fromAprobacion: true,
+                            cuotas,
                         })
 
                         showLoader();
@@ -3911,7 +3848,8 @@
                             },
                             detalles: $scope.gridOptionsDetalle.data,
                             itemsDeleted: [],
-                            historyDatosAdicionales: $scope.historyDatosAdicionales
+                            historyDatosAdicionales: $scope.historyDatosAdicionales,
+                            cuotas
                         })
                         showLoader();
                         notaEntregaSvc.save(query).then(response => {

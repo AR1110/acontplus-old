@@ -1,33 +1,18 @@
-import {
-  Component,
-  ViewChild,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  Output,
-  EventEmitter,
-  inject,
-  Input
-} from "@angular/core";
-import { NgbDate, NgbCalendar, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
-import { FormControl } from "@angular/forms";
-
-import { debounceTime, takeWhile } from "rxjs/operators";
-import { AppModule } from "src/app/app.module";
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 
 declare var DateRangePicker: any;
 import moment from 'moment';
 import { formatDateMoment } from "@core/utils/format-date-moment";
-import { isDatesEqual } from "@core/utils/is-dates-equal";
 
 @Component({
   selector: 'app-date-range-selection',
   standalone: true,
-  imports: [AppModule],
+  imports: [],
   templateUrl: './date-range-selection.component.html',
 })
 export class DateRangeSelectionComponent {
-
+  @Input() from: string | null = null;
+  @Input() to: string | null = null;
   @Input() options = {
     timePicker: false,
     format: "YYYY-MM-DD"
@@ -39,12 +24,12 @@ export class DateRangeSelectionComponent {
 
   ngAfterViewInit() {
     const self = this;
-      const valorInput = this.dateRangeInput.nativeElement;
+    const valorInput = this.dateRangeInput.nativeElement;
     (function (DateRangePicker) {
       let drp = new DateRangePicker(valorInput,
         {
-          //startDate: '2000-01-01',
-          //endDate: '2000-01-03',
+          startDate: self.from ? self.from :  undefined,
+          endDate: self.to ? self.to :undefined,
           //minDate: '2021-07-15 15:00',
           //maxDate: '2021-08-16 15:00',
           //maxSpan: { "days": 9 },
@@ -108,8 +93,8 @@ export class DateRangeSelectionComponent {
           //   );
           // }
           const dateRange = {
-            from: formatDateMoment(new Date(start)),
-            to: formatDateMoment(new Date(end)),
+            from:  formatDateMoment(new Date(start)),
+            to:  formatDateMoment(new Date(end))
           };
           self.onChangeDateRange.emit(dateRange);
         })

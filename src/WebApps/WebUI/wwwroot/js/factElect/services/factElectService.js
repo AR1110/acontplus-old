@@ -398,8 +398,8 @@
                         infoAdicionalDocumento,
                         datosAdicionalesArticuloTemp,
                         formasPagoTemp,
-                       // cuenta,
-                      //  cuotas
+                        cuenta,
+                        cuotas
                     ] = mainDataApi;
                      
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
@@ -485,20 +485,20 @@
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
                         irbpnr: comprobanteTemp.irbpnr || 0,
-                       // idTiempoCredito : cuenta[0].idTiempoCredito,
-                        //    fechaVencimiento: fS.formatDate(cuenta[0].fechaVencimiento),
-                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
+                        idTiempoCredito : cuenta[0].idTiempoCredito,
+                           fechaVencimiento: fS.formatDate(cuenta[0].fechaVencimiento),
+                       
                     }
 
-                    // cuotas = cuotas.map(item => {
-                    //     return {
-                    //         idCuotaPorCobrar: item.idCuotaPorCobrar,
-                    //         nroCuota: item.nroCuota,
-                    //         fechaVencimiento: fS.formatDate(item.fechaVencimiento),
-                    //         cuota: item.cuota,
-                    //         entrada: item.entrada,
-                    //     }
-                    // })
+                    cuotas = cuotas.map(item => {
+                        return {
+                            idCuotaPorCobrar: item.idCuotaPorCobrar,
+                            nroCuota: item.nroCuota,
+                            fechaVencimiento: fS.formatDate(item.fechaVencimiento),
+                            cuota: item.cuota,
+                            entrada: item.entrada,
+                        }
+                    })
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
                         idDocumento: item.idDocumento,
@@ -529,7 +529,7 @@
                         infoAdicionalDocumento,
                         datosAdicionalesArticulo,
                         formasPago,
-                        cuotas: []
+                        cuotas
                     }
                 }
             })

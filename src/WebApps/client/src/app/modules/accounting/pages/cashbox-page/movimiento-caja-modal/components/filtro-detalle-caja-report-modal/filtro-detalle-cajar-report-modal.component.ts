@@ -1,4 +1,6 @@
-import { Component, Input, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Component, inject, Input } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
 import { CODE_REPORT } from "@core/constants/global.constants";
 import { TipoDoc } from "@core/models/tipo-doc.model";
@@ -8,16 +10,15 @@ import { formatDateMoment } from "@core/utils/format-date-moment";
 import { hideLoader } from "@core/utils/loader";
 import { stringToDate } from "@core/utils/string-to-date";
 import { isValidField } from "@core/utils/utils";
-import { AccountingModule } from "@modules/accounting/accounting.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntidadFinanciera } from "@modules/accounting/models/entidad-financiera.model";
 import { ControlCajaService } from "@modules/accounting/services/control-caja.service";
 import { NgbActiveModal, NgbTimepickerModule } from "@ng-bootstrap/ng-bootstrap";
-import { AppModule } from "src/app/app.module";
 
 @Component({
   selector: 'app-filtro-detalle-caja-report-modal',
   standalone: true,
-  imports: [AppModule, AccountingModule, NgbTimepickerModule, DateRangeSelectionComponent],
+  imports: [CommonModule, FormsModule, FontAwesomeModule, NgbTimepickerModule, DateRangeSelectionComponent],
   templateUrl: './filtro-detalle-cajar-report-modal.component.html'
 })
 export class FiltroDetalleCajaReportModal {

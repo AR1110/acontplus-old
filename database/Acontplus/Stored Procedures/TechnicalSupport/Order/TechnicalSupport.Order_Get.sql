@@ -22,6 +22,7 @@ BEGIN
     ,@pageIndex INT
     ,@pageSize INT
     ,@tipo INT
+    ,@rucEmpresa VARCHAR(13)
 
 	SELECT @id = id
         ,@orderStatusCode = orderStatusCode
@@ -38,15 +39,28 @@ BEGIN
         pageSize        INT '$.pageSize'
     )
 	
-    SET @companyId = (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+    SELECT TOP 1 @rucEmpresa = rucEmpresa,  @companyId = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
 	IF @tipo = 1
 		BEGIN
-			SET @tableNames = 'puntosEmision,bodegas,categories,users'
+			SET @tableNames = 'puntosEmision,bodegas,users'
 			SELECT * FROM v_PtoEmi_Asign WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
-			SELECT * FROM v_Bodega_Asign WHERE idUsuarioRol = @userRoleId
-            SELECT * FROM TechnicalSupport.Category WITH(NOLOCK) WHERE [Enabled] = 1
-            SELECT * FROM v_usuario WHERE idEntidad = @companyId AND estadoUsuario = 1 
+			SELECT * FROM v_Bodega_Asign WHERE idUsuarioRol = @userRoleId 
+            SELECT * FROM v_usuario WHERE idEntidad = @companyId AND estadoUsuario = 1
+            IF (@id > 0)
+                BEGIN
+                    SET @tableNames = @tableNames + ',order,orderDetails'
+                    SELECT * FROM TechnicalSupport.[Order] WITH (NOLOCK) WHERE Id = @id
+                    SELECT od.* 
+                        ,d.[Name] DeviceName
+                        ,dc.SerialNumber DeviceSerie
+                        ,dc.Warranty DeviceWarranty
+                    FROM TechnicalSupport.[OrderDetail] od WITH (NOLOCK)
+                        INNER JOIN TechnicalSupport.[Order] o WITH (NOLOCK) ON od.OrderId = o.Id
+                        INNER JOIN TechnicalSupport.Device d WITH (NOLOCK) ON od.DeviceId = d.Id
+                        INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId AND dc.CustomerCompanyId = o.CustomerCompanyId
+                    WHERE od.OrderId = @id
+                END
 		END
 
    IF @tipo = 2
@@ -71,11 +85,12 @@ BEGIN
         INNER JOIN Cliente c               WITH (NOLOCK)         ON c.idCliente = tor.CustomerCompanyId
         INNER JOIN TechnicalSupport.OrderStatus sc WITH (NOLOCK)  ON sc.Id = tor.OrderStatusId
         INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON tor.EstablecimientoId = e.idEstablecimiento
-        WHERE sc.Code = @orderStatusCode
+        WHERE e.ruc = @rucEmpresa AND  sc.Code = @orderStatusCode 
             AND tor.Deleted IS NULL
         ORDER BY tor.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY   
         RETURN
     END
+    
     IF @tipo = 4
         BEGIN
             SET @tableNames = 'order,orderDetails,orderMaintenances,feeds,estabs,bodegas,taxes,taxPercents,decimalsConfig'
@@ -114,17 +129,18 @@ BEGIN
                   ,om.MedidaId
                   ,om.Quantity
                   ,om.Price
-                  ,om.Price
+                  ,taxPercentage = ti.porcentaje
                   ,om.Cost
                   ,om.TaxId
                   ,om.TaxPercentId
+                  ,Discount = ISNULL(om.Discount, 0)
+                  ,PercentageDiscount = 0
                   ,om.TaxValue 
-                  ,om.Total 
+                  ,om.Total  
                   ,a.descripcion  
                   ,a.llevaInventario 
                   ,a.precioSinSubsidio
-                  ,a.codigo            AS codigoArticulo 
-                  ,0                    AS valorDescuento
+                  ,a.codigo      
                   ,om.[Enabled]         AS estado
                   ,ISNULL
                   ((
@@ -140,6 +156,7 @@ BEGIN
                                           ,pv.precioConIva
                                           ,UPPER(ta.descripcion) as tarifa
                                           ,ta.ventaPorMayor
+                                          ,ta.predeterminada
 					                FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
 					                INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
 					                WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
@@ -169,6 +186,7 @@ BEGIN
                                           ,ap.precioConIva
                                           ,UPPER(ta.descripcion) as tarifa
                                           ,ta.ventaPorMayor 
+                                          ,ta.predeterminada
 					                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 					                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 					                WHERE ap.idArticulo = sc.idArticulo
@@ -183,16 +201,17 @@ BEGIN
 
                     ),'[]') as principal
 
-                    ,(
+                    ,ISNULL((
                 
                         SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = om.ProductId AND st.idBodega = om.BodegaId FOR JSON PATH
          
-                     ) as consolidacion
+                     ) ,'[]') as consolidacion
 
             FROM TechnicalSupport.[OrderMaintenance] om    WITH (NOLOCK)
             INNER JOIN TechnicalSupport.[OrderDetail] od ON om.OrderDetailId = od.Id
             INNER JOIN dbo.Bodega bo            WITH (NOLOCK) ON bo.idBodega   = om.BodegaId
             INNER JOIN Inventario.v_Articulo a WITH (NOLOCK) ON a.idArticulo = om.ProductId
+            INNER JOIN Sri.TarifaImpuesto ti WITH(NOLOCK) ON ti.idTarifaImpuesto = om.taxPercentId
             WHERE od.OrderId = @Id
             
             SELECT idTarifa
@@ -223,9 +242,18 @@ BEGIN
             WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
 
-            SELECT * FROM Sri.Impuesto WITH (NOLOCK)
+            SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
 
-	        SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)
+	        SELECT 
+                ti.idTarifaImpuesto
+                ,ti.codigo
+                ,ti.codImpuesto
+                ,i.idImpuesto
+                ,ti.descripcion
+                ,ti.porcentaje
+                ,ti.estado 
+                pe FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
+            INNER JOIN Sri.Impuesto i WITH(NOLOCK)  ON i.codigo = ti.codImpuesto 
 
             SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @companyId AND codTrasaccion = 'V'
             RETURN

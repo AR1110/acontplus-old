@@ -28,24 +28,20 @@ BEGIN
            ,@serie              VARCHAR(18)
            ,@userId             INT
            ,@datetime           DATETIME
+           ,@orderStatusId      INT
 
     --> Data Json
     DECLARE @details VARCHAR(MAX)
 
-    --> Set values
-	SET @userId     = (SELECT idUsuario FROM v_Usuario WHERE idUsuarioRol = @userRoleId)
-    SET @enabled    = 1
-    SET @datetime   = (SELECT dbo.ufnGetdateEcuador())
-        
     DECLARE @tbOrder AS TABLE (
         uuid VARCHAR(100) NOT NULL
        ,establecimientoId INT NOT NULL
        ,puntoEmisionId INT NOT NULL
-       ,customerCompanyId INT NOT NULL
-       ,orderStatusId INT NULL
+       ,customerCompanyId INT NOT NULL 
        ,obs VARCHAR(500) NULL
        ,userId INT NOT NULL
        ,fechaEmision DATETIME2 NOT NULL
+       ,assignedUserId INT
     )
 
     DECLARE @tbDetails AS TABLE(
@@ -55,84 +51,98 @@ BEGIN
        ,deviceSerie VARCHAR(300)
        ,deviceWarranty NUMERIC(18,2)
        ,obs VARCHAR(500) NULL
+       ,assignedUserId INT
     )
         
-    --> Data Json 
-    SELECT @details = orderDetails FROM OPENJSON(@json) WITH (orderDetails  NVARCHAR(MAX) AS JSON )
-
-    --> Insert to temp Table
-    INSERT INTO @tbOrder
-          (uuid, establecimientoId, puntoEmisionId, customerCompanyId, orderStatusId, obs, userId, fechaEmision)
-    SELECT uuid, establecimientoId, puntoEmisionId, customerCompanyId, orderStatusId, obs, userId, fechaEmision
-    FROM OPENJSON(@json) WITH
-    (
-        uuid                 VARCHAR(100)    '$.uuid'
-        ,establecimientoId   INT             '$.establecimientoId'
-        ,puntoEmisionId      INT             '$.puntoEmisionId'
-        ,customerCompanyId   INT             '$.customerCompanyId'
-        ,orderStatusId       INT             '$.orderStatusId'
-        ,obs                 VARCHAR(100)    '$.obs'
-        ,userId              INT             '$.userId'
-        ,fechaEmision        DATETIME2       '$.fechaEmision'
-    )
-        
-    ---> Validations order.
-    IF NOT EXISTS(SELECT 1 FROM @tbOrder)
-        BEGIN
-            SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el orden', NULL)
-            RETURN
-        END
-
-    --> Insert to temp Table
-    INSERT INTO @tbDetails(uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs)
-    SELECT uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs
-                    FROM OPENJSON(@details) WITH
-                    (
-                        uuid         VARCHAR(100)    '$.uuid'
-                        ,deviceCustomerId INT       '$.deviceCustomerId'
-                        ,deviceId    INT             '$.deviceId'
-                        ,deviceSerie    VARCHAR(300)             '$.deviceSerie'
-                        ,deviceWarranty    NUMERIC(18,2)             '$.deviceWarranty'
-                        ,obs         VARCHAR(100)    '$.obs'
-                    )
-
-    ---> Validation details
-    IF NOT EXISTS(SELECT 1 FROM @tbDetails)
-        BEGIN
-            SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
-            RETURN
-        END
-
-    SELECT @sequence        = cd.secuencial
-        , @estab            = pa.estab
-        , @ptoEmi           = pa.ptoEmi
-        , @idTipoDocumento  = cd.idTipoDocumento
-	FROM Config.v_ConfigDocumento cd
-    INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
-    AND cd.idPuntoEmision = (SELECT puntoEmisionId FROM @tbOrder)
-    WHERE pa.idUsuarioRol = @userRoleId
-    AND cd.codDoc = 'OTS'
-
-    ---> Serie
-    SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
-        
-    ---> Validations if exist doc.
-    IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
-				                  INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
-                                  AND cd.idPuntoEmision = (SELECT puntoEmisionId FROM @tbOrder)
-			                      WHERE pa.idUsuarioRol = @userRoleId
-			                      AND cd.codDoc = 'OTS')
-    BEGIN       
-        SELECT Common.ufnSpResponse('0', 'Aun no se ha configurado el secuencial para Soporte Técnico',  DEFAULT)
-        RETURN
-    END
+   
 
 	BEGIN TRY
+                --> Set values
+	    SET @userId     = (SELECT idUsuario FROM v_Usuario WHERE idUsuarioRol = @userRoleId)
+        SET @enabled    = 1
+        SET @datetime   = (SELECT dbo.ufnGetdateEcuador())
+        
+             --> Data Json 
+        SELECT @details = orderDetails FROM OPENJSON(@json) WITH (orderDetails  NVARCHAR(MAX) AS JSON )
+
+        SET @orderStatusId = (SELECT CASE
+                                        WHEN 
+                                            (SELECT assignedUserId FROM @tbOrder) = 0 THEN  (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'PA')
+                                        ELSE 
+                                            (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'EP')
+                                        END )
+        --> Insert to temp Table
+        INSERT INTO @tbOrder
+              (uuid, establecimientoId, puntoEmisionId, customerCompanyId, obs, userId, fechaEmision, assignedUserId)
+        SELECT uuid, establecimientoId, puntoEmisionId, customerCompanyId, obs, userId, fechaEmision, assignedUserId
+        FROM OPENJSON(@json) WITH
+        (
+            uuid                 VARCHAR(100)    '$.uuid'
+            ,establecimientoId   INT             '$.establecimientoId'
+            ,puntoEmisionId      INT             '$.puntoEmisionId'
+            ,customerCompanyId   INT             '$.customerCompanyId' 
+            ,obs                 VARCHAR(100)    '$.obs'
+            ,userId              INT             '$.userId'
+            ,fechaEmision        DATETIME2       '$.fechaEmision'
+            ,assignedUserId      INT
+        )
+        
+        ---> Validations order.
+        IF NOT EXISTS(SELECT 1 FROM @tbOrder)
+            BEGIN
+                SELECT '0' code, 'No se pudo recuperar el orden'as 'message'
+                RETURN
+            END
+
+        --> Insert to temp Table
+        INSERT INTO @tbDetails(uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs, assignedUserId)
+        SELECT uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs, assignedUserId
+                        FROM OPENJSON(@details) WITH
+                        (
+                            uuid         VARCHAR(100)    '$.uuid'
+                            ,deviceCustomerId INT       '$.deviceCustomerId'
+                            ,deviceId    INT             '$.deviceId'
+                            ,deviceSerie    VARCHAR(300)             '$.deviceSerie'
+                            ,deviceWarranty    NUMERIC(18,2)             '$.deviceWarranty'
+                            ,obs         VARCHAR(100)    '$.obs'
+                            ,assignedUserId INT
+                        )
+
+        ---> Validation details
+        IF NOT EXISTS(SELECT 1 FROM @tbDetails)
+            BEGIN
+                SELECT '0' code, 'No se pudo recuperar el detalle'as 'message'
+                RETURN
+            END
+
+        SELECT @sequence        = cd.secuencial
+            , @estab            = pa.estab
+            , @ptoEmi           = pa.ptoEmi
+            , @idTipoDocumento  = cd.idTipoDocumento
+	    FROM Config.v_ConfigDocumento cd
+        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
+        AND cd.idPuntoEmision = (SELECT puntoEmisionId FROM @tbOrder)
+        WHERE pa.idUsuarioRol = @userRoleId
+        AND cd.codDoc = 'OTS'
+
+        ---> Serie
+        SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
+        
+        ---> Validations if exist doc.
+        IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
+				                      INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
+                                      AND cd.idPuntoEmision = (SELECT puntoEmisionId FROM @tbOrder)
+			                          WHERE pa.idUsuarioRol = @userRoleId
+			                          AND cd.codDoc = 'OTS')
+        BEGIN       
+            SELECT '0' code, 'Aun no se ha configurado el secuencial para Soporte Técnico' as 'message'
+            RETURN
+        END
 		BEGIN TRAN
             ---> Inser data - Order.
             INSERT INTO TechnicalSupport.[Order]
-                  (Uuid,FechaEmision,EstablecimientoId,PuntoEmisionId,[Sequence],Serie,CustomerCompanyId,Obs,OrderStatusId,CreatedAt,Enabled, UserId)
-            SELECT uuid,fechaEmision,establecimientoId,puntoEmisionId,@sequence ,@serie,customerCompanyId,obs,orderStatusId,@datetime,@enabled,@userId
+                  (Uuid,FechaEmision,EstablecimientoId,PuntoEmisionId,[Sequence],Serie,CustomerCompanyId,Obs,OrderStatusId,CreatedAt,[Enabled], UserId, AssignedUserId)
+            SELECT uuid,fechaEmision,establecimientoId,puntoEmisionId,@sequence ,@serie,customerCompanyId,obs,@orderStatusId,@datetime,@enabled,@userId, IIF(assignedUserId = 0, NULL, assignedUserId)
             FROM @tbOrder
 
             SET @orderId = @@IDENTITY
@@ -160,11 +170,11 @@ BEGIN
 			      AND cd.codDoc = 'OTS'
             ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
 
-			SELECT Common.ufnSpResponse('1', 'Grave registrado', NULL)
+			SELECT '1' code, 'Registrado correctamente' as 'message'
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
-		 SELECT Common.ufnSpResponse('0', 'Error al guardar la orden', NULL)
+		 SELECT '0' code, 'Error al guardar la orden' as 'message'
         
         IF (@@TRANCOUNT > 0)
             ROLLBACK TRAN
@@ -176,5 +186,3 @@ BEGIN
 	END CATCH
 END
 GO
-
-

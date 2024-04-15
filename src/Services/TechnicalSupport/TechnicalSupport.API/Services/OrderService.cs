@@ -26,11 +26,11 @@ namespace TechnicalSupport.API.Services
                 return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
             }
         }
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
             try
             {
-                return await _repository.SPExecuteDeprecatedAsync("TechnicalSupport.Order_Insert", parameters);
+                return await _repository.SPExecuteAsync("TechnicalSupport.Order_Insert", parameters);
             }
             catch (Exception)
             {
@@ -38,20 +38,32 @@ namespace TechnicalSupport.API.Services
                 throw;
             }
         }
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteDeprecatedAsync("TechnicalSupport.Order_Update", parameters);
+            return await _repository.SPExecuteAsync("TechnicalSupport.Order_Update", parameters);
         }
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<ApiResponse> DeleteAsync(int userId, int id)
         {
             var order = await _context.Orders.FindAsync(id);
-            if (order == null) return false;
+            if (order == null) return new ApiResponse { code = "0", message = "No encontrada" };
             order.Enabled = false;
-            order.Deleted = true;
-
+            order.Deleted = true;   
+            order.UserId = userId;
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
-            return true;
+            return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
+        }
+
+        public async Task<ApiResponse> ConvertAsync(Dictionary<string, object> parameters)
+        {
+            try
+            {
+                return await _repository.SPExecuteAsync("TechnicalSupport.Order_Document_Insert", parameters);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse { code = "0", message = ex.Message };
+            }
         }
     }
 }

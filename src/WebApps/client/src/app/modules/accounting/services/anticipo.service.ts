@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
-import { ACCOUNTING_PATHS } from "../constants/accounting.constants";
+import { ACCOUNTING_PATHS } from "../enums/accounting.constants";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 import { isApiResponse } from "@core/models/api-response";
@@ -27,7 +27,7 @@ export class AnticipoService {
             }
             if (response.code === "1") {
               let { anticipos } = JSON.parse(response.payload as string);
-               
+
               anticipos = anticipos.map((anticipo: any) => {
                 return {
                   idAnticipo: anticipo.idAnticipo,
@@ -59,13 +59,13 @@ export class AnticipoService {
     let params = JSON.stringify({ tipo: 3 })
     return this.http.get(`${this.url}?json=${params}`)
       .pipe(
-        map(response => { 
+        map(response => {
           if (isApiResponse(response)) {
 
             if (response.code === "0") {
               throw response;
             }
-            if (response.code === "1") { 
+            if (response.code === "1") {
 
               let mainData = JSON.parse(response.payload as string);
               const { establecimiento } = mainData;

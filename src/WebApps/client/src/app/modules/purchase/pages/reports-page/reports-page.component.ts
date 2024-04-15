@@ -3,7 +3,7 @@ import { AppModule } from 'src/app/app.module';
 import { PurchaseModule } from '@modules/purchase/purchase.module';
 import { HttpClient } from '@angular/common/http';
 import { CODE_REPORT, DOC_TYPE, DOC_TYPE_SRI, PATHS_API } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@modules/accounting/constants/accounting.constants';
+import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';

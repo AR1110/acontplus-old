@@ -1,28 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 @import "ngx-toastr/toastr";
 @import "bootstrap/dist/css/bootstrap.css";
-@import "assets/css/custom.css";
+@import "assets/template/css/style.css";
 @import "assets/css/forms.css";
 @import "ngx-toastr/toastr";
 @import "perfect-scrollbar";
-//@import "tabulator-tables/dist/css/tabulator.min.css";
 
-
+html,
 body {
-  font-family: "Poppins", sans-serif !important;
+  height: 100%;
 }
 
-button, html, input, select, textarea {
-  font-family: Roboto,Helvetica Neue,sans-serif !important;
+button,
+html,
+input,
+select,
+textarea {
+  font-family: Roboto, Helvetica Neue, sans-serif !important;
 }
 
-.form-control  {
-  font-size: 0.875rem !important;
-}
-.form-select {
-  font-size: 0.875rem !important;
-
-}
 table {
   width: 100%;
 }
@@ -101,19 +97,6 @@ table {
   z-index: unset !important;
 }
 
-.form-control-border:focus {
-  border-color: blue !important;
-}
-
 .swal2-container {
   z-index: 999999;
-}
-
-html,
-body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

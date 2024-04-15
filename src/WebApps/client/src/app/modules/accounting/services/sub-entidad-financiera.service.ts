@@ -1,7 +1,7 @@
 
 import { inject, Injectable } from "@angular/core";
 import { PATHS_API } from "@core/constants/global.constants";
-import { ACCOUNTING_PATHS } from "../constants/accounting.constants";
+import { ACCOUNTING_PATHS } from "../enums/accounting.constants";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs";
 

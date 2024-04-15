@@ -5,8 +5,9 @@ namespace TechnicalSupport.API.Interfaces
     public interface IOrderService
     {
         Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-        Task<string> AddAsync(Dictionary<string, object> parameters);
-        Task<string> UpdateAsync(Dictionary<string, object> parameters);
-        Task<bool> DeleteAsync(int id);
+        Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> ConvertAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> DeleteAsync(int userId, int id);
     }
 }

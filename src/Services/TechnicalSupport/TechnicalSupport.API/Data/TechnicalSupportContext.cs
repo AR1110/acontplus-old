@@ -3,8 +3,6 @@ using Common.Core.Entities;
 using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using TechnicalSupport.API.Entities;
-
-
 namespace TechnicalSupport.API.Data
 {
     public class TechnicalSupportContext : BaseContext
@@ -14,11 +12,12 @@ namespace TechnicalSupport.API.Data
 
         }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Device> Devices { get; set; }
+        public DbSet<DeviceCustomer> DeviceCustomers { get; set; }
         public DbSet<DeviceSpecs> DeviceSpecs { get; set; }
-        public DbSet<Device> Products { get; set; }
-        public DbSet<DeviceCustomer> ProductCustomers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<OrderDocument> OrderDocuments { get; set; }
         public DbSet<OrderMaintenance> OrderMaintenances { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
 
@@ -53,7 +52,6 @@ namespace TechnicalSupport.API.Data
                 }
             }
 
-
             builder.Entity<Category>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Category>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Category>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_Category").IsUnique();
@@ -65,26 +63,28 @@ namespace TechnicalSupport.API.Data
 
             builder.Entity<DeviceCustomer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<DeviceCustomer>().Property(x => x.Enabled).HasDefaultValue(true);
-            builder.Entity<DeviceCustomer>().HasIndex(x => x.DeviceId).HasDatabaseName("UI_TS_DC_DeviceId").IsUnique();
 
             builder.Entity<DeviceSpecs>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<DeviceSpecs>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<DeviceSpecs>().HasIndex(x => x.DeviceId).HasDatabaseName("UI_TS_DS_DeviceId").IsUnique();
 
-            builder.Entity<OrderStatus>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-            builder.Entity<OrderStatus>().Property(x => x.Enabled).HasDefaultValue(true);
-            builder.Entity<OrderStatus>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_OrderStatus").IsUnique();
-
             builder.Entity<Order>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Order>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Order>().HasMany(x => x.OrderDetails).WithOne(x => x.Order).HasForeignKey(x => x.OrderId);
 
+            builder.Entity<OrderDocument>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<OrderDocument>().Property(x => x.Enabled).HasDefaultValue(true);
 
             builder.Entity<OrderDetail>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<OrderDetail>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<OrderDetail>().HasMany(x => x.OrderMaintenances).WithOne(x => x.OrderDetail).HasForeignKey(x => x.OrderDetailId);
 
+            builder.Entity<OrderMaintenance>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<OrderMaintenance>().Property(x => x.Enabled).HasDefaultValue(true);
 
+            builder.Entity<OrderStatus>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<OrderStatus>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<OrderStatus>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_OrderStatus").IsUnique();
         }
         public override int SaveChanges()
         {

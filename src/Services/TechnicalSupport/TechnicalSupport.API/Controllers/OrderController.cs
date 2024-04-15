@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -37,6 +38,7 @@ namespace TechnicalSupport.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] OrderDto orderDto)
         {
@@ -47,15 +49,14 @@ namespace TechnicalSupport.API.Controllers
                 {
                     { "userRoleId", User.GetUserRoleId() },
                     { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(orderDto,
-                                                                                        new JsonSerializerSettings
-                                                                                        {
-                                                                                            ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () },
-                                                                                            Formatting = Formatting.Indented
-                                                                                        })
-                                                                                    )
-                    }
+                        new JsonSerializerSettings
+                        {
+                            ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy () },
+                            Formatting = Formatting.Indented
+                        })
+                    )}
                 });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
+                if (response == null) { return BadRequest("No response"); }
                 return Ok(response);
             }
             catch (Exception ex)
@@ -64,8 +65,32 @@ namespace TechnicalSupport.API.Controllers
                 return BadRequest("Error on post");
             }
         }
+
+        [HttpPost("Convert")]
+        public async Task<IActionResult> Convert(ApiRequest request)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(request.Data)) }
+                };
+
+                var response = await _orderService.ConvertAsync(parameters);
+                if (response == null) { return BadRequest(); }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on convert doc: " + ex.ToString());
+                return BadRequest("Error on convert doc");
+            }
+        }
+
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Order order)
+        public async Task<IActionResult> Put(int id, [FromBody] OrderDto order)
         {
             try
             {
@@ -82,7 +107,7 @@ namespace TechnicalSupport.API.Controllers
                                                                                     )
                     }
                 });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest("No response"); }
+                if (response == null) { return BadRequest("No response"); }
                 return Ok(response);
             }
             catch (Exception ex)
@@ -96,7 +121,7 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                var response = await _orderService.DeleteAsync(id);
+                var response = await _orderService.DeleteAsync(User.GetUserId(), id);
                 return Ok(response);
             }
             catch (Exception ex)

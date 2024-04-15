@@ -3,14 +3,16 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import {
+  GroupedEstab,
+  GroupedEstabPuntoEmision,
+} from '@core/models/estab.model';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
-import { icon, IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { DeviceListModalComponent } from '@modules/technical-support/components/device-list-modal/device-list-modal.component';
 import { DeviceSearchComponent } from '@modules/technical-support/components/device-search/device-search.component';
 import { OrderDetail } from '@modules/technical-support/models/order-detail';
@@ -18,6 +20,7 @@ import { OrderService } from '@modules/technical-support/services/order.service'
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
+import { OrderDetailComponent } from './order-detail/order-detail.component';
 
 @Component({
   selector: 'app-order-modal',
@@ -27,6 +30,7 @@ import { v4 as uuidv4 } from 'uuid';
     CompanyCustomerSearchComponent,
     DeviceSearchComponent,
     NgbAccordionModule,
+    OrderDetailComponent,
     TabulatorComponent,
   ],
   templateUrl: './order-modal.component.html',
@@ -40,37 +44,6 @@ export class OrderModalComponent {
   private modalService = inject(ModalService);
   private orderService = inject(OrderService);
   private tS = inject(ToasterService);
-
-  columnNames: any[] = [
-    { title: 'deviceId', field: 'deviceId', width: 150, visible: false },
-    {
-      title: 'deviceCustomerId',
-      field: 'deviceCustomerId',
-      width: 150,
-      visible: false,
-    },
-    { title: 'Equipo', field: 'deviceName', width: 200 },
-    { title: 'Serie', field: 'deviceSerie', width: 180, editor: true },
-    {
-      title: 'Garantia',
-      field: 'deviceWarranty',
-      width: 150,
-      validator: ['numeric', 'min:0'],
-      editor: true,
-    },
-    { title: 'Obs.', field: 'obs', width: 300, editor: true },
-    {
-      cellClick: (e: any, cell: any) => {
-        this.removeFromList(cell.getData().deviceId);
-        cell.getRow().delete();
-      },
-      formatter: this.deleteButton,
-      hozAlign: 'center',
-      resizable: false,
-      title: 'Opción',
-      width: 100,
-    },
-  ];
   data: any = {};
   deviceFound: any = {};
   devices: any = [];
@@ -83,61 +56,63 @@ export class OrderModalComponent {
   users: any = [];
 
   orderForm = this.fb.group({
+    assignedUserId: 0,
     uuid: uuidv4(),
     establecimientoId: [0, Validators.required],
     puntoEmisionId: [0, Validators.required],
     customerCompanyId: [0, Validators.required],
     fechaEmision: '',
-    userId: 0,
     obs: [''],
-    orderStatusId: 1,
+    orderStatusId: 0,
     orderDetails: [],
   });
 
   addDetail(device: any) {
-    (device.deviceId = device.id),
-      (device.deviceCustomerId = device.deviceCustomerId);
-    device.deviceName = !device.deviceName ? device.name : device.deviceName;
-    device.deviceSerie = !device.deviceSerie
+    let deviceToAdd: OrderDetail = {
+      id: 0,
+      deviceId: 0,
+      deviceName: '',
+      deviceSerie: '',
+      deviceWarranty: '',
+      uuid: '',
+    };
+    deviceToAdd.deviceId = device.id;
+    deviceToAdd.deviceCustomerId = device.deviceCustomerId;
+    deviceToAdd.deviceName = !device.deviceName
+      ? device.name
+      : device.deviceName;
+    deviceToAdd.deviceSerie = !device.deviceSerie
       ? device.serie
       : device.deviceSerie;
-    device.deviceWarranty = !device.deviceWarranty
+    deviceToAdd.deviceWarranty = !device.deviceWarranty
       ? device.warranty
       : device.deviceWarranty;
-    device.obs = '';
-    device.uuid = uuidv4();
-    this.orderDetails.push(device);
+    deviceToAdd.obs = '';
+    deviceToAdd.uuid = uuidv4();
+    this.orderDetails.push(deviceToAdd);
   }
 
   closeModal() {
     this.modalRef.close();
   }
 
-  deleteButton(cell: any, formatterParams: any) {
-    //cell - the cell component
-    //formatterParams - parameters set for the column
-
-    //get the row data
-    let data = cell.getRow().getData();
-
-    //return the HTML code for the button, using Bootstrap classes and Angular routerLink
-    return `<button class='btn btn-danger'>${icon(faTrashAlt).html.join(
-      ''
-    )}</button>`;
-  }
-
   get() {
     showLoader();
-    this.orderService.get(JSON.stringify({ tipo: 1 })).subscribe({
+    let parameters = { tipo: 1, id: this.data.id };
+    if (this.data.id > 0) {
+      this.modalTitle = 'Editar Orden';
+      this.modalIcon = 'edit';
+    }
+    this.orderService.get(parameters).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
+          console.log(response);
           if (response.code == '1') {
-            let { puntosEmision, categories, users } = JSON.parse(
-              response.payload as string
-            );
+            let parsedResponse = JSON.parse(response.payload as string);
+            let { puntosEmision, users } = parsedResponse;
             this.establecimientos = groupEstabUtil({
               estabs: puntosEmision,
-              isGroupPuntoEmision: true
+              isGroupPuntoEmision: true,
             });
             const dataEstab = this.establecimientos.find(
               (estab) => estab.defaultEstab
@@ -158,14 +133,21 @@ export class OrderModalComponent {
               }
             }
             this.users = users;
+            if (this.data.id > 0) {
+              let { order, orderDetails } = parsedResponse;
+              this.order = order[0];
+              console.log(this.order);
+              this.orderDetails = orderDetails || [];
+              this.orderForm.patchValue(this.order);
+            }
           }
         }
       },
-      complete() {
-        hideLoader();
-      },
       error(error) {
         console.log(error);
+        hideLoader();
+      },
+      complete() {
         hideLoader();
       },
     });
@@ -224,11 +206,6 @@ export class OrderModalComponent {
     this.addDetail($event.data);
   }
 
-  removeFromList(deviceId: number) {
-    let newArray = this.orderDetails.filter((x) => x.deviceId !== deviceId);
-    this.orderDetails = newArray;
-  }
-
   save() {
     showLoader();
     const data = {
@@ -242,33 +219,26 @@ export class OrderModalComponent {
         message: 'Debe de añadir los detalles a la orden',
       });
     }
-    console.log(data);
     this.orderService.post(data).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
-          if (response.code === '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message!,
-            });
-          }
+          this.tS.toastr({
+            type: response.code == '1' ? 'success' : 'warning',
+            message: response.message!,
+          });
           if (response.code === '1') {
             this.orderForm.patchValue({});
             this.orderDetails = [];
             this.order = {};
-            this.tS.toastr({
-              type: 'success',
-              message: response.message!,
-            });
-            this.modalRef.close();
+            this.modalRef.close(response);
           }
         }
       },
-      complete() {
-        hideLoader();
-      },
       error(err) {
         console.log(err);
+        hideLoader();
+      },
+      complete() {
         hideLoader();
       },
     });

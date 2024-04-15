@@ -8,6 +8,7 @@ namespace TechnicalSupport.API.Entities
     [Table("OrderDetail", Schema = "TechnicalSupport")]
     public class OrderDetail : BaseEntity
     {
+        public int? AssignedUserId { get; set; }
         public Guid Uuid { get; set; }
         public Order Order { get; set; }
         public int OrderId { get; set; }

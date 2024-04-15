@@ -12,11 +12,12 @@ import swal from 'sweetalert2';
 
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 import { OrderModalComponent } from '../order-modal/order-modal.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
-  imports: [AppModule],
+  imports: [AppModule, CommonModule],
   templateUrl: './order-list.component.html',
   styles: ``,
 })
@@ -87,17 +88,12 @@ export class OrderListComponent implements OnInit {
 
   get() {
     showLoader();
-    this.orderService
-      .get(
-        JSON.stringify({
-          tipo: 2,
-          orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode],
-          ...this.dataSearch,
-        })
-      )
+    this.orderService.get({tipo: 2, orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode], ...this.dataSearch,})
       .subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
+            if (response["code"] === "0") return;
+
             const { orders } = JSON.parse(response.payload as string);
             this.orders = orders;
             if (this.orders.length > 0) {
@@ -114,6 +110,7 @@ export class OrderListComponent implements OnInit {
         },
       });
   }
+
   getReport(item: any) {
     const parameters = {
       reportParams: JSON.stringify({
@@ -127,7 +124,7 @@ export class OrderListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.get();
+    this.get();
   }
   onChangePageSize() {
     this.dataSearch.pageIndex = 1;
