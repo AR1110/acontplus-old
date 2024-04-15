@@ -201,7 +201,7 @@ export class ComprobanteIngresoLoteModalComponent {
 
           if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
             this.tipoDocumentos = structuredClone(selectedDocumentos);
-            this.selectedDocumentos = structuredClone(selectedDocumentos);
+            this.selectedDocumentos =  [...selectedDocumentos, ...selectedDocumentos] ;
 
             let dataSelectedDoc = selectedDocumentos[0];
             this.comprobante = {

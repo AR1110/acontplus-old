@@ -3,6 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SubEntidadFinancieraComponent } from './components/sub-entidad-financiera/sub-entidad-financiera.component';
+import { ValorAbonoComponent } from './components/valor-abono/valor-abono.component';
+import { FechaEmisionComponent } from './components/fecha-emision/fecha-emision.component';
+import { BancoSelectComponent } from './components/banco-select/banco-select.component';
 
 @Component({
   selector: 'app-forma-cobro-modal',
@@ -10,7 +13,10 @@ import { SubEntidadFinancieraComponent } from './components/sub-entidad-financie
   imports: [
     NgbAccordionModule,
     FormsModule,
-    SubEntidadFinancieraComponent
+    SubEntidadFinancieraComponent,
+    ValorAbonoComponent,
+    FechaEmisionComponent,
+    BancoSelectComponent
   ],
   templateUrl: './forma-cobro-modal.component.html',
   styles: ``
@@ -50,8 +56,8 @@ export class FormaCobroModalComponent {
 
   entidadesFinanciera: any[] = [];
   subEntidadesFinanciera: any[] = []
-  bancos = []
-  ciudades = []
+  bancos:any[] = []
+  ciudades:any[] = []
   documentosElectronicos = [];
 
   selectedDocElectronico = []
