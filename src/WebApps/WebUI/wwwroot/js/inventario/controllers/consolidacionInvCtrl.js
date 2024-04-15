@@ -358,15 +358,13 @@
                 }
 
                 if (colDef.field === "precioUnitario") {
-                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio)
-                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio)
+                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio) 
                 }
 
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
 
-                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio);
-                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio);
+                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio); 
                     rowEntity.conversion = dataMedida.conversion;
                 }
 

@@ -541,7 +541,7 @@
                     conversion : item.conversion,
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion, 5),
                     precioUnitario: item.precioUnitario,
-                    precioCosto: item.precioUnitario ,
+                    precioCosto: item.precioCosto ,
                     precioCostoFraccionado: item.precioCostoFraccionado,
                     total: fS.roundNumber(item.total, 5),
                     nota: fS.isValidField(item.nota),
