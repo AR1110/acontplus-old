@@ -124,6 +124,12 @@
 
 </div>
 <div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="save('FV')">
+    <fa-icon [icon]="'file-pdf'"></fa-icon> Factura
+  </button>
+  <button type="button" class="btn btn-outline-info" (click)="save('NE')">
+    <fa-icon [icon]="'dot-circle'"></fa-icon> Nota de Entrega
+  </button>
   <button type="button" class="btn btn-outline-success" (click)="save()">
     <fa-icon [icon]="'save'"></fa-icon> Guardar
   </button>
