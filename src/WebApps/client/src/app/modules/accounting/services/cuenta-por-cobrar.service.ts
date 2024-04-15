@@ -1,8 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '../enums/accounting.constants';
-import { HttpClient } from '@angular/common/http';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { map } from 'rxjs';
+
+import { ACCOUNTING_PATHS } from '../enums/accounting.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +13,77 @@ export class CuentaPorCobrarService {
   #url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_COBRAR}`;
   #http = inject(HttpClient);
 
-  constructor() { }
+
+
+  getDataFilter() {
+    const json = JSON.stringify({ tipo: 6 });
+
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response: any) => {
+        if (!response) throw response;
+
+        const { establecimientos, estadoPago, tipoDocumento } = response;
+        let estabs = groupEstabUtil({
+          estabs: establecimientos,
+          isGroupPuntoEmision: true
+        })
+
+        return {
+          estabs,
+          estadosDoc: estadoPago,
+          tiposDoc: tipoDocumento
+        }
+      }
+      ))
+  }
+
+  getAll<T>(obj: T) {
+    const json = JSON.stringify({ ...obj, tipo: 1 });
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response: any) => {
+        if (!response) throw response
+
+        const { cuentasPorCobrar } = response;
+
+
+        const results = cuentasPorCobrar.map((cxc: any, index: number) => {
+          return {
+            index: index + 1,
+            idCuentaPorCobrar: cxc.idCuentaPorCobrar,
+            codDoc: cxc.codDoc,
+            razonSocialComprador: cxc.razonSocialComprador,
+            serieComprobante: cxc.serieComprobante,
+            fechaEmision: cxc.fechaEmision,
+            fechaVencimiento: cxc.fechaVencimiento,
+            importeTotal: cxc.importeTotal,
+            abono: cxc.abono,
+            saldo: cxc.saldo,
+            tiempoCredito: cxc.tiempoCredito,
+            estado: cxc.estado,
+            codEstado: cxc.codEstado,
+            idCliente: cxc.idCliente,
+            codEstab: cxc.codEstab,
+            identificacionComprador: cxc.identificacionComprador,
+            diasMora: cxc.diasMora,
+            mora: cxc.mora
+          }
+        })
+
+
+        let dataFiltered = cuentasPorCobrar[0];
+
+
+        return {
+          cuentasPorCobrar: results,
+          totalRecords: dataFiltered && dataFiltered.totalRecords || 0,
+          totalVenta: dataFiltered && dataFiltered.totalVenta || 0,
+          totalAbono: dataFiltered && dataFiltered.totalAbono || 0,
+          totalSaldo: dataFiltered && dataFiltered.totalSaldo || 0,
+        };
+
+      })
+    )
+  }
 
   getDataForm(idCuentaPorCobrar: number, idCliente: number) {
     const json = JSON.stringify({ idCuentaPorCobrar, idCliente, tipo: 3 });

@@ -6,6 +6,10 @@ import { SubEntidadFinancieraComponent } from './components/sub-entidad-financie
 import { ValorAbonoComponent } from './components/valor-abono/valor-abono.component';
 import { FechaEmisionComponent } from './components/fecha-emision/fecha-emision.component';
 import { BancoSelectComponent } from './components/banco-select/banco-select.component';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { PaymentTypeCode } from '@modules/accounting/enums/accounting.constants';
+import { isValidField } from '@core/utils/utils';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 
 @Component({
   selector: 'app-forma-cobro-modal',
@@ -56,8 +60,8 @@ export class FormaCobroModalComponent {
 
   entidadesFinanciera: any[] = [];
   subEntidadesFinanciera: any[] = []
-  bancos:any[] = []
-  ciudades:any[] = []
+  bancos: any[] = []
+  ciudades: any[] = []
   documentosElectronicos = [];
 
   selectedDocElectronico = []
@@ -75,17 +79,19 @@ export class FormaCobroModalComponent {
       this.ciudades = ciudades;
 
       this.documentosElectronicos = documentos;
-    //  this.onChangeTabEntidadFinanciera(selectedIndexTab)
+      //  this.onChangeTabEntidadFinanciera(selectedIndexTab)
     } catch (error) {
       console.log(error)
     }
   }
 
   ngOnInit() {
+    let { dataFormaCobro, comprobante, saldo, datosCobro } = this.params;
+    this.VALOR_ABONO_ORIGINAL = roundNumber(saldo, 3);
     this.loadInitialData()
   }
 
-  onChangeTabEntidadFinanciera($index:number) {
+  onChangeTabEntidadFinanciera($index: number) {
 
     try {
       const { descripcion, idEntidadFinanciera, codigo, subEntidadesFinanciera } = this.entidadesFinanciera.at($index);
@@ -122,6 +128,184 @@ export class FormaCobroModalComponent {
 
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  isValidData() {
+    let paymentTypeCode = this.entidadesFinanciera.find(e => e.idEntidadFinanciera === this.data.idEntidadFinanciera).codigo;
+    let { nro, referencia, aprobacion, idCiudad, idBanco, lote } = this.data;
+
+    if (!(this.data.idSubEntidadFinanciera > 0)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione la SubEntidad Financiera'
+      })
+      return
+    }
+
+
+    if (!(Number(this.data.valorAbono) > 0)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese el valor de abono'
+      })
+      return
+    }
+
+    // =================== TARJETA DE CREDITO / DEBITO  =================================== //
+    if (paymentTypeCode === PaymentTypeCode.TAR) {
+      // if (!isValidField(nro)) {
+      //   this.tS.toastr({
+      //     type: 'warning',
+      //     message: 'Ingrese el Número'
+      //   })
+      //   return
+      // }
+
+      // if (!(idBanco && idBanco > 0)) {
+      //   this.tS.toastr({
+      //     type: 'warning',
+      //     message: 'Seleccione la ciudad'
+      //   })
+      //   return
+      // }
+      // if (!isValidField(referencia)) {
+      //   this.tS.toastr({
+      //     type: 'warning',
+      //     message: 'Ingrese la referencia'
+      //   })
+      //   return
+      // }
+      // if (!isValidField(aprobacion)) {
+      //   this.tS.toastr({
+      //     type: 'warning',
+      //     message: 'Ingrese la Aprobación'
+      //   })
+      //   return
+      // }
+      // if (!isValidField(lote)) {
+      //   this.tS.toastr({
+      //     type: 'warning',
+      //     message: 'Ingrese el Lote'
+      //   })
+      //   return
+      // }
+    }
+
+    // =================== TRANSFERENCIAS  =================================== //
+
+    if (paymentTypeCode === PaymentTypeCode.TRA) {
+      if (!(idBanco && idBanco > 0)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el Banco'
+        })
+        return
+      }
+      if (!isValidField(nro)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Ingrese el Número'
+        })
+        return
+      }
+    }
+
+    // =================== CHEQUES  =================================== //
+
+    if (paymentTypeCode === PaymentTypeCode.CHE) {
+      if (!(idBanco && idBanco > 0)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el Banco'
+        })
+        return
+      }
+      if (!isValidField(nro)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Ingrese el Número'
+        })
+        return
+      }
+
+      if (!(idCiudad && idCiudad > 0)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione la ciudad'
+        })
+        return
+      }
+
+      if (!isValidField(referencia)) {
+        if (!(idBanco && idBanco > 0)) {
+          this.tS.toastr({
+            type: 'warning',
+            message: 'Ingrese la referencia'
+          })
+          return
+        }
+        return
+      }
+    }
+
+    return true;
+  }
+
+  addPaymentType() {
+    try {
+      if (!this.isValidData()) throw 'Form Invalid';
+
+      this.modal.close(this.getDataPago());
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+
+  getDataPago(item: any = {}) {
+    try {
+      let entidadFinanciera = this.entidadesFinanciera.find(item => item.idEntidadFinanciera === this.data.idEntidadFinanciera);
+      let subEntidadFinanciera = entidadFinanciera.subEntidadesFinanciera.find((item: any) => item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera);
+
+      let ciudad = this.ciudades.find(item => item.idCiudad === this.data.idCiudad);
+      let banco = this.bancos.find(item => item.idBanco === this.data.idBanco);
+
+      let formattedDateTime = formatDateMoment(this.data.fechaEmision);
+      let obj = {
+        //Info
+        entidadFinanciera: entidadFinanciera.descripcion,
+        subEntidadFinanciera: subEntidadFinanciera.descripcion,
+
+        ciudad: ciudad && ciudad.descripcion,
+        banco: banco && banco.descripcion,
+
+        //Data
+        idEntidadFinanciera: entidadFinanciera.idEntidadFinanciera,
+        idSubEntidadFinanciera: subEntidadFinanciera.idSubEntidadFinanciera,
+        codEntidadFinanciera: entidadFinanciera.codigo,
+        idBanco: this.data.idBanco,
+        idCiudad: this.data.idCiudad,
+        fechaEmision: formattedDateTime,
+        posFechado: this.data.posFechado,
+        referencia: this.data.referencia,
+        aprobacion: this.data.aprobacion,
+        lote: this.data.lote,
+
+        //Data Documento
+        nro: item.serieComprobante || this.data.nro,
+        idTipoDocumento: item.idTipoDocumento,
+        idComprobante: item.idDocumento,
+        tipoDocumento: item.tipoDocumento || item.codDoc,
+        valorAbono: item.saldo || this.data.valorAbono,
+        controlCaja: subEntidadFinanciera.controlCaja
+      }
+      return obj;
+    } catch (error) {
+      console.log(error);
+      return {}
     }
   }
 

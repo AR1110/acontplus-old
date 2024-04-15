@@ -321,7 +321,8 @@
         $scope.puntosEmision = [];
         $scope.bodegas = [];
         $scope.data = {
-            fechaEmision: new Date()
+            fechaEmision: new Date(),
+            total: 0
         };
         $scope.dataClone = {};
         $scope.decimal = {};
@@ -357,15 +358,15 @@
                 }
 
                 if (colDef.field === "precioActual") {
-                    rowEntity.precioCosto = fS.roundNumber(rowEntity.precioCosto, $scope.decimal.nroPrecio)
+                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio)
                     rowEntity.precioActual = fS.roundNumber(rowEntity.precioActual, $scope.decimal.nroPrecio)
                 }
 
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
 
-                    rowEntity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio);
-                    rowEntity.precioActual = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio);
+                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio);
+                    rowEntity.precioActual = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio);
                     rowEntity.conversion = dataMedida.conversion;
                 }
 
@@ -563,7 +564,7 @@
             },
             {
                 name: 'P. Costo',
-                field: 'precioCosto',
+                field: 'precioUnitario',
                 enableCellEditOnFocus: true,
                 enableColumnMenu: false,
                 type: 'number',
@@ -827,14 +828,19 @@
             entity.porcentajeTipoIva = articulo.tarifa;
             entity.nombreTipoIva = articulo.tarifa;
             entity.stock = articulo.stock;
-            entity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
-            entity.precioActual = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
-            entity.total = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
             entity.idBodega = $scope.data.idBodega;
             entity.llevaInventario = articulo.llevaInventario;
+
             entity.medidas = medidas; //Lista Medida 
             entity.idMedida = dataMedida.idMedida; //Medida por defecto  
             entity.conversion = dataMedida.conversion;
+            entity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
+            entity.precioUnitario = dataMedida.precioUnitario;
+            entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+            entity.precioActual = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio)
+
+            entity.total = fS.roundNumber(entity.cantidad * dataMedida.precioUnitario, $scope.decimal.nroPrecio)
+
             
         }
 
@@ -870,6 +876,7 @@
 
         $scope.setItemArticuloEnDetalle = async function (item) {
             try {
+              
                 const { articulo, medidas } = item;
                 if (!articulo.llevaInventario) {
                     Swal.fire({

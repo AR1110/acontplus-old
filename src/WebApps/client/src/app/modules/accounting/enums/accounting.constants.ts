@@ -8,3 +8,12 @@ export const enum ACCOUNTING_PATHS {
   SUB_ENTIDAD_FINANCIERA = 'SubEntidadFinanciera/',
   CUENTA_POR_COBRAR = 'CuentaPorCobrar/'
 }
+
+
+export const enum PaymentTypeCode {
+  TAR = "TAR",
+  EFE = "EFE",
+  TRA = "TRA",
+  CHE = "CHE",
+  DOC = "DOC"
+}

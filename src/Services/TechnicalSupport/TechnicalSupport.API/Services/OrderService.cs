@@ -53,17 +53,5 @@ namespace TechnicalSupport.API.Services
             await _context.SaveChangesAsync();
             return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
         }
-
-        public async Task<ApiResponse> ConvertAsync(Dictionary<string, object> parameters)
-        {
-            try
-            {
-                return await _repository.SPExecuteAsync("TechnicalSupport.Order_Document_Insert", parameters);
-            }
-            catch (Exception ex)
-            {
-                return new ApiResponse { code = "0", message = ex.Message };
-            }
-        }
     }
 }
