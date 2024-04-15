@@ -169,7 +169,7 @@
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion),
                     precioUnitario: item.precioCosto,
                     precioCosto: item.precioCosto,
-                    precioCostoFraccionado: item.precioCosto,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
                     total: item.total,
                     estado: item.estado
                 }
@@ -191,7 +191,7 @@
                     cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion),
                     precioUnitario: item.precioCosto,
                     precioCosto: item.precioCosto,
-                    precioCostoFraccionado: item.precioCosto,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
                     total: item.total,
                     descripcion: item.descripcion,
                     estado: item.estado
