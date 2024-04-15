@@ -471,6 +471,7 @@
                         tarifa: dataArticulo.tarifa,
                         valorIce: dataArticulo.valorIce,
                     }
+ 
 
                     let medidas = fS.processAndSortMeasures(medidaPrincipal, medidaFraccionado);
 

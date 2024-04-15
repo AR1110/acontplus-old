@@ -711,12 +711,14 @@
                 ...medidaPrincipal,
                 precioCosto: medidaPrincipal.precioCosto || 0,
                 precioCostoFraccionado: medidaPrincipal.precioCostoFraccionado || 0,
+                precioUnitario: medidaPrincipal.precioUnitario || 0,
                 tipo: 'PRINCIPAL'
             }))
             const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medidaFraccionado => ({
                 ...medidaFraccionado,
                 precioCosto: medidaFraccionado.precioCosto || 0,
                 precioCostoFraccionado : medidaFraccionado.precioCostoFraccionado || 0,
+                precioUnitario: medidaFraccionado.precioUnitario || 0,
                 tipo: 'FRACCIONADO'
             }))
 
@@ -758,6 +760,7 @@
                 tipo: item.tipo,
                 precioCosto: item.precioCosto,
                 precioCostoFraccionado: item.precioCostoFraccionado,
+                precioUnitario: item.precioUnitario,
                 tarifas: (typeof item.tarifas === "string" ? JSON.parse(item.tarifas) : item.tarifas) || []
             }))
 
