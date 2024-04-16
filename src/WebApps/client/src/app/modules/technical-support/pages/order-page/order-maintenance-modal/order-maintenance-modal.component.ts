@@ -15,6 +15,7 @@ import { ProductService } from '@modules/inventory/services/product.service';
 import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
 import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
 import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
+import { orderMaintenanceAdapter } from '@modules/technical-support/adapters/order-maintenance.adapter';
 import { ColOrderMaintenance, OrderMaintenance } from '@modules/technical-support/models/order-maintenance.model';
 import { OrderMaintenanceService } from '@modules/technical-support/services/order-maintenance.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
@@ -25,8 +26,6 @@ import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
 
-import { OrderMaintenanceDetailComponent } from './components/order-maintenance-detail/order-maintenance-detail.component';
-
 @Component({
   selector: 'app-order-maintenance-modal',
   standalone: true,
@@ -35,7 +34,6 @@ import { OrderMaintenanceDetailComponent } from './components/order-maintenance-
     FormsModule,
     FontAwesomeModule,
     NgbAccordionModule,
-    OrderMaintenanceDetailComponent,
     DrawTaxTotalComponent,
     ProductSearchComponent,
     ReactiveFormsModule,
@@ -94,6 +92,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     bodegaId: 0,
     feeId: 0,
     fechaEmision: '',
+    orderDetailId: null
   }
 
   cloneOrder = {
@@ -113,41 +112,15 @@ export class OrderMaintenanceModalComponent implements OnInit {
   htmlIvaTotal = '';
 
 
-  getTaxEditorParams = () => {
-    const taxes = this.taxes;
-    let values: any = {};
-    for (let tax of taxes) {
-      values[tax.idImpuesto] = tax.descripcion
-    }
-    return {
-      values
-    }
-  }
 
 
-  getTaxFormatterParams = () => {
-    return this.getTaxEditorParams().values
-  }
-
-  getBodegaEditorParams = () => {
-    let bodegas = this.bodegas;
-    let values: any = {};
-    for (let b of bodegas) {
-      values[b.idBodega] = b.descripcion
-    }
-    return {
-      values
-    }
-  }
-  getBodegaFormatterParams = () => {
-    return this.getBodegaEditorParams().values
-  }
+  validatorNumber = ["required", "number"]
 
   comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
     let column: ColOrderMaintenance = cell.getColumn().getField();
     let data: OrderMaintenance = cell.getData();
-    let oldValue = cell.getOldValue();
-    let value = cell.getValue();
+    // let oldValue = cell.getOldValue();
+    // let value = cell.getValue();
 
     let editor: any = document.createElement("select");
 
@@ -220,52 +193,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     return editor;
   };
 
-  validatorNumber = ["required", "number"]
-
-  askToDelete(data: OrderMaintenance) {
-    try {
-      Swal.fire({
-        // title: "Are you sure?",
-        html: `Esta seguro de eliminar este elemento <b>${data.descripcion}</b>`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si!",
-        cancelButtonText: 'No!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          let rows = this.tabulatorComponent.refTabulator.getData().filter(r => r.rowguid !== data.rowguid);
-          this.tabulatorComponent.refTabulator.setData(rows).then(r => {
-            this.drawImpuestoTotales()
-          })
-        }
-      });
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-
-  openModalProductEdit(data: OrderMaintenance) {
-    try {
-      this.openModalProductSvc.open({ id: data.productId }).then(response => {
-        console.log(response, 'closed produc')
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  openModalProductKardex(data: OrderMaintenance) {
-    try {
-      this.openModalProductSvc.openKardex({ id: data.productId })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   columnNames = [
+    { headerSort: false, resizable: false, minWidth: 30, width: 30, rowHandle: true, formatter: "handle" },
     {
       formatter: "rownum", headerSort: false, hozAlign: "center",
     },
@@ -309,9 +238,9 @@ export class OrderMaintenanceModalComponent implements OnInit {
         buttonHolder.appendChild(delBtn);
         buttonHolder.appendChild(editBtn);
 
-        //  if (rowDataMain.llevaInventario) {
-        buttonHolder.appendChild(kardexBtn)
-        //  }
+        if (rowDataMain.llevaInventario) {
+          buttonHolder.appendChild(kardexBtn)
+        }
 
         return buttonHolder;
       },
@@ -378,6 +307,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       validator: "required",
       width: "9px",
     },
+
     {
       title: 'Imp.',
       field: 'taxId',
@@ -527,6 +457,235 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   ];
 
+  tabulatorOptions = {
+    width: null,
+    movableRows: true,
+    // groupStartOpen: false,
+    groupBy: "orderDetailId",
+    groupValues: [[]] as any,
+    groupHeader: (value: any, count: any) => {
+      let dataOrderDetail = this.orderDetails.find(od => od.orderDetailId === value);
+
+      if (dataOrderDetail) {
+        return `${dataOrderDetail.deviceName} (${count} items)`;
+      }
+      return null;
+    },
+    columns: this.columnNames,
+  };
+
+
+  getId() {
+    showLoader();
+    this.orderSvc.getId(this.params.id).subscribe({
+      next: (response) => {
+        hideLoader();
+        console.log(response)
+        this.establecimientos = response.establecimientos;
+        this.order = response.order;
+        this.orderDetails = response.orderDetails;
+        this.orderMaintenances = response.orderMaintenances.map((d: any) => {
+          let od = this.orderDetails.find(od => od.orderDetailId === d.orderDetailId);
+          return {
+            ...d,
+            deviceName: od.deviceName
+          }
+        });
+
+        console.log(this.orderDetails)
+        console.log(this.orderMaintenances)
+
+        this.feeds = response.feeds;
+        this.taxes = response.taxes;
+        this.taxPercents = response.taxPercents;
+        this.decimal = response.decimal;
+
+        let dataEstab = this.establecimientos.find((e) => e.idEstablecimiento === this.order.establecimientoId)
+        if (dataEstab) {
+          this.puntosEmision = dataEstab.puntosEmision;
+          this.bodegas = dataEstab.bodegas;
+          let dataBodega = this.bodegas.find(b => b.defaultBodega);
+          if (dataBodega) {
+            this.order.bodegaId = dataBodega.idBodega;
+            this.cloneOrder.bodegaId = this.order.bodegaId;
+          }
+          this.cloneOrder.establecimientoId = this.order.establecimientoId;
+
+        }
+
+        let dataTarifa = this.feeds.find(t => t.predeterminada)
+        if (dataTarifa) {
+          this.order.feeId = dataTarifa.idTarifa;
+          this.cloneOrder.feeId = dataTarifa.idTarifa;
+        }
+
+        this.order.orderDetailId = this.orderDetails[0].orderDetailId;
+        //  this.tabulatorOptions.groupValues = [[...this.orderDetails.map(t => t.deviceName)]]
+
+        // Obtener valores únicos para "orderDetailId"
+        const uniqueOrderDetailIds = Array.from(new Set(this.orderDetails.map((item: any) => item.orderDetailId)));
+
+        // Crear groupValues con valores únicos de "orderDetailId"
+        const groupValues = uniqueOrderDetailIds.map((id: number) => id);
+        console.log(groupValues)
+        this.tabulatorOptions.groupValues = [groupValues]
+
+        this.drawImpuestoTotales();
+      },
+      error(err) {
+        hideLoader();
+        console.log(err)
+      },
+    })
+  }
+
+
+
+  ngOnInit(): void {
+    this.getId();
+  }
+
+
+  setIdBodegaInDetalle() {
+    for (let item of this.orderMaintenances) {
+      item.bodegaId = this.order.bodegaId;
+    }
+  }
+
+  resetCantidadToZeroAndRecalculateTotals() {
+    try {
+      for (let rowEntity of this.orderMaintenances) {
+        if (!rowEntity.llevaInventario) continue;
+
+        rowEntity.quantity = 0;
+
+        console.log(rowEntity)
+
+        // this.setCalculoTotales("cantidad", rowEntity, )
+
+        // let objCalculo = gridOptionsSvc.calculoColDef({
+        //   rowEntity,
+        //   oldValue: null,
+        //   decimal: $scope.decimal,
+        //   idTarifa: $scope.data.idTarifa,
+        //   columnDefs: $scope.gridOptions.columnDefs
+        // });
+
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
+
+  async onChangeEstablecimiento() {
+    try {
+      let { isConfirmed } = await Swal.fire({
+        title: '<small>Cambiar Establecimiento?</small>',
+        html: "<small>Esta seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Si, cambiar!',
+        cancelButtonText: 'No, cancelar!',
+        reverseButtons: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      })
+
+      if (!isConfirmed) {
+        this.order.establecimientoId = this.cloneOrder.establecimientoId;
+        return
+      }
+
+      let dataEstab = this.establecimientos.find(item => item.idEstablecimiento === this.order.establecimientoId);
+      if (!dataEstab) return
+
+      this.puntosEmision = dataEstab.puntosEmision;
+      this.bodegas = dataEstab.bodegas;
+
+      if (this.puntosEmision.length === 0) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'No tienes Puntos de Emisión asignado a este establecimiento'
+        })
+        this.order.establecimientoId = this.cloneOrder.establecimientoId;
+        return
+      }
+      if (this.bodegas.length === 0) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'No tienes bodegas asignado a este establecimiento'
+        })
+        this.order.establecimientoId = this.cloneOrder.establecimientoId;
+        return
+      }
+
+      let dataPtoEmi = this.puntosEmision.find(item => (item.defaultPtoEmi));
+      if (dataPtoEmi) {
+        this.order.puntoEmisionId = dataPtoEmi.idPuntoEmision;
+      }
+
+      //Bodegas
+      let dataBodega = this.bodegas.find(item => (item.defaultBodega));
+      if (dataBodega) {
+        this.order.bodegaId = dataBodega.idBodega;
+
+      }
+      console.log(this.order)
+      this.cloneOrder.establecimientoId = this.order.establecimientoId;
+
+      this.setIdBodegaInDetalle();
+      this.resetCantidadToZeroAndRecalculateTotals();
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  askToDelete(data: OrderMaintenance) {
+    try {
+      Swal.fire({
+        // title: "Are you sure?",
+        html: `Esta seguro de eliminar este elemento <b>${data.descripcion}</b>`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si!",
+        cancelButtonText: 'No!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let rows = this.orderMaintenances.filter(r => r.rowguid !== data.rowguid);
+          this.orderMaintenances = rows;
+          this.drawImpuestoTotales()
+        }
+      });
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  openModalProductEdit(data: OrderMaintenance) {
+    try {
+      this.openModalProductSvc.open({ id: data.productId }).then(response => {
+        console.log(response, 'closed produc')
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  openModalProductKardex(data: OrderMaintenance) {
+    try {
+      this.openModalProductSvc.openKardex({ id: data.productId })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
   getDataRowEmpty() {
@@ -555,7 +714,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       tarifas: [],
       consolidacionesBodega: [],
       costoFraccionado: 0,
-      conversion: 0
+      conversion: 0,
+      llevaInventario: false
     }
     return dataOrderMaintenance;
   }
@@ -571,6 +731,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
             let taxPercents = this.taxPercents;
             let row = this.getDataRowEmpty()
             let dataTaxPercent = taxPercents.find(d => d.codigo === product.codigoPorcentaje);
+            let dataOrderDetail = this.orderDetails.find(od => od.orderDetailId === this.order.orderDetailId)
             let dataMedida = medidas.find(m => m.defaultMedida);
 
             row.productId = product.idArticulo;
@@ -590,6 +751,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
               row.cost = dataMedida.precioCosto;
               row.costoFraccionado = dataMedida.precioCostoFraccionado;
               row.conversion = dataMedida.conversion;
+              row.deviceName = dataOrderDetail.deviceName;
+              row.orderDetailId = dataOrderDetail.orderDetailId;
 
               let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
 
@@ -598,10 +761,12 @@ export class OrderMaintenanceModalComponent implements OnInit {
               row.price = dataTarifa?.precioVenta ?? 0;
             }
 
-            this.tabulatorComponent.refTabulator.addRow(row).then((r) => {
-              this.setCalculoTotales("price", row, 0, r)
-            });
+            this.orderMaintenances.push(row)
+            //this.setCalculoTotales("price", row, 0, r)
 
+            this.tabulatorComponent.refTabulator.setGroupBy(["orderDetailId"]);
+            // this.tabulatorComponent.refTabulator.addRow(row).then((r) => {
+            // });
 
 
           },
@@ -628,11 +793,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
     });
 
     row.update({
-      ...row,
+      //  ...row,
       ...obj
     })
 
-    //recalculateTotalsSimple();
     this.drawImpuestoTotales();
   }
 
@@ -656,7 +820,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
     if (column === "descripcion" || column === "obs") return
 
-    if (value === oldValue) return
+    if (value === oldValue) {
+      cell.setValue(oldValue);
+      return
+    }
 
     if (isNaN(value) || cell.getValue() === "") {
       cell.setValue(oldValue);
@@ -764,50 +931,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
     this.modalRef.close();
   }
 
-  getId() {
-    showLoader();
-    this.orderSvc.getId(this.params.id).subscribe({
-      next: (response) => {
-        hideLoader();
-        this.establecimientos = response.establecimientos;
-        this.order = response.order;
-        this.orderDetails = response.orderDetails;
-        this.orderMaintenances = response.orderMaintenances;
-
-        this.feeds = response.feeds;
-        this.taxes = response.taxes;
-        this.taxPercents = response.taxPercents;
-        this.decimal = response.decimal;
-
-        let dataEstab = this.establecimientos.find((e) => e.idEstablecimiento === this.order.establecimientoId)
-        if (dataEstab) {
-          this.puntosEmision = dataEstab.puntosEmision;
-          this.bodegas = dataEstab.bodegas;
-          let dataBodega = this.bodegas.find(b => b.defaultBodega);
-          if (dataBodega) {
-            this.order.bodegaId = dataBodega.idBodega;
-            this.cloneOrder.bodegaId = this.order.bodegaId;
-          }
-        }
-
-        let dataTarifa = this.feeds.find(t => t.predeterminada)
-        if (dataTarifa) {
-          this.order.feeId = dataTarifa.idTarifa;
-          this.cloneOrder.feeId = dataTarifa.idTarifa;
-        }
-
-        this.drawImpuestoTotales();
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
-    })
-  }
-
-  ngOnInit(): void {
-    this.getId();
-  }
 
   save(codDoc?: string) {
     try {
@@ -827,10 +950,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return
       }
 
-      let params = {
-        order: Object.assign({}, this.order, codDoc ? { codDoc } : {}),
-        detalles: this.getOnlyData(this.tabulatorComponent.refTabulator.getData())
+      let obj = {
+        order: {
+          ...this.order,
+          codDoc,
+        },
+        detalles: this.orderMaintenances
       }
+      let params = orderMaintenanceAdapter.to(obj);
 
       this.orderMaintenanceSvc.post(params).subscribe({
         next: (response) => {
@@ -857,27 +984,5 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
   }
 
-  getOnlyData(data: any[]) {
-    const propiedadesExcluidas = ['_row', 'cells', 'component', 'data', 'element', 'height', 'initialized', 'modules', 'parent', 'outerHeader', 'outerTable', 'table', '__proto__'];
 
-    // También excluir listas de objetos, solamente objetos simples
-    return data.map(objeto => {
-      const soloValores: any = {};
-      for (const key in objeto) {
-        if (!propiedadesExcluidas.includes(key) && this.esObjetoSimple(objeto[key])) {
-          soloValores[key] = objeto[key];
-        }
-      }
-      return soloValores;
-    });
-  }
-
-  esObjetoSimple(valor: any) {
-    let isValid = true;
-
-    if (typeof valor === 'object' || Array.isArray(valor)) {
-      isValid = false;
-    }
-    return isValid;
-  }
 }
