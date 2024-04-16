@@ -40,7 +40,9 @@ namespace TechnicalSupport.API.Services
                     return new ApiResponse { code = "0", message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso" };
                 }
                 var detailFound = await _context.OrderDetails.FindAsync(id);
-                _context.Remove(detailFound);
+                detailFound.Enabled = false;
+                detailFound.Deleted = true;
+                _context.Update(detailFound);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
             }
