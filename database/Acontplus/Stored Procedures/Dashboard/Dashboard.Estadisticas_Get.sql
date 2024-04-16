@@ -90,7 +90,9 @@ BEGIN
                                 AND (s.Paid IS NULL OR s.Paid = 0)
                                 AND s.[Enabled] = 1
                                 AND s.Deleted IS NULL
-                             INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON s.LicenciaId = l.Id
+                             INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
+							 INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
+                             INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON ld.LicenciaId = l.Id
                              INNER JOIN AcontplusAdmin.Config.LicenseType lt ON l.LicenseTypeId = lt.Id
                              INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH (NOLOCK) ON s.SubscriptionTypeId = st.Id
                              WHERE ur.idUsuarioRol = @idUsuarioRol
