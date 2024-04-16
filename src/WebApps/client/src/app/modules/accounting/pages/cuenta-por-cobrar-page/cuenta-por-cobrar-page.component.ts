@@ -43,7 +43,6 @@ export class CuentaPorCobrarPageComponent {
   displayedColumns: string[] = [
     'select',
     'index',
-
     'tipoDoc',
     'serieComprobante',
     'razonSocialComprador',
@@ -247,7 +246,11 @@ export class CuentaPorCobrarPageComponent {
       let params = {
         selectedDocumentos
       }
-      this.comprobanteIngresoOpenModalSvc.open(params)
+      this.comprobanteIngresoOpenModalSvc.open(params).then(result=>{
+        if(result!==null && typeof result==='object'){
+          this.getCuentasPorCobrar();
+        }
+      })
     } catch (error) {
       console.log(error)
     }

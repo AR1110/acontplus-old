@@ -11,11 +11,20 @@ import { MatTableModule } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { roundNumber } from '@core/utils/round-number.utils';
+import ComprobanteIngresoUtil, { getPaymentSubTotales } from '@modules/accounting/utils/comprobante-ingreso.util';
+import { MultiplesPaymentType, PaymentData, PaymentDetail, PaymentHistory } from '@modules/accounting/models/comprobante-ingreso';
+import Swal from 'sweetalert2';
+import { ToasterService } from '@core/services/toaster.service';
+import { DatePipe } from '@angular/common';
+import { comprobanteIngresoAdapter } from '@modules/accounting/adapters/comprobante-ingreso.adapter';
+import { ComprobanteIngresoService } from '@modules/accounting/services/comprobante-ingreso.service';
+import { isApiResponse } from '@core/models/api-response';
 
 @Component({
   selector: 'app-comprobante-ingreso-lote-modal',
   standalone: true,
   imports: [
+    DatePipe,
     MatTableModule,
     MatIconModule,
     FontAwesomeModule,
@@ -25,7 +34,7 @@ import { roundNumber } from '@core/utils/round-number.utils';
   styleUrl: './comprobante-ingreso-lote-modal.component.scss',
   animations: [
     trigger('detailExpand', [
-      state('collapsed,void', style({ height: '0px', minHeight: '0', marginBottom: '1px solid #ddd' })),
+      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
@@ -40,12 +49,23 @@ export class ComprobanteIngresoLoteModalComponent {
   modal = inject(NgbActiveModal);
   modalSvc = inject(ModalService);
   cuentaPorCobrarSvc = inject(CuentaPorCobrarService)
+  comprobanteIngresoSvc = inject(ComprobanteIngresoService)
+  tS = inject(ToasterService)
+
+
+  columnsToDisplay = ['expand', 'tipoDoc', 'serieComprobante', 'identificacionComprador', 'razonSocialComprador', 'total'];
+
+  columnsMultiplesPaymentType = ['index', 'op', 'fechaEmision', 'subEntidadFinanciera', 'valorAbono', 'valorAbonoCuota'];
 
   dataFormaCobro = {};
   tipoDocumentos: any[] = [];
   selectedDocumentos: any[] = [];
   comprobante = {} as any
-  datosCobro = []
+
+  multiplesPaymentType: MultiplesPaymentType[] = [];
+  paymentDetails: PaymentDetail[] = [];
+  historialCuentas: PaymentHistory[] = []
+
   data = {
     importeTotal: 0,
     totalSaldo: 0,
@@ -57,9 +77,6 @@ export class ComprobanteIngresoLoteModalComponent {
   }
 
   expandedElement: any | null;
-
-  // En tu-componente.component.ts
-  cuotasColumns: string[] = ['nroCuota', 'cuota', 'mora']; // Agrega más columnas según sea necesario
 
 
   getTotalesCuota() {
@@ -106,7 +123,6 @@ export class ComprobanteIngresoLoteModalComponent {
           if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
             this.tipoDocumentos = structuredClone(selectedDocumentos);
             this.selectedDocumentos = selectedDocumentos;
-            console.log(selectedDocumentos)
 
             let dataSelectedDoc = selectedDocumentos[0];
             this.comprobante = {
@@ -136,6 +152,14 @@ export class ComprobanteIngresoLoteModalComponent {
 
 
   openModalFormaCobro() {
+    if (this.data.totalSaldo <= 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No hay cuotas pendientes.'
+      })
+      return
+    }
+
     let modalRef = this.modalSvc.openModalCustom(FormaCobroModalComponent, {
       size: 'lg'
     })
@@ -143,23 +167,330 @@ export class ComprobanteIngresoLoteModalComponent {
       dataFormaCobro: this.dataFormaCobro,
       comprobante: this.comprobante,
       saldo: this.data.totalSaldo,
-      datosCobro: this.datosCobro
+      multiplesPaymentType: this.multiplesPaymentType
+    }
+
+    modalRef.result.then((dataPaymentTypeForm: PaymentData) => {
+
+      if (dataPaymentTypeForm !== null && typeof dataPaymentTypeForm === 'object') {
+        try {
+          let { posFechado, valorAbono } = dataPaymentTypeForm;
+
+          const tempPaymentDetails = structuredClone(this.paymentDetails);
+
+          const sequential = this.multiplesPaymentType.length + 1;
+          const comprobanteIngresoUtil = new ComprobanteIngresoUtil(sequential);
+          comprobanteIngresoUtil.setReceivedAmount(Number(valorAbono), posFechado)
+          comprobanteIngresoUtil.setPaymentDetail(tempPaymentDetails);
+
+          const modifiedQuotas = comprobanteIngresoUtil.applyReceivedAmountToQuota(this.selectedDocumentos);
+          const resultPaymentDetails = comprobanteIngresoUtil.paymentDetails;
+
+          const payingAmount = resultPaymentDetails.filter(item => item.secuencial === sequential)
+            .reduce((prev, curr) => prev + curr.abono, 0);
+
+          dataPaymentTypeForm.abonoCuota = roundNumber(payingAmount, 2),
+            dataPaymentTypeForm.secuencial = sequential;
+
+          const tempMultiplesPaymentType = [...this.multiplesPaymentType, dataPaymentTypeForm] as MultiplesPaymentType[]
+          const dataSubTotal = getPaymentSubTotales(modifiedQuotas, tempMultiplesPaymentType, this.comprobante)
+
+
+          this.multiplesPaymentType = tempMultiplesPaymentType;
+
+          this.selectedDocumentos = modifiedQuotas;
+
+
+          this.paymentDetails = resultPaymentDetails;
+          this.historialCuentas = comprobanteIngresoUtil.historialCuentas;
+
+          this.data.totalValorAbono = roundNumber(dataSubTotal.totalValorAbono, 5);
+          this.data.totalSaldo = roundNumber(dataSubTotal.totalSaldo, 5);
+
+
+          this.data.valorCambio = roundNumber(dataSubTotal.valorCambio, 5);
+
+          this.tS.toastr({
+            type: 'success',
+            message: 'Agregado Correctamente'
+          })
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            html: `<small>Algo salio mal: ${error}</small>`
+          })
+          console.log(error);
+        }
+      }
+
+
+    })
+  }
+
+
+  showCobroDetalle(data: any) {
+    let tempDetails = this.paymentDetails.filter(item => item.idCuotaPorCobrar === data.idCuotaPorCobrar && item.idCuentaPorCobrar === data.idCuentaPorCobrar);
+    let infoCobrosDetalle = [];
+
+    for (let pd of tempDetails) {
+      if (pd.abono > 0) {
+        let datoCobro = this.multiplesPaymentType.find(item => item.secuencial === pd.secuencial);
+        infoCobrosDetalle.push({
+          ...pd,
+          subEntidadFinanciera: datoCobro?.paymentSubTypeName,
+          posFechado: datoCobro?.posFechado ? 'SI' : 'NO'
+        })
+      }
+    }
+
+    let index = 1;
+    let message = '';
+
+    message = `<table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr class="small">
+                                        <th>N°</th>
+                                        <th>Entidad Financiera</th>
+                                        <th>Abono</th>
+                                        <th>Saldo</th>
+                                        <th>PosFechado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`
+    for (const item of infoCobrosDetalle) {
+      message += `<tr class="small">
+                                    <td>${index++}</td>
+                                    <td>${item.subEntidadFinanciera}</td>
+                                    <td>${item.abono}</td>
+                                    <td>${item.saldo}</td>
+                                    <td>${item.posFechado}</td>
+                                </tr>`
+
+    }
+    message += `</tbody></table>`
+
+    Swal.fire({
+      icon: 'info',
+      title: `<span>Cuota ${data.nroCuota}:</span> $${data.cuota} <br> <span>Mora:</span> $${data.mora}`,
+      width: 600,
+      html: message
+    })
+
+  }
+
+  showInfo = function (item: MultiplesPaymentType) {
+
+    Swal.fire({
+      icon: 'info',
+      html: `<div class="table-responsive">
+            <table class="table table-hover table-borderless table-sm">
+                <tbody>
+                    <tr>
+                        <td><b>Número:</b></td>
+                        <td>${item.nro || '...'}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Referencia:</b></td>
+                        <td>${item.referencia || '...'}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Lote:</b></td>
+                        <td>${item.lote || '...'}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Aprobación:</b></td>
+                        <td>${item.aprobacion || '...'}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>`
+    })
+
+  }
+
+
+
+  removePaymentType(secuencial: number) {
+    try {
+      Swal.fire({
+        html: `<small>Esta seguro/a de eliminar este Abono ahora?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, eliminar',
+        cancelButtonText: 'No, cancelar'
+      }).then(result => {
+        if (result.isConfirmed) {
+          let paymentDetails: Array<PaymentDetail> = [];
+          let historialCuentas: Array<PaymentHistory> = [];
+
+
+          const tempMultiplesPaymentType = this.multiplesPaymentType.filter((mp,) => mp.secuencial !== secuencial);
+
+
+
+          //Todas las cuotas en su estado original
+          let tempCuentasPorCobrar = this.selectedDocumentos.map(vc => ({
+            ...vc,
+            cuotas: structuredClone(vc.cuotasOriginal)
+          }))
+
+          let sequential = 0;
+          for (const item of tempMultiplesPaymentType) {
+            sequential++;
+
+            const comprobanteIngresoUtil = new ComprobanteIngresoUtil(sequential);
+            comprobanteIngresoUtil.setReceivedAmount(Number(item.valorAbono), item.posFechado);
+            comprobanteIngresoUtil.setPaymentDetail(paymentDetails)
+
+            tempCuentasPorCobrar = comprobanteIngresoUtil.applyReceivedAmountToQuota(tempCuentasPorCobrar);
+            paymentDetails = comprobanteIngresoUtil.paymentDetails;
+            historialCuentas = comprobanteIngresoUtil.historialCuentas;
+          }
+          const dataSubTotal = getPaymentSubTotales(tempCuentasPorCobrar, tempMultiplesPaymentType, this.comprobante)
+
+          this.selectedDocumentos = tempCuentasPorCobrar;
+
+          this.multiplesPaymentType = tempMultiplesPaymentType;
+
+
+          this.paymentDetails = paymentDetails;
+          this.historialCuentas = historialCuentas;
+
+          this.data.totalValorAbono = roundNumber(dataSubTotal.totalValorAbono, 5);
+          this.data.totalSaldo = roundNumber(dataSubTotal.totalSaldo, 5);
+
+
+          this.data.valorCambio = roundNumber(dataSubTotal.valorCambio, 5);
+
+          this.tS.toastr({
+            type: 'success',
+            message: 'Eliminado correctamente'
+          })
+        }
+      })
+    } catch (error) {
+      console.log(error)
     }
   }
 
 
-  toggleDisplay(group: any) {
-    group.display = !group.display;
+
+  save() {
+
+    try {
+      if (!(this.comprobante.idCliente > 0)) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Seleccione el cliente'
+        })
+
+        return
+      }
+      if (this.multiplesPaymentType.length === 0) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Ingrese al menos un abono'
+        })
+        return
+      }
+
+      if (this.paymentDetails.length === 0) {
+        this.tS.toastr({
+          type: 'warning',
+          message: 'Cobro detalle vacio!'
+        })
+        return
+      }
+
+      Swal.fire({
+        title: '<small>Guardar Cobro</small>',
+        html: "<small class='text-muted'>Esta seguro de guardar este cobro ahora?</small>",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, guardar!',
+        cancelButtonText: 'No, cancelar!'
+      }).then((result) => {
+
+        if (result.isConfirmed) {
+
+          let comprobante = {
+            idCliente: this.comprobante.idCliente,
+            total: this.multiplesPaymentType.reduce((acc, curr) => acc + curr.valorAbono, 0),
+            abono: this.multiplesPaymentType.reduce((acc, curr) => acc + curr.abonoCuota, 0),
+            codEstab: this.comprobante.codEstab,
+            numeroIdentificacion: this.comprobante.identificacionComprador,
+            nombreFiscal: this.comprobante.razonSocialComprador,
+          }
+
+          let cobros = this.multiplesPaymentType.map(item => {
+
+            let obj = {
+              idSubEntidadFinanciera: item.idSubEntidadFinanciera,
+              idEntidadFinanciera: item.idEntidadFinanciera,
+              idBanco: item.idBanco,
+              idCuentaBancaria: 0,
+              fechaEmision: item.fechaEmision,
+              valor: item.valorAbono,
+              posfechado: item.posFechado,
+              secuencial: item.secuencial,
+              infoCobro: item.infoCobro,
+              abono: item.abonoCuota,
+              controlCaja: item.controlCaja,
+              idComprobante: item.idComprobante,
+              idTipoDocumento: item.idTipoDocumento
+            }
+            return obj;
+          })
+
+
+          let data = {
+            comprobante,
+            cobros,
+            cobroDetalle: this.paymentDetails.filter(item => (item.abono > 0)),
+            historialCobros: this.historialCuentas,
+          }
+
+
+          let params = comprobanteIngresoAdapter.to(data);
+
+          showLoader();
+          this.comprobanteIngresoSvc.post(params).subscribe({
+            next: (response) => {
+              hideLoader()
+              if (isApiResponse(response)) {
+                if (response.code === "0") {
+                  this.tS.toastr({
+                    type: 'warning',
+                    message: response.message
+                  })
+                }
+                if (response.code === "1") {
+                  this.tS.toastr({
+                    type: 'success',
+                    message: response.message
+                  })
+                  this.modal.close(response)
+                }
+              }
+            },
+            error(error) {
+              hideLoader()
+              console.log(error)
+            }
+          })
+        }
+      })
+    } catch (error) {
+      hideLoader();
+      console.log(error)
+    }
   }
 
-  // Función para mostrar detalles de cobro de una cuota
-  showCobroDetalle(cuota: any) {
-    // Lógica para mostrar detalles de cobro de la cuota
-  }
-
-  isRowExpanded = (index: number, item: any) => item.display;
 
 
-  columnsToDisplay = ['expand', 'tipoDoc', 'serieComprobante', 'identificacionComprador', 'razonSocialComprador', 'total'];
 
 }

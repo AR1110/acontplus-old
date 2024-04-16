@@ -53,4 +53,8 @@ export class ComprobanteIngresoService {
       )
   }
 
+  post<T>(data: T){
+    return this.http.post(`${this.url}Insert`, {data})
+  }
+
 }

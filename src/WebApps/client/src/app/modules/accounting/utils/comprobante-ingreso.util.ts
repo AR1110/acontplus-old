@@ -1,16 +1,20 @@
 import { roundNumber } from "@core/utils/round-number.utils";
+import { MultiplesPaymentType, PaymentDetail, PaymentHistory } from "../models/comprobante-ingreso";
+import { CuentaPorCobrar, CuentaPorCobrarComprobante, Cuota } from "../models/cuenta-por-cobrar.model";
 
-
+type CuotaExtend = Cuota & {
+  abonoPosfechado: number
+}
 class ComprobanteIngresoUtil {
 
   private MAX_NUMBER_ROUND_GENERAL = 3;
   private MAX_NUMBER_ROUND_CUOTA_ABONO = 5;
 
   private receivedAmount = 0;
-  private voucher = {} as any;
+  private voucher = {} as CuentaPorCobrar;
   private esAbonoPosfechado = false;
-  paymentDetails: Array<any> = [];
-  historialCuentas: Array<any> = [];
+  paymentDetails: Array<PaymentDetail> = [];
+  historialCuentas: Array<PaymentHistory> = [];
   private sequencia = 0;
 
   constructor(sequencia: number) {
@@ -19,16 +23,25 @@ class ComprobanteIngresoUtil {
     this.receivedAmount = 0;
   }
 
-  setReceivedAmount(value: number) {
+  setReceivedAmount(value: number, esAbonoPosfechado: boolean) {
     this.receivedAmount = value;
+    this.esAbonoPosfechado = esAbonoPosfechado;
   }
 
-  setPaymentDetail(paymentDetails: Array<any>) {
+  setPaymentDetail(paymentDetails: Array<PaymentDetail>) {
     this.paymentDetails = paymentDetails;
   }
 
-  applyReceivedAmountToQuota(voucherQuotas: Array<any>): Array<any> {
-    const tempVoucherQuotas = JSON.parse(JSON.stringify(voucherQuotas));
+  getEstadoCuota(item: any) {
+    let estado = '';
+    if (item.saldo === 0) estado = 'COBRADA'
+    if (item.saldo > 0) estado = "PENDIENTE PARCIAL";
+    if (item.abono === 0) estado = "PENDIENTE";
+    return estado
+  }
+
+  applyReceivedAmountToQuota(cuentasPorCobrar: Array<CuentaPorCobrar>): Array<CuentaPorCobrar> {
+    const tempVoucherQuotas = JSON.parse(JSON.stringify(cuentasPorCobrar));
 
     for (const group of tempVoucherQuotas) {
       this.voucher = group;
@@ -126,16 +139,16 @@ class ComprobanteIngresoUtil {
           item.abonoPosfechado,
           this.MAX_NUMBER_ROUND_GENERAL
         );
-        // item.saldo = this.getValorSaldo(item) //Verificamos el saldo de la Cuota
-        //item.estado = this.getEstadoCuota(item);
+        item.estado = this.getEstadoCuota(item);
 
-        // item.esCuotaAfectada = true;
+        item.esCuotaAfectada = true; //
+
       }
     }
     return tempVoucherQuotas;
   }
 
-  private feeWithPayment(item: any) {
+  private feeWithPayment(item: CuotaExtend) {
     //Validaciones Saldo Cuota
     if (item.saldoCta >= this.receivedAmount) {
       const valorSaldoCta = item.saldoCta - this.receivedAmount;
@@ -181,7 +194,7 @@ class ComprobanteIngresoUtil {
    *
    * @param item Quota
    */
-  private unpaidFee(item: any) {
+  private unpaidFee(item: CuotaExtend) {
     //Validaciones Saldo Cuota
     if (item.saldoCta >= this.receivedAmount) {
       const valorSaldoCta = item.saldoCta - this.receivedAmount;
@@ -226,7 +239,7 @@ class ComprobanteIngresoUtil {
    * @param {number} saldo
    * @returns void
    */
-  private addPaymentDetail(item: any, abono: number, saldo: number) {
+  private addPaymentDetail(item: CuotaExtend, abono: number, saldo: number) {
     if (item.cuota == 0) return;
 
     let valorMovimientoSaldo = 0;
@@ -260,7 +273,7 @@ class ComprobanteIngresoUtil {
 
 }
 
-export const getTotalesCuota = (voucherQuotas: Array<any>) => {
+export const getTotalesCuota = (voucherQuotas: Array<CuentaPorCobrar>) => {
   const { importeTotal, totalAbonoAnterior, totalSaldo, totalSaldoDoc } = voucherQuotas.reduce((total, voucher) => {
     total.importeTotal += voucher.importeTotal;
     total.totalSaldo += voucher.saldo;
@@ -288,16 +301,29 @@ export const getTotalesCuota = (voucherQuotas: Array<any>) => {
 
 }
 
-export const getPaymentSubTotales = (voucherQuotas: Array<any>, multiplesPaymentType: Array<any>, comprobante: any) => {
-  const totalValorAbono = multiplesPaymentType.reduce((prev, curr) => prev + Number(curr.receivedAmount), 0)
-  const totalSaldo = voucherQuotas.flatMap(item => item.cuotas)
+export const getPaymentSubTotales = (cuotasPorCobrar: Array<CuentaPorCobrar>, multiplesPaymentType: Array<MultiplesPaymentType>, comprobante: CuentaPorCobrarComprobante) => {
+
+
+  let { totalValorAbono, totalValorAbonoEfectivo } = multiplesPaymentType.reduce((prev, curr) => {
+    prev.totalValorAbono += curr.valorAbono;
+    if (curr.paymentTypeCode === "EFE") {
+      prev.totalValorAbonoEfectivo += curr.valorAbono;
+    }
+    return prev;
+  }, {
+    totalValorAbono: 0,
+    totalValorAbonoEfectivo: 0
+  });
+
+
+  const totalSaldo = cuotasPorCobrar.flatMap(item => item.cuotas)
     .reduce((prev, curr) => prev + curr.saldo, 0);
   let valorCambio = 0;
 
-
-  if (totalValorAbono >= comprobante.saldo) {
-    valorCambio = totalValorAbono - comprobante.saldo;
+  if (totalValorAbonoEfectivo >= comprobante.saldo) {
+    valorCambio = totalValorAbonoEfectivo - comprobante.saldo
   }
+
   return {
     totalValorAbono: roundNumber(totalValorAbono, 5),
     totalSaldo: roundNumber(totalSaldo, 5),

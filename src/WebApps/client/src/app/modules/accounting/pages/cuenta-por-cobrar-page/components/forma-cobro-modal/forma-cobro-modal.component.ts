@@ -1,5 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToasterService } from '@core/services/toaster.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SubEntidadFinancieraComponent } from './components/sub-entidad-financiera/sub-entidad-financiera.component';
@@ -9,18 +9,36 @@ import { BancoSelectComponent } from './components/banco-select/banco-select.com
 import { roundNumber } from '@core/utils/round-number.utils';
 import { PaymentTypeCode } from '@modules/accounting/enums/accounting.constants';
 import { isValidField } from '@core/utils/utils';
-import { formatDateMoment } from '@core/utils/format-date-moment';
+import { PaymentSubType, PaymentType } from '@modules/accounting/models/payment-type.model';
+import { PaymentData } from '@modules/accounting/models/comprobante-ingreso';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { map, Observable, startWith } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+import Swal from 'sweetalert2';
+
+
+export const _filter = (opt: any[], value: string): string[] => {
+  console.log(opt)
+  const filterValue = value.toLowerCase();
+
+  return opt.filter(item => item.descripcion.toLowerCase().includes(filterValue));
+};
 
 @Component({
   selector: 'app-forma-cobro-modal',
   standalone: true,
   imports: [
+    ReactiveFormsModule,
     NgbAccordionModule,
     FormsModule,
+    MatAutocompleteModule,
+    MatInputModule,
     SubEntidadFinancieraComponent,
     ValorAbonoComponent,
     FechaEmisionComponent,
-    BancoSelectComponent
+    BancoSelectComponent,
+    AsyncPipe,
   ],
   templateUrl: './forma-cobro-modal.component.html',
   styles: ``
@@ -32,11 +50,16 @@ export class FormaCobroModalComponent {
       razonSocialComprador: null
     },
     saldo: 0,
-    datosCobro: []
+    multiplesPaymentType: []
   }
 
   modal = inject(NgbActiveModal);
   tS = inject(ToasterService)
+
+  ciudadesGroupOptions!: Observable<any[]>;
+  ciudadForm = this._formBuilder.group({
+    ciudadGroup: '',
+  });
 
   VALOR_ABONO_ORIGINAL = 0;
 
@@ -58,15 +81,42 @@ export class FormaCobroModalComponent {
     razonSocialComprador: null
   }
 
-  entidadesFinanciera: any[] = [];
-  subEntidadesFinanciera: any[] = []
+  entidadesFinanciera: PaymentType[] = [];
+  subEntidadesFinanciera: PaymentSubType[] = []
   bancos: any[] = []
   ciudades: any[] = []
-  documentosElectronicos = [];
+  documentosElectronicos: any[] = [];
 
   selectedDocElectronico = []
 
   selectedIndexTab = 0;
+
+  constructor(private _formBuilder: FormBuilder) { }
+
+
+  private _filterGroup(value: string): any[] {
+    if (value) {
+      return this.ciudades
+        .map(group => ({ provincia: group.provincia, ciudades: _filter(group.ciudades, value) }))
+        .filter(group => group.ciudades.length > 0);
+    }
+
+    return this.ciudades;
+  }
+
+  agruparPorProvincia(ciudades: any) {
+    let provincias: any = {};
+    ciudades.forEach(function (ciudad: any) {
+      if (!provincias[ciudad.provincia]) {
+        provincias[ciudad.provincia] = [];
+      }
+      provincias[ciudad.provincia].push(ciudad);
+    });
+    return Object.keys(provincias).map(function (provincia) {
+      return { provincia: provincia, ciudades: provincias[provincia] };
+    });
+  }
+
 
   loadInitialData() {
     try {
@@ -76,25 +126,45 @@ export class FormaCobroModalComponent {
 
 
       this.bancos = bancos;
-      this.ciudades = ciudades;
+      this.ciudades = this.agruparPorProvincia(ciudades);
 
       this.documentosElectronicos = documentos;
-      //  this.onChangeTabEntidadFinanciera(selectedIndexTab)
     } catch (error) {
       console.log(error)
     }
   }
 
+
+
   ngOnInit() {
-    let { dataFormaCobro, comprobante, saldo, datosCobro } = this.params;
+    let { saldo } = this.params;
     this.VALOR_ABONO_ORIGINAL = roundNumber(saldo, 3);
-    this.loadInitialData()
+    this.loadInitialData();
+
+    this.ciudadesGroupOptions = this.ciudadForm.get('ciudadGroup')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGroup(value || '')),
+    );
+  }
+
+  onSelectionChangeCiudad(id: number) {
+    this.data.idCiudad = id;
   }
 
   onChangeTabEntidadFinanciera($index: number) {
 
     try {
-      const { descripcion, idEntidadFinanciera, codigo, subEntidadesFinanciera } = this.entidadesFinanciera.at($index);
+      const dataEntidadFinanciera = this.entidadesFinanciera.at($index);
+      let descripcion = null;
+      let idEntidadFinanciera = 0;
+      let codigo = null;
+      let subEntidadesFinanciera: PaymentSubType[] = []
+      if (dataEntidadFinanciera) {
+        descripcion = dataEntidadFinanciera.descripcion;
+        idEntidadFinanciera = dataEntidadFinanciera.idEntidadFinanciera;
+        codigo = dataEntidadFinanciera.codigo
+        subEntidadesFinanciera = dataEntidadFinanciera.subEntidadesFinanciera
+      }
       const el = document.getElementById('btnAddFormaPago');
 
       // Controlar la visibilidad del botón en función del código de la entidad financiera
@@ -117,6 +187,10 @@ export class FormaCobroModalComponent {
       this.selectedDocElectronico = [];
       this.data.fechaEmision = new Date();
 
+      this.ciudadForm.reset({
+        ciudadGroup: '' // Reset to empty string or any other initial value
+      });
+
       if (this.subEntidadesFinanciera.length === 0) {
         this.tS.toastr({
           type: 'warning',
@@ -132,7 +206,7 @@ export class FormaCobroModalComponent {
   }
 
   isValidData() {
-    let paymentTypeCode = this.entidadesFinanciera.find(e => e.idEntidadFinanciera === this.data.idEntidadFinanciera).codigo;
+    let paymentTypeCode = this.entidadesFinanciera.find(e => e.idEntidadFinanciera === this.data.idEntidadFinanciera)?.codigo;
     let { nro, referencia, aprobacion, idCiudad, idBanco, lote } = this.data;
 
     if (!(this.data.idSubEntidadFinanciera > 0)) {
@@ -268,27 +342,36 @@ export class FormaCobroModalComponent {
   getDataPago(item: any = {}) {
     try {
       let entidadFinanciera = this.entidadesFinanciera.find(item => item.idEntidadFinanciera === this.data.idEntidadFinanciera);
-      let subEntidadFinanciera = entidadFinanciera.subEntidadesFinanciera.find((item: any) => item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera);
+      let subEntidadFinanciera = entidadFinanciera?.subEntidadesFinanciera.find((item: any) => item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera);
 
       let ciudad = this.ciudades.find(item => item.idCiudad === this.data.idCiudad);
       let banco = this.bancos.find(item => item.idBanco === this.data.idBanco);
 
-      let formattedDateTime = formatDateMoment(this.data.fechaEmision);
-      let obj = {
+      //  let formattedDateTime = formatDateMoment(this.data.fechaEmision);
+
+      const infoCobro = [{
+        nro: this.data.nro,
+        lote: this.data.lote,
+        aprobacion: this.data.aprobacion,
+        referencia: this.data.referencia,
+        idCiudad: this.data.idCiudad
+      }]
+
+      let obj: PaymentData = {
         //Info
-        entidadFinanciera: entidadFinanciera.descripcion,
-        subEntidadFinanciera: subEntidadFinanciera.descripcion,
+        paymentTypeName: entidadFinanciera?.descripcion,
+        paymentSubTypeName: subEntidadFinanciera?.descripcion,
 
         ciudad: ciudad && ciudad.descripcion,
         banco: banco && banco.descripcion,
 
         //Data
-        idEntidadFinanciera: entidadFinanciera.idEntidadFinanciera,
-        idSubEntidadFinanciera: subEntidadFinanciera.idSubEntidadFinanciera,
-        codEntidadFinanciera: entidadFinanciera.codigo,
+        idEntidadFinanciera: entidadFinanciera?.idEntidadFinanciera ?? 0,
+        idSubEntidadFinanciera: subEntidadFinanciera?.idSubEntidadFinanciera ?? 0,
+        paymentTypeCode: entidadFinanciera?.codigo ?? "",
         idBanco: this.data.idBanco,
         idCiudad: this.data.idCiudad,
-        fechaEmision: formattedDateTime,
+        fechaEmision: this.data.fechaEmision,
         posFechado: this.data.posFechado,
         referencia: this.data.referencia,
         aprobacion: this.data.aprobacion,
@@ -300,13 +383,51 @@ export class FormaCobroModalComponent {
         idComprobante: item.idDocumento,
         tipoDocumento: item.tipoDocumento || item.codDoc,
         valorAbono: item.saldo || this.data.valorAbono,
-        controlCaja: subEntidadFinanciera.controlCaja
+        controlCaja: subEntidadFinanciera?.controlCaja ?? false,
+
+        infoCobro: entidadFinanciera?.codigo === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
+        abonoCuota: 0,
+        secuencial: 0,
       }
       return obj;
     } catch (error) {
       console.log(error);
       return {}
     }
+  }
+
+
+  addDocumentoElectronico(item: any) {
+    if (item.saldo === 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'El Valor de Abono tiene que ser mayor a 0'
+      })
+      return
+    }
+
+    if (this.params.multiplesPaymentType.some((d: any) => d.idTipoDocumento === item.idTipoDocumento && d.idComprobante === item.idDocumento)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Este documento ya fue aplicado al cobro'
+      })
+      // $(".swal2-container").css("z-index", "999999");
+      return
+    }
+    Swal.fire({
+      html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${item.codDoc == 'A' ? item.serieComprobante : item.tipoDoc}?</small>`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, abonar',
+      cancelButtonText: 'No, cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.modal.close(this.getDataPago(item))
+      }
+    })
+
   }
 
 
