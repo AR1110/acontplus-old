@@ -1152,17 +1152,12 @@
                 let dataMedida = medidas.find((medida) => medida.defaultMedida);
                 let dataTarifaImpuesto = $scope.tarifasImpuesto.find(
                     (ti) => ti.codigoPorcentaje === articulo.codigoPorcentaje
-                );
-
-                let precioUnitario = dataMedida.precioCostoFraccionado;
+                ); 
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
-                entity.precioUnitario = fS.roundNumber(
-                    precioUnitario,
-                    $scope.decimal.nroPrecio
-                );
+                entity.precioUnitario = 
                 entity.etiquetas = etiquetas;
 
                 //Medidas
@@ -1170,6 +1165,10 @@
                 entity.idMedida = dataMedida.idMedida;
                 entity.conversion = dataMedida.conversion;
                 entity.precioCosto = dataMedida.precioCosto;
+                entity.precioUnitario = fS.roundNumber(
+                    dataMedida.precioUnitario,
+                    $scope.decimal.nroPrecio
+                );
                 entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
 
                 //IVA

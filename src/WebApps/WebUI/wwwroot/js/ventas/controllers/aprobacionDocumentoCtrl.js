@@ -3737,25 +3737,21 @@
         const validateCuota = function () {
             let objParamsCuota = {
                 fechaEmision: $scope.data.fechaEmision,
-                tiemposCredito: $scope.tiemposCredito,
+                tiemposCredito: $scope.tiempoCreditos,
                 idTiempoCredito: $scope.data.idTiempoCredito,
                 montoTotal: $scope.data.total,
-                cuotas: $scope.cuotas
+                cuotas: []
             }
             let cuotas = [];
             let montoTotalCuota = 0;
 
-            if (isRegister()) {
-                let dataCuota = fS.calcularCuotas(objParamsCuota);
-                cuotas = dataCuota.cuotas;
-                montoTotalCuota = dataCuota.montoTotalCuota;
+         
+            let dataCuota = fS.calcularCuotas(objParamsCuota);
+            cuotas = dataCuota.cuotas;
+            montoTotalCuota = dataCuota.montoTotalCuota;
 
-            }
-            if (isUpdate()) {
-                let dataCuota = fS.updateCuotas(objParamsCuota)
-                cuotas = dataCuota.cuotas;
-                montoTotalCuota = dataCuota.montoTotalCuota;
-            }
+           
+             
 
             if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
                 tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
@@ -3843,9 +3839,7 @@
                     if ($scope.data.docDestino === DOC_TYPE.NE) {
                         let query = notaEntregaSvc.queryMapper({
                             data: $scope.data,
-                            cliente: {
-                                idCliente: $scope.cliente.idCliente
-                            },
+                            cliente: $scope.cliente,
                             detalles: $scope.gridOptionsDetalle.data,
                             itemsDeleted: [],
                             historyDatosAdicionales: $scope.historyDatosAdicionales,
