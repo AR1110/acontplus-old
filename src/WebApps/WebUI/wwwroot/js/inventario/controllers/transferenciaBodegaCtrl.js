@@ -279,9 +279,9 @@
 
     app.controller('ModalTransferenciaBodegaCtrl', ModalTransferenciaBodegaCtrl);
 
-    ModalTransferenciaBodegaCtrl.$inject = ["$scope", "$timeout", "$uibModalInstance", "params"];
+    ModalTransferenciaBodegaCtrl.$inject = ["$scope", "$timeout", "$uibModalInstance",'articuloService', "params"];
 
-    function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, params) {
+    function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, articuloSvc, params) {
         let { data } = params;
 
         $scope.tipoDoc = {
@@ -329,17 +329,100 @@
                     rowEntity[colDef.field] = oldValue;
                 }
 
-                if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
-                    let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
-                    rowEntity.precioCosto = dataMedida.precioCosto;
-                    rowEntity.precioUnitario = dataMedida.precioUnitario;
-                    rowEntity.conversion = dataMedida.conversion;
+                if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
+                if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
+
+               
+
+                //Verificacion del stock
+                if (["idMedida", "cantidad"].includes(colDef.field)) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
                 }
 
                 $scope.setTotal(rowEntity);
 
 
             })
+        }
+
+        /**
+         * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
+         * @param {string} field - Campo modificado.
+         * @param {*} rowEntity - Objeto de fila actual.
+         * @param {*} oldValue - Valor anterior del campo modificado.
+         */
+        function checkNotificationStock(field, rowEntity, oldValue) {
+            try {
+                rowEntity.idBodega = $scope.data.idBodegaOrigen;
+
+                // Clona el objeto de la fila y la lista de artículos para evitar modificaciones directas.
+                let rowItemClone = structuredClone(rowEntity);
+                let gridOptionsClone = structuredClone($scope.gridOptions.data);
+
+                // Realiza la fusión de elementos en la lista de artículos clonada.
+                let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
+
+                // Si la cantidad no ha cambiado, no realizar más acciones.
+                if (dataItemMerge.cantidad == oldValue) return;
+
+ 
+                showLoader();
+
+                articuloSvc.checkNotificationStock({
+                    idArticulo: rowEntity.idArticulo,
+                    cantidad: -dataItemMerge.cantidadStock,
+                    idBodega: rowEntity.idBodega,
+                    idMedida: rowEntity.idMedida
+                }).then(async responseApi => {
+                    // Oculta el indicador de carga después de recibir la respuesta del servicio.
+                    hideLoader();
+
+                    let { code, message, titleSms } = responseApi;
+
+                    // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
+                    if (code === "1") {
+                        if (field === "idMedida" && rowEntity.idMedida !== oldValue) {
+                            let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
+                            rowEntity.precioCosto = dataMedida.precioCosto;
+                            rowEntity.precioUnitario = dataMedida.precioUnitario;
+                            rowEntity.conversion = dataMedida.conversion;
+                        }
+                        return;
+                    }
+
+                    // Muestra un mensaje de advertencia y espera la confirmación del usuario.
+                    let { isConfirmed } = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    });
+
+                    // Según la confirmación, realiza acciones adicionales.
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
+                            rowEntity[field] = oldValue;
+                            $scope.setTotal(rowEntity);
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                            // Si el código es "2", solo realiza cálculos totales.
+                            $scope.setTotal(rowEntity);
+                        }
+                    }
+                }).catch(error => {
+                    // Maneja errores en la llamada al servicio.
+                    hideLoader();
+                    console.log(error);
+                });
+            } catch (error) {
+                // Maneja errores generales en el bloque try-catch.
+                hideLoader();
+                console.log(error);
+            }
         }
 
         $scope.setFocusArticulo = function () {
@@ -610,6 +693,9 @@
                     }
                     $scope.data.codEstabDestino = null;
                     $scope.data.idBodegaDestino = 0;
+                    for(let item of $scope.gridOptions.data){
+                        item.cantidad = 0;
+                    }
                     $scope.$apply();
                 } else {
                     $scope.data.codEstabOrigen = $scope.cloneCodEstabOrigen;
