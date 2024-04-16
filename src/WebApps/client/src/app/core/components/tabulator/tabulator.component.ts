@@ -1,6 +1,19 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewEncapsulation,
+} from '@angular/core';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabulator-tables';
+import {
+  PageModule,
+  ReactiveDataModule,
+  TabulatorFull as Tabulator,
+} from 'tabulator-tables';
 
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
@@ -13,7 +26,6 @@ Tabulator.registerModule([PageModule, ReactiveDataModule]);
   encapsulation: ViewEncapsulation.None,
 })
 export class TabulatorComponent implements OnChanges {
-
   @Input() tableData: any[] = [];
   @Input() columnNames: any[] = [];
   @Input() height: string = '311px';
@@ -21,23 +33,22 @@ export class TabulatorComponent implements OnChanges {
   @Input() dataTreeChildField: string = 'childRows';
   @Input() dataTreeStartExpanded: boolean = false;
 
-  @Input() options = {}
+  @Input() options = {};
 
   @Output() cellEdited = new EventEmitter();
   @Output() cellClick = new EventEmitter();
 
-
-   uniqueIdTabulator= generateUuidv4()
+  uniqueIdTabulator = generateUuidv4();
   tab = document.createElement('div');
 
-
-  refTabulator!: Tabulator
+  refTabulator!: Tabulator;
 
   // ngOnInit(): void {
   //   this.drawTable();
   // }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('drawign');
     if (changes['tableData']) {
       this.drawTable();
     }
@@ -59,35 +70,34 @@ export class TabulatorComponent implements OnChanges {
       dataTreeStartExpanded: this.dataTreeStartExpanded,
       height: this.height,
       layout: 'fitData',
-      // reactiveData: true,
+      reactiveData: true,
       //responsiveLayout: true,
       autoResize: true, // prevent auto resizing of table
-      placeholder: "Sin registro",
+      placeholder: 'Sin registro',
 
-       selectable: true,
+      selectable: true,
       // selectableRangeMode: "click",
       // selectableRollingSelection: true,
-      ...this.options
+      ...this.options,
     });
     let table = document.getElementById(`${this.uniqueIdTabulator}`);
     if (table) {
       table.appendChild(this.tab);
-      if(this.cellEdited){
-        this.refTabulator.on("cellEdited", (cell)=>{
-          this.cellEdited.emit(cell)
-        })
+      if (this.cellEdited) {
+        this.refTabulator.on('cellEdited', (cell) => {
+          this.cellEdited.emit(cell);
+        });
       }
 
-      if (this.cellClick){
-        this.refTabulator.on("rowClick",(cell, row)=>{
-          this.cellClick.emit(row)
-        })
+      if (this.cellClick) {
+        this.refTabulator.on('rowClick', (cell, row) => {
+          this.cellClick.emit(row);
+        });
       }
     }
   }
 
-  updateData(){
+  updateData() {
     // this.refTabulator.updateData(this.tableData)
   }
-
 }

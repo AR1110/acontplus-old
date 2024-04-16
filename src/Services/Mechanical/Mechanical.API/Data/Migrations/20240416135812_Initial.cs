@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Mechanical.API.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial_Migration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -200,12 +201,12 @@ namespace Mechanical.API.Data.Migrations
                     Suspension = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
                     Obs = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     CompanyId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true)
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
