@@ -185,24 +185,22 @@
                 let template = nombreModalInventario.TRANSFERENCIA_BODEGA.templates['D'];
                 let controller = (await import(fileCtrl))[ctrl];
 
-                transBodegaSvc.getIdDetalle(item.idTransferenciaBodega).then(response => {
-                    let modalRef = modalSvc.openModalCustom({
-                        controller,
-                        template,
-                        isRenderRazorPartial: true,
-                        size: 'xl',
-                        params: {
-                            data: response,
-                        }
-                    })
-                    modalRef.result.then(result => {
-                        if (typeof result === 'object') {
-                            $scope.getTransferenciasBodega();
-                        }
-                    })
-                }).catch(error => {
-                    console.log(error)
-                }).finally(() => hideLoader())
+                let modalRef = modalSvc.openModalCustom({
+                    controller,
+                    template,
+                    isRenderRazorPartial: true,
+                    size: 'xl',
+                    params: {
+                        data: response,
+                    }
+                })
+                modalRef.result.then(result => {
+                    if (typeof result === 'object') {
+                        $scope.getTransferenciasBodega();
+                    }
+                })
+
+               
             } catch (error) {
                 console.log(error)
             } finally {
