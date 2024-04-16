@@ -1,5 +1,5 @@
 import { Component, inject, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
@@ -39,7 +39,6 @@ import { OrderDetailComponent } from './order-detail/order-detail.component';
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
-  private fb = inject(FormBuilder);
   private modalRef = inject(NgbActiveModal);
   private modalService = inject(ModalService);
   private orderService = inject(OrderService);
@@ -55,16 +54,16 @@ export class OrderModalComponent {
   puntosEmision: Array<GroupedEstabPuntoEmision> = [];
   users: any = [];
 
-  orderForm = this.fb.group({
-    assignedUserId: 0,
-    uuid: uuidv4(),
-    establecimientoId: [0, Validators.required],
-    puntoEmisionId: [0, Validators.required],
-    customerCompanyId: [0, Validators.required],
-    fechaEmision: '',
-    obs: [''],
-    orderStatusId: 0,
-    orderDetails: [],
+  orderForm = new FormGroup({
+    id: new FormControl(0),
+    assignedUserId: new FormControl(0, Validators.required),
+    uuid: new FormControl(uuidv4()),
+    establecimientoId: new FormControl(0, Validators.required),
+    puntoEmisionId: new FormControl(0, Validators.required),
+    customerCompanyId: new FormControl(0, Validators.required),
+    fechaEmision: new FormControl('', Validators.required),
+    obs: new FormControl(''),
+    orderStatusId: new FormControl(0),
   });
 
   addDetail(device: any) {
@@ -89,7 +88,9 @@ export class OrderModalComponent {
       : device.deviceWarranty;
     deviceToAdd.obs = '';
     deviceToAdd.uuid = uuidv4();
+    deviceToAdd.assignedUserId = 0;
     this.orderDetails.push(deviceToAdd);
+    // console.log(this.orderDetails);
   }
 
   closeModal() {
@@ -106,7 +107,6 @@ export class OrderModalComponent {
     this.orderService.get(parameters).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
-          console.log(response);
           if (response.code == '1') {
             let parsedResponse = JSON.parse(response.payload as string);
             let { puntosEmision, users } = parsedResponse;
@@ -136,7 +136,6 @@ export class OrderModalComponent {
             if (this.data.id > 0) {
               let { order, orderDetails } = parsedResponse;
               this.order = order[0];
-              console.log(this.order);
               this.orderDetails = orderDetails || [];
               this.orderForm.patchValue(this.order);
             }
@@ -208,39 +207,53 @@ export class OrderModalComponent {
 
   save() {
     showLoader();
-    const data = {
-      ...this.orderForm.value,
-      orderDetails: this.orderDetails,
-    };
-
     if (this.orderDetails.length == 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Debe de añadir los detalles a la orden',
       });
     }
-    this.orderService.post(data).subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          this.tS.toastr({
-            type: response.code == '1' ? 'success' : 'warning',
-            message: response.message!,
-          });
-          if (response.code === '1') {
-            this.orderForm.patchValue({});
-            this.orderDetails = [];
-            this.order = {};
-            this.modalRef.close(response);
-          }
-        }
-      },
-      error(err) {
-        console.log(err);
-        hideLoader();
-      },
-      complete() {
-        hideLoader();
-      },
-    });
+    const dataToSave = {
+      ...this.orderForm.value,
+      orderDetails: this.orderDetails,
+    };
+    if (this.data.id > 0) {
+      this.orderService.put(this.data.id, dataToSave).subscribe({
+        next: this.successResponse,
+        error(err) {
+          console.log(err);
+          hideLoader();
+        },
+        complete() {
+          hideLoader();
+        },
+      });
+    } else {
+      this.orderService.post(dataToSave).subscribe({
+        next: this.successResponse,
+        error(err) {
+          console.log(err);
+          hideLoader();
+        },
+        complete() {
+          hideLoader();
+        },
+      });
+    }
   }
+  successResponse = (response: object) => {
+    hideLoader();
+    if (isApiResponse(response)) {
+      this.tS.toastr({
+        type: response.code == '1' ? 'success' : 'warning',
+        message: response.message!,
+      });
+      if (response.code === '1') {
+        this.orderForm.patchValue({});
+        this.orderDetails = [];
+        this.order = {};
+        this.modalRef.close(response);
+      }
+    }
+  };
 }
