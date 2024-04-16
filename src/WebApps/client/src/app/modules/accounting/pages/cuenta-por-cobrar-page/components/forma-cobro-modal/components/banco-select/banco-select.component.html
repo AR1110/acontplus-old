@@ -1,6 +1,6 @@
 <div class="form-group">
   <label>Banco: <span class="text-danger">*</span></label>
-  <select class="form-control border-select" [(ngModel)]="value" (change)="onChange()">
+  <select class="form-select border-select" [(ngModel)]="value" (change)="onChange()">
     @for (item of bancos; track $index) {
     <option [ngValue]="item.idBanco">
       {{item.descripcion}}

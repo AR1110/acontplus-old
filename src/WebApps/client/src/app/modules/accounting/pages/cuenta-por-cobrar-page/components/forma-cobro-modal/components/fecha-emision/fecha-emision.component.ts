@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { formatDate } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-fecha-emision',
@@ -17,7 +18,14 @@ export class FechaEmisionComponent {
 
   @Output() valueChange = new EventEmitter<Date>(); // Evento para emitir el nuevo valor al componente padre
 
-  onChange() {
-    this.valueChange.emit(this.value); // Emitir el nuevo valor al componente padre
+  onChange(event: Event) {
+      const inputElement = event.target as HTMLInputElement;
+      const timeString = inputElement.value;
+
+    let dateObject = formatDate(timeString);
+
+
+
+    this.valueChange.emit(dateObject); // Emitir el nuevo valor al componente padre
   }
 }

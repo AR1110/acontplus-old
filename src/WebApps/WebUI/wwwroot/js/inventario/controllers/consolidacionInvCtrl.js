@@ -357,16 +357,14 @@
                     return
                 }
 
-                if (colDef.field === "precioActual") {
-                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio)
-                    rowEntity.precioActual = fS.roundNumber(rowEntity.precioActual, $scope.decimal.nroPrecio)
+                if (colDef.field === "precioUnitario") {
+                    rowEntity.precioUnitario = fS.roundNumber(rowEntity.precioUnitario, $scope.decimal.nroPrecio) 
                 }
 
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
 
-                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio);
-                    rowEntity.precioActual = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio);
+                    rowEntity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio); 
                     rowEntity.conversion = dataMedida.conversion;
                 }
 
@@ -564,7 +562,7 @@
             },
             {
                 name: 'P. Costo',
-                field: 'precioUnitario',
+                field: 'precioCosto',
                 enableCellEditOnFocus: true,
                 enableColumnMenu: false,
                 type: 'number',
@@ -577,8 +575,8 @@
                 aggregationLabel: "$",
             },
             {
-                name: 'P. Costo Actual',
-                field: 'precioActual',
+                name: 'P. Costo Unitario',
+                field: 'precioUnitario',
                 min: 0,
                 type: 'number',
                 enableCellEdit: true,
@@ -658,11 +656,13 @@
                         for (const a of articlesSelected) {
                             if (!$scope.gridOptions.data.some(x => x.idArticulo == a.idArticulo)) {
                                 let obj = structuredClone(a);
-                                obj.precioActual = obj.precioCosto;
+                                obj.precioUnitario = obj.precioUnitario;
+                                obj.precioCosto = obj.precioCosto;
+                                obj.precioCostoFraccionado = obj.precioCostoFraccionado;
                                 console.log(opcion)
                                 obj.cantidad = opcion && opcion===6? obj.cantidad : 1;
                                 obj.idBodega = $scope.data.idBodega;
-                                let total = obj.cantidad * obj.precioActual;
+                                let total = obj.cantidad * obj.precioUnitario;
                                 obj.total = fS.roundNumber(total, $scope.decimal.nroPrecio); //Total Precio Venta
                                 $scope.gridOptions.data.push(obj)
                             }
@@ -837,7 +837,7 @@
             entity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
             entity.precioUnitario = dataMedida.precioUnitario;
             entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
-            entity.precioActual = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio)
+          //  entity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio)
 
             entity.total = fS.roundNumber(entity.cantidad * dataMedida.precioUnitario, $scope.decimal.nroPrecio)
 
@@ -850,7 +850,7 @@
         }
 
         function setTotalColumn(rowEntity) {
-            let total = rowEntity.cantidad * rowEntity.precioActual;
+            let total = rowEntity.cantidad * rowEntity.precioUnitario;
             rowEntity.total = fS.roundNumber(total, $scope.decimal.nroPrecio); //Total Precio Venta
         }
 
