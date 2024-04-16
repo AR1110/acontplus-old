@@ -124,7 +124,12 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-success" title="Guardar Orden">
+    <button
+      type="submit"
+      class="btn btn-outline-success"
+      title="Guardar Orden"
+      [disabled]="orderForm.invalid"
+    >
       <fa-icon [icon]="'save'"></fa-icon> Guardar
     </button>
     <button

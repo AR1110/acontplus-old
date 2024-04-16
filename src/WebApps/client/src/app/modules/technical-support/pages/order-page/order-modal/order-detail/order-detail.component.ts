@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, SimpleChanges } from '@angular/core';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
@@ -109,6 +109,13 @@ export class OrderDetailComponent {
         });
       }
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['orderDetails']) {
+      console.log('changing')
+      this.orderDetails = this.orderDetails;
+    }
   }
 
   removeFromList(deviceId: number) {

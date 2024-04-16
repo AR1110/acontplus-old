@@ -8,4 +8,5 @@ export interface OrderDetail {
   obs?: string;
   orderId?: number;
   uuid: string;
+  assignedUserId?: number;
 }

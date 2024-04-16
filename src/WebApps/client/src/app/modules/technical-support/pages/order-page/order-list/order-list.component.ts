@@ -21,7 +21,6 @@ import { CommonModule } from '@angular/common';
   templateUrl: './order-list.component.html',
   styles: ``,
 })
-
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
   private modalService = inject(ModalService);
@@ -84,15 +83,26 @@ export class OrderListComponent implements OnInit {
       centered: true,
     });
     modalRef.componentInstance.data = item;
+    modalRef.result.then((response) => {
+      debugger;
+      if (response !== null && typeof response === 'object') {
+        this.get();
+      }
+    });
   }
 
   get() {
     showLoader();
-    this.orderService.get({tipo: 2, orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode], ...this.dataSearch,})
+    this.orderService
+      .get({
+        tipo: 2,
+        orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode],
+        ...this.dataSearch,
+      })
       .subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
-            if (response["code"] === "0") return;
+            if (response['code'] === '0') return;
 
             const { orders } = JSON.parse(response.payload as string);
             this.orders = orders;
@@ -136,7 +146,7 @@ export class OrderListComponent implements OnInit {
   openModalMaintenance(id: number) {
     const modalRef = this.modalService.openModalCustom(
       OrderMaintenanceModalComponent,
-      {  size: 'xl' }
+      { size: 'xl' }
     );
     modalRef.componentInstance.params = { id };
   }

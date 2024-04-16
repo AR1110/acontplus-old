@@ -353,8 +353,6 @@ export class DeviceModalComponent implements OnInit {
           name: this.specForm.get('name')?.value,
           value: this.specForm.get('value')?.value,
         };
-        console.log('object');
-        console.log(object);
         item.specs.push(object);
       }
     });
