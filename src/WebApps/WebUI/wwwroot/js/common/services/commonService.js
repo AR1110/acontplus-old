@@ -16,7 +16,7 @@ export class CommonService {
         "empleadoService",
         "ventaService",
         "clienteService"
-    ]; 
+    ];
     constructor(
         $rootScope,
         $http,
@@ -196,7 +196,7 @@ export class CommonService {
         //return str.replace(/[^a-z0-9]/gi, '');
         return str.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "");
     }
- 
+
 
     getEstadoDocByCodDoc(codDoc) {
         return this.mS.getData("get", "Config/EstadoDocumento/?json=" + JSON.stringify({
@@ -205,7 +205,7 @@ export class CommonService {
             .then(({
                 data: response
             }) => response || []);
-    } 
+    }
     //Buscador Empleado 
     querySearchEmpleado(textSearch) {
         if (!textSearch && textSearch.length < 2) return []
@@ -214,7 +214,7 @@ export class CommonService {
             textSearch
         })
     }
- 
+
     //-------------------------------------Usuario--------------------------------
     /***
      *  json = {busqueda, idRol}
@@ -312,7 +312,7 @@ export class CommonService {
                     return (nroDocumentoSecuencial = response.data);
                 }
             })
-    } 
+    }
     //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
     //Eliminar mas Adelante en depuracion co
@@ -323,7 +323,7 @@ export class CommonService {
             }
             return JSON.parse(response.payload)
         })
-    } 
+    }
     //por mejorar mas adelante 
     async generarNroDocumento({
         puntoEmision,
@@ -380,7 +380,7 @@ export class CommonService {
         })
 
     }
- 
+
     /*  
     -------------------------------------------------START GET DATA TIPO DOCUMENTO VENTA-------------------
     */
@@ -638,7 +638,7 @@ export class CommonService {
         };
     }
     /**--------------------------------------------------END GET DATA TIPO DOCUMENTO VENTA  */
- 
+
     /**------------------------------------------------- OTROS DOCUMENTOS-------------------*/
 
     async getDataGuiaRemision(id) {
@@ -927,38 +927,39 @@ export class CommonService {
             //    .catch((error) => {
             //        console.log(error);
             //    });
-            //this.getPrinter(parameters)
-            this.print(parameters);
+            this.getPrinter(parameters)
+            //this.print(parameters);
         }
     }
 
     getPrinter(parameters) {
         try {
-            //let url = `Config/Print/?json=${parameters}`
-            //this.mS.getData('get', url, null, true).then(
-            //    response => {
-            //        if (response.code === '0') {
-            //            toastr.warning(response.message)
-            //        }
-            //        if (response.code === '1') {
-            //            this.print(JSON.parse(response.payload))
-            //        }
-            //    }
-            //).catch(error => {
-            //    console.log(error)
-            //})
-            this.print(parameters);
+            console.log(parameters)
+            let newParams = Object.assign(JSON.parse(parameters), { tipo: 2 });
+            let url = `Config/Print/?json=${JSON.stringify(newParams)}`
+            this.mS.getData('get', url, null, true).then(
+                response => {
+                    if (response.code === '0') {
+                        toastr.warning(response.message)
+                    }
+                    if (response.code === '1') {
+                        //this.print(JSON.parse(response.payload))
+                        this.print(response.payload, parameters);
+                    }
+                }
+            ).catch(error => {
+                console.log(error)
+            })
         } catch (error) {
             console.log(error)
             toastr.error(error)
         }
     }
 
-    async print(parameters) {
+    async print(url, parameters) {
         try {
-
             this.mS
-                .getData("POST", "https://acontplusprint.com/Print", parameters)
+                .getData("POST", `${url}/Print`, parameters)
                 .then((response) => {
                     if (response.code === "0") {
                         toastr.warning(response.message, "", {
@@ -1157,7 +1158,7 @@ export class CommonService {
                         data: response,
                     }
 
-                    break 
+                    break
 
 
                 case "CI":
@@ -1557,4 +1558,4 @@ function storageService($window) {
 
 
 
- 
+

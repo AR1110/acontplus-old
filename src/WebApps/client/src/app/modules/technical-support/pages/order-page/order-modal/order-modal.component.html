@@ -107,8 +107,13 @@
         </button>
       </div>
     </div>
+    } @if (orderDetails.length > 0) {
+    <app-tabulator
+      [columnNames]="columnNames"
+      [tableData]="orderDetails"
+    ></app-tabulator>
     }
-    <app-order-detail [orderDetails]="orderDetails" />
+
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
@@ -124,7 +129,12 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="submit" class="btn btn-outline-success" title="Guardar Orden">
+    <button
+      type="submit"
+      class="btn btn-outline-success"
+      title="Guardar Orden"
+      [disabled]="orderForm.invalid"
+    >
       <fa-icon [icon]="'save'"></fa-icon> Guardar
     </button>
     <button
