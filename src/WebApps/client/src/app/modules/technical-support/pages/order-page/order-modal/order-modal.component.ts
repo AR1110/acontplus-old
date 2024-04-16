@@ -22,7 +22,11 @@ import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { OrderDetailService } from '@modules/technical-support/services/order-detail.service';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import {
+  faEdit,
+  faSave,
+  faTrashAlt,
+} from '@fortawesome/free-regular-svg-icons';
 
 @Component({
   selector: 'app-order-modal',
@@ -73,18 +77,18 @@ export class OrderModalComponent {
         //create edit button
         let editBtn = document.createElement('button');
         editBtn.type = 'button';
-        editBtn.innerHTML = `${icon(faEdit).html.join('')}`;
+        editBtn.innerHTML = `${icon(faSave).html.join('')}`;
         editBtn.classList.add('btn', 'btn-success', 'btn-sm');
         editBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
-          // this.openEditDetail(rowData);
+          this.editDetail(rowData);
         });
 
         //create delete button
         let delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
-        delBtn.classList.add('btn', 'btn-danger', 'btn-sm');
+        delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
         delBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
           console.log(rowData);
@@ -97,7 +101,9 @@ export class OrderModalComponent {
 
         let buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
-        buttonHolder.appendChild(editBtn);
+        if (rowDataMain.id > 0) {
+          buttonHolder.appendChild(editBtn);
+        }
         return buttonHolder;
       },
       hozAlign: 'center',
@@ -106,38 +112,8 @@ export class OrderModalComponent {
       width: 100,
     },
   ];
-
-  askToDeleteDetail(detail: OrderDetail) {
-    Swal.fire({
-      icon: 'warning',
-      text: `Esta seguro de eliminar este detalle?`,
-      showCancelButton: true,
-      confirmButtonText: 'Si',
-      cancelButtonText: 'No',
-    }).then((response) => {
-      if (response.isConfirmed) {
-        this.oDS.delete(detail.id).subscribe({
-          next: (response) => {
-            if (isApiResponse(response)) {
-              this.tS.toastr({
-                type: response.code == '1' ? 'success' : 'warning',
-                message: response.message,
-              });
-              if (response.code == '1') {
-                this.orderDetails = this.orderDetails.filter(
-                  (x) => x.id != detail.id
-                );
-              }
-            }
-          },
-          error(err) {
-            console.log(err);
-          },
-        });
-      }
-    });
-  }
-
+  clearInput = true;
+  customerBusinessName = '';
   data: any = {};
   deviceFound: any = {};
   devices: any = [];
@@ -196,11 +172,68 @@ export class OrderModalComponent {
       : device.deviceWarranty;
     // console.log(deviceToAdd);
     this.orderDetails.push(deviceToAdd);
-    console.log(this.orderDetails)
+    console.log(this.orderDetails);
+  }
+
+  askToDeleteDetail(detail: OrderDetail) {
+    Swal.fire({
+      icon: 'warning',
+      text: `Esta seguro de eliminar este detalle?`,
+      showCancelButton: true,
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
+    }).then((response) => {
+      if (response.isConfirmed) {
+        showLoader();
+        this.oDS.delete(detail.id).subscribe({
+          next: (response) => {
+            if (isApiResponse(response)) {
+              this.tS.toastr({
+                type: response.code == '1' ? 'success' : 'warning',
+                message: response.message,
+              });
+              if (response.code == '1') {
+                this.orderDetails = this.orderDetails.filter(
+                  (x) => x.id != detail.id
+                );
+              }
+            }
+          },
+          error(err) {
+            hideLoader();
+            console.log(err);
+          },
+          complete() {
+            hideLoader();
+          },
+        });
+      }
+    });
   }
 
   closeModal() {
     this.modalRef.close();
+  }
+
+  editDetail(detail: any) {
+    showLoader();
+    this.oDS.put(detail.id, detail).subscribe({
+      next: (response) => {
+        if (isApiResponse(response)) {
+          this.tS.toastr({
+            type: response.code == '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+        }
+      },
+      error(err) {
+        hideLoader();
+        console.error(err);
+      },
+      complete() {
+        hideLoader();
+      },
+    });
   }
 
   get() {
@@ -242,6 +275,7 @@ export class OrderModalComponent {
             if (this.data.id > 0) {
               let { order, orderDetails } = parsedResponse;
               this.order = order[0];
+              this.customerBusinessName = this.order.businessName;
               this.orderDetails = orderDetails || [];
               this.orderForm.patchValue(this.order);
             }
@@ -308,6 +342,7 @@ export class OrderModalComponent {
   }
   onDeviceSelected($event: any) {
     this.addDetail($event.data);
+    this.clearInput = true;
   }
 
   removeFromList(deviceId: number) {
