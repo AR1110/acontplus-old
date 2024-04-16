@@ -61,14 +61,15 @@ BEGIN
         BEGIN
 	        SET @tableNames = 'devices'
 	        SELECT d.*
-                ,dc.CustomerCompanyId
-                ,dc.SerialNumber        AS Serie
-                ,dc.Warranty
-                ,ds.Id                  AS DeviceSpecId
+                --,dc.CustomerCompanyId
+                --,dc.SerialNumber        AS Serie
+                --,dc.Warranty
+                --,ds.Id                  AS DeviceSpecId
                 ,ISNULL(ds.Specs, '{}') AS Specs
-            FROM TechnicalSupport.Device d
-            LEFT JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
+            FROM TechnicalSupport.Device d WITH (NOLOCK)
+            --LEFT JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
             LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
+            WHERE d.Deleted IS NULL
             RETURN
         END
      IF (@tipo = 3)
@@ -76,8 +77,9 @@ BEGIN
         	SET @tableNames = 'devices'
 
             SELECT * 
-            FROM TechnicalSupport.Device 
-            WITH (NOLOCK) WHERE [Name] LIKE '%' + @textSearch + '%'
+            FROM TechnicalSupport.Device WITH (NOLOCK)
+            WHERE [Name] LIKE '%' + @textSearch + '%'
+                OR [Model] LIKE '%' + @textSearch + '%'
             RETURN
         END
     IF (@tipo = 4)

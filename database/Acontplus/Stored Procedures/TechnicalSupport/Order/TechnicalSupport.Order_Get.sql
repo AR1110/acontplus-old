@@ -50,10 +50,33 @@ BEGIN
             IF (@id > 0)
                 BEGIN
                     SET @tableNames = @tableNames + ',order,orderDetails'
-                    SELECT  [Id], [Uuid], CONVERT(VARCHAR, FORMAT([FechaEmision], 'yyyy-MM-dd'), 106) FechaEmision, [EstablecimientoId], [PuntoEmisionId], [Sequence],
-                    [Serie], [CustomerCompanyId], [Tax], [Discount], [Tip], [Total], [Obs], [OrderStatusId],
-                    [CreatedAt], [UpdatedAt], [Enabled], [Deleted], [UserId], [Finished], [TaxPercentId], ISNULL([AssignedUserId], 0) AssignedUserId
-                    FROM TechnicalSupport.[Order] WITH (NOLOCK) WHERE Id = @id
+
+                    SELECT  o.[Id]
+                    ,[Uuid]
+                    ,CONVERT(VARCHAR, FORMAT([FechaEmision], 'yyyy-MM-dd'), 106) FechaEmision
+                    ,[EstablecimientoId]
+                    ,[PuntoEmisionId]
+                    ,[Sequence]
+                    ,[Serie]
+                    ,[CustomerCompanyId]
+                    ,[Tax]
+                    ,[Discount]
+                    ,[Tip]
+                    ,[Total]
+                    ,[Obs]
+                    ,[OrderStatusId] 
+                    ,o.[Enabled]
+                    ,o.[Deleted]
+                    ,o.[UserId]
+                    ,[Finished]
+                    ,[TaxPercentId]
+                    ,ISNULL([AssignedUserId], 0) AssignedUserId
+                    ,cc.BusinessName
+                    FROM TechnicalSupport.[Order] o WITH (NOLOCK)
+                        INNER JOIN dbo.Cliente c WITH (NOLOCK) ON  o.CustomerCompanyId = c.idCliente
+                        INNER JOIN Customer.Customer cc WITH (NOLOCK) ON c.CustomerId = cc.Id
+                    WHERE o.Id = @id
+
                     SELECT od.[Id], od.[Uuid], od.[OrderId], od.[DeviceId], od.[Obs], od.[CreatedAt], od.[UpdatedAt], 
                         od.[Enabled], od.[Deleted], od.[UserId], ISNULL(od.[AssignedUserId], 0) AssignedUserId
                         ,d.[Name] DeviceName
