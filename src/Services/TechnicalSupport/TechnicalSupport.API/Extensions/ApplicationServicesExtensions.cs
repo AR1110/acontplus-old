@@ -11,11 +11,15 @@ namespace TechnicalSupport.API.Extensions
             services.AddDbContextPool<TechnicalSupportContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IDeviceSpecService, DeviceSpecService>();
             services.AddScoped<IDeviceService, DeviceService>();
+            services.AddScoped<IModeloService, ModeloService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IOrderMaintenanceService, OrderMaintenanceService>();
+            services.AddScoped<ISerieService, SerieService>();
             //var config = new AutoMapper.MapperConfiguration(cfg =>
             //{
             //    cfg.AddProfile(new MappingProfiles());
