@@ -14,7 +14,7 @@ function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto
         stock: product.stock,
         s3ObjectKey: product.s3ObjectKey,
         s3ObjectUrl: product.s3ObjectUrl,
-        tarifaImpuesto: product.tarifaImpuesto
+        tarifaImpuesto:   product.nombreTipoIva  || ""
     })
 }
 
