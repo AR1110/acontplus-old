@@ -10,7 +10,7 @@ export enum TECH_SUPPORT_PATHS {
   DEVICE = 'Device/',
   DEVICE_CUSTOMER = 'DeviceCustomer/',
   DEVICE_SPEC = 'DeviceSpec/',
-  MODEL = 'Modelo/',
+  MODELO = 'Modelo/',
   ORDER = 'Order/',
   ORDER_DETAIL = 'OrderDetail/',
   ORDER_MAINTENANCE = 'OrderMaintenance/',
