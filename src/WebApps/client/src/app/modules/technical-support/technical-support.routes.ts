@@ -3,6 +3,7 @@ import { TechnicalSupportPageComponent } from './pages/technical-support-page/te
 import { DevicePageComponent } from './pages/device-page/device-page.component';
 import { BrandPageComponent } from './pages/brand-page/brand-page.component';
 import { ModeloPageComponent } from './pages/modelo-page/modelo-page.component';
+import { CategoryPageComponent } from './pages/category-page/category-page.component';
 
 export const routes: Routes = [
   {
@@ -11,6 +12,15 @@ export const routes: Routes = [
     component: TechnicalSupportPageComponent,
     data: {
       breadcrumb: 'Servicio Técnico',
+    },
+  },
+  {
+    path: 'category-page',
+    title: 'Categorias',
+    component: CategoryPageComponent,
+    data: {
+      breadcrumb: 'Categorias',
+      buttonAction: 'Nueva',
     },
   },
   {

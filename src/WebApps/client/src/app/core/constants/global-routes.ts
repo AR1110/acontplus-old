@@ -6,6 +6,7 @@ export enum GlobalRoutes {
   ContabilidadMovimientoCaja = 'accounting/movimiento-caja-page',
   TechnicalSupportDevice = 'technical-support/device-page',
   TechnicalSupport = 'technical-support/technical-support-page',
+  TechnicalSupportCategory = 'technical-support/category-page',
   TechnicalSupportBrand = 'technical-support/brand-page',
   TechnicalSupportModelo = 'technical-support/modelo-page',
   ContabilidadCarteraProveedor = 'accounting/reports/supplier-accounts',
