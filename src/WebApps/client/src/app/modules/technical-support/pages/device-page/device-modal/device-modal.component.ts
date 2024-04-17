@@ -20,6 +20,8 @@ import { DeviceSpecsService } from '@modules/technical-support/services/device-s
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
+import { Brand } from '@modules/technical-support/models/brand';
+import { Modelo } from '@modules/technical-support/models/modelo';
 
 @Component({
   selector: 'app-device-modal',
@@ -39,9 +41,11 @@ export class DeviceModalComponent implements OnInit {
   private modalRef = inject(NgbActiveModal);
   private tS = inject(ToasterService);
 
+  brands: Brand[] = [];
   // --> Variables
   modalIcon: IconProp = 'plus';
   modalTitle = 'Nuevo Equipo';
+  modelos: Modelo[] = [];
   categories: any = [];
   isUpdate = false;
 
@@ -64,6 +68,7 @@ export class DeviceModalComponent implements OnInit {
     color: '',
     customers: [],
     deviceSpecId: 0,
+    modeloId: 0
   };
 
   deviceSpecs: DeviceSpecs = {
@@ -75,6 +80,7 @@ export class DeviceModalComponent implements OnInit {
 
   deviceFormGroup: IForm<Device> = {
     categoryId: [0, Validators.required],
+    modeloId: [0, Validators.required],
     name: ['', Validators.required],
     serie: ['', Validators.required],
     brand: ['', Validators.required],
@@ -141,6 +147,8 @@ export class DeviceModalComponent implements OnInit {
         if (isApiResponse(response)) {
           const tempArray = JSON.parse(response.payload as string);
           this.categories = tempArray.categorias;
+          this.brands = tempArray.brands;
+          this.modelos = tempArray.modelos;
         }
       },
       complete() {
