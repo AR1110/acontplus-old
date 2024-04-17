@@ -20,8 +20,8 @@ export class BreadcrumbComponent implements OnInit {
   ngOnInit(): void {
     this.parentData = this.route.parent?.snapshot.data;
     this.childData = this.route.snapshot.data;
-    console.log(this.parentData);
-    console.log(this.childData);
+    // console.log(this.parentData);
+    // console.log(this.childData);
   }
 
   onClick() {
