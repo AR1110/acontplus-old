@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TechnicalSupport.API.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Initial_TS : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,18 +56,15 @@ namespace TechnicalSupport.API.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Device",
+                name: "Brand",
                 schema: "TechnicalSupport",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
-                    Brand = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
-                    Model = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
-                    Year = table.Column<int>(type: "int", nullable: true),
-                    Color = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
+                    Code = table.Column<string>(type: "varchar(8)", unicode: false, maxLength: 8, nullable: false),
+                    Name = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
@@ -76,9 +73,9 @@ namespace TechnicalSupport.API.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Device", x => x.Id);
+                    table.PrimaryKey("PK_Brand", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Device_Category_CategoryId",
+                        name: "FK_Brand_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalSchema: "TechnicalSupport",
                         principalTable: "Category",
@@ -93,9 +90,11 @@ namespace TechnicalSupport.API.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    AssignedUserId = table.Column<int>(type: "int", nullable: true),
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FechaEmision = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EstablecimientoId = table.Column<int>(type: "int", nullable: false),
+                    FechaEmision = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Finished = table.Column<bool>(type: "bit", nullable: false),
                     PuntoEmisionId = table.Column<int>(type: "int", nullable: false),
                     Sequence = table.Column<int>(type: "int", nullable: false),
                     Serie = table.Column<string>(type: "varchar(18)", unicode: false, maxLength: 18, nullable: false),
@@ -106,6 +105,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     Total = table.Column<decimal>(type: "numeric(18,5)", nullable: true),
                     Obs = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     OrderStatusId = table.Column<int>(type: "int", nullable: false),
+                    TaxPercentId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
@@ -120,6 +120,128 @@ namespace TechnicalSupport.API.Data.Migrations
                         column: x => x.OrderStatusId,
                         principalSchema: "TechnicalSupport",
                         principalTable: "OrderStatus",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Serie",
+                schema: "TechnicalSupport",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BrandId = table.Column<int>(type: "int", nullable: false),
+                    Code = table.Column<string>(type: "varchar(8)", unicode: false, maxLength: 8, nullable: false),
+                    Name = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Serie", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Serie_Brand_BrandId",
+                        column: x => x.BrandId,
+                        principalSchema: "TechnicalSupport",
+                        principalTable: "Brand",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDocument",
+                schema: "TechnicalSupport",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    DocumentoId = table.Column<int>(type: "int", nullable: true),
+                    TipoDocumentoId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDocument", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderDocument_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalSchema: "TechnicalSupport",
+                        principalTable: "Order",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Modelo",
+                schema: "TechnicalSupport",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BrandId = table.Column<int>(type: "int", nullable: false),
+                    SerieId = table.Column<int>(type: "int", nullable: true),
+                    Code = table.Column<string>(type: "varchar(8)", unicode: false, maxLength: 8, nullable: false),
+                    Name = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Modelo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Modelo_Brand_BrandId",
+                        column: x => x.BrandId,
+                        principalSchema: "TechnicalSupport",
+                        principalTable: "Brand",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Modelo_Serie_SerieId",
+                        column: x => x.SerieId,
+                        principalSchema: "TechnicalSupport",
+                        principalTable: "Serie",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Device",
+                schema: "TechnicalSupport",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
+                    ModeloId = table.Column<int>(type: "int", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: true),
+                    Color = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Device", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Device_Modelo_ModeloId",
+                        column: x => x.ModeloId,
+                        principalSchema: "TechnicalSupport",
+                        principalTable: "Modelo",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -187,6 +309,7 @@ namespace TechnicalSupport.API.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    AssignedUserId = table.Column<int>(type: "int", nullable: true),
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     DeviceId = table.Column<int>(type: "int", nullable: false),
@@ -226,6 +349,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     BodegaId = table.Column<int>(type: "int", nullable: false),
                     FeeId = table.Column<int>(type: "int", nullable: false),
                     MedidaId = table.Column<int>(type: "int", nullable: false),
+                    Descripcion = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     OrderDetailId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     TaxId = table.Column<int>(type: "int", nullable: false),
@@ -237,9 +361,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     Discount = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
                     Obs = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -256,6 +380,19 @@ namespace TechnicalSupport.API.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Brand_CategoryId",
+                schema: "TechnicalSupport",
+                table: "Brand",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "UI_TS_Brand",
+                schema: "TechnicalSupport",
+                table: "Brand",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "UI_TS_Category",
                 schema: "TechnicalSupport",
                 table: "Category",
@@ -263,23 +400,41 @@ namespace TechnicalSupport.API.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Device_CategoryId",
+                name: "IX_Device_ModeloId",
                 schema: "TechnicalSupport",
                 table: "Device",
-                column: "CategoryId");
+                column: "ModeloId");
 
             migrationBuilder.CreateIndex(
-                name: "UI_TS_DC_DeviceId",
+                name: "IX_DeviceCustomer_DeviceId",
                 schema: "TechnicalSupport",
                 table: "DeviceCustomer",
-                column: "DeviceId",
-                unique: true);
+                column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "UI_TS_DS_DeviceId",
                 schema: "TechnicalSupport",
                 table: "DeviceSpecs",
                 column: "DeviceId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Modelo_BrandId",
+                schema: "TechnicalSupport",
+                table: "Modelo",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Modelo_SerieId",
+                schema: "TechnicalSupport",
+                table: "Modelo",
+                column: "SerieId");
+
+            migrationBuilder.CreateIndex(
+                name: "UI_TS_Modelo",
+                schema: "TechnicalSupport",
+                table: "Modelo",
+                column: "Code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -301,6 +456,12 @@ namespace TechnicalSupport.API.Data.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderDocument_OrderId",
+                schema: "TechnicalSupport",
+                table: "OrderDocument",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderMaintenance_OrderDetailId",
                 schema: "TechnicalSupport",
                 table: "OrderMaintenance",
@@ -310,6 +471,19 @@ namespace TechnicalSupport.API.Data.Migrations
                 name: "UI_TS_OrderStatus",
                 schema: "TechnicalSupport",
                 table: "OrderStatus",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Serie_BrandId",
+                schema: "TechnicalSupport",
+                table: "Serie",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "UI_TS_Serie",
+                schema: "TechnicalSupport",
+                table: "Serie",
                 column: "Code",
                 unique: true);
         }
@@ -323,6 +497,10 @@ namespace TechnicalSupport.API.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "DeviceSpecs",
+                schema: "TechnicalSupport");
+
+            migrationBuilder.DropTable(
+                name: "OrderDocument",
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(
@@ -342,11 +520,23 @@ namespace TechnicalSupport.API.Data.Migrations
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(
-                name: "Category",
+                name: "Modelo",
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(
                 name: "OrderStatus",
+                schema: "TechnicalSupport");
+
+            migrationBuilder.DropTable(
+                name: "Serie",
+                schema: "TechnicalSupport");
+
+            migrationBuilder.DropTable(
+                name: "Brand",
+                schema: "TechnicalSupport");
+
+            migrationBuilder.DropTable(
+                name: "Category",
                 schema: "TechnicalSupport");
         }
     }

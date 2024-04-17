@@ -17,12 +17,12 @@ namespace TechnicalSupport.API.Data
         public DbSet<DeviceCustomer> DeviceCustomers { get; set; }
         public DbSet<DeviceSpecs> DeviceSpecs { get; set; }
         public DbSet<Modelo> Modelos { get; set; }
-        public DbSet<Serie> Series { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<OrderDocument> OrderDocuments { get; set; }
         public DbSet<OrderMaintenance> OrderMaintenances { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
+        public DbSet<Serie> Series { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
