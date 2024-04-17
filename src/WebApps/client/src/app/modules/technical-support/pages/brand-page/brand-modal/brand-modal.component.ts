@@ -47,10 +47,6 @@ export class BrandModalComponent {
     id: 0,
     code: '',
     name: '',
-    idFamilia: 0,
-    descripcion: '',
-    siglas: '',
-    estado: true,
   };
   modalIcon: IconProp = 'plus';
   modalTitle = 'Registrar Marca';
