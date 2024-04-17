@@ -7,12 +7,12 @@
     [ngbTypeahead]="search"
     [resultTemplate]="rt"
     [class.is-invalid]="searchFailed"
-    (selectItem)="onSelect($event)"
+    (selectItem)="onDeviceSelect($event)"
     onclick="select();"
     (keyup)="onKeyupSearch()"
     placeholder="Buscar Equipo"
   />
-  @if (device.id > 0) {
+  @if (device.id > 0 && !clearInput) {
   <button
     type="button"
     class="btn btn-outline-secondary btn-sm"
