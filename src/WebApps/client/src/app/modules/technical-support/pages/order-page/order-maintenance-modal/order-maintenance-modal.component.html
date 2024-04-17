@@ -7,7 +7,8 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="establishment">Establecimiento <span class="text-danger">*</span></label>
-        <select name="establishment" id="establishment" class="form-select" [(ngModel)]="order.establecimientoId">
+        <select name="establishment" id="establishment" class="form-select" [(ngModel)]="order.establecimientoId"
+          (change)="onChangeEstablecimiento()">
           @for (item of establecimientos; track $index) {
           <option [ngValue]="item.idEstablecimiento">{{item.nombreComercial}}</option>
           }
@@ -28,7 +29,8 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-        <input type="date" name="fechaEmision" id="fechaEmision" [ngModel]="order.fechaEmision | date:'yyyy-MM-dd'"  class="form-control">
+        <input type="date" name="fechaEmision" id="fechaEmision" [ngModel]="order.fechaEmision | date:'yyyy-MM-dd'"
+          class="form-control">
       </div>
     </div>
   </div>
@@ -59,50 +61,36 @@
     </div>
   </div>
 
-   <div ngbAccordion [closeOthers]="true">
-    @for (item of orderDetails; track $index) {
-    <div ngbAccordionItem   >
-      <h2 ngbAccordionHeader>
-        <button ngbAccordionButton>
-          {{ item.deviceName }}
-        </button>
-      </h2>
-      <div ngbAccordionCollapse>
-        <div ngbAccordionBody>
-          <ng-template>
-
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div class="row">
-                  <div class="form-group">
-                    <!-- <label for="productSearch">Buscar producto: </label> -->
-                    <app-product-search (onProductSelected)="onProductSelected($event)" [props]="{
-                                        isSearchSimple: true
-                                      }" />
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-
-              </div>
-            </div>
-            <div class="row mt-2">
-              <div class="col">
-                <div class="table-responsive">
-                  <app-tabulator
-                    [columnNames]="columnNames"
-                    [tableData]="orderMaintenances"
-                    (cellEdited)="cellEdited($event)"
-                  ></app-tabulator>
-                </div>
-              </div>
-            </div>
-          </ng-template>
+  <div class="row">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+      <div class="row">
+        <div class="form-group">
+          <!-- <label for="productSearch">Buscar producto: </label> -->
+          <app-product-search (onProductSelected)="onProductSelected($event)" [props]="{
+                                          isSearchSimple: true
+                                        }" />
         </div>
       </div>
     </div>
-    }
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="orderDetails"></label>
+        <select name="orderDetails" id="orderDetails" class="form-select" [(ngModel)]="order.orderDetailId">
+          @for (item of orderDetails; track $index) {
+          <option [ngValue]="item.orderDetailId">{{item.deviceName}}</option>
+          }
+        </select>
+      </div>
+    </div>
   </div>
+
+  <div class="row">
+    <div class="col-12">
+      <app-tabulator [tableData]="orderMaintenances" [options]="tabulatorOptions"
+        (cellEdited)="cellEdited($event)"></app-tabulator>
+    </div>
+  </div>
+
 
 
   <div class="row">
@@ -111,13 +99,8 @@
     </div>
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
       <div class="mt-2">
-        <app-draw-tax-total
-              [subTotalSinImpuesto]="order.subTotalSinImpuesto"
-          [htmlImpuestoTotal]="htmlImpuestoTotal"
-          [discount]="order.discount"
-          [htmlIvaTotal]="htmlIvaTotal"
-          [importeTotal]="order.total"
-        />
+        <app-draw-tax-total [subTotalSinImpuesto]="order.subTotalSinImpuesto" [htmlImpuestoTotal]="htmlImpuestoTotal"
+          [discount]="order.discount" [htmlIvaTotal]="htmlIvaTotal" [importeTotal]="order.total" />
       </div>
     </div>
   </div>

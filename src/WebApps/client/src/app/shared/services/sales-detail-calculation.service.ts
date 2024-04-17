@@ -57,6 +57,10 @@ export class SalesDetailCalculationService {
 
     let quantity = Number(data.quantity);
     let feeId = Number(data.feeId);
+    let price = Number(data.price)
+    let precioConIva = Number(data.precioConIva)
+    let percentageDiscount = Number(data.percentageDiscount)
+    let discount = Number(data.discount)
 
 
 
@@ -129,7 +133,9 @@ export class SalesDetailCalculationService {
           let precioConIva = pricingCalculateUtil.calculatePriceWithVat(dataTarifa.precioVenta, dataTarifaImpuesto.porcentaje);
           let precioConIvaConDesuento = pricingCalculateUtil.getDiscountedVATPrice(precioConIva, data.percentageDiscount);
           let valorDescuento = pricingCalculateUtil.getValueDiscount(dataTarifa.precioVenta, data.percentageDiscount);
-
+          console.log(dataTarifa)
+          console.log(precioConIvaConDesuento)
+          console.log(valorDescuento)
           data.price = roundNumber(dataTarifa.precioVenta, decimal.nroPrecio);
           data.precioConIva = roundNumber(precioConIvaConDesuento, decimal.nroPrecio);
           data.discount = roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
@@ -145,13 +151,12 @@ export class SalesDetailCalculationService {
       'price': function () {
         try {
 
-          console.log(data)
-          if (data.price === oldValue) return;
+          if (price === oldValue) return;
 
-          let precioConIva = pricingCalculateUtil.calculatePriceWithVat(data.price, dataTarifaImpuesto.porcentaje);
-          let valorDescuento = pricingCalculateUtil.getValueDiscount(data.price, data.percentageDiscount);
+          let precioConIva = pricingCalculateUtil.calculatePriceWithVat(price, dataTarifaImpuesto.porcentaje);
+          let valorDescuento = pricingCalculateUtil.getValueDiscount(price, data.percentageDiscount);
 
-          data.price = roundNumber(data.price, decimal.nroPrecio);
+          data.price = roundNumber(price, decimal.nroPrecio);
           data.precioConIva = roundNumber(precioConIva, decimal.nroPrecio);
           data.discount = roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
 
@@ -166,11 +171,11 @@ export class SalesDetailCalculationService {
       'precioConIva': function () {
         try {
 
-          if (data.precioConIva === oldValue) return;
+          if (precioConIva === oldValue) return;
 
-          let precioUnitario = pricingCalculateUtil.calculatePriceSale(data.precioConIva, dataTarifaImpuesto.porcentaje);
+          let precioUnitario = pricingCalculateUtil.calculatePriceSale(precioConIva, dataTarifaImpuesto.porcentaje);
 
-          data.precioConIva = roundNumber(data.precioConIva, decimal.nroPrecio);
+          data.precioConIva = roundNumber(precioConIva, decimal.nroPrecio);
           data.price = roundNumber(precioUnitario, decimal.nroPrecio);
 
         } catch (error) {
@@ -184,12 +189,12 @@ export class SalesDetailCalculationService {
       'percentageDiscount': function () {
         try {
 
-          if (data.percentageDiscount === oldValue) return
+          if (percentageDiscount === oldValue) return
           //Verificamos  si el porcentaje es un nuevo Valor y menor o  igual a 100
           if (data.percentageDiscount <= 100) {
-            let valorDescuento = pricingCalculateUtil.getValueDiscount(data.price, data.percentageDiscount);
+            let valorDescuento = pricingCalculateUtil.getValueDiscount(data.price, percentageDiscount);
 
-            data.percentageDiscount = roundNumber(data.percentageDiscount, decimal.nroPorcentaje);
+            data.percentageDiscount = roundNumber(percentageDiscount, decimal.nroPorcentaje);
             data.discount = roundNumber(data.quantity * valorDescuento, decimal.nroDescuentoDetalle);
 
           } else {
@@ -201,7 +206,7 @@ export class SalesDetailCalculationService {
             })
           }
 
-          data.percentageDiscount = roundNumber(data.percentageDiscount, decimal.nroPorcentaje);
+          data.percentageDiscount = roundNumber(percentageDiscount, decimal.nroPorcentaje);
 
         } catch (error) {
           self.tS.toastr({
@@ -216,15 +221,15 @@ export class SalesDetailCalculationService {
       'discount': function () {
         try {
 
-          if (data.discount === oldValue) return
+          if (discount === oldValue) return
 
           let subTotal = ((data.price * data.quantity))
 
-          if (data.discount <= subTotal) {
+          if (discount <= subTotal) {
 
-            let porcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(subTotal, data.discount);
+            let porcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(subTotal, discount);
 
-            data.discount = roundNumber(data.discount, decimal.nroDescuentoDetalle);
+            data.discount = roundNumber(discount, decimal.nroDescuentoDetalle);
             data.percentageDiscount = roundNumber(porcentajeDescuento, decimal.nroPorcentaje);
 
           } else {
@@ -281,7 +286,7 @@ export class SalesDetailCalculationService {
   getTaxTotals(obj: TaxTotalProps) {
     // Desestructurar el objeto de entrada
     let { items, decimal, tarifasImpuesto } = obj;
-
+    console.log(items)
     if (!decimal) {
       decimal = {
         nroTotalSubTotal: 2,

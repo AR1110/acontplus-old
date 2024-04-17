@@ -131,6 +131,7 @@ export class OrderService {
                     costoFraccionado: dataMedida.precioCostoFraccionado || 0,
                     conversion: dataMedida.conversion || 1,
                     consolidacionesBodega: consolidacionesBodega,
+                    llevaInventario: restItem.llevaInventario
                   };
                   return obj;
                 }

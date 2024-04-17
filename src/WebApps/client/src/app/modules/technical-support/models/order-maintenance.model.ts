@@ -27,7 +27,9 @@ export interface OrderMaintenance {
   tarifas: TarifaProducto[]
   consolidacionesBodega: ConsolidacionBodega[]
   costoFraccionado: number
+  llevaInventario: boolean
   conversion: number
+  deviceName?:  string | null
 }
 
 export type ColOrderMaintenance = keyof OrderMaintenance;
