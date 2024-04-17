@@ -8,7 +8,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   standalone: true,
   imports: [CommonModule, FontAwesomeModule],
   templateUrl: './breadcrumb.component.html',
-  styleUrl: './breadcrumb.component.scss',
+  styles: ``,
 })
 export class BreadcrumbComponent implements OnInit {
   @Output() clicked = new EventEmitter<void>();
@@ -20,6 +20,8 @@ export class BreadcrumbComponent implements OnInit {
   ngOnInit(): void {
     this.parentData = this.route.parent?.snapshot.data;
     this.childData = this.route.snapshot.data;
+    console.log(this.parentData);
+    console.log(this.childData);
   }
 
   onClick() {
