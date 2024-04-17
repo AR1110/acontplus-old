@@ -2,11 +2,15 @@
 export {
     ModalTransferenciaBodegaDetalleCtrl
 }
-ModalTransferenciaBodegaDetalleCtrl.$inject = ['$scope',  '$uibModalInstance',   'commonService', 'toastService',   'params']
-function ModalTransferenciaBodegaDetalleCtrl($scope,  $uibModalInstance, commonSvc, tS, params){
+ModalTransferenciaBodegaDetalleCtrl.$inject = [
+    '$scope', 
+    '$uibModalInstance',  
+    'transferenciaBodegaService', 
+    'params'
+]
+function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, transferenciaBodegaSvc,  params){
      
-    let {dataDocumento, detalleDocumento} = params.data;
-    
+   
    
  
         
@@ -133,11 +137,19 @@ function ModalTransferenciaBodegaDetalleCtrl($scope,  $uibModalInstance, commonS
     initiload();
     async function initiload(){
         try {
-             
-            $scope.data = dataDocumento;
-            $scope.gridOptions.data = detalleDocumento;
+            showLoader();
+            transferenciaBodegaSvc.getIdDetalle(params.id).then(response => {
+                let { dataDocumento, detalleDocumento } = response
+                $scope.data = dataDocumento;
+                $scope.gridOptions.data = detalleDocumento;
 
-            enumGridOptions(); 
+                enumGridOptions(); 
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())
+
+       
+            
         } catch (error) {
             console.log(error)
         }             
