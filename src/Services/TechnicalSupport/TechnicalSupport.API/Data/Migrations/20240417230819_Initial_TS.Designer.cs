@@ -12,7 +12,7 @@ using TechnicalSupport.API.Data;
 namespace TechnicalSupport.API.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
-    [Migration("20240417230026_Initial_TS")]
+    [Migration("20240417230819_Initial_TS")]
     partial class Initial_TS
     {
         /// <inheritdoc />
@@ -165,9 +165,6 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

@@ -98,7 +98,6 @@ namespace TechnicalSupport.API.Services
                 productFounded.Color = device.Color;
                 productFounded.Enabled = device.Enabled;
                 productFounded.Name = device.Name;
-                productFounded.Year = device.Year;
                 _context.Update(productFounded);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };

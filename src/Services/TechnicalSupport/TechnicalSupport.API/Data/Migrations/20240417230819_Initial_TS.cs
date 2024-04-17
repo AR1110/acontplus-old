@@ -226,7 +226,6 @@ namespace TechnicalSupport.API.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     ModeloId = table.Column<int>(type: "int", nullable: false),
-                    Year = table.Column<int>(type: "int", nullable: true),
                     Color = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),

@@ -12,7 +12,6 @@ namespace TechnicalSupport.API.Entities
         public string Name { get; set; }
         public Modelo Modelo { get; set; }
         public int ModeloId { get; set; }
-        public int? Year { get; set; }
         [MaxLength(100)]
         public string Color { get; set; }
         public List<DeviceCustomer> Customers { get; set; }
