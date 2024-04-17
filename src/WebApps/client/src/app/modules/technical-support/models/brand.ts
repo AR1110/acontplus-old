@@ -1,4 +1,4 @@
-import { Category } from '@modules/inventory/models/category.model';
+import { Category } from './category';
 
 export interface Brand extends Category {
   id: number;
