@@ -14,7 +14,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'brand',
+    path: 'brand-page',
     title: 'Marcas',
     component: BrandPageComponent,
     data: {
@@ -23,7 +23,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'modelo',
+    path: 'modelo-page',
     title: 'Modelos',
     component: ModeloPageComponent,
     data: {
