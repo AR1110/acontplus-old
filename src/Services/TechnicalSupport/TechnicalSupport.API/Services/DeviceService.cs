@@ -21,7 +21,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                if (_context.Devices.Any(p => p.Name == device.Name && p.Model == device.Model))
+                if (_context.Devices.Any(p => p.Name == device.Name && p.ModeloId == device.ModeloId))
                 {
                     return new ApiResponse { code = "0", message = "El equipo ya existe en la base de datos" };
                 }
@@ -94,11 +94,9 @@ namespace TechnicalSupport.API.Services
                     return new ApiResponse { code = "0", message = "El id no coincide" };
                 }
                 var productFounded = await _context.Devices.FindAsync(id);
-                productFounded.CategoryId = device.CategoryId;
-                productFounded.Brand = device.Brand;
+                productFounded.ModeloId = device.ModeloId;
                 productFounded.Color = device.Color;
                 productFounded.Enabled = device.Enabled;
-                productFounded.Model = device.Model;
                 productFounded.Name = device.Name;
                 productFounded.Year = device.Year;
                 _context.Update(productFounded);
