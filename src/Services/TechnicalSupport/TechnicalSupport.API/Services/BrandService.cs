@@ -1,4 +1,5 @@
 ﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TechnicalSupport.API.Data;
@@ -57,7 +58,7 @@ namespace TechnicalSupport.API.Services
                 {
                     return new ApiResponse { code = "0", message = "No data" };
                 }
-                return new ApiResponse { code = "1", payload = JsonConvert.SerializeObject(await _context.Brands.ToListAsync()) };
+                return new ApiResponse { code = "1", payload = DataConverters.SerializeObjectCustom<List<Brand>>(await _context.Brands.ToListAsync()) };
             }
             catch (Exception)
             {
