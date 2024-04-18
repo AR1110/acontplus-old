@@ -4,7 +4,7 @@ import { AtsPageComponent } from './pages/ats-page/ats-page.component';
 
 export const routes : Route[] = [
   {
-    path: 'ats',
+    path: 'ats-page',
     title: 'Ats',
     component: AtsPageComponent,
     data: {

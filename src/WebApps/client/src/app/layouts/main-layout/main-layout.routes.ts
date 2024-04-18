@@ -54,7 +54,7 @@ export const routes: Routes = [
           import('@restaurant/restaurant.routes').then((r) => r.routes),
       },
       {
-        path: 'fact-elect',
+        path: 'billing',
         title: 'App - Fact. Elect.',
         loadChildren: () =>
           import('@billing/billing.routes').then((r) => r.routes),
