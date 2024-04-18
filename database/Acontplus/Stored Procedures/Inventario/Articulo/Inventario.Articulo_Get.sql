@@ -577,7 +577,8 @@ BEGIN
 
             SELECT ar.idMedida 
                   ,1              as conversion
-                  ,ar.precioCosto
+                  ,ar.precioCosto as precioUnitario
+                  ,ar.precioCosto as precioCosto
                   ,ar.precioCosto as precioCostoFraccionado
                   ,me.descripcion as medida
             FROM Articulo     ar WITH (NOLOCK) 
@@ -586,7 +587,8 @@ BEGIN
 
             SELECT af.idMedida
                   ,af.conversion
-                  ,ar.precioCosto
+                  ,af.precioCostoFraccionado as precioUnitario
+                  ,ar.precioCosto            as precioCosto
                   ,af.precioCostoFraccionado as precioCostoFraccionado
                   ,me.descripcion            as medida
             FROM ArticuloFraccionado af WITH (NOLOCK) 
@@ -638,11 +640,9 @@ BEGIN
 
            SELECT idMarca, descripcion FROM dbo.Marca WHERE idEntidad = @idEntidad
 
-            SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
+           SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
 
-            SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
-
-
+           SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
 
            RETURN 
         END 

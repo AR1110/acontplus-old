@@ -68,16 +68,6 @@ function atsCtrl($scope, mS, tS, FileSaver, Blob) {
                     let serverData = new Blob([response.data], { type: response.headers()['content-type'] });
                     let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1];
                     FileSaver.saveAs(serverData, fileName);
-                    
-                    // let element = document.createElement('a');
-                    // let fileBlob = new Blob([response.data], {
-                    //     type: response.data.type
-                    // });
-                    // let url = URL.createObjectURL(fileBlob);
-                    // element.href = url;
-                    // element.setAttribute('download', 'fileName.xml');
-                    // document.body.appendChild(element); 
-                    // element.click();
                 }
             }).catch(error => {
                 hideLoader()
