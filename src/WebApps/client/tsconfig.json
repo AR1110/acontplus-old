@@ -48,6 +48,9 @@
       "@restaurant/*": [
         "src/app/modules/restaurant/*",
       ],
+      "@billing/*": [
+        "src/app/modules/billing/*",
+      ],
       "@shared/*": [
         "src/app/shared/*"
       ],
