@@ -41,19 +41,17 @@ BEGIN
     ,@total                 NUMERIC(18,5)
     ,@establecimientoId     INT
     ,@obs                   VARCHAR(500)
-    ,@estadoPagoId          INT
     ,@totalDescuento        DECIMAL(18,5)
     ,@porcentajeDescuento   DECIMAL(18,5)
     ,@propina               DECIMAL(18,5)
     ,@recargo               DECIMAL(18,5)
     ,@transporte            DECIMAL(18,5)
-    ,@CustomerId            INT
+    ,@customerId            INT
     ,@subTotalSinImpuesto   NUMERIC(18,5)
     ,@codDoc                VARCHAR(5)
     ,@order                 NVARCHAR(500)
     ,@customDetail          NVARCHAR(MAX)
     ,@idEntidad             INT
-    ,@idTipoDocumento       INT
     ,@isAutomatic           INT 
     ,@secuencial            INT
         
@@ -149,16 +147,8 @@ BEGIN
      
     ----- VARIABLES ----
     SET @fechaEmision = (SELECT dbo.ufnGetDateEcuador())
-
-    SELECT TOP 1 @idTipoDocumento   = td.idTipoDocumento 
-    FROM TipoDocumento td WITH (NOLOCK) 
-    WHERE codigoSri = '01'
-
-    SELECT TOP 1 @estadoPagoId      = idEstadoPago 
-    FROM dbo.EstadoPago WITH(NOLOCK) 
-    WHERE codigo = 'PE'
-
-    SELECT TOP 1 @CustomerId        = ISNULL(CustomerId,0) 
+        
+    SELECT TOP 1 @customerId        = ISNULL(CustomerId,0) 
     FROM Cliente WITH (NOLOCK) 
     WHERE idCliente = @customerCompanyId 
 
@@ -175,8 +165,8 @@ BEGIN
     IF (ISJSON(@customDetail) = 1 AND LEN(RTRIM(LTRIM(@customDetail))) > 0)
         BEGIN
             INSERT INTO @tblItems
-            (uuid, orderMantenainceId, orderDetailId, taxId, taxPercentId, feeId, taxValue,quantity,cost,price,discount,
-            total, obs, bodegaId,envioSri,idArticulo,[description],medidaId, cantidadTransaccion, cantidadStock
+            (uuid, orderMantenainceId, orderDetailId, taxId, taxPercentId, feeId, taxValue,quantity,cost,price,discount
+            , total, obs, bodegaId,envioSri,idArticulo,[description],medidaId, cantidadTransaccion, cantidadStock
             , precioCostoFraccionado, conversion, orderIndex, precioTotalSinImpuesto)
             
             SELECT uuid
@@ -242,8 +232,7 @@ BEGIN
                 taxValue                NUMERIC(18,5)       '$.taxValue',
                 price                   NUMERIC(18,5)       '$.price'
             )
-
-
+            
             ---------- INSERT NEW ---------------
             INSERT INTO @FacturaDetalleInsert(idArticulo, idTarifa, idBodega, medidaId, ice, cantidad, precioUnitario, precioSinSubsidio    
                                             , valorDescuento, porcentajeDescuento, precioTotalSinImpuesto, nota, descripcion, precioCosto
@@ -251,41 +240,41 @@ BEGIN
                                             , cantidadStock, precioCostoFraccionado, conversion, idMedida, orderIndex)
 
             SELECT a.idArticulo
-                ,i.feeId
-                ,i.bodegaId
-                ,i.medidaId
-                ,0
-                ,i.quantity
-                ,i.price
-                ,0
-                ,i.discount
-                ,0
-                ,i.total
-                ,i.obs
-                ,a.descripcion
-                ,a.precioCosto
-                ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
-                ,(SELECT TOP 1 codigoPorcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
-                ,(SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
+                , i.feeId
+                , i.bodegaId
+                , i.medidaId
                 , 0
-                ,i.uuid
-                ,0          AS envioSri
-                ,i.cantidadTransaccion
-                ,i.cantidadStock
-                ,i.precioCostoFraccionado
-                ,i.conversion
-                ,i.medidaId
-                ,i.orderIndex
+                , i.quantity
+                , i.price
+                , 0
+                , i.discount
+                , 0
+                , i.total
+                , i.obs
+                , a.descripcion
+                , a.precioCosto
+                , (SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
+                , (SELECT TOP 1 codigoPorcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
+                , (SELECT TOP 1 porcentaje FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo)
+                , 0
+                , i.uuid
+                , 0          AS envioSri
+                , i.cantidadTransaccion
+                , i.cantidadStock
+                , i.precioCostoFraccionado
+                , i.conversion
+                , i.medidaId
+                , i.orderIndex
             FROM @tblItems i
             INNER JOIN Sri.TarifaImpuesto sti               ON i.taxPercentId   = sti.idTarifaImpuesto
             INNER JOIN Inventario.v_Articulo a				ON a.idArticulo		= i.idArticulo
             
             UPDATE TechnicalSupport.[Order]
             SET Finished            = 1
-                , OrderStatusId     =  (SELECT Id FROM TechnicalSupport.OrderStatus WHERE Code = 'PE')
+                , OrderStatusId     = (SELECT Id FROM TechnicalSupport.OrderStatus WHERE Code = 'PE')
             WHERE Id = @orderId
         END
-    
+
     IF NOT EXISTS(SELECT TOP 1 1 FROM @tblItems)
     BEGIN
         SELECT '0' as code, 'No se pudieron recuperar los detalles' as 'message'
@@ -304,6 +293,7 @@ BEGIN
     WHERE pa.idUsuarioRol = @userRoleId 
     AND cd.codDoc = @codDoc
                          
+    ------ REVISAR Y ANALIZAR ------
     IF (@customerCompanyId = 0)
     BEGIN 
         SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente WHERE codIdentSri = '07'
@@ -361,7 +351,6 @@ BEGIN
                     FROM @tblTaxes t
                     INNER JOIN Sri.TarifaImpuesto ti ON t.TaxPercentId = ti.idTarifaImpuesto
                 END
-
         END
 
     --- FACTURA DE VENTA
@@ -498,14 +487,13 @@ BEGIN
                     SET @idTransaccion = SCOPE_IDENTITY()
 
                     INSERT INTO Inventario.TransaccionDetalle
-                            (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total, conversion, precioCostoFraccionado)
+                          (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total, conversion, precioCostoFraccionado)
 			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto, conversion, precioCostoFraccionado
                     FROM @tblInventory
 
                     EXEC dbo.Transaccion_Handler_Init 'S', @codDocTran, @documentoId, DEFAULT
                 END
         END
-
         --------------------END DOCUMENTOS---------------------
     DECLARE @codDocCuentaCobrar VARCHAR(2)
     SET @codDocCuentaCobrar = (SELECT IIF(@codDoc = 'FV', '01', 'NE'))
@@ -513,7 +501,7 @@ BEGIN
     --------------------PAYLOADS------------------
     DECLARE @payAutomatic BIT
     ,@printerAutomatic BIT
-    ,@idCuentaPorCobrar INT                           
+    ,@idCuentaPorCobrar INT
     ,@codEstab VARCHAR(15)
 
     SET @codEstab = (SELECT codEstab FROM Sri.Establecimiento WHERE idEstablecimiento = @establecimientoId)
