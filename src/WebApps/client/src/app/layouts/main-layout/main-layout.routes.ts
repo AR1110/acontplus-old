@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
+
 import { MainLayoutComponent } from './main-layout.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -50,6 +52,12 @@ export const routes: Routes = [
         title: 'App - Restaurante',
         loadChildren: () =>
           import('@restaurant/restaurant.routes').then((r) => r.routes),
+      },
+      {
+        path: 'fact-elect',
+        title: 'App - Fact. Elect.',
+        loadChildren: () =>
+          import('@billing/billing.routes').then((r) => r.routes),
       },
     ],
   },
