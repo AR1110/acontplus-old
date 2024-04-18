@@ -279,8 +279,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
       headerSort: false,
       headerHozAlign: "center",
       width: "7px",
-      editor: "input",
-      validator: ["required", "number"],
+
+      validator: ["required"],
+      editor: "number", editorParams: {
+
+        selectContents: true,
+        verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
+      }
       // editorEmptyValueFunc: (value: any, cl: any) => {
       //   console.log(cl)
       //   if (/\s/.test(value)) {
@@ -370,8 +375,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
       hozAlign: "center",
       headerHozAlign: "center",
       width: "8px",
-      editor: "input",
-      validator: this.validatorNumber
+      validator: this.validatorNumber,
+      editor: "number", editorParams: {
+        selectContents: true,
+        verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
+      }
     },
     {
       title: 'Precio Iva.',
@@ -380,8 +388,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
       hozAlign: "center",
       headerHozAlign: "center",
       width: "8px",
-      editor: "input",
-      validator: this.validatorNumber
+      validator: this.validatorNumber,
+      editor: "number", editorParams: {
+        selectContents: true,
+        verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
+      }
     },
     {
       title: '%',
@@ -390,8 +401,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
       hozAlign: "center",
       headerHozAlign: "center",
       width: "6px",
-      editor: "input",
-      validator: this.validatorNumber
+      validator: this.validatorNumber,
+      editor: "number", editorParams: {
+        selectContents: true,
+        verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
+      }
     },
     {
       title: 'Desc.',
@@ -400,8 +414,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
       hozAlign: "center",
       headerHozAlign: "center",
       width: "6px",
-      editor: "input",
-      validator: this.validatorNumber
+      validator: this.validatorNumber,
+      editor: "number", editorParams: {
+        selectContents: true,
+        verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
+      }
     },
     {
       title: 'Subtotal',
@@ -480,7 +497,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
     this.orderSvc.getId(this.params.id).subscribe({
       next: (response) => {
         hideLoader();
-        console.log(response)
         this.establecimientos = response.establecimientos;
         this.order = response.order;
         this.orderDetails = response.orderDetails;
@@ -492,8 +508,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
           }
         });
 
-        console.log(this.orderDetails)
-        console.log(this.orderMaintenances)
 
         this.feeds = response.feeds;
         this.taxes = response.taxes;
@@ -527,7 +541,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
         // Crear groupValues con valores únicos de "orderDetailId"
         const groupValues = uniqueOrderDetailIds.map((id: number) => id);
-        console.log(groupValues)
+
         this.tabulatorOptions.groupValues = [groupValues]
 
         this.drawImpuestoTotales();
@@ -554,22 +568,12 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   resetCantidadToZeroAndRecalculateTotals() {
     try {
-      for (let rowEntity of this.orderMaintenances) {
-        if (!rowEntity.llevaInventario) continue;
+      for (let row of this.orderMaintenances) {
+        if (!row.llevaInventario) continue;
 
-        rowEntity.quantity = 0;
+        row.quantity = 0;
 
-        console.log(rowEntity)
-
-        // this.setCalculoTotales("cantidad", rowEntity, )
-
-        // let objCalculo = gridOptionsSvc.calculoColDef({
-        //   rowEntity,
-        //   oldValue: null,
-        //   decimal: $scope.decimal,
-        //   idTarifa: $scope.data.idTarifa,
-        //   columnDefs: $scope.gridOptions.columnDefs
-        // });
+        this.setCalculoTotales("quantity", row, undefined)
 
       }
     } catch (error) {
@@ -644,6 +648,93 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
   }
 
+  async onChangeBodega() {
+    try {
+      let bodega = this.bodegas.find(item => item.idBodega === this.order.bodegaId);
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger ml-2'
+        },
+        buttonsStyling: false
+      })
+
+      let {
+        isConfirmed
+      } = await swalWithBootstrapButtons.fire({
+        title: '<small>Cambiar Bodega</small>',
+        html: `<small>¿Esta seguro de cambiar la Bodega: <b>${bodega?.descripcion}</b>  en el detalle del Documento?</small>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: `Si, cambiar!`,
+        cancelButtonText: 'No, cancelar!',
+        reverseButtons: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      })
+
+      if (isConfirmed) {
+        this.cloneOrder.bodegaId = this.order.bodegaId
+
+        if (this.orderMaintenances.length === 0) return
+
+        this.setIdBodegaInDetalle();
+        this.resetCantidadToZeroAndRecalculateTotals();
+      } else {
+        this.order.bodegaId = this.cloneOrder.bodegaId;
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  async onChangeFee() {
+    try {
+
+      // if (!$scope.permisoComprobanteVenta.tarifa) {
+      //   $scope.data.idTarifa = $scope.dataClone.idTarifa;
+      //   tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+      //   return
+      // }
+
+      let tarifa = this.feeds.find(item => item.idTarifa === this.order.feeId);
+      let {
+        isConfirmed
+      } = await Swal.fire({
+        html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa?.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: `Sí, cambiar!`,
+        cancelButtonText: 'No, cancelar!',
+        allowOutsideClick: false,
+      })
+
+      if (isConfirmed) {
+
+        this.cloneOrder.feeId = this.order.feeId;
+
+        if (this.orderMaintenances.length === 0) return
+
+        this.salesDetailCalculationSvc.setFeeInDetail({
+          generalFeeId: this.order.feeId,
+          items: this.orderMaintenances,
+          decimal: this.decimal,
+          columnDefs: this.tabulatorOptions.columns,
+          tarifasImpuesto: this.taxPercents
+        })
+
+        this.drawImpuestoTotales()
+
+      } else {
+        this.order.feeId = this.cloneOrder.feeId;
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   askToDelete(data: OrderMaintenance) {
     try {
@@ -720,6 +811,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
     return dataOrderMaintenance;
   }
 
+  addItem() {
+
+  }
+
+  setItem() {
+
+  }
+
   onProductSelected($event: any) {
     let { data } = $event;
     if (data.idArticulo > 0) {
@@ -728,45 +827,69 @@ export class OrderMaintenanceModalComponent implements OnInit {
         .subscribe({
           next: (response) => {
             const { product, medidas, consolidacionesFecha } = response;
+            let index = 0;
             let taxPercents = this.taxPercents;
-            let row = this.getDataRowEmpty()
+            let row = this.getDataRowEmpty();
             let dataTaxPercent = taxPercents.find(d => d.codigo === product.codigoPorcentaje);
             let dataOrderDetail = this.orderDetails.find(od => od.orderDetailId === this.order.orderDetailId)
-            let dataMedida = medidas.find(m => m.defaultMedida);
 
-            row.productId = product.idArticulo;
-            row.codigo = product.codigoArticulo;
-            row.descripcion = product.descripcion;
-            row.bodegaId = this.order.bodegaId;
+            let findIndexById = this.orderMaintenances.findIndex(item => item.llevaInventario && item.productId === product.idArticulo);
 
-            if (dataTaxPercent) {
-              row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
-              row.taxId = dataTaxPercent.idImpuesto;
+            if (findIndexById === -1) {
+              row.productId = product.idArticulo;
+              row.codigo = product.codigoArticulo;
+              row.descripcion = product.descripcion;
+              row.bodegaId = this.order.bodegaId;
+              row.llevaInventario = product.llevaInventario;
+
+              if (dataTaxPercent) {
+                row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
+                row.taxId = dataTaxPercent.idImpuesto;
+              }
+
+              let dataMedida = medidas.find(m => m.defaultMedida);
+
+
+              if (dataMedida) {
+                row.medidas = medidas;
+                row.quantity = 1;
+                row.tarifas = dataMedida.tarifas;
+                row.medidaId = dataMedida.idMedida;
+                row.cost = dataMedida.precioCosto;
+                row.costoFraccionado = dataMedida.precioCostoFraccionado;
+                row.conversion = dataMedida.conversion;
+                row.deviceName = dataOrderDetail.deviceName;
+                row.orderDetailId = dataOrderDetail.orderDetailId;
+
+                let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
+
+
+                row.feeId = dataTarifa?.idTarifa ?? 0;
+                row.price = dataTarifa?.precioVenta ?? 0;
+                row.precioConIva = dataTarifa?.precioConIva ?? 0;
+
+              }
+
+              this.orderMaintenances.push(row);
+
+            } else {
+              index = findIndexById;
+              row = this.orderMaintenances[index];
+              row.quantity = row.quantity + 1;
+
+              let dataMedida = medidas.find(m => m.idMedida === row.medidaId);
+
+              if (dataMedida) {
+                row.medidas = medidas;
+                row.tarifas = dataMedida.tarifas;
+                row.cost = dataMedida.precioCosto;
+                row.costoFraccionado = dataMedida.precioCostoFraccionado;
+                row.conversion = dataMedida.conversion;
+              }
             }
 
-            if (dataMedida) {
-              row.medidas = medidas;
-              row.tarifas = dataMedida.tarifas;
-              row.medidaId = dataMedida.idMedida;
-              row.cost = dataMedida.precioCosto;
-              row.costoFraccionado = dataMedida.precioCostoFraccionado;
-              row.conversion = dataMedida.conversion;
-              row.deviceName = dataOrderDetail.deviceName;
-              row.orderDetailId = dataOrderDetail.orderDetailId;
-
-              let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
-
-
-              row.feeId = dataTarifa?.idTarifa ?? 0;
-              row.price = dataTarifa?.precioVenta ?? 0;
-            }
-
-            this.orderMaintenances.push(row)
-            //this.setCalculoTotales("price", row, 0, r)
-
+            this.setCalculoTotales("quantity", row, undefined)
             this.tabulatorComponent.refTabulator.setGroupBy(["orderDetailId"]);
-            // this.tabulatorComponent.refTabulator.addRow(row).then((r) => {
-            // });
 
 
           },
@@ -781,21 +904,28 @@ export class OrderMaintenanceModalComponent implements OnInit {
         * @param {*} data  data row
         * @param {*} oldValue valor anterior de la columna
         */
-  setCalculoTotales(column: any, data: OrderMaintenance, oldValue: string | number, row: any) {
+  setCalculoTotales(column: any, data: OrderMaintenance, oldValue?: string | number) {
 
     let obj = this.salesDetailCalculationSvc.calculateColDef({
       data: data,
       column,
       oldValue,
-      feeId: this.order.feeId,
+      generalFeeId: this.order.feeId,
       decimal: this.decimal,
-      columnDefs: this.tabulatorComponent.refTabulator.getColumnDefinitions()
+      columnDefs: this.tabulatorOptions.columns
     });
 
-    row.update({
-      //  ...row,
-      ...obj
-    })
+    let row = this.tabulatorComponent.refTabulator.getRows().find(function (row) {
+      return row.getData().rowguid === data.rowguid;
+    });
+
+    if(row){
+      row.update({
+        data,
+        ...obj
+      })
+    }
+
 
     this.drawImpuestoTotales();
   }
@@ -866,7 +996,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       discount,
     }
 
-    this.setCalculoTotales(column, cloneData, oldValue, row);
+    this.setCalculoTotales(column, cloneData, oldValue);
 
 
   }
@@ -897,7 +1027,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   drawImpuestoTotales() {
     try {
-      let items = this.tabulatorComponent?.refTabulator?.getData() ?? this.orderMaintenances;
 
       let {
         subTotalSinImpuesto,
@@ -910,7 +1039,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         percentageDiscount,
         propina,
       } = this.salesDetailCalculationSvc.getTaxTotals({
-        items,
+        items: this.orderMaintenances,
         decimal: this.decimal,
         tarifasImpuesto: this.taxPercents,
       })

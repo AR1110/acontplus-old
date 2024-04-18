@@ -1,6 +1,7 @@
 export interface Device {
   id: number;
   categoryId: number;
+  modeloId: number;
   name: string;
   serie: string;
   brand: string;

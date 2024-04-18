@@ -33,8 +33,7 @@ BEGIN
         , @total                NUMERIC(18,6)
         , @codDoc               VARCHAR(5)
         , @payload              NVARCHAR(MAX)
-        , @puntoEmisionId       INT
-        , @orderDetailId        INT
+        , @puntoEmisionId       INT 
         
     BEGIN TRY
         DECLARE @orderMantenaince AS TABLE (
@@ -55,6 +54,7 @@ BEGIN
             , discount                  NUMERIC(18,6)   NOT NULL
             , total                     NUMERIC(18,6)   NOT NULL
             , obs                       VARCHAR(500)    NULL
+            ,orderDetailId               int not null
         )
 
         SELECT @order = orden, @detalles = detalles FROM OPENJSON(@json) WITH( orden NVARCHAR(MAX) '$.order' AS JSON, detalles NVARCHAR(MAX) '$.detalles' AS JSON)
@@ -82,8 +82,8 @@ BEGIN
             , puntoEmisionId        INT             '$.puntoEmisionId'
         )
         
-        INSERT INTO @orderMantenaince (bodegaId, codigo, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs)
-        SELECT bodegaId, codigo, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs
+        INSERT INTO @orderMantenaince (bodegaId, codigo, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, orderDetailId)
+        SELECT bodegaId, codigo, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, orderDetailId
         FROM OPENJSON(@detalles)
         WITH (
             bodegaId                        INT             '$.bodegaId',
@@ -102,7 +102,8 @@ BEGIN
             price                           NUMERIC(18,6)   '$.price',
             discount                        NUMERIC(18,6)   '$.discount',
             total                           NUMERIC(18,6)   '$.total',
-            obs                             VARCHAR(500)    '$.obs'
+            obs                             VARCHAR(500)    '$.obs',
+            orderDetailId                   INT             '$.orderDetailId'
         );
 
         IF NOT EXISTS(SELECT 1 FROM @orderMantenaince)
@@ -128,7 +129,7 @@ BEGIN
             RETURN
         END
 
-        SELECT TOP 1 @orderDetailId = Id FROM TechnicalSupport.OrderDetail WHERE OrderId = @orderId
+    
 
         BEGIN TRAN
             IF NOT EXISTS(SELECT 1 FROM TechnicalSupport.OrderMaintenance tsom	            WITH(NOLOCK)
@@ -146,7 +147,7 @@ BEGIN
                     
                     INSERT INTO TechnicalSupport.OrderMaintenance
                     (bodegaId, feeId, medidaId, orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, createdAt, enabled)
-                    SELECT bodegaId, feeId, medidaId, @orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, @date, 1 
+                    SELECT bodegaId, feeId, medidaId, orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, @date, 1 
                     FROM @orderMantenaince
 
                     --- RETURN---

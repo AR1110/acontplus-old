@@ -1,0 +1,67 @@
+<form [formGroup]="brandForm" (ngSubmit)="onSave()">
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
+    </h5>
+    <button type="button" class="btn-close" (click)="onModalClose()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="categoryId">Categoría:</label>
+          <select
+            formControlName="categoryId"
+            id="categoryId"
+            class="form-select"
+          >
+            <option [value]="0">Seleccione una categoría</option>
+            @for (item of categories; track $index) {
+            <option [value]="item.id">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="code">Código:</label>
+          <input
+            type="text"
+            formControlName="code"
+            id="code"
+            class="form-control"
+            maxlength="5"
+          />
+        </div>
+      </div>
+      <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="name">Nombre:</label>
+          <input
+            type="text"
+            formControlName="name"
+            id="name"
+            class="form-control"
+            maxlength="100"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-success btn-sm"
+      [disabled]="brandForm.invalid"
+    >
+      <fa-icon [icon]="'save'"></fa-icon> Guardar
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-dark btn-sm"
+      (click)="onModalClose()"
+    >
+      &times; Cerrar
+    </button>
+  </div>
+</form>

@@ -10,10 +10,23 @@
 // .tabulator .tabulator-row.tabulator-selected .tabulator-cell {
 //   background-color: darkblue;
 // }
+// .tabulator {
+//    font-size: 12px;
+// }
 
- 
+.tabulator .tabulator-header {
+  //  font-weight: normal;
+  //  border-bottom: 1px solid;
+  //  border-bottom-color: rgba(0, 0, 0, 0.12);
+   font-weight: bold !important;
+    color: rgba(0,0,0,.54) !important;
+
+
+}
+
  .tabulator-header .tabulator-col {
       font-size: 12px; /* Adjust this value as needed */
+      background-color:  #f3f3f3 !important;
   }
 
   /*Kardex Colores de una columna de una Tabla */
@@ -28,8 +41,11 @@
 .table-saldos {
     background-color: rgba(46,155,92,.34);
 }
- 
+
 // .tabulator-header .tabulator-col {
 //   font-size: 12px; /* Adjust this value as needed */
 // }
- 
+
+.tabulator-row.tabulator-selectable:hover {
+  background-color: #C9DDE1 !important;
+}
