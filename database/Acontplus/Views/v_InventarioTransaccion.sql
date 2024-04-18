@@ -8,6 +8,7 @@ SELECT tr.idTransaccion
 	  ,tr.idUsuario
       ,tr.serieComprobante as nroDocumento
       ,tr.fechaEmision as fechaRegistro
+      ,dt.idTransaccionDetalle
       ,dt.estado
       ,dt.idArticulo
 	  ,dt.idBodega
