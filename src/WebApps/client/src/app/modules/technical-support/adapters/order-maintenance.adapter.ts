@@ -1,3 +1,5 @@
+import { OrderMaintenance } from "../models/order-maintenance.model";
+
 type ToProps = {
   order: any
   detalles: any[]
@@ -35,9 +37,10 @@ class OrderMaintenanceAdapter {
     return obj;
   }
 
-  private detailTo(detalles: any[]) {
+  private detailTo(detalles: OrderMaintenance[]) {
     let results = detalles.map((item, index) => {
       return {
+        id: item.id,
         orderIndex: index + 1,
         bodegaId: item.bodegaId,
         orderDetailId: item.orderDetailId,

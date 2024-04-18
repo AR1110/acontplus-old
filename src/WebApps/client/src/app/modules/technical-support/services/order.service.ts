@@ -103,6 +103,7 @@ export class OrderService {
                     );
 
                   let obj: OrderMaintenance = {
+                    id: restItem.id,
                     rowguid: generateUuidv4(),
                     bodegaId: restItem.bodegaId,
                     feeId: restItem.feeId,

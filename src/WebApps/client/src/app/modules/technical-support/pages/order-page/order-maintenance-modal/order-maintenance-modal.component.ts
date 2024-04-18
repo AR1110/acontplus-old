@@ -781,14 +781,15 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   getDataRowEmpty() {
     let dataOrderMaintenance: OrderMaintenance = {
+      id: 0,
       rowguid: generateUuidv4(),
       bodegaId: 0,
       feeId: 0,
       medidaId: 0,
       orderDetailId: 0,
       productId: 0,
-      descripcion: '',
-      codigo: '',
+      descripcion: "",
+      codigo: "",
       taxId: 0,
       taxPercentId: 0,
       quantity: 1,
@@ -800,7 +801,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       discount: 0,
       precioTotalSinImpuesto: 0,
       total: 0,
-      obs: '',
+      obs: null,
       medidas: [],
       tarifas: [],
       consolidacionesBodega: [],
