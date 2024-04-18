@@ -23,10 +23,7 @@ export class ModeloPageComponent {
     id: 0,
     code: '',
     name: '',
-    idFamilia: 0,
-    descripcion: '',
-    siglas: '',
-    estado: true,
+    brandId: 0
   };
   onEdit(item: Modelo) {
     this.modeloSelected = item;

@@ -23,10 +23,6 @@ export class BrandPageComponent {
     id: 0,
     code: '',
     name: '',
-    idFamilia: 0,
-    descripcion: '',
-    siglas: '',
-    estado: true,
   };
   onEdit(item: Brand) {
     this.brandSelected = item;
