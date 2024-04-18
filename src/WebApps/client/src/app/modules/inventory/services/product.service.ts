@@ -49,6 +49,14 @@ export class ProductService {
     )
   }
 
+  getDataForm(){
+    let params = {
+      json: JSON.stringify({ tipo: 1 })
+    }
+    return this.http.get(`${this.url}Get`, {
+      params
+    }).pipe(map((response: any) => response.payload))
+  }
 
   getAll<T extends { pageIndex: number, pageSize: number }>(obj: T) {
     let params = {
@@ -161,5 +169,26 @@ export class ProductService {
         return data;
       })
     )
+  }
+
+  checkNotificationStock<T extends {
+    idArticulo: number
+    cantidad: number
+    idBodega: number
+    idMedida: number
+  }>(obj: T) {
+
+    let params = {
+      json: JSON.stringify({ ...obj, tipo: 7 })
+    }
+    return this.http.get(`${this.url}Get`, {
+      params
+    }).pipe(map((response: any) => {
+      const responseApi = JSON.parse(response.payload)[0][0];
+
+
+      return responseApi;
+    }))
+
   }
 }

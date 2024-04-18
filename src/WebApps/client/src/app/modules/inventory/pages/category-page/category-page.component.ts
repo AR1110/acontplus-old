@@ -1,14 +1,22 @@
 import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { hideLoader, showLoader } from '@core/utils/loader';
-import { InventoryModule } from '@modules/inventory/inventory.module';
 import { CategoryRead } from '@modules/inventory/models/category.model';
 import { CategoryService } from '@modules/inventory/services/category.service';
+import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
 import { AppModule } from 'src/app/app.module';
 
 @Component({
   selector: 'app-category-page',
   standalone: true,
-  imports: [AppModule, InventoryModule],
+  imports: [
+    FormsModule,
+    NgbPagination,
+    BreadcrumbComponent,
+    PrimaryStatusPipe
+  ],
   templateUrl: './category-page.component.html',
   styles: ``
 })

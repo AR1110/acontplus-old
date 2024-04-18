@@ -1,3 +1,4 @@
+import { formatDateMoment } from "@core/utils/format-date-moment";
 import { OrderMaintenance } from "../models/order-maintenance.model";
 
 type ToProps = {
@@ -25,6 +26,8 @@ class OrderMaintenanceAdapter {
     let obj = {
       id: data.id,
       bodegaId: data.bodegaId,
+      fechaEmision: formatDateMoment(data.fechaEmision),
+      establecimientoId: data.establecimientoId,
       customerCompanyId: data.customerCompanyId,
       percentageDiscount: data.percentageDiscount,
       subTotalSinImpuesto: data.subTotalSinImpuesto,
@@ -33,6 +36,7 @@ class OrderMaintenanceAdapter {
       tip: data.tip,
       total: data.total,
       puntoEmisionId: data.puntoEmisionId,
+      discount: data.discount
     }
     return obj;
   }
