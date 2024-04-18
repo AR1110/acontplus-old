@@ -2,9 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { DOC_TYPE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
+import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
+import { isDateValid } from '@core/utils/format-date-moment';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -21,6 +24,7 @@ import { OrderMaintenanceService } from '@modules/technical-support/services/ord
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
+import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { Impuesto } from '@shared/models/impuesto.model';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
@@ -38,7 +42,8 @@ import Swal from 'sweetalert2';
     ProductSearchComponent,
     ReactiveFormsModule,
     TabulatorComponent,
-    ProductSearchComponent
+    ProductSearchComponent,
+    InputDateComponent
   ],
   templateUrl: './order-maintenance-modal.component.html',
 })
@@ -47,6 +52,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
     id: 0
   };
 
+  factura = DOC_TYPE.FV;
+  notaEntrega = DOC_TYPE.NE;
+
+  codDoc: DOC_TYPE | undefined = undefined;
 
   private modalRef = inject(NgbActiveModal);
   private orderSvc = inject(OrderService);
@@ -91,8 +100,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
     tip: 0,
     bodegaId: 0,
     feeId: 0,
-    fechaEmision: '',
-    orderDetailId: null
+    fechaEmision: new Date(),
+    fechaEmisionDocCreado: null as (Date | null),
+    orderDetailId: null,
+    customerCompanyId: 0
   }
 
   cloneOrder = {
@@ -920,7 +931,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       return row.getData().rowguid === data.rowguid;
     });
 
-    if(row){
+    if (row) {
       row.update({
         data,
         ...obj
@@ -1062,28 +1073,136 @@ export class OrderMaintenanceModalComponent implements OnInit {
   }
 
 
-  save(codDoc?: string) {
-    try {
-      if (!(this.order.establecimientoId > 0)) {
+  isValidForm() {
+    if (!(this.order.establecimientoId > 0)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el Establecimiento'
+      })
+      return
+    }
+
+    if (!(this.order.puntoEmisionId > 0)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el Punto de emisión'
+      })
+      return
+    }
+
+    if (!(this.order.customerCompanyId > 0)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione el cliente'
+      })
+      return
+    }
+
+    if (!isDateValid(this.order.fechaEmision)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese una fecha válidad'
+      })
+      return
+    }
+
+    if (dateIsAfterCurrentDate(this.order.fechaEmision)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'La fecha de emisión del documento no puede ser posterior a la fecha actual.'
+      })
+      return
+    }
+
+    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+      fechaEmision: this.order.fechaEmision,
+      fechaEmisionDocCreado: this.order.fechaEmisionDocCreado,
+      setHoursZero: true
+    });
+
+    if (ajusteFechaEmision) {
+      this.order.fechaEmision = ajusteFechaEmision;
+    } else {
+      console.log('Error al justar la fecha de Emisión')
+      return
+    }
+
+
+    if (this.orderMaintenances.length === 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese al menos un artículo en el detalle'
+      })
+      return
+    }
+
+    if (this.orderMaintenances.some(row => row.llevaInventario && row.quantity === 0)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.'
+      })
+      return
+    }
+
+    if (this.orderMaintenances.some(row => !(row.bodegaId > 0))) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione la bodega en el detalle de los artículos'
+      })
+      return
+    }
+
+    if(this.codDoc===DOC_TYPE.FV || this.codDoc===DOC_TYPE.NE){
+      if (!this.orderDetails.every(od => this.orderMaintenances.some(item => item.orderDetailId === od.orderDetailId ))){
         this.tS.toastr({
           type: 'warning',
-          message: 'Seleccione el Establecimiento'
+          message: 'Cuando el orden se guarda como documento, todos los equipos deben tener al menos un producto agregado.'
         })
         return
       }
 
-      if (!(this.order.puntoEmisionId > 0)) {
-        this.tS.toastr({
-          type: 'warning',
-          message: 'Seleccione el Punto de emisión'
-        })
-        return
+    }
+
+    if (this.order.total <= 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No se puede generar el documento con valor total 0!'
+      })
+      return
+    }
+
+    return true;
+  }
+
+  saveOptions(codDoc?: DOC_TYPE ){
+    this.codDoc = codDoc;
+    console.log(codDoc)
+    if(!this.isValidForm()) return
+
+    Swal.fire({
+      text: "¿Estás seguro de que deseas guardar este documento?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si",
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.save()
       }
+    });
+
+  }
+
+
+  save() {
+    try {
 
       let obj = {
         order: {
           ...this.order,
-          codDoc,
+          codDoc: this.codDoc,
         },
         detalles: this.orderMaintenances
       }

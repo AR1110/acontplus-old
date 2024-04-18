@@ -62,7 +62,8 @@ class OrderMaintenanceAdapter {
         discount: item.discount,
         total: item.total,
         obs: item.obs,
-
+        conversion: item.conversion,
+        cantidadTransaccion: item.quantity * item.conversion,
       }
     })
     return results;
