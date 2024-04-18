@@ -40,6 +40,7 @@ class OrderMaintenanceAdapter {
   private detailTo(detalles: OrderMaintenance[]) {
     let results = detalles.map((item, index) => {
       return {
+        rowguid: item.rowguid,
         id: item.id,
         descripcion: item.descripcion,
         orderIndex: index + 1,
