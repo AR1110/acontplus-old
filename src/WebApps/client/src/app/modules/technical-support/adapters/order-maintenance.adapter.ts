@@ -40,6 +40,7 @@ class OrderMaintenanceAdapter {
       return {
         orderIndex: index + 1,
         bodegaId: item.bodegaId,
+        orderDetailId: item.orderDetailId,
         codigo: item.codigo,
         costoFraccionado: item.costoFraccionado,
         precioConIva: item.precioConIva,

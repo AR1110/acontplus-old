@@ -29,8 +29,8 @@ type Data = {
 type CalculateColDefProps = {
   data: Data; // Use the Data type directly
   column: any;
-  oldValue: string | number; // Remove the duplicate property
-  feeId: number
+  oldValue?: string | number; // Remove the duplicate property
+  generalFeeId: number
   decimal: any
   columnDefs: any
 }
@@ -39,6 +39,14 @@ type TaxTotalProps = {
   items: Data[]
   decimal: any
   tarifasImpuesto: TarifaImpuesto[]
+}
+
+type SetFeeDetailProps = {
+  items: Data[]
+  generalFeeId: number
+  decimal: any
+  tarifasImpuesto: TarifaImpuesto[],
+  columnDefs: any[]
 }
 
 @Injectable({
@@ -50,7 +58,7 @@ export class SalesDetailCalculationService {
 
   calculateColDef(props: CalculateColDefProps) {
     const self = this;
-    const { data, column, oldValue, feeId: generalFeeId, decimal, columnDefs } = props;
+    const { data, column, oldValue,  generalFeeId, decimal, columnDefs } = props;
 
     let dataTarifaImpuesto: TarifaImpuesto = columnDefs.find((item: any) => item.field === 'taxPercentId').editorParams()
       .find((item: any) => item.idTarifaImpuesto === Number(data.taxPercentId));
@@ -133,9 +141,6 @@ export class SalesDetailCalculationService {
           let precioConIva = pricingCalculateUtil.calculatePriceWithVat(dataTarifa.precioVenta, dataTarifaImpuesto.porcentaje);
           let precioConIvaConDesuento = pricingCalculateUtil.getDiscountedVATPrice(precioConIva, data.percentageDiscount);
           let valorDescuento = pricingCalculateUtil.getValueDiscount(dataTarifa.precioVenta, data.percentageDiscount);
-          console.log(dataTarifa)
-          console.log(precioConIvaConDesuento)
-          console.log(valorDescuento)
           data.price = roundNumber(dataTarifa.precioVenta, decimal.nroPrecio);
           data.precioConIva = roundNumber(precioConIvaConDesuento, decimal.nroPrecio);
           data.discount = roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
@@ -282,11 +287,56 @@ export class SalesDetailCalculationService {
   }
 
 
+  setFeeInDetail(obj: SetFeeDetailProps) {
+    let decimal = {
+      nroPrecio: 0,
+      nroDescuentoDetalle: 0
+    }
+    if(decimal && Object.keys(obj.decimal).length>0){
+      decimal = decimal;
+    }
+    try {
+      for (let row of obj.items) {
+
+        let tarifa = row.tarifas.find(item => item.idTarifa === obj.generalFeeId);
+        let dataTarifaImpuesto = obj.tarifasImpuesto.find(ti => ti.idTarifaImpuesto === row.taxPercentId)
+        if (!tarifa || !dataTarifaImpuesto) continue
+
+
+        let precioConIva = pricingCalculateUtil.calculatePriceWithVat(tarifa.precioVenta, dataTarifaImpuesto.porcentaje);
+        let valorDescuento = pricingCalculateUtil.getValueDiscount(tarifa.precioVenta, row.percentageDiscount);
+
+        row.feeId = obj.generalFeeId;
+        row.price = roundNumber(tarifa.precioVenta, decimal.nroPrecio);
+        row.precioConIva = roundNumber(precioConIva, decimal.nroPrecio);
+        row.discount = roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
+
+        // this.calculoColumnas["calculoTotalDetalle"]();
+        this.calculateColDef({
+          data: row,
+          column:null,
+          generalFeeId: obj.generalFeeId,
+          decimal: decimal,
+          columnDefs: obj.columnDefs
+        })
+      }
+
+      return true;
+
+    } catch (error) {
+      this.tS.toastr({
+        type: 'warning',
+        message: `APLICACIÓN DE TARIFA EN TODO EL DOCUMENTO: ${error}`
+      })
+    }
+    return false;
+  }
+
+
 
   getTaxTotals(obj: TaxTotalProps) {
     // Desestructurar el objeto de entrada
     let { items, decimal, tarifasImpuesto } = obj;
-    console.log(items)
     if (!decimal) {
       decimal = {
         nroTotalSubTotal: 2,
