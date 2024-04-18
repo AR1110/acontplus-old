@@ -62,6 +62,9 @@ export class ModeloPageComponent {
       modalRef.componentInstance.data = this.modeloSelected;
     }
     modalRef.result.then((response) => {
+      if (this.modeloSelected.id > 0) {
+        this.modeloSelected = {} as Modelo;
+      }
       if (response !== null && typeof response == 'object') {
         this.onGet();
       }
