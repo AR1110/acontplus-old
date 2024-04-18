@@ -63,6 +63,7 @@ export class OrderService {
             data.order = {
               ...tempOrder,
               fechaEmision: formatDate(tempOrder.fechaEmision),
+              fechaEmisionDocCreado: formatDate(tempOrder.fechaEmision),
             };
             data.orderDetails = orderDetails;
             if (orderMaintenances) {
