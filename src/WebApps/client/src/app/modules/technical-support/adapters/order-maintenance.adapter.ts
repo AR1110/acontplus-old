@@ -41,6 +41,7 @@ class OrderMaintenanceAdapter {
     let results = detalles.map((item, index) => {
       return {
         id: item.id,
+        descripcion: item.descripcion,
         orderIndex: index + 1,
         bodegaId: item.bodegaId,
         orderDetailId: item.orderDetailId,
