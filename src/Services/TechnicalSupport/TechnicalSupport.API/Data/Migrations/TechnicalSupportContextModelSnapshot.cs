@@ -361,7 +361,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<DateTime>("FechaEmision")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Finished")
+                    b.Property<bool?>("Finished")
                         .HasColumnType("bit");
 
                     b.Property<string>("Obs")

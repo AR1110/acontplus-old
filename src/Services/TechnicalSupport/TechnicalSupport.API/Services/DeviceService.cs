@@ -69,9 +69,9 @@ namespace TechnicalSupport.API.Services
             try
             {
                 var ds = await _repository.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
-                if (DataValidation.DataSetIsNull(ds))
+                if (DataValidation.DataSetIsNull(ds, true))
                 {
-                    return new ApiResponse { code = "1", message = "No se encontraron datos" };
+                    return new ApiResponse { code = "0", message = "No se encontraron datos" };
                 }
                 else
                 {

@@ -11,7 +11,7 @@ namespace TechnicalSupport.API.Entities
         public Guid Uuid { get; set; }
         public int EstablecimientoId { get; set; }
         public DateTime FechaEmision { get; set; }
-        public bool Finished { get; set; }
+        public bool? Finished { get; set; }
         public int PuntoEmisionId { get; set; }
         public int Sequence { get; set; }
         [Required]

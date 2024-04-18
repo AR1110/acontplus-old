@@ -59,7 +59,7 @@ export class DeviceListComponent implements OnInit {
     showLoader();
     this.deviceService.get(JSON.stringify({ tipo: 2 })).subscribe({
       next: (response) => {
-        if (isApiResponse(response)) {
+        if (isApiResponse(response) && response.code == '1') {
           let tempArray = JSON.parse(response.payload as string);
 
           tempArray.devices.forEach((device: any) => {
@@ -68,11 +68,11 @@ export class DeviceListComponent implements OnInit {
           this.devices = tempArray.devices;
         }
       },
-      complete() {
+      error(error) {
+        console.error(error);
         hideLoader();
       },
-      error(error) {
-        console.log(error);
+      complete() {
         hideLoader();
       },
     });
