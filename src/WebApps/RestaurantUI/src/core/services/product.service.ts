@@ -11,7 +11,7 @@ export const productService = {
         const json = JSON.stringify(Object.assign({
             idArticulo: productId,
             idBodega: warehouseId,
-            tipo: 10
+            tipo: 6
         }))
 
         const resultAxios = await Http({
