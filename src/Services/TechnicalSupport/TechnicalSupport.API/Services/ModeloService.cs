@@ -1,4 +1,6 @@
-﻿using Common.Core.Models;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TechnicalSupport.API.Data;
@@ -9,16 +11,19 @@ namespace TechnicalSupport.API.Services
 {
     public class ModeloService : IModeloService
     {
+        private readonly IADORepository _repository;
         private readonly TechnicalSupportContext _context;
 
-        public ModeloService(TechnicalSupportContext context)
+        public ModeloService(TechnicalSupportContext context, IADORepository repository)
         {
             _context = context;
+            _repository = repository;
         }
         public async Task<ApiResponse> AddAsync(Modelo modelo)
         {
             try
             {
+                modelo.SerieId = modelo.SerieId == 0 ? null : modelo.SerieId;
                 _context.Modelos.Add(modelo);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Guardado Exitosamente" };
@@ -56,7 +61,30 @@ namespace TechnicalSupport.API.Services
                 {
                     return new ApiResponse { code = "0", message = "No data" };
                 }
-                return new ApiResponse { code = "1", payload = JsonConvert.SerializeObject(await _context.Modelos.ToListAsync()) };
+                //var modelos = await _context.Modelos
+                //    .Include(m => m.Brand)
+                //    .ThenInclude(b => b.Category)
+                //    .Select(m => new
+                //    {
+                //        m.Id,
+                //        m.Code,
+                //        m.Name,
+                //        m.BrandId,
+                //        m.SerieId,
+                //        BrandCode = m.Brand.Code,
+                //        BrandName = m.Brand.Name,
+                //        CategoryCode = m.Brand.Category.Code,
+                //        CategoryName = m.Brand.Category.Name
+                //    })
+                //    .ToListAsync();
+                //return new ApiResponse { code = "1", payload = DataConverters.SerializeObjectCustom<List<Modelo>>(modelos) };
+
+                var dt = await _repository.GetDataTableAsync("TechnicalSupport.Modelo_Get", parameters);
+                if (DataValidation.DataTableIsNull(dt))
+                {
+                    return new ApiResponse { code = "0", message = "No data" };
+                }
+                return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
             }
             catch (Exception)
             {
