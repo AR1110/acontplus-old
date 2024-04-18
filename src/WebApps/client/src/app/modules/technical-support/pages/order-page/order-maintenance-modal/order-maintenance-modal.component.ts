@@ -1101,7 +1101,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     if (!isDateValid(this.order.fechaEmision)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Ingrese una fecha válidad'
+        message: 'Ingrese una fecha válida'
       })
       return
     }
