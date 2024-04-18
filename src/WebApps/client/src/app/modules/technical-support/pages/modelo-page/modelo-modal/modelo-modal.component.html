@@ -23,7 +23,7 @@
           <label for="serieId">Serie:</label>
           <select formControlName="serieId" id="serieId" class="form-select">
             <option [value]="0">Seleccione una serie</option>
-            @for (item of brands; track $index) {
+            @for (item of series; track $index) {
             <option [value]="item.id">{{ item.name }}</option>
             }
           </select>
@@ -71,7 +71,7 @@
   </div>
   <div class="modal-footer">
     <button
-      type="button"
+      type="submit"
       class="btn btn-outline-success btn-sm"
       [disabled]="modeloForm.invalid"
     >

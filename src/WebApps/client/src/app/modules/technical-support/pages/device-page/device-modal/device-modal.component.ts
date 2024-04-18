@@ -22,6 +22,8 @@ import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
 import { Brand } from '@modules/technical-support/models/brand';
 import { Modelo } from '@modules/technical-support/models/modelo';
+import { BrandService } from '@modules/technical-support/services/brand.service';
+import { ModeloService } from '@modules/technical-support/services/modelo.service';
 
 @Component({
   selector: 'app-device-modal',
@@ -33,12 +35,12 @@ import { Modelo } from '@modules/technical-support/models/modelo';
 export class DeviceModalComponent implements OnInit {
   @ViewChild('inputNameSpec') inputNameSpec: any;
   @Input() params = {} as Device;
-
-  private deviceService = inject(DeviceService);
-  private deviceSepcsService = inject(DeviceSpecsService);
-  private activeModal = inject(NgbActiveModal);
   private fb = inject(FormBuilder);
   private modalRef = inject(NgbActiveModal);
+  private brandService = inject(BrandService);
+  private deviceService = inject(DeviceService);
+  private deviceSepcsService = inject(DeviceSpecsService);
+  private modeloService = inject(ModeloService);
   private tS = inject(ToasterService);
 
   brands: Brand[] = [];
@@ -61,14 +63,12 @@ export class DeviceModalComponent implements OnInit {
     categoryId: 0,
     name: '',
     serie: '',
-    brand: '',
-    model: '',
-    year: 0,
     warranty: 0,
     color: '',
     customers: [],
     deviceSpecId: 0,
-    modeloId: 0
+    modeloId: 0,
+    brandId: 0,
   };
 
   deviceSpecs: DeviceSpecs = {
@@ -80,13 +80,9 @@ export class DeviceModalComponent implements OnInit {
 
   deviceFormGroup: IForm<Device> = {
     categoryId: [0, Validators.required],
+    brandId: [0, Validators.required],
     modeloId: [0, Validators.required],
     name: ['', Validators.required],
-    serie: ['', Validators.required],
-    brand: ['', Validators.required],
-    model: ['', Validators.required],
-    year: [0, Validators.required],
-    warranty: [''],
     color: ['', Validators.required],
   };
   deviceForm = this.fb.group(this.deviceFormGroup);
@@ -102,6 +98,48 @@ export class DeviceModalComponent implements OnInit {
     ]),
   });
 
+  onBrandChange($event: any) {
+    showLoader();
+    this.modelos = [];
+    this.modeloService
+      .get({ tipo: 2, brandId: $event.target.value })
+      .subscribe({
+        next: (response) => {
+          if (isApiResponse(response) && response.code == '1') {
+            this.modelos = JSON.parse(response.payload as string);
+          }
+        },
+        error(err) {
+          hideLoader();
+          console.error(err);
+        },
+        complete() {
+          hideLoader();
+        },
+      });
+  }
+
+  onCategoryChange($event: any) {
+    showLoader();
+    this.brands = [];
+    this.brandService
+      .get({ tipo: 2, categoryId: $event.target.value })
+      .subscribe({
+        next: (response) => {
+          if (isApiResponse(response) && response.code == '1') {
+            this.brands = JSON.parse(response.payload as string);
+          }
+        },
+        error(err) {
+          hideLoader();
+          console.error(err);
+        },
+        complete() {
+          hideLoader();
+        },
+      });
+  }
+  onModeloChange($event: any) {}
   // --> Functions
   setDataFormModal() {
     this.device = this.params;
@@ -187,7 +225,7 @@ export class DeviceModalComponent implements OnInit {
             type: 'success',
             message: response.message,
           });
-          this.activeModal.close(response.payload);
+          this.modalRef.close(response.payload);
         }
       },
       complete() {
@@ -226,7 +264,7 @@ export class DeviceModalComponent implements OnInit {
             type: 'success',
             message: response.message,
           });
-          this.activeModal.close(response);
+          this.modalRef.close(response);
         }
       },
       complete() {
@@ -292,19 +330,19 @@ export class DeviceModalComponent implements OnInit {
         this.tS.toastr({ type: 'warning', message: `El nombre es requerido` });
         isValid = false;
       }
-      if (this.validations.includes(device.brand)) {
-        this.tS.toastr({ type: 'warning', message: `La marca es requerido` });
-        isValid = false;
-      }
-      if (this.validations.includes(device.model)) {
-        this.tS.toastr({ type: 'warning', message: `El model es requerido` });
-        isValid = false;
-      }
+      // if (this.validations.includes(device.brand)) {
+      //   this.tS.toastr({ type: 'warning', message: `La marca es requerido` });
+      //   isValid = false;
+      // }
+      // if (this.validations.includes(device.model)) {
+      //   this.tS.toastr({ type: 'warning', message: `El model es requerido` });
+      //   isValid = false;
+      // }
 
-      if (this.validationsNumbers.includes(device.year)) {
-        this.tS.toastr({ type: 'warning', message: `El año es requerido` });
-        isValid = false;
-      }
+      // if (this.validationsNumbers.includes(device.year)) {
+      //   this.tS.toastr({ type: 'warning', message: `El año es requerido` });
+      //   isValid = false;
+      // }
 
       if (this.validations.includes(device.color)) {
         this.tS.toastr({ type: 'warning', message: `El color es requerido` });

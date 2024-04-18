@@ -27,7 +27,7 @@ namespace TechnicalSupport.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on Get:" + ex.Message);
+                _log.LogActivity($"Error on Get: \n {ex}");
                 return BadRequest("Error on get");
             }
         }
@@ -42,7 +42,7 @@ namespace TechnicalSupport.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on post: \n {JsonConvert.SerializeObject(serie)}");
+                _log.LogActivity($"Error on post: \n {ex} \n {JsonConvert.SerializeObject(serie)}");
                 return BadRequest(ex.Message);
             }
         }
@@ -57,7 +57,7 @@ namespace TechnicalSupport.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on put: {id} \n {JsonConvert.SerializeObject(serie)}");
+                _log.LogActivity($"Error on put: {id} \n {ex} \n {JsonConvert.SerializeObject(serie)}");
                 return BadRequest(ex.Message);
             }
         }
@@ -71,7 +71,7 @@ namespace TechnicalSupport.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on delete: {id}");
+                _log.LogActivity($"Error on delete: {id} \n {ex}");
                 return BadRequest(ex.Message);
             }
         }

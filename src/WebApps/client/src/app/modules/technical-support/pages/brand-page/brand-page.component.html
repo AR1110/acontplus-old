@@ -14,7 +14,8 @@
       <table class="table">
         <thead>
           <tr>
-            <th class="text-center">#</th>
+            <th class="text-center">#</th> 
+            <th>Categoría</th>
             <th>Código</th>
             <th>Nombre</th>
             <th>Opciones</th>
@@ -23,11 +24,12 @@
         <tbody>
           @for (item of brands; track $index) {
           <tr>
-            <td>{{ $index }}</td>
+            <td class="text-center">{{ $index + 1 }}</td>
+            <td>{{ item.categoryName }}</td>
             <td>{{ item.code }}</td>
             <td>{{ item.name }}</td>
             <td>
-              <button type="button" class="btn btn-outline-warning btn-sm">
+              <button type="button" class="btn btn-outline-warning btn-sm m-r-5">
                 <fa-icon [icon]="'edit'"></fa-icon>
               </button>
               <button type="button" class="btn btn-outline-danger btn-sm">

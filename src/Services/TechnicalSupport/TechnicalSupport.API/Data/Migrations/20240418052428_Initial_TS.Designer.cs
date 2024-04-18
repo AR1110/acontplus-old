@@ -12,7 +12,7 @@ using TechnicalSupport.API.Data;
 namespace TechnicalSupport.API.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
-    [Migration("20240417230819_Initial_TS")]
+    [Migration("20240418052428_Initial_TS")]
     partial class Initial_TS
     {
         /// <inheritdoc />
@@ -364,7 +364,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<DateTime>("FechaEmision")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Finished")
+                    b.Property<bool?>("Finished")
                         .HasColumnType("bit");
 
                     b.Property<string>("Obs")

@@ -49,6 +49,7 @@ export class ModeloModalComponent {
     id: 0,
     code: '',
     name: '',
+    categoryName: '',
   };
   modalIcon: IconProp = 'plus';
   modalTitle = 'Registrar Modelo';
@@ -62,7 +63,7 @@ export class ModeloModalComponent {
   }
   onGet() {
     showLoader();
-    this.brandService.get({}).subscribe({
+    this.brandService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {

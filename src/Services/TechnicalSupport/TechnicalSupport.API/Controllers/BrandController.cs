@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Core.Utils;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
@@ -17,17 +18,16 @@ namespace TechnicalSupport.API.Controllers
             _log = log;
         }
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string json)
         {
             try
             {
-                var response = await _brandService.GetAsync();
-                if (response == null) { return BadRequest("Can't Get brand"); };
+                var response = await _brandService.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on Get:" + ex.Message);
+                _log.LogActivity($"Error on Get:\n {ex}");
                 return BadRequest("Error on get");
             }
         }
@@ -42,7 +42,7 @@ namespace TechnicalSupport.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on post: \n {JsonConvert.SerializeObject(brand)}");
+                _log.LogActivity($"Error on post: \n {ex} \n {JsonConvert.SerializeObject(brand)}");
                 return BadRequest(ex.Message);
             }
         }
@@ -57,7 +57,7 @@ namespace TechnicalSupport.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on put: {id} \n {JsonConvert.SerializeObject(brand)}");
+                _log.LogActivity($"Error on put: {id} \n {ex} \n  {JsonConvert.SerializeObject(brand)}");
                 return BadRequest(ex.Message);
             }
         }
@@ -71,7 +71,7 @@ namespace TechnicalSupport.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity($"Error on delete: {id}");
+                _log.LogActivity($"Error on delete: {id} \n {ex}");
                 return BadRequest(ex.Message);
             }
         }

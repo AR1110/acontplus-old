@@ -4,7 +4,7 @@
     class="btn btn-outline-primary btn-sm d-none d-lg-block m-l-15"
     (click)="onModalOpen()"
   >
-    <fa-icon [icon]="'plus'"></fa-icon> NuevO
+    <fa-icon [icon]="'plus'"></fa-icon> Nuevo
   </button>
 </app-breadcrumb>
 <div class="card">
@@ -15,6 +15,7 @@
         <thead>
           <tr>
             <th class="text-center">#</th>
+            <th>Marca</th>
             <th>Código</th>
             <th>Nombre</th>
             <th>Opciones</th>
@@ -23,13 +24,14 @@
         <tbody>
           @for (item of modelos; track $index) {
           <tr>
-            <td>{{ $index }}</td>
+            <td class="text-center">{{ $index + 1 }}</td>
+            <td>{{ item.brandName }}</td>
             <td>{{ item.code }}</td>
             <td>{{ item.name }}</td>
             <td>
               <button
                 type="button"
-                class="btn btn-outline-warning btn-sm"
+                class="btn btn-outline-warning btn-sm m-r-5"
                 (click)="onEdit(item)"
               >
                 <fa-icon [icon]="'edit'"></fa-icon>

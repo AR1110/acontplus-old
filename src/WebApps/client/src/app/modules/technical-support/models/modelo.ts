@@ -1,6 +1,6 @@
 import { Brand } from './brand';
 
-export interface Modelo extends Brand {
+export interface Modelo {
   id: number;
   brandId: number;
   serieId?: number;
@@ -8,4 +8,6 @@ export interface Modelo extends Brand {
   name: string;
   year?: number;
   enabled?: boolean;
+  brandName: string;
+  categoryName: string;
 }

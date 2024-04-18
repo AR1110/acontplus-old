@@ -23,15 +23,20 @@ export class ModeloPageComponent {
     id: 0,
     code: '',
     name: '',
-    brandId: 0
+    brandId: 0,
+    brandName: '',
+    categoryName: '',
   };
+  ngOnInit(): void {
+    this.onGet();
+  }
   onEdit(item: Modelo) {
     this.modeloSelected = item;
     this.onModalOpen();
   }
   onGet() {
     showLoader();
-    this.modeloService.get({}).subscribe({
+    this.modeloService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {

@@ -23,14 +23,18 @@ export class BrandPageComponent {
     id: 0,
     code: '',
     name: '',
+    categoryName: '',
   };
+  ngOnInit(): void {
+    this.onGet();
+  }
   onEdit(item: Brand) {
     this.brandSelected = item;
     this.onModalOpen();
   }
   onGet() {
     showLoader();
-    this.brandService.get({}).subscribe({
+    this.brandService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {

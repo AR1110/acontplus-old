@@ -94,7 +94,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EstablecimientoId = table.Column<int>(type: "int", nullable: false),
                     FechaEmision = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Finished = table.Column<bool>(type: "bit", nullable: false),
+                    Finished = table.Column<bool>(type: "bit", nullable: true),
                     PuntoEmisionId = table.Column<int>(type: "int", nullable: false),
                     Sequence = table.Column<int>(type: "int", nullable: false),
                     Serie = table.Column<string>(type: "varchar(18)", unicode: false, maxLength: 18, nullable: false),
