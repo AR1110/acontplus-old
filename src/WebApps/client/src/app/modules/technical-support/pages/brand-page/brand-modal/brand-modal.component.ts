@@ -47,6 +47,7 @@ export class BrandModalComponent {
     id: 0,
     code: '',
     name: '',
+    categoryName: ''
   };
   modalIcon: IconProp = 'plus';
   modalTitle = 'Registrar Marca';
@@ -86,6 +87,7 @@ export class BrandModalComponent {
     const dataToSave = {
       ...this.brandForm.value,
     };
+    console.log(dataToSave);
     if (this.data.id > 0) {
       this.brandService.put(this.data.id, dataToSave).subscribe({
         next: this.successResponse,

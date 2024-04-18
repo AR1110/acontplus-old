@@ -5,4 +5,5 @@ export interface Brand extends Category {
   code: string;
   name: string;
   enabled?: boolean;
+  categoryName: string;
 }
