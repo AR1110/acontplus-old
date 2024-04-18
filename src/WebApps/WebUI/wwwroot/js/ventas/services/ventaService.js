@@ -749,7 +749,7 @@
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
                         irbpnr: comprobanteTemp.irbpnr || 0,
                         idTiempoCredito : cuentaPorCobrar[0].idTiempoCredito,
-                         fechaVencimiento: fS.formatDate(cuentaPorCobrar[0].fechaVencimiento),
+                        fechaVencimiento: fS.formatDate(cuentaPorCobrar[0].fechaVencimiento),
                         
                     }
 
