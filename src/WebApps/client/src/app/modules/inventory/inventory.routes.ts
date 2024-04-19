@@ -4,6 +4,7 @@ import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category
 import { ProductPageComponent } from "./pages/product-page/product-page.component";
 import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
 import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
+import { MeasurePageComponent } from "./pages/measure-page/measure-page.component";
 
 
 export const routes: Route[] = [
@@ -46,6 +47,15 @@ export const routes: Route[] = [
     component: LotPricePageComponent,
     data: {
       breadcrumb: 'Precio por Lote'
+    },
+  },
+
+  {
+    path: 'measure-page',
+    title: 'Medida',
+    component: MeasurePageComponent,
+    data: {
+      breadcrumb: 'Medida'
     },
   },
 
