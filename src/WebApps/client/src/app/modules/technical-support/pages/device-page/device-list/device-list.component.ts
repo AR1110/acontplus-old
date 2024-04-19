@@ -25,12 +25,12 @@ export class DeviceListComponent implements OnInit {
 
   getCustomers(id: number) {}
 
-  edit(item: Device) {
+  onEdit(item: Device) {
     const modalRef = this.modalSvc.openModalCustom(DeviceModalComponent, {
       size: 'lg',
       centered: true,
     });
-    modalRef.componentInstance.params = item || {};
+    modalRef.componentInstance.data = item || {};
     modalRef.result.then((result) => {
       if (result.code == '1') {
         this.get();
@@ -61,7 +61,6 @@ export class DeviceListComponent implements OnInit {
       next: (response) => {
         if (isApiResponse(response) && response.code == '1') {
           let tempArray = JSON.parse(response.payload as string);
-
           tempArray.devices.forEach((device: any) => {
             device.specs = JSON.parse(device.specs);
           });

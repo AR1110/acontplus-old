@@ -60,6 +60,9 @@ export class BrandPageComponent {
       modalRef.componentInstance.data = this.brandSelected;
     }
     modalRef.result.then((response) => {
+      if (this.brandSelected.id > 0) {
+        this.brandSelected = {} as Brand;
+      }
       if (response !== null && typeof response == 'object') {
         this.onGet();
       }
