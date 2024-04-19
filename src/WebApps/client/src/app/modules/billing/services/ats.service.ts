@@ -2,7 +2,7 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { BILLING_PATHS } from '../enums/billing.enum.ts'; 
+import { BILLING_PATHS } from '../enums/billing.enum.ts';
 import { SharedService } from '@core/services/shared.service.js';
 import { ToasterService } from '@core/services/toaster.service';
 @Injectable({
@@ -20,7 +20,7 @@ export class AtsService {
     let json = JSON.stringify(obj)
     showLoader()
     this.#http
-      .get(`${this.#url}Download?json=${json}`)
+      .get(`${this.#url}Download?json=${json}`, { responseType: 'blob' })
       .subscribe({
         next: (response:any) => {
           hideLoader();
@@ -28,12 +28,12 @@ export class AtsService {
                 this.tS.toastr({
                   type: 'warning',
                   message: response.message
-                }) 
+                })
                 return;
             }
             if (response.data.size > 0) {
               this.sharedSvc.saveFile(response)
-              
+
             }
         },
         error(err) {
