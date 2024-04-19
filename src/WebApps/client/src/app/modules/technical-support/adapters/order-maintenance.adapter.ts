@@ -64,6 +64,7 @@ class OrderMaintenanceAdapter {
         taxValue: item.taxValue,
         price: item.price,
         discount: item.discount,
+        percentageDiscount: item.percentageDiscount,
         total: item.total,
         obs: item.obs,
         conversion: item.conversion,
