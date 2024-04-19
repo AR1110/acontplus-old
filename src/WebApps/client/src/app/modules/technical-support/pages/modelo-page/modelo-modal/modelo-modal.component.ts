@@ -57,6 +57,8 @@ export class ModeloModalComponent {
 
   ngOnInit(): void {
     if (this.data.id > 0) {
+      this.modalIcon = 'edit';
+      this.modalTitle = 'Editar Modelo';
       this.modeloForm.patchValue(this.data);
     }
     this.onGet();

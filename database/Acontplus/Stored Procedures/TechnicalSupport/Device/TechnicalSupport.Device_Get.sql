@@ -61,31 +61,29 @@ BEGIN
         BEGIN
 	        SET @tableNames = 'devices'
 	        SELECT d.*
-                --,dc.CustomerCompanyId
-                --,dc.SerialNumber        AS Serie
-                --,dc.Warranty
-                --,ds.Id                  AS DeviceSpecId
+                ,m.BrandId
                 ,m.[Name] ModeloName
                 ,m.[Year]
+                ,b.CategoryId
                 ,b.[Name] BrandName
                 ,c.[Name] CategoryName
                 ,ISNULL(ds.Specs, '{}') AS Specs
             FROM TechnicalSupport.Device d WITH (NOLOCK)
-                 INNER JOIN TechnicalSupport.Modelo m WITH (NOLOCK)ON d.ModeloId = m.Id
+                INNER JOIN TechnicalSupport.Modelo m WITH (NOLOCK)ON d.ModeloId = m.Id
                 INNER JOIN TechnicalSupport.Brand b WITH (NOLOCK) ON m.BrandId = b.Id
                 INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id
-            --LEFT JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
-            LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
+                LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
             WHERE d.Deleted IS NULL
             RETURN
         END
      IF (@tipo = 3)
         BEGIN
         	SET @tableNames = 'devices'
-
             SELECT d.*
+                ,m.BrandId
                 ,m.[Name] ModeloName
                 ,m.[Year]
+                ,b.CategoryId
                 ,b.[Name] BrandName
                 ,c.[Name] CategoryName
             FROM TechnicalSupport.Device d WITH (NOLOCK)

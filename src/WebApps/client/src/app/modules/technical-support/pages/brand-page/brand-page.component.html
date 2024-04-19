@@ -14,7 +14,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th class="text-center">#</th> 
+            <th class="text-center">#</th>
             <th>Categoría</th>
             <th>Código</th>
             <th>Nombre</th>
@@ -29,7 +29,11 @@
             <td>{{ item.code }}</td>
             <td>{{ item.name }}</td>
             <td>
-              <button type="button" class="btn btn-outline-warning btn-sm m-r-5">
+              <button
+                type="button"
+                class="btn btn-outline-warning btn-sm m-r-5"
+                (click)="onEdit(item)"
+              >
                 <fa-icon [icon]="'edit'"></fa-icon>
               </button>
               <button type="button" class="btn btn-outline-danger btn-sm">

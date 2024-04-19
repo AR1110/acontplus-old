@@ -242,7 +242,11 @@ BEGIN
 			SET @ambiente = 1
 			SET @tipoEmision = 1
 
-			SELECT @idEntidad = idEntidad 
+			
+
+	BEGIN TRY
+
+        SELECT @idEntidad = idEntidad 
  			,@idUsuario = idUsuario
 			FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
  
@@ -292,8 +296,6 @@ BEGIN
 					SELECT '0' as code, 'Error al generar clave acceso '   as 'message' 
 					RETURN
 				END
-
-	BEGIN TRY
 		BEGIN TRAN
 			
 
