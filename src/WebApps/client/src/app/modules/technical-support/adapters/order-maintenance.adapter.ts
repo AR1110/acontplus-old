@@ -1,22 +1,28 @@
+import { OrderMaintenance } from './../models/order-maintenance.model';
 import { formatDateMoment } from "@core/utils/format-date-moment";
-import { OrderMaintenance } from "../models/order-maintenance.model";
 
+type OrderMaintenanceTo = OrderMaintenance & { envioSri: boolean, isGroup: boolean }
 type ToProps = {
   order: any
-  detalles: any[]
+  detalles: OrderMaintenanceTo[],
+  customDetails: OrderMaintenanceTo[]
 }
 class OrderMaintenanceAdapter {
 
   to(obj: ToProps) {
-    const { order, detalles } = obj;
+    const { order, detalles, customDetails } = obj;
 
 
     let resultOrder = this.orderTo(order);
     let resultDetalles = this.detailTo(detalles);
+    let resultCustomDetails = this.detailTo(customDetails);
+    let mergeDetails = [...resultDetalles, ...resultCustomDetails];
+
 
     return {
       order: resultOrder,
-      detalles: resultDetalles
+      detalles: mergeDetails.map((_, index) => ({ ..._, orderIndex: index + 1 })),
+      //  customDetails: resultCustomDetails
     }
   }
 
@@ -41,7 +47,7 @@ class OrderMaintenanceAdapter {
     return obj;
   }
 
-  private detailTo(detalles: OrderMaintenance[]) {
+  private detailTo(detalles: OrderMaintenanceTo[]) {
     let results = detalles.map((item, index) => {
       return {
         rowguid: item.rowguid,
@@ -69,6 +75,8 @@ class OrderMaintenanceAdapter {
         obs: item.obs,
         conversion: item.conversion,
         cantidadTransaccion: item.quantity * item.conversion,
+        envioSri: item.envioSri,
+        isGroup: item.isGroup //en caso de que el detalle sea personalizado
       }
     })
     return results;

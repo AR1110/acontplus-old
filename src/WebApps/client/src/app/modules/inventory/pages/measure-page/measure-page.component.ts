@@ -19,6 +19,7 @@ import { ActionAddDirective } from '@shared/directives/permission/action-add.dir
 export class MeasurePageComponent {
   measureSvc = inject(MeasureService);
 
+  measures:any[] = [];
   pagination = new Pagination();
 
   getMeasures(){

@@ -55,9 +55,13 @@
         </select>
       </div>
     </div>
-    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex align-items-center justify-content-center">
+    <div class="icheck-success">
+        <input type="checkbox" id="detailCustom" [(ngModel)]="checkboxDetailCustom" (change)="onChangeCheckboxDetailCustom()" />
+        <label for="detailCustom">Detalle Personalizado</label>
     </div>
+</div>
+
   </div>
 
   <div class="row">
@@ -73,14 +77,16 @@
             </div>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
-            <div class="form-group">
-              <label for="orderDetails">Detalle: <span class="text-danger">*</span></label>
-              <select name="orderDetails" id="orderDetails" class="form-select" [(ngModel)]="order.orderDetailId">
-                @for (item of orderDetails; track $index) {
-                <option [ngValue]="item.orderDetailId">{{item.deviceName}}</option>
-                }
-              </select>
-            </div>
+            @if (!detailCustom) {
+              <div class="form-group">
+                <label for="orderDetails">Detalle: <span class="text-danger">*</span></label>
+                <select name="orderDetails" id="orderDetails" class="form-select" [(ngModel)]="order.orderDetailId">
+                  @for (item of orderDetails; track $index) {
+                  <option [ngValue]="item.orderDetailId">{{item.deviceName}}</option>
+                  }
+                </select>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -89,12 +95,15 @@
           <button type="button" class="btn btn-outline-dark" (click)="saveOptions(factura)">
             <fa-icon [icon]="'file-pdf'"></fa-icon> Factura
           </button>
-          <button type="button" class="btn btn-outline-info" (click)="saveOptions(notaEntrega)">
-            <fa-icon [icon]="'dot-circle'"></fa-icon> Nota de Entrega
-          </button>
-          <button type="button" class="btn btn-outline-success" (click)="saveOptions()">
-            <fa-icon [icon]="'save'"></fa-icon> Guardar
-          </button>
+          @if (!detailCustom) {
+            <button type="button" class="btn btn-outline-info" (click)="saveOptions(notaEntrega)">
+              <fa-icon [icon]="'dot-circle'"></fa-icon> Nota de Entrega
+            </button>
+            <button type="button" class="btn btn-outline-success" (click)="saveOptions()">
+              <fa-icon [icon]="'save'"></fa-icon> Guardar
+            </button>
+
+          }
         </div>
       </div>
     </div>

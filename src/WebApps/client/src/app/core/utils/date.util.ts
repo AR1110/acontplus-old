@@ -69,6 +69,7 @@ export function ajustarFechaEmisionModificada<T extends { fechaEmision: any, fec
   }
 
   let dataFechaActual = isDatesEqual(fechaEmisionModificada, fechaActual);
+  console.log(dataFechaActual)
 
   if (dataFechaActual.esMismaFecha) {
     fechaEmisionModificada.setHours(

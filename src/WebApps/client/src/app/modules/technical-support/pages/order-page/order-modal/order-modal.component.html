@@ -50,10 +50,13 @@
       <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="form-group">
           <label for="fechaEmision">Fecha Emisión: </label>
+
           <input
             type="date"
             class="form-control border-select"
             formControlName="fechaEmision"
+            (change)="onChangeDate($event)"
+            [value]="orderForm.get('fechaEmision')?.value | date:'yyyy-MM-dd'"
             required
           />
         </div>
