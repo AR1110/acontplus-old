@@ -1,16 +1,5 @@
 USE [AcontPlus]
-go
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -35,6 +24,7 @@ BEGIN
 	       ,@codEstab VARCHAR(50)
            ,@establecimientoId INT
 	       ,@codDoc VARCHAR(5)
+           ,@tipo INT
 	------------END---------------------
 
 	--------PARAMETER MANAGEMENT----------
@@ -55,7 +45,8 @@ BEGIN
 	SELECT @codEstab = codEstab
         ,@idDocument = idDocument
         ,@codDoc= codDoc 
-    FROM OPENJSON(@json) WITH (idDocument INT  '$.idDocument',codEstab VARCHAR(50) '$.codEstab',codDoc VARCHAR(5) '$.codDoc')
+        ,@tipo = tipo
+    FROM OPENJSON(@json) WITH (idDocument INT  '$.idDocument',codEstab VARCHAR(50) '$.codEstab',codDoc VARCHAR(5) '$.codDoc', tipo INT)
 
 	SET @establecimientoId = (SELECT idEstablecimiento FROM Sri.Establecimiento WHERE codEstab = @codEstab)
     
@@ -78,6 +69,12 @@ BEGIN
 	  AND i.EstablecimientoId = @establecimientoId 
 	  AND cd.[Enabled]  = 1
 	    AND (i.Machine IS NOT NULL AND LEN(LTRIM(RTRIM(i.Machine))) > 0)
+
+    IF @tipo = 2
+        BEGIN
+            SELECT '1' code, payload = IIF(@urlPrinter = '127.0.0.1:9100', 'http://' + @urlPrinter, 'https://acontplusprint.com') FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+            RETURN
+        END
 
 	SELECT @totalThermalPrinters   = (SELECT COUNT(*) FROM Config.v_Printer ii WITH (NOLOCK) WHERE  ii.Id = i.Id AND ii.printerTypeCode = 'TE')  
 	      ,@totalInyectionPrinters = (SELECT COUNT(*) FROM Config.v_Printer ii WITH (NOLOCK) WHERE  ii.Id = i.Id AND ii.printerTypeCode = 'AT')  

@@ -1,19 +1,29 @@
 import { Component, inject } from '@angular/core';
-import { AppModule } from 'src/app/app.module';
-import { InventoryModule } from '@modules/inventory/inventory.module';
 
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { SubCategoryRead } from '@modules/inventory/models/sub-category.model';
 import { SubCategoryService } from '@modules/inventory/services/sub-category.service';
 import { ModalService } from '@core/services/modal.service';
 import {SubCategoryModalDirective} from '@inventory/directives/sub-category.directive'
+import { FormsModule } from '@angular/forms';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
+import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-subcategory-page',
   standalone: true,
-  imports: [AppModule, InventoryModule, SubCategoryModalDirective],
+  imports: [
+    NgbPagination,
+    FontAwesomeModule,
+    FormsModule,
+    BreadcrumbComponent,
+    SubCategoryModalDirective,
+    PrimaryStatusPipe
+  ],
   templateUrl: './sub-category-page.component.html',
-  
+
 })
 export class SubCategoryPageComponent {
 
@@ -61,5 +71,5 @@ export class SubCategoryPageComponent {
   changePageSize(): void {
     this.dataSearch.pageIndex = 1;
     this.getSubcategories();
-  } 
+  }
 }

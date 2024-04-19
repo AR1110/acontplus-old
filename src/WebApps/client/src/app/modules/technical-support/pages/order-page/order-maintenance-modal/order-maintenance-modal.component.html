@@ -7,7 +7,8 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="establishment">Establecimiento <span class="text-danger">*</span></label>
-        <select name="establishment" id="establishment" class="form-select" [(ngModel)]="order.establecimientoId">
+        <select name="establishment" id="establishment" class="form-select" [(ngModel)]="order.establecimientoId"
+          (change)="onChangeEstablecimiento()">
           @for (item of establecimientos; track $index) {
           <option [ngValue]="item.idEstablecimiento">{{item.nombreComercial}}</option>
           }
@@ -28,7 +29,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
-        <input type="date" name="fechaEmision" id="fechaEmision" [ngModel]="order.fechaEmision | date:'yyyy-MM-dd'"  class="form-control">
+        <app-input-date [(value)]="order.fechaEmision"/>
       </div>
     </div>
   </div>
@@ -37,7 +38,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="warehouse">Bodega: </label>
-        <select name="warehouse" id="warehouse" class="form-select">
+        <select name="warehouse" id="warehouse" class="form-select" (change)="onChangeBodega()">
           @for (item of bodegas; track $index) {
           <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
           }
@@ -47,7 +48,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="feed">Tarifa: </label>
-        <select name="feed" id="feed" class="form-select">
+        <select name="feed" id="feed" class="form-select" (change)="onChangeFee()" [(ngModel)]="order.feeId">
           @for (item of feeds; track $index) {
           <option [ngValue]="item.idTarifa">{{item.descripcion}}</option>
           }
@@ -59,50 +60,54 @@
     </div>
   </div>
 
-   <div ngbAccordion [closeOthers]="true">
-    @for (item of orderDetails; track $index) {
-    <div ngbAccordionItem   >
-      <h2 ngbAccordionHeader>
-        <button ngbAccordionButton>
-          {{ item.deviceName }}
-        </button>
-      </h2>
-      <div ngbAccordionCollapse>
-        <div ngbAccordionBody>
-          <ng-template>
-
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div class="row">
-                  <div class="form-group">
-                    <!-- <label for="productSearch">Buscar producto: </label> -->
-                    <app-product-search (onProductSelected)="onProductSelected($event)" [props]="{
-                                        isSearchSimple: true
-                                      }" />
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-
-              </div>
+  <div class="row">
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="row">
+          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+            <div class="form-group">
+              <label for="productSearch">Buscar producto: </label>
+              <app-product-search (onProductSelected)="onProductSelected($event)" [props]="{
+                                                      isSearchSimple: true
+                                                    }" />
             </div>
-            <div class="row mt-2">
-              <div class="col">
-                <div class="table-responsive">
-                  <app-tabulator
-                    [columnNames]="columnNames"
-                    [tableData]="orderMaintenances"
-                    (cellEdited)="cellEdited($event)"
-                  ></app-tabulator>
-                </div>
-              </div>
+          </div>
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+            <div class="form-group">
+              <label for="orderDetails">Detalle: <span class="text-danger">*</span></label>
+              <select name="orderDetails" id="orderDetails" class="form-select" [(ngModel)]="order.orderDetailId">
+                @for (item of orderDetails; track $index) {
+                <option [ngValue]="item.orderDetailId">{{item.deviceName}}</option>
+                }
+              </select>
             </div>
-          </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 ">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+          <button type="button" class="btn btn-outline-dark" (click)="saveOptions(factura)">
+            <fa-icon [icon]="'file-pdf'"></fa-icon> Factura
+          </button>
+          <button type="button" class="btn btn-outline-info" (click)="saveOptions(notaEntrega)">
+            <fa-icon [icon]="'dot-circle'"></fa-icon> Nota de Entrega
+          </button>
+          <button type="button" class="btn btn-outline-success" (click)="saveOptions()">
+            <fa-icon [icon]="'save'"></fa-icon> Guardar
+          </button>
         </div>
       </div>
     </div>
-    }
+
   </div>
+
+  <div class="row">
+    <div class="col-12">
+      <app-tabulator [tableData]="orderMaintenances" [options]="tabulatorOptions"
+        (cellEdited)="cellEdited($event)"></app-tabulator>
+    </div>
+  </div>
+
 
 
   <div class="row">
@@ -111,28 +116,15 @@
     </div>
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
       <div class="mt-2">
-        <app-draw-tax-total
-              [subTotalSinImpuesto]="order.subTotalSinImpuesto"
-          [htmlImpuestoTotal]="htmlImpuestoTotal"
-          [discount]="order.discount"
-          [htmlIvaTotal]="htmlIvaTotal"
-          [importeTotal]="order.total"
-        />
+        <app-draw-tax-total [subTotalSinImpuesto]="order.subTotalSinImpuesto" [htmlImpuestoTotal]="htmlImpuestoTotal"
+          [discount]="order.discount" [htmlIvaTotal]="htmlIvaTotal" [importeTotal]="order.total" />
       </div>
     </div>
   </div>
 
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="save('FV')">
-    <fa-icon [icon]="'file-pdf'"></fa-icon> Factura
-  </button>
-  <button type="button" class="btn btn-outline-info" (click)="save('NE')">
-    <fa-icon [icon]="'dot-circle'"></fa-icon> Nota de Entrega
-  </button>
-  <button type="button" class="btn btn-outline-success" (click)="save()">
-    <fa-icon [icon]="'save'"></fa-icon> Guardar
-  </button>
+
   <button type="button" class="btn btn-outline-dark" (click)="closeModal()">
     &times; Cancelar
   </button>

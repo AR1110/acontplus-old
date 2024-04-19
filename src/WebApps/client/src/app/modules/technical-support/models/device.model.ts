@@ -1,11 +1,10 @@
 export interface Device {
   id: number;
   categoryId: number;
+  brandId: number;
+  modeloId: number;
   name: string;
-  serie: string;
-  brand: string;
-  model: string;
-  year: number;
+  serie: string;  
   warranty: number;
   color: string;
   customers?: DeviceCustomer[];

@@ -3,6 +3,7 @@ import { MedidaProducto } from "@modules/inventory/shared/models/measure.model"
 import { TarifaProducto } from "@modules/inventory/shared/models/tarifa.model"
 
 export interface OrderMaintenance {
+  id: number
   rowguid: string
   bodegaId: number
   feeId: number
@@ -22,12 +23,14 @@ export interface OrderMaintenance {
   discount: number
   precioTotalSinImpuesto: number
   total: number
-  obs: string
+  obs?: string | null
   medidas: MedidaProducto[]
   tarifas: TarifaProducto[]
   consolidacionesBodega: ConsolidacionBodega[]
   costoFraccionado: number
+  llevaInventario: boolean
   conversion: number
+  deviceName?:  string | null
 }
 
 export type ColOrderMaintenance = keyof OrderMaintenance;

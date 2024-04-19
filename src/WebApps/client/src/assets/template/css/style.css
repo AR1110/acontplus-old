@@ -3447,9 +3447,9 @@ textarea.form-control.is-invalid {
   }
 }
 
-.btn:hover {
+/* .btn:hover {
   color: #212529;
-}
+} */
 
 .btn-check:focus+.btn,
 .btn:focus {
@@ -3919,26 +3919,26 @@ fieldset:disabled .btn {
   border-color: #fb9678;
 } */
 
-.btn-outline-primary:hover {
+/* .btn-outline-primary:hover {
   color: #000;
-  /*background-color: #fb9678;*/
-  /*border-color: #fb9678;*/
-}
+  background-color: #fb9678;
+  border-color: #fb9678;
+} */
 
 /* .btn-check:focus+.btn-outline-primary,
 .btn-outline-primary:focus {
   box-shadow: 0 0 0 0.25rem rgba(251, 150, 120, 0.5);
 } */
 
-.btn-check:checked+.btn-outline-primary,
+/* .btn-check:checked+.btn-outline-primary,
 .btn-check:active+.btn-outline-primary,
 .btn-outline-primary:active,
 .btn-outline-primary.active,
 .btn-outline-primary.dropdown-toggle.show {
   color: #000;
-  /*background-color: #fb9678;*/
-  /*border-color: #fb9678;*/
-}
+  background-color: #fb9678;
+  border-color: #fb9678;
+} */
 
 /* .btn-check:checked+.btn-outline-primary:focus,
 .btn-check:active+.btn-outline-primary:focus,
@@ -4627,18 +4627,18 @@ fieldset:disabled .btn {
   border: 0;
 }
 
-.dropdown-item:hover,
+/* .dropdown-item:hover,
 .dropdown-item:focus {
   color: #1e2125;
   background-color: #e9ecef;
-}
+} */
 
-.dropdown-item.active,
+/* .dropdown-item.active,
 .dropdown-item:active {
   color: #fff;
   text-decoration: none;
-  /*background-color: #fb9678;*/
-}
+  background-color: #fb9678;
+} */
 
 .dropdown-item.disabled,
 .dropdown-item:disabled {
@@ -5605,9 +5605,9 @@ fieldset:disabled .btn {
   ;
 }
 
-.breadcrumb-item.active {
+/* .breadcrumb-item.active {
   color: #6c757d;
-}
+} */
 
 .pagination {
   display: flex;
@@ -25356,12 +25356,12 @@ Preloader
   color: #fff;
 } */
 
-.btn-primary:hover,
+/* .btn-primary:hover,
 .btn-warning:hover,
 .btn-outline-primary:hover:hover,
 .btn-outline-warning:hover:hover {
   color: #fff;
-}
+} */
 
 .btn-secondary {
   border-color: #dee2e6;
@@ -28057,7 +28057,7 @@ icons path
 
 .page-titles .breadcrumb .breadcrumb-item.active {
   float: unset !important;
-  color: #fb9678;
+  /* color: #fb9678; */
   font-weight: 500;
 }
 

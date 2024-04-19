@@ -22,12 +22,13 @@ import { AppModule } from 'src/app/app.module';
   styles: ``,
 })
 export class DeviceSearchComponent {
-  @Output() onDeviceSelected = new EventEmitter<{ data: any }>();
-  @Output() resultEmptyInput = new EventEmitter();
+  @Input() clearInput: boolean = false;
   @Input() textSearch = '';
+  @Output() deviceSelected = new EventEmitter<{ data: any }>();
+  @Output() resultEmptyInput = new EventEmitter();
   private modalService = inject(ModalService);
-
   private deviceService = inject(DeviceService);
+
   device: DeviceSearch = {
     model: '',
     name: '',
@@ -38,25 +39,16 @@ export class DeviceSearchComponent {
   searching: boolean = false;
   searchFailed: boolean = false;
 
-  onDataSelected(item: any) {
-    this.onDeviceSelected.emit({
-      data: {
-        ...item,
-        deviceName: item.name,
-        model: item.model,
-      },
-    });
-    setTimeout(() => {
-      this.textSearch = this.device.name;
-    });
+  onDeviceSelect($event: any) {
+    this.device = $event.item;
+    this.setDeviceData(this.device);
+    $event.preventDefault();
   }
-
   onKeyupSearch() {
     if (!this.textSearch) {
       this.resultEmptyInput.emit();
     }
   }
-
   openModal() {
     const modalRef = this.modalService.openModalCustom(DeviceModalComponent, {
       size: 'xl',
@@ -64,15 +56,9 @@ export class DeviceSearchComponent {
     });
     modalRef.componentInstance.data = this.device;
     modalRef.result.then((response) => {
-      this.onDataSelected(response);
+      this.setDeviceData(response);
     });
   }
-
-  onSelect($event: any) {
-    this.device = $event.item;
-    this.onDataSelected(this.device);
-  }
-
   search: OperatorFunction<string, Array<DeviceSearch>> = (
     text$: Observable<string>
   ) =>
@@ -94,4 +80,20 @@ export class DeviceSearchComponent {
       }),
       tap(() => (this.searching = false))
     );
+  setDeviceData(item: any) {
+    this.deviceSelected.emit({
+      data: {
+        ...item,
+        deviceName: item.name,
+        model: item.model,
+      },
+    });
+    setTimeout(() => {
+      if (!this.clearInput) {
+        this.textSearch = this.device.name;
+      } else {
+        this.textSearch = '';
+      }
+    });
+  }
 }

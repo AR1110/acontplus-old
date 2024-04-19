@@ -1,7 +1,7 @@
 use acontplus
 go
 
-
+--DROP VIEW IF EXISTS TechnicalSupport.v_OrderMantenaince
 
 DECLARE @dbSchema NVARCHAR(200);
 SET @dbSchema = 'TechnicalSupport'  -- CHANGE TO YOUR SCHEMA
@@ -15,3 +15,4 @@ WHERE TABLE_SCHEMA = @dbSchema and TABLE_TYPE = 'BASE TABLE'
 
 
 EXEC sp_executesql @SqlStatement
+

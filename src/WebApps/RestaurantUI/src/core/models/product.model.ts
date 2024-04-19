@@ -17,6 +17,7 @@ export interface RawProductSaleData {
     s3ObjectKey: string
     s3ObjectUrl: string
     tarifaImpuesto: string
+    nombreTipoIva?: string
 }
 
 

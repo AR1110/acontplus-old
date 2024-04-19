@@ -21,7 +21,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                if (_context.Devices.Any(p => p.Name == device.Name && p.Model == device.Model))
+                if (_context.Devices.Any(p => p.Name == device.Name && p.ModeloId == device.ModeloId))
                 {
                     return new ApiResponse { code = "0", message = "El equipo ya existe en la base de datos" };
                 }
@@ -69,9 +69,9 @@ namespace TechnicalSupport.API.Services
             try
             {
                 var ds = await _repository.GetDataSetAsync("TechnicalSupport.Device_Get", parameters);
-                if (DataValidation.DataSetIsNull(ds))
+                if (DataValidation.DataSetIsNull(ds, true))
                 {
-                    return new ApiResponse { code = "1", message = "No se encontraron datos" };
+                    return new ApiResponse { code = "0", message = "No se encontraron datos" };
                 }
                 else
                 {
@@ -94,13 +94,10 @@ namespace TechnicalSupport.API.Services
                     return new ApiResponse { code = "0", message = "El id no coincide" };
                 }
                 var productFounded = await _context.Devices.FindAsync(id);
-                productFounded.CategoryId = device.CategoryId;
-                productFounded.Brand = device.Brand;
+                productFounded.ModeloId = device.ModeloId;
                 productFounded.Color = device.Color;
                 productFounded.Enabled = device.Enabled;
-                productFounded.Model = device.Model;
                 productFounded.Name = device.Name;
-                productFounded.Year = device.Year;
                 _context.Update(productFounded);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };

@@ -62,13 +62,6 @@ BEGIN
         
              --> Data Json 
         SELECT @details = orderDetails FROM OPENJSON(@json) WITH (orderDetails  NVARCHAR(MAX) AS JSON )
-
-        SET @orderStatusId = (SELECT CASE
-                                        WHEN 
-                                            (SELECT assignedUserId FROM @tbOrder) = 0 THEN  (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'PA')
-                                        ELSE 
-                                            (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'EP')
-                                        END )
         --> Insert to temp Table
         INSERT INTO @tbOrder
               (id, uuid, establecimientoId, puntoEmisionId, customerCompanyId, obs, userId, fechaEmision, assignedUserId)
@@ -91,6 +84,13 @@ BEGIN
                 SELECT '0' code, 'No se pudo recuperar el orden'as 'message'
                 RETURN
             END
+
+                SET @orderStatusId = (SELECT CASE
+                                        WHEN 
+                                            (SELECT TOP 1 assignedUserId FROM @tbOrder) = 0 THEN  (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'PA')
+                                        ELSE 
+                                            (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'EP')
+                                        END )
 
         --> Insert to temp Table
         INSERT INTO @tbDetails(id, uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs, assignedUserId)

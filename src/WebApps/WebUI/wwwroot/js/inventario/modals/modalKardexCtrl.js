@@ -594,17 +594,80 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                         windowClass: 'uibModalFullScreen',
                         isRenderRazorPartial: true
                     })
+                } else if (item.tipoDoc === "TB") {
+                    let fileCtrl = nombreModalInventario.TRANSFERENCIA_BODEGA.fileCtrl;
+                    let ctrl = nombreModalInventario.TRANSFERENCIA_BODEGA.controllers['D'];
+                    let template = nombreModalInventario.TRANSFERENCIA_BODEGA.templates['D'];
+                    let controller = (await import(fileCtrl))[ctrl];
+                    console.log(controller)
+
+                    modalSvc.openModalCustom({
+                        controller,
+                        template,
+                        size: 'xl',
+                        params: {
+                            id: item.idDocumento
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+
                 }
 
-                else {
-                    commonSvc.viewDetailDocumentII({
-                        id: item.idDocumento,
-                        codTransaccion: item.codTransaccion,
-                        codigoDocumento: item.tipoDoc,
+                else if (item.tipoDoc === "FF") {
+                    let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
+                    let ctrl = (await import(fileCtrl))[controller];
+                    let template = templates['FC'];
+
+                    modalSvc.openModalCustom({
+                        controller: ctrl,
+                        template: template, 
                         size: 'xl',
-                        windowClass: 'uibModalFullScreen'
+                        params: {
+                            codDoc: "FC",
+                            id: item.idDocumento
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+
+                }
+
+                else if(item.tipoDoc==="IV"){
+                    let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
+                    let ctrl = (await import(fileCtrl))[controller];
+                    let template = templates['CNH'];
+                    modalSvc.openModalCustom({
+                        controller: ctrl,
+                        template: template,
+                        size: 'xl',
+                        params: {
+                            codDoc: "CNH",
+                            id: item.idDocumento
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
                     })
                 }
+
+                else if (item.tipoDoc === "LC") {
+                    let { fileCtrl, controller, templates } = nombreModalCompra.DOC_COMPRA_DETALLE;
+                    let ctrl = (await import(fileCtrl))[controller];
+                    let template = templates['LC'];
+                    modalSvc.openModalCustom({
+                        controller: ctrl,
+                        template: template,
+                        size: 'xl',
+                        params: {
+                            codDoc: "LC",
+                            id: item.idDocumento
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
+                }
+
+                 
             }
 
 

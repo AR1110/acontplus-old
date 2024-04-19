@@ -7,16 +7,11 @@ namespace TechnicalSupport.API.Entities
     [Table("Device", Schema = "TechnicalSupport")]
     public class Device : BaseEntity
     {
-        public Category Category { get; set; }
-        public int CategoryId { get; set; }
         [Required]
         [MaxLength(300)]
         public string Name { get; set; }
-        [MaxLength(300)]
-        public string Brand { get; set; }
-        [MaxLength(300)]
-        public string Model { get; set; }
-        public int? Year { get; set; }
+        public Modelo Modelo { get; set; }
+        public int ModeloId { get; set; }
         [MaxLength(100)]
         public string Color { get; set; }
         public List<DeviceCustomer> Customers { get; set; }

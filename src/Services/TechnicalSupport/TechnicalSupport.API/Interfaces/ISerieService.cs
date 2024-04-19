@@ -1,0 +1,13 @@
+﻿using Common.Core.Models;
+using TechnicalSupport.API.Entities;
+
+namespace TechnicalSupport.API.Interfaces
+{
+    public interface ISerieService
+    {
+        public Task<ApiResponse> AddAsync(Serie serie);
+        public Task<ApiResponse> DeleteAsync(int userId, int id);
+        public Task<ApiResponse> GetAsync();
+        public Task<ApiResponse> UpdateAsync(int id, Serie serie);
+    }
+}

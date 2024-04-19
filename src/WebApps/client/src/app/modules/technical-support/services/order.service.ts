@@ -63,6 +63,7 @@ export class OrderService {
             data.order = {
               ...tempOrder,
               fechaEmision: formatDate(tempOrder.fechaEmision),
+              fechaEmisionDocCreado: formatDate(tempOrder.fechaEmision),
             };
             data.orderDetails = orderDetails;
             if (orderMaintenances) {
@@ -103,6 +104,7 @@ export class OrderService {
                     );
 
                   let obj: OrderMaintenance = {
+                    id: restItem.id,
                     rowguid: generateUuidv4(),
                     bodegaId: restItem.bodegaId,
                     feeId: restItem.feeId,
@@ -131,6 +133,7 @@ export class OrderService {
                     costoFraccionado: dataMedida.precioCostoFraccionado || 0,
                     conversion: dataMedida.conversion || 1,
                     consolidacionesBodega: consolidacionesBodega,
+                    llevaInventario: restItem.llevaInventario
                   };
                   return obj;
                 }

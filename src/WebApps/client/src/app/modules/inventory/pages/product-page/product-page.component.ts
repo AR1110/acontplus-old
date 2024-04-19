@@ -6,13 +6,14 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { ProductAddEditDirective } from '@inventory/directives/product/product.directive';
-import { InventoryModule } from '@inventory/inventory.module';
 import { MeasureSelectHtmlOnly } from '@inventory/models/measure.model';
 import { SubCategorySelectHtmlOnly } from '@inventory/models/sub-category.model';
 import { ProductService } from '@inventory/services/product.service';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/class/pagination';
 import { ProductSearchComponent } from '@modules/inventory/shared/components/product/product-search/product-search.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 
 type Product = {
   position: number
@@ -43,7 +44,8 @@ type Product = {
   selector: 'inventory-product-page',
   standalone: true,
   imports: [
-    InventoryModule,
+    FontAwesomeModule,
+    BreadcrumbComponent,
     FormsModule,
     ProductAddEditDirective,
     MatTableModule,

@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Services.Common;
 using Services.Common.Logs;
-using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Entities;
+using TechnicalSupport.API.Interfaces;
 
 namespace TechnicalSupport.API.Controllers
 {
     public class CategoryController : BaseApiController
     {
-        private readonly TechnicalSupportContext _context;
+        private readonly ICategoryService _categoryService;
         private readonly ICustomLogger _log;
-        public CategoryController(TechnicalSupportContext context, ICustomLogger log)
+        public CategoryController(ICategoryService categoryService, ICustomLogger log)
         {
-            _context = context;
+            _categoryService = categoryService;
             _log = log;
         }
         [HttpGet]
@@ -20,15 +21,13 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                if (!_context.Categories.Any())
-                {
-                    return NoContent();
-                }
-                return Ok(await _context.Categories.Where(x => x.Enabled == true).ToListAsync());
+                var response = await _categoryService.GetAsync();
+                if (response == null) { return BadRequest("Can't Get brand"); };
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Get: " + ex.Message);
+                _log.LogActivity($"Error on Get:\n {ex}");
                 return BadRequest("Error on get");
             }
         }
@@ -37,18 +36,14 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                if (_context.Categories.Any(c => c.Code == category.Code))
-                {
-                    return BadRequest("Codigo Existente");
-                }
-                _context.Categories.Add(category);
-                await _context.SaveChangesAsync();
-                return Ok("Registrado Exitosamente");
+                category.UserId = User.GetUserId();
+                var response = await _categoryService.AddAsync(category);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Post: " + ex.Message);
-                return BadRequest("Error on post");
+                _log.LogActivity($"Error on post: \n {ex} \n {JsonConvert.SerializeObject(category)}");
+                return BadRequest(ex.Message);
             }
         }
         [HttpPut("{id}")]
@@ -56,18 +51,14 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                if (id != category.Id)
-                {
-                    return BadRequest("El id no coincide");
-                }
-                _context.Entry(category).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return Ok("Actualizado Exitosamente");
+                category.UserId = User.GetUserId();
+                var response = await _categoryService.UpdateAsync(id, category);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Post: " + ex.Message);
-                return BadRequest("Error on post");
+                _log.LogActivity($"Error on put: {id} \n {ex} \n {JsonConvert.SerializeObject(category)}");
+                return BadRequest(ex.Message);
             }
         }
         [HttpDelete("{id}")]
@@ -75,22 +66,13 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                var category = await _context.Categories.FindAsync(id);
-                if (category == null)
-                {
-                    return NotFound();
-                }
-
-                category.Enabled = false;
-                category.Deleted = true;
-                _context.Entry(category).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return Ok("Eliminada Exitosamente");
+                var response = await _categoryService.DeleteAsync(User.GetUserId(), id);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Delete: " + ex.Message);
-                return BadRequest("Error on Delete");
+                _log.LogActivity($"Error on delete: {id} \n {ex}");
+                return BadRequest(ex.Message);
             }
         }
     }
