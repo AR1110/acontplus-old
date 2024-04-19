@@ -38,7 +38,7 @@ export class BrandModalComponent {
     ]),
     name: new FormControl('', [
       Validators.required,
-      Validators.minLength(3),
+      Validators.minLength(2),
       Validators.maxLength(100),
     ]),
   });
@@ -54,6 +54,8 @@ export class BrandModalComponent {
 
   ngOnInit(): void {
     if (this.data.id > 0) {
+      this.modalIcon = 'edit';
+      this.modalTitle = 'Editar Marca';
       this.brandForm.patchValue(this.data);
     }
     this.onGet();

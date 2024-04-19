@@ -58,7 +58,7 @@ export class DeviceModalComponent implements OnInit {
   validations = [null, '', undefined];
   validationsNumbers = [0, '', null, undefined];
 
-  device: Device = {
+  data: Device = {
     id: 0,
     categoryId: 0,
     name: '',
@@ -142,14 +142,13 @@ export class DeviceModalComponent implements OnInit {
   onModeloChange($event: any) {}
   // --> Functions
   setDataFormModal() {
-    this.device = this.params;
-    this.deviceForm.patchValue(this.params);
-
-    if (this.params.id > 0) {
+    console.info(this.data);
+    this.deviceForm.patchValue(this.data);
+    if (this.data.id > 0) {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Equipo';
       this.isUpdate = true;
-      this.setDataSpecs(this.device);
+      this.setDataSpecs(this.data);
     } else {
       this.modalIcon = 'plus';
       this.modalTitle = 'Nuevo Equipo';
@@ -200,14 +199,14 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onSave() {
-    this.device.customers = [];
-    this.device.specs = Object.assign(this.deviceSpecs, {
+    this.data.customers = [];
+    this.data.specs = Object.assign(this.deviceSpecs, {
       specs: JSON.stringify(this.convertirFormato(this.deviceSpec)),
     });
 
     if (!this.onValidateSpecs()) return;
 
-    const deviceInsert = Object.assign(this.device, this.deviceForm.value);
+    const deviceInsert = Object.assign(this.data, this.deviceForm.value);
     if (!this.onValidate(deviceInsert)) return;
 
     showLoader();
@@ -239,18 +238,18 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onUpdate() {
-    this.device.specs = Object.assign(this.deviceSpecs, {
+    this.data.specs = Object.assign(this.deviceSpecs, {
       specs: JSON.stringify(this.convertirFormato(this.deviceSpec)),
     });
 
     if (!this.onValidateSpecs()) return;
 
-    const deviceUpdate = Object.assign(this.device, this.deviceForm.value);
+    const deviceUpdate = Object.assign(this.data, this.deviceForm.value);
     if (!this.onValidate(deviceUpdate)) return;
     this.onUpdateSpecs();
 
     showLoader();
-    this.deviceService.put(this.device.id, deviceUpdate).subscribe({
+    this.deviceService.put(this.data.id, deviceUpdate).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
@@ -279,7 +278,7 @@ export class DeviceModalComponent implements OnInit {
 
   onUpdateSpecs() {
     this.deviceSepcsService
-      .put(this.device.deviceSpecId!, this.device.specs!)
+      .put(this.data.deviceSpecId!, this.data.specs!)
       .subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
