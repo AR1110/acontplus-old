@@ -52,9 +52,7 @@ BEGIN
        ,deviceWarranty NUMERIC(18,2)
        ,obs VARCHAR(500) NULL
        ,assignedUserId INT
-    )
-        
-   
+    )     
 
 	BEGIN TRY
                 --> Set values
