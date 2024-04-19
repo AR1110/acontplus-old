@@ -17,6 +17,7 @@ import { ProductSearchComponent } from '@inventory/shared/components/product/pro
 import { ProductService } from '@modules/inventory/services/product.service';
 import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
 import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
+import { getCantidadStock, mergeProductStock } from '@modules/inventory/utils/product-stock.util';
 import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
 import { orderMaintenanceAdapter } from '@modules/technical-support/adapters/order-maintenance.adapter';
 import { ColOrderMaintenance, OrderMaintenance } from '@modules/technical-support/models/order-maintenance.model';
@@ -385,7 +386,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       headerSort: false,
       hozAlign: "center",
       headerHozAlign: "center",
-      width: "8px",
+      width: "9px",
       validator: this.validatorNumber,
       editor: "number", editorParams: {
         selectContents: true,
@@ -398,7 +399,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       headerSort: false,
       hozAlign: "center",
       headerHozAlign: "center",
-      width: "8px",
+      width: "9px",
       validator: this.validatorNumber,
       editor: "number", editorParams: {
         selectContents: true,
@@ -750,7 +751,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
   askToDelete(data: OrderMaintenance) {
     try {
       Swal.fire({
-        // title: "Are you sure?",
+
         html: `Esta seguro de eliminar este elemento <b>${data.descripcion}</b>`,
         icon: "warning",
         showCancelButton: true,
@@ -760,9 +761,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
         cancelButtonText: 'No!'
       }).then((result) => {
         if (result.isConfirmed) {
-          let rows = this.orderMaintenances.filter(r => r.rowguid !== data.rowguid);
-          this.orderMaintenances = rows;
-          this.drawImpuestoTotales()
+          let index = this.orderMaintenances.findIndex(r => r.rowguid !== data.rowguid);
+          this.orderMaintenances.splice(index, 1)
+
+          this.drawImpuestoTotales();
         }
       });
     } catch (error) {
@@ -803,7 +805,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       codigo: "",
       taxId: 0,
       taxPercentId: 0,
-      quantity: 1,
+      quantity: 0,
       cost: 0,
       precioConIva: 0,
       taxValue: 0,
@@ -823,12 +825,26 @@ export class OrderMaintenanceModalComponent implements OnInit {
     return dataOrderMaintenance;
   }
 
-  addItem() {
+  addItemNoInventario() {
 
   }
 
   setItem() {
 
+  }
+
+  checkNotificationStock(rows: OrderMaintenance[], row: OrderMaintenance, oldValue: number) {
+    try {
+
+      // Realiza la fusión de elementos en la lista de artículos clonada.
+      let dataProductMerge = mergeProductStock({
+        rows: rows,
+        row
+      });
+      console.log(dataProductMerge)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   onProductSelected($event: any) {
@@ -839,72 +855,203 @@ export class OrderMaintenanceModalComponent implements OnInit {
         .subscribe({
           next: (response) => {
             const { product, medidas, consolidacionesFecha } = response;
-            let index = 0;
+
             let taxPercents = this.taxPercents;
             let row = this.getDataRowEmpty();
             let dataTaxPercent = taxPercents.find(d => d.codigo === product.codigoPorcentaje);
-            let dataOrderDetail = this.orderDetails.find(od => od.orderDetailId === this.order.orderDetailId)
-
-            let findIndexById = this.orderMaintenances.findIndex(item => item.llevaInventario && item.productId === product.idArticulo);
-
-            if (findIndexById === -1) {
-              row.productId = product.idArticulo;
-              row.codigo = product.codigoArticulo;
-              row.descripcion = product.descripcion;
-              row.bodegaId = this.order.bodegaId;
-              row.llevaInventario = product.llevaInventario;
-
-              if (dataTaxPercent) {
-                row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
-                row.taxId = dataTaxPercent.idImpuesto;
-              }
-
-              let dataMedida = medidas.find(m => m.defaultMedida);
+            let dataOrderDetail = this.orderDetails.find(od => od.orderDetailId === this.order.orderDetailId);
 
 
-              if (dataMedida) {
-                row.medidas = medidas;
-                row.quantity = 1;
-                row.tarifas = dataMedida.tarifas;
-                row.medidaId = dataMedida.idMedida;
-                row.cost = dataMedida.precioCosto;
-                row.costoFraccionado = dataMedida.precioCostoFraccionado;
-                row.conversion = dataMedida.conversion;
-                row.deviceName = dataOrderDetail.deviceName;
-                row.orderDetailId = dataOrderDetail.orderDetailId;
-
-                let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
+            let findDataProduct = this.orderMaintenances.find(item => item.llevaInventario && item.productId === product.idArticulo);
 
 
-                row.feeId = dataTarifa?.idTarifa ?? 0;
-                row.price = dataTarifa?.precioVenta ?? 0;
-                row.precioConIva = dataTarifa?.precioConIva ?? 0;
 
-              }
+            row.productId = product.idArticulo;
+            row.codigo = product.codigoArticulo;
+            row.descripcion = product.descripcion;
+            row.bodegaId = this.order.bodegaId;
+            row.llevaInventario = product.llevaInventario;
+            row.consolidacionesBodega = consolidacionesFecha;
 
-              this.orderMaintenances.push(row);
-
-            } else {
-              index = findIndexById;
-              row = this.orderMaintenances[index];
-              row.quantity = row.quantity + 1;
-
-              let dataMedida = medidas.find(m => m.idMedida === row.medidaId);
-
-              if (dataMedida) {
-                row.medidas = medidas;
-                row.tarifas = dataMedida.tarifas;
-                row.cost = dataMedida.precioCosto;
-                row.costoFraccionado = dataMedida.precioCostoFraccionado;
-                row.conversion = dataMedida.conversion;
-              }
+            if (dataTaxPercent) {
+              row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
+              row.taxId = dataTaxPercent.idImpuesto;
             }
 
-            this.setCalculoTotales("quantity", row, undefined)
+            let dataMedida = medidas.find(m => m.defaultMedida);
+
+            if (dataMedida) {
+              row.medidas = medidas;
+              row.quantity = 1;
+              row.tarifas = dataMedida.tarifas;
+              row.medidaId = dataMedida.idMedida;
+              row.cost = dataMedida.precioCosto;
+              row.costoFraccionado = dataMedida.precioCostoFraccionado;
+              row.conversion = dataMedida.conversion;
+              row.deviceName = dataOrderDetail.deviceName;
+              row.orderDetailId = dataOrderDetail.orderDetailId;
+
+              let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
+
+
+              row.feeId = dataTarifa?.idTarifa ?? 0;
+              row.price = dataTarifa?.precioVenta ?? 0;
+              row.precioConIva = dataTarifa?.precioConIva ?? 0;
+
+            }
+
+
+            //Producto de tipo Servicio
+            if (!product.llevaInventario) {
+              this.orderMaintenances.push(row);
+              this.setCalculoTotales("quantity", row, undefined)
+              this.tabulatorComponent.refTabulator.setGroupBy(["orderDetailId"]);
+              return
+            }
+
+            //Producto que lleva inventario
+            if (product.llevaInventario) {
+              // let oldValue = 0;
+              // let productsDuplicated = this.orderMaintenances.filter(item => (
+              //   item.llevaInventario && item.productId === product.idArticulo
+              // ))
+              // if (productsDuplicated.length === 0) {
+              //   productsDuplicated = [row]
+              // } else {
+              //   productsDuplicated.push(row)
+              // }
+
+              // let cloneOrderMaintenances = structuredClone(this.orderMaintenances);
+              // let findDataProduct = this.orderMaintenances.find(item => item.llevaInventario && item.productId === product.idArticulo);
+
+              // if (!findDataProduct) {
+              //   oldValue = row.quantity;
+              //   cloneOrderMaintenances.push(row);
+              // } else {
+              //   oldValue = findDataProduct.quantity;
+
+              // }
+
+              // console.log(row)
+              // console.log(productsDuplicated)
+              // let dataProductMerge = mergeProductStock({
+              //   rows: productsDuplicated,
+              //   row
+              // });
+              // console.log(dataProductMerge)
+
+
+              // let cantidadStock = getCantidadStock({
+              //   fechaEmision: this.order.fechaEmision,
+              //   bodegaId: this.order.bodegaId,
+              //   cantidadStock: dataProductMerge.cantidadStock,
+              //   consolidacionesFecha: row.consolidacionesBodega
+
+              // });
+
+              // showLoader();
+
+              // this.productSvc.checkNotificationStock({
+              //   idArticulo: row.productId,
+              //   idBodega: this.order.bodegaId,
+              //   idMedida: row.medidaId,
+              //   cantidad: cantidadStock
+              // }).subscribe({
+              //   next: async (response) => {
+              //     hideLoader();
+
+              //     if (isApiResponse(response)) {
+
+              //       let { code, message, titleSms } = response;
+
+              //       if (code === "1") {
+
+              //         this.setCalculoTotales("quantity", row, oldValue)
+              //         return
+              //       }
+
+              //       let { isConfirmed } = await Swal.fire({
+              //         title: `<small>${titleSms}</small>`,
+              //         icon: 'warning',
+              //         html: `<small>${message}</small>`,
+              //         allowOutsideClick: false,
+              //         allowEscapeKey: false,
+              //       })
+
+              //       if (isConfirmed) {
+              //         if (code === "0") {
+              //           row.quantity = oldValue;
+              //           this.setCalculoTotales("quantity", row, oldValue)
+              //         }
+              //         if (code === "2") {
+              //           this.orderMaintenances = cloneOrderMaintenances;
+
+              //           this.setCalculoTotales("quantity", row, undefined);
+              //           this.tabulatorComponent.refTabulator.setGroupBy(["orderDetailId"]);
+              //         }
+              //       }
+
+              //     }
+              //   },
+              //   error(error) {
+              //     hideLoader();
+              //     console.log(error)
+              //   }
+              // })
+
+
+              // let oldValue = 0;
+              // if (findDataProduct) {
+              //   row.quantity = row.quantity + 1;
+              // } else {
+              //   row = findDataProduct ?? row;
+              //   oldValue = row.quantity;
+              //   row.quantity = row.quantity + 1;
+              //   let dataMedida = medidas.find(m => m.idMedida === row.medidaId);
+
+              //   if (dataMedida) {
+              //     row.medidas = medidas;
+              //     row.tarifas = dataMedida.tarifas;
+              //     row.cost = dataMedida.precioCosto;
+              //     row.costoFraccionado = dataMedida.precioCostoFraccionado;
+              //     row.conversion = dataMedida.conversion;
+              //   }
+              // }
+
+              // let cloneRows = this.orderMaintenances.slice().push()
+
+              // this.checkNotificationStock(row, oldValue);
+            }
+
+
+
+
+
+
+            // if (findIndexById === -1) {
+
+
+            // } else {
+            //   index = findIndexById;
+            //   row = this.orderMaintenances[index];
+            //   row.quantity = row.quantity + 1;
+
+            //   let dataMedida = medidas.find(m => m.idMedida === row.medidaId);
+
+            //   if (dataMedida) {
+            //     row.medidas = medidas;
+            //     row.tarifas = dataMedida.tarifas;
+            //     row.cost = dataMedida.precioCosto;
+            //     row.costoFraccionado = dataMedida.precioCostoFraccionado;
+            //     row.conversion = dataMedida.conversion;
+            //   }
+            // }
+
+            // this.setCalculoTotales("quantity", row, undefined)
             this.tabulatorComponent.refTabulator.setGroupBy(["orderDetailId"]);
 
+          }
 
-          },
         });
     }
   }
@@ -1152,8 +1299,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       return
     }
 
-    if(this.codDoc===DOC_TYPE.FV || this.codDoc===DOC_TYPE.NE){
-      if (!this.orderDetails.every(od => this.orderMaintenances.some(item => item.orderDetailId === od.orderDetailId ))){
+    if (this.codDoc === DOC_TYPE.FV || this.codDoc === DOC_TYPE.NE) {
+      if (!this.orderDetails.every(od => this.orderMaintenances.some(item => item.orderDetailId === od.orderDetailId))) {
         this.tS.toastr({
           type: 'warning',
           message: 'Cuando el orden se guarda como documento, todos los equipos deben tener al menos un producto agregado.'
@@ -1174,10 +1321,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
     return true;
   }
 
-  saveOptions(codDoc?: DOC_TYPE ){
+  saveOptions(codDoc?: DOC_TYPE) {
     this.codDoc = codDoc;
     console.log(codDoc)
-    if(!this.isValidForm()) return
+    if (!this.isValidForm()) return
 
     Swal.fire({
       text: "¿Estás seguro de que deseas guardar este documento?",
