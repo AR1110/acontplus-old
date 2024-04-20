@@ -10,7 +10,7 @@ GO
 -- Create date: 2024-04-12
 -- Description:	FOR INSERT AND UPDATE ORDERMANTENAINCE
 -- =============================================
--- TechnicalSupport.OrderMantenaince_Insert 401, '{"order":{"id":12,"fechaEmision":"2024-04-15T05:00:00Z","establecimientoId":608,"puntoEmisionId":280,"uuid":"3856fb49-7c7e-4b03-87f0-c6645d6671e7","sequence":5,"serie":"001-002-000000005","tax":0,"discount":0,"tip":0,"total":600,"obs":"CHEVERE","enabled":true,"customerCompanyId":149070,"razonSocial":"SENGUANA WISUMA EMILIO YANKUAM","bodegaId":288,"feeId":1158,"subTotalSinImpuesto":600,"percentageDiscount":0,"codDoc":"FV"},"detalles":[{"rowguid":"0f44559e-b012-497e-981f-7f689a427d38","bodegaId":288,"feeId":1158,"medidaId":848,"orderDetailId":0,"productId":251478,"descripcion":"SERVICIOS INFORMÁTIVOS Y SOPORTE TÉCNICO","codigo":"SER1","taxId":1,"taxPercentId":1,"quantity":1,"cost":600,"precioConIva":600,"taxValue":0,"price":600,"percentageDiscount":0,"discount":0,"precioTotalSinImpuesto":600,"total":600,"obs":"","costoFraccionado":600,"conversion":1}]}'
+-- TechnicalSupport.OrderMantenaince_Insert 401, '{"order": {        "id": 15,        "bodegaId": 288,        "fechaEmision": "2024-04-19 17:34:23 PM",        "establecimientoId": 608,        "customerCompanyId": 149070,        "percentageDiscount": 0,        "subTotalSinImpuesto": 600,        "codDoc": "FV",        "tax": 0,        "tip": 0,        "total": 600,        "puntoEmisionId": 280,        "discount": 0    },    "detalles": [        {            "rowguid": "b565eabc-3839-422d-bd89-34c7a1f1ca77",            "id": 67,            "descripcion": "test prueba detalle uno",            "orderIndex": 1,            "bodegaId": 288,            "orderDetailId": 18,            "codigo": "SER1",            "costoFraccionado": 600,            "precioConIva": 600,            "precioTotalSinImpuesto": 600,            "feeId": 1158,            "medidaId": 848,            "productId": 251478,            "taxId": 1,            "taxPercentId": 1,            "quantity": 1,            "cost": 600,            "taxValue": 0,            "price": 600,            "discount": 0,            "percentageDiscount": 0,            "total": 600,            "obs": null,            "conversion": 1,            "cantidadTransaccion": 1,            "envioSri": true}    ],"customDetails": []}'
 CREATE OR ALTER PROC TechnicalSupport.OrderMantenaince_Insert
 @userRoleId INT
 , @json VARCHAR(MAX)
@@ -23,12 +23,12 @@ BEGIN
         , @order                NVARCHAR(500)
         , @detalles             NVARCHAR(MAX)
         , @orderId              INT
-        , @bodegaId             INT
         , @customerCompanyId    INT
         , @establecimientoId    INT
         , @puntoEmisionId       INT
         , @percentageDiscount   NUMERIC(18,6)
         , @subTotalSinImpuesto  NUMERIC(18,6)
+        , @discount             NUMERIC(18,6)
         , @tax                  NUMERIC(18,6)
         , @tip                  NUMERIC(18,6)
         , @total                NUMERIC(18,6)
@@ -38,7 +38,7 @@ BEGIN
     BEGIN TRY
         DECLARE @orderMantenaince AS TABLE (
             id                          INT             NULL
-            ,bodegaId                   INT             NOT NULL
+            , bodegaId                  INT             NOT NULL
             , codigo                    NVARCHAR(5)     NOT NULL
             , descripcion               NVARCHAR(500)   NOT NULL
             , costoFraccionado          NUMERIC(18,6)   NOT NULL
@@ -57,12 +57,14 @@ BEGIN
             , discount                  NUMERIC(18,6)   NOT NULL
             , total                     NUMERIC(18,6)   NOT NULL
             , obs                       VARCHAR(500)    NULL
+            , isGroup                   BIT             NULL
         )
 
-        SELECT @order = orden, @detalles = detalles FROM OPENJSON(@json) WITH( orden NVARCHAR(MAX) '$.order' AS JSON, detalles NVARCHAR(MAX) '$.detalles' AS JSON)
+        SELECT @order = orden, @detalles = detalles 
+        FROM OPENJSON(@json) 
+        WITH( orden NVARCHAR(MAX) '$.order' AS JSON, detalles NVARCHAR(MAX) '$.detalles' AS JSON)
         
         SELECT @orderId                 = orderId
-                , @bodegaId             = bodegaId
                 , @customerCompanyId    = customerCompanyId    
                 , @percentageDiscount   = percentageDiscount
                 , @subTotalSinImpuesto  = subTotalSinImpuesto
@@ -71,23 +73,27 @@ BEGIN
                 , @tip                  = tip
                 , @total                = total
                 , @puntoEmisionId       = puntoEmisionId
+                , @establecimientoId    = establecimientoId
+                , @discount             = discount
         FROM OPENJSON(@order) WITH (
             orderId                 INT             '$.id'
-            , bodegaId              INT             '$.bodegaId'
             , customerCompanyId     INT             '$.customerCompanyId'
             , percentageDiscount    NUMERIC(18,6)   '$.percentageDiscount'
             , subTotalSinImpuesto   NUMERIC(18,6)   '$.subTotalSinImpuesto'
             , codDoc                VARCHAR(5)      '$.codDoc'
+            , discount              NUMERIC(18,6)   '$.discount'
             , tax                   NUMERIC(18,6)   '$.tax'
             , tip                   NUMERIC(18,6)   '$.tip'
             , total                 NUMERIC(18,6)   '$.total'
             , puntoEmisionId        INT             '$.puntoEmisionId'
+            , establecimientoId     INT             '$.establecimientoId'
         )
         
-        INSERT INTO @orderMantenaince (bodegaId, codigo, descripcion, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, orderDetailId)
-        SELECT bodegaId, codigo, descripcion, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, orderDetailId
+        INSERT INTO @orderMantenaince (id,bodegaId, codigo, descripcion, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, orderDetailId, isGroup)
+        SELECT ISNULL(id, 0),bodegaId, codigo, descripcion, costoFraccionado, precioConIva, precioTotalSinImpuesto, feeId, medidaId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, orderDetailId, isGroup
         FROM OPENJSON(@detalles)
         WITH (
+            id                              INT             '$.id',
             bodegaId                        INT             '$.bodegaId',
             codigo                          VARCHAR(5)      '$.codigo',
             descripcion                     VARCHAR(500)    '$.descripcion',
@@ -106,12 +112,31 @@ BEGIN
             discount                        NUMERIC(18,6)   '$.discount',
             total                           NUMERIC(18,6)   '$.total',
             obs                             VARCHAR(500)    '$.obs',
-            orderDetailId                   INT             '$.orderDetailId'
+            orderDetailId                   INT             '$.orderDetailId',
+            isGroup                         BIT             '$.isGroup'
         );
 
-        IF NOT EXISTS(SELECT 1 FROM @orderMantenaince)
+        IF NOT EXISTS(SELECT TOP 1 1 FROM @orderMantenaince)
         BEGIN
-            SELECT '0' AS code, 'No se pudo recuperar el detalle' AS 'message'
+            SELECT '0' AS code, 'No se pudo recuperar el detalle del orden mantenimiento' + @json AS 'message'
+            RETURN
+        END
+
+        IF @establecimientoId IS NULL OR @establecimientoId = 0
+        BEGIN
+            SELECT '0' AS code, 'El establecimiento es nulo' AS 'message'
+            RETURN
+        END
+
+        IF @customerCompanyId IS NULL OR @customerCompanyId = 0
+        BEGIN
+            SELECT '0' AS code, 'El customerCompanyId es nulo' AS 'message'
+            RETURN
+        END
+
+        IF @puntoEmisionId IS NULL OR @puntoEmisionId = 0
+        BEGIN
+            SELECT '0' AS code, 'El puntoEmisionId es nulo' AS 'message'
             RETURN
         END
 
@@ -133,31 +158,50 @@ BEGIN
         END 
 
         BEGIN TRAN
-
-            MERGE INTO TechnicalSupport.OrderMaintenance AS target
-            USING @orderMantenaince AS source
-            ON target.id = source.id
-            WHEN MATCHED THEN
-                UPDATE SET
-                    target.bodegaId         = source.bodegaId,                    
-                    target.feeId            = source.feeId,
-                    target.medidaId         = source.medidaId,
-                    target.orderDetailId    = source.orderDetailId,
-                    target.productId        = source.productId,
-                    target.taxId            = source.taxId,
-                    target.taxPercentId     = source.taxPercentId,
-                    target.quantity         = source.quantity,
-                    target.cost             = source.cost,
-                    target.taxValue         = source.taxValue,
-                    target.price            = source.price,
-                    target.discount         = source.discount,
-                    target.total            = source.total,
-                    target.obs              = source.obs,
-                    target.descripcion      = source.descripcion
-            WHEN NOT MATCHED THEN
-                INSERT (bodegaId, feeId, medidaId, orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, descripcion, createdAt, [enabled])
-                VALUES (source.bodegaId, source.feeId, source.medidaId, source.orderDetailId, source.productId, source.taxId, source.taxPercentId, source.quantity, source.cost, source.taxValue, source.price, source.discount, source.total, source.obs, source.descripcion, @date, 1);
-
+            UPDATE TechnicalSupport.[Order]
+            SET EstablecimientoId   = @establecimientoId
+                , PuntoEmisionId    = @puntoEmisionId
+                , CustomerCompanyId = @customerCompanyId
+                , Tax               = @tax
+                , Discount          = @discount
+                , Total             = @total
+            WHERE Id = @orderId
+                       
+            ----- Primero eliminamos los registros de la tabla fisico cuando no exista en la tabla temporal ----
+            DELETE FROM TechnicalSupport.OrderMaintenance 
+            WHERE id NOT IN (SELECT id FROM @orderMantenaince) 
+            AND OrderDetailId = (SELECT TOP 1 OrderDetailId FROM @orderMantenaince )
+            
+            ----- Realizar la actualización
+            UPDATE principal
+            SET
+                principal.bodegaId          = source.bodegaId,
+                principal.feeId             = source.feeId,
+                principal.medidaId          = source.medidaId,
+                principal.orderDetailId     = source.orderDetailId,
+                principal.productId         = source.productId,
+                principal.taxId             = source.taxId,
+                principal.taxPercentId      = source.taxPercentId,
+                principal.quantity          = source.quantity,
+                principal.cost              = source.cost,
+                principal.taxValue          = source.taxValue,
+                principal.price             = source.price,
+                principal.discount          = source.discount,
+                principal.total             = source.total,
+                principal.obs               = source.obs,
+                principal.descripcion       = source.descripcion
+            FROM TechnicalSupport.OrderMaintenance AS principal
+            JOIN @orderMantenaince AS source ON principal.id = source.id
+            WHERE ISNULL(source.isGroup, 0) = 0
+            
+            -- Procedemos a la inserción solamente cuando no existan en la tabla física.
+            INSERT INTO TechnicalSupport.OrderMaintenance (bodegaId, feeId, medidaId, orderDetailId, productId, taxId, taxPercentId, quantity, cost, taxValue, price, discount, total, obs, descripcion, createdAt, [enabled])
+        
+            SELECT source.bodegaId, source.feeId, source.medidaId, source.orderDetailId, source.productId, source.taxId, source.taxPercentId, source.quantity, source.cost, source.taxValue, source.price, source.discount, source.total, source.obs, source.descripcion, @date, 1 as bit
+            FROM @orderMantenaince AS source
+            WHERE NOT EXISTS (SELECT 1 FROM TechnicalSupport.OrderMaintenance AS target WHERE target.id = source.id)
+            AND ISNULL(source.isGroup, 0) = 0
+        
             ----- ========= Transformar el documento ========= --------
             IF (@codDoc IS NOT NULL OR @codDoc != '')
                 BEGIN
