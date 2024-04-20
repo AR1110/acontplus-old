@@ -4,6 +4,7 @@ import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.comp
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
 import { formatDateMoment } from "@core/utils/format-date-moment";
 import { AtsService } from '@modules/billing/services/ats.service';
+import moment from 'moment';
 
 @Component({
   selector: 'app-ats-page',
@@ -20,9 +21,11 @@ export class AtsPageComponent {
 
   atsSvc = inject(AtsService);
 
+  fromDate: any = moment().subtract(1, 'month').startOf('month')
+  toDate: any = moment().subtract(1, 'month').endOf('month')
   dataSearch = {
-    fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date()),
+    fromDate: formatDateMoment(this.fromDate),
+    toDate: formatDateMoment(this.toDate),
     semiannual: false
   }
 
@@ -37,7 +40,7 @@ export class AtsPageComponent {
     try {
       let json = {
         fromDate: this.dataSearch.fromDate,
-        toDate: this.dataSearch.fromDate,
+        toDate: this.dataSearch.toDate,
         semiannual: this.dataSearch.semiannual
       }
       this.atsSvc.download(json)
