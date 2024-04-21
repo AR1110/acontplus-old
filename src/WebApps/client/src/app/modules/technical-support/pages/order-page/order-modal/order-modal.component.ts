@@ -27,6 +27,9 @@ import {
   faSave,
   faTrashAlt,
 } from '@fortawesome/free-regular-svg-icons';
+import { InputDateComponent } from '@shared/components/input-date/input-date.component';
+import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
+import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDate } from '@core/utils/date.util';
 
 @Component({
   selector: 'app-order-modal',
@@ -37,6 +40,7 @@ import {
     DeviceSearchComponent,
     NgbAccordionModule,
     TabulatorComponent,
+    InputDateComponent
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
@@ -350,19 +354,65 @@ export class OrderModalComponent {
     this.orderDetails = newArray;
   }
 
+  onChangeDate(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const timeString = inputElement.value;
+    console.log(inputElement.value)
+
+    let dateObject: any = timeString;
+
+    this.orderForm.patchValue({ fechaEmision: dateObject }); // Emitir el nuevo valor al componente padre
+  }
+
   save() {
-    showLoader();
+
     if (this.orderDetails.length == 0) {
       this.tS.toastr({
         type: 'warning',
         message: 'Debe de añadir los detalles a la orden',
       });
     }
+
+    let fechaEmision: any = this.orderForm.value.fechaEmision;
+    fechaEmision = formatDate(fechaEmision)
+
+    if(!fechaEmision){
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione le fecha'
+      })
+      return
+    }
+
+    if (!isDateValid(fechaEmision)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese una fecha válida'
+      })
+      return
+    }
+
+    if (dateIsAfterCurrentDate(fechaEmision)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'La fecha de emisión del documento no puede ser posterior a la fecha actual.'
+      })
+      return
+    }
+
+    let ajusteFechaEmision = ajustarFechaEmisionModificada({
+      fechaEmision: fechaEmision,
+      setHoursZero: true
+    });
+    console.log(ajusteFechaEmision)
+
     const dataToSave = {
       ...this.orderForm.value,
       orderDetails: this.orderDetails,
+      fechaEmision: formatDateMoment(ajusteFechaEmision)
     };
     if (this.data.id > 0) {
+      showLoader();
       this.orderService.put(this.data.id, dataToSave).subscribe({
         next: this.successResponse,
         error(err) {
@@ -374,6 +424,7 @@ export class OrderModalComponent {
         },
       });
     } else {
+      showLoader();
       this.orderService.post(dataToSave).subscribe({
         next: this.successResponse,
         error(err) {

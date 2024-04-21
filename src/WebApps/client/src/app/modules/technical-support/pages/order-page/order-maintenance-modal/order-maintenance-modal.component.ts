@@ -10,6 +10,7 @@ import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/uti
 import { isDateValid } from '@core/utils/format-date-moment';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
@@ -71,6 +72,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
 
   orderDetails: any[] = []
+  cloneOrderMaintenances: OrderMaintenance[] = [];
   orderMaintenances: OrderMaintenance[] = [];
   bodegas: GroupedEstabBodega[] = []
   feeds: Tarifa[] = []
@@ -87,6 +89,9 @@ export class OrderMaintenanceModalComponent implements OnInit {
     importeTotal: 0,
     nroIce: 0
   }
+
+  checkboxDetailCustom = false;
+  detailCustom = false;
 
 
   establecimientos: Array<GroupedEstab> = [];
@@ -122,6 +127,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
   //Draw Totals Tax
   htmlImpuestoTotal = '';
   htmlIvaTotal = '';
+
+
+  // se usa cuando se realiza detalle personalizado
+  importeTotal = 0;
 
 
 
@@ -205,8 +214,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     return editor;
   };
 
-  columnNames = [
-    { headerSort: false, resizable: false, minWidth: 30, width: 30, rowHandle: true, formatter: "handle" },
+  columnsMain = [
+
     {
       formatter: "rownum", headerSort: false, hozAlign: "center",
     },
@@ -297,7 +306,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
         selectContents: true,
         verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
-      }
+      },
+      editable: ()=>!this.detailCustom
       // editorEmptyValueFunc: (value: any, cl: any) => {
       //   console.log(cl)
       //   if (/\s/.test(value)) {
@@ -323,6 +333,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       },
       validator: "required",
       width: "9px",
+      editable: () => !this.detailCustom
     },
 
     {
@@ -343,7 +354,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
         }
       },
       formatterParams: () => this.taxes,
-      validator: "required"
+      validator: "required",
+      editable: () => !this.detailCustom
     },
     {
       title: 'T. Imp.',
@@ -361,7 +373,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
         }
       },
       formatterParams: () => this.taxPercents,
-      validator: "required"
+      validator: "required",
+      editable: () => !this.detailCustom
     },
     {
       title: 'Tarifa',
@@ -378,7 +391,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
           }
         }
       },
-      validator: "required"
+      validator: "required",
+      editable: () => !this.detailCustom
     },
     {
       title: 'Precio U.',
@@ -391,7 +405,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       editor: "number", editorParams: {
         selectContents: true,
         verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
-      }
+      },
+      editable: () => !this.detailCustom
     },
     {
       title: 'Precio Iva.',
@@ -404,7 +419,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       editor: "number", editorParams: {
         selectContents: true,
         verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
-      }
+      },
+      editable: () => !this.detailCustom
     },
     {
       title: '%',
@@ -417,7 +433,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       editor: "number", editorParams: {
         selectContents: true,
         verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
-      }
+      },
+      editable: () => !this.detailCustom
     },
     {
       title: 'Desc.',
@@ -430,7 +447,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
       editor: "number", editorParams: {
         selectContents: true,
         verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
-      }
+      },
+      editable: () => !this.detailCustom
     },
     {
       title: 'Subtotal',
@@ -486,7 +504,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   ];
 
-  tabulatorOptions = {
+  columnsGroup = [
+    { headerSort: false, resizable: false, minWidth: 30, width: 30, rowHandle: true, formatter: "handle" },
+    ...this.columnsMain
+  ]
+
+
+  tabGroupOptions: any = {
     width: null,
     movableRows: true,
     // groupStartOpen: false,
@@ -500,7 +524,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
       }
       return null;
     },
-    columns: this.columnNames,
+  }
+
+  tabulatorOptions = {
+    ...this.tabGroupOptions,
+    columns: this.columnsGroup
   };
 
 
@@ -548,13 +576,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         this.order.orderDetailId = this.orderDetails[0].orderDetailId;
         //  this.tabulatorOptions.groupValues = [[...this.orderDetails.map(t => t.deviceName)]]
 
-        // Obtener valores únicos para "orderDetailId"
-        const uniqueOrderDetailIds = Array.from(new Set(this.orderDetails.map((item: any) => item.orderDetailId)));
-
-        // Crear groupValues con valores únicos de "orderDetailId"
-        const groupValues = uniqueOrderDetailIds.map((id: number) => id);
-
-        this.tabulatorOptions.groupValues = [groupValues]
+        this.setGroupValues();
 
         this.drawImpuestoTotales();
       },
@@ -565,6 +587,15 @@ export class OrderMaintenanceModalComponent implements OnInit {
     })
   }
 
+  setGroupValues() {
+    // Obtener valores únicos para "orderDetailId"
+    const uniqueOrderDetailIds = Array.from(new Set(this.orderDetails.map((item: any) => item.orderDetailId)));
+
+    // Crear groupValues con valores únicos de "orderDetailId"
+    const groupValues = uniqueOrderDetailIds.map((id: number) => id);
+
+    this.tabulatorOptions.groupValues = [groupValues]
+  }
 
 
   ngOnInit(): void {
@@ -697,6 +728,55 @@ export class OrderMaintenanceModalComponent implements OnInit {
       }
     } catch (error) {
       console.log(error)
+    }
+  }
+
+
+  onChangeCheckboxDetailCustom() {
+    if (this.checkboxDetailCustom) {
+      Swal.fire({
+        title: "Detalle Personalizado",
+        text: "¿Estás seguro de que deseas agrupar todos los detalles en un solo producto de tipo servicio?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí",
+        cancelButtonText: "No"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.tS.toastr({
+            type: 'info',
+            message: 'Seleccione el producto de tipo servicio '
+          })
+
+          this.tabulatorOptions = {
+            columns: this.columnsMain,
+          };
+          this.cloneOrderMaintenances = structuredClone(this.orderMaintenances);
+          this.orderMaintenances = [];
+          this.detailCustom = true;
+
+          this.importeTotal = this.order.total;
+          this.drawImpuestoTotales()
+        } else {
+          this.checkboxDetailCustom = false;
+          this.detailCustom = false;
+        }
+      });
+    } else {
+      this.importeTotal = 0;
+      this.detailCustom = false;
+      this.tabulatorOptions = {
+        ...this.tabGroupOptions,
+        columns: this.columnsGroup
+      };
+      this.orderMaintenances = structuredClone(this.cloneOrderMaintenances);
+      this.setGroupValues();
+      this.tabulatorComponent.refTabulator.setGroupBy(["orderDetailId"]);
+
+      this.drawImpuestoTotales()
+
     }
   }
 
@@ -847,6 +927,10 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
   }
 
+  setProductNoInventoryDetailCustom(response: any) {
+
+  }
+
   onProductSelected($event: any) {
     let { data } = $event;
     if (data.idArticulo > 0) {
@@ -899,6 +983,32 @@ export class OrderMaintenanceModalComponent implements OnInit {
               row.precioConIva = dataTarifa?.precioConIva ?? 0;
 
             }
+
+
+            //cuando es detalle personalizado el producto tiene que ser de tipo servicio
+            if (this.detailCustom && product.llevaInventario) {
+              this.tS.toastr({
+                type: 'warning',
+                message: 'Cuando la opción es Detalle Personlizado el producto tiene que ser de tipo servicio'
+              })
+              return
+            }
+
+            //cuando el detalle es personalizado
+            if (this.detailCustom) {
+              this.orderMaintenances = [];
+
+
+
+              row.price = pricingCalculateUtil.calculatePriceSale(this.importeTotal, dataTaxPercent?.porcentaje ?? 0);
+              row.precioConIva = this.importeTotal;
+              row.taxValue = this.importeTotal - row.price;
+
+              this.orderMaintenances.push(row);
+              this.setCalculoTotales("quantity", row, undefined)
+              return
+            }
+
 
 
             //Producto de tipo Servicio
@@ -1299,7 +1409,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       return
     }
 
-    if (this.codDoc === DOC_TYPE.FV || this.codDoc === DOC_TYPE.NE) {
+    if (!(this.detailCustom) && this.codDoc === DOC_TYPE.FV || this.codDoc === DOC_TYPE.NE) {
       if (!this.orderDetails.every(od => this.orderMaintenances.some(item => item.orderDetailId === od.orderDetailId))) {
         this.tS.toastr({
           type: 'warning',
@@ -1345,15 +1455,43 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   save() {
     try {
+      let detalles: any[] = [];
+      let customDetails: any[] = [];
+
+      if (this.detailCustom) {
+        detalles = this.cloneOrderMaintenances.map(item => {
+          return {
+            ...item,
+            envioSri: false
+          }
+        })
+
+        customDetails = this.orderMaintenances.map(item => {
+          return {
+            ...item,
+            envioSri: true,
+            isGroup: true
+          }
+        })
+      } else {
+        detalles = this.orderMaintenances.map(item => {
+          return {
+            ...item,
+            envioSri: true
+          }
+        })
+      }
 
       let obj = {
         order: {
           ...this.order,
           codDoc: this.codDoc,
         },
-        detalles: this.orderMaintenances
+        detalles,
+        customDetails
       }
       let params = orderMaintenanceAdapter.to(obj);
+      console.log(params)
 
       this.orderMaintenanceSvc.post(params).subscribe({
         next: (response) => {

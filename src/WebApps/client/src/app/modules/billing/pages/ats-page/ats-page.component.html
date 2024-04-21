@@ -8,7 +8,7 @@
                       <div class="form-group">
                         <label for="dateRangeSelect">Rango Fechas</label>
 
-                        <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
+                        <app-date-range-selection [from]="dataSearch.fromDate" [to]="dataSearch.toDate" (onChangeDateRange)="onDateRangeSelection($event)" />
                       </div>
                         <!-- <div class="form-group">
                             <label for="year">Año:</label>
