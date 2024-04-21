@@ -34,10 +34,11 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                var brand = await _context.Series.FindAsync(id);
-                brand.Enabled = false;
-                brand.Deleted = true;
-                _context.Update(brand);
+                var serie = await _context.Series.FindAsync(id);
+                serie.Enabled = false;
+                serie.Deleted = true;
+                serie.UserId = userId;
+                _context.Update(serie);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Eliminada Exitosamente" };
             }
@@ -69,12 +70,13 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                var brandFound = await _context.Series.FindAsync(id);
-                brandFound.BrandId = serie.BrandId;
-                brandFound.Code = serie.Code;
-                brandFound.Enabled = serie.Enabled;
-                brandFound.Name = serie.Name;
-                _context.Update(brandFound);
+                var serieFound = await _context.Series.FindAsync(id);
+                serieFound.BrandId = serie.BrandId;
+                serieFound.Code = serie.Code;
+                serieFound.Enabled = serie.Enabled;
+                serieFound.Name = serie.Name;
+                serieFound.UserId = serie.UserId;
+                _context.Update(serieFound);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizada Exitosamente" };
             }

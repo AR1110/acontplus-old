@@ -15,5 +15,6 @@ namespace TechnicalSupport.API.Entities
         [Required]
         [MaxLength(150)]
         public string Name { get; set; }
+        public List<Serie> Series { get; set; }
     }
 }

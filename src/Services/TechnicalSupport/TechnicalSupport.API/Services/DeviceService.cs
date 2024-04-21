@@ -53,6 +53,7 @@ namespace TechnicalSupport.API.Services
                 }
                 device.Enabled = false;
                 device.Deleted = true;
+                device.UserId = userId;
                 _context.Update(device);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Eliminado Exitosamente" };
@@ -98,6 +99,7 @@ namespace TechnicalSupport.API.Services
                 productFounded.Color = device.Color;
                 productFounded.Enabled = device.Enabled;
                 productFounded.Name = device.Name;
+                productFounded.UserId = device.UserId;
                 _context.Update(productFounded);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
