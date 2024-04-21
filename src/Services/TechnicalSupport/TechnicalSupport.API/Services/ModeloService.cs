@@ -103,6 +103,7 @@ namespace TechnicalSupport.API.Services
                 modeloFound.Enabled = modelo.Enabled;
                 modeloFound.Name = modelo.Name;
                 modeloFound.UserId = modelo.UserId;
+                modeloFound.SerieId = modelo.SerieId;
                 _context.Update(modeloFound);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };

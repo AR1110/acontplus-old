@@ -131,13 +131,16 @@ export class BrandModalComponent {
       this.modalTitle = 'Editar Marca';
       this.brandForm.patchValue(this.data);
     }
+    if (
+      this.data.id > 0 &&
+      Number(JSON.parse(this.data.series as string)?.length) > 0
+    ) {
+      this.series = JSON.parse(this.data.series as string) || [];
+    }
     this.onGet();
   }
   onGet() {
     showLoader();
-    if (this.data.id > 0 && Number(JSON.parse(this.data.series as string)?.length) > 0) {
-      this.series = JSON.parse(this.data.series as string) || [];
-    }
     this.categoryService.get({}).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
