@@ -1,4 +1,6 @@
-﻿using Common.Core.Models;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TechnicalSupport.API.Data;
@@ -10,10 +12,11 @@ namespace TechnicalSupport.API.Services
     public class SerieService : ISerieService
     {
         private readonly TechnicalSupportContext _context;
-
-        public SerieService(TechnicalSupportContext context)
+        private readonly IADORepository _repository;
+        public SerieService(TechnicalSupportContext context, IADORepository repoitory)
         {
             _context = context;
+            _repository = repoitory;
         }
         public async Task<ApiResponse> AddAsync(Serie serie)
         {
@@ -49,7 +52,7 @@ namespace TechnicalSupport.API.Services
             }
         }
 
-        public async Task<ApiResponse> GetAsync()
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             try
             {
@@ -57,7 +60,13 @@ namespace TechnicalSupport.API.Services
                 {
                     return new ApiResponse { code = "0", message = "No data" };
                 }
-                return new ApiResponse { code = "1", payload = JsonConvert.SerializeObject(await _context.Brands.ToListAsync()) };
+                //return new ApiResponse { code = "1", payload = JsonConvert.SerializeObject(await _context.Brands.ToListAsync()) };
+                var dt = await _repository.GetDataTableAsync("TechnicalSupport.Serie_Get", parameters);
+                if (DataValidation.DataTableIsNull(dt))
+                {
+                    return new ApiResponse { code = "0", message = "No data" };
+                }
+                return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
             }
             catch (Exception)
             {
