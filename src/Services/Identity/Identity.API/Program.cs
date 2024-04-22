@@ -5,7 +5,7 @@ using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Identity.API.Extensions;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 internal class Program
@@ -26,7 +26,7 @@ internal class Program
                             x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                         });
 
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+        builder.Services.AddIdentityService(builder.Configuration);
 
         builder.Services.AddSwaggerDocumentation();
 

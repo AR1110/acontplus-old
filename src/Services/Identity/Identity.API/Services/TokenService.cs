@@ -9,20 +9,21 @@ namespace Identity.API.Services
 {
     public class TokenService : ITokenService
     {
+        private readonly IConfiguration _configuration;
         private readonly SymmetricSecurityKey _key;
         public readonly bool _expInDays;
-        public readonly int _tokenExp;
+        public readonly int _exp;
         public TokenService(IConfiguration configuration)
         {
-            //var tokenKey = Encoding.UTF8.GetBytes((_configuration["Token:Key"]).PadRight((512 / 8), '\0'));
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]));
-            _tokenExp = Convert.ToInt32(configuration["Token:Exp"]);
-            _expInDays = Convert.ToBoolean(configuration["Token:ExpInDays"]);
+            _configuration = configuration;
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
+            _exp = Convert.ToInt32(_configuration["Token:Exp"]);
+            _expInDays = Convert.ToBoolean(_configuration["Token:ExpInDays"]);
         }
         public string CreateToken(UserData data)
         {
-            var signingCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
-            var claimsIdentiy = new ClaimsIdentity(new List<Claim>
+            var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
+            var claims = new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Name, data.Fullname),
                     new Claim(JwtRegisteredClaimNames.GivenName, data.Fullname),
@@ -40,16 +41,16 @@ namespace Identity.API.Services
                     new Claim("idUsuarioRol", Convert.ToString(data.UserRoleId)),
                     new Claim("nroIdentificacion", data.IDCardUser),
                     new Claim("razonSocial", data.TradeName)
-                });
-            var securityTokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = claimsIdentiy,
-                Expires = _expInDays ? DateTime.UtcNow.AddDays(_tokenExp) : DateTime.UtcNow.AddHours(_tokenExp),
-                SigningCredentials = signingCredentials
-            };
-            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
-            return jwtSecurityTokenHandler.WriteToken(securityToken);
+                };
+
+            var jwtOptions = new JwtSecurityToken(
+                     claims: claims,
+                     expires: _expInDays ? DateTime.UtcNow.AddDays(_exp) : DateTime.UtcNow.AddMinutes(_exp),
+                     signingCredentials: credentials);
+
+
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtOptions);
+            return token;
         }
     }
 }

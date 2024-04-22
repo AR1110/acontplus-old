@@ -3,7 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Configuracion.API.Extensions;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +20,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
-builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+builder.Services.AddIdentityService(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerDocumentation();

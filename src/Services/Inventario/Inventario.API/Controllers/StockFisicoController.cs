@@ -4,7 +4,7 @@ using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Services.Common;
+using Services.Common.Extensions;
 
 namespace Inventario.API.Controllers
 {

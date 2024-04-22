@@ -2,7 +2,7 @@
 using Common.Core.Utils;
 using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
+using Services.Common.Extensions;
 
 namespace Inventario.API.Controllers
 {

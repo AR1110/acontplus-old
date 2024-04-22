@@ -1,7 +1,7 @@
 ﻿using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 using TechnicalSupport.API.Entities;
 using TechnicalSupport.API.Interfaces;

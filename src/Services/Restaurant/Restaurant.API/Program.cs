@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Restaurant.API.Data;
 using Restaurant.API.Extensions;
-using Services.Common;
+using Services.Common.Extensions;
 
 
 internal class Program
@@ -29,7 +29,7 @@ internal class Program
                            x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                        });
 
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+        builder.Services.AddIdentityService(builder.Configuration);
 
         builder.Services.AddSwaggerDocumentation();
 
