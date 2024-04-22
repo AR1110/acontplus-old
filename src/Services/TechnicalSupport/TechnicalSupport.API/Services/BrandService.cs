@@ -23,6 +23,14 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
+                if (brand.Series.Count > 0)
+                {
+                    foreach (var item in brand.Series)
+                    {
+                        item.UserId = brand.UserId;
+                    }
+
+                }
                 _context.Brands.Add(brand);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Guardada Exitosamente" };
@@ -92,10 +100,22 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
+                if (brand.Series.Count > 0)
+                {
+                    foreach (var item in brand.Series)
+                    {
+                        if (item.Id == 0)
+                        {
+                            item.UserId = brand.UserId;
+                        }
+                    }
+
+                }
                 var brandFound = await _context.Brands.FindAsync(id);
                 brandFound.Code = brand.Code;
                 brandFound.Enabled = brand.Enabled;
                 brandFound.Name = brand.Name;
+                brandFound.Series = brand.Series;
                 _context.Update(brandFound);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizada Exitosamente" };

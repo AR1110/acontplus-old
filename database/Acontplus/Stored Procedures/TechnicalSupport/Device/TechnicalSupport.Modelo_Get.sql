@@ -26,6 +26,8 @@ BEGIN
 			SELECT m.*
 				,c.Name CategoryName
 				,c.Code CategoryCode
+                ,b.[Code] BrandCode
+                ,b.[Name] BrandName
 			FROM TechnicalSupport.Modelo m WITH (NOLOCK) 
 				INNER JOIN TechnicalSupport.Brand b WITH (NOLOCK) ON m.BrandId = b.Id
 				INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id 

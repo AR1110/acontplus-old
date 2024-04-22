@@ -98,56 +98,63 @@ export class DeviceModalComponent implements OnInit {
     ]),
   });
 
-  onBrandChange($event: any) {
-    showLoader();
-    this.modelos = [];
-    this.modeloService
-      .get({ tipo: 2, brandId: $event.target.value })
-      .subscribe({
-        next: (response) => {
-          if (isApiResponse(response) && response.code == '1') {
-            this.modelos = JSON.parse(response.payload as string);
-          }
-        },
-        error(err) {
-          hideLoader();
-          console.error(err);
-        },
-        complete() {
-          hideLoader();
-        },
-      });
+  ngOnInit(): void {
+    this.setDataFormModal();
+    this.getDataForm();
   }
 
-  onCategoryChange($event: any) {
+  onBrandChange($event: any) {
+    this.onBrandGet($event.target.value);
+  }
+
+  onBrandGet(categoryId: number) {
     showLoader();
     this.brands = [];
-    this.brandService
-      .get({ tipo: 2, categoryId: $event.target.value })
-      .subscribe({
-        next: (response) => {
-          if (isApiResponse(response) && response.code == '1') {
-            this.brands = JSON.parse(response.payload as string);
-          }
-        },
-        error(err) {
-          hideLoader();
-          console.error(err);
-        },
-        complete() {
-          hideLoader();
-        },
-      });
+    this.brandService.get({ tipo: 2, categoryId }).subscribe({
+      next: (response) => {
+        if (isApiResponse(response) && response.code == '1') {
+          this.brands = JSON.parse(response.payload as string);
+        }
+      },
+      error(err) {
+        hideLoader();
+        console.error(err);
+      },
+      complete() {
+        hideLoader();
+      },
+    });
+  }
+  onCategoryChange($event: any) {
+    this.onBrandGet($event.target.value);
   }
   onModeloChange($event: any) {}
-  // --> Functions
+  onModeloGet(brandId: number) {
+    showLoader();
+    this.modelos = [];
+    this.modeloService.get({ tipo: 2, brandId }).subscribe({
+      next: (response) => {
+        if (isApiResponse(response) && response.code == '1') {
+          this.modelos = JSON.parse(response.payload as string);
+        }
+      },
+      error(err) {
+        hideLoader();
+        console.error(err);
+      },
+      complete() {
+        hideLoader();
+      },
+    });
+  }
   setDataFormModal() {
-    console.info(this.data);
     this.deviceForm.patchValue(this.data);
     if (this.data.id > 0) {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Equipo';
       this.isUpdate = true;
+      this.onBrandGet(this.data.categoryId);
+      this.onModeloGet(this.data.brandId);
       this.setDataSpecs(this.data);
     } else {
       this.modalIcon = 'plus';
@@ -329,20 +336,6 @@ export class DeviceModalComponent implements OnInit {
         this.tS.toastr({ type: 'warning', message: `El nombre es requerido` });
         isValid = false;
       }
-      // if (this.validations.includes(device.brand)) {
-      //   this.tS.toastr({ type: 'warning', message: `La marca es requerido` });
-      //   isValid = false;
-      // }
-      // if (this.validations.includes(device.model)) {
-      //   this.tS.toastr({ type: 'warning', message: `El model es requerido` });
-      //   isValid = false;
-      // }
-
-      // if (this.validationsNumbers.includes(device.year)) {
-      //   this.tS.toastr({ type: 'warning', message: `El año es requerido` });
-      //   isValid = false;
-      // }
-
       if (this.validations.includes(device.color)) {
         this.tS.toastr({ type: 'warning', message: `El color es requerido` });
         isValid = false;
@@ -423,10 +416,5 @@ export class DeviceModalComponent implements OnInit {
     // if (this.specs.length > 0) {
     //   this.specsTemp = this.specs.filter((x: any) => x.uuid === uuid);
     // }
-  }
-
-  ngOnInit(): void {
-    this.setDataFormModal();
-    this.getDataForm();
   }
 }
