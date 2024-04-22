@@ -88,3 +88,16 @@ export function ajustarFechaEmisionModificada<T extends { fechaEmision: any, fec
 
   return fechaEmisionModificada;
 }
+
+
+export function setDateWithCurrentTime(date: Date): Date {
+    const currentDate = new Date();
+    const currentHours = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+    const currentSeconds = currentDate.getSeconds();
+    
+    const newDate = new Date(date);
+    newDate.setHours(currentHours, currentMinutes, currentSeconds);
+    
+    return newDate;
+}
