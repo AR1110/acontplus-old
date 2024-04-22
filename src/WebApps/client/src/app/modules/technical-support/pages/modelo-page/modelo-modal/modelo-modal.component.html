@@ -10,7 +10,12 @@
       <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
         <div class="form-group">
           <label for="brandId">Marca:</label>
-          <select formControlName="brandId" id="brandId" class="form-select">
+          <select
+            formControlName="brandId"
+            id="brandId"
+            class="form-select"
+            (change)="onBrandChange($event)"
+          >
             <option [value]="0">Seleccione una marca</option>
             @for (item of brands; track $index) {
             <option [value]="item.id">{{ item.name }}</option>

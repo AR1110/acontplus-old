@@ -47,6 +47,23 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm m-b-5"
+          (click)="onSerieAdd()"
+        >
+          <fa-icon [icon]="'plus'"></fa-icon> Añadir Serie
+        </button>
+        @if (this.series.length > 0) {
+        <app-tabulator
+          [columnNames]="columnNames"
+          [tableData]="series"
+        ></app-tabulator>
+        }
+      </div>
+    </div>
   </div>
   <div class="modal-footer">
     <button

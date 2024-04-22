@@ -1,8 +1,7 @@
-import { Brand } from './brand';
-
-export interface Serie extends Brand {
+export interface Serie {
   id: number;
   code: string;
   name: string;
+  year?: number;
   enabled?: boolean;
 }

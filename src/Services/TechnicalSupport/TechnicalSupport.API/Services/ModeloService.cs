@@ -42,6 +42,7 @@ namespace TechnicalSupport.API.Services
                 var modelo = await _context.Modelos.FindAsync(id);
                 modelo.Enabled = false;
                 modelo.Deleted = true;
+                modelo.UserId = userId;
                 _context.Update(modelo);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Eliminado Exitosamente" };
@@ -101,6 +102,8 @@ namespace TechnicalSupport.API.Services
                 modeloFound.Code = modelo.Code;
                 modeloFound.Enabled = modelo.Enabled;
                 modeloFound.Name = modelo.Name;
+                modeloFound.UserId = modelo.UserId;
+                modeloFound.SerieId = modelo.SerieId;
                 _context.Update(modeloFound);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };

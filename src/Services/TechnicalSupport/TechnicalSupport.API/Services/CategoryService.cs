@@ -38,6 +38,7 @@ namespace TechnicalSupport.API.Services
                 var category = await _context.Categories.FindAsync(id);
                 category.Enabled = false;
                 category.Deleted = true;
+                category.UserId = userId;
                 _context.Update(category);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Eliminada Exitosamente" };
@@ -74,6 +75,7 @@ namespace TechnicalSupport.API.Services
                 categoryFound.Code = category.Code;
                 categoryFound.Enabled = category.Enabled;
                 categoryFound.Name = category.Name;
+                categoryFound.UserId = category.UserId;
                 _context.Update(categoryFound);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizada Exitosamente" };

@@ -26,7 +26,8 @@ BEGIN
 			SELECT b.*
 				,c.Name CategoryName
 				,c.Code CategoryCode
-			FROM TechnicalSupport.Brand b
+                ,series = ISNULL((SELECT s.id, s.code, s.[name], ISNULL(s.[year], 0) as 'year' FROM TechnicalSupport.Serie s WITH (NOLOCK) WHERE s.brandId = b.Id AND s.Deleted IS NULL FOR JSON PATH), '[]')
+			FROM TechnicalSupport.Brand b WITH (NOLOCK)
 			INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id 
 			WHERE b.Deleted IS NULL
 		END
