@@ -10,7 +10,7 @@ GO
 -- Create date: 2024-04-08
 -- Description: REPORTE DE ORDEN
 -- =============================================
--- TechnicalSupport.Order_Report 28, '{"id": 1}', ''
+-- TechnicalSupport.Order_Report 28, '{"id": 10}', ''
 CREATE OR ALTER PROCEDURE TechnicalSupport.Order_Report @userRoleId INT
 ,@json VARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
@@ -49,8 +49,10 @@ BEGIN
 
     SELECT od.Id                    AS OrderDetaillId
     ,   d.[Name]                    AS DeviceName
-    ,   dc.SerialNumber             AS DeviceSerie
-    ,   dc.Warranty                 AS DeviceWarranty
+    ,   DeviceSerie                 = (SELECT TOP 1 Serie       FROM TechnicalSupport.DeviceCustomer dv 
+                                                                WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
+    ,   DeviceWarranty              = (SELECT TOP 1 Warranty    FROM TechnicalSupport.DeviceCustomer dv 
+                                                                WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
     ,   od.Obs                      AS Obs
     ,   od.CreatedAt                AS CreatedAt
     --- OrderMantenaince ----
@@ -64,14 +66,15 @@ BEGIN
     ,   ISNULL(orm.Discount, 0)     AS Discount
     ,   ISNULL(orm.Total, 0)        AS Total
     ,   orm.Obs                     AS ObsMaintenance
-    FROM TechnicalSupport.OrderMaintenance orm    WITH(NOLOCK)
-    INNER JOIN dbo.Bodega b                             WITH(NOLOCK) ON b.idBodega          = orm.BodegaId
-    INNER JOIN dbo.Medida m                             WITH(NOLOCK) ON m.idMedida          = orm.MedidaId
-    INNER JOIN dbo.Articulo a                           WITH(NOLOCK) ON a.idArticulo        = orm.ProductId
-    INNER JOIN TechnicalSupport.OrderDetail od          WITH(NOLOCK)  ON od.Id               = orm.OrderDetailId
-    INNER JOIN TechnicalSupport.Device d                WITH(NOLOCK) ON od.DeviceId         = d.Id
-    INNER JOIN TechnicalSupport.DeviceCustomer dc       WITH(NOLOCK) ON d.Id                = dc.DeviceId
+    FROM TechnicalSupport.OrderDetail od WITH(NOLOCK)
+    INNER JOIN TechnicalSupport.[Order] o               WITH(NOLOCK) ON o.Id				    = od.OrderId
+    INNER JOIN TechnicalSupport.Device d                WITH(NOLOCK) ON d.Id				    = od.DeviceId
+    LEFT  JOIN TechnicalSupport.OrderMaintenance orm	WITH(NOLOCK) ON orm.OrderDetailId	    = od.Id
+    LEFT JOIN dbo.Bodega b                              WITH(NOLOCK) ON b.idBodega              = orm.BodegaId
+    LEFT JOIN dbo.Medida m                              WITH(NOLOCK) ON m.idMedida              = orm.MedidaId
+    LEFT JOIN dbo.Articulo a                            WITH(NOLOCK) ON a.idArticulo            = orm.ProductId
     WHERE od.OrderId = @id
+    AND orm.Deleted IS NULL
     ORDER BY orm.OrderDetailId DESC
 END
 GO
