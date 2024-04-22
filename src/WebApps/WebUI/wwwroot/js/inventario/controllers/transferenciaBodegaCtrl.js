@@ -615,6 +615,7 @@
                     //Bodega Destino 
                     $scope.bodegasDestino = dataEstabDestino.bodegas;
                     $scope.gridOptions.data = detalles;
+                    console.log(detalles)
                     enumGridOptions();
                     $scope.tituloModal = 'Editar';
                     $scope.btnText = 'Actualizar';
