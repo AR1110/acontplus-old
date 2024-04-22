@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.ReporteTributario
+namespace WebUI.Pages.ReporteFactElect
 {
     public class IndexModel : PageModel
     {

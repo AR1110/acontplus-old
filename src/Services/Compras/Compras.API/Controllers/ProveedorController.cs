@@ -3,7 +3,7 @@ using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Compras.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 namespace Compras.API.Controllers

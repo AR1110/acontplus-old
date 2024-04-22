@@ -4,7 +4,7 @@ using Inventario.Core.Entities;
 using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 namespace Inventario.API.Controllers

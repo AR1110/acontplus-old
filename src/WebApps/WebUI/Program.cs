@@ -1,5 +1,5 @@
 ﻿using Common.Core.Utils;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 using WebUI.Hubs;
 
@@ -19,7 +19,7 @@ namespace WebUI
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
 
-            builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+            builder.Services.AddIdentityService(builder.Configuration);
 
 
             builder.Services.AddRazorPages().AddRazorPagesOptions(options =>

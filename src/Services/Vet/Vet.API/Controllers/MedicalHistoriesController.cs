@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Services.Common;
+using Services.Common.Extensions;
 using Vet.API.Data;
 using Vet.API.Entities;
 using Vet.API.Interfaces;

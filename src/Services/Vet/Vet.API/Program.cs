@@ -2,7 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 using Vet.API.Extensions;
@@ -23,7 +23,7 @@ builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+builder.Services.AddIdentityService(builder.Configuration);
 builder.Services.AddSwaggerDocumentation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();

@@ -20,7 +20,7 @@ namespace Common.Core.Utils
                 env = EnvHelper.GetEnvironment();
             configurationBuilder.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
             string sharedFolder = Environment.OSVersion.Platform == PlatformID.Win32NT ? Path.Combine("C:\\Acontplus\\", "Shared") : Path.Combine("/home/acontplus/shared/");
-            configurationBuilder.AddJsonFile(Path.Combine(sharedFolder, $"sharedsettings.{env}.json"), optional: true);
+            configurationBuilder.AddJsonFile(Path.Combine(sharedFolder, $"sharedsettings.{env}.json"), optional: false, reloadOnChange: true);
             //configurationBuilder.AddJsonFile($"SharedSettings/sharedsettings.{env}.json", optional: true, reloadOnChange: true);
         }
     }

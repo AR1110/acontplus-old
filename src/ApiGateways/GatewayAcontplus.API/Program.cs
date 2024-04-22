@@ -1,7 +1,7 @@
 ﻿using Common.Core.Utils;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Services.Common;
+using Services.Common.Extensions;
 
 internal class Program
 {
@@ -26,7 +26,7 @@ internal class Program
         builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
         builder.Services.AddOcelot(builder.Configuration);
 
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+        builder.Services.AddIdentityService(builder.Configuration);
 
         var app = builder.Build();
 

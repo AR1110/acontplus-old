@@ -3,8 +3,8 @@ using Common.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using Services.Common;
 using Configuracion.API.Interfaces;
+using Services.Common.Extensions;
 
 namespace Configuracion.API.Controllers
 {

@@ -4,7 +4,7 @@ using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Contabilidad.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 namespace Contabilidad.API.Controllers.v1

@@ -4,7 +4,7 @@ using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 using TechnicalSupport.API.Dtos;
 using TechnicalSupport.API.Entities;

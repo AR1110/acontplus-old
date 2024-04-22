@@ -4,7 +4,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Extensions;
 using Ventas.API.Extensions;
 
 namespace Ventas.API
@@ -28,7 +28,7 @@ namespace Ventas.API
                                 x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                             });
 
-            builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+            builder.Services.AddIdentityService(builder.Configuration);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddSwaggerDocumentation();

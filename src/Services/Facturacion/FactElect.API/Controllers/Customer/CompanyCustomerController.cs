@@ -2,7 +2,7 @@
 using Common.Core.Utils;
 using FactElect.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 namespace FactElect.API.Controllers.Customer

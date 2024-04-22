@@ -1,7 +1,7 @@
 ﻿using Common.Core.Models;
 using Configuracion.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 namespace Configuracion.API.Controllers
