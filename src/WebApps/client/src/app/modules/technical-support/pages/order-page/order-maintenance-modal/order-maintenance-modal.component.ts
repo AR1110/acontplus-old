@@ -307,7 +307,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         selectContents: true,
         verticalNavigation: "table", //up and down arrow keys navigate away from cell without changing value
       },
-      editable: ()=>!this.detailCustom
+      editable: () => !this.detailCustom
       // editorEmptyValueFunc: (value: any, cl: any) => {
       //   console.log(cl)
       //   if (/\s/.test(value)) {
@@ -1021,93 +1021,88 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
             //Producto que lleva inventario
             if (product.llevaInventario) {
-              // let oldValue = 0;
-              // let productsDuplicated = this.orderMaintenances.filter(item => (
-              //   item.llevaInventario && item.productId === product.idArticulo
-              // ))
-              // if (productsDuplicated.length === 0) {
-              //   productsDuplicated = [row]
-              // } else {
-              //   productsDuplicated.push(row)
-              // }
+              let oldValue = 1;
+              let productsDuplicated = structuredClone(this.orderMaintenances).filter(item => (
+                item.llevaInventario && item.productId === product.idArticulo
+              ))
+
+              productsDuplicated.push({...row})
+
 
               // let cloneOrderMaintenances = structuredClone(this.orderMaintenances);
               // let findDataProduct = this.orderMaintenances.find(item => item.llevaInventario && item.productId === product.idArticulo);
 
-              // if (!findDataProduct) {
-              //   oldValue = row.quantity;
-              //   cloneOrderMaintenances.push(row);
-              // } else {
-              //   oldValue = findDataProduct.quantity;
+              if (findDataProduct) {
+                oldValue = findDataProduct.quantity;
+                row = findDataProduct;
+                 row.quantity += 1;
+              } else {
+                this.orderMaintenances.push(row)
+              }
 
-              // }
+              console.log(productsDuplicated)
+              let dataProductMerge = mergeProductStock({
+                rows: structuredClone(productsDuplicated),
+                row: structuredClone(row)
+              });
 
-              // console.log(row)
-              // console.log(productsDuplicated)
-              // let dataProductMerge = mergeProductStock({
-              //   rows: productsDuplicated,
-              //   row
-              // });
-              // console.log(dataProductMerge)
+              console.log(dataProductMerge)
 
 
-              // let cantidadStock = getCantidadStock({
-              //   fechaEmision: this.order.fechaEmision,
-              //   bodegaId: this.order.bodegaId,
-              //   cantidadStock: dataProductMerge.cantidadStock,
-              //   consolidacionesFecha: row.consolidacionesBodega
+              let cantidadStock = getCantidadStock({
+                fechaEmision: this.order.fechaEmision,
+                bodegaId: this.order.bodegaId,
+                cantidadStock: dataProductMerge.cantidadStock,
+                consolidacionesFecha: row.consolidacionesBodega
+              });
 
-              // });
+              showLoader();
+              this.productSvc.checkNotificationStock({
+                idArticulo: row.productId,
+                idBodega: this.order.bodegaId,
+                idMedida: row.medidaId,
+                cantidad: cantidadStock
+              }).subscribe({
+                next: async (response) => {
+                  hideLoader();
 
-              // showLoader();
+                  if (isApiResponse(response)) {
 
-              // this.productSvc.checkNotificationStock({
-              //   idArticulo: row.productId,
-              //   idBodega: this.order.bodegaId,
-              //   idMedida: row.medidaId,
-              //   cantidad: cantidadStock
-              // }).subscribe({
-              //   next: async (response) => {
-              //     hideLoader();
+                    let { code, message, titleSms } = response;
 
-              //     if (isApiResponse(response)) {
+                    if (code === "1") {
+                      console.log(row)
+                      this.setCalculoTotales("quantity", row, oldValue)
+                      return
+                    }
 
-              //       let { code, message, titleSms } = response;
+                    let { isConfirmed } = await Swal.fire({
+                      title: `<small>${titleSms}</small>`,
+                      icon: 'warning',
+                      html: `<small>${message}</small>`,
+                      allowOutsideClick: false,
+                      allowEscapeKey: false,
+                    })
 
-              //       if (code === "1") {
+                    if (isConfirmed) {
+                      if (code === "0") {
+                        row.quantity = oldValue;
+                        this.setCalculoTotales("quantity", row, oldValue)
+                      }
+                      if (code === "2") {
 
-              //         this.setCalculoTotales("quantity", row, oldValue)
-              //         return
-              //       }
+                        this.setCalculoTotales("quantity", row, undefined);
+                        this.tabulatorComponent.refTabulator.setGroupBy(["orderDetailId"]);
+                      }
+                    }
 
-              //       let { isConfirmed } = await Swal.fire({
-              //         title: `<small>${titleSms}</small>`,
-              //         icon: 'warning',
-              //         html: `<small>${message}</small>`,
-              //         allowOutsideClick: false,
-              //         allowEscapeKey: false,
-              //       })
-
-              //       if (isConfirmed) {
-              //         if (code === "0") {
-              //           row.quantity = oldValue;
-              //           this.setCalculoTotales("quantity", row, oldValue)
-              //         }
-              //         if (code === "2") {
-              //           this.orderMaintenances = cloneOrderMaintenances;
-
-              //           this.setCalculoTotales("quantity", row, undefined);
-              //           this.tabulatorComponent.refTabulator.setGroupBy(["orderDetailId"]);
-              //         }
-              //       }
-
-              //     }
-              //   },
-              //   error(error) {
-              //     hideLoader();
-              //     console.log(error)
-              //   }
-              // })
+                  }
+                },
+                error(error) {
+                  hideLoader();
+                  console.log(error)
+                }
+              })
 
 
               // let oldValue = 0;

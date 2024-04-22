@@ -1,4 +1,5 @@
 import { isDateValid } from "@core/utils/format-date-moment"
+
 import { ConsolidacionBodega } from "../shared/models/consolidacion-bodega.model"
 import { MedidaProducto } from "../shared/models/measure.model"
 
@@ -68,6 +69,8 @@ export const getCantidadStock = function (obj: GetCantidadStockProps): number {
 
   if (dataConsolidacionFecha) {
     const fechaConsolidacion = new Date(dataConsolidacionFecha.fechaConsolidacion);
+    console.log(fechaConsolidacion)
+    console.log(fechaEmision)
     if (isDateValid(fechaConsolidacion) && fechaConsolidacion >= fechaEmision) {
       return 0;
     }
