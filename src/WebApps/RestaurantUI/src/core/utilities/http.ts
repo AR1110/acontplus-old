@@ -3,7 +3,7 @@ import { getToken } from "@/core/services";
 const instance = axios.create({ 
   baseURL: import.meta.env["VITE_API_URL"],
 });
-
+ 
 //   console.log("init Axios interceptor");
 const updateHeader = (request: any) => {
   const token = "Bearer " + getToken();

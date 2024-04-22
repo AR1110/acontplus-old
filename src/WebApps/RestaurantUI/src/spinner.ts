@@ -7,7 +7,7 @@ export function showLoader() {
   }
 
 }
-
+  
 export function hideLoader() {
   const loading = document.querySelector('.loading');
   if (loading) {
