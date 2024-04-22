@@ -9,6 +9,7 @@ namespace TechnicalSupport.API.Services
     {
         private readonly TechnicalSupportContext _context;
         private readonly IADORepository _repository;
+        private readonly string _module = "TechnicalSupport.Order_";
         public OrderService(TechnicalSupportContext context, IADORepository repository)
         {
             _context = context;
@@ -16,21 +17,29 @@ namespace TechnicalSupport.API.Services
         }
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("TechnicalSupport.Order_Get", parameters);
-            if (DataValidation.DataSetIsNull(ds, true))
+            try
             {
-                return new ApiResponse { code = "0", message = "No se encontraron datos" };
+                var ds = await _repository.GetDataSetAsync($"{_module}Get", parameters);
+                if (DataValidation.DataSetIsNull(ds, true))
+                {
+                    return new ApiResponse { code = "0", message = "No se encontraron datos" };
+                }
+                else
+                {
+                    return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+                }
             }
-            else
+            catch (Exception)
             {
-                return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
+
+                throw;
             }
         }
         public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
         {
             try
             {
-                return await _repository.SPExecuteAsync("TechnicalSupport.Order_Insert", parameters);
+                return await _repository.SPExecuteAsync($"{_module}Insert", parameters);
             }
             catch (Exception)
             {
@@ -40,18 +49,27 @@ namespace TechnicalSupport.API.Services
         }
         public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("TechnicalSupport.Order_Update", parameters);
+            try
+            {
+                return await _repository.SPExecuteAsync($"{_module}Update", parameters);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
-        public async Task<ApiResponse> DeleteAsync(int userId, int id)
+        public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
         {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null) return new ApiResponse { code = "0", message = "No encontrada" };
-            order.Enabled = false;
-            order.Deleted = true;   
-            order.UserId = userId;
-            _context.Orders.Update(order);
-            await _context.SaveChangesAsync();
-            return new ApiResponse { code = "1", message = "Eliminada exitosamente" };
+            try
+            {
+                return await _repository.SPExecuteAsync($"{_module}Delete", parameters);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
