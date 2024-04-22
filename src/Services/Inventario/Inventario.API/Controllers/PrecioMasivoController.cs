@@ -3,7 +3,7 @@ using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 

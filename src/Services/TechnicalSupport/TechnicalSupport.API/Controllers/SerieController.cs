@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Core.Utils;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 using TechnicalSupport.API.Entities;
 using TechnicalSupport.API.Interfaces;
+using TechnicalSupport.API.Services;
 
 namespace TechnicalSupport.API.Controllers
 {
@@ -17,11 +19,11 @@ namespace TechnicalSupport.API.Controllers
             _log = log;
         }
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string json)
         {
             try
             {
-                var response = await _serieService.GetAsync();
+                var response = await _serieService.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
                 if (response == null) { return BadRequest("Can't Get Data"); };
                 return Ok(response);
             }

@@ -84,35 +84,31 @@ app.run(function ($window, $rootScope) {
 })
 
 function alertEndSession() {
-    let timerInterval = 0
+    let timerInterval;
     Swal.fire({
         icon: 'warning',
-        title: 'Authenticación',
-        text: 'Ha perdido session, inicie nuevamente',
-        timer: 5000,
+        title: "Ha perdido sesión!",
+        html: "Redirigiendo en <b></b> segundos",
+        timer: 10000,
         timerProgressBar: true,
-        allowOutsideClick: false,
         didOpen: () => {
-            Swal.showLoading()
+            Swal.showLoading();
+            const timer = Swal.getPopup().querySelector("b");
             timerInterval = setInterval(() => {
-                const content = Swal.getHtmlContainer()
-                if (content) {
-                    const b = content.querySelector('b')
-                    if (b) {
-                        b.textContent = Swal.getTimerLeft()
-                    }
-                }
-            }, 100)
+                timer.textContent = `${(Swal.getTimerLeft() * 0.001).toFixed()}`;
+            }, 100);
         },
         willClose: () => {
-            clearInterval(timerInterval)
+            clearInterval(timerInterval);
         }
     }).then((result) => {
-        location.href = '/Login/Index'
         if (result.dismiss === Swal.DismissReason.timer) {
-            location.href = '/Login/Index'
+            Object.keys(localStorage).forEach(function (key) {
+                localStorage.removeItem(key);
+            });
+            window.location.href = '/Login/Index';
         }
-    })
+    });
 }
 
 app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
@@ -133,14 +129,14 @@ app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
             let newDate = moment.tz(new Date(), "America/Guayaquil")
             //console.log(newDate)
             const currentTime = Math.floor(new Date(newDate) / 1000); // convert to seconds
-            // console.log(currentTime)
-            // console.log(expiration)
+            //console.log(currentTime)
+            //console.log(expiration)
 
             if (expiration < currentTime) {
-                //console.log('yes')
                 alertEndSession()
+            } else {
+                config.headers['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
             }
-            config.headers['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
         }
         return config
     }

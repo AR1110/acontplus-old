@@ -5,7 +5,7 @@ using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Inventario.API.Extensions;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Extensions;
 
 internal class Program
 {
@@ -33,7 +33,7 @@ internal class Program
 
         builder.Services.AddApplicationServices(builder.Configuration);
 
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+        builder.Services.AddIdentityService(builder.Configuration);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddSwaggerDocumentation();

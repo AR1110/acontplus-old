@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Login.Pages
+namespace WebUI.Pages.Login
 {
     public class IndexModel : PageModel
     {

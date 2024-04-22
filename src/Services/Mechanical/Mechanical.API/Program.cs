@@ -3,7 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Mechanical.API.Extensions;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 
@@ -29,7 +29,7 @@ internal class Program
 
         builder.Services.AddCors();
 
-        builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+        builder.Services.AddIdentityService(builder.Configuration);
 
         builder.Services.AddSwaggerDocumentation();
 

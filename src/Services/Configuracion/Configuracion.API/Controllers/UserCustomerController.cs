@@ -4,7 +4,7 @@ using Configuracion.API.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using Services.Common;
+using Services.Common.Extensions;
 
 namespace Configuracion.API.Controllers
 {

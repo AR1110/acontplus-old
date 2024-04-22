@@ -2,7 +2,7 @@
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
+using Services.Common.Extensions;
 
 namespace WebUI.Controllers.Config
 {

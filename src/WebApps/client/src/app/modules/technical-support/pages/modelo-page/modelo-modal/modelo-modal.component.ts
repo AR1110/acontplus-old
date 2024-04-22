@@ -11,9 +11,11 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Brand } from '@modules/technical-support/models/brand';
+import { Modelo } from '@modules/technical-support/models/modelo';
 import { Serie } from '@modules/technical-support/models/serie';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
+import { SerieService } from '@modules/technical-support/services/serie.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -27,11 +29,12 @@ export class ModeloModalComponent {
   private modeloService = inject(ModeloService);
   private brandService = inject(BrandService);
   private modalRef = inject(NgbActiveModal);
+  private serieService = inject(SerieService);
   private tS = inject(ToasterService);
   modeloForm = new FormGroup({
     id: new FormControl(0),
     brandId: new FormControl(0, Validators.required),
-    serieId: new FormControl(0),
+    serieId: new FormControl({ value: 0, disabled: true }),
     code: new FormControl('', [
       Validators.required,
       Validators.minLength(1),
@@ -45,11 +48,13 @@ export class ModeloModalComponent {
     year: new FormControl(0),
   });
   brands: Brand[] = [];
-  data: Brand = {
+  data: Modelo = {
     id: 0,
     code: '',
     name: '',
     categoryName: '',
+    brandId: 0,
+    brandName: '',
   };
   modalIcon: IconProp = 'plus';
   modalTitle = 'Registrar Modelo';
@@ -60,8 +65,34 @@ export class ModeloModalComponent {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Modelo';
       this.modeloForm.patchValue(this.data);
+      this.onBrandGet(this.data.brandId);
     }
     this.onGet();
+  }
+  onBrandChange($event: any) {
+    this.onBrandGet($event.target.value);
+  }
+  onBrandGet(brandId: number) {
+    showLoader();
+    this.series = [];
+    this.serieService.get({ tipo: 2, brandId }).subscribe({
+      next: (response) => {
+        if (isApiResponse(response) && response.code == '1') {
+          this.series = JSON.parse(response.payload as string) || [];
+          this.modeloForm.get('serieId')?.enable();
+          // const state = false ? 'disable' : 'enable';
+          // this.modeloForm.controls['serieId'][state]();
+        } else if (this.modeloForm.controls['serieId']) {
+          this.modeloForm.get('serieId')?.disable();
+        }
+      },
+      error(err) {
+        hideLoader();
+      },
+      complete() {
+        hideLoader();
+      },
+    });
   }
   onGet() {
     showLoader();
@@ -69,8 +100,6 @@ export class ModeloModalComponent {
       next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            console.log(response);
-            console.log(JSON.parse(response.payload as string));
             this.brands = JSON.parse(response.payload as string);
           }
         }

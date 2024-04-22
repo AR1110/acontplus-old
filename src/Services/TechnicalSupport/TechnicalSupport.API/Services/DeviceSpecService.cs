@@ -38,6 +38,7 @@ namespace TechnicalSupport.API.Services
                     return new ApiResponse { code = "0", message = "No se encontró registro de especificaciones" };
                 }
                 itemFounded.Specs = data.Specs;
+                itemFounded.UserId = data.UserId;
                 _context.Update(itemFounded);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Especificaciones actualizado exitosamente " };

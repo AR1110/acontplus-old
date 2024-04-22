@@ -40,15 +40,11 @@ namespace TechnicalSupport.API.Data
                         builder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
                     }
                 }
-                // Force all string-based columns to non-unicode equivalent 
-                // when no column type is explicitly set.
                 foreach (var property in builder.Model.GetEntityTypes()
                     .SelectMany(t => t.GetProperties())
                     .Where(
-                           p => p.ClrType == typeof(string)    // Entity is a string
-                        && p.GetColumnType() == null           // No column type is set
-                                                               // Next line only required if using ASP.Net Identity:
-                        //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
+                           p => p.ClrType == typeof(string)   
+                        && p.GetColumnType() == null
                     ))
                 {
                     property.SetIsUnicode(false);
@@ -58,6 +54,7 @@ namespace TechnicalSupport.API.Data
             builder.Entity<Brand>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Brand>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Brand>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_Brand").IsUnique();
+            builder.Entity<Brand>().HasMany(x => x.Series).WithOne(x => x.Brand).HasForeignKey(x => x.BrandId);
 
             builder.Entity<Category>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Category>().Property(x => x.Enabled).HasDefaultValue(true);
@@ -115,11 +112,6 @@ namespace TechnicalSupport.API.Data
                 {
                     ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
                 }
-
-                //if (entityEntry.State == EntityState.Added)
-                //{
-                //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
-                //}
             }
 
             return base.SaveChanges();
@@ -138,10 +130,6 @@ namespace TechnicalSupport.API.Data
                 {
                     ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.Now;
                 }
-                //if (entityEntry.State == EntityState.Added)
-                //{
-                //    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.Now;
-                //}
             }
             var result = await base.SaveChangesAsync(cancellationToken);
             return result;

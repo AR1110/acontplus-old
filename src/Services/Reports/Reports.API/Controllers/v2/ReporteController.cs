@@ -4,7 +4,7 @@ using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Reports.API.Dtos;
 using Reports.Core.Interfaces;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 namespace Reports.API.Controllers.v2

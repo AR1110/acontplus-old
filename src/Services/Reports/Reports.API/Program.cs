@@ -2,7 +2,7 @@
 using Asp.Versioning.ApiExplorer;
 using Common.Core.Utils;
 using Reports.API.Extensions;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 namespace Reports.API
@@ -20,7 +20,7 @@ namespace Reports.API
             builder.Services.AddApplicationServices(builder.Configuration);
 
             builder.Services.AddControllers();
-            builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+            builder.Services.AddIdentityService(builder.Configuration);
 
             builder.Services.AddSwaggerDocumentation();
 

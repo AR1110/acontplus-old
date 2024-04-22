@@ -1,4 +1,6 @@
-﻿using Common.Core.Models;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TechnicalSupport.API.Data;
@@ -10,10 +12,11 @@ namespace TechnicalSupport.API.Services
     public class SerieService : ISerieService
     {
         private readonly TechnicalSupportContext _context;
-
-        public SerieService(TechnicalSupportContext context)
+        private readonly IADORepository _repository;
+        public SerieService(TechnicalSupportContext context, IADORepository repoitory)
         {
             _context = context;
+            _repository = repoitory;
         }
         public async Task<ApiResponse> AddAsync(Serie serie)
         {
@@ -34,10 +37,11 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                var brand = await _context.Series.FindAsync(id);
-                brand.Enabled = false;
-                brand.Deleted = true;
-                _context.Update(brand);
+                var serie = await _context.Series.FindAsync(id);
+                serie.Enabled = false;
+                serie.Deleted = true;
+                serie.UserId = userId;
+                _context.Update(serie);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Eliminada Exitosamente" };
             }
@@ -48,7 +52,7 @@ namespace TechnicalSupport.API.Services
             }
         }
 
-        public async Task<ApiResponse> GetAsync()
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             try
             {
@@ -56,7 +60,13 @@ namespace TechnicalSupport.API.Services
                 {
                     return new ApiResponse { code = "0", message = "No data" };
                 }
-                return new ApiResponse { code = "1", payload = JsonConvert.SerializeObject(await _context.Brands.ToListAsync()) };
+                //return new ApiResponse { code = "1", payload = JsonConvert.SerializeObject(await _context.Brands.ToListAsync()) };
+                var dt = await _repository.GetDataTableAsync("TechnicalSupport.Serie_Get", parameters);
+                if (DataValidation.DataTableIsNull(dt))
+                {
+                    return new ApiResponse { code = "0", message = "No data" };
+                }
+                return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
             }
             catch (Exception)
             {
@@ -69,12 +79,13 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                var brandFound = await _context.Series.FindAsync(id);
-                brandFound.BrandId = serie.BrandId;
-                brandFound.Code = serie.Code;
-                brandFound.Enabled = serie.Enabled;
-                brandFound.Name = serie.Name;
-                _context.Update(brandFound);
+                var serieFound = await _context.Series.FindAsync(id);
+                serieFound.BrandId = serie.BrandId;
+                serieFound.Code = serie.Code;
+                serieFound.Enabled = serie.Enabled;
+                serieFound.Name = serie.Name;
+                serieFound.UserId = serie.UserId;
+                _context.Update(serieFound);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Actualizada Exitosamente" };
             }

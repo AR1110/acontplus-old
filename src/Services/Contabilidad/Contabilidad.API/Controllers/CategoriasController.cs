@@ -3,7 +3,7 @@ using Contabilidad.Core.Interfaces;
 using Contabilidad.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Services.Common;
+using Services.Common.Extensions;
 
 namespace Contabilidad.API.Controllers
 {

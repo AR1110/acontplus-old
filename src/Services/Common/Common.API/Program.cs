@@ -4,7 +4,7 @@ using Autofac.Extensions.DependencyInjection;
 using Common.API.Extensions;
 using Common.Core.Utils;
 using Newtonsoft.Json.Serialization;
-using Services.Common;
+using Services.Common.Extensions;
 
 namespace Common.API
 {
@@ -26,7 +26,7 @@ namespace Common.API
                                 x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                             });
 
-            builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+            builder.Services.AddIdentityService(builder.Configuration);
 
             builder.Services.AddSwaggerDocumentation();
 

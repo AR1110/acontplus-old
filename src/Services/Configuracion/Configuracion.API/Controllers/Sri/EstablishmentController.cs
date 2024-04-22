@@ -1,11 +1,11 @@
-﻿ 
+﻿
 using Common.Core.Models;
 using Common.Core.Utils;
 using Configuracion.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using Services.Common;
 using Configuracion.API.Interfaces.Sri;
+using Services.Common.Extensions;
 
 namespace Configuracion.API.Controllers.Sri
 {

@@ -1,7 +1,7 @@
 ﻿using Configuracion.API.Data;
 using Configuracion.API.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Services.Common;
+using Services.Common.Extensions;
 using Services.Common.Logs;
 
 namespace Configuracion.API.Controllers

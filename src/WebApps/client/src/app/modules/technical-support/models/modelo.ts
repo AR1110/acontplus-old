@@ -1,4 +1,3 @@
-import { Brand } from './brand';
 
 export interface Modelo {
   id: number;
