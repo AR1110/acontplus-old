@@ -98,7 +98,7 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                var response = await _orderService.DeleteAsync(User.GetUserId(), id);
+                var response = await _orderService.DeleteAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id} });
                 return Ok(response);
             }
             catch (Exception ex)
