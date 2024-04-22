@@ -25,3 +25,4 @@ go
 --ALTER TABLE TipoIva ALTER COLUMN fechaInicio DATETIME2 NOT NULL
 
 select * from TipoIva
+

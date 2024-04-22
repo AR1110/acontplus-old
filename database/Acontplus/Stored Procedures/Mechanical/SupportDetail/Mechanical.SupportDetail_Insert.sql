@@ -82,7 +82,8 @@ BEGIN
         BEGIN TRAN
            INSERT INTO [Mechanical].[SupportDetail]
                  ([SupportId],ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled])
-           SELECT @supportId ,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled] FROM @tbSupportDetail 
+           SELECT @supportId ,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled] 
+           FROM @tbSupportDetail 
 
         COMMIT TRAN 
 

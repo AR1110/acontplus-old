@@ -1,26 +1,26 @@
 --use [Acontplus]
 --go
 
-declare @table as table
-(
-	idTipoDocumento INT NOT NULL
-   ,idTipoTransaccion INT NOT NULL
-   ,idDocumento INT NOT NULL
-   ,total INT NOT NULL
-)
+--declare @table as table
+--(
+--	idTipoDocumento INT NOT NULL
+--   ,idTipoTransaccion INT NOT NULL
+--   ,idDocumento INT NOT NULL
+--   ,total INT NOT NULL
+--)
 
-declare @tableDuplicate as table
-(
-	idTransaccion int  not null unique
-    ,idTipoDocumento INT NOT NULL
-    ,idTipoTransaccion INT NOT NULL
-    ,idDocumento INT NOT NULL
-)
+--declare @tableDuplicate as table
+--(
+--	idTransaccion int  not null unique
+--    ,idTipoDocumento INT NOT NULL
+--    ,idTipoTransaccion INT NOT NULL
+--    ,idDocumento INT NOT NULL
+--)
 
-declare @tableDelete as table
-(
-	idTransaccion int  not null unique
-)
+--declare @tableDelete as table
+--(
+--	idTransaccion int  not null unique
+--)
 
 --INSERT INTO @table (idTipoDocumento,idTipoTransaccion,idDocumento,total)
 --select idTipoDocumento,idTipoTransaccion,idDocumento,COUNT(*) as total 
