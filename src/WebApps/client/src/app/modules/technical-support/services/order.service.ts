@@ -97,11 +97,11 @@ export class OrderService {
                   let precioTotalSinImpuesto =
                     restItem.price * restItem.quantity - restItem.discount;
                   let subTotalSinDescuento = restItem.price * restItem.quantity;
-                  let percentageDiscount =
+                  let percentageDiscount = subTotalSinDescuento > 0 ?
                     pricingCalculateUtil.getValueDiscountPercentage(
                       subTotalSinDescuento,
                       restItem.discount
-                    );
+                    ) : 0
 
                   let obj: OrderMaintenance = {
                     id: restItem.id,
