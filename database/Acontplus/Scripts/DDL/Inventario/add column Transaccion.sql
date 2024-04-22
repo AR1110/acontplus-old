@@ -6,8 +6,6 @@ go
 
 --alter table Inventario.Transaccion add conversion numeric(18,2)
 
---alter table Inventario.Transaccion drop column conversion numeric(18,2)
-
 --update tr set
 --	   tr.conversion = ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af with (nolock) where af.idArticulo = tr.idArticulo and af.idMedida = tr.idMedida),1) 
 --from Inventario.Transaccion tr
@@ -24,12 +22,6 @@ go
 --inner join dbo.Articulo ar on ar.idArticulo = tr.idArticulo
 
 --alter table Inventario.Transaccion alter column precioCostoFraccionado numeric(18,5) not null
-
---select tr.idArticulo
---      ,tr.idMedida
---	  ,tr.conversion
---	  ,tr.precioCostoFraccionado
---from Inventario.Transaccion tr with (nolock)
 
 --> Customer proveedor
 
@@ -100,7 +92,8 @@ go
 
 --update cl
 --   set cl.CustomerId = (select top 1 c.Id from Customer.Customer c where c.IDCard = cl.numeroIdentificacion )
---from Cliente cl WHERE CustomerId is null
+--from Cliente cl with (rowlock) 
+--WHERE cl.CustomerId is null
 
 
 --> TRANSACCION CUSTOMER ID SALIDAS
@@ -211,7 +204,7 @@ go
 --inner join Inventario.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
 --WHERE tt.codigo = 'S'
 --  AND td.codigo in ('FE','NE','TB')   
-  --AND td.codigo in ('TB') 
+
 
 
 --  update tr set
@@ -437,7 +430,5 @@ go
 
 select TOP 100 * from Inventario.Transaccion
 
-
-SELECT top 100 * FROM Inventario.TransaccionDetalle
 
 --ALTER TABLE Inventario.Transaccion  alter column serieComprobante VARCHAR(30) not null
