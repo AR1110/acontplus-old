@@ -1022,9 +1022,9 @@ export class OrderMaintenanceModalComponent implements OnInit {
             //Producto que lleva inventario
             if (product.llevaInventario) {
               let oldValue = 1;
-              let productsDuplicated = this.orderMaintenances.filter(item => (
+              let productsDuplicated = structuredClone(this.orderMaintenances).filter(item => (
                 item.llevaInventario && item.productId === product.idArticulo
-              )).slice()
+              ))
 
               productsDuplicated.push({...row})
 
@@ -1035,7 +1035,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
               if (findDataProduct) {
                 oldValue = findDataProduct.quantity;
                 row = findDataProduct;
-                // row.quantity += 1;
+                 row.quantity += 1;
               } else {
                 this.orderMaintenances.push(row)
               }
@@ -1043,7 +1043,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
               console.log(productsDuplicated)
               let dataProductMerge = mergeProductStock({
                 rows: structuredClone(productsDuplicated),
-                row
+                row: structuredClone(row)
               });
 
               console.log(dataProductMerge)
