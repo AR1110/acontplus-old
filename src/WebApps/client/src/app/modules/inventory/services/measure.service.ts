@@ -15,4 +15,17 @@ export class MeasureService {
     })
     return this.#http.get(`${this.#url}?json=${JSON.stringify(json)}`)
   }
+
+
+  post<T>(data: T) {
+    return this.#http.post(`${this.#url}`, { data })
+  }
+
+  put<T>(id: number, data: T) {
+    return this.#http.put(`${this.#url}${id}`, { data })
+  }
+
+  delete(id: number) {
+    return this.#http.delete(`${this.#url}${id}`)
+  }
 }
