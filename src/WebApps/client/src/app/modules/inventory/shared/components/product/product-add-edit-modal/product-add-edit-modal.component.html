@@ -1,5 +1,5 @@
 <div class="modal-header">
-  	<h4 class="modal-title">Nuevo Producto</h4>
+  	<h4 class="modal-title">{{titleModal}}</h4>
 		<button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
 </div>
 
@@ -14,7 +14,7 @@
               <label for="description"
                 >Descripción: <span class="text-danger">*</span></label
               >
-              <input type="text" class="form-control" placeholder="..." />
+              <input type="text" class="form-control" placeholder="..." [(ngModel)]="data.descripcion"  appToUpperCase />
             </div>
           </div>
           <div class="colxl-6 col-lg-6 col-md-6 col-12">
@@ -108,25 +108,25 @@
                     >Tipo Artículo: <span class="text-danger">*</span>
                   </label>
                   <select class="form-select" formControlName="idTipoArticulo">
-                    <!-- @for (item of tipoArticulos; track $index) {
+                     @for (item of tiposArticulo; track $index) {
                       <option [value]="item.idTipoArticulo">
                         {{ item.descripcion }}
                       </option>
-                      } -->
+                      }
                   </select>
                 </div>
               </div>
 
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                  <label for="medida">Medida</label>
+                  <label for="medida">Medida: <span class="text-danger">*</span></label>
                   <div class="input-group">
                     <select class="form-select" formControlName="idMedida">
-                      <!-- @for (item of medidas; track $index) {
+                      @for (item of medidas; track $index) {
                         <option [value]="item.idMedida">
                           {{ item.descripcion }}
                         </option>
-                        } -->
+                        }
                     </select>
 
                     <button
@@ -153,9 +153,9 @@
               ng-disabled="!articlePermission.isUpdatePrice"
               formControlName="idTipoIva"
             >
-              <!-- @for (item of tipoIvas; track $index) {
+              @for (item of tiposIva; track $index) {
                 <option [value]="item.idTipoIva">{{ item.descripcion }}</option>
-                } -->
+                }
             </select>
           </div>
           <div class="col-lg-2 col-md-6 col-sm-6 col-xs-6">
@@ -218,7 +218,7 @@
 
         <div class="row">
           <div class="col-lg-10 col-12">
-            <div #tabularTablePVP></div>
+            <app-tabulator [columnNames]="columnNames" [tableData]="productTarifa" [options]="tabOptions" />
           </div>
         </div>
       </ng-template>
@@ -279,4 +279,14 @@
   </nav>
 
   <div [ngbNavOutlet]="nav" class="mt-2"></div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-success">
+    {{btnText}}
+  </button>
+  <button type="button" class="btn btn-dark">
+    &times; Cerrar
+  </button>
+
 </div>

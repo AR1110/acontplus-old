@@ -19,7 +19,10 @@ import { ProductSale } from './../models/product.model';
 })
 export class ProductService {
   private http = inject(HttpClient);
+  private url_old = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT_OLD}`;
   private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT}`;
+
+
 
   private productAdapter = new ProductAdapter()
 
@@ -49,27 +52,63 @@ export class ProductService {
     )
   }
 
-  getDataForm(){
+  getDataForm() {
     let params = {
-      json: JSON.stringify({ tipo: 1 })
+      json: JSON.stringify({ tipo: 5 })
     }
-    return this.http.get(`${this.url}Get`, {
+    return this.http.get(`${this.url}`, {
       params
-    }).pipe(map((response: any) => response.payload))
+    }).pipe(
+      map((response: any) => {
+        let data = {
+          categorias: [],
+          decimal: {},
+          estabs: [] as GroupedEstab[],
+          etiquetas: [],
+          marcas: [],
+          medidas: [],
+          modelos: [],
+          subCategorias: [],
+          tarifas: [],
+          tiposArticulo: [],
+          tiposIce: [],
+          tiposIva: [],
+        }
+        if (response !== null && typeof response === 'object') {
+          data.categorias = response.categorias;
+          data.decimal = response.decimal[0],
+            data.estabs = groupEstabUtil({
+              bodegas: response.estabs,
+              isGroupBodega: true
+            })
+
+          data.etiquetas = response.etiquetas;
+          data.marcas = response.marcas;
+          data.medidas = response.medidas;
+          data.modelos = response.modelos;
+          data.subCategorias = response.subCategorias;
+          data.tarifas = response.tarifas;
+          data.tiposArticulo = response.tiposArticulo;
+          data.tiposIce = response.tiposIce;
+          data.tiposIva = response.tiposIva;
+        }
+        return data;
+      })
+    )
   }
 
   getAll<T extends { pageIndex: number, pageSize: number }>(obj: T) {
     let params = {
       json: JSON.stringify({ ...obj, tipo: 1 })
     }
-    return this.http.get(`${this.url}Get`, {
+    return this.http.get(`${this.url_old}Get`, {
       params
     }).pipe(map((response: any) => response.payload))
   }
 
   get(params: any) {
     return this.http
-      .get(`${this.url}Get?json=${params}`)
+      .get(`${this.url_old}Get?json=${params}`)
       .pipe(map((response) => response));
   }
 
@@ -82,7 +121,7 @@ export class ProductService {
       busqueda: data.textSearch,
     };
     return this.http
-      .get(`${this.url}Search?json=${JSON.stringify(query)}`)
+      .get(`${this.url_old}Search?json=${JSON.stringify(query)}`)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
@@ -100,7 +139,7 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ tipo: 13 })
     }
-    return this.http.get(`${this.url}Get`, {
+    return this.http.get(`${this.url_old}Get`, {
       params
     }).pipe(
       map(response => {
@@ -136,7 +175,7 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ idArticulo: id, tipo: 6 })
     }
-    return this.http.get(`${this.url}Get`, {
+    return this.http.get(`${this.url_old}Get`, {
       params
     }).pipe(
       map((response) => {
@@ -181,7 +220,7 @@ export class ProductService {
     let params = {
       json: JSON.stringify({ ...obj, tipo: 7 })
     }
-    return this.http.get(`${this.url}Get`, {
+    return this.http.get(`${this.url_old}Get`, {
       params
     }).pipe(map((response: any) => {
       const responseApi = JSON.parse(response.payload)[0][0];

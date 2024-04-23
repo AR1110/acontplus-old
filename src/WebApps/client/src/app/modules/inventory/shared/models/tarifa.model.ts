@@ -19,3 +19,5 @@ export interface TarifaProducto {
 
 
 export interface TarifaSelectHtmlOnly extends Pick<Tarifa, 'idTarifa' | 'descripcion' | 'predeterminada'> { }
+
+
