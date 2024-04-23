@@ -1,11 +1,6 @@
 use [Acontplus]
 go 
 
-USE AcontPlus
-GO
-IF OBJECT_ID(N'Common.Country', N'U') IS NOT NULL
-DROP TABLE Common.Country 
-GO
 CREATE TABLE Common.Country (
 	 Id INT PRIMARY KEY IDENTITY(1,1) NOT NULL
 	,Code VARCHAR(25) NOT NULL

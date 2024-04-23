@@ -27,26 +27,26 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    DECLARE @LicensePlate VARCHAR(15)
-	       ,@userId INT
-           ,@Date DATETIME2
-           ,@CompanyId INT
-           ,@VehicleId INT
-           ,@VehicleCompanyId INT
-           ,@IDCard VARCHAR(15)
-           ,@CustomerId INT
-           ,@UserAssignedId INT
-           ,@Obs VARCHAR(300)
+    --> Global  
+	DECLARE @tipo INT ,@CompanyId INT
 
-    DECLARE @jsonCustomer VARCHAR(MAX)
-           ,@jsonVehicle  VARCHAR(MAX)
-           ,@jsonSupport  VARCHAR(MAX)
-           ,@cardTypeId   VARCHAR
+    --> DataJson
+    DECLARE @customer VARCHAR(MAX) ,@vehicle VARCHAR(MAX) ,@support VARCHAR(MAX)
+
+    --> Support
+    DECLARE @Sequence INT ,@VehicleCompanyId INT ,@PuntoEmisionId INT 
+
+    --> Customer
+	DECLARE @CustomerId INT ,@IDCard VARCHAR(15) ,@CardTypeId INT ,@IDType VARCHAR(5)
+
+    --> VehicleCompaby
+	DECLARE @LicensePlate VARCHAR(15),@userId INT ,@VehicleId INT
 	
     
 
     DECLARE @tbSupport AS TABLE (
-        [Date] DATETIME2 NOT NULL
+        Id INT UNIQUE NOT NULL
+       ,[Date] DATETIME2 NOT NULL
        ,VehicleCompanyId INT NOT NULL
        ,CustomerId INT NOT NULL
        ,UserAssignedId INT NOT NULL
@@ -81,74 +81,76 @@ BEGIN
     )
 
 	BEGIN TRY 
-            
-           
+        --> SAVING THE JSON DATA 
+        SELECT @customer = customer
+              ,@vehicle  = vehicle
+              ,@support  = support
+        FROM OPENJSON(@json)  WITH 
+        (
+            customer NVARCHAR(MAX) as json
+           ,vehicle  NVARCHAR(MAX) as json
+           ,support  NVARCHAR(MAX) as json
+        )
 
-		    --=========================== SAVING THE JSON DATA ====================================================================== --
-            SELECT @jsonCustomer = customer, @jsonVehicle = vehicle,@jsonSupport = jsonSupport
-            FROM OPENJSON(@json)  WITH 
-            (
-                customer    NVARCHAR(MAX) '$.customer'as json
-               ,vehicle     NVARCHAR(MAX) '$.vehicle' as json
-               ,jsonSupport NVARCHAR(MAX) '$.support' as json
-            )
+        INSERT INTO @tbSupport
+              (vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
+        SELECT vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
+        FROM OPENJSON(@support) WITH 
+        (
+            puntoEmisionId   INT 
+           ,vehicleCompanyId INT 
+           ,customerId       INT 
+           ,supportTypeId    INT 
+           ,userAssignedId   INT 
+           ,obs              VARCHAR(300) 
+           ,[date]           DATETIME2
+        )
 
-            INSERT INTO @tbSupport
-                  (vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
-            SELECT vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
-            FROM OPENJSON(@jsonSupport) WITH
-            (
-                vehicleCompanyId INT '$.vehicleCompanyId'
-               ,customerId       INT '$.customerId'
-               ,userAssignedId   INT '$.userAssignedId'
-               ,[date]     DATETIME2 '$.date'
-               ,Obs     VARCHAR(300) '$.obs'
-            )
+	    INSERT INTO @tbVehicle
+			  ([VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje)
+		SELECT [VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje
+		FROM OPENJSON(@vehicle) WITH
+		(
+			vehicleTypeId INT 
+		   ,countryId     INT 
+		   ,licensePlate  VARCHAR(10) 
+		   ,brand         VARCHAR(150) 
+		   ,model         VARCHAR(150) 
+		   ,[year]        INT 
+		   ,color         VARCHAR(150)  
+		   ,engine        VARCHAR(150) 
+		   ,chassis       VARCHAR(150)  
+		   ,cylindraje    VARCHAR(150)  
+		   ,customerId    INT  
+		   ,observation   VARCHAR(300)
+        )
 
-			INSERT INTO @tbVehicle
-				  ([VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[Observation])
-			SELECT [VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[Observation]
-			FROM OPENJSON(@jsonVehicle) WITH
-			(
-				[VehicleTypeId]        INT '$.vehicleTypeId'
-			   ,[CountryId]            INT '$.countryId'
-			   ,[LicensePlate] VARCHAR(10) '$.licensePlate'
-			   ,[Brand]       VARCHAR(150) '$.brand'
-			   ,[Model]       VARCHAR(150) '$.model'
-			   ,[Year]                 INT '$.year' 
-			   ,[Color]       VARCHAR(150) '$.color' 
-			   ,[Engine]      VARCHAR(150) '$.engine' 
-			   ,[Chassis]     VARCHAR(150) '$.chassis' 
-			   ,[Cylindraje]  VARCHAR(150) '$.cylindraje' 
-			   ,[Observation] VARCHAR(300) '$.observation'
-			) as dt
-
-            INSERT INTO @tbCustomer 
-                  (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address])
-            SELECT IDType,IDCard,BusinessName,TradeName,email,telephone,[Address] FROM OPENJSON(@jsonCustomer) WITH 
-            (
-                IDType         VARCHAR(2) '$.idType'
-               ,IDCard        VARCHAR(15) '$.idCard'
-               ,BusinessName VARCHAR(300) '$.businessName'
-               ,TradeName    VARCHAR(300) '$.tradeName'
-               ,Email        VARCHAR(500) '$.email'
-               ,telephone    VARCHAR(300) '$.telephone'
-               ,[Address]    VARCHAR(500) '$.address'
-            )
+        INSERT INTO @tbCustomer 
+              (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address])
+        SELECT IDType,IDCard,BusinessName,TradeName,email,telephone,[Address] 
+        FROM OPENJSON(@customer) WITH 
+        (
+            idType       VARCHAR(2) 
+           ,idCard       VARCHAR(15) 
+           ,businessName VARCHAR(300) 
+           ,tradeName    VARCHAR(300) 
+           ,email        VARCHAR(500) 
+           ,telephone    VARCHAR(300) 
+           ,[address]    VARCHAR(500)
+        )
 			
-
-            --=========================== RUPERERATING IN VARIABLES ======================================================================--
+            --> RUPERERATING IN VARIABLES 
 			
             SELECT @LicensePlate = LicensePlate FROM @tbVehicle
 
-            SELECT @CustomerId = CustomerId, @VehicleCompanyId = VehicleCompanyId, @Date = [Date], @UserAssignedId = UserAssignedId, @Obs = Obs FROM @tbSupport 
+            SELECT @CustomerId = CustomerId, @VehicleCompanyId = VehicleCompanyId FROM @tbSupport 
 			
             SELECT @IDCard = tc.IDCard, @cardTypeId = (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = tc.IDType ) FROM @tbCustomer tc
 
             SELECT TOP 1 @userId = idUsuario, @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 
-            --=========================== VALIDATION OF INFORMATION ===================================================================== --
+            --> VALIDATION OF INFORMATION 
             IF @VehicleCompanyId = 0
                 BEGIN 
                     IF EXISTS (SELECT 1 FROM Mechanical.v_Vehicle WHERE LicensePlate = @LicensePlate AND CompanyId = @CompanyId AND [Deleted] IS NULL)
@@ -160,11 +162,10 @@ BEGIN
 
             -- ========================= TRANSACTION ================================================================================
 		    BEGIN TRAN
-                
-               
-                -- EXISTENCE OF THE CUSTOMER OR DRIVER
-                IF @CustomerId = 0
+                --> EXISTENCE OF THE CUSTOMER OR DRIVER
+                IF @VehicleCompanyId = 0
                     BEGIN 
+                        --> Customer
                         IF EXISTS (SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @IDCard)
                             BEGIN
                                 SELECT TOP 1 @CustomerId = Id FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @IDCard
@@ -172,12 +173,14 @@ BEGIN
                         ELSE
                             BEGIN 
                                 INSERT INTO Customer.Customer
-                                      (IDType, IDCard, BusinessName, TradeName, email, telephone, [Address], SriValidation)
-                                SELECT IDType, IDCard, BusinessName, TradeName, email, telephone, [Address], SriValidation FROM @tbCustomer 
+                                      (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
+                                SELECT IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation
+                                FROM @tbCustomer 
 
                                 SELECT @CustomerId = SCOPE_IDENTITY()
                             END
 
+                        --> Customer Company
                         IF EXISTS (SELECT 1 FROM dbo.Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @IDCard AND idEntidad = @CompanyId)
                             BEGIN
                                 SELECT @CustomerId = idCliente FROM dbo.Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @IDCard AND idEntidad = @CompanyId
@@ -186,66 +189,62 @@ BEGIN
                         ELSE 
                             BEGIN
                                 INSERT INTO dbo.Cliente
-                                        (idEntidad,idTipoIdentificacion,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,correo,telefono,validationSri,customerId)
-                                SELECT @CompanyId,@CardTypeId,IDCard,TradeName,BusinessName,[Address],Email ,telephone,SriValidation,@CustomerId FROM @tbCustomer
+                                       (idEntidad,idTipoIdentificacion,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,correo,telefono,validationSri,customerId)
+                                SELECT @CompanyId,@CardTypeId,IDCard,TradeName,BusinessName,[Address],Email ,telephone,SriValidation,@CustomerId 
+                                FROM @tbCustomer
 
                                 SELECT @CustomerId = SCOPE_IDENTITY()
                             END 
-                    END 
-
-                  -- EXISTENCE OF THE VEHICLE ---
-                IF @VehicleCompanyId = 0 
-                    BEGIN 
-			            IF EXISTS (SELECT 1 FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE LicensePlate = @LicensePlate)
+                 
+                        --> Vehicle
+			            IF EXISTS (SELECT 1 FROM Mechanical.Vehicle WITH (NOLOCK) WHERE LicensePlate = @LicensePlate)
 				            BEGIN
-					            SELECT TOP 1 @VehicleId = VehicleId FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE LicensePlate = @LicensePlate
+					            SELECT TOP 1 @VehicleId = Id FROM Mechanical.Vehicle WITH (NOLOCK) WHERE LicensePlate = @LicensePlate
 				            END
 			            ELSE 
 				            BEGIN
-					             INSERT INTO [Mechanical].[Vehicle]
-							           (CountryId,[VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[CreatedAt],[Enabled])
-					             SELECT CountryId,[VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[CreatedAt],[Enabled] FROM @tbVehicle
+					            INSERT INTO [Mechanical].[Vehicle]
+							          (CountryId,[VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje)
+					            SELECT CountryId,[VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje 
+                                FROM @tbVehicle
 
-					             SELECT @VehicleId = SCOPE_IDENTITY()
+					            SELECT @VehicleId = SCOPE_IDENTITY()
 				            END
 
                         INSERT INTO [Mechanical].[VehicleCompany]
-					           (VehicleId,CompanyId,UserId,CustomerId,Observation,CreatedAt,Enabled)
-			            SELECT @VehicleId,@CompanyId,@userId,@CustomerId,[Observation],[CreatedAt],[Enabled] FROM @tbVehicle
+					           (VehicleId ,CompanyId ,UserId ,CustomerId)
+			            SELECT @VehicleId,@CompanyId,@userId,@CustomerId 
 
                         SELECT @VehicleCompanyId = SCOPE_IDENTITY()
                     END 
                 
                 -- CUSTOMER RECORD -- 
-                UPDATE [Mechanical].[Support]
-                   SET [Date]             = @Date
-                      ,[VehicleCompanyId] = @VehicleCompanyId
-                      ,[CustomerId]       = @CustomerId
-                      ,[UserAssignedId]   = @UserAssignedId
-                      ,Obs                = @Obs
+                UPDATE sp WITH (ROWLOCK)
+                   SET [Date]             = ts.[Date]
+                      ,[VehicleCompanyId] = ts.VehicleCompanyId
+                      ,[CustomerId]       = ts.CustomerId
+                      ,[UserAssignedId]   = ts.UserAssignedId
+                      ,Obs                = ts.Obs
                       ,[UpdatedAt]        = GETDATE()
-                 WHERE Id = @Id
+                FROM [Mechanical].[Support] sp
+                INNER JOIN @tbSupport       ts ON ts.Id = sp.Id
 
 		    COMMIT TRAN 
-            
             SELECT [Common].[ufnSpResponse]('1', 'Éxitos al Editar', NULL)
 	END TRY 
 
 	BEGIN CATCH
-		
         IF (@@TRANCOUNT > 0) 
             BEGIN 
                 ROLLBACK TRAN
             END 
 
         INSERT INTO ErroresSistema
-        (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES
-        (NEWID(), 'Support/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'Support/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error al editar La ficha de Soporte', NULL)
-
-    END CATCH 
+        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+    END CATCH  
 END
 GO
 

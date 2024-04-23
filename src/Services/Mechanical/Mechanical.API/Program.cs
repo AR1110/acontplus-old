@@ -55,7 +55,14 @@ internal class Program
             options.WithOrigins("https://localhost:7111");
         });
 
-        app.UseHttpsRedirection();
+        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        {
+            app.Urls.Add("http://*:5009"); // 👈 Add the URL
+        }
+        else
+        {
+            app.UseHttpsRedirection();
+        }
 
         app.UseAuthentication();
 

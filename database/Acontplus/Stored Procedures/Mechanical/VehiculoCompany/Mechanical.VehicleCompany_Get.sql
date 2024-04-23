@@ -29,16 +29,19 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @tipo INT
-    DECLARE @CompanyId INT
-    DECLARE @Id INT
-    DECLARE @CustomerId INT
+    
+    --> Global
+	DECLARE @tipo INT ,@CompanyId INT
+    
+    --> Filters
+    DECLARE @Id INT ,@CustomerId INT
 
+    --> Variables
     SELECT TOP 1 @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-    -- GET LIST -- 
+    --> Get
 	IF @tipo = 1
 		BEGIN
 			SET @tableNames = 'vehicles'
@@ -54,30 +57,32 @@ BEGIN
                              WHEN 'AT' THEN 'fa fa-car'
                    END as icon
                   ,[Enabled]
-            FROM Mechanical.v_Vehicle 
-            WITH (NOLOCK) 
-            WHERE CompanyId = @CompanyId AND Deleted IS NULL
+            FROM Mechanical.v_Vehicle WITH (NOLOCK) 
+            WHERE CompanyId = @CompanyId 
+              AND Deleted IS NULL
             ORDER BY Id DESC
             
             RETURN
 		END
 
-    -- GET DATAFORM -- 
+    --> DataForm
 	IF @tipo = 2
 		BEGIN
 			SET @tableNames = 'vehicleTypes,countrys'
+
 			SELECT Id as vehicleTypeId, [Description] FROM Mechanical.VehicleType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
 
             SELECT Id as countryId, [Description] FROM Common.Country WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1 
+
             RETURN 
 		END 
 
-    -- GET DATAFORM UPDATE O GET ID -- 
+    --> GET DATAFORM UPDATE O GET ID
     IF @tipo = 3
         BEGIN
             SET @tableNames = 'customer,vehicle'
 
-            SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
+            SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
 
             SELECT TOP 1 @CustomerId = CustomerId FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE Id = @Id
 
@@ -108,6 +113,7 @@ BEGIN
                   ,[Enabled]
             FROM Mechanical.v_Vehicle WITH (NOLOCK) 
             WHERE Id = @Id
+
             RETURN 
         END 
 END

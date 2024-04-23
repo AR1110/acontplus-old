@@ -29,102 +29,115 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @tipo INT
-           ,@CompanyId INT
-           ,@Id INT
-           ,@CustomerId INT
-           ,@VehicleCompranyId INT
-           ,@textSearch VARCHAR(100)
-           ,@pageSize INT
-	       ,@pageIndex INT 
-           ,@chkUser BIT , @UserAssignedId INT 
+    SET LANGUAGE SPANISH;
 
-    DECLARE @sql NVARCHAR(MAX) = 'SELECT Id
-                                        ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
-                                        ,FORMAT([Date], ''dd/MM/yyyy HH:mm'') as [Date]
-                                        ,idCard
-                                        ,TradeName
-                                        ,LicensePlate
-                                        ,CASE [Status] WHEN 0 THEN ''PENDIENTE'' 
-                                                       WHEN 1 THEN ''REVISIÓN''
-                                                       WHEN 2 THEN ''FINALIZADO''
-                                                       WHEN 3 THEN ''PROCESADO''
-                                                       WHEN 5 THEN ''ANULADO''
-                                         END as [Status]
-                                        ,CASE [Status] WHEN 5 THEN ''table-danger'' 
-                                                       WHEN 2 THEN ''table-success''
-                                                       ELSE '''' END as ColorRow 
-                                        ,UserAssigned
-                                        ,COUNT(*) OVER() AS [TotalRecords]
-                                        ,Obs
-                                        ,codEstab
-                                        ,[Status]       AS TypeStatus
-                                  FROM Mechanical.v_Support WITH (NOLOCK)
-                                  WHERE CompanyId = @CompanyId '
-           ,@params NVARCHAR(MAX)
+    --> Global
+	DECLARE @tipo INT ,@CompanyId INT
 
-    SELECT TOP 1 @CompanyId = idEntidad, @UserAssignedId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+    --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+    
+    --> Filters
+    DECLARE @Id INT ,@CustomerId INT ,@VehicleCompranyId INT ,@textSearch VARCHAR(100) ,@UserId INT 
 
-	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
+    -->Variables
+    SELECT TOP 1 @CompanyId = idEntidad, @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-    -- GET LIST -- 
+	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
+
+    --> Get
 	IF @tipo = 1
 		BEGIN
-			
-            SELECT @pageIndex = pageIndex, @pageSize = pageSize, @chkUser = chkUser 
-            FROM OPENJSON(@json) WITH 
-            (
-                pageIndex INT '$.pageIndex'
-               ,pageSize  INT '$.pageSize'
-               ,chkUser   BIT '$.chkUser'
-            )
-
             SET @tableNames = 'supports'
 
-            SET @params = '@CompanyId INT ,@UserAssignedId INT ,@pageSize INT ,@pageIndex INT'
+            SET @params = '@CompanyId INT 
+                          ,@UserId    INT 
+                          ,@pageSize  INT 
+                          ,@pageIndex INT'
+
+            SET @sql  = 'SELECT Id
+                               ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
+                               ,FORMAT([Date], ''dd/MM/yyyy HH:mm'') as [Date]
+                               ,idCard
+                               ,TradeName
+                               ,LicensePlate
+                               ,CASE [Status] WHEN 0 THEN ''PENDIENTE'' 
+                                              WHEN 1 THEN ''REVISIÓN''
+                                              WHEN 2 THEN ''FINALIZADO''
+                                              WHEN 3 THEN ''PROCESADO''
+                                              WHEN 5 THEN ''ANULADO''
+                                END as [Status]
+                               ,CASE [Status] WHEN 5 THEN ''table-danger'' 
+                                              WHEN 2 THEN ''table-success''
+                                              ELSE '''' 
+                                END as ColorRow 
+                               ,UserAssigned
+                               ,COUNT(*) OVER() AS [TotalRecords]
+                               ,Obs
+                               ,codEstab
+                               ,[Status]        AS TypeStatus
+                        FROM Mechanical.v_Support WITH (NOLOCK)
+                        WHERE CompanyId = @CompanyId '
 			 
-            IF @chkUser = 1
+            SELECT @pageIndex = pageIndex
+                  ,@pageSize  = pageSize
+            FROM OPENJSON(@json) WITH 
+            (
+                pageIndex INT
+               ,pageSize  INT
+            )
+
+            IF @UserId > 0
                 BEGIN
-                    SET @sql = @sql + 'AND [Status] = 0 AND UserAssignedId = @UserAssignedId ' 
+                    SET @sql = @sql + 'AND [Status] = 0 AND UserAssignedId = @UserId ' 
                 END 
 
             SET @sql = @sql + 'ORDER BY Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
             
             EXEC sp_executesql @sql
 							  ,@params
-                              ,@CompanyId      = @CompanyId
-                              ,@UserAssignedId = @UserAssignedId
-							  ,@pageIndex      = @pageIndex
-							  ,@pageSize       = @pageSize
+                              ,@CompanyId = @CompanyId
+                              ,@UserId    = @UserId
+							  ,@pageIndex = @pageIndex
+							  ,@pageSize  = @pageSize
 
             RETURN
 		END
 
-    -- GET DATAFORM -- 
+    -->DataForm 
 	IF @tipo = 2
 		BEGIN
 			SET @tableNames = 'establishments,emissionPoints,vehicleTypes,countrys,idTypes,users'
 			
             SELECT idEstablecimiento as establecimientoId
                   ,nombreComercial
-             FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+             FROM v_Estab_Asign WITH (NOLOCK) 
+             WHERE idUsuarioRol = @userRoleId 
+             ORDER BY predeterminado DESC
 
-            SELECT ap.idEstablecimiento as establecimientoId
-                  ,ap.idPuntoEmision as puntoEmisionId
+            SELECT ap.idEstablecimiento       as establecimientoId
+                  ,ap.idPuntoEmision          as puntoEmisionId
                   ,ap.estab + '-' + ap.ptoEmi as ptoEmi
-                  ,(SELECT (REPLICATE('0',(9-LEN(COUNT(*)+1)))+CONVERT(NVARCHAR(10),COUNT(*)+1)) FROM Mechanical.Support ms WHERE ms.PuntoEmisionId = ap.idPuntoEmision) as sequence
-            FROM v_PtoEmi_Asign ap WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultPtoEmi DESC
+                  ,(
+                        SELECT (REPLICATE('0',(9-LEN(COUNT(*)+1)))+CONVERT(NVARCHAR(10),COUNT(*)+1)) 
+                        FROM Mechanical.Support ms 
+                        WHERE ms.PuntoEmisionId = ap.idPuntoEmision
+
+                   ) as sequence
+            FROM v_PtoEmi_Asign ap WITH (NOLOCK) 
+            WHERE idUsuarioRol = @userRoleId 
+            ORDER BY defaultPtoEmi DESC
 
             SELECT Id as vehicleTypeId, [Description] FROM Mechanical.VehicleType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
 
             SELECT Id as countryId, [Description] FROM Common.Country WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1 
 
-            SELECT codigoSri as idType
-                  ,descripcion as [description] 
+            SELECT codigoSri            as idType
+                  ,descripcion          as [description] 
                   ,idTipoIdentificacion as tipoIdentificacionId
             FROM dbo.TipoIdentificacion WITH (NOLOCK) 
             WHERE estado = 1
-            AND codigoSri IN ('05','04','06')
+              AND codigoSri IN ('05','04','06')
 
             SELECT idUsuario as UserAssignedId, nombreUsuario as UserName FROM v_usuario WITH (NOLOCK) WHERE idEntidad = @CompanyId
 
@@ -136,7 +149,7 @@ BEGIN
         BEGIN
             SET @tableNames = 'support,vehicle,customer,paramaters'
 
-            SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
+            SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
 
             SELECT TOP 1 @CustomerId = CustomerId, @VehicleCompranyId = VehicleCompanyId FROM Mechanical.v_Support WITH (NOLOCK) WHERE Id = @Id
 
@@ -188,7 +201,7 @@ BEGIN
     -- GET SEARCH THE VEHICLE OR CUSTOMER 
     IF @tipo = 4
         BEGIN
-            SELECT @textSearch =  REPLACE(textSearch,SPACE(1),'%') FROM OPENJSON(@json) WITH (textSearch VARCHAR(100) '$.textSearch')
+            SELECT @textSearch =  REPLACE(textSearch,SPACE(1),'%') FROM OPENJSON(@json) WITH (textSearch VARCHAR(100))
 
             SET @tableNames = 'dataSeach'
 
@@ -199,8 +212,9 @@ BEGIN
                   ,TradeName
             FROM Mechanical.v_Vehicle WITH (NOLOCK) 
             WHERE CompanyId = @CompanyId
-              AND (LicensePlate LIKE '%' + @textSearch + '%' 
-               OR  IDCard       LIKE '%' + @textSearch + '%'
+              AND (
+                   LicensePlate LIKE '%' + @textSearch + '%' 
+                OR IDCard       LIKE '%' + @textSearch + '%'
                   )   
 
             RETURN 

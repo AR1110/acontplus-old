@@ -49,6 +49,7 @@ BEGIN
 	,@idEstab INT
 	,@idDocumento INT
     ,@tipoIdentificacion VARCHAR(20)
+    ,@CustomerId INT
 
 	BEGIN TRY
         
@@ -184,17 +185,33 @@ BEGIN
 
 			IF (@codDoc != '07')
 				BEGIN	
+
+                    IF NOT EXISTS(SELECT 1 FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = LTRIM(RTRIM(@identificacionCliProv)))
+						BEGIN
+
+							INSERT INTO Customer.Customer WITH (ROWLOCK)
+                                   (IDType,IDCard,BusinessName,TradeName,[Address],SriValidation)
+							SELECT @tipoIdentificacion,LTRIM(RTRIM(@identificacionCliProv)), LTRIM(RTRIM(@razonSocial)), LTRIM(RTRIM(@nombreComercial)),LTRIM(RTRIM(@direccion)), 1 
+                           
+                            SET @customerId = @@IDENTITY
+						END
+					ELSE
+						BEGIN 
+							SELECT TOP 1 @customerId = ID FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = LTRIM(RTRIM(@identificacionCliProv))
+						END
+
+
 					IF NOT EXISTS(SELECT 1 FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
 						BEGIN
 							INSERT INTO Proveedor WITH (ROWLOCK)
-                                   (idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
-							SELECT @idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad
+                                   (idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad,CustomerId,validationSri)
+							SELECT @idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad,@customerId,1
 
                             SELECT @idProveedor = SCOPE_IDENTITY()
 						END
                     ELSE 
                         BEGIN
-                            SELECT @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)) 
+                            SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)) 
                         END 
 				END
 				--> Contabilidad
