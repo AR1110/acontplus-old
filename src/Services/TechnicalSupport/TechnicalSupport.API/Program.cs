@@ -45,6 +45,15 @@ internal class Program
 
         var app = builder.Build();
 
+        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        {
+            app.Urls.Add("http://*:5012"); // 👈 Add the URL
+        }
+        else
+        {
+            app.UseHttpsRedirection();
+        }
+
         app.UseStatusCodePages();
 
         // Configure the HTTP request pipeline.
@@ -52,7 +61,7 @@ internal class Program
 
         app.UseRouting();
 
-        app.UseHttpsRedirection();
+ 
 
         app.UseAuthentication();
 

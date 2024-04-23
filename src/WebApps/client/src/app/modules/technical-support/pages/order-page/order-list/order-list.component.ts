@@ -1,23 +1,33 @@
-import { Component, inject, input, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CODE_REPORT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ORDER_STATUS_CODE } from '@modules/technical-support/constants/tech-support.constants';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { AppModule } from 'src/app/app.module';
+import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
 import swal from 'sweetalert2';
 
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 import { OrderModalComponent } from '../order-modal/order-modal.component';
-import { CommonModule } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { Pagination } from '@shared/class/pagination';
+import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
-  imports: [AppModule, CommonModule],
+  imports: [
+    MatTableModule,
+    FontAwesomeModule,
+    NgbDropdownModule,
+    NgbPaginationModule,
+    PrimaryStatusPipe,
+  ],
   templateUrl: './order-list.component.html',
   styles: ``,
 })
@@ -27,14 +37,13 @@ export class OrderListComponent implements OnInit {
   private orderService = inject(OrderService);
   private sharedService = inject(SharedService);
   private tS = inject(ToasterService);
-  dataSearch: any = {
-    maxSize: 5,
-    pageIndex: 1,
-    pageSize: 25,
-    totalRecords: 0,
-  };
+
+  pagination = new Pagination()
+
   orders: any = [];
   recordsQuantity = [5, 10, 25, 50, 100];
+
+  displayedColumns: string[] = ['position', 'op', 'fechaEmision', 'serieComprobante', 'razonSocialComprador', 'discount', 'total', 'obs', 'user', 'status'];
 
   async askToDelete(item: any) {
     const result = await swal.fire({
@@ -84,7 +93,6 @@ export class OrderListComponent implements OnInit {
     });
     modalRef.componentInstance.data = item;
     modalRef.result.then((response) => {
-      debugger;
       if (response !== null && typeof response === 'object') {
         this.get();
       }
@@ -93,22 +101,18 @@ export class OrderListComponent implements OnInit {
 
   get() {
     showLoader();
+    let params = {
+      pageIndex: this.pagination.pageIndex,
+      pageSize: this.pagination.pageSize,
+      orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode],
+    }
     this.orderService
-      .get({
-        tipo: 2,
-        orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode],
-        ...this.dataSearch,
-      })
+      .getAll(params)
       .subscribe({
         next: (response) => {
-          if (isApiResponse(response)) {
-            if (response['code'] === '0') return;
-
-            const { orders } = JSON.parse(response.payload as string);
-            this.orders = orders;
-            if (this.orders.length > 0) {
-              this.dataSearch.totalRecords = this.orders[0].totalRecords;
-            }
+          this.orders = response;
+          if (this.orders.length > 0) {
+            this.pagination.totalRecords = this.orders[0].totalRecords;
           }
         },
         complete() {
@@ -137,7 +141,7 @@ export class OrderListComponent implements OnInit {
     this.get();
   }
   onChangePageSize() {
-    this.dataSearch.pageIndex = 1;
+    this.pagination.pageIndex = 1;
     this.get();
   }
   onPageChanged() {
@@ -151,9 +155,7 @@ export class OrderListComponent implements OnInit {
     modalRef.componentInstance.params = { id };
 
     modalRef.result.then((result) => {
-      if (result === undefined || result === null) return;
-
-      if (result["code"] === "1") {
+      if (result !== null && typeof result === 'object') {
         this.get();
       }
     });

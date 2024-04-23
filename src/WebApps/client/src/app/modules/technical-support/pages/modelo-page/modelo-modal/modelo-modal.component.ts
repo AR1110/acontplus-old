@@ -38,7 +38,7 @@ export class ModeloModalComponent {
     code: new FormControl('', [
       Validators.required,
       Validators.minLength(1),
-      Validators.maxLength(5),
+      Validators.maxLength(8),
     ]),
     name: new FormControl('', [
       Validators.required,

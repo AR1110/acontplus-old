@@ -1,14 +1,11 @@
 ﻿@page
-@model             IndexModel
+@model WebUI.Pages.Login.IndexModel
 @{
     ViewData["Title"] = "Index";
     Layout = "";
-    //var returnUrl = ViewData["ReturnUrl"] as string;
     @RouteData.Values["returnUrl"]
     @RouteData.Values["UrlGateway"]
 }
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 <!DOCTYPE html>
 <html lang="es-ec">
 <head>
@@ -39,7 +36,7 @@
     <link href="~/lib/limonte-sweetalert2/sweetalert2.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/spinners.min.css" rel="stylesheet" asp-append-version="true" />
-     <style>
+    <style>
         .btn-login {
             background-color: #d71365;
             color: #fff;
@@ -58,13 +55,13 @@
     <section id="wrapper" class="login-register" style="background-image:url(../assets/images/background/fondo.jpg);">
 
         <div class="login-box card">
-             <img class="card-img-top img-fluid" src="~/assets/images/logo/logo.jpg" alt="Img logo">
+            <img class="card-img-top img-fluid" src="~/assets/images/logo/logo.jpg" alt="Img logo">
             <div class="card-body">
                 <form class="form-horizontal form-material text-center" ng-submit="login()" id="loginform">
                     @* <a href="javascript:void(0)" class="db">
-                        <img class="img-fluid rounded mx-auto d-block" src="~/assets/images/logo/imgLogoTipoAcontplus.jpg" alt="logo" width="90%" height="90%">
-                        <br>
-                    </a> *@
+                            <img class="img-fluid rounded mx-auto d-block" src="~/assets/images/logo/imgLogoTipoAcontplus.jpg" alt="logo" width="90%" height="90%">
+                            <br>
+                        </a> *@
                     <h4 class="text-center m-b-20"> Inicio de Sesión</h4>
                     <div class="form-group m-t-40">
                         <div class="col-12">
@@ -154,12 +151,12 @@
 
     @if (ViewData["ReturnUrl"] != null)
     {
-            <script type="text/javascript">
+        <script type="text/javascript">
                 window.onload = function () {
                     var returnUrl = '@ViewData["ReturnUrl"]';
                     $('#returnUrl').val(returnUrl);
                 };
-            </script>
+        </script>
     }
 </body>
 </html>

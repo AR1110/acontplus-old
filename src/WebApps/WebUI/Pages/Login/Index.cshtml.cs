@@ -18,7 +18,7 @@ namespace WebUI.Pages.Login
         public IActionResult OnPost()
         {
             //put logout code here
-            return Redirect("/Login/Index");
+            return Redirect("/Pages/Login/Index");
         }
     }
 }
