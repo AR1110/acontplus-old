@@ -9,6 +9,7 @@ export class PrimaryStatusPipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) { }
 
   transform(estado: boolean): SafeHtml {
+    console.log(estado)
     return estado
       ? this.sanitizer.bypassSecurityTrustHtml("<span class='badge bg-success font-weight-100'>Activo</span>")
       : this.sanitizer.bypassSecurityTrustHtml("<span class='badge bg-danger font-weight-100'>Inactivo</span>");

@@ -28,6 +28,33 @@ export class OrderService {
       .pipe(map((response) => response));
   }
 
+  getAll<T>(obj: T){
+    let json = JSON.stringify({
+      ...obj,
+      tipo: 2,
+    });
+    return this.http
+      .get(`${this.url}?json=${json}`)
+      .pipe(
+        map(response=>{
+          let orders = [];
+          if(isApiResponse(response)){
+            if(response.code==="1"){
+              let mainData = JSON.parse(response.payload as string);
+
+              orders = mainData.orders.map((item:any, index:number)=>{
+                return {
+                  ...item,
+                  position: index + 1
+                }
+              })
+            }
+          }
+          return orders;
+        })
+      );
+  }
+
   getId(id: number) {
     let json = JSON.stringify({
       id,
