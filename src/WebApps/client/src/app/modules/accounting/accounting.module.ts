@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CompanyCustomerSearchComponent } from "@core/components/company-customer-search/company-customer-search.component";
+import { CompanyCustomerSearchComponent } from "@modules/customer/company-customer/components/company-customer-search/company-customer-search.component";
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
 import { SupplierSearchComponent } from "@modules/purchase/components/supplier-search/supplier-search.component";
 @NgModule({

@@ -59,6 +59,12 @@ export const routes: Routes = [
         loadChildren: () =>
           import('@billing/billing.routes').then((r) => r.routes),
       },
+      {
+        path: 'mechanical',
+        title: 'App - Mecánica.',
+        loadChildren: () =>
+          import('@mechanical/mechanical.routes').then((r) => r.routes),
+      },
     ],
   },
 ];
