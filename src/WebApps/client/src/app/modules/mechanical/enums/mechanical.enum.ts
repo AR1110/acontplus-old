@@ -1,3 +1,4 @@
 export enum MECHANICAL_PATHS {
-  VEHICLE = 'Vehicle/'
+  VEHICLE = 'Vehicle/',
+  SUPPORT ='Support/'
 }
