@@ -10,26 +10,26 @@
     <div class="card-body ">
       <div class="form-group">
         <label for="serachCustomer">Buscar Cliente/Conductor</label>
-        <app-company-customer-search [isSearchSimple]="true"/>
+        <app-company-customer-search [isSearchSimple]="true" (onCustomerSelected)="onCustomerSelected($event)" />
       </div>
 
       <div class="row">
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
           <div class="form-group">
             <label for="identificacion">Identificación:</label>
-            <input type="text" class="form-control" readonly>
+            <input type="text" class="form-control" readonly [value]="customer.idCard">
           </div>
         </div>
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
           <div class="form-group">
             <label for="razonSocial">Razon Social: </label>
-            <input type="text" class="form-control" readonly>
+            <input type="text" class="form-control" readonly [value]="customer.businessName">
 
           </div>
         </div>
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
           <label for="email">Correo: </label>
-            <input type="text" class="form-control" readonly>
+            <input type="text" class="form-control" readonly [value]="customer.email">
 
         </div>
       </div>

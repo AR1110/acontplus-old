@@ -24,4 +24,5 @@ export enum GlobalRoutes {
   ConfigEstablishment = 'config/establishment-page',
   FactElectAts = 'billing/ats-page',
   MechanicalVehicle = 'mechanical/vehicle-page',
+  MechanicalLayout = 'mechanical/layout',
 }

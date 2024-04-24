@@ -12,20 +12,20 @@ export class VehicleService {
   #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.VEHICLE}`
   #http = inject(HttpClient);
 
-  getAll<T>(obj: T){
+  getAll<T>(obj: T) {
     let json = JSON.stringify({
       ...obj,
       tipo: 1
     })
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response:any)=>{
+      map((response: any) => {
         let vehicles = [];
-        if(response!==null && typeof response==='object'){
+        if (response !== null && typeof response === 'object') {
           let data = response.vehicles;
-          vehicles = data.map((item:any, index:number)=>{
+          vehicles = data.map((item: any, index: number) => {
             return {
               ...item,
-              position: index +1
+              position: index + 1
             }
           });
         }
@@ -34,7 +34,7 @@ export class VehicleService {
     )
   }
 
-  getDataForm(){
+  getDataForm() {
     let json = JSON.stringify({
       tipo: 2
     })
@@ -53,7 +53,7 @@ export class VehicleService {
     )
   }
 
-  getId(id: number){
+  getId(id: number) {
     let json = JSON.stringify({
       id,
       tipo: 3
@@ -84,6 +84,10 @@ export class VehicleService {
 
   remove(id: number) {
     return this.#http.delete(`${this.#url}${id}`)
+  }
+
+  putState(id: number, state: boolean) {
+    return this.#http.put(`${this.#url}PutState/${id}/${state}`, null)
   }
 
 }

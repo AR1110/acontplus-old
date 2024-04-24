@@ -7,14 +7,28 @@
 
 <div class="card">
   <div class="card-body">
-    <div class="row">
-      <div class="col-xl-6 col-lg-6 col-12">
 
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Buscar vehiculo">
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-start">
+          <span class="form-group pull-left page-size form-inline">
+            <select class="form-select control-color" [(ngModel)]="pagination.pageSize" (change)="changePageSize()">
+              @for(item of pagination.pageSizeOptions; track $index){
+              <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+          </span>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="d-flex justify-content-end">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Buscar vehiculo">
+          </div>
         </div>
       </div>
     </div>
+
     <section class="section-container-table">
       <table mat-table [dataSource]="dataSource">
 
@@ -63,7 +77,7 @@
         <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef> Estado </th>
           <td mat-cell *matCellDef="let element">
-            <mat-slide-toggle [(ngModel)]="element.enabled"></mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="element.enabled" (change)="putState(element.id, element.enabled)"></mat-slide-toggle>
           </td>
         </ng-container>
 
@@ -72,5 +86,7 @@
       </table>
     </section>
 
+    <ngb-pagination [collectionSize]="pagination.totalRecords" [(page)]="pagination.pageIndex" [maxSize]="pagination.maxSize"
+      [pageSize]="pagination.pageSize" [rotate]="true" (pageChange)="pageChanged()" [boundaryLinks]="true" />
   </div>
 </div>

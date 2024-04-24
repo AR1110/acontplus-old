@@ -33,7 +33,16 @@ export class VehicleAddEditModalComponent {
   countries: any = [];
   vehicleTypes: VehicleTypeSelectHtmlOnly[] = []
 
-  customer: any = {}
+  customer = {
+    idType : '',
+    idCard : '',
+    cardTypeId : 0,
+    businessName : '',
+    tradeName : '',
+    email : '',
+    telephone : '',
+    address : '',
+  }
   data = {
     customerId: 0,
     countryId: 0,
@@ -73,7 +82,11 @@ export class VehicleAddEditModalComponent {
   }
 
   ngOnInit() {
-    showLoader()
+    if (this.params.id > 0) {
+          this.titleModal = 'Editar Vehículo';
+          this.btnText = 'Actualizar';
+    }
+    showLoader();
     this.vehicleSvc.getDataForm().subscribe({
       next: (response) => {
         hideLoader()
@@ -91,7 +104,7 @@ export class VehicleAddEditModalComponent {
           this.vehicleSvc.getId(this.params.id).subscribe({
             next: (response) => {
               hideLoader()
-              this.customer = response.customer;
+              this.customer = response.customer as any
               this.data = {
                 ...this.data,
                 ...response.vehicle
@@ -109,6 +122,19 @@ export class VehicleAddEditModalComponent {
         hideLoader()
       }
     })
+  }
+
+
+  onCustomerSelected({data}:any){
+    this.data.customerId = data.idCliente;
+    this.customer.idType = data.codigoSri;
+    this.customer.idCard = data.numeroIdentificacion;
+   // cardTypeId = e.idTipoIdentificacion;
+    this.customer.businessName = data.nombreComercial;
+    this.customer.tradeName = data.nombreFiscal;
+    this.customer.email = data.correo;
+    this.customer.telephone = data.telefono;
+    this.customer.address = data.direccion;
   }
 
   isValidForm() {
