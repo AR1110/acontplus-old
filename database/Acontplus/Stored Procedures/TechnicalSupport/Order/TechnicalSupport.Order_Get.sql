@@ -31,8 +31,7 @@ BEGIN
         ,@tipo = tipo
     FROM OPENJSON (@json) WITH 
     (
-        id              INT '$.id',
-        orderStatusCode VARCHAR(2)  '$.orderStatusCode',
+        id              INT '$.id', 
         tipo            INT         '$.tipo',
         orderStatusCode VARCHAR(2)  '$.orderStatusCode',
         pageIndex       INT '$.pageIndex',
@@ -96,9 +95,9 @@ BEGIN
         SET @tableNames = 'orders'
         
         SELECT tor.Id
-            ,tor.Uuid
-            ,tor.Sequence
+            ,tor.Uuid 
             ,tor.Serie
+            ,fechaEmision            = FORMAT(tor.fechaEmision, 'dd/MM/yyyy HH:mm')
             ,ISNULL(tor.Tax, 0.0)       AS Tax
             ,ISNULL(tor.Discount, 0.0)  AS Discount
             ,ISNULL(tor.Tip, 0.0)       AS Tip
@@ -106,13 +105,15 @@ BEGIN
             ,ISNULL(tor.Obs, '')        AS obs
             ,tor.Enabled
             ,tor.CustomerCompanyId
-            ,c.nombreFiscal
+            ,c.nombreFiscal             AS razonSocialComprador
             ,e.codEstab
             ,totalRecords       = COUNT(*) OVER()
+            ,userName = u.nombreUsuario 
         FROM TechnicalSupport.[Order] tor WITH (NOLOCK)
         INNER JOIN Cliente c               WITH (NOLOCK)         ON c.idCliente = tor.CustomerCompanyId
         INNER JOIN TechnicalSupport.OrderStatus sc WITH (NOLOCK)  ON sc.Id = tor.OrderStatusId
         INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON tor.EstablecimientoId = e.idEstablecimiento
+        INNER JOIN dbo.Usuario u WITH(NOLOCK) ON u.idUsuario = tor.Userid
         WHERE e.ruc = @rucEmpresa AND  sc.Code = @orderStatusCode 
             AND tor.Deleted IS NULL
         ORDER BY tor.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY   

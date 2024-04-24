@@ -80,7 +80,7 @@ BEGIN
 		,estado                     = a.estado
 		,precioCosto                = a.precioCosto
 		,precioSinSubsidio          = ISNULL(a.precioSinSubsidio,0)
-		,idEtiqueta                 = ISNULL(a.idEtiqueta,0)
+		,a.idEtiqueta
 		,nombreTipoIva              = ti.descripcion
 		,porcentajeTipoIva          = ti.porcentaje
 		,codigoTipoIva              = ti.codigo

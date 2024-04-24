@@ -16,10 +16,10 @@ export const routes: Routes = [
   },
   {
     path: 'category-page',
-    title: 'Categorias',
+    title: 'Categorías',
     component: CategoryPageComponent,
     data: {
-      breadcrumb: 'Categorias',
+      breadcrumb: 'Categorías',
       buttonAction: 'Nueva',
     },
   },

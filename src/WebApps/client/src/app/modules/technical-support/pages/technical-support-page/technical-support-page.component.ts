@@ -7,6 +7,7 @@ import { OrderModalComponent } from '../order-page/order-modal/order-modal.compo
 import { AppModule } from 'src/app/app.module';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { RouterLink } from '@angular/router';
+import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 
 @Component({
   selector: 'app-technical-support-page',
@@ -18,6 +19,8 @@ import { RouterLink } from '@angular/router';
     DashboardComponent,
     NgbNavModule,
     OrderListComponent,
+
+    ActionAddDirective
   ],
   templateUrl: './technical-support-page.component.html',
   styles: ``,
