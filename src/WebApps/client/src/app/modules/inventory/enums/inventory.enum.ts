@@ -1,5 +1,6 @@
 export const enum INVENTORY_PATHS {
-  PRODUCT = 'Articulo/',
+  PRODUCT_OLD = 'Articulo/',
+  PRODUCT = 'Product/',
   CATEGORY = 'Familia/',
   SUBCATEGORY = 'SubFamilia/',
   MASSIVE_TAX = 'MassiveTax/',

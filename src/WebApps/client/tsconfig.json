@@ -51,6 +51,9 @@
       "@billing/*": [
         "src/app/modules/billing/*",
       ],
+      "@mechanical/*": [
+        "src/app/modules/mechanical/*",
+      ],
       "@shared/*": [
         "src/app/shared/*"
       ],
