@@ -4,6 +4,7 @@ using Mechanical.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
 using Services.Common.Logs;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Mechanical.API.Controllers
 {
@@ -73,13 +74,13 @@ namespace Mechanical.API.Controllers
                     { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
                 var response = await _supportService.UpdateAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
+                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Editar"); }
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Post: \n" + ex.ToString());
-                return BadRequest("Error On Save");
+                _log.LogActivity("Error on Put: \n" + ex.ToString());
+                return BadRequest("Error On Update");
             }
         }
 
@@ -88,14 +89,18 @@ namespace Mechanical.API.Controllers
         {
             try
             {
-                bool response = await _supportService.DeleteAsync(id);
-                if (!response) { return BadRequest("No se pudo Eliminar"); }
+                var parameters = new Dictionary<string, object> {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "id", id },
+                };
+                var response = await _supportService.DeleteAsync(parameters);
+                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Eliminar"); }
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error on Delete: \n" + ex.ToString());
-                return BadRequest("Error on Delete");
+                return BadRequest("Error On Delete");
             }
         }
     }

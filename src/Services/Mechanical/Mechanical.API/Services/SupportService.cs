@@ -42,17 +42,9 @@ namespace Mechanical.API.Services
         {
             return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Update", parameters);
         }
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
-            var support = await _context.Supports.FindAsync(id);
-            if (support == null) return false;
-            support.Enabled = false;
-            support.Deleted = true;
-            support.UpdatedAt = DateTime.Now;
-            support.Status = 5;
-            _context.Update(support);
-            await _context.SaveChangesAsync();
-            return true;
+            return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Delete", parameters);
         }
     }
 }
