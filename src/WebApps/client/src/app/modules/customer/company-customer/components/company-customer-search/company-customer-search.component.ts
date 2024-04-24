@@ -48,7 +48,7 @@ export class CompanyCustomerSearchComponent {
   searching = false;
   searchFailed = false;
 
-  constructor(private companyCustomerService: CompanyCustomerService) {}
+  constructor(private companyCustomerService: CompanyCustomerService) { }
 
   openModal() {
     if (this.dataSearch.idCliente > 0) {
@@ -71,11 +71,13 @@ export class CompanyCustomerSearchComponent {
   onSelect($event: any) {
     this.customer = $event.item;
     this.dataSearch.idCliente = this.customer.idCliente;
-    this.onCustomerSelected.emit({ data: {
-      ...this.customer,
-      razonSocialComprador: this.customer.nombreFiscal,
-      identificacionComprador: this.customer.numeroIdentificacion
-    } });
+    this.onCustomerSelected.emit({
+      data: {
+        ...this.customer,
+        razonSocialComprador: this.customer.nombreFiscal,
+        identificacionComprador: this.customer.numeroIdentificacion
+      }
+    });
     setTimeout(() => {
       this.textSearch = this.customer.nombreFiscal;
     });
