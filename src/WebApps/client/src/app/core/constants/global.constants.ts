@@ -12,7 +12,8 @@ export const enum PATHS_API {
   TECHSUPPORT = 'TechnicalSupport/',
   INVENTORY = 'Inventario/',
   RESTAURANT = 'Restaurant/',
-  BILLING = 'FactElect/'
+  BILLING = 'FactElect/',
+  MECHANICAL = 'Mechanical/'
 }
 
 export const enum PATHS {
@@ -89,6 +90,8 @@ export enum TAX_RATE_CODE {
   ZERO_PERCENT = "0",
   TWELVE_PERCENT = "2",
   FOURTEEN_PERCENT = "3",
+  FIFTEEN_PERCENT='4',
+  FIVE_PERCENT='5',
   NOT_SUBJECT_TO_TAX = "6",
   TAX_EXEMPT = "7",
   DIFFERENTIATED_TAX = "8",

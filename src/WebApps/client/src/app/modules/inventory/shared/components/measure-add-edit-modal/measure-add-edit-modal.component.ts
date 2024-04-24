@@ -11,7 +11,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-measure-add-edit-modal',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './measure-add-edit-modal.component.html',
   styles: ``
@@ -64,11 +64,11 @@ export class MeasureAddEditModalComponent {
       }
 
       if (this.data.id > 0) {
-        this.measureSvc.post(this.data).subscribe(this.successReponse)
+        this.measureSvc.put(this.data.id, this.data).subscribe(this.successReponse)
       }
 
       if (!(this.data.id > 0)) {
-        this.measureSvc.put(this.data.id, this.data).subscribe(this.successReponse)
+        this.measureSvc.post(this.data).subscribe(this.successReponse)
       }
 
 

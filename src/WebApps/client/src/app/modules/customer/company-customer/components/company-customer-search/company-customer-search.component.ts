@@ -26,6 +26,7 @@ export class CompanyCustomerSearchComponent {
   @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
   @Input() textSearch = '';
+  @Input() showActionsBtn = true;
   private modalService = inject(ModalService);
 
   customer: CompanyCustomerSearch = {
