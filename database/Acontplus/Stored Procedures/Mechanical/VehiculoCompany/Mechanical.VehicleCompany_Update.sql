@@ -29,96 +29,142 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-    DECLARE @VehicleTypeId INT 
-	       ,@CountryId INT 
-	       ,@VehicleId INT 
-           ,@LicensePlate VARCHAR(10)
-	       ,@Brand VARCHAR(150) 
-	       ,@Model VARCHAR(150)
-	       ,@Year INT 
-	       ,@Color VARCHAR(150)
-           ,@Engine VARCHAR(150)
-           ,@Chassis VARCHAR(150)
-           ,@Cylindraje VARCHAR(150)
-	       ,@CustomerId INT 
+    SET LANGUAGE SPANISH;
 
-    DECLARE @userId INT
+    --> Global  
+	DECLARE @tipo INT ,@VehicleId INT
 
-    DECLARE @jsonCustomer VARCHAR(MAX)
-           ,@jsonVehicle AS VARCHAR(MAX)
+    --> Json
+    DECLARE @customer VARCHAR(MAX),@vehicle AS VARCHAR(MAX)
+
+    --> VehicleCompaby
+	DECLARE @userId INT, @CompanyId INT
+
+    --> Customer
+	DECLARE @CustomerId INT
+    
+    DECLARE @tbVehicle AS TABLE (
+	    Id INT NOT NULL UNIQUE
+       ,VehicleId INT NOT NULL UNIQUE
+       ,[VehicleTypeId] INT NOT NULL
+	   ,[CountryId] INT NOT NULL
+       ,[LicensePlate] VARCHAR(10) NOT NULL
+	   ,[Brand] VARCHAR(150) NOT NULL
+	   ,[Model] VARCHAR(150) NOT NULL
+	   ,[Year] INT NOT NULL
+	   ,[Color] VARCHAR(150) NOT NULL
+       ,[Engine] VARCHAR(150) NOT NULL
+       ,[Chassis] VARCHAR(150) NOT NULL
+       ,[Cylindraje] VARCHAR(150) NOT NULL
+	   ,[CustomerId] INT NOT NULL
+	   ,[Observation] VARCHAR(300) NULL
+	   ,[Enabled] BIT DEFAULT 1 
+	   ,[CreatedAt] DATETIME2 DEFAULT GETDATE() NOT NULL
+	)
+
+    DECLARE @tbCustomer AS TABLE(
+        IDType VARCHAR(2) NOT NULL
+       ,IDCard VARCHAR(15) UNIQUE NOT NULL
+       ,BusinessName VARCHAR(300) NOT NULL
+       ,TradeName VARCHAR(300) NOT NULL
+       ,Email VARCHAR(500) NULL
+       ,telephone VARCHAR(300) NULL
+       ,[Address] VARCHAR(500) NULL
+       ,SriValidation BIT DEFAULT 1 
+    )
 	  
     BEGIN TRY
+        --> SAVING THE JSON DATA
+        SELECT @customer = customer
+              ,@vehicle  = vehicle
+        FROM OPENJSON(@json) WITH 
+        (
+            customer   NVARCHAR(MAX) as json
+           ,vehicle    NVARCHAR(MAX) as json
+        )
+
+        INSERT INTO @tbVehicle
+			   (Id,vehicleId,VehicleTypeId,CountryId,LicensePlate,Brand,Model,[Year],Color,Engine,Chassis,Cylindraje,CustomerId,Observation)
+		SELECT @id,vehicleId,VehicleTypeId,CountryId,LicensePlate,Brand,Model,[Year],Color,Engine,Chassis,Cylindraje,CustomerId,Observation
+		FROM OPENJSON(@vehicle) WITH
+        (
+	         vehicleId     INT
+            ,vehicleTypeId INT 
+	        ,countryId     INT 
+	        ,licensePlate  VARCHAR(10) 
+	        ,brand         VARCHAR(150) 
+	        ,model         VARCHAR(150) 
+	        ,[year]        INT 
+	        ,color         VARCHAR(150)  
+	        ,engine        VARCHAR(150) 
+	        ,chassis       VARCHAR(150)  
+	        ,cylindraje    VARCHAR(150)  
+	        ,customerId    INT  
+	        ,observation   VARCHAR(300) 
+
+        ) as dt
+
+        INSERT INTO @tbCustomer 
+              (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address])
+        SELECT IDType,IDCard,BusinessName,TradeName,email,telephone,[Address] 
+        FROM OPENJSON(@customer) WITH 
+        (
+            idType       VARCHAR(2) 
+           ,idCard       VARCHAR(15) 
+           ,businessName VARCHAR(300) 
+           ,tradeName    VARCHAR(300) 
+           ,email        VARCHAR(500) 
+           ,telephone    VARCHAR(300) 
+           ,[address]    VARCHAR(500)
+        )
+
+        --> RUPERERATING IN VARIABLES 
+		SELECT TOP 1  @CustomerId = CustomerId FROM @tbVehicle
+
+        --> VALIDATION OF INFORMATION 
+        IF (SELECT COUNT(*) FROM @tbVehicle) = 0   
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del vehiculo', NULL)
+                RETURN
+            END
             
-          --=========================== SAVING THE JSON DATA ====================================================================== --
-          SELECT @jsonCustomer = customer, @jsonVehicle = vehicle  FROM OPENJSON(@json) WITH (customer NVARCHAR(MAX) '$.customer' as json,vehicle NVARCHAR(MAX) '$.vehicle' as json)
-
-
-          SELECT @VehicleTypeId = [VehicleTypeId]
-                ,@CountryId     = [CountryId]
-                ,@VehicleId     = [VehicleId]
-                ,@LicensePlate  = [LicensePlate]
-                ,@Brand         = [Brand]
-                ,@Model         = [Model]
-                ,@Year          = [Year]
-                ,@Color         = [Color]
-                ,@Engine        = [Engine]
-                ,@Chassis       = [Chassis]
-                ,@Cylindraje    = [Cylindraje]
-                ,@CustomerId    = [CustomerId]
-			FROM OPENJSON(@jsonVehicle) WITH
-			(
-				[VehicleTypeId]        INT '$.vehicleTypeId'
-			   ,[VehicleId]            INT '$.vehicleId'
-               ,[CountryId]            INT '$.countryId'
-			   ,[LicensePlate] VARCHAR(10) '$.licensePlate'
-			   ,[Brand]       VARCHAR(150) '$.brand'
-			   ,[Model]       VARCHAR(150) '$.model'
-			   ,[Year]                 INT '$.year' 
-			   ,[Color]       VARCHAR(150) '$.color' 
-               ,[Engine]      VARCHAR(150) '$.engine' 
-			   ,[Chassis]     VARCHAR(150) '$.chassis' 
-			   ,[Cylindraje]  VARCHAR(150) '$.cylindraje' 
-			   ,[CustomerId]           INT '$.customerId'
-			) as dt
-
         BEGIN TRAN 
             
-            UPDATE [Mechanical].[Vehicle]
-               SET [VehicleTypeId] = @VehicleTypeId
-                  ,[CountryId]     = @CountryId
-                  ,[LicensePlate]  = @LicensePlate
-                  ,[Brand]         = @Brand
-                  ,[Model]         = @Model
-                  ,[Year]          = @Year
-                  ,[Color]         = @Color
-                  ,[Engine]        = @Engine
-                  ,[Chassis]       = @Chassis
-                  ,[Cylindraje]    = @Cylindraje
-                  ,[UpdatedAt]     = GETDATE()
-            WHERE Id = @VehicleId
+            UPDATE ve WITH (ROWLOCK)
+               SET ve.[VehicleTypeId] = tv.VehicleTypeId
+                  ,ve.[CountryId]     = tv.CountryId
+                  ,ve.[Brand]         = tv.Brand
+                  ,ve.[Model]         = tv.Model
+                  ,ve.[Year]          = tv.[Year]
+                  ,ve.[Color]         = tv.Color
+                  ,ve.[Engine]        = tv.Engine
+                  ,ve.[Chassis]       = tv.Chassis
+                  ,ve.[Cylindraje]    = tv.Cylindraje
+                  ,ve.[UpdatedAt]     = GETDATE()
+            FROM [Mechanical].[Vehicle] ve
+            INNER JOIN @tbVehicle       tv ON tv.VehicleId = ve.Id 
 
-            UPDATE [Mechanical].[VehicleCompany]
-                 SET [CustomerId] = @CustomerId
-                    ,[UpdatedAt]  = GETDATE()
+            UPDATE [Mechanical].[VehicleCompany] WITH (ROWLOCK)
+               SET [CustomerId] = @CustomerId
+                  ,[UpdatedAt]  = GETDATE()
              WHERE Id = @id
 
         COMMIT TRAN 
         SELECT [Common].[ufnSpResponse]('1', 'Actualizado exitosamente', NULL)
     END TRY 
 
-    BEGIN CATCH 
-        SELECT [Common].[ufnSpResponse]('0', 'Error al Actualizar el Vehículo', NULL)
-        
-        IF (@@TRANCOUNT > 0)
+    BEGIN CATCH
+        IF (@@TRANCOUNT > 0) 
             BEGIN 
                 ROLLBACK TRAN
-
-                INSERT INTO ErroresSistema
-                (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-	            VALUES
-                (NEWID(), 'Mechanical/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
             END 
-    END CATCH
+
+        INSERT INTO ErroresSistema
+            (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'Vehicle/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
+	         
+        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
+    END CATCH 
 
 	  
 END

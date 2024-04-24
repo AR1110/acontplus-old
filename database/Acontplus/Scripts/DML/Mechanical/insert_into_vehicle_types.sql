@@ -2,6 +2,8 @@ USE [Acontplus]
 go 
 
 
+--ALTER TABLE Mechanical.VehicleCompany ADD DEFAULT 1 FOR [Enabled]
+
 INSERT INTO Mechanical.VehicleType(Description,Code,CreatedAt,Enabled) values ('Automóvil','AT',GETDATE(),1)
 INSERT INTO Mechanical.VehicleType(Description,Code,CreatedAt,Enabled) values ('Camión','CM',GETDATE(),1)
 INSERT INTO Mechanical.VehicleType(Description,Code,CreatedAt,Enabled) values ('Autobús','AB',GETDATE(),1)
