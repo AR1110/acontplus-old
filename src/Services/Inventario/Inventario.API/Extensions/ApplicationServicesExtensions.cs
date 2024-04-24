@@ -30,6 +30,7 @@ namespace Inventario.API.Extensions
             services.AddScoped<IConsolidacionService, ConsolidacionService>();
             services.AddScoped<ILotPriceService, LotPriceService>();
             services.AddScoped<IMeasureService, MeasureService>();
+            services.AddScoped<IProductService, ProductService>();
 
             services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddSingleton<S3ObjectCustom>();

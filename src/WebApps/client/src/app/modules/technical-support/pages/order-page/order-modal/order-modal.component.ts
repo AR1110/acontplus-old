@@ -1,6 +1,6 @@
 import { Component, inject, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { CompanyCustomerSearchComponent } from '@core/components/company-customer-search/company-customer-search.component';
+import { CompanyCustomerSearchComponent } from '@modules/customer/company-customer/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import {
