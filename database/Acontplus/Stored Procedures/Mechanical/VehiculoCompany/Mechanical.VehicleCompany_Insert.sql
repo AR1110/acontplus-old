@@ -28,7 +28,7 @@ BEGIN
 	SET NOCOUNT ON;
     
     --> Global  
-	DECLARE @tipo INT ,@Id INT ,@VehicleId INT ,@CompanyId INT
+	DECLARE @tipo INT ,@Id INT ,@VehicleId INT ,@CompanyId INT ,@payload VARCHAR(MAX)
 
     --> Json
     DECLARE @customer VARCHAR(MAX),@vehicle AS VARCHAR(MAX)
@@ -197,8 +197,10 @@ BEGIN
 
 			SELECT @Id = SCOPE_IDENTITY()
 
+            SET @payload = (SELECT @Id as id FOR JSON PATH)
+
 		COMMIT TRAN 
-        SELECT [Common].[ufnSpResponse]('1', 'Guadado Correctamente', NULL)
+        SELECT [Common].[ufnSpResponse]('1', 'Guadado Correctamente', @payload)
 	END TRY 
 
 	BEGIN CATCH
