@@ -43,19 +43,6 @@ BEGIN
     --- Agregado por Ignacio ----
     DECLARE @siglaFamilia VARCHAR(5)
 
-
-	SELECT @jsonArticulo = jsonArticulo
-		,@jsonPvp = jsonPvp
-		,@idBodega = idBodega
-		,@ubicacion = ubicacion
-	FROM OPENJSON (@json)
-		WITH(
-			jsonArticulo VARCHAR(MAX) '$.jsonArticulo',
-			jsonPvp VARCHAR(MAX) '$.jsonPvp',
-			idBodega INT '$.idBodega',
-			ubicacion VARCHAR(90) '$.ubicacion'
-			)
-
 	DECLARE @tbArticle AS TABLE (
 	    idSubFamilia INT NOT NULL
 	   ,idMarca INT NULL
@@ -98,6 +85,18 @@ BEGIN
 
 	BEGIN TRY
 		
+        SELECT @jsonArticulo = jsonArticulo
+		,@jsonPvp = jsonPvp
+		,@idBodega = idBodega
+		,@ubicacion = ubicacion
+	    FROM OPENJSON (@json)
+		WITH(
+			jsonArticulo VARCHAR(MAX) '$.jsonArticulo',
+			jsonPvp VARCHAR(MAX) '$.jsonPvp',
+			idBodega INT '$.idBodega',
+			ubicacion VARCHAR(90) '$.ubicacion'
+			)
+
 		INSERT INTO @tbArticle
 				(idSubFamilia
 				,idMarca
@@ -383,7 +382,7 @@ BEGIN
                             END
                         ELSE
                             BEGIN
-                                UPDATE Restaurant.Item SET Summary = (SELECT  descripcion FROM @tbArticle) WHERE ProductId = @id
+                                UPDATE Restaurant.Item SET Summary = (SELECT descripcion FROM @tbArticle) WHERE ProductId = @id
                             END
                     END
 
@@ -416,29 +415,27 @@ BEGIN
                     END
 
 
-				 SET @payload = (SELECT 
-								idArticulo
-								,idMedida
-								,codigo
-								,codigoAuxiliar
-								,codigoBarra
-								,gestion = 'A'
-	 							,'data'  = 0
-								,etiquetas = ISNULL((SELECT e.idEtiqueta , e.descripcion, e.etiquetas FROM Inventario.Etiqueta e WHERE e.idEtiqueta = art.idEtiqueta FOR JSON PATH), '[]')
-							 FROM Articulo art 
-							 WHERE art.idArticulo = @id FOR JSON PATH 
+				 SET @payload = (SELECT idArticulo
+								       ,idMedida
+								       ,codigo
+								       ,codigoAuxiliar
+								       ,codigoBarra
+								       ,gestion = 'A'
+	 							       ,'data'  = 0
+								       ,etiquetas = ISNULL((SELECT e.idEtiqueta , e.descripcion, e.etiquetas FROM Inventario.Etiqueta e WHERE e.idEtiqueta = art.idEtiqueta FOR JSON PATH), '[]')
+							     FROM Articulo art WITH (NOLOCK)
+							     WHERE art.idArticulo = @id FOR JSON PATH 
 							 )
 
 		COMMIT TRAN 
 		SELECT '1'code,'Actualizado Exitosamente' as 'message', payload = @payload
-		RETURN 
 	END TRY 
 
 	BEGIN CATCH 
 		IF @@TRANCOUNT > 0 
-		BEGIN
-			ROLLBACK TRAN; 
-		END
+		    BEGIN
+			    ROLLBACK TRAN; 
+		    END
 		
 		INSERT INTO ErroresSistema(token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
 		VALUES(NEWID(),'/Articulo/Update',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario)
