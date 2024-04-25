@@ -9,4 +9,6 @@ export interface Vehicle {
   enabled: boolean
 }
 
-export interface VehicleRead extends Vehicle { }
+export interface VehicleRead extends Vehicle {
+  totalRecords: number
+ }

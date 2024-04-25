@@ -10,6 +10,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { VehicleRead } from '@modules/mechanical/models/vehicle.model';
 import { VehicleService } from '@modules/mechanical/services/vehicle.service';
 import { VehicleAddEditDirective } from '@modules/mechanical/shared/directives/vehicle-add-edit.directive';
+import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/class/pagination';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import Swal from 'sweetalert2';
@@ -24,7 +25,8 @@ import Swal from 'sweetalert2';
     MatSlideToggleModule,
     BreadcrumbComponent,
     VehicleAddEditDirective,
-    ActionAddDirective
+    ActionAddDirective,
+    NgbPagination
   ],
   templateUrl: './vehicle-page.component.html',
   styles: ``
@@ -33,26 +35,36 @@ export class VehiclePageComponent {
   vehicleSvc = inject(VehicleService);
   tS = inject(ToasterService);
 
-  displayedColumns = ['position', 'op', 'tipoVehiculo', 'placa','identificacion', 'cliente-conductor', 'estado'];
+  displayedColumns = ['position', 'op', 'tipoVehiculo', 'placa', 'identificacion', 'cliente-conductor', 'estado'];
 
   pagination = new Pagination();
   dataSource: VehicleRead[] = [];
 
-  resultModal(result?:any){
+  resultModal(result?: any) {
     this.getVehicles()
   }
 
 
-  getVehicles(){
+  getVehicles() {
     try {
       let params = {
         pageIndex: this.pagination.pageIndex,
         pageSize: this.pagination.pageSize,
       }
+      showLoader();
       this.vehicleSvc.getAll(params).subscribe({
-        next: (response) =>{
+        next: (response) => {
+          hideLoader()
           this.dataSource = response;
 
+          if (this.dataSource.length > 0) {
+            this.pagination.totalRecords = this.dataSource[0].totalRecords;
+          }
+
+        },
+        error(err) {
+          hideLoader()
+          console.log(err)
         },
       })
     } catch (error) {
@@ -61,12 +73,21 @@ export class VehiclePageComponent {
   }
 
 
-  ngOnInit(){
+  ngOnInit() {
+    this.getVehicles();
+  }
+
+  pageChanged(): void {
+    this.getVehicles();
+  }
+
+  changePageSize(): void {
+    this.pagination.pageIndex = 1;
     this.getVehicles();
   }
 
   //Remove or Delete
-  askToDelete(id:number) {
+  askToDelete(id: number) {
     Swal.fire({
       title: '¿Estás seguro de eliminar?',
       text: '¡No podrás revertir esto!',
@@ -80,29 +101,54 @@ export class VehiclePageComponent {
       if (result.isConfirmed) {
         showLoader();
         this.vehicleSvc.remove(id).subscribe({
-          next: (response)=> {
-              if(isApiResponse(response)){
-                if(response.code==="0"){
-                  this.tS.toastr({
-                    type: 'warning',
-                    message: response.message
-                  })
-                }
-                if (response.code === "1") {
-                  this.tS.toastr({
-                    type: 'success',
-                    message: response.message
-                  })
-                  this.getVehicles();
-                }
+          next: (response) => {
+            if (isApiResponse(response)) {
+              if (response.code === "0") {
+                this.tS.toastr({
+                  type: 'warning',
+                  message: response.message
+                })
               }
+              if (response.code === "1") {
+                this.tS.toastr({
+                  type: 'success',
+                  message: response.message
+                })
+                this.getVehicles();
+              }
+            }
           },
           error(err) {
-              console.log(err)
-              hideLoader();
+            console.log(err)
+            hideLoader();
           },
         })
       }
     });
+  };
+
+
+  //Status Vehicle
+  putState(id: number, state: boolean) {
+    showLoader();
+    this.vehicleSvc.putState(id, state).subscribe({
+      next: (response) => {
+        hideLoader();
+        if (response) {
+          this.tS.toastr({
+            type: 'success',
+            message: 'Actualizado correctamente'
+          })
+
+        }
+        else {
+          this.tS.toastr({
+            type: 'warning',
+            message: 'Error en actualizar el estado'
+          })
+        }
+        this.getVehicles()
+      },
+    })
   };
 }

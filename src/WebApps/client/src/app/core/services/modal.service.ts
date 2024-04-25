@@ -26,6 +26,43 @@ export class ModalService {
       });
   }
 
+  open(
+    theComponent: any,
+    {
+      backdrop,
+      centered,
+      fullscreen,
+      keyboard,
+      size,
+      scrollable,
+      windowClass = '',
+    }: Partial<PropsModal> = {}
+  ) {
+    const modalRef = this.ngbModal.open(theComponent, {
+      backdrop: !backdrop ? 'static' : true,
+      centered,
+      fullscreen,
+      keyboard: this.getKeyboard(backdrop, keyboard),
+      scrollable,
+      size,
+      windowClass,
+    });
+
+    // this.openModals.push(modalRef);
+
+    // modalRef.result.finally(() => {
+    //   this.removeModal(modalRef);
+    // });
+
+    return modalRef;
+  }
+
+  /**
+   * !Deprecated
+   * @param theComponent
+   * @param param1
+   * @returns
+   */
   openModalCustom(
     theComponent: any,
     {
