@@ -61,7 +61,9 @@ export class VehicleService {
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
       map((response: any) => {
         let data = {
-          customer: {},
+          customer: {
+            id: 0
+          },
           vehicle: {}
         }
         if (response !== null && typeof response === 'object') {
