@@ -104,7 +104,11 @@ export class DeviceModalComponent implements OnInit {
   }
 
   onBrandChange($event: any) {
-    this.onBrandGet($event.target.value);
+    let brandId = Number($event.target.value);
+    if (!(brandId > 0)) {
+      return;
+    }
+    this.onModeloGet(brandId);
   }
 
   onBrandGet(categoryId: number) {
@@ -126,7 +130,11 @@ export class DeviceModalComponent implements OnInit {
     });
   }
   onCategoryChange($event: any) {
-    this.onBrandGet($event.target.value);
+    let categoryId = Number($event.target.value);
+    if (!(categoryId > 0)) {
+      return;
+    }
+    this.onBrandGet(categoryId);
   }
   onModeloChange($event: any) {}
   onModeloGet(brandId: number) {

@@ -15,6 +15,7 @@ export enum TECH_SUPPORT_PATHS {
   ORDER_DETAIL = 'OrderDetail/',
   ORDER_MAINTENANCE = 'OrderMaintenance/',
   SERIE = 'Serie/',
+  STATS = 'Stats/',
 }
 
 export enum ORDER_STATUS_CODE {

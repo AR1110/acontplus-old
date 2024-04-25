@@ -89,3 +89,4 @@ bin-release/
 /src/WebApps/RestaurantUI/dev-dist/sw.js
 /src/WebApps/RestaurantUI/dev-dist/workbox-5357ef54.js
 /src/Services/Customer/Customer.API/Customer.API.csproj.user
+/src/WebApps/WebUI/dist
