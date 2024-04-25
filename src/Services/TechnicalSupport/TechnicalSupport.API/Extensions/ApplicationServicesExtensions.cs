@@ -20,6 +20,7 @@ namespace TechnicalSupport.API.Extensions
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddScoped<IOrderMaintenanceService, OrderMaintenanceService>();
             services.AddScoped<ISerieService, SerieService>();
+            services.AddScoped<IStatsService, StatsService>();
             //var config = new AutoMapper.MapperConfiguration(cfg =>
             //{
             //    cfg.AddProfile(new MappingProfiles());

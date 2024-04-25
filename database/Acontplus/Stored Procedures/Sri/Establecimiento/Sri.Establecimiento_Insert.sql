@@ -97,7 +97,6 @@ BEGIN
 		BEGIN TRAN 
 				INSERT INTO Sri.Establecimiento
 					(codEstab
-					,EntidadId
                     ,canton
 					,actividad
 					,agenteRetencion
@@ -112,10 +111,10 @@ BEGIN
 					,correo
 					,contribuyenteRimpe
 					,fechaRegistro
-					,usuario)
+					,usuario
+                    ,idEntidad)
 				SELECT 
 				     @codEstab
-				    ,@idEntidad
                     ,@canton
 				    ,@actividad
 				    ,@agenteRetencion
@@ -131,6 +130,7 @@ BEGIN
 				    ,@contribuyenteRimpe
 				    ,dbo.ufnGetDateEcuador()
 				    ,@nombreUsuario
+                    ,@idEntidad
 					
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' AS 'message'

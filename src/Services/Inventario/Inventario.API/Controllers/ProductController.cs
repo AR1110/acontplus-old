@@ -44,7 +44,7 @@ namespace Inventario.API.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<ActionResult> Post(ApiRequest request)
         {
             try
