@@ -71,12 +71,12 @@ BEGIN
         idArticulo              INT                 NULL DEFAULT 0,
         [description]           VARCHAR(500)        NULL,
         cantidadTransaccion     NUMERIC(18,5)       NULL,
-        costoFraccionado  NUMERIC(18,5)       NULL,
+        costoFraccionado        NUMERIC(18,5)       NULL,
         medidaId                INT                 NOT NULL,
         conversion              NUMERIC(18,5)       NOT NULL,
         orderIndex              INT                 NOT NULL,
         precioTotalSinImpuesto  NUMERIC(18,5)       NOT NULL,
-        percentageDiscount         NUMERIC(18,5)       NOT NULL,
+        percentageDiscount      NUMERIC(18,5)       NOT NULL,
         llevaInventario         BIT                 NOT NULL,
         idTipoIva               INT                 NOT NULL,
         codigoPorcentaje        INT                 NOT NULL,
@@ -173,7 +173,7 @@ BEGIN
     SELECT TOP 1 @secuencial = ultimaSecuencia FROM Config.v_ConfigDocumento WITH (NOLOCK) WHERE idPuntoEmision = @puntoEmisionId AND idTipoDocumento = @idTipoDocumento
 
     SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
-
+              
     ---- ================ INSERT ITEMS ================ -----
     IF (ISJSON(@details) = 1 AND LEN(RTRIM(LTRIM(@details))) > 0)
         BEGIN
@@ -181,7 +181,7 @@ BEGIN
             (uuid, taxId, taxPercentId, feeId, taxValue,quantity,cost,price,discount
             , total, obs, bodegaId,envioSri,idArticulo,[description],medidaId, cantidadTransaccion
             , costoFraccionado, conversion, orderIndex, precioTotalSinImpuesto, percentageDiscount
-            , llevaInventario, idTipoIva, porcentaje, codigoPorcentaje)
+            , llevaInventario, idTipoIva, codigoPorcentaje, porcentaje)
             
             SELECT d.uuid
                 , d.taxId
@@ -257,7 +257,7 @@ BEGIN
                 , i.[description]
                 , i.cost
                 , i.idTipoIva
-                , i.codigoPorcentaje
+                , CAST(i.codigoPorcentaje AS VARCHAR)
                 , i.porcentaje
                 , i.taxValue
                 , i.uuid
@@ -313,7 +313,7 @@ BEGIN
     INNER JOIN v_PtoEmi_Asign pa        WITH(NOLOCK) ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
     WHERE pa.idUsuarioRol   = @userRoleId 
     AND cd.codDoc           = @codDoc
-    
+
     ---- NOTA DE ENTREGA ----
     IF @codDoc = 'NE'
         BEGIN             
