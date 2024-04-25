@@ -39,10 +39,11 @@ export class ModalService {
     }: Partial<PropsModal> = {}
   ) {
     const modalRef = this.ngbModal.open(theComponent, {
-      backdrop: !backdrop ? 'static' : true,
+      backdrop,
       centered,
       fullscreen,
-      keyboard: this.getKeyboard(backdrop, keyboard),
+      keyboard,
+     // keyboard: this.getKeyboard(backdrop, keyboard),
       scrollable,
       size,
       windowClass,

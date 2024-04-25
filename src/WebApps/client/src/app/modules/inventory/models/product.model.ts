@@ -7,6 +7,7 @@ export interface Product {
 }
 
 export interface ProductSearch {
+  position?:number
   idArticulo: number,
   codigo: string,
   descripcion: string

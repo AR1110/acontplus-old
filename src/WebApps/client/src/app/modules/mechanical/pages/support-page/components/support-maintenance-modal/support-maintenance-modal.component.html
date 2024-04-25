@@ -1,0 +1,66 @@
+<div class="modal-header">
+  <h6 class="modal-title" id="modal-basic-title">
+    <fa-icon [icon]="'tools'" size="xs"></fa-icon> Mantenimiento
+  </h6>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="estab">Establecimiento: </label>
+        <select name="estab" id="estab">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="puntoEmision">Punto Emisión: </label>
+        <option value=""></option>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group"></div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+
+
+      <app-product-search-popup/>
+      <!-- <div class="form-group">
+        <label for="productSearch">Producto: </label>
+        <app-product-search [props]="{
+          isSearchSimple: true
+        }"/>
+      </div> -->
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="bodega">Bodega: </label>
+        <select name="bodega" id="bodega">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <app-tabulator [tableData]="details" [options]="tabulatorOptions"
+        (cellEdited)="cellEdited($event)"></app-tabulator>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" >
+    Guardar
+  </button>
+  <button type="button" class="btn btn-dark" (click)="modal.close( )">
+    &times; Cerrar
+  </button>
+</div>

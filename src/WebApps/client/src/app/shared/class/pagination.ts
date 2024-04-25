@@ -6,7 +6,7 @@ export class Pagination {
   maxSize = 5;
   totalRecords = 0;
 
-  pageSizeOptions = [10,25, 50, 75, 100]
+  pageSizeOptions = [25, 50, 75, 100]
 }
 
 

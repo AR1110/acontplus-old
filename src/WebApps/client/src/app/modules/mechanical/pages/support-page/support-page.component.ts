@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, type OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
+import { ToasterService } from '@core/services/toaster.service';
+import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
+import { SupportService } from '@modules/mechanical/services/support.service';
 import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/class/pagination';
-import { SupportService } from '@modules/mechanical/services/support.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { MatTableModule } from '@angular/material/table';
-import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
+
+import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
+import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
+import { ProductSearchPopupComponent } from '@modules/inventory/shared/components/product/product-search-popup/product-search-popup.component';
+
 
 @Component({
   selector: 'app-support-page',
@@ -22,12 +26,12 @@ import { ToasterService } from '@core/services/toaster.service';
     FontAwesomeModule,
     NgbDropdownModule,
     NgbPagination,
-    MatTableModule
+    MatTableModule,
+    ProductSearchPopupComponent
   ],
   templateUrl: './support-page.component.html',
-  styleUrl: './support-page.component.css',
 })
-export class SupportPageComponent implements OnInit {
+export class SupportPageComponent {
   modalSvc = inject(ModalService);
   supportSvc = inject(SupportService)
   tS = inject(ToasterService)
@@ -91,10 +95,6 @@ export class SupportPageComponent implements OnInit {
   }
 
 
-  resultModal(event: any) {
-    this.getSupports();
-  }
-
   askToDelete(id: number) {
     try {
       Swal.fire({
@@ -137,6 +137,16 @@ export class SupportPageComponent implements OnInit {
       });
     } catch (error) {
       console.log(error)
+    }
+  }
+
+
+  openMaintenance(id: number){
+    let modalRef = this.modalSvc.open(SupportMaintenanceModalComponent, {
+      size: 'xl'
+    })
+    modalRef.componentInstance.params = {
+      id
     }
   }
 
