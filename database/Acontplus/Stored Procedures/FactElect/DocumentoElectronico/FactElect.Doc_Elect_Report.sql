@@ -86,6 +86,18 @@ BEGIN
 
                                               ),0) as subTotalNoObjetoIva
 
+                                              ,ISNULL((
+                                                     SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
+                                                     FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                                     WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''5''
+                                                  ),0) as subTotalIvaCinco
+
+                                              ,ISNULL((
+                                                     SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
+                                                     FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                                     WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''4''
+                                                  ),0) as subTotalIvaQuince
+
 	                                          ,ISNULL
                                               ((
                                                  SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
@@ -108,8 +120,8 @@ BEGIN
                                               ((
                                                  SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
                                                  FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2''
-
+                                                 WHERE fi.FacturaId = f.idFactura 
+                                                 AND fi.codigo = ''2''
                                               ),0) as iva
 
 	                                          ,CAST(f.totalDescuento as numeric(18,2))         as descuento
@@ -133,7 +145,7 @@ BEGIN
                                                     INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = nc.idPuntoEmision
                                                     INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pt.codEstab
                                                     WHERE nc.idFactura = f.idFactura
-                                                      AND nc.estado = 1
+                                                    AND nc.estado = 1
 
                                                ) as nroDevolucion
 
@@ -141,7 +153,7 @@ BEGIN
                                                     SELECT TOP 1 CAST(nc.total as numeric(18,2)) 
                                                     FROM dbo.NotaCredito nc WITH (NOLOCK) 
                                                     WHERE nc.idFactura = f.idFactura
-                                                      AND nc.estado = 1
+                                                    AND nc.estado = 1
 
                                                ) as devolucion
 
@@ -155,9 +167,8 @@ BEGIN
 
                                         FROM Ventas.v_Factura f WITH (NOLOCK)
                                         WHERE f.idEntidad = @idEntidad
-                                          AND f.estado = 1
-
-                                      )as dt WHERE dt.idFactura > 0 '
+                                        AND f.estado = 1
+                                      )AS dt WHERE dt.idFactura > 0'
 
             IF @codEstab IS NOT NULL
                 BEGIN
@@ -286,6 +297,21 @@ BEGIN
                                     WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2'' AND ni.codigoPorcentaje = ''6''
 
                                 ),0) as subTotalNoObjetoIva
+
+                                ,ISNULL
+                                ((
+                                    SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
+                                    FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                    WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''5''
+                                ),0) as subTotalIvaCinco
+
+                                ,ISNULL
+                                ((
+                                    SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
+                                    FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                    WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''4''
+
+                                ),0) as subTotalIvaQuince
 
 	                           ,ISNULL
                                 ((
@@ -444,6 +470,21 @@ BEGIN
                                     WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigoPorcentaje = ''6''
 
                               ),0) as subTotalNoObjetoIva
+
+                              ,ISNULL
+                                ((
+                                    SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
+                                    FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                    WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''5''
+                                ),0) as subTotalIvaCinco
+
+                              ,ISNULL
+                              ((
+                                    SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
+                                    FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                    WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''4''
+
+                                ),0) as subTotalIvaQuince
 
                               ,ISNULL((
                                 
@@ -667,7 +708,7 @@ BEGIN
                     INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
                     INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario      = de.idUsuario
                     WHERE codDoc = ''07'' 
-                        AND idEntidad = @idEntidad '
+                    AND idEntidad = @idEntidad '
 
             IF @codEstab IS NOT NULL
                 BEGIN
