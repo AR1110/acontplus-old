@@ -87,22 +87,31 @@ BEGIN
                                               ),0) as subTotalNoObjetoIva
 
                                               ,ISNULL((
+                                                     
                                                      SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
                                                      FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                     WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''5''
-                                                  ),0) as subTotalIvaCinco
+                                                     WHERE fi.FacturaId = f.idFactura 
+                                                       AND fi.codigo = ''2'' 
+                                                       AND fi.codigoPorcentaje = ''5''
+
+                                               ),0) as subTotalIvaCinco
 
                                               ,ISNULL((
-                                                     SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                                     FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                     WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''4''
-                                                  ),0) as subTotalIvaQuince
+                                                         SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
+                                                         FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                                         WHERE fi.FacturaId = f.idFactura 
+                                                           AND fi.codigo = ''2'' 
+                                                           AND fi.codigoPorcentaje = ''4''
+
+                                               ),0) as subTotalIvaQuince
 
 	                                          ,ISNULL
                                               ((
                                                  SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
                                                  FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.codigoPorcentaje = ''0''
+                                                 WHERE fi.FacturaId = f.idFactura 
+                                                   AND fi.codigo = ''2'' 
+                                                   AND fi.codigoPorcentaje = ''0''
 
                                               ),0) as subTotalIvaCero
 
@@ -110,7 +119,9 @@ BEGIN
                                               ((
                                                  SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
                                                  FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                                 WHERE fi.FacturaId = f.idFactura AND fi.codigo = ''2'' AND fi.[Percent] > 0
+                                                 WHERE fi.FacturaId = f.idFactura 
+                                                   AND fi.codigo = ''2'' 
+                                                   AND fi.codigoPorcentaje = ''2''
 
                                               ),0) as subTotalIva
 
@@ -121,11 +132,35 @@ BEGIN
                                                  SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
                                                  FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
                                                  WHERE fi.FacturaId = f.idFactura 
-                                                 AND fi.codigo = ''2''
+                                                   AND fi.codigo = ''2''
+                                                   AND fi.codigoPorcentaje = ''2''
+
                                               ),0) as iva
 
+                                              ,ISNULL
+                                              ((
+                                                 SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
+                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                                 WHERE fi.FacturaId = f.idFactura 
+                                                   AND fi.codigo = ''2''
+                                                   AND fi.codigoPorcentaje = ''5''
+
+                                              ),0) as iva5
+
+                                              ,ISNULL
+                                              ((
+                                                 SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
+                                                 FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                                                 WHERE fi.FacturaId = f.idFactura 
+                                                   AND fi.codigo = ''2''
+                                                   AND fi.codigoPorcentaje = ''4''
+
+                                              ),0) as iva15
+
 	                                          ,CAST(f.totalDescuento as numeric(18,2))         as descuento
+
 	                                          ,CAST(f.total as numeric(18,2))                  as total
+
 
 	                                          ,(
                                                     SELECT TOP 1 dd.serieComprobante 
