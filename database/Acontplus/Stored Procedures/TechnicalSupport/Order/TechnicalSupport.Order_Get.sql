@@ -146,7 +146,7 @@ BEGIN
             INNER JOIN TechnicalSupport.OrderStatus sc  ON sc.Id = tor.OrderStatusId
             WHERE tor.Id = @id
 
-            SELECT o.Id OrderDetailId, d.Id DeviceId, d.[Name] DeviceName
+            SELECT o.Id OrderDetailId, d.Id DeviceId, d.[Name] DeviceName, o.Obs
             FROM TechnicalSupport.[OrderDetail] o WITH (NOLOCK) 
             INNER JOIN TechnicalSupport.Device d WITH (NOLOCK) ON o.DeviceId = d.Id
             WHERE OrderId = @id

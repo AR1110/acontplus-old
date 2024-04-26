@@ -109,7 +109,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     fechaEmision: new Date(),
     fechaEmisionDocCreado: null as (Date | null),
     orderDetailId: null,
-    customerCompanyId: 0
+    customerCompanyId: 0,
+    obs: '',
   }
 
   cloneOrder = {
@@ -574,6 +575,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         }
 
         this.order.orderDetailId = this.orderDetails[0].orderDetailId;
+        this.order.obs = this.orderDetails[0].obs
         //  this.tabulatorOptions.groupValues = [[...this.orderDetails.map(t => t.deviceName)]]
 
         this.setGroupValues();
@@ -602,6 +604,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
     this.getId();
   }
 
+  onChangeOrderDetail($event: any) {
+    this.order.obs = this.orderDetails.find(
+      (x) => x.orderDetailId == $event.target.value
+    ).obs;
+  }
 
   setIdBodegaInDetalle() {
     for (let item of this.orderMaintenances) {

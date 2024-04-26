@@ -41,16 +41,16 @@ BEGIN
 	                SET @totalCustomers =  (select total from #temp
                                             )
     SELECT '1' code, payload = (SELECT (SELECT [code], [name]
-    ,total = (SELECT COUNT (*) FROM TechnicalSupport.[Order] o 	WITH (NOLOCK)
+    ,total = ISNULL((SELECT COUNT (*) FROM TechnicalSupport.[Order] o 	WITH (NOLOCK)
 												    INNER JOIN Sri.Establecimiento e 	WITH (NOLOCK) ON o.EstablecimientoId = e.idEstablecimiento
 												    INNER JOIN dbo.Entidad en 	WITH (NOLOCK) ON e.idEntidad = en.idEntidad 
 										     WHERE  e.idEntidad = @companyId AND  o.Deleted IS NULL
                                                 AND o.[Enabled] = 1
 											    AND o.OrderStatusId = os.Id
-											    )
+											    ), 0)
     from TechnicalSupport.[OrderStatus] os
     WHERE os.Deleted IS NULL FOR JSON PATH) as 'stats'
-                            , @totalOrders totalOrders, @totalCustomers totalCustomers, @totalEmployes totalEmployes FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+                            ,ISNULL(@totalOrders, 0) totalOrders, ISNULL(@totalCustomers, 0) totalCustomers, ISNULL(@totalEmployes, 0) totalEmployes FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
 	drop table #temp
 END
 GO
