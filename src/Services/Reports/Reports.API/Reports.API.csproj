@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="Reports\GestionReporte\ArticuloTarifa - Copy.rdl" />
+    <None Remove="Reports\TechnicalSupport\Order.rdl" />
     <None Remove="Reports\Ventas\AprobHistorial.rdl" />
     <None Remove="Reports\Ventas\Factura.rdlc" />
     <None Remove="Reports\Ventas\FacturaGeneral.rdl" />
@@ -150,6 +151,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Retencion.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\TechnicalSupport\Order.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Ventas\Clientes.rdl">

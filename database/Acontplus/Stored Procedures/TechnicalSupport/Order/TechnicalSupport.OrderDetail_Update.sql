@@ -18,12 +18,18 @@ BEGIN
 	SET NOCOUNT ON; 
     DECLARE @tblDetails AS TABLE (
         id INT NOT NULL,
-        obs VARCHAR(300) NOT NULL
+        obs VARCHAR(300) NOT NULL,
+        warranty NUMERIC(18,5)
     )
-    DECLARE @userId INT
+    DECLARE @userId INT,
+        @deviceId INT,
+        @orderId INT,
+        @customerCompanyId INT
 	BEGIN TRY
-        INSERT INTO @tblDetails(id, obs)
-        SELECT id, obs FROM OPENJSON(@json) WITH (id INT, obs VARCHAR(300))
+        SELECT @orderId = @orderId, @deviceId = DeviceId FROM TechnicalSupport.OrderDetail WITH (NOLOCK) WHERE Id = @id
+        SET @customerCompanyId = (SELECT CustomerCompanyId FROM TechnicalSupport.[Order] WHERE Id = @orderId)
+        INSERT INTO @tblDetails(id, obs, warranty)
+        SELECT id, obs, warranty FROM OPENJSON(@json) WITH (id INT, obs VARCHAR(300), warranty NUMERIC(18,5))
 		SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
         BEGIN TRAN
 			UPDATE od SET 
@@ -32,6 +38,8 @@ BEGIN
                 od.UserId = @userId
             FROM TechnicalSupport.OrderDetail od WITH (ROWLOCK) 
                 INNER JOIN @tblDetails td ON od.Id = td.id
+
+            UPDATE  TechnicalSupport.DeviceCustomer SET Warranty = (SELECT warranty FROM @tblDetails) WHERE DeviceId = @deviceId AND CustomerCompanyId = @customerCompanyId
 		COMMIT TRAN
         SELECT '1' code, 'Actualizado correctamente' as 'message'
 	END TRY
