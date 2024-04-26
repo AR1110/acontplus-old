@@ -1,0 +1,38 @@
+
+
+.mat-mdc-table-sticky {
+  // background: #59abfd;
+  opacity: 1;
+}
+
+.example-sticky-toggle-group {
+  margin: 8px;
+}
+
+
+.mat-mdc-header-cell, .mat-mdc-footer-cell, .mat-mdc-cell {
+  min-width: 60px;
+  font-size: 12px;
+  box-sizing: border-box;
+  height: 10px;
+}
+
+.mat-mdc-header-row, .mat-mdc-footer-row, .mat-mdc-row {
+  min-width: 1920px; /* 24 columns, 80px each */
+}
+
+.mat-mdc-table-sticky-border-elem-top {
+  border-bottom: 1px solid midnightblue;
+}
+
+.mat-mdc-table-sticky-border-elem-right {
+  border-left: 1px solid midnightblue;
+}
+
+.mat-mdc-table-sticky-border-elem-bottom {
+  border-top: 1px solid midnightblue;
+}
+
+.mat-mdc-table-sticky-border-elem-left {
+  border-right: 1px solid midnightblue;
+}

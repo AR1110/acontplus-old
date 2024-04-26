@@ -5,7 +5,7 @@ export class ProductAdapter {
 
   searchFrom(products: unknown): Array<ProductSearch> {
     if (Array.isArray(products)) {
-      let results = products.map(product => {
+      let results = products.map((product, index) => {
         let tarifas = JSON.parse(product.priceSale);
         let resultsTarifasMapped = tarifas.map((tarifa: any) => {
           return {
@@ -15,6 +15,7 @@ export class ProductAdapter {
           }
         })
         let obj = {
+          position: index +1,
           idArticulo: product.idArticulo,
           codigo: product.codigo,
           descripcion: product.descripcion,
