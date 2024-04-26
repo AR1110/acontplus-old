@@ -112,12 +112,12 @@ export class ProductService {
       .pipe(map((response) => response));
   }
 
-  search<T extends { textSearch: string }>(
+  search<T extends { textSearch: string, pageIndex?: number, pageSize?:number }>(
     data: T
   ): Observable<Array<ProductSearch>> {
     let query = {
-      pageIndex: 1,
-      pageSize: 15,
+      pageIndex: data.pageIndex ?? 1,
+      pageSize: data.pageSize ?? 15,
       busqueda: data.textSearch,
     };
     return this.http

@@ -24,6 +24,7 @@
     </div> -->
   </div>
 </div>
+<app-product-search-popup/>
 
 <section class="section-container-table">
   <table mat-table [dataSource]="dataSource">
@@ -51,6 +52,10 @@
             <button ngbDropdownItem title="Editar" (click)="askToDelete(element.id)">
               <fa-icon [icon]="'trash-can'"></fa-icon> Anular
             </button>
+
+              <button ngbDropdownItem title="Editar" (click)="openMaintenance(element.id)">
+                <fa-icon [icon]="'tools'"></fa-icon> Mantenimiento
+              </button>
 
           </div>
         </div>
