@@ -63,24 +63,11 @@ namespace Common.Core.Utils
         }
         public static string SerializeDictionary(Dictionary<string, object> data)
         {
-            //var options = new JsonSerializerOptions
-            //{
-            //    Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            //    WriteIndented = true // Optional: makes the output formatted for readability
-            //};
-            //var result = System.Text.Json.JsonSerializer.Serialize(data, options);
-            var contractResolver = new DefaultContractResolver
+            return JsonConvert.SerializeObject(data, new JsonSerializerSettings
             {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            };
-            var options = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto,
-                ContractResolver = contractResolver,
+                ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
                 Formatting = Formatting.Indented
-            };
-            var json = JsonConvert.SerializeObject(data, options);
-            return json;
+            });
         }
         public static string DictionaryToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         {
