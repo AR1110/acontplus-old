@@ -1,11 +1,9 @@
-
-import { Component, inject, Input, } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import {  ProductOptionSearchOverlayComponent } from '@modules/inventory/shared/components/product/product-option-search-overlay/product-option-search-overlay.component';
 import { ProductSearchPopupComponent } from '@modules/inventory/shared/components/product/product-search-popup/product-search-popup.component';
 import { ProductSearchComponent } from '@modules/inventory/shared/components/product/product-search/product-search.component';
 import { SupportDetailService } from '@modules/mechanical/services/support-detail.service';
