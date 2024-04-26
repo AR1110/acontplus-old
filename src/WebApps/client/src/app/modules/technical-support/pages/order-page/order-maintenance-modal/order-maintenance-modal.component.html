@@ -97,10 +97,10 @@
           id="orderDetails"
           class="form-select"
           [(ngModel)]="order.orderDetailId"
-          (change)="onChangeOrderDetail($event)"
+          (change)="onChangeOrderDetail()"
         >
           @for (item of orderDetails; track $index) {
-          <option [value]="item.orderDetailId">
+          <option [ngValue]="item.orderDetailId">
             {{ item.deviceName }}
           </option>
           }

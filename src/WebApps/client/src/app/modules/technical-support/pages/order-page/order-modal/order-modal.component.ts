@@ -71,15 +71,20 @@ export class OrderModalComponent {
       visible: false,
     },
     { title: 'Equipo', field: 'deviceName', width: 225 },
-    { title: 'Serie', field: 'deviceSerie', width: 200, editor: true },
+    { title: 'Serie (IMEI)', field: 'deviceSerie', width: 200, editor: true },
     {
-      title: 'Garantia',
+      title: 'Garantia (si aplica)',
       field: 'deviceWarranty',
       width: 150,
       validator: ['numeric', 'min:0'],
       editor: true,
     },
-    { title: 'Obs.', field: 'obs', width: 450, editor: true },
+    {
+      title: 'Reparaciones Requeridas',
+      field: 'obs',
+      width: 450,
+      editor: true,
+    },
     {
       formatter: (cell: any) => {
         //let cellEl = cell.getElement();

@@ -20,6 +20,10 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
+                if (await _context.Categories.AnyAsync(x => x.Code == category.Code))
+                {
+                    return new ApiResponse { code = "0", message = "Este código ya se encuentra registrado" };
+                }
                 _context.Categories.Add(category);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Guardada Exitosamente" };

@@ -17,7 +17,7 @@ export class OrderDetailService {
   }
   put(id: number, data: any) {
     return this.http
-      .put(`${this.url}${id}`, data)
+      .put(`${this.url}${id}`, { data })
       .pipe(map((response) => response));
   }
 }

@@ -62,7 +62,12 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                return await _repository.SPExecuteAsync($"{_module}_Update", new Dictionary<string, object> { { "userRoleId", data.UserRoleId}, { "json", DataConverters.SerializeDictionary(data.Data)} });
+                var parameters = new Dictionary<string, object> { 
+                    { "userRoleId", data.UserRoleId },
+                    { "id", id },
+                    { "json", DataConverters.SerializeDictionary(data.Data) }
+                };
+                return await _repository.SPExecuteAsync($"{_module}_Update", parameters);
             }
             catch (Exception)
             {
