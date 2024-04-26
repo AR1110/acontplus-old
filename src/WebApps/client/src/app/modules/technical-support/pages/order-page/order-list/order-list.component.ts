@@ -14,9 +14,9 @@ import swal from 'sweetalert2';
 
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 import { OrderModalComponent } from '../order-modal/order-modal.component';
-import { MatTableModule } from '@angular/material/table';
-import { Pagination } from '@shared/class/pagination';
+import { MatTableModule } from '@angular/material/table'; 
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
+import { Pagination } from '@shared/models/pagination.model';
 
 @Component({
   selector: 'app-order-list',

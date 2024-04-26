@@ -8,13 +8,12 @@ import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportService } from '@modules/mechanical/services/support.service';
-import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
-import { Pagination } from '@shared/class/pagination';
+import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap'; 
 import Swal from 'sweetalert2';
 
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
-import { ProductSearchPopupComponent } from '@modules/inventory/shared/components/product/product-search-popup/product-search-popup.component';
+import { Pagination } from '@shared/models/pagination.model';
 
 
 @Component({
@@ -27,7 +26,7 @@ import { ProductSearchPopupComponent } from '@modules/inventory/shared/component
     NgbDropdownModule,
     NgbPagination,
     MatTableModule,
-    ProductSearchPopupComponent
+
   ],
   templateUrl: './support-page.component.html',
 })
@@ -49,7 +48,7 @@ export class SupportPageComponent {
       id: id
     }
     modalRef.result.then(result => {
-      if(result!==null && typeof result==='object'){
+      if (result !== null && typeof result === 'object') {
         this.getSupports()
       }
     })
@@ -129,8 +128,8 @@ export class SupportPageComponent {
               }
             },
             error(err) {
-                hideLoader()
-                console.log(err)
+              hideLoader()
+              console.log(err)
             },
           })
         }
@@ -141,7 +140,7 @@ export class SupportPageComponent {
   }
 
 
-  openMaintenance(id: number){
+  openMaintenance(id: number) {
     let modalRef = this.modalSvc.open(SupportMaintenanceModalComponent, {
       size: 'xl'
     })

@@ -50,6 +50,9 @@
             Object.keys(localStorage).forEach(function (key) {
                 localStorage.removeItem(key);
             });
+            Object.keys(sessionStorage).forEach(function (key) {
+                sessionStorage.removeItem(key);
+            });
             location.href = "/Login";
         };
 

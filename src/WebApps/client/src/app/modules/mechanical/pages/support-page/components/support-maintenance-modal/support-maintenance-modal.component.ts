@@ -1,11 +1,14 @@
 import { Component, inject, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { ProductSearchPopupComponent } from '@modules/inventory/shared/components/product/product-search-popup/product-search-popup.component';
 import { ProductSearchComponent } from '@modules/inventory/shared/components/product/product-search/product-search.component';
+import { ProductSearchPopupDirective } from '@modules/inventory/shared/directives/product/product-search-popup.directive';
+import { SupportMaintenanceDetail } from '@modules/mechanical/models/support-maintenance.model';
 import { SupportDetailService } from '@modules/mechanical/services/support-detail.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -13,11 +16,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-support-maintenance-modal',
   standalone: true,
   imports: [
+    FormsModule,
     FontAwesomeModule,
     TabulatorComponent,
     ProductSearchComponent,
-
-    ProductSearchPopupComponent
+    ProductSearchPopupDirective
   ],
   templateUrl: './support-maintenance-modal.component.html',
 })
@@ -36,8 +39,11 @@ export class SupportMaintenanceModalComponent {
   taxPercents: any[] = []
 
 
+  productSearch = {
+    textSearch: ''
+  }
 
-  products: any[] =  [
+  products: any[] = [
     {
       showHeader: true,
       idArticulo: 224602,
@@ -700,6 +706,15 @@ export class SupportMaintenanceModalComponent {
 
   }
 
+  getDataRowEmpty() {
+    let details = new SupportMaintenanceDetail()
+    return details;
+  }
+
+  onResultSelectedProduct($event: any) {
+    console.log($event)
+    console.log(this.getDataRowEmpty())
+  }
 
   cellEdited($event: any) {
 

@@ -28,15 +28,22 @@
 
   <div class="row">
     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-
-
-      <app-product-search-popup/>
-      <!-- <div class="form-group">
+ 
+      <div class="form-group">
         <label for="productSearch">Producto: </label>
-        <app-product-search [props]="{
-          isSearchSimple: true
-        }"/>
-      </div> -->
+         <input 
+         type="text" 
+         name="productSearch" 
+         id="productSearch" 
+         class="form-control" 
+         placeholder="Buscar producto..." 
+         [(ngModel)]="productSearch.textSearch"
+         appProductSearchPopup 
+         [searchSale]="true" 
+         [textSearch]="productSearch.textSearch"
+         (onSelectedRow)="onResultSelectedProduct($event)"
+         >
+      </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
       <div class="form-group">
