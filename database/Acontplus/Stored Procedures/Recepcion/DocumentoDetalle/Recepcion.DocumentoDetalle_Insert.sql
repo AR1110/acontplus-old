@@ -166,13 +166,20 @@ BEGIN
 
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
+                    IF EXISTS (SELECT 1 FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @idDocumento)
+                        BEGIN 
+                            SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @idDocumento
+                        END 
+                    ELSE 
+                        BEGIN 
+                            INSERT INTO Inventario.Transaccion
+                                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                            SELECT @idTipoTransaccion,@fechaEmision,@idTipoDocumento,@idDocumento,@CustomerId,@idUsuario,@idEntidad,@serieComprobante 
+
+                            SET @idTransaccion = SCOPE_IDENTITY()
+                        END
+
                     --> Transaccion
-                    INSERT INTO Inventario.Transaccion
-                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
-                    SELECT @idTipoTransaccion,@fechaEmision,@idTipoDocumento,@idDocumento,@CustomerId,@idUsuario,@idEntidad,@serieComprobante 
-
-                    SET @idTransaccion = SCOPE_IDENTITY()
-
 					INSERT INTO Inventario.TransaccionDetalle
                            (idTransaccion
                            ,idArticulo

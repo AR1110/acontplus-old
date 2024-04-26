@@ -1,5 +1,5 @@
-use [Acontplus]
-go 
+--use [Acontplus]
+--go 
 
 --INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Motor','MT',GETDATE(),1)
 --INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Transmisión','ST',GETDATE(),1)
