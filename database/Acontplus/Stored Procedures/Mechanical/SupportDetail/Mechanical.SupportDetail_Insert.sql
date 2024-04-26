@@ -17,12 +17,9 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
    
-   -- Maintenance
-    DECLARE @supportId INT, @CompanyId INT, @UserId INT, @jsonSupport VARCHAR(100) ,@jsonSupportDetails VARCHAR(MAX)
+    --> Maintenance
+    DECLARE @supportId INT, @CompanyId INT, @UserId INT ,@supportDetails VARCHAR(MAX)
     
-    -- Inventory 
-	DECLARE @inventory VARCHAR(5)
-       
     DECLARE @tbSupportDetail AS TABLE(
         ArticuloId INT NOT NULL
        ,TarifaId INT NOT NULL
@@ -42,37 +39,40 @@ BEGIN
     )
 
     BEGIN TRY 
-        
-        SELECT @jsonSupport = support ,@jsonSupportDetails = supportDetails FROM OPENJSON(@json) WITH (support  NVARCHAR(100) '$.support', supportDetails NVARCHAR(MAX) '$.supportDetails' as json)
-
-        SELECT @supportId = supportId FROM OPENJSON(@jsonSupport) WITH ( supportId   INT '$.supportId')
-
-        INSERT INTO @tbSupportDetail (ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory)
-                                   SELECT ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory
-                                   FROM OPENJSON(@jsonSupportDetails) WITH 
-                                   (
-                                        ArticuloId             INT '$.articuloId' 
-                                       ,TarifaId               INT '$.tarifaId' 
-                                       ,BodegaId               INT '$.bodegaId' 
-                                       ,MedidaId               INT '$.medidaId' 
-                                       ,[Description] VARCHAR(300) '$.description'
-                                       ,Quantity     NUMERIC(18,5) '$.quantity'
-                                       ,Price        NUMERIC(18,5) '$.price'
-                                       ,Cost         NUMERIC(18,5) '$.cost'
-                                       ,Total        NUMERIC(18,5) '$.total'
-                                       ,CodePercentage VARCHAR(10) '$.codePercentage'
-                                       ,[Percentage] NUMERIC(18,5) '$.percentage'
-                                       ,Inventory              BIT '$.inventory'
-                                   )
-
-        -- ======================= VARIABLES ===============================
-
+        --> Variables Generales
         SELECT TOP 1 @CompanyId = idEntidad , @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @CompanyId AND codConfig = 'CI'
+        --> Data Json
+        SELECT @supportId      = supportId
+              ,@supportDetails = supportDetails 
+        FROM OPENJSON(@json) WITH 
+        (
+            supportId   INT
+           ,supportDetails NVARCHAR(MAX) as json
+        )
 
 
-        -- ======================= VALIDATION ===============================
+        INSERT INTO @tbSupportDetail 
+              (ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory)
+        SELECT ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory
+        FROM OPENJSON(@supportDetails) WITH 
+        (
+             articuloId     INT  
+            ,tarifaId       INT 
+            ,bodegaId       INT 
+            ,medidaId       INT 
+            ,[description]  VARCHAR(300) 
+            ,quantity       NUMERIC(18,5) 
+            ,price          NUMERIC(18,5) 
+            ,cost           NUMERIC(18,5) 
+            ,total          NUMERIC(18,5) 
+            ,codePercentage VARCHAR(10) 
+            ,[percentage]   NUMERIC(18,5) 
+            ,inventory      BIT
+        )
+
+
+        --> VALIDATION 
         IF (SELECT COUNT(*) FROM @tbSupportDetail) = 0
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0', 'Error en el detalle del soporte', NULL)
@@ -81,17 +81,12 @@ BEGIN
 
         BEGIN TRAN
            INSERT INTO [Mechanical].[SupportDetail]
-                 ([SupportId],ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled])
-           SELECT @supportId ,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled] 
+                 ( SupportId,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled])
+           SELECT @supportId,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled] 
            FROM @tbSupportDetail 
 
         COMMIT TRAN 
-
-         IF (@supportId > 0) 
-            SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
-         ELSE 
-            SELECT [Common].[ufnSpResponse]('0', 'No se pudo guardar el Mantenimiento', NULL)
-
+        SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
     END TRY
 
     BEGIN CATCH 
@@ -101,10 +96,9 @@ BEGIN
             END 
 
         INSERT INTO ErroresSistema
-        (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		VALUES
-        (NEWID(), 'Support/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'SupportDetail/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),dbo.ufnGetDateEcuador(),@userId
 	         
-        SELECT [Common].[ufnSpResponse]('0', 'Error al guardar el detalle de Soporte', NULL)
+        SELECT [Common].[ufnSpResponse]('0', 'Error en el procedimiento', NULL)
     END CATCH 
 END

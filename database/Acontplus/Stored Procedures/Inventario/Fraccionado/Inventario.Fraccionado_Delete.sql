@@ -17,12 +17,22 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
+    DECLARE @idMedida INT
+
 	BEGIN TRY 
+        
+        SELECT TOP 1 @idMedida = idMedida FROM dbo.ArticuloFraccionado WITH (ROWLOCK) WHERE idArticuloFraccionado = @id
+
+        IF EXISTS(SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id AND idMedida = @idMedida AND estado = 1)
+            BEGIN
+                SELECT Common.ufnSpResponse('0', 'El Articulo tiene realizada transacciones no pueden ser editado', NULL)  			
+			    RETURN 
+            END 
+
 		BEGIN TRAN 
 			DELETE FROM ArticuloFraccionado WHERE idArticuloFraccionado = @id
 		COMMIT TRAN 
-		SELECT Common.ufnSpResponse('1', 'Eliminado Correctamente', NULL) 		
-		RETURN 
+		SELECT Common.ufnSpResponse('1', 'Eliminado Correctamente', NULL)
 	END TRY
 
 

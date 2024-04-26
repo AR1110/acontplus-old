@@ -254,17 +254,17 @@ BEGIN
 
 		IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idMedida != @idMedida AND idArticulo = @id)
 			BEGIN
-				IF EXISTS (SELECT 1 FROM ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @id)
+				IF EXISTS (SELECT 1 FROM ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @id AND idMedida = @idMedida)
 					BEGIN
-						SELECT '0'code,'Este Articulo se encuntra fraccionado, su medida no puede ser editada' as 'message'
+						SELECT '0'code,'Este Articulo se encuntra fraccionado con esta medida' as 'message'
 						RETURN;
 					END 
 
-                IF EXISTS(SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id AND estado = 1)
-                    BEGIN
-                        SELECT '0'code, 'El Articulo tiene realizada transacciones no pueden ser editado' as 'message'			
-			            RETURN 
-                    END
+               -- IF EXISTS(SELECT 1 FROM Inventario.TransaccionDetalle WITH (NOLOCK) WHERE idArticulo = @id AND estado = 1)
+               --     BEGIN
+               --         SELECT '0'code, 'El Articulo tiene realizada transacciones no pueden ser editado' as 'message'			
+			            --RETURN 
+               --     END
 			END 
 
 		IF @fraccionado = 0 
