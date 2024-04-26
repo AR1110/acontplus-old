@@ -3,3 +3,5 @@ import { FieldDefinitionDetailSale } from "@shared/models/field-definition-detai
 export class SupportMaintenanceDetail extends FieldDefinitionDetailSale {
   id = 0
 }
+
+export type ColSupportMaintenanceDetail = keyof SupportMaintenanceDetail;

@@ -1,16 +1,28 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { isApiResponse } from '@core/models/api-response';
+import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { ProductSale } from '@modules/inventory/models/product.model';
+import { ProductService } from '@modules/inventory/services/product.service';
 import { ProductSearchComponent } from '@modules/inventory/shared/components/product/product-search/product-search.component';
 import { ProductSearchPopupDirective } from '@modules/inventory/shared/directives/product/product-search-popup.directive';
-import { SupportMaintenanceDetail } from '@modules/mechanical/models/support-maintenance.model';
+import { ConsolidacionBodega } from '@modules/inventory/shared/models/consolidacion-bodega.model';
+import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
+import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
+import { getCantidadStock, mergeProductStock } from '@modules/inventory/utils/product-stock.util';
+import { ColSupportMaintenanceDetail, SupportMaintenanceDetail } from '@modules/mechanical/models/support-maintenance.model';
 import { SupportDetailService } from '@modules/mechanical/services/support-detail.service';
+import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
+import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-support-maintenance-modal',
@@ -28,16 +40,64 @@ export class SupportMaintenanceModalComponent {
   @Input() params = {
     id: 0
   }
+
   modal = inject(NgbActiveModal)
+  private productSvc = inject(ProductService);
+  private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
+  private openModalProductSvc = inject(OpenModalProductService)
 
   supportDetailSvc = inject(SupportDetailService)
 
-  details: any[] = [];
+  @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
-  bodegas: any = []
+  data = {
+    id: 0,
+    puntoEmisionId: 0,
+    establecimientoId: 0,
+    vehicleCompanyId: 0,
+    customerId: 0,
+    fechaEmision: new Date(),
+    sequence: "",
+    obs: null,
+    userAssignedId: 0,
+    businessName: "",
+    idCard: "",
+    address: null,
+    telephone: null,
+    email: null,
+    codEstab: "",
+    bodegaId: 0,
+    feeId: 0,
+    subTotalSinImpuesto: 0,
+    discount: 0,
+    percentageDiscount: 0,
+    total: 0
+  }
+  cloneData = {
+    bodegaId: 0
+  }
+  details: SupportMaintenanceDetail[] = [];
+
+  estabs: GroupedEstab[] = []
+  bodegas: GroupedEstabBodega[] = []
   taxes: any[] = []
-  taxPercents: any[] = []
+  taxPercents: TarifaImpuesto[] = []
 
+  decimal: DecimalSale = {
+    nroPrecio: 0,
+    nroCantidad: 0,
+    nroIva: 0,
+    nroDescuentoDetalle: 0,
+    nroTotalDetalle: 0,
+    nroTotalSubTotal: 0,
+    nroDescuento: 0,
+    importeTotal: 0,
+    nroIce: 0
+  }
+
+  //Draw Totals Tax
+  htmlImpuestoTotal = '';
+  htmlIvaTotal = '';
 
   productSearch = {
     textSearch: ''
@@ -520,26 +580,26 @@ export class SupportMaintenanceModalComponent {
 
     },
 
-    {
-      title: 'Imp.',
-      field: 'taxId',
-      headerSort: false,
-      headerHozAlign: "center",
-      width: "7px",
-      editor: this.comboEditor,
+    // {
+    //   title: 'Imp.',
+    //   field: 'taxId',
+    //   headerSort: false,
+    //   headerHozAlign: "center",
+    //   width: "7px",
+    //   editor: this.comboEditor,
 
-      editorParams: () => this.taxes,
-      formatter: function (cell: any, formatterParams: any) {
-        for (var i = 0; i < formatterParams.length; i++) {
+    //   editorParams: () => this.taxes,
+    //   formatter: function (cell: any, formatterParams: any) {
+    //     for (var i = 0; i < formatterParams.length; i++) {
 
-          if (formatterParams[i].idImpuesto == cell.getValue()) {
-            return formatterParams[i].descripcion;
-          }
-        }
-      },
-      formatterParams: () => this.taxes,
-      validator: "required",
-    },
+    //       if (formatterParams[i].idImpuesto == cell.getValue()) {
+    //         return formatterParams[i].descripcion;
+    //       }
+    //     }
+    //   },
+    //   formatterParams: () => this.taxes,
+    //   validator: "required",
+    // },
     {
       title: 'T. Imp.',
       field: 'taxPercentId',
@@ -695,6 +755,17 @@ export class SupportMaintenanceModalComponent {
     this.supportDetailSvc.getId(this.params.id).subscribe({
       next: (response) => {
         hideLoader()
+        this.data = response.data;
+        this.estabs = response.estabs;
+        this.taxPercents = response.tarifasImpuesto;
+        let dataEstab = this.estabs.find(e => e.idEstablecimiento === this.data.establecimientoId);
+        if (dataEstab) {
+          this.bodegas = dataEstab.bodegas;
+          let dataBodega = this.bodegas.find(b => b.defaultBodega);
+          if (dataBodega) {
+            this.data.bodegaId = dataBodega.idBodega;
+          }
+        }
         console.log(response)
       },
       error(err) {
@@ -711,13 +782,280 @@ export class SupportMaintenanceModalComponent {
     return details;
   }
 
-  onResultSelectedProduct($event: any) {
-    console.log($event)
+  onResultSelectedProduct(response: any) {
+
     console.log(this.getDataRowEmpty())
+    let product = response.product as ProductSale;
+    let medidas = response.medidas as MedidaProducto[];
+    let consolidacionesFecha = response.consolidacionesFecha as ConsolidacionBodega[]
+
+    let row = this.getDataRowEmpty();
+    let dataTaxPercent = this.taxPercents.find(d => d.codigo === product.codigoPorcentaje);
+
+
+
+    let findDataProduct = this.details.find(item => item.llevaInventario && item.productId === product.idArticulo);
+
+
+
+    row.productId = product.idArticulo;
+    row.codigo = product.codigoArticulo;
+    row.descripcion = product.descripcion;
+    row.bodegaId = this.data.bodegaId;
+    row.llevaInventario = product.llevaInventario;
+    row.consolidacionesBodega = consolidacionesFecha;
+
+    if (dataTaxPercent) {
+      row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
+      row.taxId = dataTaxPercent.idImpuesto;
+    }
+
+    let dataMedida = medidas.find(m => m.defaultMedida);
+
+    if (dataMedida) {
+      row.medidas = medidas;
+      row.quantity = 1;
+      row.tarifas = dataMedida.tarifas;
+      row.medidaId = dataMedida.idMedida;
+      row.cost = dataMedida.precioCosto;
+      row.costoFraccionado = dataMedida.precioCostoFraccionado;
+      row.conversion = dataMedida.conversion;
+
+      let dataTarifa = row.tarifas.find(t => t.defaultTarifa);
+
+
+      row.feeId = dataTarifa?.idTarifa ?? 0;
+      row.price = dataTarifa?.precioVenta ?? 0;
+      row.precioConIva = dataTarifa?.precioConIva ?? 0;
+
+    }
+
+
+
+
+    //Producto de tipo Servicio
+    if (!product.llevaInventario) {
+      this.details.push(row);
+      this.setCalculoTotales("quantity", row, undefined)
+      return
+    }
+
+    //Producto que lleva inventario
+    if (product.llevaInventario) {
+      let oldValue = 1;
+      let productsDuplicated = structuredClone(this.details).filter(item => (
+        item.llevaInventario && item.productId === product.idArticulo
+      ))
+
+      productsDuplicated.push({ ...row })
+
+
+      // let cloneOrderMaintenances = structuredClone(this.orderMaintenances);
+      // let findDataProduct = this.orderMaintenances.find(item => item.llevaInventario && item.productId === product.idArticulo);
+
+      if (findDataProduct) {
+        oldValue = findDataProduct.quantity;
+        row = findDataProduct;
+        row.quantity += 1;
+      } else {
+        this.details.push(row)
+      }
+
+      console.log(productsDuplicated)
+      let dataProductMerge = mergeProductStock({
+        rows: structuredClone(productsDuplicated),
+        row: structuredClone(row)
+      });
+
+      console.log(dataProductMerge)
+
+
+      let cantidadStock = getCantidadStock({
+        fechaEmision: this.data.fechaEmision,
+        bodegaId: this.data.bodegaId,
+        cantidadStock: dataProductMerge.cantidadStock,
+        consolidacionesFecha: row.consolidacionesBodega
+      });
+
+      showLoader();
+      this.productSvc.checkNotificationStock({
+        idArticulo: row.productId,
+        idBodega: this.data.bodegaId,
+        idMedida: row.medidaId,
+        cantidad: cantidadStock
+      }).subscribe({
+        next: async (response) => {
+          hideLoader();
+
+          if (isApiResponse(response)) {
+
+            let { code, message, titleSms } = response;
+
+            if (code === "1") {
+              console.log(row)
+              this.setCalculoTotales("quantity", row, oldValue)
+              return
+            }
+
+            let { isConfirmed } = await Swal.fire({
+              title: `<small>${titleSms}</small>`,
+              icon: 'warning',
+              html: `<small>${message}</small>`,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+            })
+
+            if (isConfirmed) {
+              if (code === "0") {
+                row.quantity = oldValue;
+                this.setCalculoTotales("quantity", row, oldValue)
+              }
+              if (code === "2") {
+
+                this.setCalculoTotales("quantity", row, undefined);
+              }
+            }
+
+          }
+        },
+        error(error) {
+          hideLoader();
+          console.log(error)
+        }
+      })
+
+    }
   }
 
-  cellEdited($event: any) {
+  /**
+      *
+      * @param {*} column nombre de la columnas
+      * @param {*} data  data row
+      * @param {*} oldValue valor anterior de la columna
+      */
+  setCalculoTotales(column: any, data: SupportMaintenanceDetail, oldValue?: string | number) {
 
+    let obj = this.salesDetailCalculationSvc.calculateColDef({
+      data: data,
+      column,
+      oldValue,
+      generalFeeId: this.data.feeId,
+      decimal: this.decimal,
+      columnDefs: this.tabulatorOptions.columns
+    });
+
+    let row = this.tabulatorComponent.refTabulator.getRows().find(function (row) {
+      return row.getData().rowguid === data.rowguid;
+    });
+
+    if (row) {
+      row.update({
+        data,
+        ...obj
+      })
+    }
+
+
+    this.drawImpuestoTotales();
+  }
+
+  drawImpuestoTotales() {
+    try {
+
+      let {
+        subTotalSinImpuesto,
+        htmlImpuestoTotal,
+        htmlIvaTotal,
+        irbpnr,
+        totalIce,
+        importeTotal,
+        discount,
+        percentageDiscount,
+        propina,
+      } = this.salesDetailCalculationSvc.getTaxTotals({
+        items: this.details,
+        decimal: this.decimal,
+        tarifasImpuesto: this.taxPercents,
+      })
+
+      this.data.subTotalSinImpuesto = subTotalSinImpuesto;
+      this.data.total = importeTotal;
+      this.data.discount = discount;
+      this.data.percentageDiscount = percentageDiscount;
+      // this.data.tip = propina;
+      this.htmlImpuestoTotal = htmlImpuestoTotal;
+      this.htmlIvaTotal = htmlIvaTotal;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  cellEdited(cell: any) {
+    let row = cell.getRow();
+    let column: ColSupportMaintenanceDetail = cell.getColumn().getField();
+    let oldValue = parseFloat(cell.getOldValue());
+    let value = parseFloat(cell.getValue());
+
+    let data = cell.getData();
+    let quantity = parseFloat(data.quantity);
+    let medidaId = parseInt(data.medidaId);
+    let taxId = parseInt(data.taxId);
+    let taxPercentId = parseInt(data.taxPercentId);
+    let feeId = parseInt(data.feeId);
+    let price = parseFloat(data.price);
+    let precioConIva = parseFloat(data.precioConIva);
+    let percentageDiscount = parseFloat(data.percentageDiscount);
+    let discount = parseFloat(data.discount);
+
+    if (column === "descripcion" || column === "obs") return
+
+    if (value === oldValue) {
+      cell.setValue(oldValue);
+      return
+    }
+
+    if (isNaN(value) || cell.getValue() === "") {
+      cell.setValue(oldValue);
+      return
+    }
+
+    if (value < 0) {
+      data[column] = oldValue;
+    }
+
+    if (column === "taxId") {
+      if (!this.taxPercents.some(t => t.idImpuesto === Number(value))) {
+        taxId = oldValue;
+      } else {
+        let cellInOtherColumn = row.getCell("taxPercentId");
+        // Establecer el foco en la celda
+        cellInOtherColumn.edit()
+        cellInOtherColumn.getElement().focus();
+        return
+      }
+    }
+
+    if (column === 'quantity') {
+      if (["", null, 0].includes(value)) {
+        cell.getRow().deselect();
+        cell.restoreOldValue();
+      }
+    }
+
+    let cloneData = {
+      ...data,
+      quantity,
+      medidaId,
+      taxId,
+      taxPercentId,
+      feeId,
+      price,
+      precioConIva,
+      percentageDiscount,
+      discount,
+    }
+
+    this.setCalculoTotales(column, cloneData, oldValue);
   }
 
 }

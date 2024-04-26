@@ -3,11 +3,11 @@ import { ConsolidacionBodega } from "@modules/inventory/shared/models/consolidac
 import { MedidaProducto } from "@modules/inventory/shared/models/measure.model";
 import { TarifaProducto } from "@modules/inventory/shared/models/tarifa.model";
 
-export class FieldDefinitionDetailSale { 
+export class FieldDefinitionDetailSale {
   rowguid: string = generateUuidv4()
   bodegaId: number = 0;
   feeId: number = 0;
-  medidaId: number = 0;  
+  medidaId: number = 0;
   productId: number = 0;
   descripcion: string = ""
   codigo: string = ""
@@ -26,7 +26,9 @@ export class FieldDefinitionDetailSale {
   medidas: MedidaProducto[] = []
   tarifas: TarifaProducto[] = []
   consolidacionesBodega!: ConsolidacionBodega[];
-  precioCostoFraccionado: number = 0;
+  costoFraccionado: number = 0;
   llevaInventario: boolean = false
-  conversion: number= 1;  
+  conversion: number= 1;
 }
+
+
