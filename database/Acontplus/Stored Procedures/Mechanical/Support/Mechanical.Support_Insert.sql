@@ -31,9 +31,6 @@ BEGIN
     --> Global  
 	DECLARE @tipo INT ,@Id INT ,@CompanyId INT ,@userId INT
 
-    --> DataJson
-    DECLARE @support VARCHAR(MAX)
-
     --> Support
     DECLARE @Sequence INT ,@VehicleCompanyId INT ,@PuntoEmisionId INT 
 
@@ -52,16 +49,11 @@ BEGIN
 
 	BEGIN TRY 
 		--> SAVING THE JSON DATA 
-        SELECT @support  = support
-        FROM OPENJSON(@json)  WITH 
-        (
-            support  NVARCHAR(MAX) as json
-        )
            
         INSERT INTO @tbSupport
               (puntoEmisionId,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
         SELECT puntoEmisionId,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
-        FROM OPENJSON(@support) WITH 
+        FROM OPENJSON(@json) WITH 
         (
             puntoEmisionId   INT 
            ,vehicleCompanyId INT 

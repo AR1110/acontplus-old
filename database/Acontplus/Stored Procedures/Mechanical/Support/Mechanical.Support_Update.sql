@@ -30,8 +30,6 @@ BEGIN
     --> Global  
 	DECLARE @tipo INT ,@CompanyId INT ,@userId INT
 
-    --> DataJson
-    DECLARE @support VARCHAR(MAX)
 
     DECLARE @tbSupport AS TABLE (
         Id INT UNIQUE NOT NULL
@@ -43,14 +41,16 @@ BEGIN
     )
 
 	BEGIN TRY 
+        --> VARIABLES GLOBALES
+        SELECT TOP 1 @userId = idUsuario, @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+        
 
         --> SAVING THE JSON DATA 
-        SELECT @support  = support FROM OPENJSON(@json) WITH (support NVARCHAR(MAX) as json)
 
         INSERT INTO @tbSupport
-              (vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
-        SELECT vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
-        FROM OPENJSON(@support) WITH 
+               (Id,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
+        SELECT @id,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
+        FROM OPENJSON(@json) WITH 
         (
             puntoEmisionId   INT 
            ,vehicleCompanyId INT 
@@ -61,9 +61,6 @@ BEGIN
            ,[date]           DATETIME2
         )
 
-			
-        --> RUPERERATING IN VARIABLES 
-        SELECT TOP 1 @userId = idUsuario, @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 
         --> VALIDATION OF INFORMATION 

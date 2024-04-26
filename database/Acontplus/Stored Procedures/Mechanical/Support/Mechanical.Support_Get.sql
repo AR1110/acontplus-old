@@ -158,7 +158,7 @@ BEGIN
                   ,VehicleCompanyId
                   ,CustomerId
                   ,UserAssignedId
-                  ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
+                  ,[Date]
                   ,Obs
                   ,[Status] AS [Status]
             FROM Mechanical.v_Support WITH (NOLOCK)
@@ -203,7 +203,7 @@ BEGIN
         BEGIN
             SELECT @textSearch =  REPLACE(textSearch,SPACE(1),'%') FROM OPENJSON(@json) WITH (textSearch VARCHAR(100))
 
-            SET @tableNames = 'dataSeach'
+            SET @tableNames = 'dataSearch'
 
             SELECT TOP 20 
                    Id
