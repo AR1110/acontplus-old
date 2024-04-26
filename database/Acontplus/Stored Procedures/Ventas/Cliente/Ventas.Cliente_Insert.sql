@@ -24,7 +24,7 @@ BEGIN
     --> Data Cliente
     DECLARE @IDType VARCHAR(10) ,@idTipoIdentificacion INT ,@numeroIdentificacion NVARCHAR(15) ,@customerId INT
 
-    DECLARE @tbCliente AS TABLE(
+    DECLARE @tblCliente AS TABLE(
         idTipoClienteProveedor INT NULL
        ,idTipoEntidad INT NULL
        ,idSubContribuyente INT NULL
@@ -53,7 +53,7 @@ BEGIN
         SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
         --> Data Json 
-        INSERT INTO @tbCliente 
+        INSERT INTO @tblCliente 
               (idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri)
 	    SELECT idEmpleado,idTipoIdentificacion,idTipoClienteProveedor,idTipoEntidad,idCiudad,idSubContribuyente,idTiempoCredito,idEmpresa,idCargo,idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,nota,montoCredito,validationSri
 	    FROM OPENJSON(@json) WITH
@@ -81,10 +81,10 @@ BEGIN
         )
 
         --> Recuperando Informacion
-        SELECT TOP 1 @numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) , @idTipoIdentificacion = idTipoIdentificacion FROM @tbCliente 
+        SELECT TOP 1 @numeroIdentificacion = LTRIM(RTRIM(numeroIdentificacion)) , @idTipoIdentificacion = idTipoIdentificacion FROM @tblCliente 
 
         --> Validacion de informacion 
-        IF (SELECT COUNT(*) FROM @tbCliente) = 0 
+        IF (SELECT COUNT(*) FROM @tblCliente) = 0 
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0','Error en la info del cliente', DEFAULT)
                 RETURN
@@ -105,7 +105,7 @@ BEGIN
 					INSERT INTO Customer.Customer WITH (ROWLOCK)
                            (IDType,IDCard,BusinessName,TradeName,email,telephone,[Address],SriValidation)
 					SELECT @IDType,LTRIM(RTRIM(numeroIdentificacion)), LTRIM(RTRIM(nombreFiscal)), LTRIM(RTRIM(nombreComercial)), LTRIM(RTRIM(correo)),LTRIM(RTRIM(telefono)),LTRIM(RTRIM(direccion)),validationSri
-					FROM @tbCliente
+					FROM @tblCliente
 
                     SET @customerId = @@IDENTITY
 				END
@@ -119,11 +119,11 @@ BEGIN
                   idTiempoCredito,idEmpresa,idCargo,FormaPagoSriId,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,idUsuario,idEntidad,customerId)
 			SELECT idTipoIdentificacion,idEmpleado,IIF(idTipoClienteProveedor = 0, NULL, idTipoClienteProveedor),idTipoEntidad,idCiudad,IIF(idSubContribuyente = 0, NULL, idSubContribuyente),
                 IIF(idTiempoCredito = 0, NULL, idTiempoCredito),IIF(idEmpresa = 0, NULL, idEmpresa), IIF(idCargo = 0, NULL, idCargo),idFormaPagoSri,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,telefono,correo,placa,montoCredito,nota,validationSri,@idUsuario,@idEntidad,@customerId
-            FROM @tbCliente
+            FROM @tblCliente
 
 		    SET @idCliente = @@IDENTITY
 
-            SET @payload =  (SELECT @idCliente as idCliente FOR JSON PATH)
+            SET @payload =  (SELECT @idCliente as idCliente, nombreFiscal, numeroIdentificacion FROM @tblCliente FOR JSON PATH)
 
 		COMMIT TRAN 
         SELECT [Common].[ufnSpResponse]('1','Registrado Correctamente', @payload)

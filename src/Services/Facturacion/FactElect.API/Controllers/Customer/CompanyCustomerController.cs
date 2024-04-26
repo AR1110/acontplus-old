@@ -46,7 +46,7 @@ namespace FactElect.API.Controllers.Customer
             }
             catch (Exception ex)
             {
-                _logWriter.LogActivity($"Error on Get: \n {ex}");
+                _logWriter.LogActivity($"Error on Post: \n {ex}");
                 return BadRequest(ex.Message);
             }
         }
@@ -66,7 +66,7 @@ namespace FactElect.API.Controllers.Customer
             }
             catch (Exception ex)
             {
-                _logWriter.LogActivity($"Error on Get: \n {ex}");
+                _logWriter.LogActivity($"Error on Put: \n {ex}");
                 return BadRequest(ex.Message);
             }
         }
@@ -82,7 +82,7 @@ namespace FactElect.API.Controllers.Customer
             }
             catch (Exception ex)
             {
-                _logWriter.LogActivity($"Error on Get: {json} \n {ex}");
+                _logWriter.LogActivity($"Error on Search: {json} \n {ex}");
                 return BadRequest(ex.Message);
             }
         }

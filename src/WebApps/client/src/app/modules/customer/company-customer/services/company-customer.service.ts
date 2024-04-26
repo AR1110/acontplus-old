@@ -10,7 +10,7 @@ import { Observable, map } from 'rxjs';
 })
 export class CompanyCustomerService {
   //For customers of Acontplus Customers (cliente)
-  url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
+  private url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
   constructor(private http: HttpClient) {}
 
   async checkExistence(params: any) {
@@ -26,7 +26,7 @@ export class CompanyCustomerService {
   }
 
   getById(id: number) {
-    return this.http.get(this.url + id).pipe(map((response) => response));
+    return this.http.get(`${this.url}${id}`).pipe(map((response) => response));
   }
 
   getDataForm() {
@@ -42,7 +42,9 @@ export class CompanyCustomerService {
   }
 
   put(id: number, data: any) {
-    return this.http.put(this.url + id, data).pipe(map((response) => response));
+    return this.http
+      .put(`${this.url}${id}`, { data: data })
+      .pipe(map((response) => response));
   }
 
   search<T extends { textSearch: string }>(

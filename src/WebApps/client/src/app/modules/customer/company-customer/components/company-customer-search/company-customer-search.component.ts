@@ -25,8 +25,9 @@ export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
-  @Input() textSearch = '';
   @Input() showActionsBtn = true;
+  @Input() textSearch = '';
+  private companyCustomerService = inject(CompanyCustomerService);
   private modalService = inject(ModalService);
 
   customer: CompanyCustomerSearch = {
@@ -36,51 +37,38 @@ export class CompanyCustomerSearchComponent {
     telefono: '',
     direccion: '',
     correo: '',
-    numeroIdentificacion: ''
+    numeroIdentificacion: '',
   };
-
-  dataSearch = {
-    idCliente: 0,
-    razonSocial: '',
-  };
-
 
   searching = false;
   searchFailed = false;
 
-  constructor(private companyCustomerService: CompanyCustomerService) { }
-
-  openModal() {
-    if (this.dataSearch.idCliente > 0) {
-      const modalRef = this.modalService.openModalCustom(
-        AddEditModalComponent,
-        {
-          centered: true,
-          size: 'lg',
-        }
-      );
-      modalRef.componentInstance.data = this.customer;
-    } else {
-      this.modalService.openModalCustom(AddEditModalComponent, {
-        centered: true,
-        size: 'xl',
-      });
+  onKeyupSearch() {
+    if (!this.textSearch) {
+      this.resultEmptyInput.emit({});
     }
   }
 
-  onSelect($event: any) {
-    this.customer = $event.item;
-    this.dataSearch.idCliente = this.customer.idCliente;
-    this.onCustomerSelected.emit({
-      data: {
-        ...this.customer,
-        razonSocialComprador: this.customer.nombreFiscal,
-        identificacionComprador: this.customer.numeroIdentificacion
+  openModal() {
+    const modalRef = this.modalService.openModalCustom(AddEditModalComponent, {
+      centered: true,
+      size: 'xl',
+    });
+    if (this.customer.idCliente > 0) {
+      modalRef.componentInstance.data = this.customer;
+    }
+    modalRef.result.then((response) => {
+      if (response != null && typeof response === 'object') {
+        this.customer = JSON.parse(response.payload)[0];
+        this.setCustomerData(this.customer);
       }
     });
-    setTimeout(() => {
-      this.textSearch = this.customer.nombreFiscal;
-    });
+  }
+
+  onSelect($event: any) {
+    console.log($event);
+    this.customer = $event.item;
+    this.setCustomerData(this.customer);
   }
 
   search: OperatorFunction<string, Array<CompanyCustomerSearch>> = (
@@ -105,9 +93,16 @@ export class CompanyCustomerSearchComponent {
       tap(() => (this.searching = false))
     );
 
-  onKeyupSearch() {
-    if (!this.textSearch) {
-      this.resultEmptyInput.emit({});
-    }
+  setCustomerData(customer: CompanyCustomerSearch) {
+    this.onCustomerSelected.emit({
+      data: {
+        ...customer,
+        razonSocialComprador: customer.nombreFiscal,
+        identificacionComprador: customer.numeroIdentificacion,
+      },
+    });
+    setTimeout(() => {
+      this.textSearch = customer.nombreFiscal;
+    });
   }
 }

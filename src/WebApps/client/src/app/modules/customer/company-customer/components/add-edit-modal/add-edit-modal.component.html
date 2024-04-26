@@ -1,9 +1,9 @@
-<form [formGroup]="customerForm" (ngSubmit)="save()">
+<form [formGroup]="customerForm" (ngSubmit)="onSave()">
   <div class="modal-header">
     <h5 class="modal-title">
       <fa-icon [icon]="modalIcon"></fa-icon> {{ modalTitle }}
     </h5>
-    <button type="button" class="btn-close" (click)="closeModal()"></button>
+    <button type="button" class="btn-close" (click)="onModalClose()"></button>
   </div>
   <div class="modal-body">
     <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
@@ -40,7 +40,7 @@
                   class="form-control border-select"
                   id="numeroIdentificacion"
                   formControlName="numeroIdentificacion"
-                  (keydown.enter)="validarNumeroIdentificacion()"
+                  (keydown.enter)="onKeyDownGovernmentId()"
                   maxlength="15"
                   placeholder="Ej: 2105234568"
                 />
@@ -469,7 +469,7 @@
     <button
       type="button"
       class="btn btn-outline-dark btn-sm"
-      (click)="closeModal()"
+      (click)="onModalClose()"
     >
       &times; Cancelar
     </button>
