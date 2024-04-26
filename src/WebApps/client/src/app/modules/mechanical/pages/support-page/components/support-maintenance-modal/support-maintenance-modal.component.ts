@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
+import { ToasterService } from '@core/services/toaster.service';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -16,10 +17,12 @@ import { ConsolidacionBodega } from '@modules/inventory/shared/models/consolidac
 import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
 import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
 import { getCantidadStock, mergeProductStock } from '@modules/inventory/utils/product-stock.util';
+import { supportMaintenanceAdapter } from '@modules/mechanical/adapters/support-maintenance.adapter';
 import { ColSupportMaintenanceDetail, SupportMaintenanceDetail } from '@modules/mechanical/models/support-maintenance.model';
 import { SupportDetailService } from '@modules/mechanical/services/support-detail.service';
 import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
@@ -32,7 +35,8 @@ import Swal from 'sweetalert2';
     FontAwesomeModule,
     TabulatorComponent,
     ProductSearchComponent,
-    ProductSearchPopupDirective
+    ProductSearchPopupDirective,
+    DrawTaxTotalComponent
   ],
   templateUrl: './support-maintenance-modal.component.html',
 })
@@ -46,7 +50,8 @@ export class SupportMaintenanceModalComponent {
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
   private openModalProductSvc = inject(OpenModalProductService)
 
-  supportDetailSvc = inject(SupportDetailService)
+  private supportDetailSvc = inject(SupportDetailService)
+  private tS = inject(ToasterService)
 
   @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
 
@@ -102,280 +107,6 @@ export class SupportMaintenanceModalComponent {
   productSearch = {
     textSearch: ''
   }
-
-  products: any[] = [
-    {
-      showHeader: true,
-      idArticulo: 224602,
-      codigo: '*CASALT4200CBBK',
-      descripcion: 'CASE ALTEK MID-TOWER 4200 TEC-MOU-PAR USB3.0 NEGRO',
-      iva: '12%',
-      stock: 0,
-      subFamilia: 'REPUESTOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: 'badge badge-danger',
-      priceSale: '[{"tarifa":"CONT","precio":42.00000},{"tarifa":"DSTO","precio":38.00000},{"tarifa":"TAR","precio":48.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 235252,
-      codigo: '*CASGAZCMB3405BK',
-      descripcion: 'CASE GAZAL COMBO 3405-1 TECL. PARL. MOUSE. NEGRO',
-      iva: '12%',
-      stock: 1,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: '',
-      priceSale: '[{"tarifa":"CONT","precio":45.00000},{"tarifa":"DSTO","precio":42.00000},{"tarifa":"TAR","precio":48.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 224607,
-      codigo: '*ID225XTK20',
-      descripcion: 'COMBO TECLADO MOUSE XTECH MULTIMEDIA WIRLESS SPANISH XTK-309S',
-      iva: '12%',
-      stock: 0,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: 'badge badge-danger',
-      priceSale: '[{"tarifa":"CONT","precio":19.50000},{"tarifa":"DSTO","precio":18.00000},{"tarifa":"TAR","precio":22.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 249447,
-      codigo: '*GENCOMUSB31330003401',
-      descripcion: 'COMBO TECLADO Y MOUSE GENIUS KM-200 USB NEGRO',
-      iva: '12%',
-      stock: 1,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: '',
-      priceSale: '[{"tarifa":"CONT","precio":15.00000},{"tarifa":"DSTO","precio":14.00000},{"tarifa":"TAR","precio":16.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: 'https://acontplusprd.s3.us-east-1.amazonaws.com/2293530915001/articulos/10873054-6645-416c-b4de-1bc48925a833.webp',
-      s3ObjectKey: '2293530915001/articulos/10873054-6645-416c-b4de-1bc48925a833.webp',
-      totalRecords: 24
-    },
-    {
-      idArticulo: 249449,
-      codigo: '*GENMOUWIR31340014401',
-      descripcion: 'COMBO TECLADO Y MOUSE GENIUS KM-8101 WIRELESS NEGRO/RF 2.4GHZ',
-      iva: '12%',
-      stock: 1,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: '',
-      priceSale: '[{"tarifa":"CONT","precio":22.00000},{"tarifa":"DSTO","precio":20.00000},{"tarifa":"TAR","precio":24.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: 'https://acontplusprd.s3.us-east-1.amazonaws.com/2293530915001/articulos/2db6d504-1468-4aa3-a060-879acaf70226.jpg',
-      s3ObjectKey: '2293530915001/articulos/2db6d504-1468-4aa3-a060-879acaf70226.jpg',
-      totalRecords: 24
-    },
-    {
-      idArticulo: 249448,
-      codigo: '*GENCOMUSB31330007401',
-      descripcion: 'COMBO TECLADO Y MOUSE GENIUS SLIMSTAR C126 USB NEGRO / SMART KEY',
-      iva: '12%',
-      stock: 1,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: '',
-      priceSale: '[{"tarifa":"CONT","precio":16.00000},{"tarifa":"DSTO","precio":15.00000},{"tarifa":"TAR","precio":17.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: 'https://acontplusprd.s3.us-east-1.amazonaws.com/2293530915001/articulos/37b9557b-bde7-4cf2-9472-360c9dcbb0c2.webp',
-      s3ObjectKey: '2293530915001/articulos/37b9557b-bde7-4cf2-9472-360c9dcbb0c2.webp',
-      totalRecords: 24
-    },
-    {
-      idArticulo: 224611,
-      codigo: '*KEYQUAQC4400UBK',
-      descripcion: 'COMBO TECLADO-MOUSE QUASAD Wired 1.5mts QC-4400U Negro',
-      iva: '12%',
-      stock: 0,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: 'badge badge-danger',
-      priceSale: '[{"tarifa":"CONT","precio":12.00000},{"tarifa":"DSTO","precio":10.00000},{"tarifa":"TAR","precio":14.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 256984,
-      codigo: '*ASUCOMPORX1504ZA-NJ726',
-      descripcion: 'COMPUTADOR ASUS X1504ZA-NJ726 CORE I7-1255U/16GB/512GB/15.6FHD/NO OS/MOUSE/BLUE',
-      iva: '12%',
-      stock: 1,
-      subFamilia: 'EQUIPOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: '',
-      priceSale: '[{"tarifa":"CONT","precio":855.00000},{"tarifa":"DSTO","precio":0.00000},{"tarifa":"TAR","precio":0.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 199513,
-      codigo: '*ACC3',
-      descripcion: 'GEL MOUSE PAD XTA526 XTECH',
-      iva: '12%',
-      stock: 0,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: 'badge badge-danger',
-      priceSale: '[{"tarifa":"CONT","precio":7.00000},{"tarifa":"DSTO","precio":0.00000},{"tarifa":"TAR","precio":0.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 199485,
-      codigo: '*MOUGENDX110UBG5',
-      descripcion: 'MOUSE GENIUS DX-110 USB Negro G5',
-      iva: '12%',
-      stock: 1,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: '',
-      priceSale: '[{"tarifa":"CONT","precio":5.00000},{"tarifa":"DSTO","precio":4.00000},{"tarifa":"TAR","precio":6.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 249414,
-      codigo: '*MOUGENERG8200SI',
-      descripcion: 'MOUSE GENIUS ERGO-8200S Wireless Silent Iron Gray',
-      iva: '12%',
-      stock: 1,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: '',
-      priceSale: '[{"tarifa":"CONT","precio":15.00000},{"tarifa":"DSTO","precio":13.00000},{"tarifa":"TAR","precio":17.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: 'https://acontplusprd.s3.us-east-1.amazonaws.com/2293530915001/articulos/4607f08d-a4b3-4716-815b-801d66be42b4.png',
-      s3ObjectKey: '2293530915001/articulos/4607f08d-a4b3-4716-815b-801d66be42b4.png',
-      totalRecords: 24
-    },
-    {
-      idArticulo: 228496,
-      codigo: '*MOUGENMT900SBKN',
-      descripcion: 'MOUSE GENIUS MICRO TRAVELER 900S WIRELESS USB Negro NP',
-      iva: '12%',
-      stock: 0,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: 'badge badge-danger',
-      priceSale: '[{"tarifa":"CONT","precio":18.00000},{"tarifa":"DSTO","precio":16.00000},{"tarifa":"TAR","precio":20.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 199488,
-      codigo: '*MOUGENNX7005BLK',
-      descripcion: 'MOUSE GENIUS NX-7005 Wireless Negro',
-      iva: '12%',
-      stock: 0,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: 'badge badge-danger',
-      priceSale: '[{"tarifa":"CONT","precio":9.00000},{"tarifa":"DSTO","precio":8.00000},{"tarifa":"TAR","precio":10.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: null,
-      s3ObjectKey: null,
-      totalRecords: 24
-    },
-    {
-      idArticulo: 246274,
-      codigo: '*MOUGENNX7015CHO',
-      descripcion: 'MOUSE GENIUS NX-7015 CHOCOLATE Wireless New Package',
-      iva: '12%',
-      stock: 0,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: 'badge badge-danger',
-      priceSale: '[{"tarifa":"CONT","precio":12.00000},{"tarifa":"DSTO","precio":10.00000},{"tarifa":"TAR","precio":14.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: 'https://acontplusprd.s3.us-east-1.amazonaws.com/2293530915001/articulos/da404feb-1c8b-424e-ba01-356e62014324.jpg',
-      s3ObjectKey: '2293530915001/articulos/da404feb-1c8b-424e-ba01-356e62014324.jpg',
-      totalRecords: 24
-    },
-    {
-      idArticulo: 246273,
-      codigo: '*MOUGENNX7015UIG',
-      descripcion: 'MOUSE GENIUS NX-7015 Wireless IRON-GGRAY BLISTER',
-      iva: '12%',
-      stock: 1,
-      subFamilia: 'ACCESORIOS',
-      marca: null,
-      medida: 'UNI',
-      fraccionado: '',
-      style: '',
-      priceSale: '[{"tarifa":"CONT","precio":10.00000},{"tarifa":"DSTO","precio":10.00000},{"tarifa":"TAR","precio":14.00000},{"tarifa":"PVP4","precio":0.00000},{"tarifa":"PVP5","precio":0.00000}]',
-      warehouses: '[{"ubicacion":"SN"}]',
-      precioSinSubsidio: 0,
-      s3ObjectUrl: 'https://acontplusprd.s3.us-east-1.amazonaws.com/2293530915001/articulos/8bbb9144-91ec-4d42-a06b-ab220dccdd70.webp',
-      s3ObjectKey: '2293530915001/articulos/8bbb9144-91ec-4d42-a06b-ab220dccdd70.webp',
-      totalRecords: 24
-    }
-  ];
 
 
   validatorNumber = ["required", "number"]
@@ -743,10 +474,10 @@ export class SupportMaintenanceModalComponent {
 
   ];
 
+
   tabulatorOptions = {
-    columns: this.columns,
-    height: 0,
-    layout: "fitDataStretch",
+    // movableRows: true,
+    height: "100%",
   }
 
 
@@ -755,9 +486,13 @@ export class SupportMaintenanceModalComponent {
     this.supportDetailSvc.getId(this.params.id).subscribe({
       next: (response) => {
         hideLoader()
-        this.data = response.data;
+        this.data = {
+          ...this.data,
+          ...response.data
+        };
         this.estabs = response.estabs;
         this.taxPercents = response.tarifasImpuesto;
+        this.details = response.details;
         let dataEstab = this.estabs.find(e => e.idEstablecimiento === this.data.establecimientoId);
         if (dataEstab) {
           this.bodegas = dataEstab.bodegas;
@@ -766,7 +501,7 @@ export class SupportMaintenanceModalComponent {
             this.data.bodegaId = dataBodega.idBodega;
           }
         }
-        console.log(response)
+        this.drawImpuestoTotales()
       },
       error(err) {
         hideLoader()
@@ -778,11 +513,12 @@ export class SupportMaintenanceModalComponent {
   }
 
   getDataRowEmpty() {
-    let details = new SupportMaintenanceDetail()
-    return details;
+    let detailsEmpty = new SupportMaintenanceDetail()
+    return detailsEmpty;
   }
 
   onResultSelectedProduct(response: any) {
+    let tempDetails = structuredClone(this.details);
 
     console.log(this.getDataRowEmpty())
     let product = response.product as ProductSale;
@@ -794,7 +530,7 @@ export class SupportMaintenanceModalComponent {
 
 
 
-    let findDataProduct = this.details.find(item => item.llevaInventario && item.productId === product.idArticulo);
+    let findDataProduct = tempDetails.find(item => item.llevaInventario && item.productId === product.idArticulo);
 
 
 
@@ -835,7 +571,8 @@ export class SupportMaintenanceModalComponent {
 
     //Producto de tipo Servicio
     if (!product.llevaInventario) {
-      this.details.push(row);
+      tempDetails.push(row)
+      this.details = structuredClone(tempDetails)
       this.setCalculoTotales("quantity", row, undefined)
       return
     }
@@ -843,7 +580,7 @@ export class SupportMaintenanceModalComponent {
     //Producto que lleva inventario
     if (product.llevaInventario) {
       let oldValue = 1;
-      let productsDuplicated = structuredClone(this.details).filter(item => (
+      let productsDuplicated = structuredClone(tempDetails).filter(item => (
         item.llevaInventario && item.productId === product.idArticulo
       ))
 
@@ -858,10 +595,11 @@ export class SupportMaintenanceModalComponent {
         row = findDataProduct;
         row.quantity += 1;
       } else {
-        this.details.push(row)
+        tempDetails.push(row)
+        this.details = tempDetails;
       }
 
-      console.log(productsDuplicated)
+
       let dataProductMerge = mergeProductStock({
         rows: structuredClone(productsDuplicated),
         row: structuredClone(row)
@@ -941,7 +679,7 @@ export class SupportMaintenanceModalComponent {
       oldValue,
       generalFeeId: this.data.feeId,
       decimal: this.decimal,
-      columnDefs: this.tabulatorOptions.columns
+      columnDefs: this.columns
     });
 
     let row = this.tabulatorComponent.refTabulator.getRows().find(function (row) {
@@ -1056,6 +794,107 @@ export class SupportMaintenanceModalComponent {
     }
 
     this.setCalculoTotales(column, cloneData, oldValue);
+  }
+
+  private isValidForm() {
+    if (this.details.length === 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese al menos un artículo en el detalle'
+      })
+      return
+    }
+
+    if (this.details.some(row => row.llevaInventario && row.quantity === 0)) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.'
+      })
+      return
+    }
+
+    if (this.details.some(row => !(row.bodegaId > 0))) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'Seleccione la bodega en el detalle de los artículos'
+      })
+      return
+    }
+
+
+    if (this.data.total <= 0) {
+      this.tS.toastr({
+        type: 'warning',
+        message: 'No se puede generar el documento con valor total 0!'
+      })
+      return
+    }
+
+    return true;
+  }
+
+  async save() {
+    try {
+      if (!this.isValidForm()) return
+
+      let { isConfirmed } = await Swal.fire({
+        text: "¿Estás seguro de que deseas guardar este documento?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si",
+        cancelButtonText: 'No'
+      })
+
+      if (!isConfirmed) return
+
+      let details = this.details.map((item) => {
+        let dataTarifaImpuesto = this.taxPercents.find(tp => tp.idTarifaImpuesto === item.taxPercentId);
+
+        return {
+          ...item,
+          codePercentage: dataTarifaImpuesto?.codigo,
+          percentage: dataTarifaImpuesto?.porcentaje
+        }
+      })
+      let obj = {
+        data: structuredClone(this.data),
+        details: details,
+      }
+      let params = supportMaintenanceAdapter.to(obj);
+
+      showLoader()
+      this.supportDetailSvc.post(params).subscribe({
+        next: (response) => {
+          hideLoader()
+          if (isApiResponse(response)) {
+            if (response.code === "0") {
+              this.tS.toastr({
+                type: 'warning',
+                message: response.message
+              })
+            }
+            if (response.code === "1") {
+              this.tS.toastr({
+                type: 'success',
+                message: response.message
+              })
+              this.modal.close(response)
+            }
+          }
+
+        },
+        error(err) {
+          hideLoader();
+          console.log(err)
+        },
+      })
+
+    } catch (error) {
+      hideLoader()
+      console.log(error)
+    }
   }
 
 }

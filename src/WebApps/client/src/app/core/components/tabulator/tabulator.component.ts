@@ -73,7 +73,7 @@ export class TabulatorComponent implements OnChanges {
       reactiveData: true,
       //responsiveLayout: true,
       autoResize: true, // prevent auto resizing of table
-      placeholder: 'Sin registro',
+      // placeholder: 'Sin registro',
 
       selectable: true,
       // selectableRangeMode: "click",

@@ -8,7 +8,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportService } from '@modules/mechanical/services/support.service';
-import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap'; 
+import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
@@ -147,6 +147,11 @@ export class SupportPageComponent {
     modalRef.componentInstance.params = {
       id
     }
+    modalRef.result.then(result=>{
+      if(result!==null && typeof result==='object'){
+        this.getSupports();
+      }
+    })
   }
 
 

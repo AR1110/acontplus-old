@@ -31,6 +31,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     let self = this;
+    Object.keys(sessionStorage).forEach(function (key) {
+      sessionStorage.removeItem(key);
+    });
+
     this.route.queryParams.subscribe(params => {
       let { token, route, permission } = params;
 
