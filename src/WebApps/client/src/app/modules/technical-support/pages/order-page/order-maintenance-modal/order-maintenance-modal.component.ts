@@ -517,7 +517,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     // groupStartOpen: false,
     groupBy: "orderDetailId",
     groupValues: [[]] as any,
-    groupHeader: (value: any, count: any) => { 
+    groupHeader: (value: any, count: any) => {
       let dataOrderDetail = this.orderDetails.find(od => od.orderDetailId === value);
 
       if (dataOrderDetail) {
@@ -575,6 +575,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         }
 
         this.order.orderDetailId = this.orderDetails[0].orderDetailId;
+        this.order.obs = this.orderDetails[0].obs
         //  this.tabulatorOptions.groupValues = [[...this.orderDetails.map(t => t.deviceName)]]
 
         this.setGroupValues();
