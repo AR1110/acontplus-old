@@ -109,7 +109,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
     fechaEmision: new Date(),
     fechaEmisionDocCreado: null as (Date | null),
     orderDetailId: null,
-    customerCompanyId: 0
+    customerCompanyId: 0,
+    obs: '',
   }
 
   cloneOrder = {
@@ -516,7 +517,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     // groupStartOpen: false,
     groupBy: "orderDetailId",
     groupValues: [[]] as any,
-    groupHeader: (value: any, count: any) => {
+    groupHeader: (value: any, count: any) => { 
       let dataOrderDetail = this.orderDetails.find(od => od.orderDetailId === value);
 
       if (dataOrderDetail) {
@@ -602,6 +603,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
     this.getId();
   }
 
+  onChangeOrderDetail($event: any) {
+    this.order.obs = this.orderDetails.find(
+      (x) => x.orderDetailId == $event.target.value
+    ).obs;
+  }
 
   setIdBodegaInDetalle() {
     for (let item of this.orderMaintenances) {

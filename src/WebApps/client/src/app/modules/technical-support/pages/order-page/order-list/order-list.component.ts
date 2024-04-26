@@ -86,7 +86,7 @@ export class OrderListComponent implements OnInit {
     }
   }
 
-  edit(item: any) {
+  onEdit(item: any) {
     const modalRef = this.modalService.openModalCustom(OrderModalComponent, {
       size: 'xl',
       centered: true,

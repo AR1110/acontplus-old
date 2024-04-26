@@ -29,7 +29,12 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
-import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDate } from '@core/utils/date.util';
+import {
+  ajustarFechaEmisionModificada,
+  dateIsAfterCurrentDate,
+  formatDate,
+} from '@core/utils/date.util';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-order-modal',
@@ -40,14 +45,16 @@ import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate, formatDate } fro
     DeviceSearchComponent,
     NgbAccordionModule,
     TabulatorComponent,
-    InputDateComponent
+    InputDateComponent,
   ],
   templateUrl: './order-modal.component.html',
   styles: ``,
   encapsulation: ViewEncapsulation.None,
+  providers: [DatePipe],
 })
 export class OrderModalComponent {
   @ViewChild('inputNameSpec') inputNameSpec: any;
+  private datePipe = inject(DatePipe);
   private modalRef = inject(NgbActiveModal);
   private modalService = inject(ModalService);
   private oDS = inject(OrderDetailService);
@@ -117,11 +124,13 @@ export class OrderModalComponent {
     },
   ];
   clearInput = true;
+  currentDate = new Date();
   customerBusinessName = '';
   data: any = {};
   deviceFound: any = {};
   devices: any = [];
   establecimientos: Array<GroupedEstab> = [];
+  formatedDate: any = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd');
   modalIcon: IconProp = 'plus';
   modalTitle = 'Nueva Orden';
   order: any = {};
@@ -136,7 +145,7 @@ export class OrderModalComponent {
     establecimientoId: new FormControl(0, Validators.required),
     puntoEmisionId: new FormControl(0, Validators.required),
     customerCompanyId: new FormControl(0, Validators.required),
-    fechaEmision: new FormControl('', Validators.required),
+    fechaEmision: new FormControl(this.formatedDate, Validators.required),
     obs: new FormControl(''),
     orderStatusId: new FormControl(0),
   });
@@ -357,7 +366,7 @@ export class OrderModalComponent {
   onChangeDate(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const timeString = inputElement.value;
-    console.log(inputElement.value)
+    console.log(inputElement.value);
 
     let dateObject: any = timeString;
 
@@ -365,7 +374,6 @@ export class OrderModalComponent {
   }
 
   save() {
-
     if (this.orderDetails.length == 0) {
       this.tS.toastr({
         type: 'warning',
@@ -374,42 +382,43 @@ export class OrderModalComponent {
     }
 
     let fechaEmision: any = this.orderForm.value.fechaEmision;
-    fechaEmision = formatDate(fechaEmision)
+    fechaEmision = formatDate(fechaEmision);
 
-    if(!fechaEmision){
+    if (!fechaEmision) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Seleccione le fecha'
-      })
-      return
+        message: 'Seleccione le fecha',
+      });
+      return;
     }
 
     if (!isDateValid(fechaEmision)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'Ingrese una fecha válida'
-      })
-      return
+        message: 'Ingrese una fecha válida',
+      });
+      return;
     }
 
     if (dateIsAfterCurrentDate(fechaEmision)) {
       this.tS.toastr({
         type: 'warning',
-        message: 'La fecha de emisión del documento no puede ser posterior a la fecha actual.'
-      })
-      return
+        message:
+          'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
+      });
+      return;
     }
 
     let ajusteFechaEmision = ajustarFechaEmisionModificada({
       fechaEmision: fechaEmision,
-      setHoursZero: true
+      setHoursZero: true,
     });
-    console.log(ajusteFechaEmision)
+    console.log(ajusteFechaEmision);
 
     const dataToSave = {
       ...this.orderForm.value,
       orderDetails: this.orderDetails,
-      fechaEmision: formatDateMoment(ajusteFechaEmision)
+      fechaEmision: formatDateMoment(ajusteFechaEmision),
     };
     if (this.data.id > 0) {
       showLoader();

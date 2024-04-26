@@ -63,12 +63,7 @@ BEGIN
              --> Data Json 
         SELECT @details = orderDetails FROM OPENJSON(@json) WITH (orderDetails  NVARCHAR(MAX) AS JSON )
 
-        SET @orderStatusId = (SELECT CASE
-                                        WHEN 
-                                            (SELECT assignedUserId FROM @tbOrder) = 0 THEN  (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'PA')
-                                        ELSE 
-                                            (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'EP')
-                                        END )
+
         --> Insert to temp Table
         INSERT INTO @tbOrder
               (uuid, establecimientoId, puntoEmisionId, customerCompanyId, obs, userId, fechaEmision, assignedUserId)
@@ -84,6 +79,13 @@ BEGIN
             ,fechaEmision        DATETIME2       '$.fechaEmision'
             ,assignedUserId      INT
         )
+
+        SET @orderStatusId = (SELECT CASE
+                                        WHEN 
+                                            (SELECT assignedUserId FROM @tbOrder) = 0 THEN  (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'PA')
+                                        ELSE 
+                                            (SELECT Id FROM TechnicalSupport.OrderStatus WITH (NOLOCK) WHERE code = 'EP')
+                                        END )
         
         ---> Validations order.
         IF NOT EXISTS(SELECT 1 FROM @tbOrder)
