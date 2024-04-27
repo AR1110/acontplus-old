@@ -3,17 +3,17 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { GroupedEstab } from '@core/models/estab.model';
 import { formatDate } from '@core/utils/date.util';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { isValidField } from '@core/utils/utils';
+import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
+import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
 
 import { MECHANICAL_PATHS } from '../enums/mechanical.enum';
 import { SupportMaintenanceDetail } from '../models/support-maintenance.model';
-import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
-import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
-import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
-import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { roundNumber } from '@core/utils/round-number.utils';
-import { isValidField } from '@core/utils/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -113,7 +113,8 @@ export class SupportDetailService {
               conversion: dataMedida.conversion || 1,
               consolidacionesBodega: consolidacionesBodega,
               llevaInventario: restItem.llevaInventario,
-              estado: true
+              enabled: restItem.enabled,
+
             };
             return obj;
           }
@@ -134,5 +135,6 @@ export class SupportDetailService {
   post<T>(data: T) {
     return this.#http.post(`${this.#url}`, { data })
   }
+
 
 }

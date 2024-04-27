@@ -1,26 +1,28 @@
-
 import { formatDateMoment } from "@core/utils/format-date-moment";
-import { SupportMaintenanceDetail } from "../models/support-maintenance.model";
 
+import { SupportMaintenanceDetail } from "../models/support-maintenance.model";
 
 type ToProps = {
   data: any
   details: SupportMaintenanceDetail[],
+  detailsDeleted: SupportMaintenanceDetail[],
 }
 class SupportMaintenanceAdapter {
 
   to(obj: ToProps) {
-    const { data, details } = obj;
+    const { data, details, detailsDeleted } = obj;
 
 
     let resultData = this.dataTo(data);
     let resultDetalles = this.detailTo(details);
+    let resultDetallesDeleted = this.detailTo(detailsDeleted);
 
+    let resultDetallesMerge = [...resultDetalles, ...resultDetallesDeleted]
 
     return {
       //order: resultOrder,
       supportId: resultData.id,
-      supportDetails: resultDetalles,
+      supportDetails: resultDetallesMerge,
       //  customDetails: resultCustomDetails
     }
   }
@@ -64,7 +66,8 @@ class SupportMaintenanceAdapter {
         codePercentage: item.codePercentage,
         percentage: item.percentage,
         inventory: item.llevaInventario,
-        estado: item.estado
+        enabled: item.enabled,
+        deleted: item.deleted
       }
     })
     return results;

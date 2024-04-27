@@ -18,3 +18,13 @@ export const getPermisosLocal = () => {
   return dataPermisos;
 }
 
+
+export function isValidJSON(texto: string) {
+  try {
+    JSON.parse(texto);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+

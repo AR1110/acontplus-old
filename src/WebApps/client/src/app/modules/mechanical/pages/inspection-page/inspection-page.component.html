@@ -1,0 +1,105 @@
+<div class="row">
+  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+    <div class="d-flex justify-content-start">
+      <span class="form-group pull-left page-size form-inline">
+        <select class="form-select control-color" [(ngModel)]="pagination.pageSize" (change)="changePageSize()">
+          @for(item of pagination.pageSizeOptions; track $index){
+          <option [ngValue]="item">{{ item }}</option>
+          }
+        </select>
+      </span>
+
+    </div>
+  </div>
+  <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+    <!-- <div class="d-flex justify-content-end">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Buscar vehiculo">
+      </div>
+    </div> -->
+  </div>
+</div>
+
+<section class="section-container-table">
+  <table mat-table [dataSource]="dataSource">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> No. </th>
+      <td mat-cell *matCellDef="let i=index"> {{i+1}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="op">
+      <th mat-header-cell *matHeaderCellDef> Op. </th>
+      <td mat-cell *matCellDef="let element">
+        <div ngbDropdown container="body">
+          <button type="button" class="btn btn-outline-success btn-sm" ngbDropdownToggle>
+            <fa-icon [icon]="'cog'"></fa-icon>
+          </button>
+          <div ngbDropdownMenu>
+
+            <button ngbDropdownItem title="Editar" (click)="openModal(element.id, element.supportId)">
+              <fa-icon [icon]="'edit'"></fa-icon> Editar
+            </button>
+
+
+          </div>
+        </div>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="cliente-conductor">
+      <th mat-header-cell *matHeaderCellDef> Cliente/Conductor </th>
+      <td mat-cell *matCellDef="let element"> {{element.businessName}} </td>
+    </ng-container>
+
+      <ng-container matColumnDef="placa">
+        <th mat-header-cell *matHeaderCellDef> Placa </th>
+        <td mat-cell *matCellDef="let element"> {{element.licensePlate
+          }} </td>
+      </ng-container>
+
+    <ng-container matColumnDef="marca">
+      <th mat-header-cell *matHeaderCellDef> Marca </th>
+      <td mat-cell *matCellDef="let element"> {{element.brand}} </td>
+    </ng-container>
+
+      <!-- Weight Column -->
+      <ng-container matColumnDef="tipo">
+        <th mat-header-cell *matHeaderCellDef> Tipo </th>
+        <td mat-cell *matCellDef="let element"> {{element.vehicleType
+}} </td>
+      </ng-container>
+
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="kilometraje">
+      <th mat-header-cell *matHeaderCellDef> Kilometraje </th>
+      <td mat-cell *matCellDef="let element"> {{element.mileage}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="combustible">
+      <th mat-header-cell *matHeaderCellDef> Combustible </th>
+      <td mat-cell *matCellDef="let element"> {{element.fuellevel
+}} </td>
+    </ng-container>
+
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center" colspan="7">
+        Sin registro
+      </td>
+    </tr>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</section>
+
+<div class="card-body">
+
+  <ngb-pagination [collectionSize]="pagination.totalRecords" [(page)]="pagination.pageIndex"
+    [maxSize]="pagination.maxSize" [pageSize]="pagination.pageSize" [rotate]="true" (pageChange)="pageChanged()"
+    [boundaryLinks]="true" />
+</div>

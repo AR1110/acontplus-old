@@ -4,7 +4,8 @@ export class SupportMaintenanceDetail extends FieldDefinitionDetailSale {
   id = 0
   codePercentage?: string
   percentage?: number
-  estado: boolean = true
+  enabled: boolean = true
+  deleted?: boolean
 }
 
 export type ColSupportMaintenanceDetail = keyof SupportMaintenanceDetail;

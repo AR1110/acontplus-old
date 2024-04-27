@@ -82,6 +82,7 @@ export class SupportMaintenanceModalComponent {
     bodegaId: 0
   }
   details: SupportMaintenanceDetail[] = [];
+  detailsDeleted: SupportMaintenanceDetail[] = [];
 
   estabs: GroupedEstab[] = []
   bodegas: GroupedEstabBodega[] = []
@@ -188,6 +189,38 @@ export class SupportMaintenanceModalComponent {
     return editor;
   };
 
+  askToDelete(data: SupportMaintenanceDetail) {
+    try {
+      Swal.fire({
+        html: `Esta seguro de eliminar este elemento <b>${data.descripcion}</b>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si!',
+        cancelButtonText: 'No!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let index = this.details.findIndex(
+            (r) => r.rowguid !== data.rowguid
+          );
+          this.details.splice(index, 1);
+
+          if (data.id > 0) {
+            this.detailsDeleted.push({
+              ...data,
+              enabled: false,
+              deleted: true
+            })
+          }
+
+          this.drawImpuestoTotales();
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   columns = [
 
@@ -217,7 +250,7 @@ export class SupportMaintenanceModalComponent {
         delBtn.classList.add("btn", "btn-danger", "btn-xs");
         delBtn.addEventListener("click", () => {
           let rowData = cell.getRow().getData();
-          // this.askToDelete(rowData)
+           this.askToDelete(rowData)
         });
 
         //create kardex button
@@ -262,6 +295,9 @@ export class SupportMaintenanceModalComponent {
       hozAlign: "center",
       headerHozAlign: "center",
       width: "20px",
+      // formatter: (cell:any) =>{
+      //   return cell.getValue().toUpperCase();
+      // },
       editable: function (cell: any) {
         let data = cell.getRow().getData();
         return !data.llevaInventario
@@ -520,7 +556,7 @@ export class SupportMaintenanceModalComponent {
   onResultSelectedProduct(response: any) {
     let tempDetails = structuredClone(this.details);
 
-    console.log(this.getDataRowEmpty())
+
     let product = response.product as ProductSale;
     let medidas = response.medidas as MedidaProducto[];
     let consolidacionesFecha = response.consolidacionesFecha as ConsolidacionBodega[]
@@ -572,7 +608,7 @@ export class SupportMaintenanceModalComponent {
     //Producto de tipo Servicio
     if (!product.llevaInventario) {
       tempDetails.push(row)
-      this.details = structuredClone(tempDetails)
+      this.details = tempDetails;
       this.setCalculoTotales("quantity", row, undefined)
       return
     }
@@ -685,6 +721,7 @@ export class SupportMaintenanceModalComponent {
     let row = this.tabulatorComponent.refTabulator.getRows().find(function (row) {
       return row.getData().rowguid === data.rowguid;
     });
+    console.log(obj)
 
     if (row) {
       row.update({
@@ -858,9 +895,21 @@ export class SupportMaintenanceModalComponent {
           percentage: dataTarifaImpuesto?.porcentaje
         }
       })
+
+      let detailsDeleted = this.detailsDeleted.map((item) => {
+        let dataTarifaImpuesto = this.taxPercents.find(tp => tp.idTarifaImpuesto === item.taxPercentId);
+
+        return {
+          ...item,
+          codePercentage: dataTarifaImpuesto?.codigo,
+          percentage: dataTarifaImpuesto?.porcentaje
+        }
+      })
+      console.log(details)
       let obj = {
         data: structuredClone(this.data),
         details: details,
+        detailsDeleted: detailsDeleted
       }
       let params = supportMaintenanceAdapter.to(obj);
 
