@@ -44,7 +44,6 @@ interface UserAssigned {
     VehicleAddEditDirective
   ],
   templateUrl: './support-add-edit-modal.component.html',
-  styleUrl: './support-add-edit-modal.component.css',
 })
 export class SupportAddEditModalComponent {
   @Input() params = {
