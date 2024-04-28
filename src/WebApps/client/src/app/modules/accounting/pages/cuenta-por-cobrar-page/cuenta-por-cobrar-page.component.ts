@@ -13,8 +13,8 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CuentaPorCobrarService } from '@modules/accounting/services/cuenta-por-cobrar.service';
-import { ComprobanteIngresoOpenModalService } from '@modules/accounting/shared/services/comprobante-ingreso-open-modal.service';
-import { Pagination } from '@shared/class/pagination';
+import { ComprobanteIngresoOpenModalService } from '@modules/accounting/shared/services/comprobante-ingreso-open-modal.service'; 
+import { Pagination } from '@shared/models/pagination.model';
 import { forkJoin } from 'rxjs';
 
 

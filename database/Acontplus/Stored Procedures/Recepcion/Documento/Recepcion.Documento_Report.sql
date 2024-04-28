@@ -122,7 +122,7 @@ BEGIN
 			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
 			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                                  AND di.CodePercentage = ''4''
+			                                AND di.CodePercentage = ''4''
 	                                  ),0) as subTotalIvaQuince
 
 	                                  ,ISNULL
@@ -130,7 +130,7 @@ BEGIN
 			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
 			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                                  AND di.CodePercentage = ''0''
+			                                AND di.CodePercentage = ''0''
 	                                  ),0) as subTotal0
 
 	                                  ,ISNULL
@@ -138,7 +138,7 @@ BEGIN
 			                                SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
 			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                                WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                                  AND di.CodePercentage IN (''2'',''8'',''3'')
+			                                AND di.CodePercentage IN (''2'',''8'',''3'')
 	                                  ),0) as subTotalIva
 
 	                                  ,ISNULL
@@ -153,15 +153,33 @@ BEGIN
 			                                SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
 			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                                WHERE di.DocumentoRecibidoId = dr.idDocumento
-			                                  AND di.Code = ''2''
+			                                AND di.Code = ''2''
+                                            AND di.CodePercentage = ''2''
 	                                  ),0) as iva
 
+                                      ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento
+			                                AND di.Code = ''2''
+                                            AND di.CodePercentage = ''5''
+	                                  ),0) as iva5
+
+                                      ,ISNULL
+	                                  ((
+			                                SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
+			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                                WHERE di.DocumentoRecibidoId = dr.idDocumento
+			                                AND di.Code = ''2''
+                                            AND di.CodePercentage = ''4''
+	                                  ),0) as iva15
 	                                  ,ISNULL
 	                                  ((
 			                                SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
 			                                FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                                WHERE di.DocumentoRecibidoId = dr.idDocumento
-			                                  AND di.Code = ''3''
+			                                AND di.Code = ''3''
 	                                  ),0) as totalIce
 
 	                                  ,CAST(dr.importeTotal as numeric(18,2)) as importeTotal
@@ -171,7 +189,7 @@ BEGIN
 			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
 			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
 			                                WHERE ds.numAutDocSustento = dr.claveAcceso
-				                                AND rt.anuladaSri = 0 
+				                            AND rt.anuladaSri = 0 
 
 		                                ) as nroRetencion
 
@@ -276,7 +294,7 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                  AND ti.codigoPorcentaje IN(''2'',''8'')
+			                                AND ti.codigoPorcentaje IN(''2'',''8'')
 			
 	                                   ),0)
 	                                   ,CAST(fc.totalDescuento as numeric(18,2))
@@ -287,8 +305,30 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                  AND im.codigo = ''2''
-			
+			                                AND im.codigo = ''2''
+                                            AND ti.codigoPorcentaje = 2
+	                                   ),0)
+
+                                       ,ISNULL
+	                                   ((
+			                                SELECT CAST(SUM(fi.TaxValue)as numeric(18,2)) 
+			                                FROM Compra.FacturaImpuesto fi WITH (NOLOCK)
+			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
+			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
+			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
+			                                AND im.codigo = ''2''
+                                            AND ti.codigoPorcentaje = 5			
+	                                   ),0) 
+
+                                       ,ISNULL
+	                                   ((
+			                                SELECT CAST(SUM(fi.TaxValue)as numeric(18,2)) 
+			                                FROM Compra.FacturaImpuesto fi WITH (NOLOCK)
+			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
+			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
+			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
+			                                AND im.codigo = ''2''
+                                            AND ti.codigoPorcentaje = 4		
 	                                   ),0)
 	                                   ,ISNULL
 	                                   ((
@@ -297,9 +337,9 @@ BEGIN
 			                                INNER JOIN dbo.TipoIva      ti WITH (NOLOCK) ON ti.idTipoIva  = fi.TaxPercentId
 			                                INNER JOIN dbo.Impuesto     im WITH (NOLOCK) ON im.idImpuesto = fi.TaxId 
 			                                WHERE fi.FacturaCompraId = fc.idFacturaCompra
-			                                  AND im.codigo = ''3''
-			
+			                                AND im.codigo = ''3''			
 	                                   ),0)
+
 	                                   ,CAST(fc.total as numeric(18,2))
                                        ,(
 		
@@ -307,7 +347,7 @@ BEGIN
 			                                FROM FactElect.RetencionAts            rt WITH (NOLOCK)
 			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
 			                                WHERE ds.numAutDocSustento = fc.nroAutorizacion
-				                                AND rt.anuladaSri = 0 
+				                            AND rt.anuladaSri = 0 
 
 		                                ) as nroRetencion
 
@@ -452,7 +492,7 @@ BEGIN
 			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
 			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                            AND di.CodePercentage = ''6''
+			                        AND di.CodePercentage = ''6''
 	                            ),0) as subTotalNoIva
 
 	                            ,ISNULL
@@ -460,7 +500,7 @@ BEGIN
 			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
 			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                            AND di.CodePercentage = ''0''
+			                        AND di.CodePercentage = ''0''
 	                            ),0) as subTotal0
 
                                 ,ISNULL
@@ -476,7 +516,7 @@ BEGIN
 			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
 			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                            AND di.CodePercentage = ''4''
+			                        AND di.CodePercentage = ''4''
 	                            ),0) as subTotalIvaQuince
 
 	                            ,ISNULL
@@ -484,7 +524,7 @@ BEGIN
 			                        SELECT CAST(SUM(di.TaxBase)as numeric(18,2)) 
 			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento 
-			                            AND di.CodePercentage IN (''2'',''8'')
+			                        AND di.CodePercentage IN (''2'',''8'')
 	                            ),0) as subTotalIva
 
 	                            ,ISNULL
@@ -499,15 +539,30 @@ BEGIN
 			                        SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
 			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento
-			                            AND di.Code = ''2''
+			                        AND di.Code = ''2''
 	                            ),0) as iva
 
+                                ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento
+			                        AND di.Code = ''5''
+	                            ),0) as iva5
+
+                                ,ISNULL
+	                            ((
+			                        SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
+			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
+			                        WHERE di.DocumentoRecibidoId = dr.idDocumento
+			                        AND di.Code = ''4''
+	                            ),0) as iva15
 	                            ,ISNULL
 	                            ((
 			                        SELECT CAST(SUM(di.TaxValue)as numeric(18,2)) 
 			                        FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK) 
 			                        WHERE di.DocumentoRecibidoId = dr.idDocumento
-			                            AND di.Code = ''3''
+			                        AND di.Code = ''3''
 	                            ),0) as totalIce
 
 								,ISNULL

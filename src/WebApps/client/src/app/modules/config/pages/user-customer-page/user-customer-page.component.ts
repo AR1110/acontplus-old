@@ -7,11 +7,11 @@ import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRead } from "@modules/config/models/user-customer/user-customer.model";
 import { UserCustomerService } from "@modules/config/services/user-customer/user-customer.service";
-import { NgbPaginationModule } from "@ng-bootstrap/ng-bootstrap";
-import { Pagination } from "@shared/class/pagination";
+import { NgbPaginationModule } from "@ng-bootstrap/ng-bootstrap"; 
 
 import { UserCustomerAddEditModalComponent } from "./components/user-customer-add-edit-modal/user-customer-add-edit-modal.component";
 import { UserCustomerRoleModalComponent } from "./components/user-customer-role-modal/user-customer-role-modal.component";
+import { Pagination } from "@shared/models/pagination.model";
 
 @Component({
   selector: 'app-user-customer-apge',

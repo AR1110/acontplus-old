@@ -261,6 +261,7 @@ export class SalesDetailCalculationService {
         try {
           let precioTotalSinImpuesto = ((data.price * data.quantity)) - data.discount;
           let valorImpuesto = pricingCalculateUtil.calculateTaxValue(precioTotalSinImpuesto, dataTarifaImpuesto.porcentaje);
+          console.log(precioTotalSinImpuesto)
           let total = precioTotalSinImpuesto + valorImpuesto;
           // let totalIce = data.cantidad * rowEntity.ice;
 

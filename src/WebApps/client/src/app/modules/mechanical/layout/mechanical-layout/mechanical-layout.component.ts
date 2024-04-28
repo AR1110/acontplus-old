@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, type OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { InspectionPageComponent } from '@modules/mechanical/pages/inspection-page/inspection-page.component';
 import { SupportPageComponent } from '@modules/mechanical/pages/support-page/support-page.component';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -12,9 +13,10 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
     NgbNavModule,
     BreadcrumbComponent,
     SupportPageComponent,
+    InspectionPageComponent
   ],
   templateUrl: './mechanical-layout.component.html',
-  styleUrl: './mechanical-layout.component.css',
+  styleUrl: './mechanical-layout.component.scss',
 })
 export class MechanicalLayoutComponent implements OnInit {
   active = 1;

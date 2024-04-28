@@ -9,11 +9,11 @@ import { ProductAddEditDirective } from '@inventory/directives/product/product.d
 import { MeasureSelectHtmlOnly } from '@inventory/models/measure.model';
 import { SubCategorySelectHtmlOnly } from '@inventory/models/sub-category.model';
 import { ProductService } from '@inventory/services/product.service';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { Pagination } from '@shared/class/pagination';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap'; 
 import { ProductSearchComponent } from '@modules/inventory/shared/components/product/product-search/product-search.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { Pagination } from '@shared/models/pagination.model';
 
 type Product = {
   position: number

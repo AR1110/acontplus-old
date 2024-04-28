@@ -50,6 +50,9 @@
             Object.keys(localStorage).forEach(function (key) {
                 localStorage.removeItem(key);
             });
+            Object.keys(sessionStorage).forEach(function (key) {
+                sessionStorage.removeItem(key);
+            });
             location.href = "/Login";
         };
 
@@ -123,7 +126,7 @@
                         $scope.accion = namesObject; 
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                        location.href = "/Home/Index";
+                      //  location.href = "/Home/Index";
                     }
                 }
             }

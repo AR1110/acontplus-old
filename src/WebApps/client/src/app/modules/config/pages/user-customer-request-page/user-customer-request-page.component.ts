@@ -12,8 +12,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRequest } from "@modules/config/models/user-customer/user-customer-request.model";
 import { UserCustomerRole } from "@modules/config/models/user-customer/user-customer-role.model";
 import { UserCustomerRequestService } from "@modules/config/services/user-customer/user-customer-request.service";
-import { NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap";
-import { Pagination } from '@shared/class/pagination';
+import { NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap"; 
+import { Pagination } from "@shared/models/pagination.model";
 import Swal from "sweetalert2";
 
 @Component({

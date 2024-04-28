@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { isApiResponse } from '@core/models/api-response';
@@ -9,12 +9,12 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportService } from '@modules/mechanical/services/support.service';
 import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
-import { Pagination } from '@shared/class/pagination';
 import Swal from 'sweetalert2';
 
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
-import { ProductSearchPopupComponent } from '@modules/inventory/shared/components/product/product-search-popup/product-search-popup.component';
+import { Pagination } from '@shared/models/pagination.model';
+import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
 
 
 @Component({
@@ -27,16 +27,17 @@ import { ProductSearchPopupComponent } from '@modules/inventory/shared/component
     NgbDropdownModule,
     NgbPagination,
     MatTableModule,
-    ProductSearchPopupComponent
+
   ],
   templateUrl: './support-page.component.html',
 })
 export class SupportPageComponent {
+  @Input() status = 0;
   modalSvc = inject(ModalService);
   supportSvc = inject(SupportService)
   tS = inject(ToasterService)
 
-  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'estado'];
+  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs','estado'];
   pagination = new Pagination()
 
   dataSource: any[] = [];
@@ -49,7 +50,7 @@ export class SupportPageComponent {
       id: id
     }
     modalRef.result.then(result => {
-      if(result!==null && typeof result==='object'){
+      if (result !== null && typeof result === 'object') {
         this.getSupports()
       }
     })
@@ -129,8 +130,8 @@ export class SupportPageComponent {
               }
             },
             error(err) {
-                hideLoader()
-                console.log(err)
+              hideLoader()
+              console.log(err)
             },
           })
         }
@@ -141,12 +142,27 @@ export class SupportPageComponent {
   }
 
 
-  openMaintenance(id: number){
+  openMaintenance(id: number) {
     let modalRef = this.modalSvc.open(SupportMaintenanceModalComponent, {
       size: 'xl'
     })
     modalRef.componentInstance.params = {
       id
+    }
+    modalRef.result.then(result=>{
+      if(result!==null && typeof result==='object'){
+        this.getSupports();
+      }
+    })
+  }
+
+
+  openModalInspection(id: number) {
+    let modalRef = this.modalSvc.open(InspectionModalComponent, {
+      size: 'xl'
+    })
+    modalRef.componentInstance.params = {
+      supportId: id
     }
   }
 
