@@ -284,7 +284,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>obs</rd:DefaultName>
-            <Top>12.52925cm</Top>
+            <Top>11.87308cm</Top>
             <Left>0.00001cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
@@ -317,7 +317,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>obs</rd:DefaultName>
-            <Top>13.23508cm</Top>
+            <Top>12.60008cm</Top>
             <Left>0.00001cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
@@ -334,6 +334,7 @@
           </Textbox>
           <Line Name="Line2">
             <Top>3.48403cm</Top>
+            <Left>0cm</Left>
             <Height>0cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>6</ZIndex>
@@ -507,6 +508,7 @@
           </Textbox>
           <Line Name="Line3">
             <Top>4.3307cm</Top>
+            <Left>0cm</Left>
             <Height>0cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>10</ZIndex>
@@ -553,6 +555,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox13</rd:DefaultName>
             <Top>3.58959cm</Top>
+            <Left>0cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>11</ZIndex>
@@ -652,12 +655,8 @@
                           <PaddingBottom>2pt</PaddingBottom>
                         </Style>
                       </Textbox>
-                      <RowSpan>2</RowSpan>
                     </CellContents>
                   </TablixCornerCell>
-                </TablixCornerRow>
-                <TablixCornerRow>
-                  <TablixCornerCell />
                 </TablixCornerRow>
               </TablixCornerRows>
             </TablixCorner>
@@ -678,6 +677,142 @@
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="deviceSerie1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!deviceSerie.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>deviceSerie1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="deviceWarranty1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!deviceWarranty.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>deviceWarranty1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="createdAt1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!createdAt.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>createdAt1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="obs3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!obs.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>obs3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
                   <Height>3.22467cm</Height>
                   <TablixCells>
                     <TablixCell>
@@ -689,16 +824,16 @@
                                 <Width>4.913cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.31905cm</Width>
+                                <Width>1.59422cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.34246cm</Width>
+                                <Width>1.39261cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.25664cm</Width>
+                                <Width>1.22765cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.39263cm</Width>
+                                <Width>1.0963cm</Width>
                               </TablixColumn>
                               <TablixColumn>
                                 <Width>1.26504cm</Width>
@@ -720,7 +855,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>Producto</Value>
+                                                <Value>Producto/Servicio</Value>
                                                 <Style>
                                                   <FontSize>9pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -1337,47 +1472,7 @@
                         </CellContents>
                       </TablixHeader>
                       <TablixMembers>
-                        <TablixMember>
-                          <TablixHeader>
-                            <Size>0.6cm</Size>
-                            <CellContents>
-                              <Textbox Name="deviceSerie">
-                                <CanGrow>true</CanGrow>
-                                <KeepTogether>true</KeepTogether>
-                                <Paragraphs>
-                                  <Paragraph>
-                                    <TextRuns>
-                                      <TextRun>
-                                        <Value>=Fields!deviceSerie.Value</Value>
-                                        <Style>
-                                          <FontFamily>Arial</FontFamily>
-                                        </Style>
-                                      </TextRun>
-                                    </TextRuns>
-                                    <Style>
-                                      <TextAlign>Center</TextAlign>
-                                    </Style>
-                                  </Paragraph>
-                                </Paragraphs>
-                                <rd:DefaultName>deviceSerie</rd:DefaultName>
-                                <Style>
-                                  <Border>
-                                    <Color>LightGrey</Color>
-                                    <Style>Solid</Style>
-                                  </Border>
-                                  <VerticalAlign>Middle</VerticalAlign>
-                                  <PaddingLeft>2pt</PaddingLeft>
-                                  <PaddingRight>2pt</PaddingRight>
-                                  <PaddingTop>2pt</PaddingTop>
-                                  <PaddingBottom>2pt</PaddingBottom>
-                                </Style>
-                              </Textbox>
-                            </CellContents>
-                          </TablixHeader>
-                          <TablixMembers>
-                            <TablixMember />
-                          </TablixMembers>
-                        </TablixMember>
+                        <TablixMember />
                       </TablixMembers>
                     </TablixMember>
                     <TablixMember>
@@ -1419,47 +1514,7 @@
                         </CellContents>
                       </TablixHeader>
                       <TablixMembers>
-                        <TablixMember>
-                          <TablixHeader>
-                            <Size>0.6cm</Size>
-                            <CellContents>
-                              <Textbox Name="deviceWarranty">
-                                <CanGrow>true</CanGrow>
-                                <KeepTogether>true</KeepTogether>
-                                <Paragraphs>
-                                  <Paragraph>
-                                    <TextRuns>
-                                      <TextRun>
-                                        <Value>=Fields!deviceWarranty.Value</Value>
-                                        <Style>
-                                          <FontFamily>Arial</FontFamily>
-                                        </Style>
-                                      </TextRun>
-                                    </TextRuns>
-                                    <Style>
-                                      <TextAlign>Center</TextAlign>
-                                    </Style>
-                                  </Paragraph>
-                                </Paragraphs>
-                                <rd:DefaultName>deviceWarranty</rd:DefaultName>
-                                <Style>
-                                  <Border>
-                                    <Color>LightGrey</Color>
-                                    <Style>Solid</Style>
-                                  </Border>
-                                  <VerticalAlign>Middle</VerticalAlign>
-                                  <PaddingLeft>2pt</PaddingLeft>
-                                  <PaddingRight>2pt</PaddingRight>
-                                  <PaddingTop>2pt</PaddingTop>
-                                  <PaddingBottom>2pt</PaddingBottom>
-                                </Style>
-                              </Textbox>
-                            </CellContents>
-                          </TablixHeader>
-                          <TablixMembers>
-                            <TablixMember />
-                          </TablixMembers>
-                        </TablixMember>
+                        <TablixMember />
                       </TablixMembers>
                     </TablixMember>
                     <TablixMember>
@@ -1501,48 +1556,7 @@
                         </CellContents>
                       </TablixHeader>
                       <TablixMembers>
-                        <TablixMember>
-                          <TablixHeader>
-                            <Size>0.6cm</Size>
-                            <CellContents>
-                              <Textbox Name="createdAt">
-                                <CanGrow>true</CanGrow>
-                                <KeepTogether>true</KeepTogether>
-                                <Paragraphs>
-                                  <Paragraph>
-                                    <TextRuns>
-                                      <TextRun>
-                                        <Value>=Fields!createdAt.Value</Value>
-                                        <Style>
-                                          <FontFamily>Arial</FontFamily>
-                                          <Format>d</Format>
-                                        </Style>
-                                      </TextRun>
-                                    </TextRuns>
-                                    <Style>
-                                      <TextAlign>Center</TextAlign>
-                                    </Style>
-                                  </Paragraph>
-                                </Paragraphs>
-                                <rd:DefaultName>createdAt</rd:DefaultName>
-                                <Style>
-                                  <Border>
-                                    <Color>LightGrey</Color>
-                                    <Style>Solid</Style>
-                                  </Border>
-                                  <VerticalAlign>Middle</VerticalAlign>
-                                  <PaddingLeft>2pt</PaddingLeft>
-                                  <PaddingRight>2pt</PaddingRight>
-                                  <PaddingTop>2pt</PaddingTop>
-                                  <PaddingBottom>2pt</PaddingBottom>
-                                </Style>
-                              </Textbox>
-                            </CellContents>
-                          </TablixHeader>
-                          <TablixMembers>
-                            <TablixMember />
-                          </TablixMembers>
-                        </TablixMember>
+                        <TablixMember />
                       </TablixMembers>
                     </TablixMember>
                     <TablixMember>
@@ -1584,44 +1598,7 @@
                         </CellContents>
                       </TablixHeader>
                       <TablixMembers>
-                        <TablixMember>
-                          <TablixHeader>
-                            <Size>0.6cm</Size>
-                            <CellContents>
-                              <Textbox Name="obs1">
-                                <CanGrow>true</CanGrow>
-                                <KeepTogether>true</KeepTogether>
-                                <Paragraphs>
-                                  <Paragraph>
-                                    <TextRuns>
-                                      <TextRun>
-                                        <Value>=Fields!obs.Value</Value>
-                                        <Style>
-                                          <FontFamily>Arial</FontFamily>
-                                        </Style>
-                                      </TextRun>
-                                    </TextRuns>
-                                    <Style>
-                                      <TextAlign>Center</TextAlign>
-                                    </Style>
-                                  </Paragraph>
-                                </Paragraphs>
-                                <rd:DefaultName>obs1</rd:DefaultName>
-                                <Style>
-                                  <Border>
-                                    <Color>LightGrey</Color>
-                                    <Style>Solid</Style>
-                                  </Border>
-                                  <VerticalAlign>Middle</VerticalAlign>
-                                  <PaddingLeft>2pt</PaddingLeft>
-                                  <PaddingRight>2pt</PaddingRight>
-                                  <PaddingTop>2pt</PaddingTop>
-                                  <PaddingBottom>2pt</PaddingBottom>
-                                </Style>
-                              </Textbox>
-                            </CellContents>
-                          </TablixHeader>
-                        </TablixMember>
+                        <TablixMember />
                       </TablixMembers>
                     </TablixMember>
                   </TablixMembers>
@@ -1692,6 +1669,7 @@
                       </SortExpressions>
                       <TablixMembers>
                         <TablixMember />
+                        <TablixMember />
                       </TablixMembers>
                     </TablixMember>
                   </TablixMembers>
@@ -1699,7 +1677,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>orderDetails</DataSetName>
-            <Top>7.71737cm</Top>
+            <Top>7.08237cm</Top>
+            <Left>0cm</Left>
             <Height>4.57284cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>13</ZIndex>
@@ -1710,7 +1689,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>147.94365mm</Height>
+        <Height>132.9153mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1720,7 +1699,7 @@
       <Width>189.8651mm</Width>
       <Page>
         <PageFooter>
-          <Height>7.05mm</Height>
+          <Height>6.35mm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>

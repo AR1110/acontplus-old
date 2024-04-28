@@ -10,7 +10,7 @@ GO
 -- Create date: 2024-04-08
 -- Description: REPORTE DE ORDEN
 -- =============================================
--- TechnicalSupport.Order_Report 28, '{"id": 10}', ''
+-- TechnicalSupport.Order_Report 28, '{"id": 26}', ''
 CREATE OR ALTER PROCEDURE TechnicalSupport.Order_Report @userRoleId INT
 ,@json VARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
@@ -49,9 +49,9 @@ BEGIN
 
     SELECT od.Id                    AS OrderDetaillId
     ,   d.[Name]                    AS DeviceName
-    ,   DeviceSerie                 = (SELECT TOP 1 Serie       FROM TechnicalSupport.DeviceCustomer dv 
-                                                                WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
-    ,   DeviceWarranty              = (SELECT TOP 1 Warranty    FROM TechnicalSupport.DeviceCustomer dv 
+    ,   DeviceSerie                 = (SELECT TOP 1 dv.SerialNumber FROM TechnicalSupport.DeviceCustomer dv 
+                                                                    WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
+    ,   DeviceWarranty              = (SELECT TOP 1 dv.Warranty FROM TechnicalSupport.DeviceCustomer dv 
                                                                 WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
     ,   od.Obs                      AS Obs
     ,   od.CreatedAt                AS CreatedAt
