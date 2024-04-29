@@ -658,5 +658,17 @@
     "inputFiles": [
       "wwwroot/js/common/utils/utils.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/controllers/reporteContabilidadCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/controllers/reporteContabilidadCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/services/contabilidadService.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/services/contabilidadService.js"
+    ]
   }
 ]

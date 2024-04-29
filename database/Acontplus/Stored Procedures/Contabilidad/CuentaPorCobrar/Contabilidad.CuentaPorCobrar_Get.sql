@@ -251,7 +251,7 @@ BEGIN
 			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
 			ORDER BY cx.nroCuota ASC
             RETURN 
-		END 
+		END
 	
 	--> Datos para cobros por Documento
 	IF @tipo = 3
@@ -406,7 +406,7 @@ BEGIN
     --> Filter 
     IF @tipo = 6
         BEGIN
-            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento'
+            SET @tableNames = 'establecimientos,estadoPago,tipoDocumento,empresas'
 
             SELECT idEstablecimiento
                   ,nombreComercial
@@ -421,6 +421,7 @@ BEGIN
 
             SELECT idTipoDocumento,descripcion,codigoSri,codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo IN ('FV','NE')
 
+            SELECT * FROM Administrador.Empresa WHERE idEntidad = @idEntidad
             RETURN 
         END
 

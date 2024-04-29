@@ -21,19 +21,24 @@
             codEstado: '',
             codDoc: '',
             ckCuotas: false,
-            ckCxcVencida: false
+            ckCxcVencida: false,
+            idEmpresa: 0,
         }
         $scope.cliente = {};
         initial();
         function initial() {
             showLoader();
+
             cuentaPorCobrarSvc
                 .getDataFilter()
                 .then((response) => {
-                    const { estabs, estadosDoc, tiposDoc } = response;
+                    const { estabs, estadosDoc, tiposDoc, empresas } = response;
+
                     $scope.establecimientos = estabs;
                     $scope.estadosDoc = estadosDoc;
                     $scope.tiposDoc = tiposDoc;
+                    $scope.empresas = empresas;
+
                     let dataEstab = $scope.establecimientos.find((estab) => estab.defaultEstab);
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     let dataPuntoEmision = $scope.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi);
@@ -78,9 +83,6 @@
 
         }
 
-
-
-
         const getTipoDoc = () => {
             if ($scope.dataSearch.codDoc === DOC_TYPE.FV) {
                 return DOC_TYPE.FV_SRI;
@@ -96,6 +98,7 @@
                     return
                 }
             }
+
             let dataParams = {
                 tipo: 1,
                 ckFecha: $scope.dataSearch.ckFecha,
@@ -106,8 +109,12 @@
                 fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                 ckCxcVencida: $scope.dataSearch.ckCxcVencida,
                 ckCuotas: $scope.dataSearch.ckCuotas,
-                codDoc: fS.isValidField(getTipoDoc())
+                codDoc: fS.isValidField(getTipoDoc()),
+                idEmpresa: $scope.dataSearch.idEmpresa,
             };
+
+            console.log("$scope.dataParams");
+            console.log(dataParams);
 
             const parameters = {
                 hasIdUsuarioRol: true,
@@ -125,24 +132,5 @@
                 formatType: format
             })
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
-
-
-
-
 })(window.angular)

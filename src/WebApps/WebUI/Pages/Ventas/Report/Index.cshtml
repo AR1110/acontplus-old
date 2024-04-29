@@ -1,170 +1,169 @@
 ﻿@page
 @model WebUI.Pages.Ventas.Report.IndexModel
- 
+
 @{
     ViewData["Title"] = "Reporte Contabilidad";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
 <div ng-controller="reporteContabilidadCtrl">
     <div class="row page-titles">
-	<div class="col-md-5 align-self-center">
-		<h5 class="text-themecolor">Cartera de Clientes</h5>
-	</div> 
-    <div class="col-md-7 align-self-center text-right">
-        <div class="d-flex justify-content-end align-items-center">
-            
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Cartera de Clientes</h5>
         </div>
-    </div> 
-</div> 
-
-<div class="card">
-	<div class="card-body"> 
-        <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="icheck-primary">
-                <input
-                    type="checkbox"
-                    id="ckFecha"
-                    ng-model="dataSearch.ckFecha"
-                    name="ckFecha"
-                />
-                <label for="ckFecha">Rango Fecha</label>
-                </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
             </div>
+        </div>
+    </div>
 
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="icheck-primary">
-                <input
-                    type="checkbox"
-                    id="checkboxCompanyCustomer"
-                    ng-model="dataSearch.checkboxCompanyCustomer"
-                    name="checkboxCompanyCustomer"
-                />
-                <label for="checkboxCompanyCustomer">Cliente</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                    <div class="icheck-primary">
+                        <input type="checkbox"
+                               id="ckFecha"
+                               ng-model="dataSearch.ckFecha"
+                               name="ckFecha" />
+                        <label for="ckFecha">Rango Fecha</label>
+                    </div>
                 </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="icheck-primary">
-                    <input type="checkbox" id="ckCxcVencida" ng-model="dataSearch.ckCxcVencida" />
+
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                    <div class="icheck-primary">
+                        <input type="checkbox"
+                               id="checkboxCompanyCustomer"
+                               ng-model="dataSearch.checkboxCompanyCustomer"
+                               name="checkboxCompanyCustomer" />
+                        <label for="checkboxCompanyCustomer">Cliente</label>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="ckCxcVencida" ng-model="dataSearch.ckCxcVencida" />
                         <label for="ckCxcVencida">Vencidas</label>
-                </div> 
-            </div>
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="icheck-primary">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                    <div class="icheck-primary">
                         <input type="checkbox" id="ckCuotas" ng-model="dataSearch.ckCuotas" />
                         <label for="ckCuotas">Cuotas</label>
-                    </div> 
-            </div>
-            <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-3 col-md-4 col-sm-6 col-12"></div>
             </div>
             <hr />
-            
-		<div class="row">
-			<div class="col-lg-3 col-md-3 col-sm-6 col-12">
-				<div class="form-group">
-					<label for="estabs">Estab: <span class="text-danger">*</span></label>
-					<select
-						name="estabs"
-						id="estabs"
-						class="form-control border-select"
-						ng-model="dataSearch.codEstab"
-						ng-change="onChangeEstab()"
-					>
-						 
-                        <option ng-value="estab.codEstab" ng-repeat="estab in establecimientos">
-                            {{estab.nombreComercial}}
-                        </option>
-					 
-					</select>
-				</div>
-			</div>
-			<div class="col-lg-2 col-md-2 col-sm-6 col-12">
-				<div class="form-group">
-					<label for="estabs">Pto. emisión: <span class="text-danger">*</span></label>
-					<select
-						name="estabs"
-						id="estabs"
-						class="form-control border-select"
-						ng-model="dataSearch.idPuntoEmision"
-					> 
-                        <option ng-value="ptoEmi.idPuntoEmision"  ng-repeat="ptoEmi in puntosEmision"> 
-                            {{ptoEmi.ptoEmi}}
-                        </option>						 
-					</select>
-				</div>
-			</div>
-			<div class="col-lg-4 col-md-4 col-sm-6 col-12">
-                <label for="date-range-filter">Rango Fechas: </label>  
-                <date-range-filter current-date="dataSearch.fechaInicio"
-                                    start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                    result-range-date="resultRangeFilter(result)"></date-range-filter> 
-			</div>
-			<div class="col-lg-3 col-md-3 col-sm-6 col-12">
-				<div class="form-group">
-					<label for="estadosDoc">Estado:</label>
-					<select
-						name="estadosDoc"
-						id="estadosDoc"
-						ng-model="dataSearch.codEstado"
-						class="form-control border-select"
-					>
-						<option ng-value="0">Todos</option> 
-							<option ng-value="estado.codigo" ng-repeat="estado in estadosDoc"> 
-                                {{estado.descripcion}}
-                            </option> 
-					</select>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="tipoDoc">Tipo Doc.</label>
-					<select
-						name="tipoDoc"
-						id="tipoDoc"
-						ng-model="dataSearch.codDoc"
-						class="form-control border-select"
-					>
-						<option value="">Todos</option> 
-                            <option ng-value="tipoDoc.codigo" ng-repeat="tipoDoc in tiposDoc"> {{tipoDoc.descripcion}}
+
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="estabs">Estab: <span class="text-danger">*</span></label>
+                        <select name="estabs"
+                                id="estabs"
+                                class="form-control border-select"
+                                ng-model="dataSearch.codEstab"
+                                ng-change="onChangeEstab()">
+
+                            <option ng-value="estab.codEstab" ng-repeat="estab in establecimientos">
+                                {{estab.nombreComercial}}
                             </option>
-						 
-					</select>
-				</div>
-			</div>
-			<div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                 <div class="form-group">
-                                <label for="clienteFiltro">Cliente</label>
-                                <input type="text" id="customerInputSearch" class="form-control border-select"
-                                       ng-model="cliente.nombreCliente" cliente-search-drtv
-                                       on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
-                                       placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
-                                <script type="text/ng-template" id="autocompleteClienteTemplate.html">
-                                    <div class="autocomplete-suggestion-uib-typeahead">
-                                        <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
-                                    </div>
-                                </script>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="estabs">Pto. emisión: <span class="text-danger">*</span></label>
+                        <select name="estabs"
+                                id="estabs"
+                                class="form-control border-select"
+                                ng-model="dataSearch.idPuntoEmision">
+                            <option ng-value="ptoEmi.idPuntoEmision" ng-repeat="ptoEmi in puntosEmision">
+                                {{ptoEmi.ptoEmi}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                    <label for="date-range-filter">Rango Fechas: </label>
+                    <date-range-filter current-date="dataSearch.fechaInicio"
+                                       start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                       result-range-date="resultRangeFilter(result)"></date-range-filter>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="form-group">
+                        <label for="estadosDoc">Estado:</label>
+                        <select name="estadosDoc"
+                                id="estadosDoc"
+                                ng-model="dataSearch.codEstado"
+                                class="form-control border-select">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="estado.codigo" ng-repeat="estado in estadosDoc">
+                                {{estado.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="tipoDoc">Tipo Doc.</label>
+                        <select name="tipoDoc"
+                                id="tipoDoc"
+                                ng-model="dataSearch.codDoc"
+                                class="form-control border-select">
+                            <option value="">Todos</option>
+                            <option ng-value="tipoDoc.codigo" ng-repeat="tipoDoc in tiposDoc">
+                                {{tipoDoc.descripcion}}
+                            </option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="clienteFiltro">Cliente</label>
+                        <input type="text" id="customerInputSearch" class="form-control border-select"
+                               ng-model="cliente.nombreCliente" cliente-search-drtv
+                               on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                               placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
-			</div>
-			 
-		</div>
-	</div>
-	<div class="card-footer">
-		<button class="btn btn-danger" ng-click="getReport('pdf')">
-			PDF 
-		</button>
-		<button class="btn btn-success" ng-click="getReport('excel')">
-			 
-			Excel
-		</button>
-	</div>
-</div>
+                        </script>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label for="empresa">Empresa: </label>
+                        <select name="empresa"
+                                id="empresa"
+                                ng-model="dataSearch.idEmpresa"
+                                class="form-control border-select">
+                            <option value="" selected>Todos</option>
+                            <option ng-value="empresa.idEmpresa" ng-repeat="empresa in empresas">
+                                {{empresa.nombreComercial}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-danger" ng-click="getReport('pdf')">
+                PDF
+            </button>
+            <button class="btn btn-success" ng-click="getReport('excel')">
 
+                Excel
+            </button>
+        </div>
+    </div>
 </div>
-@section Scripts { 
+@section Scripts {
     <script src="~/js/contabilidad/controllers/reporteContabilidadCtrl.min.js" asp-append-version="true"></script>
 }
