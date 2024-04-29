@@ -20,6 +20,7 @@ import { OrderModalComponent } from '../order-modal/order-modal.component';
 import { MatTableModule } from '@angular/material/table';
 import { Pagination } from '@shared/models/pagination.model';
 import { OrderListFiltersComponent } from './order-list-filters/order-list-filters.component';
+import { OrderDocumentComponent } from '../order-document/order-document.component';
 
 @Component({
   selector: 'app-order-list',
@@ -140,6 +141,14 @@ export class OrderListComponent implements OnInit {
         this.get();
       }
     });
+  }
+
+  onOpenDocument(item: any) {
+    const modalRef = this.modalService.openModalCustom(OrderDocumentComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.data = item;
   }
 
   get() {

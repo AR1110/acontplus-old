@@ -12,20 +12,12 @@
       <th mat-header-cell *matHeaderCellDef>Op.</th>
       <td mat-cell *matCellDef="let element">
         <div ngbDropdown container="body">
-          <button
-            type="button"
-            class="btn btn-outline-success btn-sm"
-            ngbDropdownToggle
-          >
+          <button type="button" class="btn btn-outline-success btn-sm" ngbDropdownToggle>
             <fa-icon [icon]="'cog'"></fa-icon>
           </button>
           <div ngbDropdownMenu>
             @if (orderStatusCode==2 || orderStatusCode == 3) {
-            <button
-              ngbDropdownItem
-              (click)="openModalMaintenance(element)"
-              title="Iniciar Reparaciones"
-            >
+            <button ngbDropdownItem (click)="openModalMaintenance(element)" title="Iniciar Reparaciones">
               <fa-icon [icon]="'cogs'"></fa-icon> Mantenimiento
             </button>
             } @if (orderStatusCode==2) {
@@ -33,28 +25,23 @@
               <fa-icon [icon]="'edit'"></fa-icon> Editar
             </button>
             } @if (orderStatusCode==2) {
-            <button
-              ngbDropdownItem
-              (click)="askToDelete(element)"
-              title="Eliminar"
-            >
+            <button ngbDropdownItem (click)="askToDelete(element)" title="Eliminar">
               <fa-icon [icon]="'lock'"></fa-icon> Eliminar
             </button>
             }
-            <button
-              ngbDropdownItem
-              (click)="getReport(element)"
-              title="Reporte"
-            >
+            <button ngbDropdownItem (click)="getReport(element)" title="Reporte">
               <fa-icon [icon]="'file-pdf'"></fa-icon> Reporte
             </button>
-            @if (orderStatusCode == 4) {
-            <button
-              ngbDropdownItem
-              (click)="askToDelivery(element)"
-              title="Entregar"
-            >
+
+            @if (orderStatusCode == 4 ) {
+            <button ngbDropdownItem (click)="askToDelivery(element)" title="Entregar">
               <fa-icon [icon]="'sign-out'"></fa-icon> Entregar
+            </button>
+            }
+
+            @if(orderStatusCode == 4 || orderStatusCode == 5) {
+            <button ngbDropdownItem (click)="onOpenDocument(element)" title="Documento">
+              <fa-icon [icon]="'cogs'"></fa-icon> Documento
             </button>
             }
           </div>
@@ -118,13 +105,7 @@
 </section>
 
 <div class="card-body">
-  <ngb-pagination
-    [collectionSize]="pagination.totalRecords"
-    [(page)]="pagination.pageIndex"
-    [maxSize]="pagination.maxSize"
-    [pageSize]="pagination.pageSize"
-    [rotate]="true"
-    (pageChange)="onPageChanged()"
-    [boundaryLinks]="true"
-  />
+  <ngb-pagination [collectionSize]="pagination.totalRecords" [(page)]="pagination.pageIndex"
+    [maxSize]="pagination.maxSize" [pageSize]="pagination.pageSize" [rotate]="true" (pageChange)="onPageChanged()"
+    [boundaryLinks]="true" />
 </div>
