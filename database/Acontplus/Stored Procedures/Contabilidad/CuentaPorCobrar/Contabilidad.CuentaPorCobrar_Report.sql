@@ -50,6 +50,7 @@ BEGIN
            ,@porcentajeComision NUMERIC(18,5)
            ,@subFamiliasChecked VARCHAR(150) 
            ,@idTarifa           INT
+           ,@idEmpresa          INT
 
     --> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
@@ -69,6 +70,7 @@ BEGIN
                   ,@ckCxcVencida = ckCxcVencida
                   ,@ckCuotas     = ckCuotas
                   ,@codDoc       = codDoc
+                  ,@idEmpresa    = idEmpresa
             FROM OPENJSON(@json) WITH 
             (
                 idCliente    INT         '$.idCliente'
@@ -80,6 +82,7 @@ BEGIN
                ,ckCxcVencida BIT         '$.ckCxcVencida'
                ,ckCuotas     BIT         '$.ckCuotas'
                ,codDoc       VARCHAR(10) '$.codDoc'
+               ,idEmpresa    INT         '$.idEmpresa'
             )
 
             SET @sql = 'SELECT IIF(cc.codDoc = ''01'',''FE'',cc.codDoc)  as codDoc
@@ -99,7 +102,9 @@ BEGIN
                           ,@fechaInicio  DATETIME
                           ,@fechaFin     DATETIME
                           ,@codEstado VARCHAR(15)
-                          ,@codDoc    VARCHAR(10)'
+                          ,@codDoc    VARCHAR(10)
+                          ,@idEmpresa        INT'
+                          
 
 
             IF @ckCuotas = 1
@@ -149,7 +154,7 @@ BEGIN
             IF @codEstab IS NOT NULL 
                 BEGIN
                     SET @sql = @sql + 'AND cc.codEstab = @codEstab '
-                END 
+                END
 
             IF @ckFecha = 1
                 BEGIN
@@ -159,7 +164,12 @@ BEGIN
             IF @idCliente > 0 
                 BEGIN
                     SET @sql = @sql + 'AND cc.idCliente = @idCliente '
-                END 
+                END
+
+            IF @idEmpresa > 0
+                BEGIN
+                    SET @sql = @sql + 'AND cc.idEmpresa = @idEmpresa'
+                END
 
             IF @codEstado IS NOT NULL
                 BEGIN
@@ -195,6 +205,7 @@ BEGIN
                               ,@fechaFin    = @fechaFin
                               ,@codEstado   = @codEstado
                               ,@codDoc      = @codDoc
+                              ,@idEmpresa   = @idEmpresa
 
             RETURN 
 

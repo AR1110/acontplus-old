@@ -2,7 +2,7 @@ USE AcontPlus
 
 IF OBJECT_ID(N'v_CuentaPorCobrar', N'V')IS NOT NULL
 	DROP VIEW v_CuentaPorCobrar
-GO 
+GO
 
 CREATE VIEW v_CuentaPorCobrar AS (
 	SELECT cc.idCuentaPorCobrar
@@ -14,6 +14,7 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		  ,cc.idUsuario
 		  ,cc.idEstadoPago
 		  ,es.idEstablecimiento
+          ,idEmpresa                = ISNULL(cl.idEmpresa, 0)
 		  ,es.codEstab
 		  ,cc.codDoc
 		  ,telefonoEstablecimiento = es.telefono
@@ -34,11 +35,11 @@ CREATE VIEW v_CuentaPorCobrar AS (
           ,cc.diasMora
 		  ,usuario                 = us.nombreUsuario
 		  ,tiempoCredito           = tc.tipo
-          ,tc.descripcion as tipoTiempoCredito
+          ,tc.descripcion          AS tipoTiempoCredito
 		  ,estadoSri               = CASE WHEN cc.codDoc = '01' THEN (SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = cc.idDocumento AND de.codDoc = '01') 
 		                                                         ELSE 0 END     
           ,cc.mora
-          ,us.nombreUsuario 
+          ,us.nombreUsuario
 	FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
 	INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision  = cc.idPuntoEmision
 	INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab        = pt.codEstab

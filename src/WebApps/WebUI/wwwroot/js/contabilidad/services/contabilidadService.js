@@ -668,7 +668,7 @@
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
                 if (!response) throw response;
 
-                const { establecimientos, estadoPago, tipoDocumento } = response;
+                const { establecimientos, estadoPago, tipoDocumento, empresas } = response;
                 let dataToGroup = {
                     estabs: establecimientos, //Establecimientos con puntos de emision 
                 }
@@ -677,7 +677,8 @@
                 return {
                     estabs,
                     estadosDoc: estadoPago,
-                    tiposDoc: tipoDocumento
+                    tiposDoc: tipoDocumento,
+                    empresas: empresas
                 }
             })
         }
