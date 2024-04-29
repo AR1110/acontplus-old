@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using System.Text.Json;
-using TechnicalSupport.API.Entities;
 
 
 namespace TechnicalSupport.API.Data
@@ -14,13 +12,13 @@ namespace TechnicalSupport.API.Data
             if (!context.Categories.Any())
             {
                 var categoriesData = File.ReadAllText(path + @"/Data/SeedData/Categories.json");
-                var categories = JsonSerializer.Deserialize<List<Category>>(categoriesData);
+                var categories = JsonConvert.DeserializeObject<List<Category>>(categoriesData);
                 context.Categories.AddRange(categories);
             }
             if (!context.OrderStatuses.Any())
             {
                 var statusesData = File.ReadAllText(path + @"/Data/SeedData/OrderStatuses.json");
-                var statuses = JsonSerializer.Deserialize<List<OrderStatus>>(statusesData);
+                var statuses = JsonConvert.DeserializeObject<List<OrderStatus>>(statusesData);
                 context.OrderStatuses.AddRange(statuses);
             }
             if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();

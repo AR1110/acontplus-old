@@ -1,10 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Infrastructure.Repository;
-using Reports.Application.Services;
-using Reports.Core.Interfaces;
-using Services.Common.Logs;
-
-namespace Reports.API.Extensions
+﻿namespace Reports.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {

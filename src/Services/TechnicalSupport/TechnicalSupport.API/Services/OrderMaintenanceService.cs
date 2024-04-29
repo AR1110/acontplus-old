@@ -1,9 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Interfaces;
-namespace TechnicalSupport.API.Services
+﻿namespace TechnicalSupport.API.Services
 {
     public class OrderMaintenanceService : IOrderMaintenanceService
     {
@@ -31,7 +26,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                 return await _repository.SPExecuteAsync("TechnicalSupport.OrderMantenaince_Insert", parameters);
+                return await _repository.SPExecuteAsync("TechnicalSupport.OrderMantenaince_Insert", parameters);
             }
             catch (Exception ex)
             {

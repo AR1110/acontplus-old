@@ -1,9 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using TechnicalSupport.API.Interfaces;
-
-namespace TechnicalSupport.API.Services
+﻿namespace TechnicalSupport.API.Services
 {
     public class StatsService : IStatsService
     {
@@ -18,7 +13,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                return await _repository.SPExecuteAsync("TechnicalSupport.Stats_Get", parameters); 
+                return await _repository.SPExecuteAsync("TechnicalSupport.Stats_Get", parameters);
             }
             catch (Exception)
             {

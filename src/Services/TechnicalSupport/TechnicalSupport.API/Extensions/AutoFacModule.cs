@@ -1,10 +1,4 @@
-﻿using Autofac;
-using Common.Core.Interfaces;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
-using TechnicalSupport.API.Data;
-
-namespace TechnicalSupport.API.Extensions
+﻿namespace TechnicalSupport.API.Extensions
 {
     public class AutoFacModule : Module
     {

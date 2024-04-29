@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Services.Common.Logs;
-using TechnicalSupport.API.Data;
-
-namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers
 {
     public class OrderStatusController : BaseApiController
     {

@@ -1,5 +1,4 @@
-﻿using Common.Core.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TechnicalSupport.API.Entities
 {

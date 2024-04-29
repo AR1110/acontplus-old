@@ -1,13 +1,4 @@
-﻿using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-using TechnicalSupport.API.Entities;
-using TechnicalSupport.API.Interfaces;
-using TechnicalSupport.API.Services;
-
-namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers
 {
     public class SerieController : BaseApiController
     {

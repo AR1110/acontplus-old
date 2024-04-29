@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-
-namespace TechnicalSupport.API.Data
+﻿namespace TechnicalSupport.API.Data
 {
     //to execute migrations from api
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<TechnicalSupportContext>

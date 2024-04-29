@@ -1,13 +1,4 @@
-﻿using System.Data;
-using Asp.Versioning;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Reports.API.Dtos;
-using Reports.Core.Interfaces;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-
-namespace Reports.API.Controllers.v2
+﻿namespace Reports.API.Controllers.v2
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
@@ -33,7 +24,7 @@ namespace Reports.API.Controllers.v2
 
                 var dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
 
-                 
+
                 if (dsParams.Tables["ReportProps"].Rows.Count == 0)
                 {
                     _log.LogActivity($"Can't get report params \n ReportProps: {data.reportParams}");

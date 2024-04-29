@@ -1,16 +1,4 @@
-﻿using AutoMapper;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-using TechnicalSupport.API.Dtos;
-using TechnicalSupport.API.Entities;
-using TechnicalSupport.API.Interfaces;
-
-namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers
 {
     public class OrderController : BaseApiController
     {
@@ -64,7 +52,7 @@ namespace TechnicalSupport.API.Controllers
                 return BadRequest("Error on post");
             }
         }
-                
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] OrderDto order)
         {
@@ -111,7 +99,7 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                var response = await _orderService.DeleteAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id} });
+                var response = await _orderService.DeleteAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
                 return Ok(response);
             }
             catch (Exception ex)

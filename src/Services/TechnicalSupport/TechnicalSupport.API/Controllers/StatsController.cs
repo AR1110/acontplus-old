@@ -1,10 +1,4 @@
-﻿using Common.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-using TechnicalSupport.API.Interfaces;
-
-namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers
 {
     public class StatsController : BaseApiController
     {

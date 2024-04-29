@@ -1,7 +1,4 @@
-﻿using Common.Core.Models;
-using TechnicalSupport.API.Entities;
-
-namespace TechnicalSupport.API.Interfaces
+﻿namespace TechnicalSupport.API.Interfaces
 {
     public interface ICategoryService
     {

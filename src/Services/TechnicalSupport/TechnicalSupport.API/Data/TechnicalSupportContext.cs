@@ -1,8 +1,4 @@
 ﻿using System.Reflection;
-using Common.Core.Entities;
-using Common.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using TechnicalSupport.API.Entities;
 namespace TechnicalSupport.API.Data
 {
     public class TechnicalSupportContext : BaseContext
@@ -43,7 +39,7 @@ namespace TechnicalSupport.API.Data
                 foreach (var property in builder.Model.GetEntityTypes()
                     .SelectMany(t => t.GetProperties())
                     .Where(
-                           p => p.ClrType == typeof(string)   
+                           p => p.ClrType == typeof(string)
                         && p.GetColumnType() == null
                     ))
                 {

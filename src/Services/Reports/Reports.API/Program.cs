@@ -1,9 +1,5 @@
-﻿using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
-using Common.Core.Utils;
+﻿using Asp.Versioning.ApiExplorer;
 using Reports.API.Extensions;
-using Services.Common.Extensions;
-using Services.Common.Logs;
 
 namespace Reports.API
 {

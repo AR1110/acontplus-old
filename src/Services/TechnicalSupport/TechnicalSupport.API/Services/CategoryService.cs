@@ -1,12 +1,4 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Entities;
-using TechnicalSupport.API.Interfaces;
-
-namespace TechnicalSupport.API.Services
+﻿namespace TechnicalSupport.API.Services
 {
     public class CategoryService : ICategoryService
     {

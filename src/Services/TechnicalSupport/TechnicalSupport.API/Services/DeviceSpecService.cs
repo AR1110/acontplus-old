@@ -1,10 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Entities;
-using TechnicalSupport.API.Interfaces;
-
-namespace TechnicalSupport.API.Services
+﻿namespace TechnicalSupport.API.Services
 {
     public class DeviceSpecService : IDeviceSpecService
     {

@@ -1,13 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Entities;
-using TechnicalSupport.API.Interfaces;
-
-namespace TechnicalSupport.API.Services
+﻿namespace TechnicalSupport.API.Services
 {
     public class BrandService : IBrandService
     {
@@ -23,7 +14,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                if (await _context.Brands.AnyAsync(x=>x.Code == brand.Code))
+                if (await _context.Brands.AnyAsync(x => x.Code == brand.Code))
                 {
                     return new ApiResponse { code = "0", message = "Este código ya se encuentra registrado" };
                 }

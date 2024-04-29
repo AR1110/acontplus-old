@@ -1,16 +1,4 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.Core.Utils;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
-using Services.Common.Errors;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-
-using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Extensions;
-
-internal class Program
+﻿internal class Program
 {
     private static async Task Main(string[] args)
     {
@@ -61,7 +49,7 @@ internal class Program
 
         app.UseRouting();
 
- 
+
 
         app.UseAuthentication();
 

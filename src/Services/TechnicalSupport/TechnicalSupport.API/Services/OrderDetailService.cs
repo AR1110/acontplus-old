@@ -1,11 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.EntityFrameworkCore;
-using TechnicalSupport.API.Data;
-using TechnicalSupport.API.Interfaces;
-
-namespace TechnicalSupport.API.Services
+﻿namespace TechnicalSupport.API.Services
 {
     public class OrderDetailService : IOrderDetailService
     {
@@ -35,7 +28,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                if (await _context.OrderMaintenances.AnyAsync(x=>x.OrderDetailId == id && x.Deleted == null))
+                if (await _context.OrderMaintenances.AnyAsync(x => x.OrderDetailId == id && x.Deleted == null))
                 {
                     return new ApiResponse { code = "0", message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso" };
                 }
@@ -62,7 +55,7 @@ namespace TechnicalSupport.API.Services
         {
             try
             {
-                var parameters = new Dictionary<string, object> { 
+                var parameters = new Dictionary<string, object> {
                     { "userRoleId", data.UserRoleId },
                     { "id", id },
                     { "json", DataConverters.SerializeDictionary(data.Data) }

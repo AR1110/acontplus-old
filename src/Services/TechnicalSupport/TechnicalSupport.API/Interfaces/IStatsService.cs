@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-
-namespace TechnicalSupport.API.Interfaces
+﻿namespace TechnicalSupport.API.Interfaces
 {
     public interface IStatsService
     {
