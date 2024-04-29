@@ -4,7 +4,6 @@ import { TabulatorComponent } from '@core/components/tabulator/tabulator.compone
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
@@ -15,13 +14,14 @@ import { ProductSearchComponent } from '@modules/inventory/shared/components/pro
 import { ProductSearchPopupDirective } from '@modules/inventory/shared/directives/product/product-search-popup.directive';
 import { ConsolidacionBodega } from '@modules/inventory/shared/models/consolidacion-bodega.model';
 import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
+import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
 import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
 import { getCantidadStock, mergeProductStock } from '@modules/inventory/utils/product-stock.util';
 import { supportMaintenanceAdapter } from '@modules/mechanical/adapters/support-maintenance.adapter';
 import { ColSupportMaintenanceDetail, SupportMaintenanceDetail } from '@modules/mechanical/models/support-maintenance.model';
 import { SupportDetailService } from '@modules/mechanical/services/support-detail.service';
 import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
@@ -33,6 +33,7 @@ import Swal from 'sweetalert2';
   imports: [
     FormsModule,
     FontAwesomeModule,
+    NgbTooltipModule,
     TabulatorComponent,
     ProductSearchComponent,
     ProductSearchPopupDirective,
@@ -79,7 +80,8 @@ export class SupportMaintenanceModalComponent {
     total: 0
   }
   cloneData = {
-    bodegaId: 0
+    bodegaId: 0,
+    feeId: 0
   }
   details: SupportMaintenanceDetail[] = [];
   detailsDeleted: SupportMaintenanceDetail[] = [];
@@ -108,6 +110,8 @@ export class SupportMaintenanceModalComponent {
   productSearch = {
     textSearch: ''
   }
+
+  feeds: Tarifa[] = [];
 
 
   validatorNumber = ["required", "number"]
@@ -521,6 +525,7 @@ export class SupportMaintenanceModalComponent {
     showLoader()
     this.supportDetailSvc.getId(this.params.id).subscribe({
       next: (response) => {
+        console.log(response)
         hideLoader()
         this.data = {
           ...this.data,
@@ -528,6 +533,8 @@ export class SupportMaintenanceModalComponent {
         };
         this.estabs = response.estabs;
         this.taxPercents = response.tarifasImpuesto;
+        this.feeds = response.feeds;
+
         this.details = response.details;
         let dataEstab = this.estabs.find(e => e.idEstablecimiento === this.data.establecimientoId);
         if (dataEstab) {
@@ -537,6 +544,13 @@ export class SupportMaintenanceModalComponent {
             this.data.bodegaId = dataBodega.idBodega;
           }
         }
+
+        let dataTarifa = this.feeds.find((t) => t.predeterminada);
+        if (dataTarifa) {
+          this.data.feeId = dataTarifa.idTarifa;
+          this.cloneData.feeId = dataTarifa.idTarifa;
+        }
+
         this.drawImpuestoTotales()
       },
       error(err) {
@@ -698,6 +712,112 @@ export class SupportMaintenanceModalComponent {
         }
       })
 
+    }
+  }
+
+
+  async onChangeBodega() {
+    try {
+      let bodega = this.bodegas.find(
+        (item) => item.idBodega === this.data.bodegaId
+      );
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger ml-2',
+        },
+        buttonsStyling: false,
+      });
+
+      let { isConfirmed } = await swalWithBootstrapButtons.fire({
+        title: '<small>Cambiar Bodega</small>',
+        html: `<small>¿Esta seguro de cambiar la Bodega: <b>${bodega?.descripcion}</b>  en el detalle del Documento?</small>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: `Si, cambiar!`,
+        cancelButtonText: 'No, cancelar!',
+        reverseButtons: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      });
+
+      if (isConfirmed) {
+        this.cloneData.bodegaId = this.data.bodegaId;
+
+        if (this.details.length === 0) return;
+
+        this.setIdBodegaInDetalle();
+        this.resetCantidadToZeroAndRecalculateTotals();
+      } else {
+        this.data.bodegaId = this.cloneData.bodegaId;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  setIdBodegaInDetalle() {
+    for (let item of this.details) {
+      item.bodegaId = this.data.bodegaId;
+    }
+  }
+
+  resetCantidadToZeroAndRecalculateTotals() {
+    try {
+      for (let row of this.details) {
+        if (!row.llevaInventario) continue;
+
+        row.quantity = 0;
+
+        this.setCalculoTotales('quantity', row, undefined);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  async onChangeFee() {
+    try {
+      // if (!$scope.permisoComprobanteVenta.tarifa) {
+      //   $scope.data.idTarifa = $scope.dataClone.idTarifa;
+      //   tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+      //   return
+      // }
+
+      let tarifa = this.feeds.find(
+        (item) => item.idTarifa === this.data.feeId
+      );
+      let { isConfirmed } = await Swal.fire({
+        html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa?.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: `Sí, cambiar!`,
+        cancelButtonText: 'No, cancelar!',
+        allowOutsideClick: false,
+      });
+
+      if (isConfirmed) {
+        this.cloneData.feeId = this.data.feeId;
+
+        if (this.details.length === 0) return;
+
+        this.salesDetailCalculationSvc.setFeeInDetail({
+          generalFeeId: this.data.feeId,
+          items: this.details,
+          decimal: this.decimal,
+          columnDefs: this.columns,
+          tarifasImpuesto: this.taxPercents,
+        });
+
+        this.drawImpuestoTotales();
+      } else {
+        this.data.feeId = this.cloneData.feeId;
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 

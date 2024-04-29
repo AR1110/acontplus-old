@@ -15,6 +15,8 @@ import { SupportAddEditModalComponent } from './components/support-add-edit-moda
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
 import { Pagination } from '@shared/models/pagination.model';
 import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
+import { SharedService } from '@core/services/shared.service';
+import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
 
 
 @Component({
@@ -36,8 +38,9 @@ export class SupportPageComponent {
   modalSvc = inject(ModalService);
   supportSvc = inject(SupportService)
   tS = inject(ToasterService)
+  sharedSvc = inject(SharedService)
 
-  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs','estado'];
+  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs', 'estado'];
   pagination = new Pagination()
 
   dataSource: any[] = [];
@@ -149,8 +152,8 @@ export class SupportPageComponent {
     modalRef.componentInstance.params = {
       id
     }
-    modalRef.result.then(result=>{
-      if(result!==null && typeof result==='object'){
+    modalRef.result.then(result => {
+      if (result !== null && typeof result === 'object') {
         this.getSupports();
       }
     })
@@ -166,6 +169,26 @@ export class SupportPageComponent {
     }
   }
 
+
+  // For report
+  getReport(item: any) {
+    let format = 'pdf';
+    let dataParams = { supportId: item.id };
+    const params = {
+      reportParams: JSON.stringify({
+        hasParams: true,
+        codigo: MECHANICAL_CODE_REPORT.MS,
+        codEstab: item.codEstab,
+        format,
+        additionalParams: []
+      }),
+      hasService: false,
+      hasIdUsuarioRol: true,
+      dataParams: JSON.stringify(dataParams)
+    };
+
+    this.sharedSvc.getReport(params, 'pdf', true);
+  }
 
 
 

@@ -11,6 +11,7 @@
   onclick="select();"
   (keyup)="onKeyupSearch()"
   placeholder="..."
+  (keyup.enter)="onEnterKeyPressed($event)"
 />
 } @else {
 <div class="input-group">

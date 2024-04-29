@@ -31,26 +31,29 @@
 
       <div class="form-group">
         <label for="productSearch">Producto: </label>
-         <input
-         type="text"
-         name="productSearch"
-         id="productSearch"
-         class="form-control"
-         placeholder="Buscar producto..."
-         [(ngModel)]="productSearch.textSearch"
-         appProductSearchPopup
-         [searchSale]="true"
-         [textSearch]="productSearch.textSearch"
-         (onSelectedRow)="onResultSelectedProduct($event)"
-         >
+        <input type="text" name="productSearch" id="productSearch" class="form-control" placement="top"
+          ngbTooltip="Ingrese nombre o el código del producto y dale Enter" placeholder="Buscar producto..."
+          [(ngModel)]="productSearch.textSearch" appProductSearchPopup [searchSale]="true"
+          [textSearch]="productSearch.textSearch" (onSelectedRow)="onResultSelectedProduct($event)" autocomplete="off">
       </div>
     </div>
-    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
       <div class="form-group">
         <label for="bodega">Bodega: </label>
-        <select name="bodega" id="bodega" [(ngModel)]="data.bodegaId" class="form-select">
+        <select name="bodega" id="bodega" [(ngModel)]="data.bodegaId" class="form-select" (change)="onChangeBodega()">
           @for (item of bodegas; track $index) {
-            <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
+          <option [ngValue]="item.idBodega">{{item.descripcion}}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="feed">Tarifa: </label>
+        <select name="feed" id="feed" class="form-select" (change)="onChangeFee()" [(ngModel)]="data.feeId">
+          @for (item of feeds; track $index) {
+          <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
           }
         </select>
       </div>
@@ -63,33 +66,28 @@
         </button>
 
       </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <app-tabulator [columnNames]="columns" [tableData]="details" [options]="tabulatorOptions"
-        (cellEdited)="cellEdited($event)"></app-tabulator>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12"></div>
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="mt-2">
-        <app-draw-tax-total
-          [subTotalSinImpuesto]="data.subTotalSinImpuesto"
-          [htmlImpuestoTotal]="htmlImpuestoTotal"
-          [discount]="data.discount"
-          [htmlIvaTotal]="htmlIvaTotal"
-          [importeTotal]="data.total"
-        />
+    <div class="row">
+      <div class="col-12">
+        <app-tabulator [columnNames]="columns" [tableData]="details" [options]="tabulatorOptions"
+          (cellEdited)="cellEdited($event)"></app-tabulator>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12"></div>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+        <div class="mt-2">
+          <app-draw-tax-total [subTotalSinImpuesto]="data.subTotalSinImpuesto" [htmlImpuestoTotal]="htmlImpuestoTotal"
+            [discount]="data.discount" [htmlIvaTotal]="htmlIvaTotal" [importeTotal]="data.total" />
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div class="modal-footer">
+  <div class="modal-footer">
 
-  <button type="button" class="btn btn-dark" (click)="modal.close( )">
-    &times; Cerrar
-  </button>
-</div>
+    <button type="button" class="btn btn-dark" (click)="modal.close( )">
+      &times; Cerrar
+    </button>
+  </div>

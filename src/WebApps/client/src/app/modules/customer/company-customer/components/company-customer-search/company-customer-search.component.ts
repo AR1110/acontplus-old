@@ -27,6 +27,7 @@ export class CompanyCustomerSearchComponent {
   @Input() isSearchSimple = false;
   @Input() showActionsBtn = true;
   @Input() textSearch = '';
+  @Input() isSearchToExternal = false;
   private companyCustomerService = inject(CompanyCustomerService);
   private modalService = inject(ModalService);
 
@@ -105,4 +106,15 @@ export class CompanyCustomerSearchComponent {
       this.textSearch = customer.nombreFiscal;
     });
   }
+
+
+  onEnterKeyPressed(event:Event): void {
+    let ev = event as KeyboardEvent;
+    console.log(event)
+    if (!this.isSearchToExternal && !(ev.key === 'Enter')) return
+
+
+  }
+
+
 }

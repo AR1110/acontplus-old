@@ -1,7 +1,10 @@
 <div class="modal-body">
   <div class="input-group input-group-lg">
-    <input type="text" class="form-control"  
-      (keyup)="applyFilter($event)" [(ngModel)]="dataSearch.textSearch" placeholder="Ingrese descripción o código del producto">
+    <input type="text" class="form-control"
+      #txtSearch
+      (input)="applyFilter(txtSearch.value)"
+      [value]="dataSearch.textSearch"
+      placeholder="Ingrese descripción o código del producto">
     <span class="input-group-text" id="inputGroup-sizing-lg">Esc</span>
   </div>
 
@@ -22,7 +25,7 @@
 
       <ng-container [matColumnDef]="column.columnDef">
         <th mat-header-cell *matHeaderCellDef> {{column.header}} </th>
-        <td mat-cell *matCellDef="let element; let i = index" [ngClass]="{'highlighted': highlightRowIndex === i}"> 
+        <td mat-cell *matCellDef="let element; let i = index" [ngClass]="{'highlighted': highlightRowIndex === i}">
           @if (column.columnDef==="codigo") {
           {{(element.codigo.length > 12) ? ((element.codigo).slice(0, 12) + '...') : element.codigo}}
           }

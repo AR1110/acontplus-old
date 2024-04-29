@@ -45,9 +45,14 @@
           </button>
           <div ngbDropdownMenu>
 
+            <button ngbDropdownItem title="Reporte" (click)="getReport(element)">
+              <fa-icon [icon]="'file-arrow-down'"></fa-icon> Reporte
+            </button>
+
             <button ngbDropdownItem   title="Editar" (click)="openModal(element.id)">
               <fa-icon [icon]="'edit'"></fa-icon> Editar
             </button>
+
 
             <button ngbDropdownItem title="Editar" (click)="askToDelete(element.id)">
               <fa-icon [icon]="'trash-can'"></fa-icon> Anular

@@ -36,10 +36,14 @@ export class SupportDetailService {
           estabs: [] as GroupedEstab[],
           tarifasImpuesto: [],
           decimal: {} as any,
-          details: [] as SupportMaintenanceDetail[]
+          details: [] as SupportMaintenanceDetail[],
+
+          feeds: []
         }
         if (response !== null && typeof response === 'object') {
-          let { bodega, support, tipoIva, decimal, supportDetail } = response;
+          let { bodega, support, tipoIva, decimal, supportDetail,
+            tarifas
+          } = response;
           let { date, ...dataSupport } = support[0]
           dataSupport.fechaEmision = formatDate(dataSupport.date)
           result.data = dataSupport;
@@ -51,6 +55,8 @@ export class SupportDetailService {
           result.tarifasImpuesto = tipoIva;
 
           result.decimal = decimal[0];
+
+          result.feeds = tarifas;
 
 
           result.details = supportDetail.map((item: any) => {

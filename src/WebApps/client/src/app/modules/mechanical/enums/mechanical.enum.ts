@@ -5,6 +5,23 @@ export enum MECHANICAL_PATHS {
   INSPECTION = 'Inspection/'
 }
 
+
+export const enum MECHANICAL_CODE_REPORT {
+
+  /**
+   * Reporte Soporte
+   * @type {string}
+   */
+  MS = 'MS',
+
+  /**
+  * Reporte Mechanical Inspection
+  * @type {string}
+  */
+  MI ='MI'
+}
+
+
 export enum VEHICLE_PART_TYPE_CODE {
   // Motor
   MT='MT',

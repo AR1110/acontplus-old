@@ -14,14 +14,12 @@
       <li [ngbNavItem]="1">
         <button ngbNavLink>Soporte</button>
         <ng-template ngbNavContent>
-          {{active}}
           <app-support-page [status]="active" />
         </ng-template>
       </li>
       <li [ngbNavItem]="2">
         <button ngbNavLink>En proceso</button>
         <ng-template ngbNavContent>
-          {{active}}
             <app-support-page [status]="active" />
           <!-- <app-inspection-page /> -->
         </ng-template>

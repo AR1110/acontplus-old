@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatRow, MatTableModule } from '@angular/material/table';
 import { ProductService } from '@modules/inventory/services/product.service';
-import { NgbActiveModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap'; 
+import { NgbActiveModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { map } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { isValidField } from '@core/utils/utils';
@@ -76,7 +76,10 @@ export class ProductSearchPopupComponent {
 
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
-    if (isValidField(this.dataSearch.textSearch)) {
+
+    if (isValidField(this.params.textSearch)) {
+      this.dataSearch.textSearch = this.params.textSearch
+
       this.search()
       return
     }
@@ -96,8 +99,9 @@ export class ProductSearchPopupComponent {
     this.displayedColumns = this.columns.map(x => x.columnDef);
   }
 
-  applyFilter($event?: any) {
-    if ($event && (["ArrowDown", "ArrowUp", "Enter", 'ArrowLeft', 'ArrowRight'].includes($event.key))) return
+  applyFilter(value: string) {
+    this.dataSearch.textSearch = value;
+    // if ($event && (["ArrowDown", "ArrowUp", "Enter", 'ArrowLeft', 'ArrowRight'].includes($event.key))) return
 
     if (!isValidField(this.dataSearch.textSearch.trim())) return
 
@@ -226,11 +230,11 @@ export class ProductSearchPopupComponent {
    * @param event
    */
   @HostListener('keydown.arrowdown', ['$event'])
-  onArrowDown(event: KeyboardEvent): void { 
-    if (this.overlayHasFocus && this.highlightRowIndex < (this.dataSource.length - 1)) { 
-     
-        this.highlightRowIndex += 1; 
-       
+  onArrowDown(event: KeyboardEvent): void {
+    if (this.overlayHasFocus && this.highlightRowIndex < (this.dataSource.length - 1)) {
+
+      this.highlightRowIndex += 1;
+
       this.onHighlightedRowChange(event)
     }
   }
@@ -244,7 +248,7 @@ export class ProductSearchPopupComponent {
 
     if (this.overlayHasFocus && this.highlightRowIndex > 0) {
       this.highlightRowIndex -= 1;
-      this.onHighlightedRowChange(event) 
+      this.onHighlightedRowChange(event)
     }
   }
 
@@ -324,7 +328,7 @@ export class ProductSearchPopupComponent {
 
   openOverlay(): void {
     this.isOverlayOpen = true;
-   // this.highlightRowIndex = -1;
+    // this.highlightRowIndex = -1;
   }
 
   closeOverlay(): void {
