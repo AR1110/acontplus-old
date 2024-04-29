@@ -19,6 +19,7 @@ BEGIN
     DECLARE @tblDetails AS TABLE (
         id INT NOT NULL,
         obs VARCHAR(300) NOT NULL,
+        serie VARCHAR(150),
         warranty NUMERIC(18,5)
     )
     DECLARE @userId INT,
@@ -26,10 +27,12 @@ BEGIN
         @orderId INT,
         @customerCompanyId INT
 	BEGIN TRY
-        SELECT @orderId = @orderId, @deviceId = DeviceId FROM TechnicalSupport.OrderDetail WITH (NOLOCK) WHERE Id = @id
-        SET @customerCompanyId = (SELECT CustomerCompanyId FROM TechnicalSupport.[Order] WHERE Id = @orderId)
-        INSERT INTO @tblDetails(id, obs, warranty)
-        SELECT id, obs, warranty FROM OPENJSON(@json) WITH (id INT, obs VARCHAR(300), warranty NUMERIC(18,5))
+        SELECT @orderId = orderId, @deviceId = DeviceId FROM TechnicalSupport.OrderDetail WITH (NOLOCK) WHERE Id = @id
+        SET @customerCompanyId = (SELECT CustomerCompanyId FROM TechnicalSupport.[Order] WITH (NOLOCK) WHERE Id = @orderId)
+
+        INSERT INTO @tblDetails(id, obs, serie, warranty)
+        SELECT id, obs, deviceSerie, deviceWarranty FROM OPENJSON(@json) WITH (id INT, obs VARCHAR(300), deviceSerie VARCHAR(100), deviceWarranty NUMERIC(18,5))
+
 		SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
         BEGIN TRAN
 			UPDATE od SET 
@@ -39,7 +42,10 @@ BEGIN
             FROM TechnicalSupport.OrderDetail od WITH (ROWLOCK) 
                 INNER JOIN @tblDetails td ON od.Id = td.id
 
-            UPDATE  TechnicalSupport.DeviceCustomer SET Warranty = (SELECT warranty FROM @tblDetails) WHERE DeviceId = @deviceId AND CustomerCompanyId = @customerCompanyId
+            UPDATE  TechnicalSupport.DeviceCustomer SET Warranty = (SELECT warranty FROM @tblDetails)
+                ,SerialNumber = (SELECT serie FROM @tblDetails)
+            WHERE DeviceId = @deviceId 
+                AND CustomerCompanyId = @customerCompanyId
 		COMMIT TRAN
         SELECT '1' code, 'Actualizado correctamente' as 'message'
 	END TRY

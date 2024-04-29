@@ -108,12 +108,13 @@ BEGIN
             ,c.nombreFiscal             AS razonSocialComprador
             ,e.codEstab
             ,totalRecords       = COUNT(*) OVER()
-            ,userName = u.nombreUsuario 
+            ,ISNULL(tor.AssignedUserId, 0) AssignedUserId 
+            ,userName = IIF(sc.Code = 'PA', sc.[Name], u.nombreUsuario) 
         FROM TechnicalSupport.[Order] tor WITH (NOLOCK)
         INNER JOIN Cliente c               WITH (NOLOCK)         ON c.idCliente = tor.CustomerCompanyId
         INNER JOIN TechnicalSupport.OrderStatus sc WITH (NOLOCK)  ON sc.Id = tor.OrderStatusId
         INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON tor.EstablecimientoId = e.idEstablecimiento
-        INNER JOIN dbo.Usuario u WITH(NOLOCK) ON u.idUsuario = tor.Userid
+        LEFT JOIN dbo.Usuario u WITH(NOLOCK) ON u.idUsuario = tor.AssignedUserId
         WHERE e.ruc = @rucEmpresa AND  sc.Code = @orderStatusCode 
             AND tor.Deleted IS NULL
         ORDER BY tor.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY   
