@@ -38,7 +38,6 @@ namespace TechnicalSupport.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] OrderDto orderDto)
         {
@@ -91,6 +90,20 @@ namespace TechnicalSupport.API.Controllers
             {
                 _log.LogActivity("Error on put: " + ex.ToString());
                 return BadRequest("Error on put");
+            }
+        }
+        [HttpPut("Delivery/{id}")]
+        public async Task<IActionResult> Delivery(int id)
+        {
+            try
+            {
+                var response = await _orderService.DeliveryAsync(User.GetUserId(), id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on delivery: " + ex.ToString());
+                return BadRequest(ex.Message);
             }
         }
         [HttpDelete("{id}")]

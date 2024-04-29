@@ -1,6 +1,7 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
+using Microsoft.EntityFrameworkCore;
 using TechnicalSupport.API.Data;
 using TechnicalSupport.API.Interfaces;
 namespace TechnicalSupport.API.Services
@@ -15,6 +16,25 @@ namespace TechnicalSupport.API.Services
             _context = context;
             _repository = repository;
         }
+        public async Task<ApiResponse> DeliveryAsync(int userId, int id)
+        {
+            try
+            {
+                var statuses = await _context.OrderStatuses.Where(x => x.Code == "E").ToListAsync();
+                var orderFound = await _context.Orders.FindAsync(id);
+                orderFound.OrderStatusId = statuses.FirstOrDefault().Id;
+                orderFound.UserId = userId;
+                _context.Update(orderFound);
+                await _context.SaveChangesAsync();
+                return new ApiResponse { code = "1", message = "Entregada correctamente" };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
             try
@@ -71,5 +91,6 @@ namespace TechnicalSupport.API.Services
                 throw;
             }
         }
+
     }
 }
