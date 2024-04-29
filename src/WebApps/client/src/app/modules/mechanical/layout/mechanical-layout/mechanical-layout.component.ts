@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { InspectionPageComponent } from '@modules/mechanical/pages/inspection-page/inspection-page.component';
+import { MechanicalDashboardComponent } from '@modules/mechanical/pages/mechanical-dashboard/mechanical-dashboard.component';
 import { SupportPageComponent } from '@modules/mechanical/pages/support-page/support-page.component';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -12,6 +13,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     NgbNavModule,
     BreadcrumbComponent,
+    MechanicalDashboardComponent,
     SupportPageComponent,
     InspectionPageComponent
   ],

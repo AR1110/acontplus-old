@@ -104,6 +104,36 @@ export class SupportService {
     )
   }
 
+  getDashboard(){
+    let json = JSON.stringify({
+      tipo: 6
+    })
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response: any) => {
+
+        let result = {
+          data: {
+            quantitySupport: 0,
+            quantityVehicleCompany: 0,
+            quantityInspection:0,
+          },
+          barchart: [] as any
+        }
+        if(response!==null && typeof response==='object'){
+
+          let quantity = response.quantity[0];
+          result.data = {
+            quantitySupport: quantity.quantitySupport,
+            quantityVehicleCompany: quantity.quantityVehicleCompany,
+            quantityInspection: quantity.quantityInspection,
+          }
+          result.barchart = response.barchart;
+        }
+        return result;
+      })
+    )
+  }
+
   searchCustomerVehicle<T extends { textSearch: string }>(obj: T) {
     let json = JSON.stringify({
       tipo: 4,

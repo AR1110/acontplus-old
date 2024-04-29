@@ -81,6 +81,13 @@
           </td>
         </ng-container>
 
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell text-center" colspan="8">
+            Sin registro
+          </td>
+        </tr>
+
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
