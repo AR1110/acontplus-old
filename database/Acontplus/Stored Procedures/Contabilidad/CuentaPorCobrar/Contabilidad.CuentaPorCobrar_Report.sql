@@ -168,7 +168,7 @@ BEGIN
 
             IF @idEmpresa > 0
                 BEGIN
-                    SET @sql = @sql + 'AND cc.idEmpresa = @idEmpresa'
+                    SET @sql = @sql + 'AND cc.idEmpresa = @idEmpresa '
                 END
 
             IF @codEstado IS NOT NULL
