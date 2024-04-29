@@ -18,8 +18,8 @@ import swal from 'sweetalert2';
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 import { OrderModalComponent } from '../order-modal/order-modal.component';
 import { MatTableModule } from '@angular/material/table';
-import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { Pagination } from '@shared/models/pagination.model';
+import { OrderListFiltersComponent } from './order-list-filters/order-list-filters.component';
 
 @Component({
   selector: 'app-order-list',
@@ -29,6 +29,7 @@ import { Pagination } from '@shared/models/pagination.model';
     FontAwesomeModule,
     NgbDropdownModule,
     NgbPaginationModule,
+    OrderListFiltersComponent,
     PrimaryStatusPipe,
   ],
   templateUrl: './order-list.component.html',
