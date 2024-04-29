@@ -59,6 +59,14 @@
           <DataField>direction</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="orderStatus">
+          <DataField>orderStatus</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="updateDate">
+          <DataField>updateDate</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="orderDetails">
@@ -160,7 +168,7 @@
             </Paragraphs>
             <rd:DefaultName>razonSocial</rd:DefaultName>
             <Top>11.43mm</Top>
-            <Left>19.14395mm</Left>
+            <Left>19.14405mm</Left>
             <Height>8.96333mm</Height>
             <Width>170.72108mm</Width>
             <Style>
@@ -179,7 +187,7 @@
             <MIMEType>=Parameters!mimeType.Value</MIMEType>
             <Sizing>FitProportional</Sizing>
             <Top>0.03528cm</Top>
-            <Left>0.00001cm</Left>
+            <Left>0.00002cm</Left>
             <Height>2.91817cm</Height>
             <Width>3.95533cm</Width>
             <ZIndex>1</ZIndex>
@@ -217,7 +225,7 @@
             </Paragraphs>
             <rd:DefaultName>serie</rd:DefaultName>
             <Top>0.07056cm</Top>
-            <Left>1.9144cm</Left>
+            <Left>1.91441cm</Left>
             <Height>1.03717cm</Height>
             <Width>17.07211cm</Width>
             <ZIndex>2</ZIndex>
@@ -251,7 +259,7 @@
             </Paragraphs>
             <rd:DefaultName>direction</rd:DefaultName>
             <Top>2.07461cm</Top>
-            <Left>1.9144cm</Left>
+            <Left>1.91441cm</Left>
             <Height>0.87884cm</Height>
             <Width>17.07211cm</Width>
             <ZIndex>3</ZIndex>
@@ -284,8 +292,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>obs</rd:DefaultName>
-            <Top>11.87308cm</Top>
-            <Left>0.00001cm</Left>
+            <Top>13.75691cm</Top>
+            <Left>0.00002cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>4</ZIndex>
@@ -317,8 +325,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>obs</rd:DefaultName>
-            <Top>12.60008cm</Top>
-            <Left>0.00001cm</Left>
+            <Top>14.48391cm</Top>
+            <Left>0.00002cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>5</ZIndex>
@@ -334,7 +342,7 @@
           </Textbox>
           <Line Name="Line2">
             <Top>3.48403cm</Top>
-            <Left>0cm</Left>
+            <Left>0.00001cm</Left>
             <Height>0cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>6</ZIndex>
@@ -377,7 +385,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value xml:space="preserve">         </Value>
+                    <Value xml:space="preserve">               </Value>
                     <Style>
                       <FontFamily>Segoe UI Light</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -395,8 +403,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>customer</rd:DefaultName>
-            <Top>5.07181cm</Top>
-            <Left>0.00001cm</Left>
+            <Top>5.10709cm</Top>
+            <Left>0.00002cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>7</ZIndex>
@@ -425,7 +433,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value xml:space="preserve">      </Value>
+                    <Value xml:space="preserve">            </Value>
                     <Style>
                       <FontFamily>Segoe UI Light</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -444,7 +452,7 @@
             </Paragraphs>
             <rd:DefaultName>customerPhone</rd:DefaultName>
             <Top>5.70709cm</Top>
-            <Left>0.00001cm</Left>
+            <Left>0.00002cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>8</ZIndex>
@@ -473,7 +481,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value xml:space="preserve">     </Value>
+                    <Value xml:space="preserve">           </Value>
                     <Style>
                       <FontFamily>Segoe UI Light</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -491,8 +499,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>customerAddress</rd:DefaultName>
-            <Top>6.30709cm</Top>
-            <Left>0.00001cm</Left>
+            <Top>6.34237cm</Top>
+            <Left>0.00002cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>9</ZIndex>
@@ -508,7 +516,7 @@
           </Textbox>
           <Line Name="Line3">
             <Top>4.3307cm</Top>
-            <Left>0cm</Left>
+            <Left>0.00001cm</Left>
             <Height>0cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>10</ZIndex>
@@ -555,7 +563,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox13</rd:DefaultName>
             <Top>3.58959cm</Top>
-            <Left>0cm</Left>
+            <Left>0.00001cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>11</ZIndex>
@@ -584,7 +592,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value xml:space="preserve">              </Value>
+                    <Value xml:space="preserve">                    </Value>
                     <Style>
                       <FontFamily>Segoe UI Light</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -602,8 +610,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>customerCardID</rd:DefaultName>
-            <Top>4.36598cm</Top>
-            <Left>0.00001cm</Left>
+            <Top>4.40126cm</Top>
+            <Left>0.00002cm</Left>
             <Height>0.6cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>12</ZIndex>
@@ -1677,8 +1685,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>orderDetails</DataSetName>
-            <Top>7.08237cm</Top>
-            <Left>0cm</Left>
+            <Top>8.9662cm</Top>
+            <Left>0.00001cm</Left>
             <Height>4.57284cm</Height>
             <Width>18.9865cm</Width>
             <ZIndex>13</ZIndex>
@@ -1688,15 +1696,106 @@
               </Border>
             </Style>
           </Tablix>
+          <Textbox Name="customerAddress2">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Fecha Entrega:    </Value>
+                    <Style>
+                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!updateDate.Value, "order")</Value>
+                    <Style>
+                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>customerAddress</rd:DefaultName>
+            <Top>6.97765cm</Top>
+            <Left>0.00002cm</Left>
+            <Height>0.6cm</Height>
+            <Width>18.9865cm</Width>
+            <ZIndex>14</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="customerAddress3">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Estado:</Value>
+                    <Style>
+                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">               </Value>
+                    <Style>
+                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!orderStatus.Value, "order")</Value>
+                    <Style>
+                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>customerAddress</rd:DefaultName>
+            <Top>7.68348cm</Top>
+            <Left>0.00002cm</Left>
+            <Height>0.6cm</Height>
+            <Width>18.9865cm</Width>
+            <ZIndex>15</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>132.9153mm</Height>
+        <Height>154.01413mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>189.8651mm</Width>
+      <Width>189.8652mm</Width>
       <Page>
         <PageFooter>
           <Height>6.35mm</Height>
@@ -1719,7 +1818,7 @@
               </Paragraphs>
               <rd:DefaultName>username</rd:DefaultName>
               <Top>0.035cm</Top>
-              <Left>0.00001cm</Left>
+              <Left>0.00002cm</Left>
               <Height>0.6cm</Height>
               <Width>5.20933cm</Width>
               <Style>
@@ -1750,7 +1849,7 @@
               </Paragraphs>
               <rd:DefaultName>ExecutionTime</rd:DefaultName>
               <Top>0mm</Top>
-              <Left>135.04337mm</Left>
+              <Left>135.04347mm</Left>
               <Height>6.35mm</Height>
               <Width>50.8mm</Width>
               <ZIndex>1</ZIndex>
