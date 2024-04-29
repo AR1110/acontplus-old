@@ -75,7 +75,7 @@ export class OrderModalComponent {
     {
       title: 'Garantia (si aplica)',
       field: 'deviceWarranty',
-      width: 150,
+      width: 130,
       validator: ['numeric', 'min:0'],
       editor: true,
     },
@@ -95,6 +95,7 @@ export class OrderModalComponent {
         editBtn.type = 'button';
         editBtn.innerHTML = `${icon(faSave).html.join('')}`;
         editBtn.classList.add('btn', 'btn-success', 'btn-sm');
+        editBtn.title = 'Guardar Detalle';
         editBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
           this.editDetail(rowData);
@@ -105,6 +106,7 @@ export class OrderModalComponent {
         delBtn.type = 'button';
         delBtn.innerHTML = `${icon(faTrashAlt).html.join('')}`;
         delBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-r-5');
+        delBtn.title = 'Eliminar detalle';
         delBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
           console.log(rowData);

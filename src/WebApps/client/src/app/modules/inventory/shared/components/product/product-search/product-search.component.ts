@@ -1,18 +1,31 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { startWith, map, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import {
+  startWith,
+  map,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+} from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ProductService } from '@modules/inventory/services/product.service';
 import { MatTableModule } from '@angular/material/table';
 import { ProductSearch } from '@modules/inventory/models/product.model';
 
-
 type ProductSearchProps = {
   isSearchSimple?: boolean;
   isSearchAdvanced?: boolean;
-  nameProduct?: string
+  nameProduct?: string;
+  clearInput?: boolean;
 };
 
 /**
@@ -22,21 +35,28 @@ type ProductSearchProps = {
   selector: 'app-product-search',
   templateUrl: './product-search.component.html',
   standalone: true,
-  imports: [FormsModule, MatAutocompleteModule, ReactiveFormsModule, MatTableModule, AsyncPipe],
-  styleUrl: './product-search.component.css'
+  imports: [
+    FormsModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    AsyncPipe,
+  ],
+  styleUrl: './product-search.component.css',
 })
 export class ProductSearchComponent {
   @Input() props: ProductSearchProps = {
     isSearchSimple: false,
     isSearchAdvanced: false,
-    nameProduct: ''
-  }
-  @Input() textSearch = ''
+    nameProduct: '',
+    clearInput: false,
+  };
+  @Input() textSearch = '';
 
   @Output() onProductSelected = new EventEmitter<{ data: any }>();
   @Output() emptyInput = new EventEmitter();
 
-  private productSvc = inject(ProductService)
+  private productSvc = inject(ProductService);
   control = new FormControl('');
   filteredProducts!: Observable<any[]>;
 
@@ -319,13 +339,13 @@ export class ProductSearchComponent {
       startWith(''),
       debounceTime(400),
       distinctUntilChanged(),
-      switchMap(val => {
+      switchMap((val) => {
         if (val && val.length > 2) {
-          return this._filter(val)
+          return this._filter(val);
           // return this.products as any[]
         }
-        this.emptyInput.emit({ data: {} })
-        return []
+        this.emptyInput.emit({ data: {} });
+        return [];
       })
     );
   }
@@ -333,11 +353,11 @@ export class ProductSearchComponent {
   private _filter(value: string) {
     const filterValue = this._normalizeValue(value);
     return this.productSvc.search({ textSearch: value }).pipe(
-      map(response => {
-        console.log(response)
+      map((response) => {
+        console.log(response);
         return response;
       })
-    )
+    );
   }
 
   private _normalizeValue(value: string): string {
@@ -345,6 +365,10 @@ export class ProductSearchComponent {
   }
 
   onSelectionChange(product: ProductSearch) {
+    console.log(this.props);
+    if (this.props.clearInput) {
+      this.control.patchValue('');
+    }
     this.onProductSelected.emit({ data: product });
   }
 }

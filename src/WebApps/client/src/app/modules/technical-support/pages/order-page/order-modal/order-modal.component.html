@@ -56,7 +56,7 @@
             class="form-control border-select"
             formControlName="fechaEmision"
             (change)="onChangeDate($event)"
-            [value]="orderForm.get('fechaEmision')?.value | date:'yyyy-MM-dd'"
+            [value]="orderForm.get('fechaEmision')?.value | date : 'yyyy-MM-dd'"
             required
           />
         </div>
@@ -84,7 +84,8 @@
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="customerSearch">Cliente: </label>
-          <app-company-customer-search [textSearch]="customerBusinessName"
+          <app-company-customer-search
+            [textSearch]="customerBusinessName"
             (onCustomerSelected)="onCustomerSelected($event)"
           ></app-company-customer-search>
         </div>
@@ -123,7 +124,7 @@
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <label for="observación">Observación:</label>
+          <label for="observación">Observación General:</label>
           <textarea
             id="obs"
             formControlName="obs"

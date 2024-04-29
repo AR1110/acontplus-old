@@ -27,32 +27,35 @@ export class OrderService {
       .delete(`${this.url}${id}`)
       .pipe(map((response) => response));
   }
+  delivery(id: number) {
+    return this.http
+      .put(`${this.url}delivery/${id}`, null)
+      .pipe(map((response) => response));
+  }
 
-  getAll<T>(obj: T){
+  getAll<T>(obj: T) {
     let json = JSON.stringify({
       ...obj,
       tipo: 2,
     });
-    return this.http
-      .get(`${this.url}?json=${json}`)
-      .pipe(
-        map(response=>{
-          let orders = [];
-          if(isApiResponse(response)){
-            if(response.code==="1"){
-              let mainData = JSON.parse(response.payload as string);
+    return this.http.get(`${this.url}?json=${json}`).pipe(
+      map((response) => {
+        let orders = [];
+        if (isApiResponse(response)) {
+          if (response.code === '1') {
+            let mainData = JSON.parse(response.payload as string);
 
-              orders = mainData.orders.map((item:any, index:number)=>{
-                return {
-                  ...item,
-                  position: index + 1
-                }
-              })
-            }
+            orders = mainData.orders.map((item: any, index: number) => {
+              return {
+                ...item,
+                position: index + 1,
+              };
+            });
           }
-          return orders;
-        })
-      );
+        }
+        return orders;
+      })
+    );
   }
 
   getId(id: number) {
@@ -124,11 +127,13 @@ export class OrderService {
                   let precioTotalSinImpuesto =
                     restItem.price * restItem.quantity - restItem.discount;
                   let subTotalSinDescuento = restItem.price * restItem.quantity;
-                  let percentageDiscount = subTotalSinDescuento > 0 ?
-                    pricingCalculateUtil.getValueDiscountPercentage(
-                      subTotalSinDescuento,
-                      restItem.discount
-                    ) : 0
+                  let percentageDiscount =
+                    subTotalSinDescuento > 0
+                      ? pricingCalculateUtil.getValueDiscountPercentage(
+                          subTotalSinDescuento,
+                          restItem.discount
+                        )
+                      : 0;
 
                   let obj: OrderMaintenance = {
                     id: restItem.id,
@@ -160,7 +165,7 @@ export class OrderService {
                     costoFraccionado: dataMedida.precioCostoFraccionado || 0,
                     conversion: dataMedida.conversion || 1,
                     consolidacionesBodega: consolidacionesBodega,
-                    llevaInventario: restItem.llevaInventario
+                    llevaInventario: restItem.llevaInventario,
                   };
                   return obj;
                 }

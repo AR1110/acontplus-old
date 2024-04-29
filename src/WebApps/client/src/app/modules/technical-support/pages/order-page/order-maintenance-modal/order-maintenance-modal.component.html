@@ -110,7 +110,7 @@
     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
       <div class="form-group">
         <label for="obs-detalle-reparacion"
-          >Solicitud: <span class="text-danger">*</span></label
+          >Solicitud de Reparación: <span class="text-danger">*</span></label
         >
         <input
           type="text"
@@ -133,7 +133,8 @@
             <app-product-search
               (onProductSelected)="onProductSelected($event)"
               [props]="{
-                isSearchSimple: true
+                isSearchSimple: true,
+                clearInput: true
               }"
             />
           </div>

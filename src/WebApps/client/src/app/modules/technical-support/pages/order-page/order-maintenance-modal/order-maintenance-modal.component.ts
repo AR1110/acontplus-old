@@ -246,14 +246,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
         let rowDataMain = cell.getRow().getData();
 
         //create edit button
-        let editBtn = document.createElement('button');
-        editBtn.type = 'button';
-        editBtn.innerHTML = `${icon(faEdit).html.join('')}`;
-        editBtn.classList.add('btn', 'btn-success', 'btn-xs');
-        editBtn.addEventListener('click', () => {
-          let rowData = cell.getRow().getData();
-          this.openModalProductEdit(rowData);
-        });
+        // let editBtn = document.createElement('button');
+        // editBtn.type = 'button';
+        // editBtn.innerHTML = `${icon(faEdit).html.join('')}`;
+        // editBtn.classList.add('btn', 'btn-success', 'btn-xs');
+        // editBtn.addEventListener('click', () => {
+        //   let rowData = cell.getRow().getData();
+        //   this.openModalProductEdit(rowData);
+        // });
 
         //create delete button
         let delBtn = document.createElement('button');
@@ -277,7 +277,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
         let buttonHolder = document.createElement('span');
         buttonHolder.appendChild(delBtn);
-        buttonHolder.appendChild(editBtn);
+        // buttonHolder.appendChild(editBtn);
 
         if (rowDataMain.llevaInventario) {
           buttonHolder.appendChild(kardexBtn);
