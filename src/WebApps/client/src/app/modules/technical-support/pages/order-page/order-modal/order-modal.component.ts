@@ -156,6 +156,12 @@ export class OrderModalComponent {
   });
 
   addDetail(device: any) {
+    if (this.orderDetails.some((x) => x.deviceId == device.id)) {
+      return this.tS.toastr({
+        type: 'warning',
+        message: 'Este equipo ya se encuentra agregado en el detalle',
+      });
+    }
     let deviceToAdd: OrderDetail = {
       id: 0,
       deviceId: 0,

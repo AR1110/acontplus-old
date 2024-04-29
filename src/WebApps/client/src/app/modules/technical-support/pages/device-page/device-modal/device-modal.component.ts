@@ -381,13 +381,18 @@ export class DeviceModalComponent implements OnInit {
   }
 
   addSpecTypeDevice() {
+    let specName = this.specTypeForm.get('specName')?.value || '';
+    if (!specName || !(specName.length >= 3)) {
+      return this.tS.toastr({
+        type: 'warning',
+        message: 'Ingrese una categoría valida!',
+      });
+    }
     this.deviceSpec.push({
       uuid: uuidv4(),
-      name: this.specTypeForm.get('specName')?.value || '',
+      name: specName,
       specs: [],
     });
-
-    // Clear input
     this.specTypeForm.patchValue({ specName: '' });
   }
 
@@ -410,6 +415,10 @@ export class DeviceModalComponent implements OnInit {
     setTimeout(() => {
       this.inputNameSpec.nativeElement.focus();
     }, 0);
+  }
+
+  removeSpecCategory(uuid: string) {
+    this.deviceSpec = this.deviceSpec.filter((x) => x.uuid !== uuid);
   }
 
   removeSpec(index: any, uuid: string) {
