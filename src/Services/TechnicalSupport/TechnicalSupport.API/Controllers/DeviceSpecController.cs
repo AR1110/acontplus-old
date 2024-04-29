@@ -1,8 +1,6 @@
 ﻿namespace TechnicalSupport.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DeviceSpecController : ControllerBase
+    public class DeviceSpecController : BaseApiController
     {
         private IDeviceSpecService _service;
         private readonly ICustomLogger _log;
