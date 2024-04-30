@@ -7,7 +7,7 @@ namespace TechnicalSupport.API.Entities
     public class Category : BaseEntity
     {
         [Required]
-        [MaxLength(8)]
+        [MaxLength(10)]
         public string Code { get; set; }
 
         [Required]

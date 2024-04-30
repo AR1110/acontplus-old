@@ -19,22 +19,28 @@ import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order
 import { OrderModalComponent } from '../order-modal/order-modal.component';
 import { MatTableModule } from '@angular/material/table';
 import { Pagination } from '@shared/models/pagination.model';
-import { OrderListFiltersComponent } from './order-list-filters/order-list-filters.component';
 import { OrderDocumentComponent } from '../order-document/order-document.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { formatDateMoment } from '@core/utils/format-date-moment';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
   imports: [
-    MatTableModule,
+    DateRangeSelectionComponent,
     FontAwesomeModule,
+    FormsModule,
+    MatTableModule,
     NgbDropdownModule,
     NgbPaginationModule,
-    OrderListFiltersComponent,
     PrimaryStatusPipe,
   ],
   templateUrl: './order-list.component.html',
-  styles: ``,
+  styles: `.row {
+    display: flex;
+    align-items: center;
+  }`,
 })
 export class OrderListComponent implements OnInit {
   @Input() orderStatusCode: any = '';
@@ -42,12 +48,12 @@ export class OrderListComponent implements OnInit {
   private orderService = inject(OrderService);
   private sharedService = inject(SharedService);
   private tS = inject(ToasterService);
-
-  pagination = new Pagination();
-
-  orders: any = [];
-  recordsQuantity = [5, 10, 25, 50, 100];
-
+  dataSearch = {
+    assignedUserId: 0,
+    customer: '',
+    endDate: formatDateMoment(new Date()),
+    startDate: formatDateMoment(new Date()),
+  };
   displayedColumns: string[] = [
     'position',
     'op',
@@ -60,6 +66,9 @@ export class OrderListComponent implements OnInit {
     'user',
     'status',
   ];
+  orders: any = [];
+  pagination = new Pagination();
+  startDate: string = '';
 
   async askToDelete(item: any) {
     const result = await swal.fire({
@@ -130,35 +139,16 @@ export class OrderListComponent implements OnInit {
     }
   }
 
-  onEdit(item: any) {
-    const modalRef = this.modalService.openModalCustom(OrderModalComponent, {
-      size: 'xl',
-      centered: true,
-    });
-    modalRef.componentInstance.data = item;
-    modalRef.result.then((response) => {
-      if (response !== null && typeof response === 'object') {
-        this.get();
-      }
-    });
-  }
-
-  onOpenDocument(item: any) {
-    const modalRef = this.modalService.openModalCustom(OrderDocumentComponent, {
-      size: 'xl',
-      centered: true,
-    });
-    modalRef.componentInstance.data = item;
-  }
-
   get() {
     showLoader();
     let params = {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize,
       orderStatusCode: ORDER_STATUS_CODE[this.orderStatusCode],
+      startDate: this.startDate,
     };
-    this.orderService.getAll(params).subscribe({
+    let clonedParams = Object.assign(params, this.dataSearch);
+    this.orderService.getAll(clonedParams).subscribe({
       next: (response) => {
         this.orders = response;
         if (this.orders.length > 0) {
@@ -193,6 +183,41 @@ export class OrderListComponent implements OnInit {
   onChangePageSize() {
     this.pagination.pageIndex = 1;
     this.get();
+  }
+  onDateRangeSelection(range: { from: string; to: string }) {
+    this.dataSearch.endDate = range.to;
+    this.dataSearch.startDate = range.from;
+    this.get();
+  }
+  onEdit(item: any) {
+    const modalRef = this.modalService.openModalCustom(OrderModalComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.data = item;
+    modalRef.result.then((response) => {
+      if (response !== null && typeof response === 'object') {
+        this.get();
+      }
+    });
+  }
+  onModalOpen() {
+    const modalResp = this.modalService.openModalCustom(OrderModalComponent, {
+      centered: true,
+      size: 'xl',
+    });
+    modalResp.result.then((response) => {
+      if (response !== null && typeof response === 'object') {
+        this.get();
+      }
+    });
+  }
+  onOpenDocument(item: any) {
+    const modalRef = this.modalService.openModalCustom(OrderDocumentComponent, {
+      size: 'xl',
+      centered: true,
+    });
+    modalRef.componentInstance.data = item;
   }
   onPageChanged() {
     this.get();

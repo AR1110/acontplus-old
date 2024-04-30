@@ -19,6 +19,7 @@ namespace TechnicalSupport.API.Data
         public DbSet<OrderMaintenance> OrderMaintenances { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
         public DbSet<Serie> Series { get; set; }
+        public DbSet<WarrantyHistory> WarrantyHistories { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -93,6 +94,9 @@ namespace TechnicalSupport.API.Data
             builder.Entity<Serie>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Serie>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Serie>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_Serie").IsUnique();
+
+            builder.Entity<WarrantyHistory>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<WarrantyHistory>().Property(x => x.Enabled).HasDefaultValue(true);
         }
         public override int SaveChanges()
         {

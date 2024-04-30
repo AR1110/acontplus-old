@@ -11,15 +11,7 @@
       <li [ngbNavItem]="2">
         <button ngbNavLink>Por Asignar</button>
         <ng-template ngbNavContent>
-          <button
-            type="button"
-            class="btn btn-outline-primary btn-sm"
-            (click)="openOrderModal()"
-
-          >
-            <fa-icon [icon]="'plus'"></fa-icon>
-            Nueva
-          </button>
+          
           <app-order-list [orderStatusCode]="active" />
         </ng-template>
       </li>
