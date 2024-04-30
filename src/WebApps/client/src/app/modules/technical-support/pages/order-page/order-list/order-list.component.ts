@@ -23,6 +23,7 @@ import { OrderDocumentComponent } from '../order-document/order-document.compone
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { FormsModule } from '@angular/forms';
+import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-delivery-modal.component';
 
 @Component({
   selector: 'app-order-list',
@@ -83,40 +84,6 @@ export class OrderListComponent implements OnInit {
     if (result.isConfirmed) {
       showLoader();
       this.orderService.delete(item.id).subscribe({
-        next: (response) => {
-          if (isApiResponse(response)) {
-            this.tS.toastr({
-              type: response.code == '1' ? 'success' : 'warning',
-              message: response.message,
-            });
-            if (response.code == '1') {
-              this.get();
-            }
-          }
-        },
-        error(err) {
-          console.log(err);
-          hideLoader();
-        },
-        complete() {
-          hideLoader();
-        },
-      });
-    }
-  }
-  async askToDelivery(item: any) {
-    const result = await swal.fire({
-      icon: 'info',
-      text: 'Esta seguro de entregar esta orden al cliente?',
-      title: 'Aviso',
-      showConfirmButton: true,
-      showDenyButton: true,
-      confirmButtonText: 'Si',
-      denyButtonText: 'No',
-    });
-    if (result.isConfirmed) {
-      showLoader();
-      this.orderService.delivery(item.id).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
             this.tS.toastr({
@@ -219,6 +186,20 @@ export class OrderListComponent implements OnInit {
     });
     modalRef.componentInstance.data = item;
   }
+
+  askToDelivery(item: any) {
+    const modalRef = this.modalService.openModalCustom(OrderDeliveryModalComponent, {
+      centered: true,
+    })
+    modalRef.componentInstance.data = item;
+
+    modalRef.result.then((response) => {
+      if (response.code === "1") {
+        this.get()
+      }
+    });
+  }
+
   onPageChanged() {
     this.get();
   }

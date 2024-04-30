@@ -10,7 +10,7 @@ GO
 -- Create date: 2024-04-08
 -- Description: REPORTE DE ORDEN
 -- =============================================
--- TechnicalSupport.Order_Report 28, '{"id": 26}', ''
+-- TechnicalSupport.Order_Report 28, '{"id": 27}', ''
 CREATE OR ALTER PROCEDURE TechnicalSupport.Order_Report @userRoleId INT
 ,@json VARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
@@ -19,8 +19,11 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @id INT
+            , @entregadoPor VARCHAR(500)
 
 	SELECT @id = id FROM OPENJSON(@json) WITH (id INT '$.id')
+
+    SELECT @entregadoPor = nombreComercial FROM v_Usuario WHERE idUsuarioRol = @userRoleId
 
 	SET @tableNames = 'order,orderDetails'
 	SELECT
@@ -40,7 +43,13 @@ BEGIN
         , u.nombreUsuario                                                           AS Username
         , o.Obs                                                                     AS Obs
         , tos.Name                                                                  AS OrderStatus
-        , ISNULL(CONVERT(NVARCHAR, FORMAT(o.UpdatedAt, 'dd-MM-yyyy HH:mm')), '-')   AS UpdateDate
+        , ISNULL(CONVERT(NVARCHAR, FORMAT(o.UpdatedAt, 'dd/MM/yyyy HH:mm')), '-')   AS UpdateDate
+        , ua.nombreCompleto                                                         AS UsuarioAsignado
+        , @entregadoPor                                                             AS EntregadoPor
+        , (CASE WHEN o.Receiver IS NULL OR LEN(o.Receiver) = 0
+                THEN cc.BusinessName
+                ELSE o.Receiver END
+          )                                                                         AS RecibidoPor       
 	FROM TechnicalSupport.[Order] o		            WITH (NOLOCK)
     LEFT JOIN dbo.Usuario u				            WITH (NOLOCK) ON u.idUsuario			= o.UserId
     INNER JOIN dbo.Cliente c			            WITH (NOLOCK) ON c.idCliente			= o.CustomerCompanyId
@@ -48,14 +57,13 @@ BEGIN
     INNER JOIN Sri.Establecimiento e	            WITH (NOLOCK) ON e.idEstablecimiento	= o.EstablecimientoId
     INNER JOIN dbo.Entidad en			            WITH (NOLOCK) ON en.ruc					= e.ruc
     INNER JOIN TechnicalSupport.OrderStatus tos     WITH (NOLOCK) ON tos.Id                 = o.OrderStatusId
+    LEFT JOIN v_Usuario ua                          WITH (NOLOCK) ON ua.idUsuario           = o.AssignedUserId
     WHERE o.Id = @id
 
     SELECT od.Id                    AS OrderDetaillId
     ,   d.[Name]                    AS DeviceName
-    ,   DeviceSerie                 = (SELECT TOP 1 dv.SerialNumber FROM TechnicalSupport.DeviceCustomer dv 
-                                                                    WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
-    ,   DeviceWarranty              = (SELECT TOP 1 dv.Warranty FROM TechnicalSupport.DeviceCustomer dv 
-                                                                WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
+    ,   DeviceSerie                 = (SELECT TOP 1 dv.SerialNumber FROM TechnicalSupport.DeviceCustomer dv WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
+    ,   DeviceWarranty              = (SELECT TOP 1 dv.warrantyEndDate FROM TechnicalSupport.DeviceCustomer dv WHERE dv.CustomerCompanyId = o.CustomerCompanyId)
     ,   od.Obs                      AS Obs
     ,   od.CreatedAt                AS CreatedAt
     --- OrderMantenaince ----

@@ -10,14 +10,22 @@
             _context = context;
             _repository = repository;
         }
-        public async Task<ApiResponse> DeliveryAsync(int userId, int id)
+        public async Task<ApiResponse> DeliveryAsync(OrderDeliveryDto deliveryDto, int id)
         {
             try
             {
                 var statuses = await _context.OrderStatuses.Where(x => x.Code == "E").ToListAsync();
                 var orderFound = await _context.Orders.FindAsync(id);
                 orderFound.OrderStatusId = statuses.FirstOrDefault().Id;
-                orderFound.UserId = userId;
+                orderFound.UserId = deliveryDto.UserId;
+
+                // Verification for update
+                if (deliveryDto.IsOtherReceiver)
+                {
+                    orderFound.ReceiverGovernmentId = deliveryDto.ReceiverGovernmentId;
+                    orderFound.Receiver = deliveryDto.Receiver;
+                }
+
                 _context.Update(orderFound);
                 await _context.SaveChangesAsync();
                 return new ApiResponse { code = "1", message = "Entregada correctamente" };
