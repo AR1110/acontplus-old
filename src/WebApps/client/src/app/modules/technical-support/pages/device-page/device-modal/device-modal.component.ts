@@ -194,7 +194,7 @@ export class DeviceModalComponent implements OnInit {
 
   getDataForm() {
     showLoader();
-    this.deviceService.get(JSON.stringify({ tipo: 1 })).subscribe({
+    this.deviceService.get({ tipo: 1 }).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
           const tempArray = JSON.parse(response.payload as string);
