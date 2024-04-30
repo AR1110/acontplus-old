@@ -43,30 +43,38 @@
           <button type="button" class="btn btn-outline-success btn-sm" ngbDropdownToggle>
             <fa-icon [icon]="'cog'"></fa-icon>
           </button>
-          <div ngbDropdownMenu>
+          <div ngbDropdownMenu style="max-width: 50px;" >
 
-            <button ngbDropdownItem title="Reporte" (click)="getReport(element)">
+            <button ngbDropdownItem title="Reporte" class="btn-sm" (click)="getReport(element)">
               <fa-icon [icon]="'file-arrow-down'"></fa-icon> Reporte
             </button>
 
-            <button ngbDropdownItem   title="Editar" (click)="openModal(element.id)">
+            <button ngbDropdownItem   title="Editar" class="btn-sm" (click)="openModal(element.id)">
               <fa-icon [icon]="'edit'"></fa-icon> Editar
             </button>
 
 
-            <button ngbDropdownItem title="Editar" (click)="askToDelete(element.id)">
+            <button ngbDropdownItem title="Editar"  class="btn-sm"(click)="askToDelete(element.id)">
               <fa-icon [icon]="'trash-can'"></fa-icon> Anular
             </button>
             @if (status===1) {
-              <button ngbDropdownItem title="Editar" (click)="openMaintenance(element.id)">
+              <button ngbDropdownItem title="Editar" class="btn-sm" (click)="openMaintenance(element.id)">
                 <fa-icon [icon]="'tools'"></fa-icon> Mantenimiento
               </button>
 
             }
 
             @if (status===2) {
-            <button ngbDropdownItem title="Inspección" (click)="openModalInspection(element.id)">
+            <button ngbDropdownItem title="Inspección" class="btn-sm" (click)="openModalInspection(element.id)">
               <fa-icon [icon]="'tools'"></fa-icon> Inspección
+            </button>
+
+            }
+
+            @if (status===2) {
+            <button ngbDropdownItem title="Convertir a Doc. Aprobación" class="btn-sm" (click)="askToConvertToDoc(element.id)">
+              <fa-icon [icon]="'file-arrow-down'"></fa-icon>
+                Convertir a Aprobación
             </button>
 
             }
