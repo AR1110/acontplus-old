@@ -109,6 +109,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     orderDetailId: null,
     customerCompanyId: 0,
     obs: '',
+    deviceWarranty: ''
   };
 
   cloneOrder = {
@@ -587,8 +588,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
           this.cloneOrder.feeId = dataTarifa.idTarifa;
         }
 
-        this.order.orderDetailId = this.orderDetails[0].orderDetailId;
-        this.order.obs = this.orderDetails[0].obs;
+        let dataOrderDetail = this.orderDetails[0];
+
+        this.order.orderDetailId = dataOrderDetail?.orderDetailId;
+        this.order.deviceWarranty = dataOrderDetail?.deviceWarranty;
+        this.order.obs = dataOrderDetail?.obs;
         //  this.tabulatorOptions.groupValues = [[...this.orderDetails.map(t => t.deviceName)]]
 
         this.setGroupValues();

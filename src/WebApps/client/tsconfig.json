@@ -28,6 +28,9 @@
       "@core/*": [
         "src/app/core/*"
       ],
+      "@company-customer/*": [
+        "src/app/modules/customer/company-customer/*"
+      ],
       "@modules/*": [
         "src/app/modules/*"
       ],

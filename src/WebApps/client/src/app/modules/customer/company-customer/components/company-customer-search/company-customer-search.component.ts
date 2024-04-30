@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ModalService } from '@core/services/modal.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AddEditModalComponent } from '@modules/customer/company-customer/components/add-edit-modal/add-edit-modal.component';
 import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
 import { CompanyCustomerService } from '@modules/customer/company-customer/services/company-customer.service';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   Observable,
   OperatorFunction,
@@ -12,14 +15,19 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { AppModule } from 'src/app/app.module';
+import { CompanyCustomerAddEditDirective } from '@company-customer/directives/company-customer-add-edit.directive';
 
 @Component({
   selector: 'app-company-customer-search',
   standalone: true,
-  imports: [AppModule],
+  imports: [
+    FormsModule,
+    NgbTypeaheadModule,
+    FontAwesomeModule,
+    CompanyCustomerAddEditDirective
+  ],
   templateUrl: './company-customer-search.component.html',
-  styles: ``,
+  styles: `  `,
 })
 export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();

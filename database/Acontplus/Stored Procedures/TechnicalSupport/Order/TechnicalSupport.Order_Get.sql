@@ -143,14 +143,19 @@ BEGIN
                 ,tor.Enabled
                 ,tor.CustomerCompanyId
                 ,c.nombreFiscal RazonSocial
-            FROM TechnicalSupport.[Order] tor
-            INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId
-            INNER JOIN TechnicalSupport.OrderStatus sc  ON sc.Id = tor.OrderStatusId
+            FROM TechnicalSupport.[Order] tor 
+            INNER JOIN Cliente c                        ON c.idCliente = tor.CustomerCompanyId 
             WHERE tor.Id = @id
 
-            SELECT o.Id OrderDetailId, d.Id DeviceId, d.[Name] DeviceName, o.Obs
+            SELECT 
+                o.Id OrderDetailId, 
+                d.Id DeviceId, 
+                d.[Name] DeviceName, 
+                o.Obs,
+                dc.warrantyEndDate DeviceWarranty
             FROM TechnicalSupport.[OrderDetail] o WITH (NOLOCK) 
             INNER JOIN TechnicalSupport.Device d WITH (NOLOCK) ON o.DeviceId = d.Id
+             INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON dc.DeviceId = o.DeviceId  
             WHERE OrderId = @id
 
             SELECT om.Id

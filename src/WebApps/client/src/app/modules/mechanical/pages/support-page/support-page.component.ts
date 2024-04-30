@@ -62,7 +62,8 @@ export class SupportPageComponent {
     try {
       let params = {
         pageIndex: this.pagination.pageIndex,
-        pageSize: this.pagination.pageSize
+        pageSize: this.pagination.pageSize,
+        status: this.status-1
       }
       showLoader();
       this.supportSvc.getAll(params).subscribe({

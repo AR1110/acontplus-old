@@ -1,4 +1,5 @@
-import { Directive, HostListener, inject } from '@angular/core';
+import { Directive, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
+import { AddEditModalComponent } from '@company-customer/components/add-edit-modal/add-edit-modal.component';
 import { ModalService } from '@core/services/modal.service';
 
 @Directive({
@@ -8,10 +9,25 @@ import { ModalService } from '@core/services/modal.service';
 export class CompanyCustomerAddEditDirective {
   #modalSvc = inject(ModalService);
 
-
-  @HostListener('event.click')
-  onClick(){
+  @Output() onResult = new EventEmitter();
+  @Input() id = 0;
+  @HostListener('click')
+  onClick() {
     console.log('this')
+    let modalRef = this.#modalSvc.open(AddEditModalComponent, {
+      size: 'xl'
+    })
+    modalRef.componentInstance.data = {
+      id: this.id,
+      idCliente: this.id
+    }
+
+    modalRef.result.then(result => {
+      if (result !== null && typeof result === 'object') {
+        this.onResult.emit(result)
+      }
+    })
+
   }
 
 
