@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ModalService } from '@core/services/modal.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { AddEditModalComponent } from '@modules/customer/company-customer/components/add-edit-modal/add-edit-modal.component';
 import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
 import { CompanyCustomerService } from '@modules/customer/company-customer/services/company-customer.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
@@ -37,7 +35,6 @@ export class CompanyCustomerSearchComponent {
   @Input() textSearch = '';
   @Input() isSearchToExternal = false;
   private companyCustomerService = inject(CompanyCustomerService);
-  private modalService = inject(ModalService);
 
   customer: CompanyCustomerSearch = {
     idCliente: 0,
@@ -58,21 +55,6 @@ export class CompanyCustomerSearchComponent {
     }
   }
 
-  openModal() {
-    const modalRef = this.modalService.openModalCustom(AddEditModalComponent, {
-      centered: true,
-      size: 'xl',
-    });
-    if (this.customer.idCliente > 0) {
-      modalRef.componentInstance.data = this.customer;
-    }
-    modalRef.result.then((response) => {
-      if (response != null && typeof response === 'object') {
-        this.customer = JSON.parse(response.payload)[0];
-        this.setCustomerData(this.customer);
-      }
-    });
-  }
 
   onSelect($event: any) {
     console.log($event);
@@ -103,18 +85,31 @@ export class CompanyCustomerSearchComponent {
     );
 
   setCustomerData(customer: CompanyCustomerSearch) {
-    this.onCustomerSelected.emit({
-      data: {
-        ...customer,
-        razonSocialComprador: customer.nombreFiscal,
-        identificacionComprador: customer.numeroIdentificacion,
-      },
-    });
+
+    this.onEmitData(customer);
     setTimeout(() => {
       this.textSearch = customer.nombreFiscal;
     });
   }
 
+
+  //retorno de data cuando registran del modal
+  onResult($event:any){
+    if($event!==null && "item" in $event){
+      this.onEmitData($event.item);
+    }
+  }
+  onEmitData(result:any){
+    let data = {
+      ...result,
+      razonSocialComprador: result.nombreFiscal,
+      identificacionComprador: result.numeroIdentificacion,
+    };
+
+    this.onCustomerSelected.emit({
+      data
+    });
+  }
 
   onEnterKeyPressed(event:Event): void {
     let ev = event as KeyboardEvent;
@@ -123,6 +118,4 @@ export class CompanyCustomerSearchComponent {
 
 
   }
-
-
 }
