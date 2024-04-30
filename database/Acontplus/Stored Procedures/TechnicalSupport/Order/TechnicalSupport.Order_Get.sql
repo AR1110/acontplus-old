@@ -9,6 +9,7 @@ GO
 -- Author:		Ivan Paz
 -- Create date: 2023-10-18
 -- Description:	SP for get orders
+-- TechnicalSupport.Order_Get 401, '{"tipo": 5, "id": 27}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE TechnicalSupport.Order_Get @userRoleId INT
 ,@json VARCHAR(MAX)
@@ -90,7 +91,7 @@ BEGIN
                 END
 		END
 
-   IF @tipo = 2
+    IF @tipo = 2
     BEGIN
         SET @tableNames = 'orders'
         
@@ -290,5 +291,104 @@ BEGIN
             SELECT * FROM  Config.v_Sistema_Decimal WHERE idEntidad = @companyId AND codTrasaccion = 'V'
             RETURN
         END
+
+    IF @tipo = 5
+    BEGIN
+        SET @tableNames = 'documento,documentoDetalle'
+
+        ---- DATOS PRINCIPALES
+        SELECT tsod.DocumentoId 
+            ,   tsod.TipoDocumentoId
+            ,   td.descripcion
+            ,   td.codigo
+            ,   f.subTotalSinImpuestos
+            ,   f.totalDescuento
+            ,   f.porcentajeDescuento
+            ,   f.propina
+            ,   f.recargo
+            ,   f.transporte
+            ,   f.total
+            ,   f.observacion
+        FROM TechnicalSupport.OrderDocument tsod    WITH (NOLOCK)
+        INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento = tsod.TipoDocumentoId
+        INNER JOIN Factura f                        WITH (NOLOCK) ON f.idFactura = tsod.DocumentoId
+        WHERE tsod.OrderId = @id
+
+        UNION
+
+        SELECT tsod.DocumentoId 
+            ,   tsod.TipoDocumentoId
+            ,   td.descripcion
+            ,   td.codigo
+            ,   ne.subTotalSinImpuestos
+            ,   ne.totalDescuento
+            ,   ne.porcentajeDescuento
+            ,   ne.propina
+            ,   ne.recargo
+            ,   ne.transporte
+            ,   ne.total
+            ,   ne.observacion
+        FROM TechnicalSupport.OrderDocument tsod
+        INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento = tsod.TipoDocumentoId
+        INNER JOIN NotaEntrega ne                   WITH(NOLOCK) ON ne.idNotaEntrega = tsod.DocumentoId
+        WHERE tsod.Orderid = @id
+            
+        ---- DETALLES
+        SELECT fd.idFacturaDetalle              AS DocumentoDetalleId
+            ,   fd.descripcion
+            ,   b.descripcion                   AS Bodega
+            ,   t.descripcion                   AS Tarifa
+            ,   m.descripcion                   AS Medida
+            ,   ti.descripcion                  AS TipoIva
+            ,   fd.cantidad
+            ,   fd.precioUnitario
+            ,   fd.valorDescuento
+            ,   fd.porcentajeDescuento
+            ,   fd.precioTotalSinImpuesto
+            ,   fd.nota
+            ,   fd.ice
+            ,   fd.precioCosto
+            ,   fd.tarifa
+            ,   fd.valorImpuesto
+            ,   fd.valorImpuesto
+            ,   fd.codigoPorcentaje
+        FROM TechnicalSupport.OrderDocument tsod    WITH(NOLOCK)
+        INNER JOIN FacturaDetalle fd                WITH(NOLOCK) ON fd.idFactura    = tsod.DocumentoId
+        INNER JOIN Bodega b                         WITH(NOLOCK) ON b.idBodega      = fd.idBodega
+        INNER JOIN Tarifa t                         WITH(NOLOCK) ON t.idTarifa      = fd.idTarifa
+        INNER JOIN Medida m                         WITH(NOLOCK) ON m.idMedida      = fd.idMedida
+        INNER JOIN TipoIva ti                       WITH(NOLOCK) ON ti.idTipoIva    = fd.idTipoIva
+        WHERE tsod.OrderId = @id
+
+        UNION 
+
+        SELECT fd.idNotaEntregaDetalle          AS DocumentoDetalleId
+            ,   fd.descripcion
+            ,   b.descripcion                   AS Bodega
+            ,   t.descripcion                   AS Tarifa
+            ,   m.descripcion                   AS Medida
+            ,   ti.descripcion                  AS TipoIva
+            ,   fd.cantidad
+            ,   fd.precioUnitario
+            ,   fd.valorDescuento
+            ,   fd.porcentajeDescuento
+            ,   fd.precioTotalSinImpuesto
+            ,   fd.nota
+            ,   fd.ice
+            ,   fd.precioCosto
+            ,   fd.tarifa
+            ,   fd.valorImpuesto
+            ,   fd.valorImpuesto
+            ,   fd.codigoPorcentaje
+        FROM TechnicalSupport.OrderDocument tsod    WITH(NOLOCK)
+        INNER JOIN NotaEntregaDetalle fd            WITH(NOLOCK) ON fd.idNotaEntrega    = tsod.DocumentoId
+        INNER JOIN Bodega b                         WITH(NOLOCK) ON b.idBodega          = fd.idBodega
+        INNER JOIN Tarifa t                         WITH(NOLOCK) ON t.idTarifa          = fd.idTarifa
+        INNER JOIN Medida m                         WITH(NOLOCK) ON m.idMedida          = fd.idMedida
+        INNER JOIN TipoIva ti                       WITH(NOLOCK) ON ti.idTipoIva        = fd.idTipoIva
+        WHERE tsod.OrderId = @id
+
+        RETURN
+    END
 END
 GO
