@@ -6,7 +6,6 @@ import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
 import { SupportService } from '@modules/mechanical/services/support.service';
@@ -65,10 +64,9 @@ export class SupportPageComponent {
         pageSize: this.pagination.pageSize,
         status: this.status-1
       }
-      showLoader();
       this.supportSvc.getAll(params).subscribe({
         next: (response) => {
-          hideLoader()
+
           this.dataSource = response;
           if (this.dataSource.length > 0) {
             this.pagination.totalRecords = this.dataSource[0].totalRecords;
@@ -76,7 +74,7 @@ export class SupportPageComponent {
           console.log(response)
         },
         error(err) {
-          hideLoader();
+         ;
           console.log(err)
         },
       })
@@ -112,10 +110,9 @@ export class SupportPageComponent {
         cancelButtonText: 'No!'
       }).then((result) => {
         if (result.isConfirmed) {
-          showLoader()
           this.supportSvc.remove(id).subscribe({
             next: (response) => {
-              hideLoader()
+
               if (isApiResponse(response)) {
                 if (response.code === "0") {
                   this.tS.toastr({
@@ -133,7 +130,7 @@ export class SupportPageComponent {
               }
             },
             error(err) {
-              hideLoader()
+
               console.log(err)
             },
           })
@@ -170,10 +167,9 @@ export class SupportPageComponent {
   }
 
   askToConvertToDoc(id:number){
-    showLoader();
     this.supportSvc.getConvertToAprobDoc(id).subscribe({
       next:(response)=> {
-        hideLoader()
+
         const swalWithBootstrapButtons = Swal.mixin({
           customClass: {
             confirmButton: "btn btn-success",
@@ -209,7 +205,7 @@ export class SupportPageComponent {
         });
       },
       error(err) {
-          hideLoader();
+         ;
           console.log(err)
       },
     })

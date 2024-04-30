@@ -1,8 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { CompanyCustomerSearchComponent } from '@modules/customer/company-customer/components/company-customer-search/company-customer-search.component';
 import { VehicleTypeSelectHtmlOnly } from '@modules/mechanical/models/vehicle-type.model';
@@ -59,7 +58,7 @@ export class VehicleAddEditModalComponent {
 
   successResponse = {
     next: (response: any) => {
-      hideLoader()
+      // hideLoader()
       if (isApiResponse(response)) {
         if (response.code === "0") {
           this.tS.toastr({
@@ -81,7 +80,7 @@ export class VehicleAddEditModalComponent {
       }
     },
     error(err: any) {
-      hideLoader()
+      // hideLoader()
       console.log(err)
     }
   }
@@ -91,10 +90,9 @@ export class VehicleAddEditModalComponent {
       this.titleModal = 'Editar Vehículo';
       this.btnText = 'Actualizar';
     }
-    showLoader();
+
     this.vehicleSvc.getDataForm().subscribe({
       next: (response) => {
-        hideLoader()
         const {
           countries,
           vehicleTypes
@@ -105,10 +103,9 @@ export class VehicleAddEditModalComponent {
         if (this.params.id > 0) {
           this.titleModal = 'Editar Vehículo';
           this.btnText = 'Actualizar';
-          showLoader()
           this.vehicleSvc.getId(this.params.id).subscribe({
             next: (response) => {
-              hideLoader()
+              // hideLoader()
               this.customer = response.customer as any
               this.data = {
                 ...this.data,
@@ -117,14 +114,14 @@ export class VehicleAddEditModalComponent {
             },
             error(err) {
               console.log(err)
-              hideLoader()
+              // hideLoader()
             }
           })
         }
       },
       error(err) {
         console.log(err)
-        hideLoader()
+        // hideLoader()
       }
     })
   }

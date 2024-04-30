@@ -14,7 +14,6 @@ import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
 import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isApiResponse } from '@core/models/api-response';
 
 type VehiclePartNode = VehiclePart & {
@@ -76,7 +75,7 @@ export class InspectionModalComponent {
 
   successResponse = {
     next: (response: any) => {
-      hideLoader()
+
       if (isApiResponse(response)) {
         if (response.code === "0") {
           this.tS.toastr({
@@ -95,7 +94,7 @@ export class InspectionModalComponent {
       }
     },
     error(err: any) {
-      hideLoader()
+
       console.log(err)
     }
   }
@@ -103,10 +102,10 @@ export class InspectionModalComponent {
   ngOnInit(): void {
     try {
 
-      showLoader();
+
       this.inspectionSvc.getDataForm(this.params.supportId).subscribe({
         next: (response) => {
-          hideLoader();
+
 
           this.support = response.support;
 
@@ -115,10 +114,10 @@ export class InspectionModalComponent {
 
           if (this.params.inspectionId > 0) {
             this.btnText = 'Actualizar';
-            showLoader()
+
             this.inspectionSvc.getId(this.params.inspectionId).subscribe({
               next: (response) => {
-                hideLoader()
+
                 this.data = response.data;
                 this.vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
                   let nodes = response.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[]
@@ -129,7 +128,7 @@ export class InspectionModalComponent {
                 })
               },
               error(err) {
-                hideLoader();
+                ;
                 console.log(err)
               },
             })
@@ -145,12 +144,12 @@ export class InspectionModalComponent {
 
         },
         error(err) {
-          hideLoader();
+          ;
           console.log(err)
         },
       })
     } catch (error) {
-      hideLoader();
+      ;
       console.log(error)
     }
   }
@@ -266,15 +265,15 @@ export class InspectionModalComponent {
         obs: isValidField(this.data.obs)
       }
       if (this.params.inspectionId > 0) {
-        showLoader()
+
         this.inspectionSvc.put(this.params.inspectionId, data).subscribe(this.successResponse)
       }
       if (!(this.params.inspectionId > 0)) {
-        showLoader()
+
         this.inspectionSvc.post(data).subscribe(this.successResponse)
       }
     } catch (error) {
-      hideLoader()
+
       console.log(error)
     }
   }

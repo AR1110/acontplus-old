@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
 import { InspectionService } from '@modules/mechanical/services/inspection.service';
@@ -57,20 +56,12 @@ export class InspectionPageComponent {
       pageSize: this.pagination.pageSize,
       status: 1
     }
-    showLoader();
-    this.inspectionSvc.getAll(params).subscribe({
-      next: (response) => {
-        hideLoader();
-        this.dataSource = response;
-        if(this.dataSource.length>0){
-          this.pagination.totalRecords = this.dataSource[0].totalRecords;
-        }
 
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
+    this.inspectionSvc.getAll(params).subscribe((response) => {
+      this.dataSource = response;
+      if (this.dataSource.length > 0) {
+        this.pagination.totalRecords = this.dataSource[0].totalRecords;
+      }
     })
   }
 
