@@ -49,7 +49,7 @@ BEGIN
        ,deviceCustomerId INT NOT NULL
        ,deviceId INT NOT NULL
        ,deviceSerie VARCHAR(300)
-       ,deviceWarranty NUMERIC(18,2)
+       ,warrantyEndDate DATETIME
        ,obs VARCHAR(500) NULL
        ,assignedUserId INT
     )     
@@ -95,15 +95,15 @@ BEGIN
             END
 
         --> Insert to temp Table
-        INSERT INTO @tbDetails(uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs, assignedUserId)
-        SELECT uuid, deviceCustomerId, deviceId, deviceSerie, deviceWarranty, obs, assignedUserId
+        INSERT INTO @tbDetails(uuid, deviceCustomerId, deviceId, deviceSerie, warrantyEndDate, obs, assignedUserId)
+        SELECT uuid, deviceCustomerId, deviceId, deviceSerie, warrantyEndDate, obs, assignedUserId
                         FROM OPENJSON(@details) WITH
                         (
                             uuid         VARCHAR(100)    '$.uuid'
                             ,deviceCustomerId INT       '$.deviceCustomerId'
                             ,deviceId    INT             '$.deviceId'
                             ,deviceSerie    VARCHAR(300)             '$.deviceSerie'
-                            ,deviceWarranty    NUMERIC(18,2)             '$.deviceWarranty'
+                            ,warrantyEndDate    DATETIME2             '$.warrantyEndDate'
                             ,obs         VARCHAR(100)    '$.obs'
                             ,assignedUserId INT
                         )
@@ -154,8 +154,8 @@ BEGIN
             FROM @tbDetails
 
         
-            INSERT INTO TechnicalSupport.DeviceCustomer(CustomerCompanyId, DeviceId, SerialNumber, Warranty)
-            SELECT (SELECT TOP 1 o.customerCompanyId FROM @tbOrder o), deviceId, deviceSerie, deviceWarranty
+            INSERT INTO TechnicalSupport.DeviceCustomer(CustomerCompanyId, DeviceId, SerialNumber, warrantyEndDate)
+            SELECT (SELECT TOP 1 o.customerCompanyId FROM @tbOrder o), deviceId, deviceSerie, warrantyEndDate
             FROM @tbDetails 
             WHERE deviceCustomerId = 0
         

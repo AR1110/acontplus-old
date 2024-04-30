@@ -81,7 +81,7 @@ BEGIN
                         od.[Enabled], od.[Deleted], od.[UserId], ISNULL(od.[AssignedUserId], 0) AssignedUserId
                         ,d.[Name] DeviceName
                         ,dc.SerialNumber DeviceSerie
-                        ,dc.Warranty DeviceWarranty
+                        ,dc.warrantyEndDate DeviceWarranty
                         ,dc.Id DeviceCustomerId
                     FROM TechnicalSupport.[OrderDetail] od WITH (NOLOCK)
                         INNER JOIN TechnicalSupport.[Order] o WITH (NOLOCK) ON od.OrderId = o.Id
