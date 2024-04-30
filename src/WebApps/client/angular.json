@@ -58,7 +58,8 @@
             ],
             "scripts": [
               "src/assets/lib/vanilla-daterange/moment.min.js",
-              "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.js"
+              "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.js",
+              "src/assets/lib/luxon/luxon.js"
             ]
           },
           "configurations": {
