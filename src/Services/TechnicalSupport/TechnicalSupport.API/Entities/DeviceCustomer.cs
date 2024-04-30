@@ -10,9 +10,9 @@ namespace TechnicalSupport.API.Entities
         public int DeviceId { get; set; }
         public int CustomerCompanyId { get; set; }
         [Required]
-        [MaxLength(100)]
+        [MaxLength(300)]
         public string SerialNumber { get; set; }
-        [Column(TypeName = "numeric(18,2), not null")]
-        public decimal? Warranty { get; set; }
+        public DateTime? WarrantyStartDate { get; set; }
+        public DateTime? WarrantyEndDate { get; set; }
     }
 }

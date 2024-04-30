@@ -9,7 +9,7 @@ namespace TechnicalSupport.API.Entities
         public Brand Brand { get; set; }
         public int BrandId { get; set; }
         [Required]
-        [MaxLength(8)]
+        [MaxLength(10)]
         public string Code { get; set; }
         [Required]
         [MaxLength(150)]
