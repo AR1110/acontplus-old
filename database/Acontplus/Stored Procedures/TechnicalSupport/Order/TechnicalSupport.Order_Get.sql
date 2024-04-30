@@ -9,7 +9,7 @@ GO
 -- Author:		Ivan Paz
 -- Create date: 2023-10-18
 -- Description:	SP for get orders
--- TechnicalSupport.Order_Get 401, '{"tipo": 5, "id": 27}', ''
+-- TechnicalSupport.Order_Get 401, '{"tipo": 5, "id": 20}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE TechnicalSupport.Order_Get @userRoleId INT
 ,@json VARCHAR(MAX)
@@ -301,6 +301,13 @@ BEGIN
             ,   tsod.TipoDocumentoId
             ,   td.descripcion
             ,   td.codigo
+            ,   CONVERT(NVARCHAR, FORMAT(o.FechaEmision, 'yyyy/MM/dd')) AS FechaEmision
+            ,   o.Serie
+            ,   e.nombreComercial                                       AS Establecimiento
+            ,   c.nombreComercial                                       AS Cliente
+            ,   c.numeroIdentificacion
+            ,   c.correo
+            ,   c.direccion
             ,   f.subTotalSinImpuestos
             ,   f.totalDescuento
             ,   f.porcentajeDescuento
@@ -308,10 +315,13 @@ BEGIN
             ,   f.recargo
             ,   f.transporte
             ,   f.total
-            ,   f.observacion
+            ,   o.Obs
         FROM TechnicalSupport.OrderDocument tsod    WITH (NOLOCK)
-        INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento = tsod.TipoDocumentoId
-        INNER JOIN Factura f                        WITH (NOLOCK) ON f.idFactura = tsod.DocumentoId
+        INNER JOIN TechnicalSupport.[Order] o       WITH (NOLOCK) ON o.Id                   = tsod.OrderId
+        INNER JOIN Sri.Establecimiento e            WITH (NOLOCK) ON e.idEstablecimiento    = o.EstablecimientoId
+        INNER JOIN Cliente c                        WITH (NOLOCK) ON c.idCliente            = o.CustomerCompanyId
+        INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento     = tsod.TipoDocumentoId
+        INNER JOIN Factura f                        WITH (NOLOCK) ON f.idFactura            = tsod.DocumentoId
         WHERE tsod.OrderId = @id
 
         UNION
@@ -320,6 +330,13 @@ BEGIN
             ,   tsod.TipoDocumentoId
             ,   td.descripcion
             ,   td.codigo
+            ,   CONVERT(NVARCHAR, FORMAT(o.FechaEmision, 'yyyy/MM/dd')) AS FechaEmision
+            ,   o.Serie
+            ,   e.nombreComercial                                       AS Establecimiento
+            ,   c.nombreComercial                                       AS Cliente
+            ,   c.numeroIdentificacion
+            ,   c.correo
+            ,   c.direccion
             ,   ne.subTotalSinImpuestos
             ,   ne.totalDescuento
             ,   ne.porcentajeDescuento
@@ -327,17 +344,20 @@ BEGIN
             ,   ne.recargo
             ,   ne.transporte
             ,   ne.total
-            ,   ne.observacion
+            ,   o.Obs
         FROM TechnicalSupport.OrderDocument tsod
-        INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento = tsod.TipoDocumentoId
-        INNER JOIN NotaEntrega ne                   WITH(NOLOCK) ON ne.idNotaEntrega = tsod.DocumentoId
+        INNER JOIN TechnicalSupport.[Order] o       WITH (NOLOCK) ON o.Id                   = tsod.OrderId
+        INNER JOIN Sri.Establecimiento e            WITH (NOLOCK) ON e.idEstablecimiento    = o.EstablecimientoId
+        INNER JOIN Cliente c                        WITH (NOLOCK) ON c.idCliente            = o.CustomerCompanyId
+        INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento     = tsod.TipoDocumentoId
+        INNER JOIN NotaEntrega ne                   WITH (NOLOCK) ON ne.idNotaEntrega       = tsod.DocumentoId
         WHERE tsod.Orderid = @id
-            
+        
         ---- DETALLES
         SELECT fd.idFacturaDetalle              AS DocumentoDetalleId
             ,   fd.descripcion
             ,   b.descripcion                   AS Bodega
-            ,   t.descripcion                   AS Tarifa
+            ,   t.descripcion                   AS TarifaDescripcion
             ,   m.descripcion                   AS Medida
             ,   ti.descripcion                  AS TipoIva
             ,   fd.cantidad
@@ -349,7 +369,6 @@ BEGIN
             ,   fd.ice
             ,   fd.precioCosto
             ,   fd.tarifa
-            ,   fd.valorImpuesto
             ,   fd.valorImpuesto
             ,   fd.codigoPorcentaje
         FROM TechnicalSupport.OrderDocument tsod    WITH(NOLOCK)
@@ -365,7 +384,7 @@ BEGIN
         SELECT fd.idNotaEntregaDetalle          AS DocumentoDetalleId
             ,   fd.descripcion
             ,   b.descripcion                   AS Bodega
-            ,   t.descripcion                   AS Tarifa
+            ,   t.descripcion                   AS TarifaDescripcion
             ,   m.descripcion                   AS Medida
             ,   ti.descripcion                  AS TipoIva
             ,   fd.cantidad
@@ -377,7 +396,6 @@ BEGIN
             ,   fd.ice
             ,   fd.precioCosto
             ,   fd.tarifa
-            ,   fd.valorImpuesto
             ,   fd.valorImpuesto
             ,   fd.codigoPorcentaje
         FROM TechnicalSupport.OrderDocument tsod    WITH(NOLOCK)
