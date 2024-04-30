@@ -4,20 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
+import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
 import { SupportService } from '@modules/mechanical/services/support.service';
 import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
+import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
-import { Pagination } from '@shared/models/pagination.model';
-import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
-import { SharedService } from '@core/services/shared.service';
-import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
-
 
 @Component({
   selector: 'app-support-page',
@@ -169,11 +168,58 @@ export class SupportPageComponent {
     }
   }
 
+  askToConvertToDoc(id:number){
+    showLoader();
+    this.supportSvc.getConvertToAprobDoc(id).subscribe({
+      next:(response)=> {
+        hideLoader()
+        const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger ml-2"
+          },
+          buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
+          title: "Pasar a Doc. Aprobación",
+          text: "¿Estás seguro de transformar a Aprobación Documento?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Si!",
+          cancelButtonText: "No!",
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            swalWithBootstrapButtons.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success"
+            });
+          } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+          ) {
+            swalWithBootstrapButtons.fire({
+              title: "Cancelled",
+              text: "Your imaginary file is safe :)",
+              icon: "error"
+            });
+          }
+        });
+      },
+      error(err) {
+          hideLoader();
+          console.log(err)
+      },
+    })
+
+  }
+
 
   // For report
   getReport(item: any) {
     let format = 'pdf';
-    let dataParams = { supportId: item.id };
+    let dataParams = { supportId: item.id, tipo: 1 };
     const params = {
       reportParams: JSON.stringify({
         hasParams: true,
@@ -187,7 +233,7 @@ export class SupportPageComponent {
       dataParams: JSON.stringify(dataParams)
     };
 
-    this.sharedSvc.getReport(params, 'pdf', true);
+    this.sharedSvc.getReport(params, 'pdf');
   }
 
 

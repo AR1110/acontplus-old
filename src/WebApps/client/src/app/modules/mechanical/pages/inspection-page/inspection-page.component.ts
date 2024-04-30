@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ModalService } from '@core/services/modal.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { InspectionService } from '@modules/mechanical/services/inspection.service';
-import { Pagination } from '@shared/models/pagination.model';
-import { InspectionModalComponent } from './components/inspection-modal/inspection-modal.component';
-import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatTableModule } from '@angular/material/table';
-import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
+import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
+import { hideLoader, showLoader } from '@core/utils/loader';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
+import { InspectionService } from '@modules/mechanical/services/inspection.service';
+import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { Pagination } from '@shared/models/pagination.model';
+
+import { InspectionModalComponent } from './components/inspection-modal/inspection-modal.component';
 
 @Component({
   selector: 'app-inspection-page',
@@ -90,7 +91,7 @@ export class InspectionPageComponent {
   getReport(item: any) {
 
     let format = 'pdf';
-    let dataParams = { inspectionId: item.id };
+    let dataParams = { inspectionId: item.id, tipo: 1 };
     const params = {
       hasService: false,
       hasIdUsuarioRol: true,
@@ -104,7 +105,7 @@ export class InspectionPageComponent {
       dataParams: JSON.stringify(dataParams)
     };
 
-    this.sharedSvc.getReport(params, 'pdf', true)
+    this.sharedSvc.getReport(params, 'pdf')
 
   }
 

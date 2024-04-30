@@ -134,6 +134,17 @@ export class SupportService {
     )
   }
 
+  getConvertToAprobDoc(id:number){
+    let json = JSON.stringify({
+      tipo: 5,
+      id
+    })
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response: any) => {
+        console.log(response)
+      }))
+  }
+
   searchCustomerVehicle<T extends { textSearch: string }>(obj: T) {
     let json = JSON.stringify({
       tipo: 4,
