@@ -71,7 +71,7 @@
 
             let { latestVersion } = $scope.userData;
 
-            if (latestVersion != '20240401') {
+            if (latestVersion != '20240430') {
                 // $scope.logout();
             } else {
                 //consume from bd

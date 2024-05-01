@@ -32,7 +32,7 @@ namespace TechnicalSupport.API.Entities
         public int? TaxPercentId { get; set; }
         [MaxLength(300)]
         public string Receiver { get; set; } 
-        [MaxLength(300)]
+        [MaxLength(25)]
         public string ReceiverGovernmentId { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
     }

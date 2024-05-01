@@ -1,4 +1,6 @@
-﻿namespace TechnicalSupport.API.Controllers
+﻿using TechnicalSupport.API.Entities;
+
+namespace TechnicalSupport.API.Controllers
 {
     public class OrderController : BaseApiController
     {
@@ -80,12 +82,16 @@
                 return BadRequest("Error on put");
             }
         }
+
+
         [HttpPut("Delivery/{id}")]
-        public async Task<IActionResult> Delivery(int id)
+        public async Task<IActionResult> Delivery(int id, [FromBody] OrderDeliveryDto deliveryDto)
         {
             try
             {
-                var response = await _orderService.DeliveryAsync(User.GetUserId(), id);
+                deliveryDto.UserId = User.GetUserId();
+
+                var response = await _orderService.DeliveryAsync(deliveryDto, id);
                 return Ok(response);
             }
             catch (Exception ex)

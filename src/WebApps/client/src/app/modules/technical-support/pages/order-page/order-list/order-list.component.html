@@ -84,10 +84,10 @@
             } @if (orderStatusCode==2) {
             <button
               ngbDropdownItem
-              (click)="askToDelete(element)"
-              title="Eliminar"
+              (click)="askToCancel(element)"
+              title="Anular"
             >
-              <fa-icon [icon]="'lock'"></fa-icon> Eliminar
+              <fa-icon [icon]="'lock'"></fa-icon> Anular
             </button>
             }
             <button
