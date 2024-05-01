@@ -21,7 +21,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './mechanical-layout.component.scss',
 })
 export class MechanicalLayoutComponent implements OnInit {
-  active = 1;
+  active = 0;
   ngOnInit(): void { }
 
 

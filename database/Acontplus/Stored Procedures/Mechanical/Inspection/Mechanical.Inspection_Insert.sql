@@ -81,6 +81,8 @@ BEGIN
             END 
 
         BEGIN TRAN 
+            
+            UPDATE Mechanical.Support WITH (ROWLOCK) SET [Status] = 1 WHERE Id = @SupportId
 
             INSERT INTO [Mechanical].[Inspection]
                   (SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs, CompanyId, UserId,[Status],CreatedAt,[Enabled])

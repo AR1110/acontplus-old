@@ -65,8 +65,8 @@ BEGIN
                                ,CASE [Status] WHEN 0 THEN ''PENDIENTE'' 
                                               WHEN 1 THEN ''REVISIÓN''
                                               WHEN 2 THEN ''FINALIZADO''
-                                              WHEN 3 THEN ''PROCESADO''
-                                              WHEN 5 THEN ''ANULADO''
+                                              WHEN 3 THEN ''APROBADO''
+                                              WHEN 4 THEN ''ANULADO''
                                 END as [Status]
                                ,CASE [Status] WHEN 5 THEN ''table-danger'' 
                                               WHEN 2 THEN ''table-success''
@@ -77,7 +77,8 @@ BEGIN
                                ,Obs
                                ,codEstab
                                ,[Status]        AS TypeStatus
-                        FROM Mechanical.v_Support WITH (NOLOCK)
+                               ,(SELECT TOP 1 CAST(1 as bit) FROM Mechanical.[Inspection] st WITH (NOLOCK) WHERE st.SupportId = sm.Id) as existsInsp
+                        FROM Mechanical.v_Support sm WITH (NOLOCK)
                         WHERE CompanyId = @CompanyId '
 			 
             SELECT @pageIndex = pageIndex
@@ -87,7 +88,7 @@ BEGIN
             (
                 pageIndex INT
                ,pageSize  INT
-               ,[status]  BIT
+               ,[status]  INT
             )
 
             IF @Status >= 0
@@ -390,11 +391,12 @@ BEGIN
 
                    ) as quantityInspection
 
-            SELECT CASE [Status] WHEN 0 THEN 'Por Asignar' 
+            SELECT CASE [Status] WHEN 0 THEN 'Pendiente' 
                                  WHEN 1 THEN 'En proceso'
-                                 WHEN 2 THEN 'Por Entregar'
-                                 WHEN 4 THEN 'Entregado'
-                                        ELSE 'Anulado' 
+                                 WHEN 2 THEN 'Entregado'
+                                 WHEN 3 THEN 'Aprobado'
+                                 WHEN 4 THEN 'Anulado'
+                                        ELSE '' 
                    END      as [Status]
                   ,COUNT(*) as quantity
             FROM Mechanical.Support 

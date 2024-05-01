@@ -12,7 +12,7 @@ import { SupportService } from '@modules/mechanical/services/support.service';
 import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
-
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
@@ -27,6 +27,7 @@ import { SupportMaintenanceModalComponent } from './components/support-maintenan
     NgbDropdownModule,
     NgbPagination,
     MatTableModule,
+    MatCheckboxModule,
 
   ],
   templateUrl: './support-page.component.html',
@@ -38,7 +39,7 @@ export class SupportPageComponent {
   tS = inject(ToasterService)
   sharedSvc = inject(SharedService)
 
-  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs', 'estado'];
+  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs', 'estado','entregar'];
   pagination = new Pagination()
 
   dataSource: any[] = [];
@@ -233,6 +234,49 @@ export class SupportPageComponent {
     this.sharedSvc.getReport(params, 'pdf');
   }
 
+  //Status Support
+  putState(id: number, status: number) {
+    try {
+      Swal.fire({
+        // title: "Are you sure?",
+        text: "¿Estás seguro de Entregar este documento?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí!",
+        cancelButtonText: 'No!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.supportSvc.putState(id, status).subscribe({
+            next: (response) => {
 
+              if (isApiResponse(response)) {
+                if (response.code === "0") {
+                  this.tS.toastr({
+                    type: 'warning',
+                    message: response.message
+                  })
+                }
+                if (response.code === "1") {
+                  this.tS.toastr({
+                    type: 'success',
+                    message: response.message
+                  })
+                  this.getSupports();
+                }
+              }
+            },
+            error(err) {
 
+              console.log(err)
+            },
+          })
+        }
+      });
+    } catch (error) {
+      console.log(error)
+    }
+  };
 }
+
