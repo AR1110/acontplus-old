@@ -13,9 +13,4 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\Inventario\Inventario.Core\Inventario.Core.csproj" />
-	  <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
-	</ItemGroup>
-
 </Project>
