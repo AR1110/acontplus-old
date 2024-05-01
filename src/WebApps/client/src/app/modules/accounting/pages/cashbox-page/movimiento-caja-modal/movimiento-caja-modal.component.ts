@@ -1,21 +1,18 @@
-import { Component, inject, input, Input, ViewEncapsulation } from '@angular/core';
+import { Component, inject, Input, ViewEncapsulation } from '@angular/core';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CODE_ESTADO, CODE_REPORT, FORMAT_REPORT, FORMAT_TYPE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
-import { TipoDoc } from '@core/models/tipo-doc.model';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { formatDateMoment } from '@core/utils/format-date-moment';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { stringToDate } from '@core/utils/string-to-date';
 import { getPermisosLocal, isValidField } from '@core/utils/utils';
 import { AccountingModule } from '@modules/accounting/accounting.module';
 import { ControlCaja } from '@modules/accounting/models/cashbox.model';
-import { EntidadFinanciera } from '@modules/accounting/models/entidad-financiera.model';
 import { ControlCajaService } from '@modules/accounting/services/control-caja.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
-import { NgbActiveModal, NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { PermissionCashAccounting, PermissionStateService } from '@shared/store/permission-state.service';
 import { AppModule } from 'src/app/app.module';
 import Swal from 'sweetalert2';
 
@@ -42,12 +39,15 @@ export class MovimientoCajaModalComponent {
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToasterService);
+  private pS = inject(PermissionStateService)
 
-  dataPermisosCaja = {
+  dataPermisosCaja: PermissionCashAccounting = {
     cerrarCaja: false,
     verOtrasCajas: false,
     reporteMovimiento: false,
-    enterKey: false
+    enterKey: false,
+    reporteTransaccionPendiente: false,
+    reporteDetalleControlCaja: false
   }
   isReloadCaja = false;
 
@@ -97,18 +97,14 @@ export class MovimientoCajaModalComponent {
       dateEnd: this.dataSearch.toDate,
       statusMovement: [""].includes(this.dataSearch.statusMovement) ? null : this.dataSearch.statusMovement
     }
-    showLoader();
     this.controlCajaSvc.getAll(dataSearch).subscribe({
       next: (response) => {
-        hideLoader();
-
         const { movimientos } = response as { movimientos: Array<ControlCaja> }
 
         this.movimientosCaja = movimientos;
         this.totalRecords = this.movimientosCaja.length > 0 ? this.movimientosCaja[0].totalRecords : 0
       },
       error(err) {
-        hideLoader();
         console.log(err)
       },
     })
@@ -117,17 +113,14 @@ export class MovimientoCajaModalComponent {
   ngOnInit() {
     try {
       this.getMovimientosCaja();
-      let getDataPermiso: any = getPermisosLocal();
 
-      if (getDataPermiso) {
-        this.dataPermisosCaja = getDataPermiso.cashAccounting;
-      //  this.dataPermisosCaja = getDataPermiso.permisoCaja || {};
+      this.pS.select("permission").subscribe(response => {
+        this.dataPermisosCaja = response.cashAccounting;
+      })
 
-      }
-      showLoader()
+
       this.controlCajaSvc.getDataFilter().subscribe({
         next: (response) => {
-          hideLoader();
           const estados = response.estados;
           const dataEstado = estados.find((estado: any) => estado.codEstado === CODE_ESTADO.NCBR);
           if (dataEstado) {
@@ -135,7 +128,6 @@ export class MovimientoCajaModalComponent {
           }
         },
         error(err) {
-          hideLoader();
           console.log(err)
         },
       })
@@ -143,7 +135,6 @@ export class MovimientoCajaModalComponent {
 
 
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }
@@ -173,7 +164,7 @@ export class MovimientoCajaModalComponent {
   }
 
   verReporteMovimientoCaja(estado: boolean) {
-    if(!estado){
+    if (!estado) {
       return true;
     }
     return this.dataPermisosCaja.reporteMovimiento
@@ -324,7 +315,7 @@ export class MovimientoCajaModalComponent {
 
   }
 
-  openModalFiltroReporteDetalleCaja(data: ControlCaja){
+  openModalFiltroReporteDetalleCaja(data: ControlCaja) {
     try {
       const modalRef = this.modalSvc.openModalCustom(FiltroControlCajaReportModal, {
         size: 'sm'

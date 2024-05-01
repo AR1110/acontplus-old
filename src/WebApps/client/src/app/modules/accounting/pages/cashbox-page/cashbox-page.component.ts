@@ -4,7 +4,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
+
 import { getPermisosLocal } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Cashbox } from '@modules/accounting/models/cashbox.model';
@@ -67,16 +67,13 @@ export class CashboxPageComponent {
       pageIndex: this.dataSearch.pageIndex,
       pageSize: this.dataSearch.pageSize
     }
-    showLoader();
     this.cashboxSvc.getAll(params).subscribe({
       next: (response) => {
-        hideLoader();
         let { cajas } = response as { cajas: any };
         this.cashboxs = cajas || [];
         this.totalRecords = this.cashboxs.length > 0 ? this.cashboxs[0]?.totalRecords : 0;
       },
       error: (err) => {
-        hideLoader();
         console.log(err)
         this.totalRecords = 0;
       },
@@ -129,10 +126,8 @@ export class CashboxPageComponent {
         allowOutsideClick: false
       }).then(result => {
         if (result.isConfirmed) {
-          showLoader();
           this.cashboxSvc.delete(id).subscribe({
             next: (response) => {
-              hideLoader();
               if (isApiResponse(response)) {
                 if (response.code === "0") {
                   this.tS.toastr({
@@ -149,14 +144,12 @@ export class CashboxPageComponent {
                 }
               }
             }, error(err) {
-              hideLoader();
               console.log(err)
             },
           })
         }
       })
     } catch (error) {
-      hideLoader();
       console.log(error)
     }
   }
