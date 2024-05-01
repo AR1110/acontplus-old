@@ -24,6 +24,31 @@
       </li>
 
       <li [ngbNavItem]="3">
+        <button ngbNavLink>Entregado</button>
+        <ng-template ngbNavContent>
+            <app-support-page [status]="active" />
+          <!-- <app-inspection-page /> -->
+        </ng-template>
+      </li>
+
+
+      <li [ngbNavItem]="4">
+        <button ngbNavLink>Aprobado</button>
+        <ng-template ngbNavContent>
+            <app-support-page [status]="active" />
+          <!-- <app-inspection-page /> -->
+        </ng-template>
+      </li>
+
+      <li [ngbNavItem]="5">
+        <button ngbNavLink>Anulado</button>
+        <ng-template ngbNavContent>
+            <app-support-page [status]="active" />
+          <!-- <app-inspection-page /> -->
+        </ng-template>
+      </li>
+
+      <li [ngbNavItem]="6">
         <button ngbNavLink>Inspección</button>
         <ng-template ngbNavContent>
 

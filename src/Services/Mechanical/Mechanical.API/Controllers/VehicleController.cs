@@ -91,8 +91,7 @@ namespace Mechanical.API.Controllers
         {
             try
             {
-                bool response = await _vehicleService.DeleteAsync(id);
-                if (!response) { return BadRequest("No se pudo Eliminar"); }
+                var response = await _vehicleService.DeleteAsync(id);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -107,8 +106,7 @@ namespace Mechanical.API.Controllers
         {
             try
             {
-                bool response = await _vehicleService.UpdateStateAsync(id, state);
-                if (!response) { return BadRequest("No se pudo Actualizar"); }
+                var response = await _vehicleService.UpdateStateAsync(id, state);
                 return Ok(response);
             }
             catch (Exception ex)
