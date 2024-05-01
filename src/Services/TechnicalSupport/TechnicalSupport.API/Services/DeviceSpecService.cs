@@ -23,24 +23,17 @@
 
         public async Task<ApiResponse> UpdateAsync(int id, DeviceSpecs data)
         {
-            try
+            var itemFounded = await _context.DeviceSpecs.FindAsync(id);
+            if (itemFounded == null)
             {
+                return new ApiResponse { code = "0", message = "No se encontró registro de especificaciones" };
+            }
 
-                var itemFounded = await _context.DeviceSpecs.FindAsync(id);
-                if (itemFounded == null)
-                {
-                    return new ApiResponse { code = "0", message = "No se encontró registro de especificaciones" };
-                }
-                itemFounded.Specs = data.Specs;
-                itemFounded.UserId = data.UserId;
-                _context.Update(itemFounded);
-                await _context.SaveChangesAsync();
-                return new ApiResponse { code = "1", message = "Especificaciones actualizado exitosamente " };
-            }
-            catch (Exception)
-            {
-                throw new NotImplementedException();
-            }
+            itemFounded.Specs = data.Specs;
+            itemFounded.UserId = data.UserId;
+            _context.Update(itemFounded);
+            await _context.SaveChangesAsync();
+            return new ApiResponse { code = "1", message = "Especificaciones actualizado exitosamente " };
         }
     }
 }

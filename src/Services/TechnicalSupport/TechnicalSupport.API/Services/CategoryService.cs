@@ -1,86 +1,65 @@
-﻿namespace TechnicalSupport.API.Services
+﻿public class CategoryService : ICategoryService
 {
-    public class CategoryService : ICategoryService
+    private readonly TechnicalSupportContext _context;
+
+    public CategoryService(TechnicalSupportContext context)
     {
-        private readonly TechnicalSupportContext _context;
+        _context = context;
+    }
 
-        public CategoryService(TechnicalSupportContext context)
+    public async Task<ApiResponse> AddAsync(Category category)
+    {
+        if (await _context.Categories.AnyAsync(x => x.Code == category.Code))
         {
-            _context = context;
-        }
-        public async Task<ApiResponse> AddAsync(Category category)
-        {
-            try
-            {
-                if (await _context.Categories.AnyAsync(x => x.Code == category.Code))
-                {
-                    return new ApiResponse { code = "0", message = "Este código ya se encuentra registrado" };
-                }
-                _context.Categories.Add(category);
-                await _context.SaveChangesAsync();
-                return new ApiResponse { code = "1", message = "Guardada Exitosamente" };
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            return new ApiResponse { code = "0", message = "Este código ya se encuentra registrado" };
         }
 
-        public async Task<ApiResponse> DeleteAsync(int userId, int id)
-        {
-            try
-            {
-                var category = await _context.Categories.FindAsync(id);
-                category.Enabled = false;
-                category.Deleted = true;
-                category.UserId = userId;
-                _context.Update(category);
-                await _context.SaveChangesAsync();
-                return new ApiResponse { code = "1", message = "Eliminada Exitosamente" };
-            }
-            catch (Exception)
-            {
+        _context.Categories.Add(category);
+        await _context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Guardada Exitosamente" };
+    }
 
-                throw;
-            }
+    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    {
+        var category = await _context.Categories.FindAsync(id);
+        if (category == null)
+        {
+            // Handle case where category not found
+            return new ApiResponse { code = "0", message = "Categoría no encontrada" };
         }
 
-        public async Task<ApiResponse> GetAsync()
-        {
-            try
-            {
-                if (!await _context.Categories.AnyAsync())
-                {
-                    return new ApiResponse { code = "0", message = "No data" };
-                }
-                return new ApiResponse { code = "1", payload = DataConverters.SerializeObjectCustom<List<Category>>(await _context.Categories.ToListAsync()) };
-            }
-            catch (Exception)
-            {
+        category.Enabled = false;
+        category.Deleted = true;
+        category.UserId = userId;
+        _context.Update(category);
+        await _context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Eliminada Exitosamente" };
+    }
 
-                throw;
-            }
+    public async Task<ApiResponse> GetAsync()
+    {
+        if (!await _context.Categories.AnyAsync())
+        {
+            return new ApiResponse { code = "0", message = "No data" };
+        }
+        return new ApiResponse { code = "1", payload = DataConverters.SerializeObjectCustom<List<Category>>(await _context.Categories.ToListAsync()) };
+    }
+
+    public async Task<ApiResponse> UpdateAsync(int id, Category category)
+    {
+        var categoryFound = await _context.Categories.FindAsync(id);
+        if (categoryFound == null)
+        {
+            // Handle case where category not found
+            return new ApiResponse { code = "0", message = "Categoría no encontrada" };
         }
 
-        public async Task<ApiResponse> UpdateAsync(int id, Category category)
-        {
-            try
-            {
-                var categoryFound = await _context.Categories.FindAsync(id);
-                categoryFound.Code = category.Code;
-                categoryFound.Enabled = category.Enabled;
-                categoryFound.Name = category.Name;
-                categoryFound.UserId = category.UserId;
-                _context.Update(categoryFound);
-                await _context.SaveChangesAsync();
-                return new ApiResponse { code = "1", message = "Actualizada Exitosamente" };
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
+        categoryFound.Code = category.Code;
+        categoryFound.Enabled = category.Enabled;
+        categoryFound.Name = category.Name;
+        categoryFound.UserId = category.UserId;
+        _context.Update(categoryFound);
+        await _context.SaveChangesAsync();
+        return new ApiResponse { code = "1", message = "Actualizada Exitosamente" };
     }
 }
