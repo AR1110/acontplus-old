@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MODAL_SIZE } from '@core/constants/global.constants';
 
 type PropsModal = {
   backdrop?: boolean | 'static';
@@ -8,7 +9,7 @@ type PropsModal = {
   fullscreen?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | boolean | string;
   keyboard?: boolean;
   scrollable?: boolean;
-  size?: 'sm' | 'lg' | 'xl';
+  size?: MODAL_SIZE.SM | MODAL_SIZE.LG | MODAL_SIZE.XL | string;
   windowClass?: string;
 };
 

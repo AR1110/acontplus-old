@@ -8,9 +8,15 @@
       <span class="card-title">Cliente/Conductor</span>
     </div>
     <div class="card-body ">
-      <div class="form-group">
-        <label for="serachCustomer">Buscar Cliente/Conductor</label>
-        <app-company-customer-search [isSearchSimple]="true" (onCustomerSelected)="onCustomerSelected($event)" />
+      <div class="row">
+        <div class="col-12">
+
+          <div class="form-group">
+            <label for="company-customer-search">Buscar Cliente/Conductor</label>
+                <app-company-customer-search  (onCustomerSelected)="onCustomerSelected($event)" />
+
+          </div>
+        </div>
       </div>
 
       <div class="row">

@@ -76,8 +76,15 @@ export class OrderModalComponent {
       title: 'Garantia (si aplica)',
       field: 'deviceWarranty',
       width: 130,
-      validator: ['numeric', 'min:0'],
-      editor: true,
+      editor: 'date',
+      formatter: 'date',
+      placeholder: 'dd/mm/yyyy',
+      formatterParams: {
+        inputFormat: 'yyyy-MM-dd',
+        outputFormat: 'dd/MM/yyyy',
+        invalidPlaceholder: '(invalid date)',
+        timezone: 'America/Guayaquil',
+      },
     },
     {
       title: 'Reparaciones Requeridas',
@@ -194,9 +201,8 @@ export class OrderModalComponent {
       : device.deviceCustomerId;
     deviceToAdd.deviceSerie = !device.deviceSerie ? 0 : device.deviceSerie;
     deviceToAdd.deviceWarranty = !device.deviceWarranty
-      ? 0
-      : device.deviceWarranty;
-    // console.log(deviceToAdd);
+      ? ''
+      : device.deviceWarranty; 
     this.orderDetails.push(deviceToAdd);
     console.log(this.orderDetails);
   }

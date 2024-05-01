@@ -14,12 +14,14 @@ export class DeviceService {
   private http = inject(HttpClient);
 
   delete(id: number) {
-    return this.http.delete(`${this.url}${id}`).pipe(map((response) => response));
+    return this.http
+      .delete(`${this.url}${id}`)
+      .pipe(map((response) => response));
   }
 
   get(params: any) {
     return this.http
-      .get(`${this.url}?json=${params}`)
+      .get(`${this.url}?json=${JSON.stringify(params)}`)
       .pipe(map((response) => response));
   }
 

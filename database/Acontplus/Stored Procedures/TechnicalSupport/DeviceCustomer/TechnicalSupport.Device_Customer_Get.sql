@@ -35,7 +35,7 @@ BEGIN
         BEGIN
             SELECT td.Id
             ,td.SerialNumber
-            ,td.Warranty
+            ,td.WarrantyEndDate
             ,td.Enabled
             ,td.CustomerCompanyId
             ,c.BusinessName

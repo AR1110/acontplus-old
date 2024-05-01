@@ -4,41 +4,24 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
-import {
-  GroupedEstab,
-  GroupedEstabBodega,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
-import {
-  ajustarFechaEmisionModificada,
-  dateIsAfterCurrentDate,
-} from '@core/utils/date.util';
+import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 import { isDateValid } from '@core/utils/format-date-moment';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
-import {
-  faEdit,
-  faListAlt,
-  faTrashAlt,
-} from '@fortawesome/free-regular-svg-icons';
+import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
 import { ProductService } from '@modules/inventory/services/product.service';
 import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
 import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
-import {
-  getCantidadStock,
-  mergeProductStock,
-} from '@modules/inventory/utils/product-stock.util';
+import { getCantidadStock, mergeProductStock } from '@modules/inventory/utils/product-stock.util';
 import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
 import { orderMaintenanceAdapter } from '@modules/technical-support/adapters/order-maintenance.adapter';
-import {
-  ColOrderMaintenance,
-  OrderMaintenance,
-} from '@modules/technical-support/models/order-maintenance.model';
+import { ColOrderMaintenance, OrderMaintenance } from '@modules/technical-support/models/order-maintenance.model';
 import { OrderMaintenanceService } from '@modules/technical-support/services/order-maintenance.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -126,6 +109,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     orderDetailId: null,
     customerCompanyId: 0,
     obs: '',
+    deviceWarranty: ''
   };
 
   cloneOrder = {
@@ -245,6 +229,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         //let cellEl = cell.getElement();
         let rowDataMain = cell.getRow().getData();
 
+
         //create edit button
         // let editBtn = document.createElement('button');
         // editBtn.type = 'button';
@@ -262,6 +247,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
         delBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
+          console.log(rowData)
           this.askToDelete(rowData);
         });
 
@@ -602,8 +588,11 @@ export class OrderMaintenanceModalComponent implements OnInit {
           this.cloneOrder.feeId = dataTarifa.idTarifa;
         }
 
-        this.order.orderDetailId = this.orderDetails[0].orderDetailId;
-        this.order.obs = this.orderDetails[0].obs;
+        let dataOrderDetail = this.orderDetails[0];
+
+        this.order.orderDetailId = dataOrderDetail?.orderDetailId;
+        this.order.deviceWarranty = dataOrderDetail?.deviceWarranty;
+        this.order.obs = dataOrderDetail?.obs;
         //  this.tabulatorOptions.groupValues = [[...this.orderDetails.map(t => t.deviceName)]]
 
         this.setGroupValues();
@@ -867,7 +856,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       }).then((result) => {
         if (result.isConfirmed) {
           let index = this.orderMaintenances.findIndex(
-            (r) => r.rowguid !== data.rowguid
+            (r) => r.rowguid === data.rowguid
           );
           this.orderMaintenances.splice(index, 1);
 

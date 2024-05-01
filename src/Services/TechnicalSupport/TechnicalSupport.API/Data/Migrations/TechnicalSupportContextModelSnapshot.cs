@@ -35,9 +35,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(8)
+                        .HasMaxLength(10)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -85,9 +85,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(8)
+                        .HasMaxLength(10)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -200,9 +200,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(300)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(300)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -210,8 +210,11 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Warranty")
-                        .HasColumnType("numeric(18,2), not null");
+                    b.Property<DateTime?>("WarrantyEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("WarrantyStartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -277,9 +280,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(8)
+                        .HasMaxLength(10)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -374,6 +377,16 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<int>("PuntoEmisionId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Receiver")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<string>("ReceiverGovernmentId")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<int>("Sequence")
                         .HasColumnType("int");
@@ -656,9 +669,9 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(8)
+                        .HasMaxLength(10)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -697,6 +710,49 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasDatabaseName("UI_TS_Serie");
 
                     b.ToTable("Serie", "TechnicalSupport");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.WarrantyHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DeviceCustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("WarrantyEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("WarrantyStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceCustomerId");
+
+                    b.ToTable("WarrantyHistory", "TechnicalSupport");
                 });
 
             modelBuilder.Entity("TechnicalSupport.API.Entities.Brand", b =>
@@ -815,12 +871,28 @@ namespace TechnicalSupport.API.Data.Migrations
             modelBuilder.Entity("TechnicalSupport.API.Entities.Serie", b =>
                 {
                     b.HasOne("TechnicalSupport.API.Entities.Brand", "Brand")
-                        .WithMany()
+                        .WithMany("Series")
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.WarrantyHistory", b =>
+                {
+                    b.HasOne("TechnicalSupport.API.Entities.DeviceCustomer", "DeviceCustomer")
+                        .WithMany()
+                        .HasForeignKey("DeviceCustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeviceCustomer");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.API.Entities.Brand", b =>
+                {
+                    b.Navigation("Series");
                 });
 
             modelBuilder.Entity("TechnicalSupport.API.Entities.Device", b =>

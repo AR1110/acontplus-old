@@ -30,6 +30,10 @@ namespace TechnicalSupport.API.Entities
         public OrderStatus OrderStatus { get; set; }
         public int OrderStatusId { get; set; }
         public int? TaxPercentId { get; set; }
+        [MaxLength(300)]
+        public string Receiver { get; set; } 
+        [MaxLength(25)]
+        public string ReceiverGovernmentId { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
     }
 }

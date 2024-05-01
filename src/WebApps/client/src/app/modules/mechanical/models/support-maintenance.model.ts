@@ -3,7 +3,6 @@ import { FieldDefinitionDetailSale } from "@shared/models/field-definition-detai
 export class SupportMaintenanceDetail extends FieldDefinitionDetailSale {
   id = 0
   codePercentage?: string
-  percentage?: number
   enabled: boolean = true
   deleted?: boolean
 }

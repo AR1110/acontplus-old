@@ -27,9 +27,9 @@ export class OrderService {
       .delete(`${this.url}${id}`)
       .pipe(map((response) => response));
   }
-  delivery(id: number) {
+  delivery(id: number, data: any) {
     return this.http
-      .put(`${this.url}delivery/${id}`, null)
+      .put(`${this.url}delivery/${id}`, data)
       .pipe(map((response) => response));
   }
 

@@ -47,61 +47,50 @@ BEGIN
 	,baseImponible VARCHAR(50)
 	,valor VARCHAR(50)
 	,idDetalle INT NULL
-	)
-
-	--IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND codDoc = '01' AND complete = 1)
-	--	BEGIN
-	--		SELECT '1' code, '' AS 'message'
-	--		RETURN
-	--	END
-	--IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE codDoc != '01')
-	--	BEGIN
-	--		SELECT '1' code, '' AS 'message'
-	--		RETURN
-	--	END
-
-	INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos)
-	SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos
-	FROM OPENJSON(@jsonData) WITH (
-		idDetalle INT '$.idDetalle'
-		,idArticulo INT '$.idArticulo'
-		,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
-		,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
-		,cantidad VARCHAR(100) '$.cantidad'
-		,descripcion VARCHAR(300) '$.descripcion'
-		,precioUnitario VARCHAR(15) '$.precioUnitario'
-		,descuento VARCHAR(15) '$.descuento'
-		,precioTotalSinImpuesto VARCHAR(15) '$.precioTotalSinImpuesto'
-		,detallesAdicionales XML '$.detallesAdicionales'
-		,impuestos XML
-	)
-
-	INSERT INTO @taxes(idDetalle, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
-	SELECT idDetalle, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor
-	FROM OPENJSON(@impuestos) 
-	WITH (
-			idDetalle INT '$.idDetalle'
-	,codArticulo VARCHAR(100) '$.codArticulo'
-	,codigo VARCHAR(100) '$.codigo'
-	,codigoPorcentaje VARCHAR(100) '$.codigoPorcentaje'
-	,tarifa VARCHAR(100) '$.tarifa'
-	,baseImponible VARCHAR(300) '$.baseImponible'
-	,valor VARCHAR(15) '$.valor'
-	)
-
-	IF NOT EXISTS (SELECT 1 FROM @tmp)
-		BEGIN
-			SELECT '0' code, 'No existe datos para registrar'as 'message'
-			RETURN
-		END
-	
-	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM AFTDataRol(@idRol)
-
-	SELECT @rucProv = rucEmisor FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento 
-
-	SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
+	) 
 
 	BEGIN TRY
+
+        INSERT INTO @tmp(idDetalle, idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos)
+	    SELECT idDetalle, @idDocumento, idArticulo, codigoPrincipal, codigoAuxiliar, cantidad, descripcion, precioUnitario, descuento, precioTotalSinImpuesto, detallesAdicionales, impuestos
+	    FROM OPENJSON(@jsonData) WITH (
+		    idDetalle INT '$.idDetalle'
+		    ,idArticulo INT '$.idArticulo'
+		    ,codigoPrincipal VARCHAR(100) '$.codigoPrincipal'
+		    ,codigoAuxiliar VARCHAR(100) '$.codigoAuxiliar'
+		    ,cantidad VARCHAR(100) '$.cantidad'
+		    ,descripcion VARCHAR(300) '$.descripcion'
+		    ,precioUnitario VARCHAR(15) '$.precioUnitario'
+		    ,descuento VARCHAR(15) '$.descuento'
+		    ,precioTotalSinImpuesto VARCHAR(15) '$.precioTotalSinImpuesto'
+		    ,detallesAdicionales XML '$.detallesAdicionales'
+		    ,impuestos XML
+	    )
+
+	    INSERT INTO @taxes(idDetalle, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
+	    SELECT idDetalle, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor
+	    FROM OPENJSON(@impuestos) 
+	    WITH (
+			    idDetalle INT '$.idDetalle'
+	    ,codArticulo VARCHAR(100) '$.codArticulo'
+	    ,codigo VARCHAR(100) '$.codigo'
+	    ,codigoPorcentaje VARCHAR(100) '$.codigoPorcentaje'
+	    ,tarifa VARCHAR(100) '$.tarifa'
+	    ,baseImponible VARCHAR(300) '$.baseImponible'
+	    ,valor VARCHAR(15) '$.valor'
+	    )
+
+	    IF NOT EXISTS (SELECT 1 FROM @tmp)
+		    BEGIN
+			    SELECT '0' code, 'No existe datos para registrar'as 'message'
+			    RETURN
+		    END
+	
+	    SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario where idUsuario = @idRol
+
+	    SELECT @rucProv = rucEmisor FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
+
+	    SELECT TOP 1 @idProveedor = idProveedor FROM Proveedor WITH (NOLOCK) WHERE idEntidad = @idEntidad AND numeroIdentificacion = @rucProv
 		BEGIN TRAN
             IF EXISTS(SELECT TOP 1 1 FROM Recepcion.Doc_Detalle_Temp cpt WITH (NOLOCK)
                                     INNER JOIN @tmp t ON cpt.idDocumento = t.idDocumento)
@@ -116,12 +105,7 @@ BEGIN
 				        END
 
             IF EXISTS (SELECT TOP 1 1 FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumento = @idDocumento)
-                BEGIN
-             --       INSERT INTO Recepcion.Doc_Detalle_Temp(idDetalle, idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
-					        --, cantidad, descripcion, precioUnitario, precioTotalSinImpuesto
-             --               , costoNeto
-             --               , descuento, detallesAdicionales, impuestos, idUsuario)
-
+                BEGIN 
 					       SELECT ROW_NUMBER() OVER(ORDER BY dd.idDocumentoDetalle ASC) - 1 idDetalle, dd.idDocumento
                            , @idProveedor idProveedor, ISNULL(dd.idArticulo , 0) idArticulo, dd.idMedida, dd.codigoPrincipal, dd.codigoAuxiliar
 					        ,dd.cantidad, a.descripcion, dd.precioUnitario
@@ -184,7 +168,7 @@ BEGIN
 			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario)
 
                     
-                    SELECT ROW_NUMBER() OVER(ORDER BY (SELECT NULL)), idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
+                    SELECT ROW_NUMBER() OVER(ORDER BY idDetalle), idDocumento, idProveedor, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
 			        , cantidad, descripcion, precioUnitario, precioTotalSinImpuesto, costoNeto, descuento, detallesAdicionales, impuestos, idUsuario
                     FROM #TEMPII
                     DROP TABLE #TEMPII

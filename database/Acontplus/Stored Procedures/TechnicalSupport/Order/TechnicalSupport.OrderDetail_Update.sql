@@ -20,7 +20,7 @@ BEGIN
         id INT NOT NULL,
         obs VARCHAR(300) NOT NULL,
         serie VARCHAR(150),
-        warranty NUMERIC(18,5)
+        warrantyEndDate DATETIME2
     )
     DECLARE @userId INT,
         @deviceId INT,
@@ -30,8 +30,8 @@ BEGIN
         SELECT @orderId = orderId, @deviceId = DeviceId FROM TechnicalSupport.OrderDetail WITH (NOLOCK) WHERE Id = @id
         SET @customerCompanyId = (SELECT CustomerCompanyId FROM TechnicalSupport.[Order] WITH (NOLOCK) WHERE Id = @orderId)
 
-        INSERT INTO @tblDetails(id, obs, serie, warranty)
-        SELECT id, obs, deviceSerie, deviceWarranty FROM OPENJSON(@json) WITH (id INT, obs VARCHAR(300), deviceSerie VARCHAR(100), deviceWarranty NUMERIC(18,5))
+        INSERT INTO @tblDetails(id, obs, serie, warrantyEndDate)
+        SELECT id, obs, deviceSerie, deviceWarranty FROM OPENJSON(@json) WITH (id INT, obs VARCHAR(300), deviceSerie VARCHAR(100), deviceWarranty DATETIME2)
 
 		SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
         BEGIN TRAN
@@ -42,7 +42,7 @@ BEGIN
             FROM TechnicalSupport.OrderDetail od WITH (ROWLOCK) 
                 INNER JOIN @tblDetails td ON od.Id = td.id
 
-            UPDATE  TechnicalSupport.DeviceCustomer SET Warranty = (SELECT warranty FROM @tblDetails)
+            UPDATE  TechnicalSupport.DeviceCustomer SET warrantyEndDate = (SELECT warrantyEndDate FROM @tblDetails)
                 ,SerialNumber = (SELECT serie FROM @tblDetails)
             WHERE DeviceId = @deviceId 
                 AND CustomerCompanyId = @customerCompanyId

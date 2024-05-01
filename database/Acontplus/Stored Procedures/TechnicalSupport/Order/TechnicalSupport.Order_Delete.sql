@@ -26,18 +26,16 @@ BEGIN
 		BEGIN TRAN
 		
 
-			UPDATE TechnicalSupport.[Order] WITH (ROWLOCK) SET Deleted = 1, [Enabled] = 0
+			UPDATE TechnicalSupport.[Order] WITH (ROWLOCK) SET [Enabled] = 0
 				,UpdatedAt = dbo.ufnGetDateEcuador()
 			WHERE Id = @id
 
-			UPDATE od SET od.Deleted = 1
-				,od.Enabled = 0
+			UPDATE od SET od.Enabled = 0
 				,od.UpdatedAt =  dbo.ufnGetDateEcuador()
 			FROM TechnicalSupport.OrderDetail od WITH (ROWLOCK) 
 			WHERE od.OrderId = @id
 
-			UPDATE om SET om.Deleted = 1
-				,om.Enabled = 0
+			UPDATE om SET om.Enabled = 0
 				,om.UpdatedAt =  dbo.ufnGetDateEcuador()
 			FROM TechnicalSupport.OrderMaintenance om WITH (ROWLOCK) 
 				INNER JOIN TechnicalSupport.OrderDetail od WITH (NOLOCK) ON om.OrderDetailId = od.Id
