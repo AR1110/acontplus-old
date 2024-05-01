@@ -670,5 +670,11 @@
     "inputFiles": [
       "wwwroot/js/contabilidad/services/contabilidadService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/modals/modalRetencionAtsCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/modals/modalRetencionAtsCtrl.js"
+    ]
   }
 ]
