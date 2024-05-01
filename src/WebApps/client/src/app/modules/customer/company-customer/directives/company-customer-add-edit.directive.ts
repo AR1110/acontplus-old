@@ -13,7 +13,6 @@ export class CompanyCustomerAddEditDirective {
   @Input() id = 0;
   @HostListener('click')
   onClick() {
-    console.log('this')
     let modalRef = this.#modalSvc.open(AddEditModalComponent, {
       size: 'xl'
     })

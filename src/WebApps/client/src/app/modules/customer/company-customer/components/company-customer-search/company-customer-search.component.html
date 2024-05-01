@@ -29,19 +29,23 @@
     placeholder="Buscar cliente"
   />
 
-  @if(customer.idCliente == 0){
+
   <button
     type="button"
     class="btn btn-outline-secondary btn-sm"
+    (onResult)="onResult($event)"
    appCompanyCustomerAddEdit
   >
     <fa-icon [icon]="'plus'"></fa-icon>
   </button>
-  } @if (customer.idCliente > 0) {
+
+  @if (customer.idCliente > 0) {
   <button
     type="button"
     class="btn btn-outline-secondary btn-sm"
-    (click)="openModal()"
+    (onResult)="onResult($event)"
+   appCompanyCustomerAddEdit
+   [id]="customer.idCliente"
   >
     <fa-icon [icon]="'edit'"></fa-icon>
   </button>
