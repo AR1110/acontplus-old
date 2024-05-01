@@ -3,51 +3,36 @@
     public class OrderStatusController : BaseApiController
     {
         private readonly TechnicalSupportContext _context;
-        private readonly ICustomLogger _log;
-        public OrderStatusController(TechnicalSupportContext context, ICustomLogger log)
+
+        public OrderStatusController(TechnicalSupportContext context)
         {
             _context = context;
-            _log = log;
         }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            try
+            if (!_context.Categories.Any())
             {
-                if (!_context.Categories.Any())
-                {
-                    return NoContent();
-                }
-                return Ok(await _context.OrderStatuses.ToListAsync());
+                return NoContent();
             }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Get: " + ex.Message);
-                return BadRequest("Error on get");
-            }
+            return Ok(await _context.OrderStatuses.ToListAsync());
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Put(int id)
         {
-            try
+            var status = await _context.OrderStatuses.FindAsync(id);
+            if (status == null)
             {
-                var status = await _context.OrderStatuses.FindAsync(id);
-                if (status == null)
-                {
-                    return NotFound("No se encontro dicho estado");
-                }
+                return NotFound("No se encontro dicho estado");
+            }
 
-                status.Enabled = false;
-                status.Deleted = true;
-                _context.Entry(status).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return Ok("Eliminada Exitosamente");
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Delete: " + ex.Message);
-                return BadRequest("Error on Delete");
-            }
+            status.Enabled = false;
+            status.Deleted = true;
+            _context.Entry(status).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok("Eliminada Exitosamente");
         }
     }
 }

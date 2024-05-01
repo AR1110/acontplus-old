@@ -3,69 +3,51 @@
     public class DeviceSpecController : BaseApiController
     {
         private IDeviceSpecService _service;
-        private readonly ICustomLogger _log;
 
-        public DeviceSpecController(IDeviceSpecService service, ICustomLogger log)
+        public DeviceSpecController(IDeviceSpecService service)
         {
             _service = service;
-            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
+                {"userRoleId", User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(json)}
+            };
 
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return BadRequest("Can't Get Data"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
+            var response = await _service.GetAsync(parameters);
+            if (response == null)
             {
-                _log.LogActivity("Error en Get " + ex);
-                return BadRequest(ex);
+                return BadRequest("Can't Get Data");
             }
+            return Ok(response);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] DeviceSpecs data)
         {
-            try
+            data.UserId = User.GetUserId();
+            var response = await _service.AddAsync(data);
+            if (response == null)
             {
-                data.UserId = User.GetUserId();
-                var response = await _service.AddAsync(data);
-                if (response == null) { return BadRequest("Cant Save"); };
-                return Ok(response);
+                return BadRequest("Cant Save");
             }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Post: " + ex.Message);
-                return BadRequest("Error on post");
-            }
+            return Ok(response);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] DeviceSpecs data)
         {
-            try
+            data.UserId = User.GetUserId();
+            var response = await _service.UpdateAsync(id, data);
+            if (response == null)
             {
-                data.UserId = User.GetUserId();
-                var response = await _service.UpdateAsync(id, data);
-                if (response == null) { return BadRequest("Cant Update"); };
-                return Ok(response);
+                return BadRequest("Cant Update");
             }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Put: " + ex.Message);
-                return BadRequest("Error on Put");
-            }
+            return Ok(response);
         }
     }
 }

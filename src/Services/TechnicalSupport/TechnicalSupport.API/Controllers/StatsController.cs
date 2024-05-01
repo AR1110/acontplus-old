@@ -5,10 +5,10 @@
         private ICustomLogger _log;
         private readonly IStatsService _statsService;
 
-        public StatsController(IStatsService statsService, ICustomLogger log)
+        public StatsController(IStatsService statsService)
         {
             _statsService = statsService;
-            _log = log;
+            
         }
         [HttpGet]
         public async Task<IActionResult> Get(string json)

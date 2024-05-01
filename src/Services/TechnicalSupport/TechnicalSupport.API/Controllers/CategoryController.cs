@@ -3,70 +3,38 @@
     public class CategoryController : BaseApiController
     {
         private readonly ICategoryService _categoryService;
-        private readonly ICustomLogger _log;
-        public CategoryController(ICategoryService categoryService, ICustomLogger log)
+
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-            _log = log;
+
         }
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                var response = await _categoryService.GetAsync();
-                if (response == null) { return BadRequest("Can't Get brand"); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on Get:\n {ex}");
-                return BadRequest("Error on get");
-            }
+            var response = await _categoryService.GetAsync();
+            if (response == null) { return BadRequest("Can't Get brand"); };
+            return Ok(response);
         }
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Category category)
         {
-            try
-            {
-                category.UserId = User.GetUserId();
-                var response = await _categoryService.AddAsync(category);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on post: \n {ex} \n {JsonConvert.SerializeObject(category)}");
-                return BadRequest(ex.Message);
-            }
+            category.UserId = User.GetUserId();
+            var response = await _categoryService.AddAsync(category);
+            return Ok(response);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Category category)
         {
-            try
-            {
-                category.UserId = User.GetUserId();
-                var response = await _categoryService.UpdateAsync(id, category);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on put: {id} \n {ex} \n {JsonConvert.SerializeObject(category)}");
-                return BadRequest(ex.Message);
-            }
+            category.UserId = User.GetUserId();
+            var response = await _categoryService.UpdateAsync(id, category);
+            return Ok(response);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var response = await _categoryService.DeleteAsync(User.GetUserId(), id);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on delete: {id} \n {ex}");
-                return BadRequest(ex.Message);
-            }
+            var response = await _categoryService.DeleteAsync(User.GetUserId(), id);
+            return Ok(response);
         }
     }
 }

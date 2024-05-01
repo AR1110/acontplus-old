@@ -3,55 +3,33 @@
     public class OrderDetailController : BaseApiController
     {
         private readonly IOrderDetailService _orderDetailService;
-        private readonly ICustomLogger _log;
-        public OrderDetailController(IOrderDetailService orderDetailService, ICustomLogger log)
+
+        public OrderDetailController(IOrderDetailService orderDetailService)
         {
             _orderDetailService = orderDetailService;
-            _log = log;
         }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
-            try
-            {
-                data.UserRoleId = User.GetUserRoleId();
-                var response = await _orderDetailService.AddAsync(data);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on post: \n {JsonConvert.SerializeObject(data)} \n {ex}");
-                return BadRequest(ex.Message);
-            }
+            data.UserRoleId = User.GetUserRoleId();
+            var response = await _orderDetailService.AddAsync(data);
+            return Ok(response);
         }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
-            try
-            {
-                data.UserRoleId = User.GetUserRoleId();
-                var response = await _orderDetailService.UpdateAsync(id, data);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on put: {id} \n {JsonConvert.SerializeObject(data)} \n {ex}");
-                return BadRequest(ex.Message);
-            }
+            data.UserRoleId = User.GetUserRoleId();
+            var response = await _orderDetailService.UpdateAsync(id, data);
+            return Ok(response);
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var response = await _orderDetailService.DeleteAsync(User.GetUserId(), id);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity($"Error on delete: {id} \n {ex}");
-                return BadRequest(ex.Message);
-            }
+            var response = await _orderDetailService.DeleteAsync(User.GetUserId(), id);
+            return Ok(response);
         }
     }
 }
