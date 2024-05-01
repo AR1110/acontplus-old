@@ -47,7 +47,7 @@ BEGIN
        ,deviceCustomerId INT NOT NULL
        ,deviceId INT NOT NULL
        ,deviceSerie VARCHAR(300)
-       ,deviceWarranty NUMERIC(18,2)
+       ,deviceWarranty DATETIME2
        ,obs VARCHAR(500) NULL
        ,assignedUserId INT
     )
@@ -102,7 +102,7 @@ BEGIN
                             ,deviceCustomerId INT       '$.deviceCustomerId'
                             ,deviceId    INT             '$.deviceId'
                             ,deviceSerie    VARCHAR(300)             '$.deviceSerie'
-                            ,deviceWarranty    NUMERIC(18,2)             '$.deviceWarranty'
+                            ,deviceWarranty    DATETIME2             '$.deviceWarranty'
                             ,obs         VARCHAR(100)    '$.obs'
                             ,assignedUserId INT
                         )
@@ -135,7 +135,7 @@ BEGIN
             FROM @tbDetails
             WHERE id = 0
         
-            INSERT INTO TechnicalSupport.DeviceCustomer(CustomerCompanyId, DeviceId, SerialNumber, Warranty)
+            INSERT INTO TechnicalSupport.DeviceCustomer(CustomerCompanyId, DeviceId, SerialNumber, WarrantyEndDate)
             SELECT (SELECT TOP 1 o.customerCompanyId FROM @tbOrder o), deviceId, deviceSerie, deviceWarranty
             FROM @tbDetails 
             WHERE deviceCustomerId = 0 
