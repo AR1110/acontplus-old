@@ -53,7 +53,7 @@ BEGIN
         INSERT INTO @tbInspection 
               ([Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs)
         SELECT [Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs
-        FROM OPENJSON(@jsonInspection) WITH 
+        FROM OPENJSON(@json) WITH 
         (
             [Date]          DATETIME2 '$.date' 
            ,Mileage               INT '$.mileage' 
