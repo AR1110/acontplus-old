@@ -14,14 +14,15 @@ import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
 import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isApiResponse } from '@core/models/api-response';
+import { MatChipsModule } from '@angular/material/chips';
 
 type VehiclePartNode = VehiclePart & {
   status: number
   obs: string
 }
 type VehiclePartTypeNode = VehiclePartType & {
+  isCollapsed: boolean
   nodes: VehiclePartNode[]
 }
 @Component({
@@ -34,7 +35,8 @@ type VehiclePartTypeNode = VehiclePartType & {
     MatButtonToggleModule,
     MatSlideToggleModule,
     MatRadioModule,
-    InputDateComponent
+    InputDateComponent,
+    MatChipsModule
   ],
   templateUrl: './inspection-modal.component.html',
 })
@@ -76,7 +78,7 @@ export class InspectionModalComponent {
 
   successResponse = {
     next: (response: any) => {
-      hideLoader()
+
       if (isApiResponse(response)) {
         if (response.code === "0") {
           this.tS.toastr({
@@ -93,20 +95,16 @@ export class InspectionModalComponent {
           this.modal.close(response)
         }
       }
-    },
-    error(err: any) {
-      hideLoader()
-      console.log(err)
     }
   }
 
   ngOnInit(): void {
     try {
 
-      showLoader();
+
       this.inspectionSvc.getDataForm(this.params.supportId).subscribe({
         next: (response) => {
-          hideLoader();
+
 
           this.support = response.support;
 
@@ -115,22 +113,23 @@ export class InspectionModalComponent {
 
           if (this.params.inspectionId > 0) {
             this.btnText = 'Actualizar';
-            showLoader()
+
             this.inspectionSvc.getId(this.params.inspectionId).subscribe({
               next: (response) => {
-                hideLoader()
+
                 this.data = response.data;
-                this.vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
-                  let nodes = response.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[]
+                let vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
+                  let nodes = response.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[];
+                  let isCollapsed = nodes.some(n => [1,2,3].includes(n.status))
+                  console.log(isCollapsed, `${item.description}`)
                   return {
                     ...item,
-                    nodes
+                    nodes,
+                    isCollapsed: !isCollapsed
                   }
                 })
-              },
-              error(err) {
-                hideLoader();
-                console.log(err)
+                console.log(vehiclePartTypeNodes)
+                this.vehiclePartTypeNodes = vehiclePartTypeNodes;
               },
             })
           } else {
@@ -138,19 +137,20 @@ export class InspectionModalComponent {
               let nodes = this.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[]
               return {
                 ...item,
-                nodes
+                nodes,
+                isCollapsed: true
               }
             })
           }
 
         },
         error(err) {
-          hideLoader();
+          ;
           console.log(err)
         },
       })
     } catch (error) {
-      hideLoader();
+      ;
       console.log(error)
     }
   }
@@ -266,15 +266,15 @@ export class InspectionModalComponent {
         obs: isValidField(this.data.obs)
       }
       if (this.params.inspectionId > 0) {
-        showLoader()
+
         this.inspectionSvc.put(this.params.inspectionId, data).subscribe(this.successResponse)
       }
       if (!(this.params.inspectionId > 0)) {
-        showLoader()
+
         this.inspectionSvc.post(data).subscribe(this.successResponse)
       }
     } catch (error) {
-      hideLoader()
+
       console.log(error)
     }
   }

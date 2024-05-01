@@ -525,8 +525,6 @@ export class SupportMaintenanceModalComponent {
     showLoader()
     this.supportDetailSvc.getId(this.params.id).subscribe({
       next: (response) => {
-        console.log(response)
-        hideLoader()
         this.data = {
           ...this.data,
           ...response.data
@@ -554,7 +552,6 @@ export class SupportMaintenanceModalComponent {
         this.drawImpuestoTotales()
       },
       error(err) {
-        hideLoader()
         console.log(err)
       },
     })
@@ -673,8 +670,6 @@ export class SupportMaintenanceModalComponent {
         cantidad: cantidadStock
       }).subscribe({
         next: async (response) => {
-          hideLoader();
-
           if (isApiResponse(response)) {
 
             let { code, message, titleSms } = response;
@@ -707,7 +702,6 @@ export class SupportMaintenanceModalComponent {
           }
         },
         error(error) {
-          hideLoader();
           console.log(error)
         }
       })
@@ -1036,7 +1030,6 @@ export class SupportMaintenanceModalComponent {
       showLoader()
       this.supportDetailSvc.post(params).subscribe({
         next: (response) => {
-          hideLoader()
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -1055,13 +1048,11 @@ export class SupportMaintenanceModalComponent {
 
         },
         error(err) {
-          hideLoader();
           console.log(err)
         },
       })
 
     } catch (error) {
-      hideLoader()
       console.log(error)
     }
   }

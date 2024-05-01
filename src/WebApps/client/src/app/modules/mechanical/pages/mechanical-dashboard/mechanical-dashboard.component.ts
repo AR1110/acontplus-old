@@ -26,11 +26,9 @@ export class MechanicalDashboardComponent   {
     this.supportSvc.getDashboard().subscribe({
       next:(response) =>{
         this.data = response.data;
-        console.log(response.data)
         let labels = response.barchart.map((i: any) => i.status)
         let data = response.barchart.map((i: any) => i.quantity)
-        console.log(labels)
-        console.log(data)
+
         this.chartSupports = new Chart('chartSupports', {
           type: 'bar',
           data: {

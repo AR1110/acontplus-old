@@ -10,7 +10,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { VehicleRead } from '@modules/mechanical/models/vehicle.model';
 import { VehicleService } from '@modules/mechanical/services/vehicle.service';
 import { VehicleAddEditDirective } from '@modules/mechanical/shared/directives/vehicle-add-edit.directive';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap'; 
+import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
@@ -51,10 +51,10 @@ export class VehiclePageComponent {
         pageIndex: this.pagination.pageIndex,
         pageSize: this.pagination.pageSize,
       }
-      showLoader();
+      // showLoader();
       this.vehicleSvc.getAll(params).subscribe({
         next: (response) => {
-          hideLoader()
+          // hideLoader()
           this.dataSource = response;
 
           if (this.dataSource.length > 0) {
@@ -63,12 +63,12 @@ export class VehiclePageComponent {
 
         },
         error(err) {
-          hideLoader()
+          // hideLoader()
           console.log(err)
         },
       })
     } catch (error) {
-      hideLoader();
+      // hideLoader();
     }
   }
 

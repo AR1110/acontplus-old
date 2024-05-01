@@ -102,3 +102,10 @@ export enum TAX_CODE {
   ICE = '3',
   IRBPNR = '5'
 }
+
+
+export enum MODAL_SIZE {
+  XL='xl',
+  LG='lg',
+  SM ='sm'
+}

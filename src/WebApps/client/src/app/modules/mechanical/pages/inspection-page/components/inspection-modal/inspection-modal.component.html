@@ -77,6 +77,7 @@
       </h2>
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
+
           <ng-template>
 
               <div class="table-responsive">
@@ -84,32 +85,28 @@
                   <thead class="thead-dark">
                     <tr>
                       <th>item</th>
-                      <th class="text-center">Bueno</th>
+                      <th class="text-center">Estado</th>
+                      <!-- <th class="text-center">Bueno</th>
                       <th class="text-center">Regular</th>
-                      <th class="text-center">Malo</th>
+                      <th class="text-center">Malo</th> -->
                       <th class="text-center">Observación</th>
                     </tr>
                   </thead>
                   <tbody>
 
-                    @for (node of item.nodes; track $index) {
+                    @for (node of item.nodes; track node.id;let i=$index) {
                       <tr>
-                        <td width="35%">{{node.description}} </td>
-                        <td width="5%" class="text-center">
-                          <mat-radio-group [(ngModel)]="node.status" name="status{{$index}}">
-                            <mat-radio-button [value]="1"></mat-radio-button>
-                          </mat-radio-group>
+                        <td width="35%">{{ node.description }}</td>
+                        <td width="25%" class="text-center">
+                          <div class="d-flex flex-row">
+                              <mat-chip-listbox aria-label="Option selection" [(ngModel)]="node.status">
+                                <mat-chip-option [value]="1" color="primary"> Bueno</mat-chip-option>
+                                <mat-chip-option [value]="2" color="primary">Regular</mat-chip-option>
+                                <mat-chip-option [value]="3" color="primary">Malo</mat-chip-option>
+                              </mat-chip-listbox>
+                          </div>
                         </td>
-                        <td width="5%" class="text-center">
-                          <mat-radio-group [(ngModel)]="node.status" name="status{{$index}}">
-                            <mat-radio-button [value]="2"></mat-radio-button>
-                          </mat-radio-group>
-                        </td>
-                        <td width="5%" class="text-center">
-                          <mat-radio-group [(ngModel)]="node.status" name="status{{$index}}">
-                            <mat-radio-button [value]="3"></mat-radio-button>
-                          </mat-radio-group>
-                        </td>
+
                         <td width="50%" class="text-center">
                           <div class="form-group">
                             <input type="text" class="form-control" [(ngModel)]="node.obs" />
@@ -123,6 +120,7 @@
 
             </div>
           </ng-template>
+
         </div>
       </div>
     </div>
