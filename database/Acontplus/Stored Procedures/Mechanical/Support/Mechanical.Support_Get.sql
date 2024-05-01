@@ -241,7 +241,7 @@ BEGIN
     IF @tipo = 5
         BEGIN
             
-            SET @tableNames = 'comrpobante,cliente,detalle'
+            SET @tableNames = 'comprobante,cliente,detalle,tiempoCredito,config,formapago,impuestos'
 
             SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
 
@@ -257,10 +257,10 @@ BEGIN
                   ,cl.idTiempoCredito
                   ,cl.FormaPagoSriId                           as idFormaPagoSri
                   ,cl.idTipoIdentificacion
-		          ,cl.nombreFiscal
-		          ,cl.numeroIdentificacion
-		          ,ISNULL(cl.direccion, '')                    as direccion
-		          ,ISNULL(cl.correo,'')                        as correo
+		          ,cl.nombreFiscal                             as razonSocialComprador
+		          ,cl.numeroIdentificacion                     as identificacionComprador
+		          ,ISNULL(cl.direccion, '')                    as direccionComprador
+		          ,ISNULL(cl.correo,'')                        as email
 		          ,ISNULL(cl.telefono, '')                     as telefono
 		          ,ISNULL(cl.placa+';'+ISNULL(cl.placa,''),'') as placa 
             FROM Mechanical.Support     st WITH (NOLOCK)
@@ -271,7 +271,9 @@ BEGIN
                   ,md.ArticuloId        
                   ,md.BodegaId         
                   ,md.TarifaId          
-                  ,md.MedidaId         
+                  ,md.MedidaId
+                  ,(SELECT TOP 1 ti.idTipoIva FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = md.CodePercentage )  as idTipoIva
+                  ,(SELECT TOP 1 ti.idImpuesto FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = md.CodePercentage ) as idImpuesto
                   ,md.[Description]                       
                   ,md.Quantity          
                   ,md.Price              
@@ -355,6 +357,36 @@ BEGIN
             WHERE SupportId = @Id
               AND md.[Enabled] = 1
               AND md.Deleted IS NULL
+
+            SELECT idTiempoCredito
+	                  ,descripcion
+	                  ,diasCredito
+	                  ,numeroCuota 
+                      ,entrada
+	            FROM TiempoCredito WITH (NOLOCK) 
+	            WHERE idEntidad = @CompanyId 
+                  AND gestion = 1 
+                  AND estado = 1
+
+            SELECT CAST(printerAutomatic AS BIT) as printerAutomatic
+	            ,CAST(payAutomatic     AS BIT) as payAutomatic
+                ,CAST(idFormaPagoSri   AS INT) as idFormaPagoSri
+	        FROM Config.v_Sistema_Ventas gs
+            WHERE gs.idEntidad = @CompanyId
+
+            SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
+
+            SELECT ti.idTarifaImpuesto
+                  ,ti.codigo
+                  ,ti.codImpuesto
+                  ,i.idImpuesto
+                  ,ti.descripcion
+                  ,ti.porcentaje
+                  ,ti.estado 
+            FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
+            INNER JOIN Sri.Impuesto  i WITH (NOLOCK)  ON i.codigo = ti.codImpuesto 
+            WHERE i.codigo = '2'
+              AND ti.estado = 1 
 
             RETURN 
         END 
