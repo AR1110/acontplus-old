@@ -97,10 +97,12 @@ BEGIN
     IF (@tipo = 4)
         BEGIN
         	SET @tableNames = 'devices'
-            SELECT d.*, dc.Id DeviceCustomerId, dc.CustomerCompanyId, dc.SerialNumber DeviceSerie, dc.Warranty DeviceWarranty, ISNULL(ds.Specs, '{}') Specs
-            
+            SELECT d.*, dc.Id DeviceCustomerId, dc.CustomerCompanyId, dc.SerialNumber DeviceSerie, CONVERT(VARCHAR, FORMAT(dc.warrantyEndDate, 'yyyy-MM-dd'), 106) DeviceWarranty, ISNULL(ds.Specs, '{}') Specs
+            ,m.[Name] Model
+            ,m.[Year]
             FROM TechnicalSupport.Device d  WITH (NOLOCK)
             INNER JOIN TechnicalSupport.DeviceCustomer dc WITH (NOLOCK) ON d.Id = dc.DeviceId
+            INNER JOIN TechnicalSupport.Modelo m WITH (NOLOCK) ON d.ModeloId = m.Id
             LEFT JOIN TechnicalSupport.DeviceSpecs ds WITH(NOLOCK) ON d.id = ds.DeviceId
             WHERE dc.CustomerCompanyId = @customerCompanyId
             RETURN

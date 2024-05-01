@@ -25,12 +25,10 @@ export class DeviceListModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.deviceService
-      .get(
-        JSON.stringify({
-          tipo: 4,
-          customerCompanyId: this.data.customerCompanyId,
-        })
-      )
+      .get({
+        tipo: 4,
+        customerCompanyId: this.data.customerCompanyId,
+      })
       .subscribe({
         next: (response) => {
           if (isApiResponse(response)) {

@@ -71,10 +71,10 @@ export class OrderListComponent implements OnInit {
   pagination = new Pagination();
   startDate: string = '';
 
-  async askToDelete(item: any) {
+  async askToCancel(item: any) {
     const result = await swal.fire({
       icon: 'warning',
-      text: 'Esta seguro de eliminar esta orden?',
+      text: 'Esta seguro de anular esta orden?',
       title: 'Aviso',
       showConfirmButton: true,
       showDenyButton: true,
