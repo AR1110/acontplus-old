@@ -36,13 +36,11 @@ export class OrderDeliveryModalComponent implements OnInit {
 
   // * Forms.
   orderDeliveryForm = new FormGroup({
-    receiverGovernmentId: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    receiver: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    receiverGovernmentId: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(13)]),
+    receiver: new FormControl('', [Validators.required, Validators.minLength(5)]),
   });
 
-  ngOnInit(): void {;
-    console.log(this.data);
-  }
+  ngOnInit(): void { }
 
   closeModal() {
     this.modalRef.close();
