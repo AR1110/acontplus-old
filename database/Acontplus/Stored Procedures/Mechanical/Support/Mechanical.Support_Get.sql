@@ -38,7 +38,7 @@ BEGIN
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
     
     --> Filters
-    DECLARE @Id INT ,@CustomerId INT ,@VehicleCompranyId INT ,@textSearch VARCHAR(100) ,@UserId INT 
+    DECLARE @Id INT ,@CustomerId INT ,@VehicleCompranyId INT ,@textSearch VARCHAR(100) ,@UserId INT ,@Status INT ,@assigned BIT
 
     -->Variables
     SELECT TOP 1 @CompanyId = idEntidad, @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -53,7 +53,8 @@ BEGIN
             SET @params = '@CompanyId INT 
                           ,@UserId    INT 
                           ,@pageSize  INT 
-                          ,@pageIndex INT'
+                          ,@pageIndex INT
+                          ,@Status    INT'
 
             SET @sql  = 'SELECT Id
                                ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
@@ -64,8 +65,8 @@ BEGIN
                                ,CASE [Status] WHEN 0 THEN ''PENDIENTE'' 
                                               WHEN 1 THEN ''REVISIÓN''
                                               WHEN 2 THEN ''FINALIZADO''
-                                              WHEN 3 THEN ''PROCESADO''
-                                              WHEN 5 THEN ''ANULADO''
+                                              WHEN 3 THEN ''APROBADO''
+                                              WHEN 4 THEN ''ANULADO''
                                 END as [Status]
                                ,CASE [Status] WHEN 5 THEN ''table-danger'' 
                                               WHEN 2 THEN ''table-success''
@@ -76,20 +77,28 @@ BEGIN
                                ,Obs
                                ,codEstab
                                ,[Status]        AS TypeStatus
-                        FROM Mechanical.v_Support WITH (NOLOCK)
+                               ,(SELECT TOP 1 CAST(1 as bit) FROM Mechanical.[Inspection] st WITH (NOLOCK) WHERE st.SupportId = sm.Id) as existsInsp
+                        FROM Mechanical.v_Support sm WITH (NOLOCK)
                         WHERE CompanyId = @CompanyId '
 			 
             SELECT @pageIndex = pageIndex
                   ,@pageSize  = pageSize
+                  ,@Status    = [status]
             FROM OPENJSON(@json) WITH 
             (
                 pageIndex INT
                ,pageSize  INT
+               ,[status]  INT
             )
 
-            IF @UserId > 0
+            IF @Status >= 0
                 BEGIN
-                    SET @sql = @sql + 'AND [Status] = 0 AND UserAssignedId = @UserId ' 
+                    SET @sql = @sql + 'AND [Status] = @Status ' 
+                END
+
+            IF @assigned = 1
+                BEGIN
+                    SET @sql = @sql + 'AND UserAssignedId = @UserId '
                 END 
 
             SET @sql = @sql + 'ORDER BY Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
@@ -100,6 +109,7 @@ BEGIN
                               ,@UserId    = @UserId
 							  ,@pageIndex = @pageIndex
 							  ,@pageSize  = @pageSize
+                              ,@Status    = @Status
 
             RETURN
 		END
@@ -130,7 +140,7 @@ BEGIN
 
             SELECT Id as vehicleTypeId, [Description] FROM Mechanical.VehicleType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
 
-            SELECT Id as countryId, [Description] FROM Common.Country WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1 
+            SELECT Id as countryId, [Description] FROM Common.Country WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1 ORDER BY [Description] ASC
 
             SELECT codigoSri            as idType
                   ,descripcion          as [description] 
@@ -206,19 +216,197 @@ BEGIN
             SET @tableNames = 'dataSearch'
 
             SELECT TOP 20 
-                   Id
+                   vc.Id
                   ,LicensePlate
                   ,Brand
-                  ,TradeName
-            FROM Mechanical.v_Vehicle WITH (NOLOCK) 
+                  ,cl.nombreFiscal as TradeName
+            FROM Mechanical.VehicleCompany vc WITH (NOLOCK) 
+            INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente = vc.CustomerId
+            INNER JOIN Mechanical.Vehicle  ve WITH (NOLOCK) ON ve.id        = vc.VehicleId
             WHERE CompanyId = @CompanyId
               AND (
-                   LicensePlate LIKE '%' + @textSearch + '%' 
-                OR IDCard       LIKE '%' + @textSearch + '%'
+                   ve.LicensePlate          LIKE '%' + @textSearch + '%'
+                OR ve.Brand                 LIKE '%' + @textSearch + '%'
+                OR ve.Model                 LIKE '%' + @textSearch + '%'
+                OR cl.numeroIdentificacion  LIKE '%' + @textSearch + '%'
+                OR cl.nombreComercial       LIKE '%' + @textSearch + '%'
+                OR cl.nombreFiscal          LIKE '%' + @textSearch + '%'
                   )   
 
             RETURN 
 
         END
+
+    --> GET PARA LA TRANFORMACION DE DOCUMENTOS DE VENTA
+    IF @tipo = 5
+        BEGIN
+            
+            SET @tableNames = 'comrpobante,cliente,detalle'
+
+            SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT st.Id              as SupportId
+                  ,st.PuntoEmisionId  as idPuntoEmision
+                  ,st.UserId          as idUsuario
+                  ,pe.codEstab
+            FROM Mechanical.Support     st WITH (NOLOCK)
+            INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = st.PuntoEmisionId
+            WHERE Id = @Id
+
+            SELECT cl.idCliente
+                  ,cl.idTiempoCredito
+                  ,cl.FormaPagoSriId                           as idFormaPagoSri
+                  ,cl.idTipoIdentificacion
+		          ,cl.nombreFiscal
+		          ,cl.numeroIdentificacion
+		          ,ISNULL(cl.direccion, '')                    as direccion
+		          ,ISNULL(cl.correo,'')                        as correo
+		          ,ISNULL(cl.telefono, '')                     as telefono
+		          ,ISNULL(cl.placa+';'+ISNULL(cl.placa,''),'') as placa 
+            FROM Mechanical.Support     st WITH (NOLOCK)
+            INNER JOIN dbo.Cliente      cl WITH (NOLOCK) ON cl.idCliente = st.CustomerId
+            WHERE Id = @Id
+
+            SELECT md.Id
+                  ,md.ArticuloId        
+                  ,md.BodegaId         
+                  ,md.TarifaId          
+                  ,md.MedidaId         
+                  ,md.[Description]                       
+                  ,md.Quantity          
+                  ,md.Price              
+                  ,md.Cost              
+                  ,md.CodePercentage
+                  ,md.[Percentage]     
+                  ,bo.codEstab
+                  ,md.Total                  
+                  ,ar.llevaInventario
+                  ,ar.stockMinimo
+                  ,ar.stock
+                  ,ar.precioSinSubsidio
+                  ,ar.codigo            AS codigoArticulo
+                  ,ar.codigoAuxiliar    AS codigoAuxiliar
+                  ,0                    AS valorDescuento
+                  ,md.[Enabled] 
+                  ,md.Deleted
+                  ,ISNULL
+                   ((
+                        SELECT af.idMedida
+                              ,IIF(af.gestionVenta = 1,1,3) as orden
+                              ,af.conversion
+                              ,af.precioCostoFraccionado
+                              ,ar.precioCosto
+			                  ,me.descripcion               as descripcion
+			                  ,(
+                                    SELECT pv.idTarifa
+                                          ,pv.precioVenta
+                                          ,pv.precioConIva
+                                          ,UPPER(ta.descripcion) as tarifa
+                                          ,ta.ventaPorMayor
+					                FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
+					                INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
+					                WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
+					                ORDER BY ta.predeterminada DESC 
+                                    FOR JSON PATH
+
+                              ) as tarifas
+			            FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			            INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
+                        INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+			            WHERE af.idArticulo = md.ArticuloId  
+                        FOR JSON PATH
+                
+                    ),'[]') as fraccionado
+
+                   ,ISNULL
+                    ((
+                        SELECT sc.idMedida
+                              ,2              as orden
+                              ,1              as conversion
+			                  ,sc.precioCosto as precioCostoFraccionado
+                              ,sc.precioCosto
+                              ,me.descripcion
+			                  ,(
+                                    SELECT ap.idTarifa
+                                          ,ap.precioVenta
+                                          ,ap.precioConIva
+                                          ,UPPER(ta.descripcion) as tarifa
+                                          ,ta.ventaPorMayor 
+					                FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+					                INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+					                WHERE ap.idArticulo = sc.idArticulo
+					                ORDER BY ta.predeterminada DESC 
+                                    FOR JSON PATH
+
+                               ) as tarifas
+			            FROM dbo.Articulo     sc WITH (NOLOCK)
+			            INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = sc.idMedida
+			            WHERE sc.idArticulo = md.ArticuloId 
+                        FOR JSON PATH
+
+                    ),'[]') as principal
+
+                   ,(
+                    SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
+                    ) as consolidacion
+            FROM Mechanical.SupportDetail md WITH (NOLOCK)
+            INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
+            INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
+            WHERE SupportId = @Id
+              AND md.[Enabled] = 1
+              AND md.Deleted IS NULL
+
+            RETURN 
+        END 
+    
+    --> ESTADISTICAS 
+    IF @tipo = 6
+        BEGIN
+            SET @tableNames = 'quantity,barchart'
+
+            SELECT (
+                        SELECT COUNT(*) 
+                        FROM Mechanical.Support 
+                        WHERE [Enabled] = 1
+                          AND Deleted IS NULL
+                          AND CompanyId = @CompanyId
+
+                   ) as quantitySupport
+
+                  ,(
+                        SELECT COUNT(*)
+                        FROM Mechanical.VehicleCompany 
+                        WHERE [Enabled] = 1
+                          AND Deleted IS NULL
+                          AND CompanyId = @CompanyId
+
+                   ) as quantityVehicleCompany
+
+                  ,(
+                        SELECT COUNT(*) 
+                        FROM Mechanical.Inspection
+                        WHERE [Enabled] = 1
+                          AND Deleted IS NULL
+                          AND CompanyId = @CompanyId
+
+                   ) as quantityInspection
+
+            SELECT CASE [Status] WHEN 0 THEN 'Pendiente' 
+                                 WHEN 1 THEN 'En proceso'
+                                 WHEN 2 THEN 'Entregado'
+                                 WHEN 3 THEN 'Aprobado'
+                                 WHEN 4 THEN 'Anulado'
+                                        ELSE '' 
+                   END      as [Status]
+                  ,COUNT(*) as quantity
+            FROM Mechanical.Support 
+            WHERE [Enabled] = 1
+              AND Deleted IS NULL
+              AND CompanyId = @CompanyId
+            GROUP BY [Status]
+            
+
+            RETURN
+        END 
 END
 GO

@@ -21,7 +21,8 @@ BEGIN
     DECLARE @supportId INT, @CompanyId INT, @UserId INT ,@supportDetails VARCHAR(MAX)
     
     DECLARE @tbSupportDetail AS TABLE(
-        ArticuloId INT NOT NULL
+        Id INT NOT NULL 
+       ,ArticuloId INT NOT NULL
        ,TarifaId INT NOT NULL
        ,BodegaId INT NOT NULL
        ,MedidaId INT NOT NULL
@@ -33,9 +34,9 @@ BEGIN
        ,CodePercentage VARCHAR(10) NOT NULL
        ,[Percentage] NUMERIC(18,5)
        ,Inventory BIT NOT NULL
-       ,[Status] INT DEFAULT 1 
        ,CreatedAt DATETIME2 DEFAULT GETDATE()
-       ,[Enabled] BIT DEFAULT 1
+       ,[Enabled] BIT NOT NULL
+       ,Deleted BIT NULL
     )
 
     BEGIN TRY 
@@ -53,11 +54,12 @@ BEGIN
 
 
         INSERT INTO @tbSupportDetail 
-              (ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory)
-        SELECT ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory
+              (Id,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory,[Enabled],Deleted)
+        SELECT Id,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory,[Enabled],Deleted
         FROM OPENJSON(@supportDetails) WITH 
         (
-             articuloId     INT  
+             id             INT
+            ,articuloId     INT  
             ,tarifaId       INT 
             ,bodegaId       INT 
             ,medidaId       INT 
@@ -69,6 +71,8 @@ BEGIN
             ,codePercentage VARCHAR(10) 
             ,[percentage]   NUMERIC(18,5) 
             ,inventory      BIT
+            ,[enabled]      BIT 
+            ,deleted        BIT
         )
 
 
@@ -80,10 +84,29 @@ BEGIN
             END
 
         BEGIN TRAN
-           INSERT INTO [Mechanical].[SupportDetail]
-                 ( SupportId,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled])
-           SELECT @supportId,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled] 
-           FROM @tbSupportDetail 
+            
+            UPDATE Mechanical.Support WITH (ROWLOCK) SET [Status] =  1 WHERE Id = @supportId
+
+            UPDATE md WITH (ROWLOCK)
+               SET md.Quantity       = td.Quantity
+                  ,md.TarifaId       = td.TarifaId
+                  ,md.MedidaId       = td.MedidaId
+                  ,md.BodegaId       = td.BodegaId
+                  ,md.[Description]  = td.[Description]
+                  ,md.Price          = td.Price
+                  ,md.CodePercentage = td.CodePercentage
+                  ,md.[Percentage]   = td.[Percentage]
+                  ,md.Deleted        = td.Deleted
+                  ,md.[Enabled]      = td.[Enabled]
+                  ,md.UpdatedAt      = GETDATE()
+            FROM Mechanical.SupportDetail md 
+            INNER JOIN @tbSupportDetail   td ON td.Id = md.Id
+
+            INSERT INTO [Mechanical].[SupportDetail]
+                   (SupportId,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled])
+            SELECT @supportId,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled] 
+            FROM @tbSupportDetail 
+            WHERE Id = 0 
 
         COMMIT TRAN 
         SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)

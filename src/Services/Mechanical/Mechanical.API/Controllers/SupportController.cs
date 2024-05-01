@@ -1,6 +1,7 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Interfaces;
+using Mechanical.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
 using Services.Common.Logs;
@@ -101,6 +102,21 @@ namespace Mechanical.API.Controllers
             {
                 _log.LogActivity("Error on Delete: \n" + ex.ToString());
                 return BadRequest("Error On Delete");
+            }
+        }
+
+        [HttpPut("PutState/{id}/{status}")]
+        public async Task<IActionResult> PutState(int id, int status)
+        {
+            try
+            {
+                var response = await _supportService.UpdateStateAsync(id, status);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on PutState: \n" + ex.ToString());
+                return BadRequest("Error On PutState");
             }
         }
     }

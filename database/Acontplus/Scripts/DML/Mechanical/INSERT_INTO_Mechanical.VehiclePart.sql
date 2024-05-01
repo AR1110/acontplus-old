@@ -100,7 +100,7 @@ GO
 
 
 -- Rodamiento 
---SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'RD'
+----SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'RD'
 --INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
 --VALUES (9,'LDB','Llanta delantera derecho',GETDATE(),1)
 --      ,(9,'LDI','Llanta delantera izquierdo',GETDATE(),1)

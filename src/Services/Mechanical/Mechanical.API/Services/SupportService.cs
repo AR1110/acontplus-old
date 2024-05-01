@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Mechanical.API.Data;
 using Mechanical.API.Interfaces;
@@ -45,6 +46,15 @@ namespace Mechanical.API.Services
         public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
         {
             return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Delete", parameters);
+        }
+
+        public async Task<ApiResponse> UpdateStateAsync(int id, int status)
+        {
+            var support = await _context.Supports.FindAsync(id);
+            support.Status = status;
+            _context.Update(support);
+            await _context.SaveChangesAsync();
+            return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };
         }
     }
 }

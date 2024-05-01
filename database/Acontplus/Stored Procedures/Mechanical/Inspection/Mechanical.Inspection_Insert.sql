@@ -16,7 +16,8 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
     
-    DECLARE @Id INT, @CompanyId INT, @UserId INT , @jsonInspection VARCHAR(MAX)
+    DECLARE @Id INT, @CompanyId INT, @UserId INT
+    
     DECLARE @SupportId INT 
     
     DECLARE @tbInspection AS TABLE (
@@ -40,27 +41,24 @@ BEGIN
 
     BEGIN TRY 
         
-        SELECT @jsonInspection = inspection FROM OPENJSON(@json) WITH (inspection NVARCHAR(MAX) '$.inspection' as json)
-
-
         INSERT INTO @tbInspection 
               (SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs)
         SELECT SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs
-        FROM OPENJSON(@jsonInspection) WITH 
+        FROM OPENJSON(@json) WITH 
         (
-            SupportId             INT '$.supportId' 
-           ,[Date]          DATETIME2 '$.date' 
-           ,Mileage               INT '$.mileage' 
-           ,FuelLevel    VARCHAR(150) '$.fuelLevel' 
-           ,Engine       VARCHAR(MAX) '$.engine'       
-           ,Cabin        VARCHAR(MAX) '$.cabin'         
-           ,Bearing      VARCHAR(MAX) '$.bearing'      
-           ,Transmission VARCHAR(MAX) '$.transmission'  
-           ,Lighting     VARCHAR(MAX) '$.lighting'     
-           ,Brake        VARCHAR(MAX) '$.brake'        
-           ,Steering     VARCHAR(MAX) '$.steering'     
-           ,Suspension   VARCHAR(MAX) '$.suspension'
-           ,Obs          VARCHAR(300) '$.obs'
+            supportId    INT  
+           ,[date]       DATETIME2  
+           ,mileage      INT  
+           ,fuelLevel    VARCHAR(150)  
+           ,engine       VARCHAR(MAX)      
+           ,cabin        VARCHAR(MAX)      
+           ,bearing      VARCHAR(MAX)    
+           ,transmission VARCHAR(MAX)
+           ,lighting     VARCHAR(MAX)  
+           ,brake        VARCHAR(MAX)      
+           ,steering     VARCHAR(MAX)    
+           ,suspension   VARCHAR(MAX)
+           ,obs          VARCHAR(300) 
         )
 
         -- ======================= VARIABLES ===============================
@@ -84,7 +82,7 @@ BEGIN
 
         BEGIN TRAN 
             
-            UPDATE Mechanical.Support SET [Status] = 1 WHERE Id = @SupportId
+            UPDATE Mechanical.Support WITH (ROWLOCK) SET [Status] = 1 WHERE Id = @SupportId
 
             INSERT INTO [Mechanical].[Inspection]
                   (SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs, CompanyId, UserId,[Status],CreatedAt,[Enabled])
@@ -94,12 +92,7 @@ BEGIN
             SELECT @Id = SCOPE_IDENTITY()
 
         COMMIT TRAN 
-
-         IF (@Id > 0) 
-            SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
-         ELSE 
-            SELECT [Common].[ufnSpResponse]('0', 'No se pudo guardar La Inspección', NULL)
-
+        SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
     END TRY 
 
     BEGIN CATCH 
@@ -111,7 +104,7 @@ BEGIN
         INSERT INTO ErroresSistema
         (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
 		VALUES
-        (NEWID(), 'Inspection/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
+        (NEWID(), 'Inspection/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
 	         
         SELECT [Common].[ufnSpResponse]('0', 'Error al guardar La Inspección', NULL)
     END CATCH 

@@ -42,6 +42,7 @@ export class SupportService {
               obs: item.obs,
               codEstab: item.codEstab,
               typeStatus: item.typeStatus,
+              existsInsp : item.existsInsp
 
             }
           })
@@ -178,4 +179,7 @@ export class SupportService {
     return this.#http.delete(`${this.#url}${id}`)
   }
 
+  putState(id: number, status: number) {
+    return this.#http.put(`${this.#url}PutState/${id}/${status}`, null)
+  }
 }
