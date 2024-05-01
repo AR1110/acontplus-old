@@ -10,7 +10,7 @@ GO
 -- Create date: 2024-04-08
 -- Description: REPORTE DE ORDEN
 -- =============================================
--- TechnicalSupport.Order_Report 28, '{"id": 27}', ''
+-- TechnicalSupport.Order_Report 28, '{"id": 31}', ''
 CREATE OR ALTER PROCEDURE TechnicalSupport.Order_Report @userRoleId INT
 ,@json VARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
@@ -43,12 +43,16 @@ BEGIN
         , u.nombreUsuario                                                           AS Username
         , o.Obs                                                                     AS Obs
         , tos.Name                                                                  AS OrderStatus
-        , ISNULL(CONVERT(NVARCHAR, FORMAT(o.UpdatedAt, 'dd/MM/yyyy HH:mm')), '-')   AS UpdateDate
+        , (CASE WHEN ISNULL(o.Finished, 0) = 1
+                THEN ISNULL(CONVERT(NVARCHAR, FORMAT(o.UpdatedAt, 'dd/MM/yyyy HH:mm')), '-')
+                ELSE '' END
+          )                                                                         AS UpdateDate
         , ua.nombreCompleto                                                         AS UsuarioAsignado
-        , @entregadoPor                                                             AS EntregadoPor
-        , (CASE WHEN o.Receiver IS NULL OR LEN(o.Receiver) = 0
-                THEN cc.BusinessName
-                ELSE o.Receiver END
+        , (CASE WHEN ISNULL(o.Finished, 0) = 1 THEN @entregadoPor ELSE '' END)      AS EntregadoPor
+        , (CASE 
+            WHEN o.Receiver IS NULL AND ISNULL(o.Finished, 0) = 1 THEN cc.BusinessName
+            WHEN o.Receiver IS NOT NULL AND ISNULL(o.Finished, 0) = 1 THEN o.Receiver 
+            ELSE '' END
           )                                                                         AS RecibidoPor       
 	FROM TechnicalSupport.[Order] o		            WITH (NOLOCK)
     LEFT JOIN dbo.Usuario u				            WITH (NOLOCK) ON u.idUsuario			= o.UserId
