@@ -3476,23 +3476,23 @@ fieldset:disabled .btn {
   background-color: #fca68c;
 } */
 
-.btn-check:focus+.btn-primary,
+/* .btn-check:focus+.btn-primary,
 .btn-primary:focus {
   color: #000;
-  /*background-color: #fca68c;*/
-  /*background-color: #fca68c;*/
-  /*box-shadow: 0 0 0 0.25rem rgba(213, 128, 102, 0.5);*/
-}
+  background-color: #fca68c;
+  background-color: #fca68c;
+  box-shadow: 0 0 0 0.25rem rgba(213, 128, 102, 0.5);
+} */
 
-.btn-check:checked+.btn-primary,
+/* .btn-check:checked+.btn-primary,
 .btn-check:active+.btn-primary,
 .btn-primary:active,
 .btn-primary.active,
 .show>.btn-primary.dropdown-toggle {
   color: #000;
-  /*background-color: #fcab93;*/
-  /*background-color: #fca68c;*/
-}
+  background-color: #fcab93;
+  background-color: #fca68c;
+} */
 
 /* .btn-check:checked+.btn-primary:focus,
 .btn-check:active+.btn-primary:focus,

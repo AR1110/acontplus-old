@@ -1,4 +1,6 @@
-﻿internal class Program
+﻿using Services.Common.Middleware;
+
+internal class Program
 {
     private static async Task Main(string[] args)
     {
@@ -23,8 +25,6 @@
 
         builder.Services.AddSwaggerDocumentation();
 
-        builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-
         builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -32,6 +32,8 @@
 
 
         var app = builder.Build();
+
+        app.UseMiddleware<ExceptionMiddleware>();
 
         if (Environment.OSVersion.Platform != PlatformID.Win32NT)
         {
@@ -48,8 +50,6 @@
         app.UseSwaggerDocumentation();
 
         app.UseRouting();
-
-
 
         app.UseAuthentication();
 
