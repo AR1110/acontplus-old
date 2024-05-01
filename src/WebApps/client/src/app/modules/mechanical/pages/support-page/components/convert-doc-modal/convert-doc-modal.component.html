@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Convertir a un documento:</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="d-flex flex-column bd-highlight mb-3">
+    <div class="p-2 bd-highlight">
+      Ruc/Cédula: {{companyCustomer.identificacionComprador}}
+    </div>
+    <div class="p-2 bd-highlight">
+      Razon Social: {{companyCustomer.razonSocialComprador}}
+    </div>
+    <!-- <div class="p-2 bd-highlight">Flex item 3</div> -->
+    <hr>
+    <div class="d-flex justify-content-center">
+      <h4><b>Total</b> {{data.total}}</h4>
+    </div>
+  </div>
+
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary " (click)="saveInvoice()">FACTURA</button>
+  <button class="btn btn-warning" (click)="saveNotaEntrega()">NOTA ENTREGA</button>
+  <button class="btn btn-dark " (click)="modal.close()">&times; CERRAR</button>
+</div>

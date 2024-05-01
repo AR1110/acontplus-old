@@ -6,6 +6,13 @@ import { formatDate } from '@core/utils/date.util';
 import { map } from 'rxjs';
 
 import { MECHANICAL_PATHS } from '../enums/mechanical.enum';
+import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
+import { SupportDetail } from '../models/support.model';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
+import { isValidField } from '@core/utils/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -144,7 +151,90 @@ export class SupportService {
     })
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
       map((response: any) => {
-        console.log(response)
+        const { cliente, config, detalle, formapago, tiempoCredito, impuestos } = response;
+
+        let details = detalle.map((item: any) => {
+
+          const { fraccionado, principal, consolidacion, ...restItem } = item;
+
+          let consolidacionesBodega = (consolidacion && JSON.parse(consolidacion)) || [];
+
+          consolidacionesBodega = consolidacionesBodega.map((data: any) => {
+
+            return {
+              idArticulo: data.idArticulo,
+              idBodega: data.idBodega,
+              fechaConsolidacion:
+                data.fechaConsolidacion &&
+                new Date(data.fechaConsolidacion),
+            }
+          })
+
+
+          const medidas = mergeMeasureUtil(principal, fraccionado);
+
+          let dataMedida = medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
+
+          let precioConIva = pricingCalculateUtil.calculatePriceWithVat(restItem.price, restItem.percentage);
+          let precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.valorDescuento;
+          let subTotalSinDescuento = restItem.price * restItem.quantity
+
+          let percentageDiscount = subTotalSinDescuento > 0 ? pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento,
+            restItem.valorDescuento
+          ) : 0
+
+          let taxValue = pricingCalculateUtil.calculateTaxValue(precioTotalSinImpuesto, restItem.percentage)
+
+          let obj: SupportDetail = {
+            id: restItem.id,
+            rowguid: generateUuidv4(),
+            bodegaId: restItem.bodegaId,
+            feeId: restItem.tarifaId,
+            medidaId: restItem.medidaId,
+            productId: restItem.articuloId,
+            taxId: restItem.idImpuesto,
+            // taxPercentId: dataTarifaImpuesto.idTarifaImpuesto,
+            idTipoIva: restItem.idTipoIva,
+            taxPercentId: restItem.idTipoIva,
+            quantity: restItem.quantity,
+            descripcion: restItem.description,
+            codigo: restItem.codigoArticulo,
+            cost: restItem.cost,
+            taxValue: taxValue,
+            price: restItem.price,
+            precioConIva: roundNumber(precioConIva, 4),
+            percentageDiscount: roundNumber(percentageDiscount, 4),
+            discount: restItem.valorDescuento,
+            precioTotalSinImpuesto: roundNumber(precioTotalSinImpuesto, 4),
+            total: restItem.total,
+            obs: isValidField(restItem.obs),
+            medidas: medidas || [],
+            tarifas: dataMedida.tarifas || [],
+            costoFraccionado: dataMedida.precioCostoFraccionado || 0,
+            conversion: dataMedida.conversion || 1,
+            consolidacionesBodega: consolidacionesBodega,
+            llevaInventario: restItem.llevaInventario,
+            enabled: restItem.enabled,
+            codePercentage: restItem.codePercentage,
+            percentage: restItem.percentage,
+            precioSinSubsidio: restItem.precioSinSubsidio||0
+          };
+          return obj;
+        }
+        );
+
+        let tempComprobante = response.comprobante[0];
+        let comprobante = tempComprobante;
+        let formasPagoSri = formapago;
+        return {
+          comprobante,
+          details,
+          companyCustomer: cliente[0],
+          formasPagoSri,
+          tiemposCredito: tiempoCredito,
+          config: config[0],
+          taxPercents: impuestos
+        }
       }))
   }
 
