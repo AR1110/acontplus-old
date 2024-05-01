@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
@@ -121,7 +122,9 @@ export class ProductService {
       busqueda: data.textSearch,
     };
     return this.http
-      .get(`${this.url_old}Search?json=${JSON.stringify(query)}`)
+      .get(`${this.url_old}Search?json=${JSON.stringify(query)}`, {
+        context: getNoLoader()
+      })
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {

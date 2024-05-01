@@ -1,33 +1,19 @@
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations'
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { errorInterceptor } from '@core/interceptors/error.interceptor';
+import { injectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
+import { loaderInterceptor } from '@core/interceptors/loader.interceptor';
 import { provideToastr } from 'ngx-toastr';
-import { InjectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
-import { LoaderInterceptor } from '@core/interceptors/loader.interceptor';
-import { ErrorInterceptor } from '@core/interceptors/error.interceptor';
+
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: InjectSessionInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LoaderInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ErrorInterceptor,
-      multi: true
-    },
-    //provideHttpClient(withInterceptors([])),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptors([injectSessionInterceptor, loaderInterceptor, errorInterceptor])),
+   // provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
     provideToastr({
       preventDuplicates: true

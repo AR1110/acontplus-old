@@ -1,25 +1,27 @@
 import { Component, inject } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
-import { AppModule } from 'src/app/app.module';
-import { MovimientoCajaService } from '@modules/accounting/services/movimiento-caja.service';
-import { ModalEgresoIngresoComponent } from './modal-egreso-ingreso/modal-egreso-ingreso.component';
-import { MovimientoCajaRead } from '@modules/accounting/models/movimiento-caja.model';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { CODE_REPORT } from '@core/constants/global.constants';
-import { SharedService } from '@core/services/shared.service';
-import Swal from 'sweetalert2';
-import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
-import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { isValidField } from '@core/utils/utils';
-import { EmployeeSearchComponent } from '@modules/sale/components/employee-search/employee-search.component';
+import { CODE_REPORT } from '@core/constants/global.constants';
+import { isApiResponse } from '@core/models/api-response';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { ModalService } from '@core/services/modal.service';
+import { SharedService } from '@core/services/shared.service';
+import { ToasterService } from '@core/services/toaster.service';
 import { formatDateMoment } from '@core/utils/format-date-moment';
+import { isValidField } from '@core/utils/utils';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MovimientoCajaRead } from '@modules/accounting/models/movimiento-caja.model';
+import { MovimientoCajaService } from '@modules/accounting/services/movimiento-caja.service';
+import { EmployeeSearchComponent } from '@modules/sale/components/employee-search/employee-search.component';
+import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
+
+import { ModalEgresoIngresoComponent } from './modal-egreso-ingreso/modal-egreso-ingreso.component';
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
   standalone: true,
-  imports: [AppModule, DateRangeSelectionComponent, EmployeeSearchComponent],
+  imports: [FormsModule, FontAwesomeModule,NgbDropdownModule,NgbPagination, DateRangeSelectionComponent, EmployeeSearchComponent],
   templateUrl: './egreso-ingreso-caja.component.html',
 })
 export class EgresoIngresoCajaComponent {
@@ -60,25 +62,24 @@ export class EgresoIngresoCajaComponent {
       idEmpleado: isValidField(this.dataSearch.employeeId),
       codEstado: isValidField(this.dataSearch.codEstado)
     }
-    showLoader();
     this.movimientosCaja = [];
     this.movCajaSvc.getAll(params).subscribe({
       next: (response) => {
-        hideLoader();
+
         this.movimientosCaja = response || [];
         this.totalRecords = this.movimientosCaja.length > 0 ? this.movimientosCaja[0].totalRecords : 0;
       },
       error(err) {
-        hideLoader();
+
         console.log(err)
       },
     })
   }
   ngOnInit() {
-    showLoader()
+
     this.movCajaSvc.getDataFilter().subscribe({
       next: (response) => {
-        hideLoader()
+
         this.establecimientos = response.establecimientos;
         if (this.establecimientos.length > 0) {
           let dataEstab = this.establecimientos.find(item => (item.predeterminado))
@@ -90,7 +91,7 @@ export class EgresoIngresoCajaComponent {
       },
       error(err) {
         console.log(err)
-        hideLoader()
+
       },
     })
   }
@@ -177,10 +178,10 @@ export class EgresoIngresoCajaComponent {
         allowOutsideClick: false
       }).then(result => {
         if (result.isConfirmed) {
-          showLoader();
+
           this.movCajaSvc.delete(item.idMovimientoCaja).subscribe({
             next: (response) => {
-              hideLoader();
+
               if (isApiResponse(response)) {
                 if (response.code === "0") {
                   this.tS.toastr({
@@ -197,14 +198,14 @@ export class EgresoIngresoCajaComponent {
                 }
               }
             }, error(err) {
-              hideLoader();
+
               console.log(err)
             },
           })
         }
       })
     } catch (error) {
-      hideLoader();
+
       console.log(error)
     }
   }
