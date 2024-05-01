@@ -99,14 +99,18 @@
                 </button>
                 }
 
+                @if (dataPermisosCaja.reporteTransaccionPendiente) {
+                  <button ngbDropdownItem (click)="askToReportType(item, BUTTON_TRANSACTION_PENDING)">
+                    <fa-icon [icon]="['fas', 'money-bill-transfer']"></fa-icon> Reporte Transacciones pendientes
+                  </button>
+                }
 
-                <button ngbDropdownItem (click)="askToReportType(item, BUTTON_TRANSACTION_PENDING)">
-                  <fa-icon [icon]="['fas', 'money-bill-transfer']"></fa-icon> Reporte Transacciones pendientes
-                </button>
+                @if (dataPermisosCaja.reporteDetalleControlCaja) {
+                  <button ngbDropdownItem (click)="openModalReporteFiltroDetalleCaja(item)">
+                    <fa-icon [icon]="['fas', 'table-list']"></fa-icon> Reporte Detalle Control Caja
+                  </button>
+                }
 
-                <button ngbDropdownItem (click)="openModalReporteFiltroDetalleCaja(item)">
-                  <fa-icon [icon]="['fas', 'table-list']"></fa-icon> Reporte Detalle Control Caja
-                </button>
               </div>
             </div>
           </td>
