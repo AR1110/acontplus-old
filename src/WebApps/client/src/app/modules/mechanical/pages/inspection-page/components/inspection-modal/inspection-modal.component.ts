@@ -15,12 +15,14 @@ import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 import { isValidField } from '@core/utils/utils';
 import { isApiResponse } from '@core/models/api-response';
+import { MatChipsModule } from '@angular/material/chips';
 
 type VehiclePartNode = VehiclePart & {
   status: number
   obs: string
 }
 type VehiclePartTypeNode = VehiclePartType & {
+  isCollapsed: boolean
   nodes: VehiclePartNode[]
 }
 @Component({
@@ -33,7 +35,8 @@ type VehiclePartTypeNode = VehiclePartType & {
     MatButtonToggleModule,
     MatSlideToggleModule,
     MatRadioModule,
-    InputDateComponent
+    InputDateComponent,
+    MatChipsModule
   ],
   templateUrl: './inspection-modal.component.html',
 })
@@ -92,10 +95,6 @@ export class InspectionModalComponent {
           this.modal.close(response)
         }
       }
-    },
-    error(err: any) {
-
-      console.log(err)
     }
   }
 
@@ -119,17 +118,18 @@ export class InspectionModalComponent {
               next: (response) => {
 
                 this.data = response.data;
-                this.vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
-                  let nodes = response.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[]
+                let vehiclePartTypeNodes = this.vehiclePartTypes.map(item => {
+                  let nodes = response.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[];
+                  let isCollapsed = nodes.some(n => [1,2,3].includes(n.status))
+                  console.log(isCollapsed, `${item.description}`)
                   return {
                     ...item,
-                    nodes
+                    nodes,
+                    isCollapsed: !isCollapsed
                   }
                 })
-              },
-              error(err) {
-                ;
-                console.log(err)
+                console.log(vehiclePartTypeNodes)
+                this.vehiclePartTypeNodes = vehiclePartTypeNodes;
               },
             })
           } else {
@@ -137,7 +137,8 @@ export class InspectionModalComponent {
               let nodes = this.vehicleParts.filter((vp) => vp.vehiclePartTypeId === item.id) as VehiclePartNode[]
               return {
                 ...item,
-                nodes
+                nodes,
+                isCollapsed: true
               }
             })
           }
