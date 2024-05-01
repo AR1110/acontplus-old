@@ -193,10 +193,12 @@ BEGIN
 			,codEstado = 1
 			,idContribuyente = @idProveedor
 			,nroDocumento = CONVERT(BIGINT, @secuencial)
-			WHERE  idDocumento = @id AND codDoc = '07' AND versionComp = '2.0.0'
+			WHERE idDocumento = @id 
+              AND codDoc = '07' 
+              AND versionComp = '2.0.0'
 
-			SELECT '1' code, 'Retencion actualizada con exito'  as 'message'
 		COMMIT TRAN
+        SELECT '1' code, 'Retencion actualizada con exito'  as 'message'
 	END TRY
 	BEGIN CATCH
 	SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'

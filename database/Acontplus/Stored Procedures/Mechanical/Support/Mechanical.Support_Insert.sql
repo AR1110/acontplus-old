@@ -48,8 +48,10 @@ BEGIN
     )
 
 	BEGIN TRY 
-		--> SAVING THE JSON DATA 
-           
+        --> Variables Globales
+        SELECT TOP 1 @userId = idUsuario, @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+		--> SAVING THE JSON DATA    
         INSERT INTO @tbSupport
               (puntoEmisionId,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
         SELECT puntoEmisionId,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
@@ -65,10 +67,11 @@ BEGIN
         )
 
         --> RUPERERATING IN VARIABLES 
+
+        SELECT TOP 1 @PuntoEmisionId = PuntoEmisionId FROM @tbSupport 
+
         SELECT @Sequence = COUNT(*) + 1 FROM Mechanical.Support WHERE PuntoEmisionId = @PuntoEmisionId
             
-        SELECT TOP 1 @userId = idUsuario, @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
-
 
         --> VALIDATION OF INFORMATION
         IF (SELECT COUNT(*) FROM @tbSupport) = 0
