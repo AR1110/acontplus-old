@@ -1,9 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { MECHANICAL_PATHS } from '../enums/mechanical.enum';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { formatDate } from '@core/utils/date.util';
+import { map } from 'rxjs';
+
+import { MECHANICAL_PATHS } from '../enums/mechanical.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -151,7 +153,9 @@ export class SupportService {
       tipo: 4,
       textSearch: obj.textSearch
     })
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+    return this.#http.get(`${this.#url}?json=${json}`,{
+      context: getNoLoader()
+    }).pipe(
       map((response: any) => {
         let results = [];
         if (response !== null && typeof response === 'object') {

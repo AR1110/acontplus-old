@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { isApiResponse } from '@core/models/api-response';
 import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
-import { Observable, map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ import { Observable, map } from 'rxjs';
 export class CompanyCustomerService {
   //For customers of Acontplus Customers (cliente)
   private url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   async checkExistence(params: any) {
     return this.http
@@ -54,7 +55,9 @@ export class CompanyCustomerService {
       textSearch: data.textSearch,
     };
     return this.http
-      .get(`${this.url}Search?json=${JSON.stringify(query)}`)
+      .get(`${this.url}Search?json=${JSON.stringify(query)}`, {
+        context: getNoLoader()
+      })
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {

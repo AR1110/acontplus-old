@@ -42,13 +42,13 @@ DECLARE @codModule NVARCHAR(255) = 'C';
 
 --addd reporteTransaccionPendiente 
  
---UPDATE Config.UserPermission
---SET jsonPermission =JSON_MODIFY(
---                jsonPermission, 
---                '$.reporteTransaccionPendiente', 
---                JSON_QUERY('{"label":"Reporte Transacción Pendiente", "enabled":true}')
---            )
---WHERE codModule = @codModule;
+UPDATE Config.UserPermission
+SET jsonPermission =JSON_MODIFY(
+                jsonPermission, 
+                '$.reporteTransaccionPendiente', 
+                JSON_QUERY('{"label":"Reporte Transacción Pendiente", "enabled":true}')
+            )
+WHERE codModule = @codModule;
 
 
 --addd reporteDetalleControlCaja

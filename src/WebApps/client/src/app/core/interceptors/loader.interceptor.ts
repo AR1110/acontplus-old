@@ -1,43 +1,42 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpResponse,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { HttpContext, HttpContextToken, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { hideLoader, showLoader } from '@core/utils/loader';
+import { finalize } from 'rxjs/operators';
 
-@Injectable()
-export class LoaderInterceptor implements HttpInterceptor {
-  private requests: HttpRequest<any>[] = [];
+const isLoader = new HttpContextToken<boolean>(() => true);
+export function getNoLoader() {
+  return new HttpContext().set(isLoader, false);
+}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
+  let requests: HttpRequest<any>[] = [];
 
-    this.requests.push(req);
-
-    console.log("No of requests--->" + this.requests.length);
-
-    if (this.requests.length === 1) {
-      showLoader();
-    }
-
-    return next.handle(req).pipe(
-      finalize(() => {
-        this.removeRequest(req);
-      })
-    );
+  if (!req.context.get(isLoader)){
+    return next(req);
   }
 
-  private removeRequest(req: HttpRequest<any>): void {
-    const i = this.requests.indexOf(req);
+  console.log('is loader', req.context.get(isLoader))
+
+  requests.push(req);
+
+  console.log("No of requests--->" + requests.length);
+
+  if (requests.length === 1) {
+    showLoader();
+  }
+
+  return next(req).pipe(
+    finalize(() => {
+      removeRequest(req);
+    })
+  );
+
+  function removeRequest(req: HttpRequest<any>): void {
+    const i = requests.indexOf(req);
     if (i >= 0) {
-      this.requests.splice(i, 1);
+      requests.splice(i, 1);
     }
 
-    if (this.requests.length === 0) {
+    if (requests.length === 0) {
       hideLoader();
     }
   }
