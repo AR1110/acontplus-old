@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
 import { hideLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { OrderListComponent } from '@modules/technical-support/pages/order-page/order-list/order-list.component';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { StatsService } from '@modules/technical-support/services/stats.service';
 import { Chart, registerables } from 'chart.js';
@@ -10,7 +11,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FontAwesomeModule],
+  imports: [FontAwesomeModule, OrderListComponent],
   templateUrl: './dashboard.component.html',
   styles: ``,
 })

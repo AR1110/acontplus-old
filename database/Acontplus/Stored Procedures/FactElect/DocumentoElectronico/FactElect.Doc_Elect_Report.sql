@@ -179,25 +179,38 @@ BEGIN
                                                     INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pt.codEstab
                                                     WHERE nc.idFactura = f.idFactura
                                                     AND nc.estado = 1
-
                                                ) as nroDevolucion
-
                                               ,(
                                                     SELECT TOP 1 CAST(nc.total as numeric(18,2)) 
                                                     FROM dbo.NotaCredito nc WITH (NOLOCK) 
                                                     WHERE nc.idFactura = f.idFactura
                                                     AND nc.estado = 1
-
-                                               ) as devolucion
-
+                                               ) AS devolucion
+                                              ,ISNULL((
+                                                    SELECT CAST(SUM(t3.TaxValue)				AS NUMERIC(18,2))
+                                                    FROM Recepcion.DocumentoRecibido t1			WITH(NOLOCK)
+                                                    INNER JOIN FactElect.DocRelacionado t2		WITH(NOLOCK) ON t2.idDocumentoRecibido = t1.idDocumento
+                                                    INNER JOIN Recepcion.DocumentoImpuesto t3	WITH(NOLOCK) ON t3.DocumentoRecibidoId = t1.idDocumento
+                                                    WHERE t1.codDoc = ''07''
+                                                    and t2.claveAcceso = f.claveAcceso
+                                                    AND T3.Code = 2
+                                              ), 0) AS retIva
+                                              ,ISNULL((
+                                                    SELECT CAST(SUM(t3.TaxValue)				AS NUMERIC(18,2))
+                                                    FROM Recepcion.DocumentoRecibido t1			WITH(NOLOCK)
+                                                    INNER JOIN FactElect.DocRelacionado t2		WITH(NOLOCK) ON t2.idDocumentoRecibido = t1.idDocumento
+                                                    INNER JOIN Recepcion.DocumentoImpuesto t3	WITH(NOLOCK) ON t3.DocumentoRecibidoId = t1.idDocumento
+                                                    WHERE t1.codDoc = ''07''
+                                                    and t2.claveAcceso = f.claveAcceso
+                                                    AND T3.Code = 1
+                                              ), 0) AS retRenta
                                               ,f.nombreUsuario as usuario
                                               ,f.idUsuario
-							                  ,f.codEstado 
+							                  ,f.codEstado
                                               ,CASE WHEN codEstado = 4 THEN ''Autorizada''
                                                     WHEN codEstado = 6 THEN ''Anulada''
                                                                        ELSE ''No Autorizada'' 
                                                END as estado
-
                                         FROM Ventas.v_Factura f WITH (NOLOCK)
                                         WHERE f.idEntidad = @idEntidad
                                         AND f.estado = 1

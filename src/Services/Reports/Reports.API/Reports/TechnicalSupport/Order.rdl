@@ -858,13 +858,13 @@
                                 <Width>1.32765cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.524cm</Width>
+                                <Width>1.82033cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.40956cm</Width>
+                                <Width>1.76867cm</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>5.65311cm</Width>
+                                <Width>4.99767cm</Width>
                               </TablixColumn>
                             </TablixColumns>
                             <TablixRows>
@@ -1156,7 +1156,7 @@
                                               </TextRun>
                                             </TextRuns>
                                             <Style>
-                                              <TextAlign>Left</TextAlign>
+                                              <TextAlign>Center</TextAlign>
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
@@ -1193,7 +1193,7 @@
                                               </TextRun>
                                             </TextRuns>
                                             <Style>
-                                              <TextAlign>Left</TextAlign>
+                                              <TextAlign>Center</TextAlign>
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
@@ -1230,7 +1230,7 @@
                                               </TextRun>
                                             </TextRuns>
                                             <Style>
-                                              <TextAlign>Left</TextAlign>
+                                              <TextAlign>Center</TextAlign>
                                             </Style>
                                           </Paragraph>
                                         </Paragraphs>
@@ -1712,7 +1712,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>ASIGNADO A</Value>
+                                  <Value>TÉCNICO ASIGNADO</Value>
                                   <Style>
                                     <FontFamily />
                                     <FontWeight>Bold</FontWeight>
@@ -2059,7 +2059,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>153.37909mm</Height>
+        <Height>153.3791mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
