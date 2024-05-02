@@ -152,7 +152,6 @@ BEGIN
                                                  WHERE fi.FacturaId = f.idFactura 
                                                    AND fi.codigo = ''2''
                                                    AND fi.codigoPorcentaje = ''4''
-
                                               ),0) as iva15
 
 	                                          ,CAST(f.totalDescuento as numeric(18,2))         as descuento
@@ -191,18 +190,18 @@ BEGIN
                                                     FROM Recepcion.DocumentoRecibido t1			WITH(NOLOCK)
                                                     INNER JOIN FactElect.DocRelacionado t2		WITH(NOLOCK) ON t2.idDocumentoRecibido = t1.idDocumento
                                                     INNER JOIN Recepcion.DocumentoImpuesto t3	WITH(NOLOCK) ON t3.DocumentoRecibidoId = t1.idDocumento
-                                                    WHERE t1.codDoc = ''07''
-                                                    and t2.claveAcceso = f.claveAcceso
-                                                    AND T3.Code = 2
+                                                    WHERE t1.codDoc         = ''07''
+                                                    and t2.claveAcceso      = f.claveAcceso
+                                                    AND t3.Code             = 2
                                               ), 0) AS retIva
                                               ,ISNULL((
                                                     SELECT CAST(SUM(t3.TaxValue)				AS NUMERIC(18,2))
                                                     FROM Recepcion.DocumentoRecibido t1			WITH(NOLOCK)
                                                     INNER JOIN FactElect.DocRelacionado t2		WITH(NOLOCK) ON t2.idDocumentoRecibido = t1.idDocumento
                                                     INNER JOIN Recepcion.DocumentoImpuesto t3	WITH(NOLOCK) ON t3.DocumentoRecibidoId = t1.idDocumento
-                                                    WHERE t1.codDoc = ''07''
-                                                    and t2.claveAcceso = f.claveAcceso
-                                                    AND T3.Code = 1
+                                                    WHERE t1.codDoc         = ''07''
+                                                    and t2.claveAcceso      = f.claveAcceso
+                                                    AND t3.Code             = 1
                                               ), 0) AS retRenta
                                               ,f.nombreUsuario as usuario
                                               ,f.idUsuario
