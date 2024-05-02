@@ -151,6 +151,10 @@
                 tipo: 3,
                 codigo: CODE_REPORT.NCRG
             },
+            ["03"]: {
+                tipo: 4,
+                codigo: CODE_REPORT.NCRG
+            },
             [DOC_TYPE.R_SRI]: {
                 tipo: 5,
                 codigo: CODE_REPORT.FCRRG
@@ -186,7 +190,10 @@
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     identificacion: $scope.dataSearch.checkBoxCustomer ? fS.isValidField($scope.dataSearch.identificacion) : null,
-                    idUsuario: $scope.dataSearch.checkBoxUser ? fS.isValidField($scope.dataSearch.idUsuario) : null
+                    idUsuario: $scope.dataSearch.checkBoxUser ? fS.isValidField($scope.dataSearch.idUsuario) : null,
+                    ckRetencion: $scope.dataSearch.codeRetencion === "ALL" ? null : $scope.dataSearch.codeRetencion==='CR',
+                    ckDevolucion: $scope.dataSearch.codeDevolucion === "ALL" ? null : $scope.dataSearch.codeDevolucion==='CD'
+
                 }
                 const parameters = {
                     hasIdUsuarioRol: true,
