@@ -4,14 +4,11 @@ import { TabulatorComponent } from '@core/components/tabulator/tabulator.compone
 import { isApiResponse } from '@core/models/api-response';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { ProductSale } from '@modules/inventory/models/product.model';
 import { ProductService } from '@modules/inventory/services/product.service';
-import { ProductSearchComponent } from '@modules/inventory/shared/components/product/product-search/product-search.component';
-import { ProductSearchPopupDirective } from '@modules/inventory/shared/directives/product/product-search-popup.directive';
 import { ConsolidacionBodega } from '@modules/inventory/shared/models/consolidacion-bodega.model';
 import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
 import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
@@ -26,6 +23,7 @@ import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-ta
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
+import { ProductSearchOverlayComponent } from '@modules/inventory/shared/components/product/product-search-overlay/product-search-overlay.component';
 
 @Component({
   selector: 'app-support-maintenance-modal',
@@ -35,9 +33,8 @@ import Swal from 'sweetalert2';
     FontAwesomeModule,
     NgbTooltipModule,
     TabulatorComponent,
-    ProductSearchComponent,
-    ProductSearchPopupDirective,
-    DrawTaxTotalComponent
+    DrawTaxTotalComponent,
+    ProductSearchOverlayComponent
   ],
   templateUrl: './support-maintenance-modal.component.html',
 })
@@ -522,7 +519,6 @@ export class SupportMaintenanceModalComponent {
 
 
   ngOnInit(): void {
-    showLoader()
     this.supportDetailSvc.getId(this.params.id).subscribe({
       next: (response) => {
         this.data = {
@@ -661,8 +657,6 @@ export class SupportMaintenanceModalComponent {
         cantidadStock: dataProductMerge.cantidadStock,
         consolidacionesFecha: row.consolidacionesBodega
       });
-
-      showLoader();
       this.productSvc.checkNotificationStock({
         idArticulo: row.productId,
         idBodega: this.data.bodegaId,
@@ -1027,7 +1021,6 @@ export class SupportMaintenanceModalComponent {
       }
       let params = supportMaintenanceAdapter.to(obj);
 
-      showLoader()
       this.supportDetailSvc.post(params).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {

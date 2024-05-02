@@ -1,0 +1,11 @@
+.overlay-content {
+  width: 900px;
+  // max-height: 300px;
+  padding-top: 4px;
+  margin: 0;
+}
+ @media screen and (max-width: 600px) {
+  .overlay-content {
+    width: 100%; /* Adjust width for smaller screens */
+  }
+}

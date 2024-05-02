@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
@@ -12,11 +13,12 @@ import { SupportService } from '@modules/mechanical/services/support.service';
 import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+
 import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
+import { ConvertDocModalComponent } from './components/convert-doc-modal/convert-doc-modal.component';
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
-import { ConvertDocModalComponent } from './components/convert-doc-modal/convert-doc-modal.component';
+import { formatDateMoment } from '@core/utils/format-date-moment';
 
 @Component({
   selector: 'app-support-page',
@@ -59,12 +61,20 @@ export class SupportPageComponent {
     })
   }
 
+  dataSearch = {
+    fromDate: formatDateMoment(new Date()),
+    toDate: formatDateMoment(new Date())
+  }
+
   getSupports() {
     try {
       let params = {
+        ckDate       : true,
         pageIndex: this.pagination.pageIndex,
         pageSize: this.pagination.pageSize,
-        status: this.status - 1
+        status: this.status - 1,
+        fromDate: this.dataSearch.fromDate,
+        toDate: this.dataSearch.toDate
       }
       this.supportSvc.getAll(params).subscribe({
         next: (response) => {
@@ -146,7 +156,9 @@ export class SupportPageComponent {
 
   openMaintenance(id: number) {
     let modalRef = this.modalSvc.open(SupportMaintenanceModalComponent, {
-      size: 'xl'
+      size: 'xl',
+      backdrop:'static',
+      keyboard: false
     })
     modalRef.componentInstance.params = {
       id
@@ -161,7 +173,7 @@ export class SupportPageComponent {
 
   openModalInspection(id: number) {
     let modalRef = this.modalSvc.open(InspectionModalComponent, {
-      size: 'xl'
+      size: 'xl',
     })
     modalRef.componentInstance.params = {
       supportId: id
@@ -244,6 +256,8 @@ export class SupportPageComponent {
               console.log(err)
             },
           })
+        }else{
+          this.getSupports()
         }
       });
     } catch (error) {
