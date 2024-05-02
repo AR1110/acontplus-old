@@ -168,7 +168,13 @@ BEGIN
 							                   ) as nroRetencion
 
 	                                          ,(
-                                                    SELECT SUM(dr.valorRetenido) FROM FactElect.DocRelacionado dr WITH (NOLOCK) WHERE dr.claveAcceso = f.claveAcceso
+                                                  SELECT CAST(SUM(t3.TaxValue)				AS NUMERIC(18,2))
+                                                  FROM Recepcion.DocumentoRecibido t1			WITH(NOLOCK)
+                                                  INNER JOIN FactElect.DocRelacionado t2		WITH(NOLOCK) ON t2.idDocumentoRecibido = t1.idDocumento
+                                                  INNER JOIN Recepcion.DocumentoImpuesto t3	WITH(NOLOCK) ON t3.DocumentoRecibidoId = t1.idDocumento
+                                                  WHERE t1.codDoc         = ''07''
+                                                    AND t2.claveAcceso      = f.claveAcceso
+
                                                ) as totalRet
 
                                               ,(
@@ -213,6 +219,7 @@ BEGIN
                                         FROM Ventas.v_Factura f WITH (NOLOCK)
                                         WHERE f.idEntidad = @idEntidad
                                         AND f.estado = 1
+
                                       )AS dt WHERE dt.idFactura > 0'
 
             IF @codEstab IS NOT NULL
@@ -237,8 +244,8 @@ BEGIN
                             SET @sql = @sql + 'AND dt.codEstado = @codEstado '
                         END 
                     ELSE 
-                        BEGIN
-                            SET @sql = @sql + 'AND dt.codEstado != 4'
+                        BEGIN 
+                            SET @sql = @sql + 'AND dt.codEstado != 4 '
                         END 
                 END 
 
@@ -261,6 +268,12 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND dt.nroRetencion IS NOT NULL '
                 END 
+
+            IF @ckRetencion = 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.nroRetencion IS NULL '
+                END 
+           
 
             SET @sql = @sql + 'ORDER BY dt.fechaEmision,dt.identificacionComprador DESC '
 
