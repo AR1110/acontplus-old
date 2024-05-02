@@ -152,16 +152,17 @@ BEGIN
             WHERE idUsuarioRol = @userRoleId 
             ORDER BY defaultBodega DESC
 
-            SELECT 
-                 ti.idTarifaImpuesto
-                ,ti.codigo
-                ,ti.codImpuesto
-                ,i.idImpuesto
-                ,ti.descripcion
-                ,ti.porcentaje
-                ,ti.estado 
+            SELECT ti.idTarifaImpuesto
+                  ,ti.codigo
+                  ,ti.codImpuesto
+                  ,i.idImpuesto
+                  ,ti.descripcion
+                  ,ti.porcentaje
+                  ,ti.estado 
             FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
-            INNER JOIN Sri.Impuesto i WITH(NOLOCK)  ON i.codigo = ti.codImpuesto 
+            INNER JOIN Sri.Impuesto  i WITH (NOLOCK)  ON i.codigo = ti.codImpuesto 
+            WHERE i.codigo = '2'
+              AND ti.estado = 1 
             
             SELECT nroPrecio
 	              ,nroCantidad
