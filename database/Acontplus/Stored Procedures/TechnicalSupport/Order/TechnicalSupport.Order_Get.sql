@@ -27,6 +27,7 @@ BEGIN
     ,@startDate DATETIME2
     ,@endDate DATETIME2
     ,@customer VARCHAR(100)
+    ,@assignedUserId INT
 
 	SELECT @id = id
         ,@orderStatusCode = orderStatusCode
@@ -36,6 +37,7 @@ BEGIN
         ,@startDate = startDate
         ,@endDate = endDate
         ,@customer = customer
+        ,@assignedUserId = assignedUserId
     FROM OPENJSON (@json) WITH 
     (
         id              INT '$.id', 
@@ -45,7 +47,8 @@ BEGIN
         pageSize        INT '$.pageSize',
         startDate DATETIME2,
         endDate DATETIME2,
-        customer VARCHAR(100)
+        customer VARCHAR(100),
+        assignedUserId INT
     )
 	
     SELECT TOP 1 @rucEmpresa = rucEmpresa,  @companyId = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
@@ -103,7 +106,9 @@ BEGIN
 
     IF @tipo = 2
     BEGIN
-        SET @tableNames = 'orders'
+        SET @tableNames = 'users,orders'
+
+        SELECT * FROM v_usuario WHERE idEntidad = @companyId AND estadoUsuario = 1
         
         DECLARE @sqlQuery NVARCHAR(MAX)
 
@@ -123,24 +128,35 @@ BEGIN
             ,e.codEstab
             ,totalRecords = COUNT(*) OVER()
             ,ISNULL(tor.AssignedUserId, 0) AssignedUserId 
-            ,userName = IIF(sc.Code = ''PA'', sc.[Name], u.nombreUsuario) 
+            ,userName = IIF(sc.Code = ''PA'', sc.[Name], u.nombreUsuario)
+            ,sc.[Name] OrderStatusName
         FROM TechnicalSupport.[Order] tor WITH (NOLOCK)
         INNER JOIN Cliente c WITH (NOLOCK) ON c.idCliente = tor.CustomerCompanyId
         INNER JOIN TechnicalSupport.OrderStatus sc WITH (NOLOCK) ON sc.Id = tor.OrderStatusId
         INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON tor.EstablecimientoId = e.idEstablecimiento
         LEFT JOIN dbo.Usuario u WITH(NOLOCK) ON u.idUsuario = tor.AssignedUserId
-        WHERE e.ruc = @rucEmpresa AND sc.Code = @orderStatusCode 
+        WHERE e.ruc = @rucEmpresa
             AND CAST(tor.fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE)
             AND tor.Deleted IS NULL '
 
+
+        IF (LEN(RTRIM(LTRIM(ISNULL(@orderStatusCode, '')))) > 0)
+        BEGIN
+              SET @sqlQuery = @sqlQuery + 'AND sc.Code = @orderStatusCode ' 
+        END
+
         IF (LEN(RTRIM(LTRIM(@customer))) > 0)
             BEGIN
-            SET @sqlQuery = @sqlQuery + '
-            AND (c.nombreFiscal LIKE ''%' + @customer + '%'' OR c.nombreComercial LIKE ''%' + @customer + '%'' OR 
-            c.numeroIdentificacion = ''' + @customer + ''')'
+                SET @sqlQuery = @sqlQuery + '
+                AND (c.nombreFiscal LIKE ''%' + @customer + '%'' OR c.nombreComercial LIKE ''%' + @customer + '%'' OR 
+                c.numeroIdentificacion = ''' + @customer + ''')'
 
             END
-    
+        IF (@assignedUserId > 0)
+            BEGIN
+                 SET @sqlQuery = @sqlQuery + 'AND tor.AssignedUserId = @AssignedUserId '
+            END
+        
         SET @sqlQuery = @sqlQuery + 'ORDER BY tor.Id DESC OFFSET @pageSize * (@pageIndex - 1) ROWS FETCH NEXT @pageSize ROWS ONLY'
         EXEC sp_executesql @sqlQuery, N'@rucEmpresa NVARCHAR(100)
                                     ,@orderStatusCode NVARCHAR(100)
@@ -148,7 +164,8 @@ BEGIN
                                     ,@pageIndex INT
                                     ,@startDate DATETIME2
                                     ,@endDate DATETIME2
-                                    ,@customer VARCHAR(100)', @rucEmpresa, @orderStatusCode, @pageSize, @pageIndex, @startDate, @endDate,@customer
+                                    ,@customer VARCHAR(100)
+                                    ,@assignedUserId INT', @rucEmpresa, @orderStatusCode, @pageSize, @pageIndex, @startDate, @endDate,@customer, @assignedUserId 
 
         RETURN
     END
