@@ -41,19 +41,23 @@ export class OrderService {
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response) => {
         let orders = [];
+        let users = [];
         if (isApiResponse(response)) {
           if (response.code === '1') {
             let mainData = JSON.parse(response.payload as string);
+            if (mainData.orders) {
+              orders = mainData.orders.map((item: any, index: number) => {
+                return {
+                  ...item,
+                  position: index + 1,
+                };
+              });
+            }
 
-            orders = mainData.orders.map((item: any, index: number) => {
-              return {
-                ...item,
-                position: index + 1,
-              };
-            });
+            users = mainData.users || [];
           }
         }
-        return orders;
+        return { orders, users };
       })
     );
   }

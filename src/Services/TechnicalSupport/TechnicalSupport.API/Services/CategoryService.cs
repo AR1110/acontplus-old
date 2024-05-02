@@ -1,10 +1,12 @@
 ﻿public class CategoryService : ICategoryService
 {
+    private readonly IADORepository _repository;
     private readonly TechnicalSupportContext _context;
 
-    public CategoryService(TechnicalSupportContext context)
+    public CategoryService(TechnicalSupportContext context, IADORepository repository)
     {
         _context = context;
+        _repository = repository;
     }
 
     public async Task<ApiResponse> AddAsync(Category category)
@@ -36,14 +38,22 @@
         return new ApiResponse { code = "1", message = "Eliminada Exitosamente" };
     }
 
-    public async Task<ApiResponse> GetAsync()
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
         if (!await _context.Categories.AnyAsync())
         {
             return new ApiResponse { code = "0", message = "No data" };
         }
-        return new ApiResponse { code = "1", payload = DataConverters.SerializeObjectCustom<List<Category>>(await _context.Categories.ToListAsync()) };
+
+        var dt = await _repository.GetDataTableAsync("TechnicalSupport.Category_Get", parameters);
+        if (DataValidation.DataTableIsNull(dt))
+        {
+            return new ApiResponse { code = "0", message = "No data" };
+        }
+
+        return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
     }
+
 
     public async Task<ApiResponse> UpdateAsync(int id, Category category)
     {

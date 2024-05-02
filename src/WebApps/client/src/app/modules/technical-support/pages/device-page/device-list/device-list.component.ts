@@ -57,7 +57,7 @@ export class DeviceListComponent implements OnInit {
 
   get() {
     showLoader();
-    this.deviceService.get(JSON.stringify({ tipo: 2 })).subscribe({
+    this.deviceService.get({ tipo: 2 }).subscribe({
       next: (response) => {
         if (isApiResponse(response) && response.code == '1') {
           let tempArray = JSON.parse(response.payload as string);

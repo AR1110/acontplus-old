@@ -29,8 +29,12 @@
         id="assignedUsers"
         class="form-select"
         [(ngModel)]="dataSearch.assignedUserId"
+        (change)="get()"
       >
-        <option [value]="0" selected>Todos</option>
+        <option [ngValue]="0" selected>Todos</option>
+        @for (item of users; track $index) {
+        <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
+        }
       </select>
     </div>
   </div>
@@ -63,10 +67,10 @@
         <div ngbDropdown container="body">
           <button
             type="button"
-            class="btn btn-outline-success btn-sm"
+            class="btn btn-outline-primary btn-sm"
             ngbDropdownToggle
           >
-            <fa-icon [icon]="'cog'"></fa-icon>
+            <fa-icon [icon]="'bars'"></fa-icon>
           </button>
           <div ngbDropdownMenu>
             @if (orderStatusCode==2 || orderStatusCode == 3) {
@@ -159,13 +163,17 @@
       <td mat-cell *matCellDef="let element">{{ element.userName }}</td>
     </ng-container>
 
+    <ng-container matColumnDef="orderStatusName">
+      <th mat-header-cell *matHeaderCellDef>Estado Orden</th>
+      <td mat-cell *matCellDef="let element">{{ element.orderStatusName }}</td>
+    </ng-container>
+
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Estado</th>
       <td mat-cell *matCellDef="let element">
         <div [innerHTML]="element.enabled | primaryStatus"></div>
       </td>
     </ng-container>
-
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
