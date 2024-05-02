@@ -29,7 +29,7 @@ export class FieldDefinitionDetailSale {
   costoFraccionado: number = 0;
   llevaInventario: boolean = false
   conversion: number= 1;
-  percentage?:number
+  percentage?:number =0
 }
 
 

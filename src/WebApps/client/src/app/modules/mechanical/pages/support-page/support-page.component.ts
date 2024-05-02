@@ -12,10 +12,11 @@ import { SupportService } from '@modules/mechanical/services/support.service';
 import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
+import { ConvertDocModalComponent } from './components/convert-doc-modal/convert-doc-modal.component';
 
 @Component({
   selector: 'app-support-page',
@@ -39,7 +40,7 @@ export class SupportPageComponent {
   tS = inject(ToasterService)
   sharedSvc = inject(SharedService)
 
-  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs', 'estado','entregar'];
+  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs', 'estado', 'entregar'];
   pagination = new Pagination()
 
   dataSource: any[] = [];
@@ -63,7 +64,7 @@ export class SupportPageComponent {
       let params = {
         pageIndex: this.pagination.pageIndex,
         pageSize: this.pagination.pageSize,
-        status: this.status-1
+        status: this.status - 1
       }
       this.supportSvc.getAll(params).subscribe({
         next: (response) => {
@@ -75,7 +76,7 @@ export class SupportPageComponent {
           console.log(response)
         },
         error(err) {
-         ;
+          ;
           console.log(err)
         },
       })
@@ -167,48 +168,19 @@ export class SupportPageComponent {
     }
   }
 
-  askToConvertToDoc(id:number){
+  askToConvertToDoc(id: number) {
     this.supportSvc.getConvertToAprobDoc(id).subscribe({
-      next:(response)=> {
+      next: (response) => {
 
-        const swalWithBootstrapButtons = Swal.mixin({
-          customClass: {
-            confirmButton: "btn btn-success",
-            cancelButton: "btn btn-danger ml-2"
-          },
-          buttonsStyling: false
-        });
-        swalWithBootstrapButtons.fire({
-          title: "Pasar a Doc. Aprobación",
-          text: "¿Estás seguro de transformar a Aprobación Documento?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Si!",
-          cancelButtonText: "No!",
-          reverseButtons: true
-        }).then((result) => {
-          if (result.isConfirmed) {
-            swalWithBootstrapButtons.fire({
-              title: "Deleted!",
-              text: "Your file has been deleted.",
-              icon: "success"
-            });
-          } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-          ) {
-            swalWithBootstrapButtons.fire({
-              title: "Cancelled",
-              text: "Your imaginary file is safe :)",
-              icon: "error"
-            });
+        let modalRef = this.modalSvc.open(ConvertDocModalComponent)
+        modalRef.componentInstance.params = response;
+
+        modalRef.result.then(result => {
+          if (result !== null && typeof result === 'object') {
+            this.getSupports();
           }
-        });
-      },
-      error(err) {
-         ;
-          console.log(err)
-      },
+        })
+      }
     })
 
   }
