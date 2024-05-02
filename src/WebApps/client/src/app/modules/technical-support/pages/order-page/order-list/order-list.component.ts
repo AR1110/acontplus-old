@@ -66,10 +66,12 @@ export class OrderListComponent implements OnInit {
     'obs',
     'user',
     'status',
+    'orderStatusName',
   ];
   orders: any = [];
   pagination = new Pagination();
   startDate: string = '';
+  users: any = [];
 
   async askToCancel(item: any) {
     const result = await swal.fire({
@@ -115,9 +117,11 @@ export class OrderListComponent implements OnInit {
       startDate: this.startDate,
     };
     let clonedParams = Object.assign(params, this.dataSearch);
+    console.log(clonedParams);
     this.orderService.getAll(clonedParams).subscribe({
       next: (response) => {
-        this.orders = response;
+        this.orders = response.orders;
+        this.users = response.users;
         if (this.orders.length > 0) {
           this.pagination.totalRecords = this.orders[0].totalRecords;
         }
@@ -188,14 +192,17 @@ export class OrderListComponent implements OnInit {
   }
 
   askToDelivery(item: any) {
-    const modalRef = this.modalService.openModalCustom(OrderDeliveryModalComponent, {
-      centered: true,
-    })
+    const modalRef = this.modalService.openModalCustom(
+      OrderDeliveryModalComponent,
+      {
+        centered: true,
+      }
+    );
     modalRef.componentInstance.data = item;
 
     modalRef.result.then((response) => {
-      if (response.code === "1") {
-        this.get()
+      if (response.code === '1') {
+        this.get();
       }
     });
   }
