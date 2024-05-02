@@ -91,13 +91,20 @@ export function ajustarFechaEmisionModificada<T extends { fechaEmision: any, fec
 
 
 export function setDateWithCurrentTime(date: Date): Date {
-    const currentDate = new Date();
-    const currentHours = currentDate.getHours();
-    const currentMinutes = currentDate.getMinutes();
-    const currentSeconds = currentDate.getSeconds();
-    
-    const newDate = new Date(date);
-    newDate.setHours(currentHours, currentMinutes, currentSeconds);
-    
-    return newDate;
+  const currentDate = new Date();
+  const currentHours = currentDate.getHours();
+  const currentMinutes = currentDate.getMinutes();
+  const currentSeconds = currentDate.getSeconds();
+
+  const newDate = new Date(date);
+  newDate.setHours(currentHours, currentMinutes, currentSeconds);
+
+  return newDate;
 }
+
+
+export const addDayToDate = function (fechaEmision: Date, dia: number) {
+  let newDate = new Date(fechaEmision);
+  newDate.setDate(newDate.getDate() + dia);
+  return newDate;
+};

@@ -109,3 +109,54 @@ export enum MODAL_SIZE {
   LG='lg',
   SM ='sm'
 }
+
+
+export enum FORMA_PAGO_SRI_CODE {
+  /**
+   * SIN UTILIZACION DEL SISTEMA FINANCIERO
+   * @type {string}
+   */
+  SUSF = '01',
+
+  /**
+   * COMPENSACIÓN DE DEUDAS
+   * @type {string}
+   */
+  CD = '15',
+
+  /**
+   * TARJETA DE DÉBITO
+   * @type {string}
+   */
+  TB = '16',
+
+  /**
+   * DINERO ELECTRÓNICO
+   * @type {string}
+   */
+  DE = '17',
+
+  /**
+   * TARJETA PREPAGO
+   * @type {string}
+   */
+  TPP = '18',
+
+  /**
+   * TARJETA DE CRÉDITO
+   * @type {string}
+   */
+  TC = '19',
+
+  /**
+   * OTROS CON UTILIZACION DEL SISTEMA FINANCIERO
+   * @type {string}
+   */
+  OCUSF = '20',
+
+  /**
+   * ENDOSO DE TÍTULOS
+   * @type {string}
+   */
+  ET = '21'
+}

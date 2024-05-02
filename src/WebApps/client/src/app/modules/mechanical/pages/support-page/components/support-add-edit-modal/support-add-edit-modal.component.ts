@@ -1,12 +1,11 @@
-import { establecimientos } from './../../../../../technical-support/store/tech-spec.store';
+
 import { CommonModule, JsonPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Input, type OnInit } from '@angular/core';
+import { Component, inject, Input, } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 import { formatDateMoment, isDateValid } from '@core/utils/format-date-moment';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportService } from '@modules/mechanical/services/support.service';
@@ -91,7 +90,7 @@ export class SupportAddEditModalComponent {
 
   successResponse = {
     next: (response: any) => {
-      hideLoader()
+
       if (isApiResponse(response)) {
         if (response.code === "0") {
           this.tS.toastr({
@@ -110,16 +109,16 @@ export class SupportAddEditModalComponent {
       }
     },
     error(err: any) {
-      hideLoader()
+
       console.log(err)
     }
   }
 
   ngOnInit(): void {
-    showLoader();
+
     this.supportSvc.getDataForm().subscribe({
       next: (response) => {
-        hideLoader()
+
         this.establishments = response.establishments;
         this.cloneEmissionPoints = response.emissionPoints;
         this.users = response.users;
@@ -128,10 +127,10 @@ export class SupportAddEditModalComponent {
           this.titleModal = 'Editar Soporte';
           this.btnText = 'Actualizar';
 
-          showLoader();
+
           this.supportSvc.getId(this.params.id).subscribe({
             next: (value) => {
-              hideLoader()
+
               console.log(value)
               this.data = value.data as any;
               console.log(this.data)
@@ -141,8 +140,8 @@ export class SupportAddEditModalComponent {
 
             },
             error(err) {
-                console.log(err)
-                hideLoader()
+              console.log(err)
+
             },
           })
           return
@@ -154,7 +153,7 @@ export class SupportAddEditModalComponent {
 
       },
       error(err) {
-        hideLoader()
+
         console.log(err)
       },
     })
@@ -199,7 +198,7 @@ export class SupportAddEditModalComponent {
     );
 
   formatter(x: { tradeName: string }) {
-    if(typeof x==='string'){
+    if (typeof x === 'string') {
       return x;
     }
     return x.tradeName
@@ -220,17 +219,17 @@ export class SupportAddEditModalComponent {
 
   getDataVehicleById(id: number) {
     try {
-      showLoader();
+
       this.vehicleSvc.getId(id).subscribe({
         next: (response) => {
-          hideLoader();
+          ;
           this.data.vehicleCompanyId = id;
           this.data.customerId = response.customer.id;
           this.vehicle = response.vehicle as any;
         },
         error(err) {
           console.log(err)
-          hideLoader()
+
         },
       })
     } catch (error) {
@@ -352,18 +351,17 @@ export class SupportAddEditModalComponent {
           }
 
           if (!(this.params.id > 0)) {
-            showLoader()
             this.supportSvc.post(data).subscribe(this.successResponse)
 
           }
 
           if (this.params.id > 0) {
-            showLoader();
+
             this.supportSvc.put(this.params.id, data).subscribe(this.successResponse)
 
           }
         } catch (error) {
-          hideLoader()
+
           console.log(error)
         }
       }

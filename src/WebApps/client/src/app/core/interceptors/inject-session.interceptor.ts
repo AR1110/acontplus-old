@@ -1,51 +1,37 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-  HttpContext,
-  HttpContextToken,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpContext, HttpContextToken, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { AuthService } from '@modules/auth/services/auth.service';
 
 const CUSTOM_URL = new HttpContextToken<boolean>(() => false);
 export function customUrl() {
   return new HttpContext().set(CUSTOM_URL, true);
 }
+export const injectSessionInterceptor: HttpInterceptorFn = (req, next) => {
+  let authSvc = inject(AuthService)
 
-@Injectable()
-export class InjectSessionInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  const authToken = authSvc.getToken();
+  const parseJwt = authSvc.parseJwt();
 
-  intercept(
-    request: HttpRequest<unknown>,
-    next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
-    const authToken = this.authService.getToken();
-    const parseJwt = this.authService.parseJwt();
+  const baseUrl = parseJwt.urlGateway;
 
-    const baseUrl = parseJwt.urlGateway;
+  // Define una expresión regular para verificar la presencia de 'rdlcProps', 'dataSources' y 'rdlcParams'
+  //const regex = /(?:rdlcProps|dataSources|rdlcParams)/;
 
-    // Define una expresión regular para verificar la presencia de 'rdlcProps', 'dataSources' y 'rdlcParams'
-    //const regex = /(?:rdlcProps|dataSources|rdlcParams)/;
-
-    // Usa el método test para verificar si alguna de las subcadenas está presente
-    //const isUrlPrinter = regex.test(request.url);
-    let isCustomUrl = false;
-    if (request.context.get(CUSTOM_URL)) {
-      isCustomUrl = true;
-    }
-    // console.log(baseUrl)
-    // console.log(request.url)
-    const url = isCustomUrl ? request.url : `${baseUrl}/gateway/${request.url}`;
-    request = request.clone({
-      url,
-      setHeaders: {
-        Authorization: 'Bearer ' + authToken,
-      },
-    });
-    return next.handle(request);
+  // Usa el método test para verificar si alguna de las subcadenas está presente
+  //const isUrlPrinter = regex.test(request.url);
+  let isCustomUrl = false;
+  if (req.context.get(CUSTOM_URL)) {
+    isCustomUrl = true;
   }
-}
+  // console.log(baseUrl)
+  // console.log(request.url)
+  const url = isCustomUrl ? req.url : `${baseUrl}/gateway/${req.url}`;
+  req = req.clone({
+    url,
+    setHeaders: {
+      Authorization: 'Bearer ' + authToken,
+    },
+  });
+
+  return next(req);
+};

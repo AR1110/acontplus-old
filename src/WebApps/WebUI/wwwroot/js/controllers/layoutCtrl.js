@@ -105,6 +105,8 @@
 
 
         const pathname = $window.location.pathname;
+        if (/\/Config\/UserProfile\/Index/.test(pathname)) return;
+
         if (pathname) {
             if (pathname === "/") {
                 location.href = "/Home/Index";
@@ -126,7 +128,7 @@
                         $scope.accion = namesObject; 
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                        location.href = "/Home/Index";
+                         location.href = "/Home/Index";
                     }
                 }
             }

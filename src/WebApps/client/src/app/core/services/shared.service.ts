@@ -1,7 +1,7 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS, PATHS_API } from '@core/constants/global.constants';
-import { customUrl } from '@core/interceptors/inject-session.interceptor';
+import{ customUrl } from '@core/interceptors/inject-session.interceptor';
 import { isApiResponse } from '@core/models/api-response';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { SendMailModalComponent } from '@shared/components/send-mail-modal/send-mail-modal.component';
