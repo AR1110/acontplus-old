@@ -10,9 +10,9 @@
 
         }
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string json)
         {
-            var response = await _categoryService.GetAsync();
+            var response = await _categoryService.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
             if (response == null) { return BadRequest("Can't Get brand"); };
             return Ok(response);
         }
