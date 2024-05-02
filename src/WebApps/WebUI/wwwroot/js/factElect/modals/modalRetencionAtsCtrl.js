@@ -1002,7 +1002,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
             tS.toastr('warning', 'Debe agregar al menos un impuesto al documento de sustento')
             return false
         }
-        if (!$scope.retencion.codigo) {
+        if (!$scope.retencion.codigo || Number($scope.retencion.codigo) == 0) {
             tS.toastr('warning', 'Debe seleccionar un impuesto')
             return false
         }
@@ -1045,7 +1045,7 @@ function modalRetencionAtsCtrl($scope, $injector, $cookies, $window, FileSaver, 
                 uniqueIdDoc: uniqueIdDoc,
                 idRetencionAtsRet: (idDocumentoElectronico) ? $scope.retencion.idRetencionAtsRet : 0,
                 codigo: $scope.retencion.codigo,
-                impuesto: $scope.impuestosRet.find(item => item.codigo == $scope.retencion.codigo).descripcion,
+                impuesto: Number($scope.retencion.codigo) == 0 ? 'Necesita Revisión' : $scope.impuestosRet.find(item => item.codigo == $scope.retencion.codigo).descripcion,
                 codigoRetencion: $scope.retencion.codigoRetencion,
                 codRet: $scope.retencion.codigoRetencion + ' - ' + $scope.porcentajeRetener.find(item => item.codigo == $scope.retencion.codigoRetencion).descripcion,
                 baseImponible: $scope.retencion.baseImponible,

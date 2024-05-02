@@ -37,7 +37,7 @@ type CalculateColDefProps = {
 
 type TaxTotalProps = {
   items: Data[]
-  decimal: any
+  decimal?: any
   tarifasImpuesto: TarifaImpuesto[]
 }
 

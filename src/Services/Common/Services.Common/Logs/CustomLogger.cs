@@ -7,58 +7,69 @@ namespace Services.Common.Logs
     {
         void LogActivity(string message, string status = "");
     }
-    public class CustomLogger: ICustomLogger
+
+    public class CustomLogger : ICustomLogger
     {
         private readonly IConfiguration _configuration;
+
         public CustomLogger(IConfiguration configuration)
         {
             _configuration = configuration;
         }
+
         public void LogActivity(string message, string status)
         {
             try
             {
-                string LogFolderPath = _configuration["Logs:CustomLogs"];
-                if (string.IsNullOrEmpty(LogFolderPath))
+                bool writeLogs = _configuration.GetValue("Logs:WriteLogs", defaultValue: true);
+                if (!writeLogs)
                 {
-                    LogFolderPath = Environment.CurrentDirectory + "\\Logs\\";
+                    return; // Logs are disabled, no need to proceed
                 }
-                if (!Directory.Exists(LogFolderPath))
+
+                string logFolderPath = _configuration.GetValue<string>("Logs:CustomLogs");
+                if (string.IsNullOrEmpty(logFolderPath))
                 {
-                    DirectoryInfo di = Directory.CreateDirectory(LogFolderPath);
+                    logFolderPath = Path.Combine(Environment.CurrentDirectory, "Logs");
+                }
+
+                if (!Directory.Exists(logFolderPath))
+                {
+                    Directory.CreateDirectory(logFolderPath);
                 }
 
                 string date = DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
-                string dateFolder = Path.Combine(LogFolderPath, date);
-                LogFolderPath = dateFolder + ".txt";
-                string Msg = "";
-                Msg = "\n---------------------------- Start -----------------------------------\n" + Environment.NewLine;
-                Msg += "Time : " + DateTime.Now.ToShortDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString() + Environment.NewLine;
-                Msg += "Status : " + status + Environment.NewLine;
-                Msg += "Message : " + message + Environment.NewLine;
-                Msg += "\n---------------------------- End -----------------------------------\n" + Environment.NewLine;
-                Log(LogFolderPath, Msg);
+                string logFilePath = Path.Combine(logFolderPath, $"{date}.txt");
+
+                string logMessage = $@"
+---------------------------- Start -----------------------------------
+Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}
+Status: {status}
+Message: {message}
+---------------------------- End -----------------------------------";
+
+                Log(logFilePath, logMessage);
             }
             catch (Exception ex)
             {
+                // Handle exception gracefully
                 _ = ex.Message;
-                //throw ex;
             }
         }
-        public static void Log(string sFilePath, string sErrMsg)
+
+        private static void Log(string filePath, string message)
         {
-            StreamWriter sw;
             try
             {
-                sw = File.AppendText(sFilePath);
-                sw.WriteLine(sErrMsg);
-                sw.Flush();
-                sw.Close();
+                using (StreamWriter sw = File.AppendText(filePath))
+                {
+                    sw.WriteLine(message);
+                }
             }
             catch (Exception ex)
             {
+                // Handle exception gracefully
                 _ = ex.Message;
-                //throw ex;
             }
         }
     }

@@ -48,16 +48,16 @@ BEGIN
 	
 	,idDocumentoDetalle = ISNULL((SELECT TOP 1 dd.idDocumentoDetalle FROM Recepcion.DocumentoDetalle dd WHERE d.idArticulo = dd.idArticulo AND dd.idDocumento = d.idDocumento), 0) 
 
-	,etiquetas = ISNULL((SELECT TOP 1 ee.idEtiqueta, ee.descripcion, ee.etiquetas
+	,etiquetas = IIF(d.idARTICULO = 0, '[]', ISNULL((SELECT TOP 1 ee.idEtiqueta, ee.descripcion, ee.etiquetas
 				  FROM Inventario.Etiqueta ee
 			      WHERE ee.idEtiqueta IN (
 					SELECT ar.idEtiqueta
 					FROM Articulo ar
 					WHERE ar.idArticulo = d.idArticulo
-				) FOR JSON PATH), '[]')
-	,datosAdicionales = ISNULL((SELECT top 1 ar.datosAdicionales FROM Articulo ar where ar.idArticulo = d.idArticulo), 0)
+				) FOR JSON PATH), '[]'))
+	,datosAdicionales = IIF(d.idArticulo = 0, 0, ISNULL((SELECT top 1 ar.datosAdicionales FROM Articulo ar where ar.idArticulo = d.idArticulo), 0))
     ----Medidas agregado por Emilio 
-    ,ISNULL
+    ,IIF(d.idArticulo = 0, '[]', ISNULL
         ((
             SELECT af.idMedida
                   ,IIF(af.gestionVenta = 1,1,3) as orden
@@ -71,9 +71,9 @@ BEGIN
 			WHERE af.idArticulo = d.idArticulo 
             FOR JSON PATH
                 
-        ),'[]') as fraccionado
+        ),'[]')) as fraccionado
 
-        ,ISNULL
+        ,IIF(d.idArticulo = 0, '[]',ISNULL
         ((
             SELECT sc.idMedida
                   ,2              as orden
@@ -86,7 +86,7 @@ BEGIN
 			WHERE sc.idArticulo = d.idArticulo 
             FOR JSON PATH
 
-         ),'[]') as principal 
+         ),'[]')) as principal 
 	FROM Recepcion.Doc_Detalle_Temp d
 	WHERE d.idDocumento = @idDocumento
 	ORDER BY d.idDetalle ASC

@@ -1,6 +1,7 @@
 export const enum SALE_PATHS {
   EMPLOYEE = 'Empleado/',
-  APROBACION_DOC ='AprobacionDocumento/'
+  APROBACION_DOC ='AprobacionDocumento/',
+  NOTA_ENTREGA = 'NotaEntrega/'
 }
 
 

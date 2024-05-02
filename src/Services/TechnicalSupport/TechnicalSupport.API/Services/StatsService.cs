@@ -11,15 +11,7 @@
 
         public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            try
-            {
-                return await _repository.SPExecuteAsync("TechnicalSupport.Stats_Get", parameters);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            return await _repository.SPExecuteAsync("TechnicalSupport.Stats_Get", parameters);
         }
     }
 }

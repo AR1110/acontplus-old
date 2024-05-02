@@ -91,7 +91,7 @@
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
-      "library": "limonte-sweetalert2@11.10.7",
+      "library": "limonte-sweetalert2@11.10.8",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -151,7 +151,7 @@
       "destination": "wwwroot/assets/icons/material-design-iconic-font/"
     },
     {
-      "library": "tabulator@6.2.0",
+      "library": "tabulator@6.2.1",
       "destination": "wwwroot/lib/tabulator/",
       "files": [
         "js/tabulator.min.js",
