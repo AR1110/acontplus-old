@@ -38,7 +38,7 @@ BEGIN
 	DECLARE @idPuntoEmision INT ,@docOrigen VARCHAR(5) ,@docDestino VARCHAR(5) ,@idEstadoDocumento INT , @identificacionComprador VARCHAR(20)
 
     -->Fact.Elect
-    DECLARE @fechaEmision DATETIME2 ,@codDoc VARCHAR(5) ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@ruc VARCHAR(20) ,@ambiente VARCHAR(5) ,@secuencial INT ,@claveAcceso VARCHAR(50)
+    DECLARE @fechaEmision DATETIME2 ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@ruc VARCHAR(20) ,@ambiente VARCHAR(5) ,@secuencial INT ,@claveAcceso VARCHAR(50)
 
 	DECLARE @tbComprobante  AS TABLE (
 		 idCliente INT NOT NULL
@@ -214,8 +214,6 @@ BEGIN
 		ELSE
 			BEGIN
 				SET @claveAcceso = NEWID()
-
-				SET @codDoc = 'NE'
 			END 
 		
 		-- ========================= VALIDADACIONES =====================================================	
@@ -306,6 +304,17 @@ BEGIN
 				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
 					       WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = pr.idProforma
 				END 
+
+
+            IF @docOrigen = 'MO'
+                BEGIN
+                    UPDATE mo WITH (ROWLOCK)
+                       SET mo.[Status] = 4
+                    FROM Mechanical.Support mo
+                    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
+					       WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = mo.Id
+
+                END 
 
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' as 'message'

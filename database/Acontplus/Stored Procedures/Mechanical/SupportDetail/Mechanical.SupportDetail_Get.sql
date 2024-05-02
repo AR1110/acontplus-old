@@ -32,7 +32,7 @@ BEGIN
         BEGIN
             SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
 
-            SET @tableNames = 'support,supportDetail,bodega,tipoIva,decimal'
+            SET @tableNames = 'support,supportDetail,bodega,tipoIva,decimal,tarifas'
 
             SELECT v_s.Id
                   ,v_s.PuntoEmisionId
@@ -54,29 +54,26 @@ BEGIN
             WHERE Id = @Id
                         
             SELECT md.Id
-                  ,md.ArticuloId        AS idArticulo
-                  ,md.BodegaId          AS idBodega
-                  ,md.TarifaId          AS idTarifa
-                  ,md.MedidaId          AS idMedida
-                  ,md.[Description]     AS descripcion                  
-                  ,md.Quantity          AS cantidad
-                  ,md.Price             AS precioUnitario
-                  ,md.Price             AS precioVenta
-                  ,md.Cost              AS precioCosto
-                  ,md.CodePercentage    AS codigoPorcentaje
-                  ,md.[Percentage]      AS tarifa
+                  ,md.ArticuloId        
+                  ,md.BodegaId         
+                  ,md.TarifaId          
+                  ,md.MedidaId         
+                  ,md.[Description]                       
+                  ,md.Quantity          
+                  ,md.Price              
+                  ,md.Cost              
+                  ,md.CodePercentage
+                  ,md.[Percentage]     
                   ,bo.codEstab
                   ,md.Total                  
                   ,ar.llevaInventario
-                  ,ar.idTipoIva
-                  ,ar.iva
                   ,ar.stockMinimo
                   ,ar.stock
                   ,ar.precioSinSubsidio
                   ,ar.codigo            AS codigoArticulo
                   ,ar.codigoAuxiliar    AS codigoAuxiliar
                   ,0                    AS valorDescuento
-                  ,md.[Enabled]         AS estado
+                  ,md.[Enabled] 
                   ,md.Deleted
                   ,ISNULL
                    ((
@@ -138,10 +135,12 @@ BEGIN
                    ,(
                     SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
                     ) as consolidacion
-            FROM Mechanical.SupportDetail    md WITH (NOLOCK)
-            INNER JOIN dbo.Bodega            bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
-            INNER JOIN Inventario.v_Articulo ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
+            FROM Mechanical.SupportDetail md WITH (NOLOCK)
+            INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
+            INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
             WHERE SupportId = @Id
+              AND md.[Enabled] = 1
+              AND md.Deleted IS NULL
             
             SELECT idBodega
                   ,idEstablecimiento
@@ -153,7 +152,17 @@ BEGIN
             WHERE idUsuarioRol = @userRoleId 
             ORDER BY defaultBodega DESC
 
-            SELECT idTipoIva,descripcion,codigo,codigoPorcentaje,porcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
+            SELECT ti.idTarifaImpuesto
+                  ,ti.codigo
+                  ,ti.codImpuesto
+                  ,i.idImpuesto
+                  ,ti.descripcion
+                  ,ti.porcentaje
+                  ,ti.estado 
+            FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
+            INNER JOIN Sri.Impuesto  i WITH (NOLOCK)  ON i.codigo = ti.codImpuesto 
+            WHERE i.codigo = '2'
+              AND ti.estado = 1 
             
             SELECT nroPrecio
 	              ,nroCantidad
@@ -167,6 +176,13 @@ BEGIN
 	        FROM Config.v_Sistema_Decimal WITH (NOLOCK)
             WHERE codTrasaccion = 'V' 
               AND idEntidad = @CompanyId
+
+            SELECT idTarifa
+	                 ,descripcion
+	                 ,predeterminada
+	                 ,codigo 
+	        FROM Tarifa WITH (NOLOCK) 
+	        WHERE idEntidad = @CompanyId AND estado = 1
 
             RETURN
         END
