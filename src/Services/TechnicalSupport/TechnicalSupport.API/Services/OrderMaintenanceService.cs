@@ -37,18 +37,18 @@
 
     public async Task<ApiResponse> DeleteAsync(int id)
     {
-        var order = await _context.Orders.FindAsync(id);
+        var orderMaintenance = await _context.OrderMaintenances.FindAsync(id);
 
-        if (order == null)
+        if (orderMaintenance == null)
         {
             // Handle case where order not found
             return new ApiResponse { code = "0", message = "No se encontró orden para eliminar" };
         }
 
-        order.Enabled = false;
-        order.Deleted = true;
+        orderMaintenance.Enabled = false;
+        orderMaintenance.Deleted = true;
 
-        _context.Orders.Update(order);
+        _context.Update(orderMaintenance);
         await _context.SaveChangesAsync();
 
         return new ApiResponse { code = "1", message = "Eliminado exitosamente" };

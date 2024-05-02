@@ -68,20 +68,20 @@ internal class Program
 
         app.MapControllers().RequireAuthorization();
 
-        using var scope = app.Services.CreateScope();
-        var services = scope.ServiceProvider;
-        var context = services.GetRequiredService<TechnicalSupportContext>();
-        var logger = services.GetRequiredService<ILogger<Program>>();
+        //using var scope = app.Services.CreateScope();
+        //var services = scope.ServiceProvider;
+        //var context = services.GetRequiredService<TechnicalSupportContext>();
+        //var logger = services.GetRequiredService<ILogger<Program>>();
 
-        try
-        {
-            await context.Database.MigrateAsync();
-            await TechnicalSupportContextSeed.SeedAsync(context);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occured during migration");
-        }
+        //try
+        //{
+        //    await context.Database.MigrateAsync();
+        //    await TechnicalSupportContextSeed.SeedAsync(context);
+        //}
+        //catch (Exception ex)
+        //{
+        //    logger.LogError(ex, "An error occured during migration");
+        //}
 
         await app.RunAsync();
     }
