@@ -30,7 +30,7 @@ export class CategoryModalComponent {
     code: new FormControl('', [
       Validators.required,
       Validators.minLength(1),
-      Validators.maxLength(10),
+      Validators.maxLength(25),
     ]),
     name: new FormControl('', [
       Validators.required,

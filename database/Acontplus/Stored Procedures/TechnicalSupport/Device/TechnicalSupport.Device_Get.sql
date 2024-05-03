@@ -55,6 +55,7 @@ BEGIN
                ,tc.CreatedAt
             FROM TechnicalSupport.Category tc WITH(NOLOCK)
             WHERE tc.[Enabled] = 1
+                AND tc.companyId = @companyId
             ORDER BY tc.CreatedAt DESC
 
             RETURN

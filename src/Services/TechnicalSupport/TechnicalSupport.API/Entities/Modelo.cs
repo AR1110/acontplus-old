@@ -11,7 +11,7 @@ namespace TechnicalSupport.API.Entities
         public Serie Serie { get; set; }
         public int? SerieId { get; set; }
         [Required]
-        [MaxLength(10)]
+        [MaxLength(25)]
         public string Code { get; set; }
         [Required]
         [MaxLength(150)]

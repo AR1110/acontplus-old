@@ -23,17 +23,27 @@
             >Categoria:
             <span class="text-danger">*</span>
           </label>
-          <select
-            formControlName="categoryId"
-            id="categoryId"
-            class="form-select"
-            (change)="onCategoryChange($event)"
-          >
-            <option [value]="0">Seleccione una categoría</option>
-            @for (item of categories; track $index) {
-            <option [value]="item.id">{{ item.name }}</option>
-            }
-          </select>
+          <div class="input-group">
+            <select
+              formControlName="categoryId"
+              id="categoryId"
+              class="form-select"
+              (change)="onCategoryChange($event)"
+            >
+              <option [value]="0">Seleccione una categoría</option>
+              @for (item of categories; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              title="Añadir Categoría"
+              (click)="addCategory()"
+            >
+              <fa-icon [icon]="'plus'"></fa-icon>
+            </button>
+          </div>
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
@@ -42,17 +52,28 @@
             >Marca:
             <span class="text-danger">*</span>
           </label>
-          <select
-            formControlName="brandId"
-            id="brandId"
-            class="form-select"
-            (change)="onBrandChange($event)"
-          >
-            <option [value]="0">Seleccione una marca</option>
-            @for (item of brands; track $index) {
-            <option [value]="item.id">{{ item.name }}</option>
-            }
-          </select>
+          <div class="input-group">
+            <select
+              formControlName="brandId"
+              id="brandId"
+              class="form-select"
+              (change)="onBrandChange($event)"
+            >
+              <option [value]="0">Seleccione una marca</option>
+              @for (item of brands; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              title="Añadir Marca"
+              [disabled]="unselectedCategory"
+              (click)="addBrand()"
+            >
+              <fa-icon [icon]="'plus'"></fa-icon>
+            </button>
+          </div>
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
@@ -61,16 +82,27 @@
             >Modelo:
             <span class="text-danger">*</span>
           </label>
-          <select
-            formControlName="modeloId"
-            id="modeloId"
-            class="form-select"
-            (change)="onModeloChange($event)"
-          >
-            @for (item of modelos; track $index) {
-            <option [value]="item.id">{{ item.name }}</option>
-            }
-          </select>
+          <div class="input-group">
+            <select
+              formControlName="modeloId"
+              id="modeloId"
+              class="form-select"
+              (change)="onModeloChange($event)"
+            >
+              @for (item of modelos; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              title="Añadir Modelo"
+              [disabled]="unseletedBrand"
+              (click)="addModelo()"
+            >
+              <fa-icon [icon]="'plus'"></fa-icon>
+            </button>
+          </div>
         </div>
       </div>
     </div>

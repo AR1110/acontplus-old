@@ -27,7 +27,7 @@ BEGIN
     ,@ruc                   VARCHAR(13)
     ,@estab                 VARCHAR(3)
     ,@ptoEmi                VARCHAR(3) 
-    ,@tiempoCreditoId       INT = 1
+    ,@tiempoCreditoId       INT
     ,@tipoDocumentoId       INT
     ,@ambiente              INT
     ,@autoSriAuth           BIT
@@ -315,6 +315,13 @@ BEGIN
         , @ruc          = rucEmpresa
     FROM v_usuario 
     WHERE idUsuarioRol  = @userRoleId
+
+    SELECT TOP 1 @tiempoCreditoId = idTiempoCredito  
+    FROM dbo.TiempoCredito WITH(NOLOCK) 
+    WHERE idEntidad = @companyId   
+    AND gestion = 1
+    AND estado  = 1
+    AND diasCredito = 0
 
      IF (@userId = 0)
         BEGIN
