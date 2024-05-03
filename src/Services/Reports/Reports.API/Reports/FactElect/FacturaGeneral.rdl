@@ -170,16 +170,16 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>14.41653mm</Width>
+                  <Width>10.30976mm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>20.45044mm</Width>
+                  <Width>20.68809mm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>31.92843mm</Width>
+                  <Width>28.65151mm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>22.27088mm</Width>
+                  <Width>20.42579mm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>20.25822mm</Width>
@@ -188,7 +188,7 @@
                   <Width>26.61948mm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>19.52839mm</Width>
+                  <Width>25.2426mm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>19.10534mm</Width>
@@ -250,7 +250,7 @@
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>6mm</Height>
+                  <Height>8.54mm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -1184,7 +1184,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Reten. IVA</Value>
+                                  <Value>Ret. IVA</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1242,7 +1242,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Reten. Renta</Value>
+                                  <Value>Ret. Renta</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1840,7 +1840,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>6mm</Height>
+                  <Height>12.3528mm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -5682,8 +5682,8 @@
             <DataSetName>detalleDs</DataSetName>
             <Top>27.80072mm</Top>
             <Left>0mm</Left>
-            <Height>30mm</Height>
-            <Width>492.289mm</Width>
+            <Height>38.8928mm</Height>
+            <Width>489.01209mm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -6398,14 +6398,14 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>57.80072mm</Height>
+        <Height>66.69352mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>492.289mm</Width>
+      <Width>489.01209mm</Width>
       <Page>
         <PageFooter>
           <Height>6.91727mm</Height>
