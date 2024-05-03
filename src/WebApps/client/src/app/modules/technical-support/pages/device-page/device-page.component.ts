@@ -17,7 +17,7 @@ export class DevicePageComponent {
   private modalService = inject(ModalService);
   onModalOpen() {
     const modalRef = this.modalService.openModalCustom(DeviceModalComponent, {
-      size: 'lg',
+      size: 'xl',
       centered: true,
     });
     modalRef.result.then((response) => {

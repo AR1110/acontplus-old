@@ -40,7 +40,7 @@ export class BrandModalComponent {
     code: new FormControl('', [
       Validators.required,
       Validators.minLength(1),
-      Validators.maxLength(10),
+      Validators.maxLength(25),
     ]),
     name: new FormControl('', [
       Validators.required,
@@ -119,6 +119,7 @@ export class BrandModalComponent {
     id: 0,
     code: '',
     name: '',
+    categoryId: 0,
     categoryName: '',
   };
   modalIcon: IconProp = 'plus';
@@ -136,6 +137,9 @@ export class BrandModalComponent {
       Number(JSON.parse(this.data.series as string)?.length) > 0
     ) {
       this.series = JSON.parse(this.data.series as string) || [];
+    }
+    if (this.data.categoryId > 0) {
+      this.brandForm.get('categoryId')?.setValue(this.data.categoryId);
     }
     this.onGet();
   }

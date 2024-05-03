@@ -37,7 +37,7 @@ BEGIN
 		END
 	IF (@tipo = 2)
 		BEGIN
-			SELECT * FROM TechnicalSupport.Brand WITH (NOLOCK) WHERE CategoryId = @categoryId
+			SELECT * FROM TechnicalSupport.Brand WITH (NOLOCK) WHERE CategoryId = @categoryId ORDER BY Id DESC
 		END
 
 END

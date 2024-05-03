@@ -39,7 +39,7 @@ BEGIN
 		END
 	IF (@tipo = 2)
 		BEGIN
-			SELECT * FROM TechnicalSupport.Modelo m WITH (NOLOCK) WHERE brandId = @brandId
+			SELECT * FROM TechnicalSupport.Modelo m WITH (NOLOCK) WHERE brandId = @brandId ORDER BY Id DESC
 		END
 
 END

@@ -9,7 +9,7 @@ namespace TechnicalSupport.API.Entities
         public Category Category { get; set; }
         public int CategoryId { get; set; }
         [Required]
-        [MaxLength(10)]
+        [MaxLength(25)]
         public string Code { get; set; }
         [Required]
         [MaxLength(150)]

@@ -38,7 +38,7 @@ export class ModeloModalComponent {
     code: new FormControl('', [
       Validators.required,
       Validators.minLength(1),
-      Validators.maxLength(10),
+      Validators.maxLength(25),
     ]),
     name: new FormControl('', [
       Validators.required,
@@ -66,6 +66,9 @@ export class ModeloModalComponent {
       this.modalTitle = 'Editar Modelo';
       this.modeloForm.patchValue(this.data);
       this.onBrandGet(this.data.brandId);
+    }
+    if (this.data.brandId > 0) {
+      this.modeloForm.get('brandId')?.setValue(this.data.brandId);
     }
     this.onGet();
   }
