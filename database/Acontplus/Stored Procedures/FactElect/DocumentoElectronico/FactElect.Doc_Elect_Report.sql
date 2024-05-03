@@ -343,7 +343,8 @@ BEGIN
                                 ((
                                     SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
                                     FROM Ventas.v_NotaCreditoImpuesto ni 
-                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2'' 
+                                    WHERE ni.NotaCreditoId  = ncp.idNotaCredito 
+                                    AND ni.codigo           = ''2'' 
                                     AND ni.codigoPorcentaje = ''7''
 
                                 ),0) as subTotalExento
@@ -352,32 +353,35 @@ BEGIN
                                 ((
                                     SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
                                     FROM Ventas.v_NotaCreditoImpuesto ni 
-                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2'' 
+                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito 
+                                    AND ni.codigo = ''2'' 
                                     AND ni.codigoPorcentaje = ''6''
 
                                 ),0) as subTotalNoObjetoIva
                                 ,ISNULL((
-                                        SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                        FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                        WHERE fi.FacturaId = fv.idFactura 
-                                        AND fi.codigo = ''2'' 
-                                        AND fi.codigoPorcentaje = ''5''
+                                    SELECT CAST(SUM(ni.TaxBase) AS NUMERIC(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId  = ncp.idNotaCredito 
+                                    AND ni.codigo           = ''2'' 
+                                    AND ni.codigoPorcentaje = ''5''
+                                    AND ni.[Percent] > 0
                                 ),0) as subTotalIvaCinco
 
                                 ,ISNULL((
-                                    SELECT CAST(SUM(TaxBase)as numeric(18,2)) 
-                                    FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = fv.idFactura 
-                                    AND fi.codigo = ''2'' 
-                                    AND fi.codigoPorcentaje = ''4''
+                                    SELECT CAST(SUM(ni.TaxBase) AS NUMERIC(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId  = ncp.idNotaCredito 
+                                    AND ni.codigo           = ''2'' 
+                                    AND ni.codigoPorcentaje = ''4''
+                                    AND ni.[Percent] > 0
                                 ),0) as subTotalIvaQuince
 
 	                           ,ISNULL
                                 ((
                                     SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
                                     FROM Ventas.v_NotaCreditoImpuesto ni 
-                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito 
-                                    AND ni.codigo = ''2'' 
+                                    WHERE ni.NotaCreditoId  = ncp.idNotaCredito 
+                                    AND ni.codigo           = ''2'' 
                                     AND ni.codigoPorcentaje = ''0''
                                 ),0) as subTotalIvaCero
 
@@ -385,38 +389,40 @@ BEGIN
                                 ((
                                     SELECT CAST(SUM(ni.TaxBase)as numeric(18,2)) 
                                     FROM Ventas.v_NotaCreditoImpuesto ni 
-                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2'' AND ni.[Percent] > 0
-
+                                    WHERE ni.NotaCreditoId  = ncp.idNotaCredito 
+                                    AND ni.codigo           = ''2'' 
+                                    AND ni.codigoPorcentaje = ''2''
+                                    AND ni.[Percent] > 0
                                 ),0) as subTotalIva
 
 	                            ,CAST(ncp.subTotalSinImpuestos  as numeric(18,2))  as precioTotalSinImpuestos
 	                                          
                                ,ISNULL
                                 ((
-                                    SELECT CAST(SUM(ni.TaxValue)as numeric(18,2)) 
+                                    SELECT CAST(SUM(ni.TaxValue)    AS NUMERIC(18,2)) 
                                     FROM Ventas.v_NotaCreditoImpuesto ni 
-                                    WHERE ni.NotaCreditoId = ncp.idNotaCredito AND ni.codigo = ''2''
-
+                                    WHERE ni.NotaCreditoId          = ncp.idNotaCredito 
+                                    AND ni.codigo                   = ''2''
+                                    AND ni.codigoPorcentaje         = ''2''
                                 ),0) as iva
+
                                 ,ISNULL
                                 ((
-                                    SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
-                                    FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = fv.idFactura 
-                                    AND fi.codigo = ''2''
-                                    AND fi.codigoPorcentaje = ''5''
-
+                                    SELECT CAST(SUM(ni.TaxValue)    AS NUMERIC(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId          = ncp.idNotaCredito 
+                                    AND ni.codigo                   = ''2''
+                                    AND ni.codigoPorcentaje         = ''5''
                                 ),0) as iva5
 
                                 ,ISNULL
                                 ((
-                                    SELECT CAST(SUM(TaxValue)as numeric(18,2)) 
-                                    FROM  Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
-                                    WHERE fi.FacturaId = fv.idFactura 
-                                    AND fi.codigo = ''2''
-                                    AND fi.codigoPorcentaje = ''4''
-
-                                ),0) as iva15
+                                    SELECT CAST(SUM(ni.TaxValue)    AS NUMERIC(18,2)) 
+                                    FROM Ventas.v_NotaCreditoImpuesto ni 
+                                    WHERE ni.NotaCreditoId          = ncp.idNotaCredito 
+                                    AND ni.codigo                   = ''2''
+                                    AND ni.codigoPorcentaje         = ''4''
+                                ),0) AS iva15
 
 	                          ,CAST(ncp.totalDescuento as numeric(18,2))         as descuento
 	                          ,CAST(ncp.total as numeric(18,2))                  as total		
@@ -535,46 +541,71 @@ BEGIN
                               ,lc.identificacionProveedor
                               ,lc.razonSocialProveedor										
                               ,ISNULL((
-                                
-                                    SELECT CAST(SUM(li.TaxBase)as numeric(18,2)) 
+                                    SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
                                     FROM Compra.v_LiquidacionImpuesto li 
-                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigoPorcentaje = ''7''
-
-                              ),0) as subTotalExento
+                                    WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
+                                    AND li.codigoPorcentaje     = ''7''
+                              ),0) AS subTotalExento
 
                               ,ISNULL((
-
-                                    SELECT CAST(SUM(li.TaxBase)as numeric(18,2)) 
+                                    SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
                                     FROM Compra.v_LiquidacionImpuesto li 
-                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigoPorcentaje = ''6''
-
+                                    WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
+                                    AND li.codigoPorcentaje     = ''6''
                               ),0) as subTotalNoObjetoIva
 
                               ,ISNULL((
-                                
-                                    SELECT CAST(SUM(li.TaxBase)as numeric(18,2)) 
+                                    SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
                                     FROM Compra.v_LiquidacionImpuesto li 
-                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigoPorcentaje = ''0''
+                                    WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
+                                    AND li.codigoPorcentaje     = ''5''
+                              ),0) AS subTotalIvaCinco
 
+                              ,ISNULL((
+                                    SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
+                                    AND li.codigoPorcentaje     = ''4''
+                              ),0) AS subTotalIvaQuince
+
+                              ,ISNULL((
+                                    SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId      = lc.idLiquidacionCompra 
+                                    AND li.codigoPorcentaje     = ''0''
                               ),0) as subTotalIvaCero
 
                               ,ISNULL((
-
-                                    SELECT CAST(SUM(li.TaxBase)as numeric(18,2)) 
+                                    SELECT CAST(SUM(li.TaxBase) AS NUMERIC(18,2)) 
                                     FROM Compra.v_LiquidacionImpuesto li 
-                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigo = ''2'' AND li.[Percent] > 0
-
+                                    WHERE li.LiquidacionId      = lc.idLiquidacionCompra
+                                    AND li.codigo               = ''2'' 
+                                    AND li.[Percent] > 0
                                ),0) as subTotalIva
 
-                               ,CAST(lc.subTotalSinImpuestos  as numeric(18,2))  as precioTotalSinImpuestos
+                               ,CAST(lc.subTotalSinImpuestos    AS NUMERIC(18,2))  as precioTotalSinImpuestos
 	                                          
                                ,ISNULL((
-
-                                    SELECT CAST(SUM(li.TaxValue)as numeric(18,2)) 
+                                    SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2))
                                     FROM Compra.v_LiquidacionImpuesto li 
-                                    WHERE li.LiquidacionId = lc.idLiquidacionCompra AND li.codigo = ''2''
+                                    WHERE li.LiquidacionId          = lc.idLiquidacionCompra 
+                                    AND li.codigo                   = ''2''
+                               ),0) AS iva
 
-                               ),0) as iva
+                               ,ISNULL((
+                                    SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2)) 
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId          = lc.idLiquidacionCompra 
+                                    AND li.codigo                   = ''5''
+                               ),0) AS iva5
+
+                               ,ISNULL((
+                                    SELECT CAST(SUM(li.TaxValue)    AS NUMERIC(18,2))
+                                    FROM Compra.v_LiquidacionImpuesto li 
+                                    WHERE li.LiquidacionId          = lc.idLiquidacionCompra
+                                    AND li.codigo                   = ''4''
+                               ),0) as iva15
+
                                ,CAST(lc.totalDescuento as numeric(18,2))         as descuento
                                ,CAST(lc.total as numeric(18,2))                  as total		
                                ,us.nombreUsuario                                 as usuario
