@@ -10,7 +10,7 @@ import { ToasterService } from '@core/services/toaster.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
 import { SupportService } from '@modules/mechanical/services/support.service';
-import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbPagination, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
@@ -34,6 +34,7 @@ import { isValidField } from '@core/utils/utils';
     NgbPagination,
     MatTableModule,
     MatCheckboxModule,
+    NgbPopoverModule,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent
   ],
