@@ -1465,43 +1465,49 @@
                     consolidacionesFecha
                 } = $scope.dataArticulo;
 
-                let index = 0, entity = {}, tarifaImpuesto = {};
+                let index = 0, entity = {}, tarifaImpuesto = {}; 
 
-                let findIndexById = $scope.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
+                //verificar si hay un articulo que lleva inventario mas de uno 
+                let itemsDuplicated = $scope.gridOptions.data.filter(item => (
+                    item.llevaInventario && item.idArticulo === articulo.idArticulo
+                ))
 
-                if (findIndexById === -1) {
+
+                let findIndexById = $scope.gridOptions.data.findIndex(
+                    item => item.llevaInventario && item.idArticulo === articulo.idArticulo
+                );
+
+                if ($scope.config.detailDuplicate) {
                     addRow();
                     index = $scope.gridOptions.data.length - 1;
                     entity = $scope.gridOptions.data[index];
+                    entity.cantidad = 1;
                 } else {
-                    index = findIndexById;
-                    entity = $scope.gridOptions.data[index];
-                    entity.cantidad = entity.cantidad + 1;
-                }
+
+                    if (itemsDuplicated.length > 1) {
+                        fS.sweetAlert('warning', `El elemento ${articulo.descripcion} aparece más de una vez en el detalle.`);
+                        return
+                    }
+
+                    if (findIndexById === -1) {
+                        addRow();
+                        index = $scope.gridOptions.data.length - 1;
+                        entity = $scope.gridOptions.data[index];
+                        entity.cantidad = 1;
+                    } else {
+                        index = findIndexById;
+                        entity = $scope.gridOptions.data[index];
+                        cantidad = entity.cantidad;
+                        entity.cantidad = cantidad + 1;
+                    }
+                } 
 
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
-
-
+ 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
-                entity.descripcion = articulo.descripcion;
-
-                //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
-                // if (
-                //     $scope.tarifaImpuestoVigente.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX
-                //     && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
-                // ) {
-                //     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
-                //     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
-                //     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
-                //     entity.tarifa = dataImpuestoTarifa.tarifa;
-
-                // } else {
-                //     entity.idTipoIva = articulo.idTipoIva;
-                //     entity.codigoPorcentaje = articulo.codigoPorcentaje;
-                //     entity.tarifa = articulo.tarifa;
-                // }
+                entity.descripcion = articulo.descripcion; 
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
