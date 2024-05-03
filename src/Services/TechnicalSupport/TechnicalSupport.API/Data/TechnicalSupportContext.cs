@@ -50,12 +50,10 @@ namespace TechnicalSupport.API.Data
 
             builder.Entity<Brand>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Brand>().Property(x => x.Enabled).HasDefaultValue(true);
-            builder.Entity<Brand>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_Brand").IsUnique();
             builder.Entity<Brand>().HasMany(x => x.Series).WithOne(x => x.Brand).HasForeignKey(x => x.BrandId);
 
             builder.Entity<Category>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Category>().Property(x => x.Enabled).HasDefaultValue(true);
-            builder.Entity<Category>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_Category").IsUnique();
 
             builder.Entity<Device>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Device>().Property(x => x.Enabled).HasDefaultValue(true);
@@ -71,7 +69,6 @@ namespace TechnicalSupport.API.Data
 
             builder.Entity<Modelo>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Modelo>().Property(x => x.Enabled).HasDefaultValue(true);
-            builder.Entity<Modelo>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_Modelo").IsUnique();
 
             builder.Entity<Order>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Order>().Property(x => x.Enabled).HasDefaultValue(true);
@@ -93,7 +90,6 @@ namespace TechnicalSupport.API.Data
 
             builder.Entity<Serie>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Serie>().Property(x => x.Enabled).HasDefaultValue(true);
-            builder.Entity<Serie>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_Serie").IsUnique();
 
             builder.Entity<WarrantyHistory>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<WarrantyHistory>().Property(x => x.Enabled).HasDefaultValue(true);

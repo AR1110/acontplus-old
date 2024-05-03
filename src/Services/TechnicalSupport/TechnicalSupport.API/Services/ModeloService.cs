@@ -11,11 +11,6 @@
 
     public async Task<ApiResponse> AddAsync(Modelo modelo)
     {
-        if (await _context.Modelos.AnyAsync(x => x.Code == modelo.Code))
-        {
-            return new ApiResponse { code = "0", message = "Este código ya se encuentra registrado" };
-        }
-
         modelo.SerieId = modelo.SerieId == 0 ? null : modelo.SerieId;
         _context.Modelos.Add(modelo);
         await _context.SaveChangesAsync();

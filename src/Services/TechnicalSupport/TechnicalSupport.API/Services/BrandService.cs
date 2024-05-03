@@ -13,11 +13,6 @@
 
         public async Task<ApiResponse> AddAsync(Brand brand)
         {
-            if (await _context.Brands.AnyAsync(x => x.Code == brand.Code))
-            {
-                return new ApiResponse { code = "0", message = "Este código ya se encuentra registrado" };
-            }
-
             if (brand.Series.Count > 0)
             {
                 foreach (var item in brand.Series)
