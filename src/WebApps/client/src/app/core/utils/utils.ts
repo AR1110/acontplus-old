@@ -1,7 +1,11 @@
 export const isValidField = <T>(field: T): T | null => {
+  let value:any = field
+  if(typeof field==='string'){
+    value = field.trim()
+  }
   const invalidValues: ReadonlyArray<T | null | undefined | "" | 0> = ["", null, undefined, 0];
 
-  return invalidValues.includes(field) ? null : field;
+  return invalidValues.includes(value) ? null : value;
 };
 
 

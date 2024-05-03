@@ -36,6 +36,7 @@ export class CompanyCustomerSearchComponent {
   @Input() isSearchToExternal = false;
   private companyCustomerService = inject(CompanyCustomerService);
 
+  @Input() id = 0;
   customer: CompanyCustomerSearch = {
     idCliente: 0,
     nombreFiscal: '',
@@ -51,14 +52,15 @@ export class CompanyCustomerSearchComponent {
 
   onKeyupSearch() {
     if (!this.textSearch) {
+      this.id=0;
       this.resultEmptyInput.emit({});
     }
   }
 
 
   onSelect($event: any) {
-    console.log($event);
     this.customer = $event.item;
+    this.id = this.customer.idCliente;
     this.setCustomerData(this.customer);
   }
 
@@ -67,7 +69,10 @@ export class CompanyCustomerSearchComponent {
   ) =>
     text$.pipe(
       distinctUntilChanged(),
-      tap(() => (this.searching = true)),
+      tap(() => {
+        this.searching = true;
+        this.id = 0;
+      }),
       switchMap((term) => {
         if (!term || term.length < 2) {
           return of([]);

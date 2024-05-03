@@ -16,9 +16,8 @@ export class CompanyCustomerAddEditDirective {
     let modalRef = this.#modalSvc.open(AddEditModalComponent, {
       size: 'xl'
     })
-    modalRef.componentInstance.data = {
+    modalRef.componentInstance.params = {
       id: this.id,
-      idCliente: this.id
     }
 
     modalRef.result.then(result => {

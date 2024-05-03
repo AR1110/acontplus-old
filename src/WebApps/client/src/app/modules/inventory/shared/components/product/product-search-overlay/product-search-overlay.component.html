@@ -23,7 +23,11 @@ cdkConnectedOverlay
 
     <app-product-search-list [dataList]="dataSource" [highlightRowIndex]="highlightRowIndex"
       [isLoadingResults]="isLoadingResults" [isRateLimitReached]="isRateLimitReached" [pagination]="pagination"
-      (rowsEmitter)="handleRows($event)" (handlePageEvent)="handlePageEvent($event)" (rowSelected)="selectRow($event)" />
+      (rowsEmitter)="handleRows($event)"
+      (handlePageEvent)="handlePageEvent($event)"
+      (rowSelected)="selectRow($event)"
+      (onClickPaginator)="onClickPaginator()"
+       />
 
   </div>
 </ng-template>

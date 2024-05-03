@@ -65,6 +65,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('@mechanical/mechanical.routes').then((r) => r.routes),
       },
+      {
+        path: 'customer',
+        title: 'App - Customer',
+        loadChildren: () => import('@customer/customer.routes').then(r => r.routes)
+      }
     ],
   },
 ];
