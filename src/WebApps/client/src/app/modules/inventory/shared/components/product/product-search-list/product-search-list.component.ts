@@ -1,12 +1,13 @@
-import { CommonModule, } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, ViewContainerRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatRow, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Pagination } from '@shared/models/pagination.model';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+
 @Component({
   selector: 'app-product-search-list',
   standalone: true,
@@ -37,6 +38,7 @@ export class ProductSearchListComponent<T>   {
   @ViewChild(MatSort) sort!: MatSort;
 
   @Output() rowSelected = new EventEmitter<T>();
+  @Output() onClickPaginator = new EventEmitter<T>();
 
   dataSource = new MatTableDataSource([]);
 
@@ -133,9 +135,11 @@ export class ProductSearchListComponent<T>   {
   }
 
   sortData($event:any){
-    this.highlightRowIndex = 0;
+    this.highlightRowIndex = -1;
     console.log(this)
   }
+
+
 
 
 

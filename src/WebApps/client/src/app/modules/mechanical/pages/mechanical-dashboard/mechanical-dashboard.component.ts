@@ -3,13 +3,15 @@ import {  Component, inject } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportService } from '@modules/mechanical/services/support.service';
 import { Chart, registerables } from 'chart.js';
+import { SupportPageComponent } from '../support-page/support-page.component';
 Chart.register(...registerables);
 @Component({
   selector: 'app-mechanical-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    SupportPageComponent
   ],
   templateUrl: './mechanical-dashboard.component.html',
 })

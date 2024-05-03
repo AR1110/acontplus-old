@@ -19,6 +19,9 @@ import { ConvertDocModalComponent } from './components/convert-doc-modal/convert
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
 import { formatDateMoment } from '@core/utils/format-date-moment';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
+import { isValidField } from '@core/utils/utils';
 
 @Component({
   selector: 'app-support-page',
@@ -31,7 +34,8 @@ import { formatDateMoment } from '@core/utils/format-date-moment';
     NgbPagination,
     MatTableModule,
     MatCheckboxModule,
-
+    DateRangeSelectionComponent,
+    CompanyCustomerSearchComponent
   ],
   templateUrl: './support-page.component.html',
 })
@@ -46,6 +50,14 @@ export class SupportPageComponent {
   pagination = new Pagination()
 
   dataSource: any[] = [];
+
+  statusDoc = [
+    { status: null, description: 'Todos' },
+    { status: 0, description: 'En proceso' },
+    { status: 1, description: 'Entregado' },
+    { status: 2, description: 'Aprobado' },
+    { status: 3, description: 'Anulado' },
+  ]
 
   openModal(id?: number) {
     const modalRef = this.modalSvc.open(SupportAddEditModalComponent, {
@@ -62,20 +74,55 @@ export class SupportPageComponent {
   }
 
   dataSearch = {
+    ckDate: true,
     fromDate: formatDateMoment(new Date()),
-    toDate: formatDateMoment(new Date())
+    toDate: formatDateMoment(new Date()),
+    customerId: null as number | null,
+    licensePlate: null as string | null,
+    assigned: false,
+    status: this.status
+  }
+
+  onChangeRequiredDate(value: boolean) {
+    this.dataSearch.ckDate = value;
+    this.getSupports();
+  }
+
+  onDateRangeSelection(range: { from: string, to: string }) {
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
+    this.getSupports();
+  }
+
+  //Customer
+  searchEmptyCompanyCustomer() {
+    this.dataSearch.customerId = null;
+    this.getSupports();
+  }
+
+  onCustomerSelected({ data }: any) {
+    this.dataSearch.customerId = data.idCliente;
+    this.getSupports();
   }
 
   getSupports() {
     try {
+      /**
+       * si status es 0 la pagina support-page carga en dasboard
+       */
+
+
       let params = {
-        ckDate       : true,
+        ckDate: this.dataSearch.ckDate,
         pageIndex: this.pagination.pageIndex,
         pageSize: this.pagination.pageSize,
-        status: this.status - 1,
+        status: this.dataSearch.status >= 0 ? this.dataSearch.status : null,
         fromDate: this.dataSearch.fromDate,
-        toDate: this.dataSearch.toDate
+        toDate: this.dataSearch.toDate,
+        customerId: this.dataSearch.customerId,
+        licensePlate: isValidField(this.dataSearch.licensePlate)
       }
+      this.dataSource = [];
       this.supportSvc.getAll(params).subscribe({
         next: (response) => {
 
@@ -96,6 +143,9 @@ export class SupportPageComponent {
   }
 
   ngOnInit(): void {
+    let status = this.status === 0 ? this.status : this.status - 1;
+    console.log(status)
+    this.dataSearch.status = status;
     this.getSupports();
   }
 
@@ -157,7 +207,7 @@ export class SupportPageComponent {
   openMaintenance(id: number) {
     let modalRef = this.modalSvc.open(SupportMaintenanceModalComponent, {
       size: 'xl',
-      backdrop:'static',
+      backdrop: 'static',
       keyboard: false
     })
     modalRef.componentInstance.params = {
@@ -256,7 +306,7 @@ export class SupportPageComponent {
               console.log(err)
             },
           })
-        }else{
+        } else {
           this.getSupports()
         }
       });
