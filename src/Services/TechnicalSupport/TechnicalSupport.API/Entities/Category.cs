@@ -6,10 +6,10 @@ namespace TechnicalSupport.API.Entities
     [Table("Category", Schema = "TechnicalSupport")]
     public class Category : BaseEntity
     {
+        public int CompanyId { get; set; }
         [Required]
         [MaxLength(10)]
         public string Code { get; set; }
-
         [Required]
         [MaxLength(300)]
         public string Name { get; set; }

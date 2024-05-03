@@ -5,9 +5,9 @@
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IADOSqlServer, ADOSqlServer>();
+            services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IRdlcReportService, RdlcReportService>();
-            services.AddScoped<ICustomLogger, CustomLogger>();
             return services;
         }
     }

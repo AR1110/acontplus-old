@@ -68,10 +68,6 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("Code")
-                        .IsUnique()
-                        .HasDatabaseName("UI_TS_Brand");
-
                     b.ToTable("Brand", "TechnicalSupport");
                 });
 
@@ -88,6 +84,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasMaxLength(10)
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -115,10 +114,6 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique()
-                        .HasDatabaseName("UI_TS_Category");
 
                     b.ToTable("Category", "TechnicalSupport");
                 });
@@ -319,10 +314,6 @@ namespace TechnicalSupport.API.Data.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.HasIndex("Code")
-                        .IsUnique()
-                        .HasDatabaseName("UI_TS_Modelo");
-
                     b.HasIndex("SerieId");
 
                     b.ToTable("Modelo", "TechnicalSupport");
@@ -384,9 +375,9 @@ namespace TechnicalSupport.API.Data.Migrations
                         .HasColumnType("varchar(300)");
 
                     b.Property<string>("ReceiverGovernmentId")
-                        .HasMaxLength(300)
+                        .HasMaxLength(25)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
+                        .HasColumnType("varchar(25)");
 
                     b.Property<int>("Sequence")
                         .HasColumnType("int");
@@ -704,10 +695,6 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
-
-                    b.HasIndex("Code")
-                        .IsUnique()
-                        .HasDatabaseName("UI_TS_Serie");
 
                     b.ToTable("Serie", "TechnicalSupport");
                 });

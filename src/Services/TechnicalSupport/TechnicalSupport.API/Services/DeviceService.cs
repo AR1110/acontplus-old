@@ -13,10 +13,6 @@
 
         public async Task<ApiResponse> AddAsync(Device device)
         {
-            if (_context.Devices.Any(p => p.Name == device.Name && p.ModeloId == device.ModeloId))
-            {
-                return new ApiResponse { code = "0", message = "El equipo ya existe en la base de datos" };
-            }
 
             if (device.Customers.Count > 0)
             {

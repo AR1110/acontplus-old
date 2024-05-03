@@ -11,11 +11,6 @@
 
     public async Task<ApiResponse> AddAsync(Category category)
     {
-        if (await _context.Categories.AnyAsync(x => x.Code == category.Code))
-        {
-            return new ApiResponse { code = "0", message = "Este código ya se encuentra registrado" };
-        }
-
         _context.Categories.Add(category);
         await _context.SaveChangesAsync();
         return new ApiResponse { code = "1", message = "Guardada Exitosamente" };
@@ -63,7 +58,7 @@
             // Handle case where category not found
             return new ApiResponse { code = "0", message = "Categoría no encontrada" };
         }
-
+        categoryFound.CompanyId = category.CompanyId;
         categoryFound.Code = category.Code;
         categoryFound.Enabled = category.Enabled;
         categoryFound.Name = category.Name;

@@ -9,12 +9,6 @@ namespace TechnicalSupport.API.Data
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            if (!context.Categories.Any())
-            {
-                var categoriesData = File.ReadAllText(path + @"/Data/SeedData/Categories.json");
-                var categories = JsonConvert.DeserializeObject<List<Category>>(categoriesData);
-                context.Categories.AddRange(categories);
-            }
             if (!context.OrderStatuses.Any())
             {
                 var statusesData = File.ReadAllText(path + @"/Data/SeedData/OrderStatuses.json");
