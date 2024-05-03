@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PATHS_API } from '@core/constants/global.constants';
+import { IDENTIFICATION_CODE, PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { isApiResponse } from '@core/models/api-response';
 import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
@@ -13,6 +13,50 @@ export class CompanyCustomerService {
   //For customers of Acontplus Customers (cliente)
   private url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
   constructor(private http: HttpClient) { }
+
+  getAll<T extends {pageIndex:number;pageSize:number}>(obj:T){
+    let json = JSON.stringify({
+      ...obj,
+      tipo: 1,
+      pageIndex: obj.pageIndex,
+      pageSize: obj.pageSize
+    })
+    return this.http.get(`${this.url}?json=${json}`).pipe(
+      map(response=>{
+        let results = [];
+        if(isApiResponse(response)){
+          if(response.code==="0"){
+            console.log(response)
+          }
+          if(response.code==="1"){
+            let mainData = JSON.parse(response.payload as string)[0];
+
+            results = mainData.map((item:any)=>{
+              let obj = {
+                idCliente: item.idCliente,
+                idTipoIdentificacion: item.idTipoIdentificacion,
+                identificacionComprador: item.numeroIdentificacion,
+                razonSocialComprador: item.nombreFiscal,
+                nombreComercial: item.nombreComercial,
+                direccion: item.direccion,
+                telefono: item.telefono,
+                correo: item.correo,
+                consumidorFinal: item.consumidorFinal,
+                validationSri: item.validationSri,
+                tipoIdentificacion: item.tipoIdentificacion,
+                codTipoIdentificacion: item.codTipoIdentificacion,
+                estado: item.estado,
+                esConsumidorFinal: item.codTipoIdentificacion === 'CF',
+                totalRecords: item.totalRecords,
+              }
+              return obj;
+            })
+          }
+        }
+        return results;
+      })
+    )
+  }
 
   async checkExistence(params: any) {
     return this.http
@@ -163,5 +207,9 @@ export class CompanyCustomerService {
           return [];
         })
       );
+  }
+
+  updateState(id:number){
+    return this.http.delete(`${this.url}${id}`)
   }
 }

@@ -59,7 +59,7 @@ export class UserCustomerPageComponent {
  // this.router.navigate(['/', 'inventory', 'measure-page'])
     //this.router.navigate(['/', 'inventory', 'product-page'])
     this.router.navigate(['/', 'customer', 'company-customer'])
-  // this.getUsersCustomer()
+   //this.getUsersCustomer()
   }
 
 

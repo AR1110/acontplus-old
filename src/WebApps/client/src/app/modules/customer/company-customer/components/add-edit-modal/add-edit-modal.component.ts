@@ -320,7 +320,7 @@ export class AddEditModalComponent {
       ...this.customerForm.value,
     };
 
-    if (dataForm.idCliente || 0 > 0) {
+    if (this.params.id > 0) {
       this.companyCustomerSvc.put(this.params.id, dataForm).subscribe(response => {
         if (isApiResponse(response)) {
           this.tS.toastr({
@@ -328,11 +328,13 @@ export class AddEditModalComponent {
             message: response.message,
           });
           if (response.code == '1') {
-            this.onModalClose();
+            this.modalRef.close(response);
           }
         }
       });
-    } else {
+    }
+
+    else if(!(this.params.id>0)) {
       this.companyCustomerSvc.post(dataForm).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.toastr({
