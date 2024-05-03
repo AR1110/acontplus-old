@@ -1,12 +1,15 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 
 @Directive({
-  selector: '[clickOutside]',
+  selector: '[appClickOutside]',
   standalone: true,
 })
 export class ClickOutsideDirective {
 
   @Output() clickOutside = new EventEmitter<MouseEvent>();
+  @Output() txtSearch = null;
+  @Output() isOverlayOpen = false;
+  @Input() input!:any
 
   constructor(private elementRef: ElementRef) { }
 
@@ -14,10 +17,11 @@ export class ClickOutsideDirective {
   public onDocumentClick(event: MouseEvent): void {
 
     const targetElement = event.target as HTMLElement;
-    // Check if the click was outside the element
-    if (targetElement && !this.elementRef.nativeElement.contains(targetElement)) {
+    const clickedInside = this.elementRef.nativeElement.contains(targetElement);
 
-      this.clickOutside.emit(event);
+    if (targetElement && !clickedInside  ) {
+        this.clickOutside.emit(event);
+
     }
   }
 }

@@ -16,6 +16,7 @@ import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
 import { ProductService } from '@modules/inventory/services/product.service';
+import { ProductSearchOverlayComponent } from '@modules/inventory/shared/components/product/product-search-overlay/product-search-overlay.component';
 import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
 import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
 import { getCantidadStock, mergeProductStock } from '@modules/inventory/utils/product-stock.util';
@@ -44,6 +45,7 @@ import Swal from 'sweetalert2';
     ProductSearchComponent,
     ReactiveFormsModule,
     TabulatorComponent,
+    ProductSearchOverlayComponent,
     ProductSearchComponent,
     InputDateComponent,
   ],

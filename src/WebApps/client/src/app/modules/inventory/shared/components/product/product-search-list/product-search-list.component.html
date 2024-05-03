@@ -10,7 +10,7 @@
 
     </div>
     }
-    <table mat-table [dataSource]="dataSource" tabindex="0" matSort>
+    <table mat-table [dataSource]="dataSource" tabindex="0" matSort  (matSortChange)="sortData($event)">
 
       @for (column of columns; track $index) {
 

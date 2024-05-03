@@ -136,13 +136,7 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
           <div class="form-group">
             <label for="productSearch">Buscar producto o servicio: </label>
-            <app-product-search
-              (onProductSelected)="onProductSelected($event)"
-              [props]="{
-                isSearchSimple: true,
-                clearInput: true
-              }"
-            />
+            <app-product-search-overlay (optionSelected)="onProductSelected($event)" [searchSale]="true" />
           </div>
         </div>
       </div>

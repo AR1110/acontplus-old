@@ -1,16 +1,25 @@
-<input matInput #input autocomplete="off" cdkOverlayOrigin #trigger="cdkOverlayOrigin"
+
+<input  matInput #input autocomplete="off" cdkOverlayOrigin #trigger="cdkOverlayOrigin"
   (input)="applyFilter(input.value)"
   [value]="dataSearch.textSearch"
-  (focusout)="checkValue()"
   (focus)="onFocus($event)"
+  (blur)="onBlur($event)"
+  (keydown)="handleKeyDown($event)"
   class="form-control"
   placeholder="Buscar producto"
   >
 
 
-<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOverlayOpen">
 
-  <div class="overlay-content" (clickOutside)="closeOverlay()">
+  <!-- [cdkConnectedOverlayHasBackdrop]="true" -->
+<ng-template
+cdkConnectedOverlay
+[cdkConnectedOverlayOrigin]="trigger"
+[cdkConnectedOverlayOpen]="isOverlayOpen"
+ (overlayOutsideClick)="backdropClick()"
+>
+
+  <div class="overlay-content"  >
 
     <app-product-search-list [dataList]="dataSource" [highlightRowIndex]="highlightRowIndex"
       [isLoadingResults]="isLoadingResults" [isRateLimitReached]="isRateLimitReached" [pagination]="pagination"

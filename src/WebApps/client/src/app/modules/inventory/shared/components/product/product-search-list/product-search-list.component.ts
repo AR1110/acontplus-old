@@ -113,6 +113,7 @@ export class ProductSearchListComponent<T>   {
       }
     })
     this.dataSource = new MatTableDataSource(mapped)
+    this.dataSource.sort = this.sort;
   }
 
   onPageEvent(event: PageEvent) {
@@ -129,6 +130,11 @@ export class ProductSearchListComponent<T>   {
   selectRow(row: T): void {
     console.log(row)
     this.rowSelected.emit(row); // this.selection.selected
+  }
+
+  sortData($event:any){
+    this.highlightRowIndex = 0;
+    console.log(this)
   }
 
 

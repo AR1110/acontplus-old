@@ -2,15 +2,15 @@ import { OverlayModule } from "@angular/cdk/overlay";
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, HostListener, inject, Input, Output, QueryList, ViewChildren, ViewContainerRef } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
-import { map, Subject } from "rxjs";
-import { ClickOutsideDirective } from "@shared/directives/click-outside.directive";
-import { ProductSearchListComponent } from "../product-search-list/product-search-list.component";
-import { Pagination } from "@shared/models/pagination.model";
 import { PageEvent } from "@angular/material/paginator";
-import { ProductService } from "@modules/inventory/services/product.service";
 import { isValidField } from "@core/utils/utils";
+import { ProductService } from "@modules/inventory/services/product.service";
+import { NgbPopoverModule } from "@ng-bootstrap/ng-bootstrap";
+import { ClickOutsideDirective } from "@shared/directives/click-outside.directive";
+import { Pagination } from "@shared/models/pagination.model";
+import { map, Subject } from "rxjs";
 
+import { ProductSearchListComponent } from "../product-search-list/product-search-list.component";
 
 @Component({
   selector: 'app-product-search-overlay',
@@ -26,18 +26,19 @@ import { isValidField } from "@core/utils/utils";
   templateUrl: './product-search-overlay.component.html',
   styleUrl: './product-search-overlay.component.scss',
 })
-export class ProductSearchOverlayComponent   {
+export class ProductSearchOverlayComponent {
   @Input() searchSale = false;
 
   @Input() overlayHasFocus: boolean = true;
   @Output() optionSelected = new EventEmitter();
 
-  dataSource:any[]=[]
+  dataSource: any[] = []
 
   _unsubscribeAll: Subject<boolean> = new Subject<boolean>();
 
   highlightRowIndex: number = -1;
   isOverlayOpen: boolean = false;
+  focusedInput = false;
 
   productTarifas: any = [];
 
@@ -51,13 +52,13 @@ export class ProductSearchOverlayComponent   {
     textSearch: ''
   }
 
-  rows:any=[]
+  rows: any = []
 
   currentOption: any;
 
 
 
-  ngOnInit(){
+  ngOnInit() {
     this.pagination.pageIndex = 0;
   }
 
@@ -67,9 +68,15 @@ export class ProductSearchOverlayComponent   {
 
     this.dataSource = [];
     let text = this.dataSearch.textSearch.trim();
-    if (!isValidField(text)) return
+    if (!isValidField(text)) {
+      this.closeOverlay()
+      return
+    }
 
-    if(text.length<=2) return
+    if (text.length <= 1) {
+      this.closeOverlay()
+      return
+    }
 
     this.search()
 
@@ -100,8 +107,9 @@ export class ProductSearchOverlayComponent   {
 
       .subscribe({
         next: (response) => {
-                    let results = structuredClone(response);
-                    this.dataSource = results;
+          this.openOverlay();
+          let results = structuredClone(response);
+          this.dataSource = results;
 
 
           // this.pagination.totalRecords = 0;
@@ -174,17 +182,32 @@ export class ProductSearchOverlayComponent   {
 
   checkValue(): void {
     console.log(' ')
-
   }
 
-  onFocus($event:any){
-    $event.stopPropagation()
-    // if (this.dataSource.length > 0) {
-    //  this.openOverlay()
-    //}
+  onFocus($event: any) {
+    this.focusedInput = true;
+    $event.stopPropagation();
+    if(isValidField(this.dataSearch.textSearch)){
+        this.openOverlay()
+    }
   }
 
-  onBlur(){
+  onBlur(ev: any) {
+    this.focusedInput = false;
+    //this.closeOverlay()
+  }
+
+  handleKeyDown(event: KeyboardEvent) {
+    // Verificar si se presionó una tecla de desplazamiento hacia la izquierda o hacia la derecha
+    if (this.isOverlayOpen && (event.key === 'Tab')) {
+     this.closeOverlay()
+    }
+  }
+
+  backdropClick(){
+    if (this.focusedInput) return
+
+    this.focusedInput = false;
     this.closeOverlay()
   }
 
@@ -194,6 +217,8 @@ export class ProductSearchOverlayComponent   {
     */
   @HostListener('keydown.arrowdown', ['$event'])
   onArrowDown(event: KeyboardEvent): void {
+    event.preventDefault();
+
     if (this.overlayHasFocus && this.highlightRowIndex < (this.dataSource.length - 1)) {
 
       this.highlightRowIndex += 1;
@@ -208,6 +233,7 @@ export class ProductSearchOverlayComponent   {
    */
   @HostListener('keydown.arrowup', ['$event'])
   onArrowUp(event: KeyboardEvent): void {
+    event.preventDefault();
 
     if (this.overlayHasFocus && this.highlightRowIndex > 0) {
       this.highlightRowIndex -= 1;
@@ -238,12 +264,13 @@ export class ProductSearchOverlayComponent   {
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
 
-    const searchQueryHasAtLeast2Characters: any = this.dataSearch.textSearch && this.dataSearch.textSearch.toString().length >= 1;
-    console.log(searchQueryHasAtLeast2Characters)
+    // const searchQueryHasAtLeast2Characters: any = this.dataSearch.textSearch && this.dataSearch.textSearch.toString().length >= 1;
+    // console.log(searchQueryHasAtLeast2Characters)
+    // console.log("heydownnnnnnnnnnnnnnnnnnnnnn")
 
-    if (event.key !== 'Enter' && event.key !== 'Tab' && !this.isOverlayOpen && searchQueryHasAtLeast2Characters) {
-      this.openOverlay();
-    }
+    // if (event.key !== 'Enter' && event.key !== 'Tab' && !this.isOverlayOpen && searchQueryHasAtLeast2Characters) {
+    //   this.openOverlay();
+    // }
   }
 
   /**
