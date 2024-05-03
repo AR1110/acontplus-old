@@ -30,10 +30,104 @@ export class CompanyCustomerService {
     return this.http.get(`${this.url}${id}`).pipe(map((response) => response));
   }
 
+  /**
+   * mejora
+   */
+  getId(id: number) {
+    return this.http.get(`${this.url}GetId/${id}`).pipe(
+      map((response) => {
+        let result = {} as any;
+        if (isApiResponse(response)) {
+          if (response.code === "0") {
+            console.log(response)
+          }
+          if (response.code === "1") {
+            let dataRepository = JSON.parse(response.payload as string)[0];
+
+            result = {
+              idCliente: dataRepository.idCliente,
+              idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
+              idTipoEntidad: dataRepository.idTipoEntidad,
+              idSubContribuyente: dataRepository.idSubContribuyente,
+              idTiempoCredito: dataRepository.idTiempoCredito,
+              idTipoIdentificacion: dataRepository.idTipoIdentificacion,
+              idCiudad: dataRepository.idCiudad,
+              numeroIdentificacion: dataRepository.numeroIdentificacion,
+              identificacionComprador: dataRepository.numeroIdentificacion,
+              razonSocialComprador: dataRepository.nombreFiscal,
+              nombreFiscal: dataRepository.nombreFiscal,
+              montoCredito: dataRepository.montoCredito,
+              nombreComercial: dataRepository.nombreComercial,
+              direccion: dataRepository.direccion,
+              telefono: dataRepository.telefono,
+              correo: dataRepository.correo,
+              estado: dataRepository.estado,
+              idEmpleado: dataRepository.idEmpleado,
+              diasCredito: dataRepository.diasCredito,
+              empleado: dataRepository.empleado,
+              idEmpresa: dataRepository.idEmpresa,
+              idCargo: dataRepository.idCargo,
+              placa: dataRepository.placa,
+              validationSri: dataRepository.validationSri,
+              correos: dataRepository.correo ? dataRepository.correo.split('|') : [],
+              telefonos: dataRepository.telefono ? dataRepository.telefono.split('|') : [],
+              placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : [],
+              idFormaPagoSri: dataRepository.idFormaPagoSri
+            }
+          }
+
+        }
+
+        return result;
+      })
+    );
+  }
+
+  // getDataForm() {
+  //   return this.http
+  //     .get(this.url + '?json=' + JSON.stringify({ tipo: 2 }))
+  //     .pipe(map((response) => response));
+  // }
+
+  /**
+   * mejora
+   * @returns
+   */
   getDataForm() {
-    return this.http
-      .get(this.url + '?json=' + JSON.stringify({ tipo: 2 }))
-      .pipe(map((response) => response));
+    let json = JSON.stringify({
+      tipo: 2
+    })
+    console.log('kjdhkjdhkjhk')
+    return this.http.get(`${this.url}?json=${json}`).pipe(
+      map(response => {
+        let result = {
+          tipoIdentificacion: [],
+          tipoContribuyentes: [],
+          tiempoCreditos: [],
+          ciudades: [],
+          tiposCliente: [],
+          empresas: [],
+          cargos: [],
+          formasPagoSri: [],
+        }
+        if (isApiResponse(response)) {
+          if (response.code === "1") {
+            let mainData = JSON.parse(response.payload as string);
+
+            result.tipoIdentificacion = mainData[0];
+            result.tipoContribuyentes = mainData[1];
+            result.tiempoCreditos = mainData[2] || [];
+            result.ciudades = mainData[3];
+            result.tiposCliente = mainData[4] || [];
+            result.empresas = mainData[5] || [];
+            result.cargos = mainData[6] || [];
+            result.formasPagoSri = mainData[7] || [];
+
+          }
+        }
+        return result;
+      })
+    )
   }
 
   post(data: any) {

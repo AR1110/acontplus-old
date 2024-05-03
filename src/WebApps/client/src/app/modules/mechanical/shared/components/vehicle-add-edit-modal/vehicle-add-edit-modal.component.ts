@@ -74,6 +74,11 @@ export class VehicleAddEditModalComponent {
           let id = 0;
           if (this.params.id > 0) {
             id = this.params.id;
+          }else{
+            let data = JSON.parse(response.payload as string)
+            if(Array.isArray(data)){
+              id = data[0].id;
+            }
           }
           this.modal.close({ id })
         }

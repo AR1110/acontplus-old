@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input, Input, signal } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -8,10 +8,11 @@ import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { MaterialModule } from '@core/material/material.module';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { CompanyCustomerService } from '../../services/company-customer.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
 import { SriCustomerService } from '@modules/customer/sri-customer/services/sri-customer.service';
+import { forkJoin, Observable } from 'rxjs';
+import { SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
 
 @Component({
   selector: 'app-add-edit-modal',
@@ -21,8 +22,30 @@ import { SriCustomerService } from '@modules/customer/sri-customer/services/sri-
   styles: ``,
 })
 export class AddEditModalComponent {
+  @Input() params = {
+    id: 0
+  }
+
+  // data = signal({
+  //   direccion:null,
+  //   idCargo: 0,
+  //   idCliente: 0,
+  //   idEmpresa: 0,
+  //   idTipoClienteProveedor: 0,
+  //   idTipoIdentificacion: 0,
+  //   idSubContribuyente: 0,
+  //   idTiempoCredito: 0,
+  //   nombreFiscal: null as string | null,
+  //   nombreComercial: null as string | null,
+  //   numeroIdentificacion: null as string | null,
+  //   correo: '',
+  //   telefono: '',
+  //   estado: false,
+  //   validationSri: false,
+  // })
+
   private announcer = inject(LiveAnnouncer);
-  private companyCustomerService = inject(CompanyCustomerService);
+  private companyCustomerSvc = inject(CompanyCustomerService);
   private sriCustomerService = inject(SriCustomerService);
   private modalRef = inject(NgbActiveModal);
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
@@ -31,7 +54,6 @@ export class AddEditModalComponent {
   activeTab = 1;
   addOnBlur = true;
   cargos: any = [];
-  data: any = {};
   emails: string[] = [];
   empresas: any = [];
   modalIcon: IconProp = 'plus';
@@ -42,11 +64,12 @@ export class AddEditModalComponent {
     Validators.maxLength(15),
   ]);
   telephones: string[] = [];
-  tiempoCreditos: any = [];
-  tipoContribuyentes: any = [];
-  tiposCliente: any = [];
-  tiposIdentificacion: any = [];
+  tiemposCredito: any[] = [];
+  tipoContribuyentes: any[] = [];
+  tiposCliente: any[] = [];
+  tiposIdentificacion: any[] = [];
 
+  barcodeCard = '';
   customerForm = new FormGroup({
     direccion: new FormControl('', Validators.required),
     idCargo: new FormControl(0),
@@ -81,7 +104,7 @@ export class AddEditModalComponent {
     event.chipInput!.clear();
   }
 
-  copyTradeName() {}
+  copyTradeName() { }
 
   editEmail(fruit: string, event: MatChipEditedEvent) {
     const value = event.value.trim();
@@ -106,37 +129,13 @@ export class AddEditModalComponent {
     }
   }
 
-  get() {
-    showLoader();
-    this.companyCustomerService.getDataForm().subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          let tempArray = JSON.parse(response.payload as string);
-          this.tiposIdentificacion = tempArray[0];
-          this.customerForm.patchValue({
-            idTipoIdentificacion:
-              this.tiposIdentificacion[1].idTipoIdentificacion,
-          });
-        }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err);
-      },
-      complete() {
-        hideLoader();
-      },
-    });
-  }
 
   async getCustomer(codigo: string, id: string) {
-    showLoader();
     let exists = false;
-    debugger;
     //check if exists for company
     (
       await //check if exists for company
-      this.companyCustomerService.checkExistence({ textSearch: id })
+        this.companyCustomerSvc.checkExistence({ textSearch: id })
     ).subscribe({
       next: (response) => {
         if (isApiResponse(response)) {
@@ -149,29 +148,52 @@ export class AddEditModalComponent {
             exists = true;
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.error(err);
-      },
-      complete() {
-        hideLoader();
-      },
+      }
     });
 
     if (!exists) {
       //search in global customers or in sri
       (
         await //search in global customers or in sri
-        this.sriCustomerService.get(codigo, id)
+          this.sriCustomerService.get(codigo, id)
       ).subscribe({
         next: (response: any) => {
-          if (codigo == '04') {
+
+          if (response.error) {
+            this.tS.toastr({
+              type: 'info',
+              message: response.error
+            })
+            return
+          }
+
+
+          if (response.telefono) {
+            if (response.telefono.includes(';')) {
+              this.telephones = response.telefono.split(';')
+
+            } else {
+              this.telephones = response.telefono.split('|')
+
+            }
+          }
+          if (response.email) {
+            if (response.email.includes("|")) {
+              this.emails = response.email.split('|') || [];
+            } else {
+              this.emails = response.email.split(';') || [];
+
+            }
+          }
+
+          if (codigo == SRI_IDENTIFICATION_CODE.RUC) {
             if (response.numeroRuc) {
               this.customerForm.patchValue({
                 numeroIdentificacion: response.numeroRuc,
                 nombreFiscal: response.razonSocial,
                 validationSri: true,
+                direccion: response.direccion,
+                nombreComercial: response.razonSocial
               });
             }
           } else {
@@ -179,42 +201,71 @@ export class AddEditModalComponent {
               this.customerForm.patchValue({
                 numeroIdentificacion: response.identificacion,
                 nombreFiscal: response.nombreCompleto,
+                nombreComercial: response.nombreCompleto,
                 direccion: response.direccion,
                 validationSri: true,
               });
             }
           }
-        },
-        error(err) {
-          hideLoader();
-          console.error(err);
-        },
-        complete() {
-          hideLoader();
-        },
+
+
+        }
       });
     }
   }
 
-  ngOnInit(): void {
-    this.get();
-    if (this.data.idCliente > 0) {
-      this.modalIcon = 'edit';
-      this.modalTitle = 'Editar Cliente';
-      if (this.data.correo) {
-        let correos = this.data.correo.replace(/;/g, ',').split(',');
-        for (const item of correos) {
-          this.emails.push(item);
-        }
-      }
-      if (this.data.telefono) {
-        let telephones = this.data.telefono.replace(/;/g, ',').split(',');
-        for (const item of telephones) {
-          this.telephones.push(item);
-        }
-      }
-      this.customerForm.patchValue(this.data);
+  getLoadData(): Observable<any> {
+    if (this.params.id > 0) {
+      return forkJoin([
+        this.companyCustomerSvc.getDataForm(),
+        this.companyCustomerSvc.getId(this.params.id)
+      ]);
+    } else {
     }
+    return this.companyCustomerSvc.getDataForm();
+  }
+
+  ngOnInit(): void {
+    try {
+
+      this.getLoadData().subscribe(response => {
+        let mainDataForm = {} as any;
+        let dataCompanyCustomer = {} as any
+        if (Array.isArray(response)) {
+          mainDataForm = response[0];
+          dataCompanyCustomer = response[1]
+        } else {
+          mainDataForm = response;
+        }
+
+        this.tiposIdentificacion = mainDataForm.tipoIdentificacion;
+        this.tiemposCredito = mainDataForm.tiempoCreditos;
+
+        if (!(this.params.id > 0)) {
+          let dataIdentificacion = this.tiposIdentificacion.find((ti: any) => ti.codigoSri === SRI_IDENTIFICATION_CODE.RUC)
+
+          if (dataIdentificacion) {
+            this.customerForm.patchValue({
+              idTipoIdentificacion: dataIdentificacion.idTipoIdentificacion,
+            });
+          }
+
+          this.customerForm.patchValue({
+            idTiempoCredito: this.tiemposCredito.length > 0 ? this.tiemposCredito[0].idTiempoCredito : 0
+          })
+
+        } else {
+          this.modalIcon = 'edit';
+          this.modalTitle = 'Editar Cliente';
+          this.emails = dataCompanyCustomer.correos;
+          this.telephones = dataCompanyCustomer.telefonos;
+          this.customerForm.patchValue(response[1]);
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
   }
 
   onModalClose() {
@@ -232,8 +283,8 @@ export class AddEditModalComponent {
     let codigoSri = this.tiposIdentificacion.find(
       (x: any) => x.idTipoIdentificacion == dataForm.idTipoIdentificacion
     ).codigoSri;
-    if (codigoSri == '04' || codigoSri == '05') {
-      if (codigoSri === '04' && dataForm.numeroIdentificacion) {
+    if (codigoSri == SRI_IDENTIFICATION_CODE.RUC || codigoSri == SRI_IDENTIFICATION_CODE.CEDULA) {
+      if (codigoSri === SRI_IDENTIFICATION_CODE.RUC && dataForm.numeroIdentificacion) {
         if (dataForm.numeroIdentificacion?.length != 13) {
           this.tS.toastr({
             type: 'warning',
@@ -242,7 +293,7 @@ export class AddEditModalComponent {
         }
         this.getCustomer(codigoSri, dataForm.numeroIdentificacion);
       }
-      if (codigoSri === '05' && dataForm.numeroIdentificacion) {
+      if (codigoSri === SRI_IDENTIFICATION_CODE.CEDULA && dataForm.numeroIdentificacion) {
         if (dataForm.numeroIdentificacion?.length != 10) {
           this.tS.toastr({
             type: 'warning',
@@ -255,7 +306,6 @@ export class AddEditModalComponent {
   }
 
   onSave() {
-    showLoader();
     if (this.telephones.length > 0) {
       this.customerForm.patchValue({
         telefono: new Array(this.telephones).toString().split(',').join(';'),
@@ -269,53 +319,35 @@ export class AddEditModalComponent {
     const dataForm = {
       ...this.customerForm.value,
     };
-    console.log(dataForm);
+
     if (dataForm.idCliente || 0 > 0) {
-      this.companyCustomerService.put(this.data.idCliente, dataForm).subscribe({
-        next: (response) => {
-          if (isApiResponse(response)) {
-            this.tS.toastr({
-              type: response.code == '1' ? 'success' : 'warning',
-              message: response.message,
-            });
-            if (response.code == '1') {
-              this.onModalClose();
-            }
+      this.companyCustomerSvc.put(this.params.id, dataForm).subscribe(response => {
+        if (isApiResponse(response)) {
+          this.tS.toastr({
+            type: response.code == '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+          if (response.code == '1') {
+            this.onModalClose();
           }
-        },
-        error(err) {
-          hideLoader();
-          console.log(err);
-        },
-        complete() {
-          hideLoader();
-        },
+        }
       });
     } else {
-      this.companyCustomerService.post(dataForm).subscribe({
-        next: (response) => {
-          if (isApiResponse(response)) {
-            this.tS.toastr({
-              type: response.code == '1' ? 'success' : 'warning',
-              message: response.message,
-            });
-            if (response.code == '1') {
-              this.modalRef.close(response);
-            }
+      this.companyCustomerSvc.post(dataForm).subscribe((response) => {
+        if (isApiResponse(response)) {
+          this.tS.toastr({
+            type: response.code == '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+          if (response.code == '1') {
+            this.modalRef.close(response);
           }
-        },
-        error(err) {
-          hideLoader();
-          console.log(err);
-        },
-        complete() {
-          hideLoader();
-        },
+        }
       });
     }
   }
 
-  refreshTiempoCredito() {}
+  refreshTiempoCredito() { }
 
   removeEmail(email: string): void {
     const index = this.emails.indexOf(email);

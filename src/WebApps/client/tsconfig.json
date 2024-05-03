@@ -57,6 +57,9 @@
       "@mechanical/*": [
         "src/app/modules/mechanical/*",
       ],
+      "@customer/*": [
+        "src/app/modules/customer/*"
+      ],
       "@shared/*": [
         "src/app/shared/*"
       ],
