@@ -62,10 +62,11 @@
     </table>
 
   </section>
+  <!-- [pageSizeOptions]="pagination.pageSizeOptions" -->
 
   @if (pagination) {
-    <mat-paginator #paginator class="demo-paginator" (page)="onPageEvent($event)" [length]="pagination.totalRecords"
-      [pageSize]="pagination.pageSize" [showFirstLastButtons]="true" [pageSizeOptions]="pagination.pageSizeOptions"
+    <mat-paginator #paginator class="demo-paginator" (click)="onClickPaginator.emit()" (page)="onPageEvent($event)" [length]="pagination.totalRecords"
+      [pageSize]="pagination.pageSize" [showFirstLastButtons]="true"
       [pageIndex]="pagination.pageIndex" aria-label="Select page">
     </mat-paginator>
   }

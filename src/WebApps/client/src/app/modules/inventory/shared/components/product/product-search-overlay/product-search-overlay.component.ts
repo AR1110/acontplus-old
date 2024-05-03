@@ -39,6 +39,7 @@ export class ProductSearchOverlayComponent {
   highlightRowIndex: number = -1;
   isOverlayOpen: boolean = false;
   focusedInput = false;
+  clickedPaginator = false;
 
   productTarifas: any = [];
 
@@ -187,8 +188,8 @@ export class ProductSearchOverlayComponent {
   onFocus($event: any) {
     this.focusedInput = true;
     $event.stopPropagation();
-    if(isValidField(this.dataSearch.textSearch)){
-        this.openOverlay()
+    if (isValidField(this.dataSearch.textSearch)) {
+      this.openOverlay()
     }
   }
 
@@ -200,13 +201,15 @@ export class ProductSearchOverlayComponent {
   handleKeyDown(event: KeyboardEvent) {
     // Verificar si se presionó una tecla de desplazamiento hacia la izquierda o hacia la derecha
     if (this.isOverlayOpen && (event.key === 'Tab')) {
-     this.closeOverlay()
+      this.closeOverlay()
     }
   }
 
-  backdropClick(){
+  backdropClick() {
     if (this.focusedInput) return
+    console.log(document.querySelector('.mat-paginator'))
 
+    if (this.clickedPaginator) return
     this.focusedInput = false;
     this.closeOverlay()
   }
@@ -313,14 +316,20 @@ export class ProductSearchOverlayComponent {
     }
   }
 
+  onClickPaginator() {
+    this.clickedPaginator = true;
+  }
+
 
   openOverlay(): void {
     this.isOverlayOpen = true;
     this.highlightRowIndex = -1;
+    this.clickedPaginator = false;
     // console.log('--highlightRowIndex = ' + this.highlightRowIndex);
   }
 
   closeOverlay(): void {
+    this.clickedPaginator = false;
     this.isOverlayOpen = false;
     this.highlightRowIndex = -1;
     console.log('closeeeeeeeeeeeeeeee')

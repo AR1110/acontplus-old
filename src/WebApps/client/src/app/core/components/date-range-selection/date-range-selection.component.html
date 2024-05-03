@@ -1,1 +1,16 @@
-<input type="text" class="form-control" id="date-range-selection-input" #dateRangeInput>
+@if (inputGroupDateChecked) {
+  <div class="input-group ">
+    <div class="input-group-text">
+      <input class="form-check-input "
+      type="checkbox"
+      [(ngModel)]="requiredDate"
+      (change)="onChangeRequiredDate()"
+      aria-label="Checkbox for following text input">
+    </div>
+    <input type="text" class="form-control" id="date-range-selection-input" #dateRangeInput>
+
+
+  </div>
+}@else{
+  <input type="text" class="form-control" id="date-range-selection-input" #dateRangeInput>
+}
