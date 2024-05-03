@@ -1088,7 +1088,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>IVA</Value>
+                                  <Value>IVA 12%</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -4503,7 +4503,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>408.15078mm</Width>
+      <Width>408.1508mm</Width>
       <Page>
         <PageFooter>
           <Height>7.0583mm</Height>
