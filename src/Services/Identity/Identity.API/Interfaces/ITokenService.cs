@@ -1,5 +1,4 @@
-﻿using Identity.API.Models;
-namespace Identity.API.Interfaces
+﻿namespace Identity.API.Interfaces
 {
     public interface ITokenService
     {

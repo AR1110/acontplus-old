@@ -37,7 +37,7 @@ namespace Compras.API
 
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
             {
-                app.Urls.Add("http://*:5003"); // 👈 Add the URL
+                app.Urls.Add("http://*:5003"); // Linux Port
             }
             else
             {

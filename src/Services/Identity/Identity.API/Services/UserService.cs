@@ -1,9 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Identity.API.Interfaces;
-
-namespace Identity.API.Services
+﻿namespace Identity.API.Services
 {
     public class UserService : IUserService
     {

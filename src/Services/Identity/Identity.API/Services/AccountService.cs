@@ -1,12 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Identity.API.Data;
-using Identity.API.Dtos;
-using Identity.API.Entities;
-using Identity.API.Interfaces;
-
-namespace Identity.API.Services
+﻿namespace Identity.API.Services
 {
     public class AccountService : IAccountService
     {

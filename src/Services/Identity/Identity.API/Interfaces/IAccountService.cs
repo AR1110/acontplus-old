@@ -1,8 +1,4 @@
-﻿using Common.Core.Models;
-using Identity.API.Dtos;
-using Identity.API.Entities;
-
-namespace Identity.API.Interfaces
+﻿namespace Identity.API.Interfaces
 {
     public interface IAccountService
     {
