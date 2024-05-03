@@ -38,7 +38,7 @@ var app = builder.Build();
 
 if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 {
-    app.Urls.Add("http://*:5014"); // 👈 Add the URL
+    app.Urls.Add("http://*:5014"); // Linux Port
 }
 else
 {

@@ -57,7 +57,7 @@ internal class Program
 
         if (Environment.OSVersion.Platform != PlatformID.Win32NT)
         {
-            app.Urls.Add("http://*:5009"); // 👈 Add the URL
+            app.Urls.Add("http://*:5009"); // Linux Port
         }
         else
         {

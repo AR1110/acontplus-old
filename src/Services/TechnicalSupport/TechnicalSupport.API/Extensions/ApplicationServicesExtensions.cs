@@ -1,4 +1,6 @@
-﻿namespace TechnicalSupport.API.Extensions
+﻿using Autofac.Core;
+
+namespace TechnicalSupport.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
@@ -6,6 +8,13 @@
         {
             services.AddDbContextPool<TechnicalSupportContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddControllers()
+                       .AddNewtonsoftJson(x =>
+                       {
+                           x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                           x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                       });
 
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<ICategoryService, CategoryService>();
