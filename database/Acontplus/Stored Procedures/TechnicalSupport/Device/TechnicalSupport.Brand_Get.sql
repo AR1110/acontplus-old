@@ -18,6 +18,9 @@ BEGIN
 
 	DECLARE @tipo INT
 	,@categoryId INT
+    ,@companyId INT
+
+    SET @companyId = (SELECT idEntidad FROM v_Usuario WHERE idUsuarioRol = @userRoleId)
 
 	SELECT @categoryId = categoryId, @tipo = tipo FROM OPENJSON(@json) WITH (categoryId INT, tipo INT)
 
@@ -30,6 +33,7 @@ BEGIN
 			FROM TechnicalSupport.Brand b WITH (NOLOCK)
 			INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id 
 			WHERE b.Deleted IS NULL
+                AND c.CompanyId = @companyId
 		END
 	IF (@tipo = 2)
 		BEGIN
