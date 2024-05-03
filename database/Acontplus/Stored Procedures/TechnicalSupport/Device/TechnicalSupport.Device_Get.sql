@@ -20,6 +20,7 @@ BEGIN
     DECLARE @tipo INT
     ,@textSearch VARCHAR(100)
     ,@customerCompanyId INT
+    ,@companyId INT
     
     SELECT @tipo            = tipo
         ,@textSearch        = textSearch
@@ -30,6 +31,8 @@ BEGIN
         textSearch VARCHAR(100) '$.textSearch',
         customerCompanyId INT '$.customerCompanyId'
     )
+
+    SELECT @companyId = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
     IF (@tipo = 1)
         BEGIN
@@ -74,6 +77,7 @@ BEGIN
                 INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id
                 LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
             WHERE d.Deleted IS NULL
+                AND c.CompanyId = @companyId
             RETURN
         END
      IF (@tipo = 3)
@@ -90,8 +94,10 @@ BEGIN
                 INNER JOIN TechnicalSupport.Modelo m WITH (NOLOCK)ON d.ModeloId = m.Id
                 INNER JOIN TechnicalSupport.Brand b WITH (NOLOCK) ON m.BrandId = b.Id
                 INNER JOIN TechnicalSupport.Category c WITH (NOLOCK) ON b.CategoryId = c.Id
-            WHERE d.[Name] LIKE '%' + @textSearch + '%'
-                OR m.[Name] LIKE '%' + @textSearch + '%'
+            WHERE  c.CompanyId = @companyId
+            AND (
+            d.[Name] LIKE '%' + @textSearch + '%'
+                OR m.[Name] LIKE '%' + @textSearch + '%')
             RETURN
         END
     IF (@tipo = 4)

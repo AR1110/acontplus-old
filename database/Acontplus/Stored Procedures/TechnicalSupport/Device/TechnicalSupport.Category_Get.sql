@@ -16,11 +16,12 @@ AS
 BEGIN 
 	SET NOCOUNT ON;
 
-	DECLARE @tipo INT 
-
+	DECLARE @tipo INT
+        ,@companyId INT
+    SET @companyId = (SELECT idEntidad FROM v_Usuario WHERE idUsuarioRol = @userRoleId)
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-	SELECT * FROM TechnicalSupport.Category WITH (NOLOCK) WHERE Deleted IS NULL
+	SELECT * FROM TechnicalSupport.Category WITH (NOLOCK) WHERE CompanyId = @companyId AND Deleted IS NULL
 
 END
 GO
