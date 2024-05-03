@@ -44,7 +44,7 @@ export class ModalService {
       centered,
       fullscreen,
       keyboard,
-     // keyboard: this.getKeyboard(backdrop, keyboard),
+    //  keyboard: this.getKeyboard(backdrop, keyboard),
       scrollable,
       size,
       windowClass,

@@ -31,10 +31,7 @@
 
       <div class="form-group">
         <label for="productSearch">Producto: </label>
-        <input type="text" name="productSearch" id="productSearch" class="form-control" placement="top"
-          ngbTooltip="Ingrese nombre o el código del producto y dale Enter" placeholder="Buscar producto..."
-          [(ngModel)]="productSearch.textSearch" appProductSearchPopup [searchSale]="true"
-          [textSearch]="productSearch.textSearch" (onSelectedRow)="onResultSelectedProduct($event)" autocomplete="off">
+        <app-product-search-overlay (optionSelected)="onResultSelectedProduct($event)" [searchSale]="true" />
       </div>
     </div>
     <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">

@@ -1,29 +1,20 @@
-import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { IForm } from '@core/Types/form-types';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
+import { IForm } from '@core/models/form-types';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import {
-  Device,
-  DeviceTypeSpec,
-  DeviceSpecs,
-} from '@modules/technical-support/models/device.model';
-import { DeviceService } from '@modules/technical-support/services/device.service';
+import { Brand } from '@modules/technical-support/models/brand';
+import { Device, DeviceSpecs, DeviceTypeSpec } from '@modules/technical-support/models/device.model';
+import { Modelo } from '@modules/technical-support/models/modelo';
+import { BrandService } from '@modules/technical-support/services/brand.service';
 import { DeviceSpecsService } from '@modules/technical-support/services/device-spec.service';
+import { DeviceService } from '@modules/technical-support/services/device.service';
+import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
-import { Brand } from '@modules/technical-support/models/brand';
-import { Modelo } from '@modules/technical-support/models/modelo';
-import { BrandService } from '@modules/technical-support/services/brand.service';
-import { ModeloService } from '@modules/technical-support/services/modelo.service';
 
 @Component({
   selector: 'app-device-modal',

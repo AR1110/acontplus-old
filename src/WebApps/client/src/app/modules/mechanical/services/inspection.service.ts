@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
+import { formatDate } from '@core/utils/date.util';
+import { isValidJSON } from '@core/utils/utils';
 import { map } from 'rxjs';
 
 import { MECHANICAL_PATHS } from '../enums/mechanical.enum';
 import { VehiclePart } from '../models/vehicle-part';
 import { VehiclePartType } from '../models/vehicle-part-type';
-import { isValidJSON } from '@core/utils/utils';
-import { formatDate } from '@core/utils/date.util';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +30,7 @@ export class InspectionService {
           vehicleParts: [] as VehiclePart[],
           vehiclePartTypes: [] as VehiclePartType[]
         }
-        console.log(response)
+
         if (response !== null && typeof response === 'object') {
           const { support, vehiclePart, vehiclePartType } = response;
           result.support = support[0];
@@ -72,7 +72,7 @@ export class InspectionService {
           data: {} as any,
           vehicleParts: [] as VehiclePart[],
         }
-        console.log(response)
+
         if (response !== null && typeof response === 'object') {
           const { inspection } = response;
           let mainData = inspection[0];
