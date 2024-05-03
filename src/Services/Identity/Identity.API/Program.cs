@@ -1,6 +1,4 @@
-﻿using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Core.Utils;
 using Identity.API.Extensions;
@@ -30,21 +28,7 @@ internal class Program
 
         builder.Services.AddSwaggerDocumentation();
 
-        builder.Services.AddApiVersioning(opt =>
-        {
-            opt.DefaultApiVersion = new ApiVersion(1, 0);
-            opt.AssumeDefaultVersionWhenUnspecified = true;
-            opt.ReportApiVersions = true;
-            opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
-                                                            new HeaderApiVersionReader("x-api-version"),
-                                                            new MediaTypeApiVersionReader("x-api-version"));
-        }).AddApiExplorer(setup =>
-        {
-            setup.GroupNameFormat = "'v'VVV";
-            setup.SubstituteApiVersionInUrl = true;
-        });
-
-        builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+        builder.Services.AddApiVersioningConfig();
 
         builder.Services.AddScoped<ICustomLogger, CustomLogger>();
 
@@ -53,18 +37,7 @@ internal class Program
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-        {
-            foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-            {
-                options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
-                    description.GroupName.ToUpperInvariant());
-            }
-        });
+        app.UseSwaggerVersionedDocumentation();
 
         app.UseRouting();
 

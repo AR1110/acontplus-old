@@ -1,9 +1,11 @@
-﻿using Asp.Versioning.ApiExplorer;
+﻿using System.Reflection;
+using Asp.Versioning.ApiExplorer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace FactElect.API.Extensions
+namespace Services.Common.Extensions
 {
     public class ConfigureSwaggerOptions
     : IConfigureNamedOptions<SwaggerGenOptions>
@@ -49,9 +51,14 @@ namespace FactElect.API.Extensions
         private OpenApiInfo CreateVersionInfo(
                 ApiVersionDescription desc)
         {
+            Assembly assembly = Assembly.GetEntryAssembly();
+
+            // Get the name of the assembly
+            string assemblyName = assembly.GetName().Name;
+
             var info = new OpenApiInfo()
             {
-                Title = "FactElect API",
+                Title = $"{assemblyName}",
                 Version = desc.ApiVersion.ToString()
             };
 
