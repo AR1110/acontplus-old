@@ -1,6 +1,6 @@
 export enum MECHANICAL_PATHS {
   VEHICLE = 'Vehicle/',
-  SUPPORT ='Support/',
+  SUPPORT = 'Support/',
   SUPPORT_DETAIL = 'SupportDetail/',
   INSPECTION = 'Inspection/'
 }
@@ -18,33 +18,44 @@ export const enum MECHANICAL_CODE_REPORT {
   * Reporte Mechanical Inspection
   * @type {string}
   */
-  MI ='MI'
+  MI = 'MI'
 }
 
 
 export enum VEHICLE_PART_TYPE_CODE {
   // Motor
-  MT='MT',
+  MT = 'MT',
 
 
   //cabina
-  CB='CB',
+  CB = 'CB',
 
   // Sistema de Transmisión
-  ST='ST',
+  ST = 'ST',
 
   // Rodamiento
-  RD='RD',
+  RD = 'RD',
 
   // Sistema de Frenos
-  SF='SF',
+  SF = 'SF',
 
   // Sistema de Dirección
-  SD='SD',
+  SD = 'SD',
 
   // Sistema de Suspensión
-  SS='SS',
+  SS = 'SS',
 
   // Sistema de luces
-  SL='SL'
+  SL = 'SL'
+}
+
+
+export enum MECHANICAL_STATUS {
+  PENDIENTE = "PE",
+  EN_PROCESO = "PR",
+  POR_ENTREGAR = "ET",
+  APROBADO = "AP",
+  ANULADO = "A",
+  INSPECCION = 'I',
+  DASHBOARD = 'D'
 }

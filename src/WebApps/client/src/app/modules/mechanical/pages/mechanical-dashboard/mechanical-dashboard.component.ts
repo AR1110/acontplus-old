@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import {  Component, inject } from '@angular/core';
+import {  Component, inject, Input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportService } from '@modules/mechanical/services/support.service';
 import { Chart, registerables } from 'chart.js';
 import { SupportPageComponent } from '../support-page/support-page.component';
+import { MECHANICAL_STATUS } from '@modules/mechanical/enums/mechanical.enum';
 Chart.register(...registerables);
 @Component({
   selector: 'app-mechanical-dashboard',
@@ -16,6 +17,8 @@ Chart.register(...registerables);
   templateUrl: './mechanical-dashboard.component.html',
 })
 export class MechanicalDashboardComponent   {
+  @Input() valueStatus: MECHANICAL_STATUS | null = null;
+  @Input() supportStatus: any[] = []
 
   chartSupports:any
   data = {

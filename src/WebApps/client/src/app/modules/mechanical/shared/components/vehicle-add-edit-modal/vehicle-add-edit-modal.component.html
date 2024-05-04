@@ -13,7 +13,7 @@
 
           <div class="form-group">
             <label for="company-customer-search">Buscar Cliente/Conductor</label>
-                <app-company-customer-search [textSearch]="customer.businessName" [id]="data.customerId" (onCustomerSelected)="onCustomerSelected($event)" />
+                <app-company-customer-search [isGetId]="true" [textSearch]="customer.businessName" [id]="data.customerId" (onCustomerSelected)="onCustomerSelected($event)" />
 
           </div>
         </div>

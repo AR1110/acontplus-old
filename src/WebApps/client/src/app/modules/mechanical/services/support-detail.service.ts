@@ -31,21 +31,24 @@ export class SupportDetailService {
       map((response: any) => {
         let result = {
           data: {
-            establecimientoId: 0
+            establecimientoId: 0,
+            establecimiento: null
           } as any,
           estabs: [] as GroupedEstab[],
           tarifasImpuesto: [],
           decimal: {} as any,
           details: [] as SupportMaintenanceDetail[],
 
-          feeds: []
+          feeds: [],
+          vehicle: {}
         }
         if (response !== null && typeof response === 'object') {
           let { bodega, support, tipoIva, decimal, supportDetail,
-            tarifas
+            tarifas, vehicleDs
           } = response;
-          let { date, ...dataSupport } = support[0]
+          let { date, nombreComercial, ...dataSupport } = support[0]
           dataSupport.fechaEmision = formatDate(dataSupport.date)
+          dataSupport.establecimiento = nombreComercial;
           result.data = dataSupport;
           result.estabs = groupEstabUtil({
             bodegas: bodega,
@@ -76,21 +79,20 @@ export class SupportDetailService {
               }
             })
 
-            let dataTarifaImpuesto = tipoIva.find((ti: any) => ti.codigo === restItem.codePercentage);
-
             const medidas = mergeMeasureUtil(principal, fraccionado);
 
             let dataMedida = medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
 
             let precioConIva = pricingCalculateUtil.calculatePriceWithVat(restItem.price, restItem.percentage);
-            let precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.valorDescuento;
+            let precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.discount;
             let subTotalSinDescuento = restItem.price * restItem.quantity
 
             let percentageDiscount = subTotalSinDescuento > 0 ? pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento,
-              restItem.valorDescuento
-            ) : 0
+              restItem.discount
+            ) : 0;
 
-            let taxValue = pricingCalculateUtil.calculateTaxValue(precioTotalSinImpuesto, restItem.percentage)
+
+            // let taxValue = pricingCalculateUtil.calculateTaxValue(precioTotalSinImpuesto, restItem.percentage)
 
             let obj: SupportMaintenanceDetail = {
               id: restItem.id,
@@ -99,17 +101,17 @@ export class SupportDetailService {
               feeId: restItem.tarifaId,
               medidaId: restItem.medidaId,
               productId: restItem.articuloId,
-              taxId: dataTarifaImpuesto.idImpuesto,
-              taxPercentId: dataTarifaImpuesto.idTarifaImpuesto,
+              taxId: restItem.taxId,
+              taxPercentId: restItem.taxPercentId,
               quantity: restItem.quantity,
               descripcion: restItem.description,
               codigo: restItem.codigoArticulo,
               cost: restItem.cost,
-              taxValue: taxValue,
+              taxValue: restItem.taxValue,
               price: restItem.price,
               precioConIva: roundNumber(precioConIva, 4),
               percentageDiscount: roundNumber(percentageDiscount, 4),
-              discount: restItem.valorDescuento,
+              discount: restItem.discount,
               precioTotalSinImpuesto: roundNumber(precioTotalSinImpuesto, 4),
               total: restItem.total,
               obs: isValidField(restItem.obs),
@@ -126,7 +128,7 @@ export class SupportDetailService {
           }
           );
 
-
+          result.vehicle = vehicleDs[0]
 
 
 

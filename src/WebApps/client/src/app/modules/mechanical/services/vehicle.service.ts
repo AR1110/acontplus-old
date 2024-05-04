@@ -62,6 +62,8 @@ export class VehicleService {
       map((response: any) => {
         let data = {
           customer: {
+
+            businessName: null,
             id: 0
           },
           vehicle: {}

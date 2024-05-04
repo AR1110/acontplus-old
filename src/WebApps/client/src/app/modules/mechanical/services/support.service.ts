@@ -59,6 +59,17 @@ export class SupportService {
     )
   }
 
+  getDataFilter(){
+    let json = JSON.stringify({
+      tipo: 8
+    })
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response: any) => {
+        return response.supportStatus;
+      })
+    )
+  }
+
   getDataForm() {
     let json = JSON.stringify({
       tipo: 2
@@ -176,14 +187,13 @@ export class SupportService {
           let dataMedida = medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
 
           let precioConIva = pricingCalculateUtil.calculatePriceWithVat(restItem.price, restItem.percentage);
-          let precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.valorDescuento;
+          let precioTotalSinImpuesto = restItem.price * restItem.quantity - restItem.discount;
           let subTotalSinDescuento = restItem.price * restItem.quantity
 
           let percentageDiscount = subTotalSinDescuento > 0 ? pricingCalculateUtil.getValueDiscountPercentage(subTotalSinDescuento,
-            restItem.valorDescuento
+            restItem.discount
           ) : 0
 
-          let taxValue = pricingCalculateUtil.calculateTaxValue(precioTotalSinImpuesto, restItem.percentage)
 
           let obj: SupportDetail = {
             id: restItem.id,
@@ -192,19 +202,19 @@ export class SupportService {
             feeId: restItem.tarifaId,
             medidaId: restItem.medidaId,
             productId: restItem.articuloId,
-            taxId: restItem.idImpuesto,
-            // taxPercentId: dataTarifaImpuesto.idTarifaImpuesto,
+            taxId: restItem.taxId,
+            idImpuesto: restItem.idImpuesto,
             idTipoIva: restItem.idTipoIva,
-            taxPercentId: restItem.idTipoIva,
+            taxPercentId: restItem.taxPercentId,
             quantity: restItem.quantity,
             descripcion: restItem.description,
             codigo: restItem.codigoArticulo,
             cost: restItem.cost,
-            taxValue: taxValue,
+            taxValue: restItem.taxValue,
             price: restItem.price,
             precioConIva: roundNumber(precioConIva, 4),
             percentageDiscount: roundNumber(percentageDiscount, 4),
-            discount: restItem.valorDescuento,
+            discount: restItem.discount,
             precioTotalSinImpuesto: roundNumber(precioTotalSinImpuesto, 4),
             total: restItem.total,
             obs: isValidField(restItem.obs),
@@ -226,6 +236,7 @@ export class SupportService {
         let tempComprobante = response.comprobante[0];
         let comprobante = tempComprobante;
         let formasPagoSri = formapago;
+
         return {
           comprobante,
           details,
@@ -269,7 +280,7 @@ export class SupportService {
     return this.#http.delete(`${this.#url}${id}`)
   }
 
-  putState(id: number, status: number) {
-    return this.#http.put(`${this.#url}PutState/${id}/${status}`, null)
+  putState(id: number, supportStatusId: number) {
+    return this.#http.put(`${this.#url}PutState/${id}/${supportStatusId}`, null)
   }
 }

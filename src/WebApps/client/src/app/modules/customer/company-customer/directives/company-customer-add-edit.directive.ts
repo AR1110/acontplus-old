@@ -21,7 +21,6 @@ export class CompanyCustomerAddEditDirective {
     }
 
     modalRef.result.then(result => {
-      console.log(result)
       if (result !== null && typeof result === 'object') {
         this.onResult.emit(result)
       }

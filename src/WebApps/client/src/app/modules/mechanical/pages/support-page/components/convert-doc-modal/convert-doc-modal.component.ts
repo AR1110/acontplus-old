@@ -69,6 +69,7 @@ export class ConvertDocModalComponent {
     percentageDiscount: 0,
     tip: 0,
     irbpnr: 0,
+    licensePlate: null as string | null
   }
   dataFormaPago = {
     idFormaPagoSri: 0,
@@ -77,6 +78,8 @@ export class ConvertDocModalComponent {
   }
 
   details: SupportDetail[] = []
+
+  infoAdicionalDoc:any[]= []
 
   successResponse = (response: any) => {
     if (isApiResponse(response)) {
@@ -98,7 +101,7 @@ export class ConvertDocModalComponent {
 
   ngOnInit(): void {
 
-    console.log(this.params)
+
     this.data = {
       ...this.data,
       ...this.params.comprobante
@@ -131,6 +134,11 @@ export class ConvertDocModalComponent {
     this.dataFormaPago.idTiempoCredito = this.data.idTiempoCredito;
     this.dataFormaPago.total = this.data.total;
 
+    this.infoAdicionalDoc = [{
+      nombre:'Placa',
+      valor: this.data.licensePlate
+    }]
+
   }
 
   protected generateSubTotals() {
@@ -150,6 +158,7 @@ export class ConvertDocModalComponent {
         tarifasImpuesto: this.params.taxPercents,
       });
 
+
       this.data.subTotalSinImpuesto = subTotalSinImpuesto;
       this.data.total = importeTotal;
       this.data.discount = discount;
@@ -161,7 +170,7 @@ export class ConvertDocModalComponent {
   }
 
   isValidForm() {
-    console.log(this.companyCustomer)
+
     if (!(this.data.supportId > 0)) {
       this.tS.toastr({
         type: 'warning',
@@ -335,7 +344,7 @@ export class ConvertDocModalComponent {
         cuotas: []
       }
       let cuotas = isValidGeneratorQuota(data);
-      console.log(cuotas)
+
       if (cuotas.length === 0) {
         this.tS.toastr({
           type: 'warning',
@@ -358,6 +367,15 @@ export class ConvertDocModalComponent {
 
       if (!isConfirmed) return
 
+      let details = this.details.map(item=>{
+        return {
+          ...item,
+          taxId: item.idImpuesto,
+          taxPercentId: item.idTipoIva
+        }
+      })
+
+
 
 
       let comprobante = {
@@ -370,9 +388,10 @@ export class ConvertDocModalComponent {
       }
       let params = {
         comprobante,
-        details: this.details,
+        details,
         cuotas: cuotas,
-        formaPago: [this.dataFormaPago]
+        formaPago: [this.dataFormaPago],
+        infoAdicionalDoc: this.infoAdicionalDoc
       }
 
       let senData = invoiceAdapter.mainAdapt(params)
@@ -397,7 +416,7 @@ export class ConvertDocModalComponent {
         cuotas: []
       }
       let cuotas = isValidGeneratorQuota(dataGenerateQuota);
-      console.log(cuotas)
+
       if (cuotas.length === 0) {
         this.tS.toastr({
           type: 'warning',
@@ -420,6 +439,14 @@ export class ConvertDocModalComponent {
 
       if (!isConfirmed) return
 
+      let details = this.details.map(item => {
+        return {
+          ...item,
+          taxId: item.idImpuesto,
+          taxPercentId: item.idTipoIva
+        }
+      })
+
       let comprobante = {
         ...this.data,
         idCliente: this.companyCustomer.idCliente,
@@ -430,8 +457,9 @@ export class ConvertDocModalComponent {
       }
       let params = {
         comprobante,
-        details: this.details,
-        cuotas: cuotas
+        details,
+        cuotas: cuotas,
+        infoAdicionalDoc: this.infoAdicionalDoc
       }
 
       let senData = notaEntregaAdapter.mainAdapt(params)

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IDENTIFICATION_CODE, PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { isApiResponse } from '@core/models/api-response';
+import { ApiResponse, isApiResponse } from '@core/models/api-response';
 import { CompanyCustomerSearch } from '@modules/customer/company-customer/models/company-customer';
 import { map, Observable } from 'rxjs';
 
@@ -177,7 +177,17 @@ export class CompanyCustomerService {
   post(data: any) {
     return this.http
       .post(this.url, { data: data })
-      .pipe(map((response) => response));
+      .pipe(map((response) => {
+        let result = {} as ApiResponse
+        if(isApiResponse(response)){
+          let payload = JSON.parse(response.payload as string)[0]
+          result = response;
+          result.payload = {
+            id: payload.idCliente
+          }
+        }
+        return result
+      }));
   }
 
   put(id: number, data: any) {

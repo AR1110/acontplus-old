@@ -306,20 +306,20 @@ export class AddEditModalComponent {
   }
 
   onSave() {
-    if (this.telephones.length > 0) {
+    console.log(this.telephones)
+
       this.customerForm.patchValue({
-        telefono: new Array(this.telephones).toString().split(',').join(';'),
+        telefono: this.telephones.length > 0 ? this.telephones.join('|') : null
       });
-    }
-    if (this.emails.length > 0) {
+
+
       this.customerForm.patchValue({
-        correo: new Array(this.emails).toString().split(',').join(';'),
-      });
-    }
+        correo: this.emails.length > 0 ? this.emails.join('|') : null
+      })
     const dataForm = {
       ...this.customerForm.value,
     };
-
+    console.log(dataForm)
     if (this.params.id > 0) {
       this.companyCustomerSvc.put(this.params.id, dataForm).subscribe(response => {
         if (isApiResponse(response)) {
@@ -328,13 +328,15 @@ export class AddEditModalComponent {
             message: response.message,
           });
           if (response.code == '1') {
-            this.modalRef.close(response);
+            this.modalRef.close({
+              id: this.params.id
+            });
           }
         }
       });
     }
 
-    else if(!(this.params.id>0)) {
+    else if (!(this.params.id > 0)) {
       this.companyCustomerSvc.post(dataForm).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.toastr({
@@ -342,7 +344,10 @@ export class AddEditModalComponent {
             message: response.message,
           });
           if (response.code == '1') {
-            this.modalRef.close(response);
+            let data = {
+              id: (response.payload as any).id
+            }
+            this.modalRef.close(data);
           }
         }
       });
