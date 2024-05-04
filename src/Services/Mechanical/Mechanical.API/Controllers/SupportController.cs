@@ -105,12 +105,12 @@ namespace Mechanical.API.Controllers
             }
         }
 
-        [HttpPut("PutState/{id}/{status}")]
-        public async Task<IActionResult> PutState(int id, int status)
+        [HttpPut("PutState/{id}/{SupportStatusId}")]
+        public async Task<IActionResult> PutState(int id, int SupportStatusId)
         {
             try
             {
-                var response = await _supportService.UpdateStateAsync(id, status);
+                var response = await _supportService.UpdateStateAsync(id, SupportStatusId);
                 return Ok(response);
             }
             catch (Exception ex)

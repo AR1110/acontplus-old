@@ -30,22 +30,26 @@ BEGIN
     --> Global  
 	DECLARE @tipo INT ,@CompanyId INT ,@userId INT
 
+    --> Support
+    DECLARE @SupportStatusId INT
 
 	BEGIN TRY 
         
         --> Variables Globales
         SELECT TOP 1 @userId = idUsuario ,@CompanyId = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        IF EXISTS (SELECT 1 FROM Mechanical.Support WHERE Id = @id AND [Status] IN (4,5))
+        SELECT TOP 1 @SupportStatusId = Id from Mechanical.SupportStatus WITH (NOLOCK) WHERE Code = 'PE'
+
+        IF EXISTS (SELECT 1 FROM Mechanical.v_Support WHERE Id = @id AND codeStatus NOT IN ('PE'))
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0', 'El soporte ya se encuentra anulado o aprobado', NULL)
+                SELECT [Common].[ufnSpResponse]('0', 'El soporte no puede ser editado', NULL)
                 RETURN 
             END 
 
         BEGIN TRAN 
             
             UPDATE Mechanical.Support WITH (ROWLOCK)
-               SET [Status] = 5
+               SET [SupportStatusId] = @SupportStatusId
                   ,UpdatedAt = GETDATE()
             WHERE Id = @id
 
