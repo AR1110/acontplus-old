@@ -38,7 +38,8 @@ BEGIN
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
     
     --> Filters
-    DECLARE @Id INT ,@CustomerId INT ,@VehicleCompranyId INT ,@textSearch VARCHAR(100) ,@UserId INT ,@Status INT ,@assigned BIT
+    DECLARE @Id INT ,@CustomerId INT ,@VehicleCompranyId INT ,@textSearch VARCHAR(100) ,@UserId INT ,@SupportStatusId INT ,@assigned BIT ,@LicensePlate VARCHAR(50)
+           ,@ckDate BIT ,@fromDate DATETIME2 ,@toDate DATETIME2
 
     -->Variables
     SELECT TOP 1 @CompanyId = idEntidad, @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -50,50 +51,59 @@ BEGIN
 		BEGIN
             SET @tableNames = 'supports'
 
-            SET @params = '@CompanyId INT 
-                          ,@UserId    INT 
-                          ,@pageSize  INT 
-                          ,@pageIndex INT
-                          ,@Status    INT'
+            SET @params = '@CompanyId       INT 
+                          ,@UserId          INT 
+                          ,@pageSize        INT 
+                          ,@pageIndex       INT
+                          ,@SupportStatusId INT
+                          ,@CustomerId      INT
+                          ,@LicensePlate    VARCHAR(50)
+                          ,@fromDate        DATETIME2
+                          ,@toDate          DATETIME2'
 
             SET @sql  = 'SELECT Id
                                ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
-                               ,FORMAT([Date], ''dd/MM/yyyy HH:mm'') as [Date]
+                               ,FORMAT([Date], ''dd/MM/yyyy HH:mm'')                      as [Date]
                                ,idCard
                                ,TradeName
                                ,LicensePlate
-                               ,CASE [Status] WHEN 0 THEN ''PENDIENTE'' 
-                                              WHEN 1 THEN ''REVISIÓN''
-                                              WHEN 2 THEN ''FINALIZADO''
-                                              WHEN 3 THEN ''APROBADO''
-                                              WHEN 4 THEN ''ANULADO''
-                                END as [Status]
-                               ,CASE [Status] WHEN 5 THEN ''table-danger'' 
-                                              WHEN 2 THEN ''table-success''
-                                              ELSE '''' 
-                                END as ColorRow 
+                               ,[Status]
                                ,UserAssigned
-                               ,COUNT(*) OVER() AS [TotalRecords]
+                               ,COUNT(*) OVER()                                           as [TotalRecords]
                                ,Obs
                                ,codEstab
-                               ,[Status]        AS TypeStatus
+                               ,[CodeStatus]
                                ,(SELECT TOP 1 CAST(1 as bit) FROM Mechanical.[Inspection] st WITH (NOLOCK) WHERE st.SupportId = sm.Id) as existsInsp
                         FROM Mechanical.v_Support sm WITH (NOLOCK)
-                        WHERE CompanyId = @CompanyId '
+                        WHERE CompanyId = @CompanyId
+                          AND [Enabled] = 1
+                          AND Deleted IS NULL '
 			 
-            SELECT @pageIndex = pageIndex
-                  ,@pageSize  = pageSize
-                  ,@Status    = [status]
+            SELECT @pageIndex       = pageIndex
+                  ,@pageSize        = pageSize
+                  ,@SupportStatusId = supportStatusId
+                  ,@CustomerId      = customerId
+                  ,@LicensePlate    = licensePlate
+                  ,@ckDate          = ckDate
+                  ,@fromDate        = fromDate
+                  ,@toDate          = toDate
+                  ,@assigned        = assigned
             FROM OPENJSON(@json) WITH 
             (
-                pageIndex INT
-               ,pageSize  INT
-               ,[status]  INT
+                pageIndex       INT
+               ,pageSize        INT
+               ,supportStatusId INT
+               ,customerId      INT
+               ,licensePlate    VARCHAR(50)
+               ,ckDate          BIT
+               ,fromDate        DATETIME2
+               ,toDate          DATETIME2
+               ,assigned        BIT
             )
 
-            IF @Status >= 0
+            IF @SupportStatusId > 0
                 BEGIN
-                    SET @sql = @sql + 'AND [Status] = @Status ' 
+                    SET @sql = @sql + 'AND SupportStatusId = @SupportStatusId  ' 
                 END
 
             IF @assigned = 1
@@ -101,16 +111,34 @@ BEGIN
                     SET @sql = @sql + 'AND UserAssignedId = @UserId '
                 END 
 
+            IF @CustomerId > 0 
+                BEGIN
+                    SET @sql = @sql + 'AND CustomerId = @CustomerId ' 
+                END 
+
+            IF @LicensePlate IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + 'AND LicensePlate LIKE @LicensePlate '
+                END 
+
+            IF @ckDate = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST([Date] as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date) ' 
+                END 
+
             SET @sql = @sql + 'ORDER BY Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
             
             EXEC sp_executesql @sql
 							  ,@params
-                              ,@CompanyId = @CompanyId
-                              ,@UserId    = @UserId
-							  ,@pageIndex = @pageIndex
-							  ,@pageSize  = @pageSize
-                              ,@Status    = @Status
-
+                              ,@CompanyId       = @CompanyId
+                              ,@UserId          = @UserId
+							  ,@pageIndex       = @pageIndex
+							  ,@pageSize        = @pageSize
+                              ,@SupportStatusId = @SupportStatusId
+                              ,@CustomerId      = @CustomerId
+                              ,@LicensePlate    = @LicensePlate
+                              ,@fromDate        = @fromDate
+                              ,@toDate          = @toDate
             RETURN
 		END
 
@@ -200,8 +228,8 @@ BEGIN
             FROM v_Cliente WITH (NOLOCK)
             WHERE idCliente = @CustomerId
 
-             SELECT EstablecimientoId
-                   ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
+            SELECT EstablecimientoId
+                  ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
             FROM Mechanical.v_Support WITH (NOLOCK)
             WHERE Id = @Id
 
@@ -272,14 +300,14 @@ BEGIN
                   ,md.BodegaId         
                   ,md.TarifaId          
                   ,md.MedidaId
-                  ,(SELECT TOP 1 ti.idTipoIva FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = md.CodePercentage )  as idTipoIva
-                  ,(SELECT TOP 1 ti.idImpuesto FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = md.CodePercentage ) as idImpuesto
+                  ,(SELECT TOP 1 ti.idTipoIva FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = ti.codigo)  as idTipoIva
+                  ,(SELECT TOP 1 ti.idImpuesto FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = ti.codigo) as idImpuesto
                   ,md.[Description]                       
                   ,md.Quantity          
                   ,md.Price              
                   ,md.Cost              
-                  ,md.CodePercentage
-                  ,md.[Percentage]     
+                  ,md.TaxPercentId
+                  ,ti.porcentaje    
                   ,bo.codEstab
                   ,md.Total                  
                   ,ar.llevaInventario
@@ -352,8 +380,9 @@ BEGIN
                     SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
                     ) as consolidacion
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
-            INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
-            INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
+            INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega         = md.BodegaId
+            INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo       = md.ArticuloId
+            INNER JOIN Sri.TarifaImpuesto ti WITH (NOLOCK) ON ti.idTarifaImpuesto = md.TaxPercentId
             WHERE SupportId = @Id
               AND md.[Enabled] = 1
               AND md.Deleted IS NULL
@@ -423,22 +452,48 @@ BEGIN
 
                    ) as quantityInspection
 
-            SELECT CASE [Status] WHEN 0 THEN 'Pendiente' 
-                                 WHEN 1 THEN 'En proceso'
-                                 WHEN 2 THEN 'Entregado'
-                                 WHEN 3 THEN 'Aprobado'
-                                 WHEN 4 THEN 'Anulado'
-                                        ELSE '' 
-                   END      as [Status]
-                  ,COUNT(*) as quantity
-            FROM Mechanical.Support 
-            WHERE [Enabled] = 1
-              AND Deleted IS NULL
-              AND CompanyId = @CompanyId
-            GROUP BY [Status]
-            
+            SELECT st.[Name] as [Status]
+                  ,COUNT(*)  as quantity
+            FROM Mechanical.Support             sp WITH (NOLOCK)
+            INNER JOIN Mechanical.SupportStatus st WITH (NOLOCK) ON st.Id = sp.SupportStatusId
+            WHERE sp.[Enabled] = 1
+              AND sp.Deleted IS NULL
+              AND sp.CompanyId = @CompanyId
+            GROUP BY st.[Name]
 
             RETURN
+        END 
+    
+    --> SupportDocument
+    IF @tipo = 7
+        BEGIN   
+            SET @tableNames = 'comprobante'
+
+            SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT TOP 1 td.codigo        as codDoc
+                        ,sp.DocumentoId
+                        ,sp.SeriesVoucher as SerieComprobante
+            FROM Mechanical.SupportDocument sp WITH (NOLOCK)
+            INNER JOIN dbo.TipoDocumento    td WITH (NOLOCK) ON td.idTipoDocumento = sp.TipoDocumentoId
+            WHERE sp.SupportId = @Id
+              AND sp.[Enabled] = 1
+              AND sp.Deleted IS NULL
+
+            RETURN
+        END 
+    
+    --> FILTER 
+    IF @tipo = 8
+        BEGIN
+            
+            SET @tableNames = 'supportStatus'
+
+            SELECT Id,[Name],Code FROM Mechanical.SupportStatus 
+            WHERE Deleted IS NULL 
+              AND [Enabled] = 1
+
+            RETURN 
         END 
 END
 GO

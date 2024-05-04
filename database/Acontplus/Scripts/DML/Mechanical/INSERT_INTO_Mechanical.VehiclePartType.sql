@@ -1,14 +1,14 @@
---use [Acontplus]
---go 
+use [Acontplus]
+go 
 
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Motor','MT',GETDATE(),1)
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Transmisión','ST',GETDATE(),1)
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Frenos','SF',GETDATE(),1)
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema Eléctrico','SE',GETDATE(),1)
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Dirección','SD',GETDATE(),1)
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Suspensión','SS',GETDATE(),1)
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Luces','SL',GETDATE(),1)
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Cabina','CB',GETDATE(),1)
---INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Rodamiento','RD',GETDATE(),1)
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Motor','MT')
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Sistema de Transmisión','ST')
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Sistema de Frenos','SF')
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Sistema Eléctrico','SE')
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Sistema de Dirección','SD')
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Sistema de Suspensión','SS')
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Sistema de Luces','SL')
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Cabina','CB')
+INSERT INTO Mechanical.VehiclePartType (Description,Code) VALUES ('Rodamiento','RD')
 
 select * from Mechanical.VehiclePartType
