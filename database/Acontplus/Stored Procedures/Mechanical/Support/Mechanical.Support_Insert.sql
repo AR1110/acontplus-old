@@ -32,7 +32,7 @@ BEGIN
 	DECLARE @tipo INT ,@Id INT ,@CompanyId INT ,@userId INT
 
     --> Support
-    DECLARE @Sequence INT ,@VehicleCompanyId INT ,@PuntoEmisionId INT 
+    DECLARE @Sequence INT ,@VehicleCompanyId INT ,@PuntoEmisionId INT ,@SupportStatusId INT
 
 
     DECLARE @tbSupport AS TABLE (
@@ -42,9 +42,8 @@ BEGIN
        ,CustomerId INT NOT NULL
        ,UserAssignedId INT NOT NULL
        ,Obs VARCHAR(300) NOT NULL
-       ,[Status] INT DEFAULT 0 NOT NULL
-       ,CreatedAt DATETIME2 DEFAULT GETDATE()
-       ,[Enabled] BIT DEFAULT 1 NOT NULL
+       ,Discount NUMERIC(15,5) NOT NULL DEFAULT 0
+       ,Total NUMERIC(15,5) NOT NULL DEFAULT 0
     )
 
 	BEGIN TRY 
@@ -70,6 +69,8 @@ BEGIN
 
         SELECT TOP 1 @PuntoEmisionId = PuntoEmisionId FROM @tbSupport 
 
+        SELECT TOP 1 @SupportStatusId = Id from Mechanical.SupportStatus WITH (NOLOCK) WHERE Code = 'PE'
+
         SELECT @Sequence = COUNT(*) + 1 FROM Mechanical.Support WHERE PuntoEmisionId = @PuntoEmisionId
             
 
@@ -90,8 +91,8 @@ BEGIN
 		BEGIN TRAN
                
             INSERT INTO [Mechanical].[Support]
-                  (PuntoEmisionId,[Date],[Sequence],VehicleCompanyId,CustomerId ,CompanyId ,UserId,UserAssignedId,Obs,CreatedAt,[Enabled],[Status])
-            SELECT PuntoEmisionId,[Date],@Sequence, VehicleCompanyId,CustomerId,@CompanyId,@UserId,UserAssignedId,Obs,CreatedAt,[Enabled],[Status] 
+                  (PuntoEmisionId,[Date],[Sequence],VehicleCompanyId,CustomerId ,CompanyId ,UserId,UserAssignedId,Obs,Total,Discount,SupportStatusId)
+            SELECT PuntoEmisionId,[Date],@Sequence, VehicleCompanyId,CustomerId,@CompanyId,@UserId,UserAssignedId,Obs,Total,Discount,@SupportStatusId 
             FROM @tbSupport
 
 			SELECT @Id = SCOPE_IDENTITY()
