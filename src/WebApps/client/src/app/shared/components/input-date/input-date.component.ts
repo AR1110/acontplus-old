@@ -15,6 +15,7 @@ import { formatDate, setDateWithCurrentTime } from '@core/utils/date.util';
 })
 export class InputDateComponent {
   @Input() value = new Date()
+  @Input() disabled = false;
 
   @Output() valueChange = new EventEmitter<Date>(); // Evento para emitir el nuevo valor al componente padre
 

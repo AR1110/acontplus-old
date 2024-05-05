@@ -79,7 +79,7 @@ export class SupportAddEditModalComponent {
   dataSearchVehicle = {
     searching: false,
     searchFailed: false,
-    model: ''
+    model: '' as string | null
   }
 
   vehicle = {
@@ -130,10 +130,8 @@ export class SupportAddEditModalComponent {
 
           this.supportSvc.getId(this.params.id).subscribe({
             next: (value) => {
-
-              console.log(value)
               this.data = value.data as any;
-              console.log(this.data)
+
               this.vehicle = value.vehicle as any;
               this.emissionPoints = this.cloneEmissionPoints.filter(e => e.establecimientoId === this.data.establecimientoId);
               this.dataSearchVehicle.model = value.customer.tradeName;
@@ -222,9 +220,9 @@ export class SupportAddEditModalComponent {
 
       this.vehicleSvc.getId(id).subscribe({
         next: (response) => {
-          ;
           this.data.vehicleCompanyId = id;
           this.data.customerId = response.customer.id;
+          this.dataSearchVehicle.model = response.customer.businessName;
           this.vehicle = response.vehicle as any;
         },
         error(err) {

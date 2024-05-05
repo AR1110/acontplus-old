@@ -1,6 +1,7 @@
 import { formatDateMoment } from "@core/utils/format-date-moment";
 
 import { SupportMaintenanceDetail } from "../models/support-maintenance.model";
+import { isValidField } from "@core/utils/utils";
 
 type ToProps = {
   data: any
@@ -21,7 +22,11 @@ class SupportMaintenanceAdapter {
 
     return {
       //order: resultOrder,
-      supportId: resultData.id,
+      support: {
+        id: resultData.id,
+        total: resultData.total,
+        discount: resultData.discount
+      },
       supportDetails: resultDetallesMerge,
       //  customDetails: resultCustomDetails
     }
@@ -55,19 +60,22 @@ class SupportMaintenanceAdapter {
         rowguid: item.rowguid,
         orderIndex: index + 1,
         articuloId: item.productId,
+        taxId: item.taxId,
+        taxPercentId: item.taxPercentId,
+        discount: item.discount,
         tarifaId: item.feeId,
         bodegaId: item.bodegaId,
         medidaId: item.medidaId,
         description: item.descripcion,
         quantity: item.quantity,
+        taxValue: item.taxValue,
         price: item.price,
         cost: item.cost,
-        total: item.total,
-        codePercentage: item.codePercentage,
-        percentage: item.percentage,
+        total: item.precioTotalSinImpuesto,
         inventory: item.llevaInventario,
         enabled: item.enabled,
-        deleted: item.deleted
+        deleted: item.deleted,
+        obs: isValidField(item.obs)
       }
     })
     return results;

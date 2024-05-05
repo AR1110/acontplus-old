@@ -31,6 +31,7 @@ export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
+  @Input() isGetId = false;
   @Input() showActionsBtn = true;
   @Input() textSearch = '';
   @Input() isSearchToExternal = false;
@@ -100,8 +101,12 @@ export class CompanyCustomerSearchComponent {
 
   //retorno de data cuando registran del modal
   onResult($event:any){
-    if($event!==null && "item" in $event){
-      this.onEmitData($event.item);
+    if(this.isGetId){
+      this.companyCustomerService.getId($event.id).subscribe(response=>{
+        this.onEmitData(response);
+      })
+    }else{
+      this.onCustomerSelected.emit($event)
     }
   }
   onEmitData(result:any){
@@ -118,7 +123,6 @@ export class CompanyCustomerSearchComponent {
 
   onEnterKeyPressed(event:Event): void {
     let ev = event as KeyboardEvent;
-    console.log(event)
     if (!this.isSearchToExternal && !(ev.key === 'Enter')) return
 
 

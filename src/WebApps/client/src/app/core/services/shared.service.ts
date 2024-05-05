@@ -55,9 +55,15 @@ export class SharedService {
     }
   }
 
+  /**
+   *
+   * @param data
+   * @param format pdf | excel
+   * @param isOldVersion
+   */
   getReport<T>(
     data: T,
-    format: 'pdf' | 'excel',
+    format: string,
     isOldVersion: boolean = false
   ) {
     const path = isOldVersion ? PATHS.DOWNLOAD_V1 : PATHS.DOWNLOAD;
