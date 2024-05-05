@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
-
-namespace Identity.API.Entities
+﻿namespace Identity.API.Entities
 {
     [Table("AccessAuthorization", Schema = "Seguridad")]
     public class AccessAuthorization: BaseEntity

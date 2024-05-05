@@ -1,7 +1,4 @@
 ﻿using System.Reflection;
-using Common.Infrastructure.Data;
-using Identity.API.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Data
 {

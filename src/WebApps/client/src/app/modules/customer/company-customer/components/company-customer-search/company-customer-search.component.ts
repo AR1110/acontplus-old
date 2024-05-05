@@ -31,11 +31,13 @@ export class CompanyCustomerSearchComponent {
   @Output() onCustomerSelected = new EventEmitter<{ data: any }>();
   @Output() resultEmptyInput = new EventEmitter();
   @Input() isSearchSimple = false;
+  @Input() isGetId = false;
   @Input() showActionsBtn = true;
   @Input() textSearch = '';
   @Input() isSearchToExternal = false;
   private companyCustomerService = inject(CompanyCustomerService);
 
+  @Input() id = 0;
   customer: CompanyCustomerSearch = {
     idCliente: 0,
     nombreFiscal: '',
@@ -51,14 +53,15 @@ export class CompanyCustomerSearchComponent {
 
   onKeyupSearch() {
     if (!this.textSearch) {
+      this.id=0;
       this.resultEmptyInput.emit({});
     }
   }
 
 
   onSelect($event: any) {
-    console.log($event);
     this.customer = $event.item;
+    this.id = this.customer.idCliente;
     this.setCustomerData(this.customer);
   }
 
@@ -67,7 +70,10 @@ export class CompanyCustomerSearchComponent {
   ) =>
     text$.pipe(
       distinctUntilChanged(),
-      tap(() => (this.searching = true)),
+      tap(() => {
+        this.searching = true;
+        this.id = 0;
+      }),
       switchMap((term) => {
         if (!term || term.length < 2) {
           return of([]);
@@ -95,8 +101,12 @@ export class CompanyCustomerSearchComponent {
 
   //retorno de data cuando registran del modal
   onResult($event:any){
-    if($event!==null && "item" in $event){
-      this.onEmitData($event.item);
+    if(this.isGetId){
+      this.companyCustomerService.getId($event.id).subscribe(response=>{
+        this.onEmitData(response);
+      })
+    }else{
+      this.onCustomerSelected.emit($event)
     }
   }
   onEmitData(result:any){
@@ -113,7 +123,6 @@ export class CompanyCustomerSearchComponent {
 
   onEnterKeyPressed(event:Event): void {
     let ev = event as KeyboardEvent;
-    console.log(event)
     if (!this.isSearchToExternal && !(ev.key === 'Enter')) return
 
 

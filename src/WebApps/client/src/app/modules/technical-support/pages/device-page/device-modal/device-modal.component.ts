@@ -1,12 +1,22 @@
 import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { IForm } from '@core/models/form-types';
+import { ModalService } from '@core/services/modal.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Brand } from '@modules/technical-support/models/brand';
-import { Device, DeviceSpecs, DeviceTypeSpec } from '@modules/technical-support/models/device.model';
+import {
+  Device,
+  DeviceSpecs,
+  DeviceTypeSpec,
+} from '@modules/technical-support/models/device.model';
 import { Modelo } from '@modules/technical-support/models/modelo';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { DeviceSpecsService } from '@modules/technical-support/services/device-spec.service';
@@ -15,6 +25,9 @@ import { ModeloService } from '@modules/technical-support/services/modelo.servic
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppModule } from 'src/app/app.module';
 import { v4 as uuidv4 } from 'uuid';
+import { BrandModalComponent } from '../../brand-page/brand-modal/brand-modal.component';
+import { ModeloModalComponent } from '../../modelo-page/modelo-modal/modelo-modal.component';
+import { CategoryModalComponent } from '../../category-page/category-modal/category-modal.component';
 
 @Component({
   selector: 'app-device-modal',
@@ -31,9 +44,9 @@ export class DeviceModalComponent implements OnInit {
   private brandService = inject(BrandService);
   private deviceService = inject(DeviceService);
   private deviceSepcsService = inject(DeviceSpecsService);
+  private modalService = inject(ModalService);
   private modeloService = inject(ModeloService);
   private tS = inject(ToasterService);
-
   brands: Brand[] = [];
   // --> Variables
   modalIcon: IconProp = 'plus';
@@ -89,6 +102,57 @@ export class DeviceModalComponent implements OnInit {
     ]),
   });
 
+  unselectedCategory = true;
+  unseletedBrand = true;
+  addCategory() {
+    const modalBrand = this.modalService.openModalCustom(
+      CategoryModalComponent,
+      {
+        size: 'sm',
+        centered: true,
+      }
+    );
+    modalBrand.result.then((response) => {
+      if (response !== null && typeof response === 'object') {
+        this.getDataForm();
+      }
+    });
+  }
+  addBrand() {
+    const modalBrand = this.modalService.openModalCustom(BrandModalComponent, {
+      size: 'lg',
+      centered: true,
+    });
+    modalBrand.componentInstance.data = {
+      categoryId: this.deviceForm.value.categoryId,
+    };
+    modalBrand.result.then((response) => {
+      if (response !== null && typeof response === 'object') {
+        let categoyId = Number(this.deviceForm.get('categoryId')?.value);
+        this.onBrandGet(categoyId);
+      }
+    });
+  }
+
+  addModelo() {
+    const modalModelo = this.modalService.openModalCustom(
+      ModeloModalComponent,
+      {
+        size: 'lg',
+        centered: true,
+      }
+    );
+    modalModelo.componentInstance.data = {
+      brandId: this.deviceForm.value.brandId,
+    };
+    modalModelo.result.then((response) => {
+      if (response !== null && typeof response === 'object') {
+        let brandId = Number(this.deviceForm.get('brandId')?.value);
+        this.onModeloGet(brandId);
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.setDataFormModal();
     this.getDataForm();
@@ -99,6 +163,7 @@ export class DeviceModalComponent implements OnInit {
     if (!(brandId > 0)) {
       return;
     }
+    this.unseletedBrand = false;
     this.onModeloGet(brandId);
   }
 
@@ -109,6 +174,10 @@ export class DeviceModalComponent implements OnInit {
       next: (response) => {
         if (isApiResponse(response) && response.code == '1') {
           this.brands = JSON.parse(response.payload as string);
+          if (this.brands.length > 0) {
+            this.deviceForm.get('brandId')?.setValue(this.brands[0].id);
+            this.unseletedBrand = false;
+          }
         }
       },
       error(err) {
@@ -125,6 +194,7 @@ export class DeviceModalComponent implements OnInit {
     if (!(categoryId > 0)) {
       return;
     }
+    this.unselectedCategory = false;
     this.onBrandGet(categoryId);
   }
   onModeloChange($event: any) {}
@@ -135,6 +205,9 @@ export class DeviceModalComponent implements OnInit {
       next: (response) => {
         if (isApiResponse(response) && response.code == '1') {
           this.modelos = JSON.parse(response.payload as string);
+          if (this.modelos.length > 0) {
+            this.deviceForm.get('modeloId')?.setValue(this.modelos[0].id);
+          }
         }
       },
       error(err) {

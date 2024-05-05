@@ -1,11 +1,9 @@
-import { Category } from './category';
-import { Serie } from './serie';
-
-export interface Brand extends Category {
+export interface Brand {
   id: number;
   code: string;
   name: string;
   enabled?: boolean;
-  categoryName: string;
+  categoryId: number;
+  categoryName?: string;
   series?: string;
 }

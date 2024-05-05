@@ -14,11 +14,11 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  console.log('is loader', req.context.get(isLoader))
+  // console.log('is loader', req.context.get(isLoader))
 
   requests.push(req);
 
-  console.log("No of requests--->" + requests.length);
+  // console.log("No of requests--->" + requests.length);
 
   if (requests.length === 1) {
     showLoader();

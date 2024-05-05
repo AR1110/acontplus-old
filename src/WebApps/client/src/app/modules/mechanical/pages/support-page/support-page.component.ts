@@ -8,9 +8,9 @@ import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MECHANICAL_CODE_REPORT } from '@modules/mechanical/enums/mechanical.enum';
+import { MECHANICAL_CODE_REPORT, MECHANICAL_STATUS } from '@modules/mechanical/enums/mechanical.enum';
 import { SupportService } from '@modules/mechanical/services/support.service';
-import { NgbDropdownModule, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbPagination, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Pagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 
@@ -34,22 +34,27 @@ import { isValidField } from '@core/utils/utils';
     NgbPagination,
     MatTableModule,
     MatCheckboxModule,
+    NgbPopoverModule,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent
   ],
   templateUrl: './support-page.component.html',
 })
 export class SupportPageComponent {
-  @Input() status = 0;
+  @Input() valueStatus: MECHANICAL_STATUS | null = null;
+  @Input() supportStatus: any[] = []
+
   modalSvc = inject(ModalService);
   supportSvc = inject(SupportService)
   tS = inject(ToasterService)
   sharedSvc = inject(SharedService)
 
-  displayedColumns = ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs', 'estado', 'entregar'];
+  displayedColumns:string[] = [];
   pagination = new Pagination()
 
-  dataSource: any[] = [];
+  dataSource: any = [];
+
+
 
   statusDoc = [
     { status: null, description: 'Todos' },
@@ -58,6 +63,8 @@ export class SupportPageComponent {
     { status: 2, description: 'Aprobado' },
     { status: 3, description: 'Anulado' },
   ]
+
+  statusTab = MECHANICAL_STATUS
 
   openModal(id?: number) {
     const modalRef = this.modalSvc.open(SupportAddEditModalComponent, {
@@ -80,7 +87,7 @@ export class SupportPageComponent {
     customerId: null as number | null,
     licensePlate: null as string | null,
     assigned: false,
-    status: this.status
+    supportStatusId: null as number | null
   }
 
   onChangeRequiredDate(value: boolean) {
@@ -116,7 +123,7 @@ export class SupportPageComponent {
         ckDate: this.dataSearch.ckDate,
         pageIndex: this.pagination.pageIndex,
         pageSize: this.pagination.pageSize,
-        status: this.dataSearch.status >= 0 ? this.dataSearch.status : null,
+        supportStatusId: this.dataSearch.supportStatusId,
         fromDate: this.dataSearch.fromDate,
         toDate: this.dataSearch.toDate,
         customerId: this.dataSearch.customerId,
@@ -130,10 +137,8 @@ export class SupportPageComponent {
           if (this.dataSource.length > 0) {
             this.pagination.totalRecords = this.dataSource[0].totalRecords;
           }
-          console.log(response)
         },
         error(err) {
-          ;
           console.log(err)
         },
       })
@@ -143,9 +148,29 @@ export class SupportPageComponent {
   }
 
   ngOnInit(): void {
-    let status = this.status === 0 ? this.status : this.status - 1;
-    console.log(status)
-    this.dataSearch.status = status;
+    let dataStatus = this.supportStatus.find(s => this.valueStatus === s.code);
+
+    if (dataStatus) {
+      this.dataSearch.supportStatusId = dataStatus.id;
+    }else{
+      this.supportStatus.unshift({
+        id: null,
+        name: 'TODOS'
+      })
+      let dataStatus = this.supportStatus.find(s => s.code===MECHANICAL_STATUS.PENDIENTE);
+      this.dataSearch.supportStatusId = dataStatus?.id
+    }
+
+
+
+   // this.dataSearch.supportStatusId = this.supportStatusId;
+
+    if(this.valueStatus===MECHANICAL_STATUS.DASHBOARD){
+      this.displayedColumns = ['position', 'op', 'estado', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs',  'entregar']
+    }else{
+      this.displayedColumns =   ['position', 'op', 'secuencia', 'fechaEmision', 'placa', 'identificacion', 'cliente-conductor', 'encargado', 'obs', 'estado', 'entregar']
+    }
+
     this.getSupports();
   }
 
@@ -269,7 +294,15 @@ export class SupportPageComponent {
   }
 
   //Status Support
-  putState(id: number, status: number) {
+  putState(id: number) {
+    let supportStatusId = this.supportStatus.find(st=>st.code===MECHANICAL_STATUS.POR_ENTREGAR)?.id;
+    if(!(supportStatusId>0)){
+      this.tS.toastr({
+        type: 'warning',
+        message: `No se encontró el estado ${supportStatusId}`
+      })
+      return
+    }
     try {
       Swal.fire({
         // title: "Are you sure?",
@@ -282,7 +315,7 @@ export class SupportPageComponent {
         cancelButtonText: 'No!'
       }).then((result) => {
         if (result.isConfirmed) {
-          this.supportSvc.putState(id, status).subscribe({
+          this.supportSvc.putState(id, supportStatusId).subscribe({
             next: (response) => {
 
               if (isApiResponse(response)) {

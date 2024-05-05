@@ -6,7 +6,8 @@ import { NotaEntregaDetail } from "@modules/sale/models/nota-entrega.model";
 type MainAdapt = {
   comprobante: any
   details: NotaEntregaDetail[],
-  cuotas: any[]
+  cuotas: any[],
+  infoAdicionalDoc:any[]
 }
 
 class NotaEntregaAdapter {
@@ -21,7 +22,7 @@ class NotaEntregaAdapter {
       notaEntrega: comprobante,
       detalles: details,
       impuestos: impuestos,
-      infoAdicional: [],
+      infoAdicional: input.infoAdicionalDoc,
       infoAdicionalArticulo: [],
       cuotas: input.cuotas
     }

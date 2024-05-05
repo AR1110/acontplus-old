@@ -8,6 +8,7 @@ type MainAdapt = {
   details: InvoiceDetail[],
   cuotas: any[],
   formaPago: any[]
+  infoAdicionalDoc: any[]
 }
 
 class InvoiceAdapter {
@@ -22,10 +23,10 @@ class InvoiceAdapter {
       infoFactura: comprobante,
       detalles: details,
       impuestos: impuestos,
-      infoAdicional: [],
       infoAdicionalArticulo: [],
       formaPago: input.formaPago,
       cuotas: input.cuotas,
+      infoAdicional: input.infoAdicionalDoc
     }
 
   }

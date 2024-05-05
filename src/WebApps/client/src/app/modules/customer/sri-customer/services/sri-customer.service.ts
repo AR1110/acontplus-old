@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PATHS_API } from '@core/constants/global.constants';
+import { PATHS_API, SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -14,8 +14,8 @@ export class SriCustomerService {
 
   async get(codigo: string, id: string) {
     let path;
-    if (codigo == '04') {
-      path = 'GetCedulaSri/';
+    if (codigo == SRI_IDENTIFICATION_CODE.RUC) {
+      path = 'GetRucSRI/';
     } else {
       path = 'GetCedulaSri/';
     }

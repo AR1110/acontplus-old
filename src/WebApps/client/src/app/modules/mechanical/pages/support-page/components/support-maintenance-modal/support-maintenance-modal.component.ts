@@ -9,6 +9,7 @@ import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { ProductSale } from '@modules/inventory/models/product.model';
 import { ProductService } from '@modules/inventory/services/product.service';
+import { ProductSearchOverlayComponent } from '@modules/inventory/shared/components/product/product-search-overlay/product-search-overlay.component';
 import { ConsolidacionBodega } from '@modules/inventory/shared/models/consolidacion-bodega.model';
 import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
 import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
@@ -18,12 +19,12 @@ import { supportMaintenanceAdapter } from '@modules/mechanical/adapters/support-
 import { ColSupportMaintenanceDetail, SupportMaintenanceDetail } from '@modules/mechanical/models/support-maintenance.model';
 import { SupportDetailService } from '@modules/mechanical/services/support-detail.service';
 import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
-import { NgbActiveModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbPopoverModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
+import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import Swal from 'sweetalert2';
-import { ProductSearchOverlayComponent } from '@modules/inventory/shared/components/product/product-search-overlay/product-search-overlay.component';
 
 @Component({
   selector: 'app-support-maintenance-modal',
@@ -32,9 +33,11 @@ import { ProductSearchOverlayComponent } from '@modules/inventory/shared/compone
     FormsModule,
     FontAwesomeModule,
     NgbTooltipModule,
+    NgbPopoverModule,
     TabulatorComponent,
     DrawTaxTotalComponent,
-    ProductSearchOverlayComponent
+    ProductSearchOverlayComponent,
+    InputDateComponent
   ],
   templateUrl: './support-maintenance-modal.component.html',
 })
@@ -56,6 +59,8 @@ export class SupportMaintenanceModalComponent {
   data = {
     id: 0,
     puntoEmisionId: 0,
+    ptoEmi:null,
+    establecimiento: null,
     establecimientoId: 0,
     vehicleCompanyId: 0,
     customerId: 0,
@@ -74,7 +79,8 @@ export class SupportMaintenanceModalComponent {
     subTotalSinImpuesto: 0,
     discount: 0,
     percentageDiscount: 0,
-    total: 0
+    total: 0,
+
   }
   cloneData = {
     bodegaId: 0,
@@ -99,6 +105,9 @@ export class SupportMaintenanceModalComponent {
     importeTotal: 0,
     nroIce: 0
   }
+
+  companyCustomer:any = {}
+  vehicle:any = {}
 
   //Draw Totals Tax
   htmlImpuestoTotal = '';
@@ -203,7 +212,7 @@ export class SupportMaintenanceModalComponent {
       }).then((result) => {
         if (result.isConfirmed) {
           let index = this.details.findIndex(
-            (r) => r.rowguid !== data.rowguid
+            (r) => r.rowguid === data.rowguid
           );
           this.details.splice(index, 1);
 
@@ -528,6 +537,7 @@ export class SupportMaintenanceModalComponent {
         this.estabs = response.estabs;
         this.taxPercents = response.tarifasImpuesto;
         this.feeds = response.feeds;
+        this.vehicle = response.vehicle
 
         this.details = response.details;
         let dataEstab = this.estabs.find(e => e.idEstablecimiento === this.data.establecimientoId);
@@ -994,30 +1004,11 @@ export class SupportMaintenanceModalComponent {
 
       if (!isConfirmed) return
 
-      let details = this.details.map((item) => {
-        let dataTarifaImpuesto = this.taxPercents.find(tp => tp.idTarifaImpuesto === item.taxPercentId);
 
-        return {
-          ...item,
-          codePercentage: dataTarifaImpuesto?.codigo,
-          percentage: dataTarifaImpuesto?.porcentaje
-        }
-      })
-
-      let detailsDeleted = this.detailsDeleted.map((item) => {
-        let dataTarifaImpuesto = this.taxPercents.find(tp => tp.idTarifaImpuesto === item.taxPercentId);
-
-        return {
-          ...item,
-          codePercentage: dataTarifaImpuesto?.codigo,
-          percentage: dataTarifaImpuesto?.porcentaje
-        }
-      })
-      console.log(details)
       let obj = {
         data: structuredClone(this.data),
-        details: details,
-        detailsDeleted: detailsDeleted
+        details: this.details,
+        detailsDeleted: this.detailsDeleted
       }
       let params = supportMaintenanceAdapter.to(obj);
 

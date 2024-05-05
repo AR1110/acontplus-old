@@ -43,7 +43,7 @@ namespace Contabilidad.API
 
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
             {
-                app.Urls.Add("http://*:5005"); // 👈 Add the URL
+                app.Urls.Add("http://*:5005"); // Linux Port
             }
             else
             {

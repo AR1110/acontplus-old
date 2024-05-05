@@ -24,6 +24,7 @@ export class BrandPageComponent {
     code: '',
     name: '',
     categoryName: '',
+    categoryId: 0
   };
   ngOnInit(): void {
     this.onGet();

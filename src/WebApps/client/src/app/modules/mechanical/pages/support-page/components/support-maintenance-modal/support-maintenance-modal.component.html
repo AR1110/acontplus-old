@@ -5,26 +5,76 @@
   <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
-  <!-- <div class="row">
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="estab">Establecimiento: </label>
-        <select name="estab" id="estab">
-          <option value=""></option>
-        </select>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+      <div class="row">
+        <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="estab">Establecimiento: </label>
+            <input type="text" name="estab" id="estab" [value]="data.establecimiento" class="form-control" disabled="disabled">
+          </div>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="puntoEmision">Punto Emisión: </label>
+            <input type="text" name="puntoEmision" id="puntoEmision" class="form-control" [value]="data.ptoEmi"
+              disabled="disabled">
+          </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="fechaEmision">Fecha Emisión: </label>
+            <app-input-date [(value)]="data.fechaEmision" [disabled]="true"></app-input-date>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="puntoEmision">Punto Emisión: </label>
-        <option value=""></option>
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+      <div class="row">
+        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="businessName">Cliente: </label>
+            <div class="input-group">
+              <input type="text" name="businessName" id="businessName" class="form-control" [value]="data.businessName"
+                readonly>
+              <button type="button" class="btn btn-secondary btn-sm" [ngbPopover]="popContent" triggers="mouseenter:mouseleave"
+                popoverTitle="Info.:">
+                <fa-icon [icon]="'info-circle'" class="text-info"></fa-icon>
+              </button>
+              <ng-template #popContent>
+                <p><strong>RUC/Cédula:</strong> {{data.idCard}}</p>
+                <p><strong>Dirección:</strong> {{data.address}}</p>
+                <p><strong>Correo:</strong> {{data.email}}</p>
+              </ng-template>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+          <div class="form-group">
+            <label for="licensePlate">Placa: </label>
+            <div class="input-group">
+              <input type="text" name="licensePlate" id="licensePlate" class="form-control" [value]="vehicle.licensePlate" readonly>
+              <button type="button" class="btn btn-secondary btn-sm" [ngbPopover]="popContentVehicle" triggers="mouseenter:mouseleave"
+                popoverTitle="Info.:">
+                <fa-icon [icon]="'info-circle'" class="text-info"></fa-icon>
+              </button>
+              <ng-template #popContentVehicle>
+                <p><strong>Marca:</strong> {{vehicle.brand}}</p>
+                <p><strong>Modelo:</strong> {{vehicle.model}}</p>
+                <p><strong>Año de Fabricación:</strong> {{vehicle.year}}</p>
+                <p><strong>Color:</strong> {{vehicle.color}}</p>
+                <p><strong>Motor:</strong> {{vehicle.engine}}</p>
+                <p><strong>Chasis:</strong>{{vehicle.chassis}}</p>
+                <p><strong>Cilindraje:</strong> {{vehicle.cylindraje}}</p>
+              </ng-template>
+
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-      <div class="form-group"></div>
-    </div>
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"></div>
-  </div> -->
+  </div>
 
   <div class="row">
     <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
@@ -74,7 +124,12 @@
   </div>
 
   <div class="row">
-    <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12"></div>
+    <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="observacion">Observación:</label>
+        <textarea name="observacion" id="observacion" class="form-control" [value]="data.obs" readonly></textarea>
+      </div>
+    </div>
     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
       <div class="mt-2">
         <app-draw-tax-total [subTotalSinImpuesto]="data.subTotalSinImpuesto" [htmlImpuestoTotal]="htmlImpuestoTotal"

@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
-using Common.Core.Utils;
-namespace Identity.API.Entities
+﻿namespace Identity.API.Entities
 {
     [Table("ForgotPassword", Schema = "Seguridad")]
     public class ForgotPassword : BaseEntity

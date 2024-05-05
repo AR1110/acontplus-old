@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-
-namespace Identity.API.Data
+﻿namespace Identity.API.Data
 {
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
