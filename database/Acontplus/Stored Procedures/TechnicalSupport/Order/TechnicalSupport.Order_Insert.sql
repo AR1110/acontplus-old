@@ -103,7 +103,7 @@ BEGIN
                             ,deviceCustomerId INT       '$.deviceCustomerId'
                             ,deviceId    INT             '$.deviceId'
                             ,deviceSerie    VARCHAR(300)             '$.deviceSerie'
-                            ,warrantyEndDate    DATETIME2             '$.warrantyEndDate'
+                            ,warrantyEndDate    DATETIME2             '$.deviceWarranty'
                             ,obs         VARCHAR(100)    '$.obs'
                             ,assignedUserId INT
                         )
