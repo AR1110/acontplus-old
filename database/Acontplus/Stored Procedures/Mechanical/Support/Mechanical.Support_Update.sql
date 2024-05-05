@@ -46,7 +46,6 @@ BEGIN
         
 
         --> SAVING THE JSON DATA 
-
         INSERT INTO @tbSupport
                (Id,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
         SELECT @id,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
@@ -61,8 +60,6 @@ BEGIN
            ,[date]           DATETIME2
         )
 
-
-
         --> VALIDATION OF INFORMATION 
         IF (SELECT COUNT(*) FROM @tbSupport) = 0
             BEGIN
@@ -70,7 +67,7 @@ BEGIN
                 RETURN
             END 
 
-        IF EXISTS (SELECT 1 FROM Mechanical.Support WHERE Id = @id AND [Status] NOT IN (0))
+        IF EXISTS (SELECT 1 FROM Mechanical.v_Support WHERE Id = @id AND codeStatus NOT IN ('PE'))
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0', 'El soporte no puede ser editado', NULL)
                 RETURN 

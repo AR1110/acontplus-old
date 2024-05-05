@@ -48,10 +48,10 @@ namespace Mechanical.API.Services
             return await _repository.SPExecuteDeprecatedAsync("Mechanical.Support_Delete", parameters);
         }
 
-        public async Task<ApiResponse> UpdateStateAsync(int id, int status)
+        public async Task<ApiResponse> UpdateStateAsync(int id, int SupportStatusId)
         {
             var support = await _context.Supports.FindAsync(id);
-            support.Status = status;
+            support.SupportStatusId = SupportStatusId;
             _context.Update(support);
             await _context.SaveChangesAsync();
             return new ApiResponse { code = "1", message = "Actualizado Exitosamente" };

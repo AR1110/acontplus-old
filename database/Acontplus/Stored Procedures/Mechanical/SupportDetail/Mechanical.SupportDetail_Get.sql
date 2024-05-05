@@ -32,7 +32,7 @@ BEGIN
         BEGIN
             SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
 
-            SET @tableNames = 'support,supportDetail,bodega,tipoIva,decimal,tarifas'
+            SET @tableNames = 'support,vehicleDs,supportDetail,bodega,tipoIva,decimal,tarifas'
 
             SELECT v_s.Id
                   ,v_s.PuntoEmisionId
@@ -40,7 +40,6 @@ BEGIN
                   ,v_s.VehicleCompanyId
                   ,v_s.CustomerId                  
                   ,v_s.[Date]
-                  ,v_s.[Sequence]
                   ,v_s.Obs
                   ,v_s.UserAssignedId                  
                   ,v_s.BusinessName
@@ -50,8 +49,25 @@ BEGIN
                   ,v_s.Email
                   ,v_s.codEstab
                   ,v_s.status
+                  ,v_s.ptoEmi
+                  ,v_s.estab
+                  ,v_s.[Sequence]
+                  ,v_s.nombreComercial
 	        FROM Mechanical.v_Support v_s WITH (NOLOCK)
             WHERE Id = @Id
+
+            SELECT ve.licensePlate as LicensePlate
+                  ,ve.brand        as Brand
+                  ,ve.model        as Model
+                  ,ve.[year]       as [Year]
+                  ,ve.color        as Color
+                  ,ve.engine       as Engine
+                  ,ve.chassis      as Chassis
+                  ,ve.cylindraje   as Cylindraje
+            FROM Mechanical.Support sp WITH (NOLOCK)
+            INNER JOIN Mechanical.VehicleCompany vc WITH (NOLOCK) ON vc.Id = sp.VehicleCompanyId
+            INNER JOIN Mechanical.Vehicle        ve WITH (NOLOCK) ON ve.Id = vc.VehicleId
+            WHERE sp.Id = @Id
                         
             SELECT md.Id
                   ,md.ArticuloId        
@@ -62,19 +78,17 @@ BEGIN
                   ,md.Quantity          
                   ,md.Price              
                   ,md.Cost              
-                  ,md.CodePercentage
-                  ,md.[Percentage]     
-                  ,bo.codEstab
-                  ,md.Total                  
+                  ,md.TaxId
+                  ,md.TaxPercentId   
+                  ,md.Total 
+                  ,md.Discount
+                  ,md.TaxValue
+                  ,bo.codEstab    
                   ,ar.llevaInventario
-                  ,ar.stockMinimo
-                  ,ar.stock
-                  ,ar.precioSinSubsidio
-                  ,ar.codigo            AS codigoArticulo
-                  ,ar.codigoAuxiliar    AS codigoAuxiliar
-                  ,0                    AS valorDescuento
+                  ,ar.codigo            as codigoArticulo
                   ,md.[Enabled] 
                   ,md.Deleted
+                  ,ti.porcentaje        as [percentage]
                   ,ISNULL
                    ((
                         SELECT af.idMedida
@@ -136,11 +150,13 @@ BEGIN
                     SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
                     ) as consolidacion
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
-            INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
-            INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
+            INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega         = md.BodegaId
+            INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo       = md.ArticuloId
+            INNER JOIN Sri.TarifaImpuesto ti WITH (NOLOCK) ON ti.idTarifaImpuesto = md.TaxPercentId
             WHERE SupportId = @Id
               AND md.[Enabled] = 1
               AND md.Deleted IS NULL
+            ORDER BY md.Id ASC
             
             SELECT idBodega
                   ,idEstablecimiento
@@ -152,10 +168,10 @@ BEGIN
             WHERE idUsuarioRol = @userRoleId 
             ORDER BY defaultBodega DESC
 
-            SELECT ti.idTarifaImpuesto
+            SELECT i.idImpuesto 
+                  ,ti.idTarifaImpuesto
                   ,ti.codigo
                   ,ti.codImpuesto
-                  ,i.idImpuesto
                   ,ti.descripcion
                   ,ti.porcentaje
                   ,ti.estado 
@@ -178,9 +194,9 @@ BEGIN
               AND idEntidad = @CompanyId
 
             SELECT idTarifa
-	                 ,descripcion
-	                 ,predeterminada
-	                 ,codigo 
+	              ,descripcion
+	              ,predeterminada
+	              ,codigo 
 	        FROM Tarifa WITH (NOLOCK) 
 	        WHERE idEntidad = @CompanyId AND estado = 1
 
