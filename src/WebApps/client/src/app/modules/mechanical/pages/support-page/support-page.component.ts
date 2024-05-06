@@ -3,10 +3,14 @@ import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
+import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import { SharedService } from '@core/services/shared.service';
 import { ToasterService } from '@core/services/toaster.service';
+import { formatDateMoment } from '@core/utils/format-date-moment';
+import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MECHANICAL_CODE_REPORT, MECHANICAL_STATUS } from '@modules/mechanical/enums/mechanical.enum';
 import { SupportService } from '@modules/mechanical/services/support.service';
@@ -18,10 +22,6 @@ import { InspectionModalComponent } from '../inspection-page/components/inspecti
 import { ConvertDocModalComponent } from './components/convert-doc-modal/convert-doc-modal.component';
 import { SupportAddEditModalComponent } from './components/support-add-edit-modal/support-add-edit-modal.component';
 import { SupportMaintenanceModalComponent } from './components/support-maintenance-modal/support-maintenance-modal.component';
-import { formatDateMoment } from '@core/utils/format-date-moment';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@company-customer/components/company-customer-search/company-customer-search.component';
-import { isValidField } from '@core/utils/utils';
 
 @Component({
   selector: 'app-support-page',
@@ -346,6 +346,37 @@ export class SupportPageComponent {
     } catch (error) {
       console.log(error)
     }
-  };
+  }
+
+  getDocView(id:number){
+    try {
+      this.supportSvc.getDocView(id).subscribe(response=>{
+        Swal.fire({
+          icon:'info',
+          html: `<div class="d-flex flex-column bd-highlight mb-3">
+                  <div class="p-2 bd-highlight">
+                    <strong>Tipo Doc:</strong> ${response.tipoDocumento}
+                  </div>
+                  <div class="p-2 bd-highlight">
+                    <strong>Serie Comprobante:</strong> ${response.serieComprobante}
+                  </div>
+                </div>`
+        })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
 }
 

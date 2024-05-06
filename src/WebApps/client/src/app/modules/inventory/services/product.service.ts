@@ -1,3 +1,4 @@
+import { GroupedSubFamilia } from './../models/sub-category.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
@@ -70,6 +71,7 @@ export class ProductService {
           medidas: [],
           modelos: [],
           subCategorias: [],
+          subCategoriesGroupOptions: [] as GroupedSubFamilia[],
           tarifas: [],
           tiposArticulo: [],
           tiposIce: [],
@@ -88,6 +90,9 @@ export class ProductService {
           data.medidas = response.medidas;
           data.modelos = response.modelos;
           data.subCategorias = response.subCategorias;
+
+          data.subCategoriesGroupOptions = groupSubCategoryUtil(response.subCategorias)
+
           data.tarifas = response.tarifas;
           data.tiposArticulo = response.tiposArticulo;
           data.tiposIce = response.tiposIce;
