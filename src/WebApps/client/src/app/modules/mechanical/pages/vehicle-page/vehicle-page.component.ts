@@ -9,7 +9,7 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { VehicleRead } from '@modules/mechanical/models/vehicle.model';
 import { VehicleService } from '@modules/mechanical/services/vehicle.service';
-import { VehicleAddEditDirective } from '@modules/mechanical/shared/directives/vehicle-add-edit.directive';
+import { VehicleAddEditDirective } from '@modules/mechanical/directives/vehicle-add-edit.directive';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { Pagination } from '@shared/models/pagination.model';

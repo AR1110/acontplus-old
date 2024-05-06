@@ -10,8 +10,8 @@ import { SubCategoryModalDirective } from '@inventory/directives/sub-category.di
 import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
 import { TipoIvaSelectHtmlOnly } from '@modules/inventory/models/tipo-iva.model';
 import { ProductService } from '@modules/inventory/services/product.service';
-import { MeasureAddEditDirective } from '@modules/inventory/shared/directives/measure-add-edit.directive';
-import { TarifaSelectHtmlOnly } from '@modules/inventory/shared/models/tarifa.model';
+import { MeasureAddEditDirective } from '@modules/inventory/directives/measure-add-edit.directive';
+import { TarifaSelectHtmlOnly } from '@modules/inventory/models/tarifa.model';
 import { NgbActiveModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { Observable } from 'rxjs';

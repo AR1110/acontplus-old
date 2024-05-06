@@ -7,7 +7,7 @@ import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
-import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
+import { MedidaProducto } from '@modules/inventory/models/measure.model';
 import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
 

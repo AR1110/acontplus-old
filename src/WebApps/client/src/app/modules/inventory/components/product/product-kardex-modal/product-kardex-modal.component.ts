@@ -11,12 +11,13 @@ import { hideLoader, showLoader } from '@core/utils/loader';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { TransactionService } from '@modules/inventory/shared/services/transaction.service';
+import { TransactionService } from '@modules/inventory/services/transaction.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { ProductSearchComponent } from '../product-search/product-search.component';
 import Swal from 'sweetalert2';
 import { SharedService } from '@core/services/shared.service';
+import { INVENTORY_CODE_REPORT } from '@modules/inventory/enums/inventory.enum';
 
 @Component({
   selector: 'app-product-kardex-modal',
@@ -489,7 +490,7 @@ export class ProductKardexModalComponent {
     let parameters = {
       hasIdUsuarioRol: true,
       reportParams: JSON.stringify({
-        codigo: "RK",
+        codigo: INVENTORY_CODE_REPORT.RK,
         format: formatType,
         codEstab: this.dataSearch.codEstab,
         hasParams: true,

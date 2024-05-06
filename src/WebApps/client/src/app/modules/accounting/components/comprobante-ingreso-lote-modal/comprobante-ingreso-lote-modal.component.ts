@@ -6,7 +6,7 @@ import { CuentaPorCobrarService } from '@modules/accounting/services/cuenta-por-
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Tabulator } from 'tabulator-tables';
 
-import { FormaCobroModalComponent } from '../forma-cobro-modal/forma-cobro-modal.component';
+import { FormaCobroModalComponent } from '../form-cobro-modal/forma-cobro-modal.component';
 import { MatTableModule } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';

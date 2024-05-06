@@ -11,7 +11,7 @@ import { map, Observable } from 'rxjs';
 import { ProductAdapter } from '../adapters/product.adapter';
 import { INVENTORY_PATHS } from '../enums/inventory.enum';
 import { ProductSearch } from '../models/product.model';
-import { MedidaProducto } from '../shared/models/measure.model';
+import { MedidaProducto } from '../models/measure.model';
 import { groupSubCategoryUtil } from '../utils/group-sub-category.util';
 import { mergeMeasureUtil } from '../utils/merge-measure.util';
 import { ProductSale } from './../models/product.model';

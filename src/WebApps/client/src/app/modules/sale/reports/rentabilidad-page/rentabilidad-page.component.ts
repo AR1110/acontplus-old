@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { GroupedEstab, GroupedEstabBodega } from "@core/models/estab.model";
 import { ProductService } from "@modules/inventory/services/product.service";
-import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
+import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
 import { UserSearchComponent } from '@core/components/user-search/user-search.component';
 import { TarifaSelectHtmlOnly } from '@inventory/models/tarifa.model';
 import { DateRangeSelectionComponent } from "@core/components/date-range-selection/date-range-selection.component";
