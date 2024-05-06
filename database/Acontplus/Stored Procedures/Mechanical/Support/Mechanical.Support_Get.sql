@@ -182,7 +182,7 @@ BEGIN
             RETURN 
 		END 
 
-    ---- GET DATAFORM UPDATE O GET ID -- 
+    --> GET DATAFORM UPDATE O GET ID -- 
     IF @tipo = 3
         BEGIN
             SET @tableNames = 'support,vehicle,customer,paramaters'
@@ -277,9 +277,13 @@ BEGIN
                   ,st.PuntoEmisionId  as idPuntoEmision
                   ,st.UserId          as idUsuario
                   ,pe.codEstab
-            FROM Mechanical.Support     st WITH (NOLOCK)
-            INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = st.PuntoEmisionId
-            WHERE Id = @Id
+                  ,st.Total
+                  ,ve.LicensePlate
+            FROM Mechanical.Support              st WITH (NOLOCK)
+            INNER JOIN dbo.PuntoEmision          pe WITH (NOLOCK) ON pe.idPuntoEmision = st.PuntoEmisionId
+            INNER JOIN Mechanical.VehicleCompany vc WITH (NOLOCK) ON vc.Id             = st.VehicleCompanyId
+            INNER JOIN Mechanical.Vehicle        ve WITH (NOLOCK) ON ve.Id             = vc.VehicleId
+            WHERE st.Id = @Id
 
             SELECT cl.idCliente
                   ,cl.idTiempoCredito
@@ -300,14 +304,17 @@ BEGIN
                   ,md.BodegaId         
                   ,md.TarifaId          
                   ,md.MedidaId
-                  ,(SELECT TOP 1 ti.idTipoIva FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = ti.codigo)  as idTipoIva
-                  ,(SELECT TOP 1 ti.idImpuesto FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = ti.codigo) as idImpuesto
+                  ,(SELECT TOP 1 ti.idTipoIva FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = ta.codigo)  as idTipoIva
+                  ,(SELECT TOP 1 ti.idImpuesto FROM dbo.TipoIva ti WITH (NOLOCK) WHERE ti.codigoPorcentaje = ta.codigo) as idImpuesto
                   ,md.[Description]                       
                   ,md.Quantity          
                   ,md.Price              
-                  ,md.Cost              
+                  ,md.Cost  
+                  ,md.Discount
+                  ,md.TaxValue
                   ,md.TaxPercentId
-                  ,ti.porcentaje    
+                  ,ta.codigo       as codePercentage
+                  ,ta.porcentaje   as [percentage]  
                   ,bo.codEstab
                   ,md.Total                  
                   ,ar.llevaInventario
@@ -379,27 +386,28 @@ BEGIN
                    ,(
                     SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
                     ) as consolidacion
+                   ,md.Obs
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega         = md.BodegaId
             INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo       = md.ArticuloId
-            INNER JOIN Sri.TarifaImpuesto ti WITH (NOLOCK) ON ti.idTarifaImpuesto = md.TaxPercentId
+            INNER JOIN Sri.TarifaImpuesto ta WITH (NOLOCK) ON ta.idTarifaImpuesto = md.TaxPercentId
             WHERE SupportId = @Id
               AND md.[Enabled] = 1
               AND md.Deleted IS NULL
 
             SELECT idTiempoCredito
-	                  ,descripcion
-	                  ,diasCredito
-	                  ,numeroCuota 
-                      ,entrada
-	            FROM TiempoCredito WITH (NOLOCK) 
-	            WHERE idEntidad = @CompanyId 
-                  AND gestion = 1 
-                  AND estado = 1
+	              ,descripcion
+	              ,diasCredito
+	              ,numeroCuota 
+                  ,entrada
+	        FROM TiempoCredito WITH (NOLOCK) 
+	        WHERE idEntidad = @CompanyId 
+                AND gestion = 1 
+                AND estado = 1
 
             SELECT CAST(printerAutomatic AS BIT) as printerAutomatic
-	            ,CAST(payAutomatic     AS BIT) as payAutomatic
-                ,CAST(idFormaPagoSri   AS INT) as idFormaPagoSri
+	              ,CAST(payAutomatic     AS BIT) as payAutomatic
+                  ,CAST(idFormaPagoSri   AS INT) as idFormaPagoSri
 	        FROM Config.v_Sistema_Ventas gs
             WHERE gs.idEntidad = @CompanyId
 
@@ -472,6 +480,7 @@ BEGIN
             SELECT @Id = id FROM OPENJSON(@json) WITH (id INT)
 
             SELECT TOP 1 td.codigo        as codDoc
+                        ,td.descripcion   as tipoDocumento
                         ,sp.DocumentoId
                         ,sp.SeriesVoucher as SerieComprobante
             FROM Mechanical.SupportDocument sp WITH (NOLOCK)
