@@ -294,7 +294,7 @@
                   <TextRun>
                     <Value>Observación:</Value>
                     <Style>
-                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontFamily />
                       <FontSize>11pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
@@ -328,7 +328,7 @@
                   <TextRun>
                     <Value>=First(Fields!obs.Value, "order")</Value>
                     <Style>
-                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontFamily />
                       <FontSize>11pt</FontSize>
                     </Style>
                   </TextRun>
@@ -652,7 +652,7 @@
                               <TextRun>
                                 <Value>EQUIPO</Value>
                                 <Style>
-                                  <FontFamily />
+                                  <FontFamily>Arial</FontFamily>
                                   <FontWeight>Bold</FontWeight>
                                 </Style>
                               </TextRun>
@@ -1402,7 +1402,7 @@
                                   <TextRun>
                                     <Value>SERIE</Value>
                                     <Style>
-                                      <FontFamily />
+                                      <FontFamily>Arial</FontFamily>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
@@ -1444,7 +1444,7 @@
                                   <TextRun>
                                     <Value>GARANTÍA</Value>
                                     <Style>
-                                      <FontFamily />
+                                      <FontFamily>Arial</FontFamily>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
@@ -1486,7 +1486,7 @@
                                   <TextRun>
                                     <Value>FECHA REGISTRO</Value>
                                     <Style>
-                                      <FontFamily />
+                                      <FontFamily>Arial</FontFamily>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
@@ -1528,7 +1528,7 @@
                                   <TextRun>
                                     <Value>OBSERVACIÓN</Value>
                                     <Style>
-                                      <FontFamily />
+                                      <FontFamily>Arial</FontFamily>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
@@ -2081,7 +2081,9 @@
                   <TextRuns>
                     <TextRun>
                       <Value>=First(Fields!username.Value, "order")</Value>
-                      <Style />
+                      <Style>
+                        <FontFamily />
+                      </Style>
                     </TextRun>
                   </TextRuns>
                   <Style />
@@ -2110,7 +2112,9 @@
                   <TextRuns>
                     <TextRun>
                       <Value>=Globals!ExecutionTime</Value>
-                      <Style />
+                      <Style>
+                        <FontFamily />
+                      </Style>
                     </TextRun>
                   </TextRuns>
                   <Style>
@@ -2122,7 +2126,7 @@
               <Top>0mm</Top>
               <Left>135.04347mm</Left>
               <Height>6.35mm</Height>
-              <Width>50.8mm</Width>
+              <Width>54.82153mm</Width>
               <ZIndex>1</ZIndex>
               <Style>
                 <Border>
