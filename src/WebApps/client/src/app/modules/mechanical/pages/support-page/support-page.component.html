@@ -168,6 +168,14 @@
 
             }
 
+            @if (valueStatus===statusTab.APROBADO) {
+            <button ngbDropdownItem title="Doc. Aprobado" class="btn-sm" (click)="getDocView(element.id)">
+              <fa-icon [icon]="'file'"></fa-icon>
+              Doc. Aprobado
+            </button>
+
+            }
+
 
           </div>
         </div>

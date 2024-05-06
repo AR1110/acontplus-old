@@ -1,7 +1,7 @@
 import { generateUuidv4 } from "@core/utils/generate-uuidv4";
-import { ConsolidacionBodega } from "@modules/inventory/shared/models/consolidacion-bodega.model";
-import { MedidaProducto } from "@modules/inventory/shared/models/measure.model";
-import { TarifaProducto } from "@modules/inventory/shared/models/tarifa.model";
+import { ConsolidacionBodega } from "@modules/inventory/models/consolidacion-bodega.model";
+import { MedidaProducto } from "@modules/inventory/models/measure.model";
+import { TarifaProducto } from "@modules/inventory/models/tarifa.model";
 
 export class FieldDefinitionDetailSale {
   rowguid: string = generateUuidv4()

@@ -1,7 +1,7 @@
 import { isDateValid } from "@core/utils/format-date-moment"
 
-import { ConsolidacionBodega } from "../shared/models/consolidacion-bodega.model"
-import { MedidaProducto } from "../shared/models/measure.model"
+import { ConsolidacionBodega } from "../models/consolidacion-bodega.model"
+import { MedidaProducto } from "../models/measure.model"
 
 type Row = {
   productId: number

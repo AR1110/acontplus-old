@@ -3,16 +3,16 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { formatDate } from '@core/utils/date.util';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { isValidField } from '@core/utils/utils';
+import { MedidaProducto } from '@modules/inventory/models/measure.model';
+import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
 
 import { MECHANICAL_PATHS } from '../enums/mechanical.enum';
-import { mergeMeasureUtil } from '@modules/inventory/utils/merge-measure.util';
-import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { SupportDetail } from '../models/support.model';
-import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { roundNumber } from '@core/utils/round-number.utils';
-import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
-import { isValidField } from '@core/utils/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -247,6 +247,23 @@ export class SupportService {
           taxPercents: impuestos
         }
       }))
+  }
+
+  getDocView(id:number){
+    let json = JSON.stringify({
+      tipo: 7,
+      id
+    })
+    return this.#http.get(`${this.#url}?json=${json}`).pipe(
+      map((response:any)=>{
+        let result = {} as any;
+        if(response!==null && typeof response==='object'){
+          let mainData = response.comprobante[0];
+          result = mainData;
+        }
+        return result;
+      })
+    )
   }
 
   searchCustomerVehicle<T extends { textSearch: string }>(obj: T) {

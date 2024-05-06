@@ -1,7 +1,7 @@
 
 import { inject, Injectable } from "@angular/core";
 import { ModalService } from "@core/services/modal.service";
-import { ComprobanteIngresoLoteModalComponent } from "@modules/accounting/pages/cuenta-por-cobrar-page/components/comprobante-ingreso-lote-modal/comprobante-ingreso-lote-modal.component";
+import { ComprobanteIngresoLoteModalComponent } from "@modules/accounting/components/comprobante-ingreso-lote-modal/comprobante-ingreso-lote-modal.component";
 
 @Injectable({
   providedIn: 'root'

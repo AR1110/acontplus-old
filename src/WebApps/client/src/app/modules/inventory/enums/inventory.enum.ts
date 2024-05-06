@@ -10,3 +10,6 @@ export const enum INVENTORY_PATHS {
 }
 
 
+export const enum INVENTORY_CODE_REPORT {
+  RK='RK'
+}
