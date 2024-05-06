@@ -1,18 +1,17 @@
-import { AppModule } from 'src/app/app.module';
 import { Component, OnInit, inject } from '@angular/core';
 import { Device } from '@modules/technical-support/models/device.model';
 import { DeviceModalComponent } from '../device-modal/device-modal.component';
 import { DeviceService } from '@modules/technical-support/services/device.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
-import { isApiResponse } from '@core/models/api-response';
 import { ModalService } from '@core/services/modal.service';
 import Swal from 'sweetalert2';
 import { ToasterService } from '@core/services/toaster.service';
+import { isApiResponse } from '@core/models/api-response';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-device-list',
   standalone: true,
-  imports: [AppModule],
+  imports: [FontAwesomeModule],
   templateUrl: './device-list.component.html',
   styles: ``,
 })
@@ -32,7 +31,7 @@ export class DeviceListComponent implements OnInit {
     });
     modalRef.componentInstance.data = item || {};
     modalRef.result.then((result) => {
-      if (result.code == '1') {
+      if (result !== null && typeof result === 'object') {
         this.get();
       }
     });
@@ -56,80 +55,44 @@ export class DeviceListComponent implements OnInit {
   }
 
   get() {
-    showLoader();
-    this.deviceService.get({ tipo: 2 }).subscribe({
-      next: (response) => {
-        if (isApiResponse(response) && response.code == '1') {
-          let tempArray = JSON.parse(response.payload as string);
-          tempArray.devices.forEach((device: any) => {
-            device.specs = JSON.parse(device.specs);
-          });
-          this.devices = tempArray.devices;
-        }
-      },
-      error(error) {
-        console.error(error);
-        hideLoader();
-      },
-      complete() {
-        hideLoader();
-      },
+    this.deviceService.get({ tipo: 2 }).subscribe((response) => {
+      if (isApiResponse(response) && response.code == '1') {
+        let tempArray = JSON.parse(response.payload as string);
+        tempArray.devices.forEach((device: any) => {
+          device.specs = JSON.parse(device.specs);
+        });
+        this.devices = tempArray.devices;
+      }
     });
   }
 
   delete(item: Device) {
-    showLoader();
-    this.deviceService.delete(item.id).subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          if (response.code == '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-            return;
-          }
-
-          this.tS.toastr({
-            type: 'success',
-            message: response.message,
-          });
+    this.deviceService.delete(item.id).subscribe((response) => {
+      if (isApiResponse(response)) {
+        this.tS.toastr({
+          type: response.code == '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+        if (response.code == '1') {
           this.get();
         }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(error) {
-        console.log(error);
-        hideLoader();
-      },
+      }
     });
   }
 
   updateStatus(item: any) {
-    showLoader();
     item.enabled = item.enabled ? 0 : 1;
-    this.deviceService.put(item.id, item).subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          if (response.code == '0') {
-            this.tS.toastr({
-              type: 'warning',
-              message: response.message,
-            });
-            return;
-          }
+    this.deviceService.put(item.id, item).subscribe((response) => {
+      if (isApiResponse(response)) {
+        if (response.code == '0') {
+          this.tS.toastr({
+            type: 'warning',
+            message: response.message,
+          });
+        } else {
           this.get();
         }
-      },
-      complete() {
-        hideLoader();
-      },
-      error(error) {
-        console.log(error);
-        hideLoader();
-      },
+      }
     });
   }
 

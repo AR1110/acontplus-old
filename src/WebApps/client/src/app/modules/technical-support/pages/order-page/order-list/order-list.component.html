@@ -81,7 +81,7 @@
             >
               <fa-icon [icon]="'cogs'"></fa-icon> Mantenimiento
             </button>
-            } @if (orderStatusCode==2) {
+            } @if (orderStatusCode==2 || orderStatusCode == 3) {
             <button ngbDropdownItem (click)="onEdit(element)" title="Editar">
               <fa-icon [icon]="'edit'"></fa-icon> Editar
             </button>
