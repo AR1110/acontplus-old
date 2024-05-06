@@ -149,6 +149,7 @@ BEGIN
                    ,(
                     SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock st WITH (NOLOCK) WHERE st.idArticulo = md.ArticuloId AND st.idBodega = md.BodegaId FOR JSON PATH
                     ) as consolidacion
+                   ,md.Obs
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega         bo WITH (NOLOCK) ON bo.idBodega         = md.BodegaId
             INNER JOIN dbo.Articulo       ar WITH (NOLOCK) ON ar.idArticulo       = md.ArticuloId
