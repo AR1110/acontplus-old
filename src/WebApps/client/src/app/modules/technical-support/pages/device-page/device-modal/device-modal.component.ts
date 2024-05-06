@@ -175,8 +175,9 @@ export class DeviceModalComponent implements OnInit {
         if (isApiResponse(response) && response.code == '1') {
           this.brands = JSON.parse(response.payload as string);
           if (this.brands.length > 0) {
-            this.deviceForm.get('brandId')?.setValue(this.brands[0].id);
             this.unseletedBrand = false;
+            // this.deviceForm.get('brandId')?.setValue(this.brands[0].id);
+            // this.onModeloGet(this.brands[0].id);
           }
         }
       },
@@ -206,7 +207,7 @@ export class DeviceModalComponent implements OnInit {
         if (isApiResponse(response) && response.code == '1') {
           this.modelos = JSON.parse(response.payload as string);
           if (this.modelos.length > 0) {
-            this.deviceForm.get('modeloId')?.setValue(this.modelos[0].id);
+            // this.deviceForm.get('modeloId')?.setValue(this.modelos[0].id);
           }
         }
       },
@@ -225,6 +226,7 @@ export class DeviceModalComponent implements OnInit {
       this.modalIcon = 'edit';
       this.modalTitle = 'Editar Equipo';
       this.isUpdate = true;
+      this.unselectedCategory = false;
       this.onBrandGet(this.data.categoryId);
       this.onModeloGet(this.data.brandId);
       this.setDataSpecs(this.data);
@@ -263,8 +265,6 @@ export class DeviceModalComponent implements OnInit {
         if (isApiResponse(response)) {
           const tempArray = JSON.parse(response.payload as string);
           this.categories = tempArray.categorias;
-          this.brands = tempArray.brands;
-          this.modelos = tempArray.modelos;
         }
       },
       complete() {

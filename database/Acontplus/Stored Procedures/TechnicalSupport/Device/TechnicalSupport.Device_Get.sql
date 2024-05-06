@@ -79,6 +79,8 @@ BEGIN
                 LEFT JOIN TechnicalSupport.DeviceSpecs    ds WITH (NOLOCK) ON d.id = ds.DeviceId
             WHERE d.Deleted IS NULL
                 AND c.CompanyId = @companyId
+            ORDER BY
+                d.Id DESC
             RETURN
         END
      IF (@tipo = 3)

@@ -4,25 +4,42 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
-import { GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import {
+  GroupedEstab,
+  GroupedEstabBodega,
+  GroupedEstabPuntoEmision,
+} from '@core/models/estab.model';
 import { ToasterService } from '@core/services/toaster.service';
-import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
+import {
+  ajustarFechaEmisionModificada,
+  dateIsAfterCurrentDate,
+} from '@core/utils/date.util';
 import { isDateValid } from '@core/utils/format-date-moment';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { icon } from '@fortawesome/fontawesome-svg-core';
-import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import {
+  faEdit,
+  faListAlt,
+  faTrashAlt,
+} from '@fortawesome/free-regular-svg-icons';
 import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
 import { ProductService } from '@modules/inventory/services/product.service';
 import { ProductSearchOverlayComponent } from '@modules/inventory/shared/components/product/product-search-overlay/product-search-overlay.component';
 import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
 import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
-import { getCantidadStock, mergeProductStock } from '@modules/inventory/utils/product-stock.util';
+import {
+  getCantidadStock,
+  mergeProductStock,
+} from '@modules/inventory/utils/product-stock.util';
 import { DecimalSale } from '@modules/sale/shared/models/decimal-sale.model';
 import { orderMaintenanceAdapter } from '@modules/technical-support/adapters/order-maintenance.adapter';
-import { ColOrderMaintenance, OrderMaintenance } from '@modules/technical-support/models/order-maintenance.model';
+import {
+  ColOrderMaintenance,
+  OrderMaintenance,
+} from '@modules/technical-support/models/order-maintenance.model';
 import { OrderMaintenanceService } from '@modules/technical-support/services/order-maintenance.service';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -111,7 +128,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     orderDetailId: null,
     customerCompanyId: 0,
     obs: '',
-    deviceWarranty: ''
+    deviceWarranty: '',
   };
 
   cloneOrder = {
@@ -231,7 +248,6 @@ export class OrderMaintenanceModalComponent implements OnInit {
         //let cellEl = cell.getElement();
         let rowDataMain = cell.getRow().getData();
 
-
         //create edit button
         // let editBtn = document.createElement('button');
         // editBtn.type = 'button';
@@ -249,7 +265,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         delBtn.classList.add('btn', 'btn-danger', 'btn-xs');
         delBtn.addEventListener('click', () => {
           let rowData = cell.getRow().getData();
-          console.log(rowData)
+          console.log(rowData);
           this.askToDelete(rowData);
         });
 
@@ -945,225 +961,216 @@ export class OrderMaintenanceModalComponent implements OnInit {
   setProductNoInventoryDetailCustom(response: any) {}
 
   onProductSelected($event: any) {
-    let { data } = $event;
-    if (data.idArticulo > 0) {
-      this.productSvc.getForSale(data.idArticulo).subscribe({
-        next: (response) => {
-          const { product, medidas, consolidacionesFecha } = response;
+    const { product, medidas, consolidacionesFecha } = $event;
 
-          let taxPercents = this.taxPercents;
-          let row = this.getDataRowEmpty();
-          let dataTaxPercent = taxPercents.find(
-            (d) => d.codigo === product.codigoPorcentaje
-          );
-          let dataOrderDetail = this.orderDetails.find(
-            (od) => od.orderDetailId === this.order.orderDetailId
-          );
+    let taxPercents = this.taxPercents;
+    let row = this.getDataRowEmpty();
+    let dataTaxPercent = taxPercents.find(
+      (d) => d.codigo === product.codigoPorcentaje
+    );
+    let dataOrderDetail = this.orderDetails.find(
+      (od) => od.orderDetailId === this.order.orderDetailId
+    );
 
-          let findDataProduct = this.orderMaintenances.find(
-            (item) =>
-              item.llevaInventario && item.productId === product.idArticulo
-          );
+    let findDataProduct = this.orderMaintenances.find(
+      (item) => item.llevaInventario && item.productId === product.idArticulo
+    );
 
-          row.productId = product.idArticulo;
-          row.codigo = product.codigoArticulo;
-          row.descripcion = product.descripcion;
-          row.bodegaId = this.order.bodegaId;
-          row.llevaInventario = product.llevaInventario;
-          row.consolidacionesBodega = consolidacionesFecha;
+    row.productId = product.idArticulo;
+    row.codigo = product.codigoArticulo;
+    row.descripcion = product.descripcion;
+    row.bodegaId = this.order.bodegaId;
+    row.llevaInventario = product.llevaInventario;
+    row.consolidacionesBodega = consolidacionesFecha;
 
-          if (dataTaxPercent) {
-            row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
-            row.taxId = dataTaxPercent.idImpuesto;
-          }
+    if (dataTaxPercent) {
+      row.taxPercentId = dataTaxPercent.idTarifaImpuesto;
+      row.taxId = dataTaxPercent.idImpuesto;
+    }
 
-          let dataMedida = medidas.find((m) => m.defaultMedida);
+    let dataMedida = medidas.find(
+      (m: { defaultMedida: any }) => m.defaultMedida
+    );
 
-          if (dataMedida) {
-            row.medidas = medidas;
-            row.quantity = 1;
-            row.tarifas = dataMedida.tarifas;
-            row.medidaId = dataMedida.idMedida;
-            row.cost = dataMedida.precioCosto;
-            row.costoFraccionado = dataMedida.precioCostoFraccionado;
-            row.conversion = dataMedida.conversion;
-            row.deviceName = dataOrderDetail.deviceName;
-            row.orderDetailId = dataOrderDetail.orderDetailId;
+    if (dataMedida) {
+      row.medidas = medidas;
+      row.quantity = 1;
+      row.tarifas = dataMedida.tarifas;
+      row.medidaId = dataMedida.idMedida;
+      row.cost = dataMedida.precioCosto;
+      row.costoFraccionado = dataMedida.precioCostoFraccionado;
+      row.conversion = dataMedida.conversion;
+      row.deviceName = dataOrderDetail.deviceName;
+      row.orderDetailId = dataOrderDetail.orderDetailId;
 
-            let dataTarifa = row.tarifas.find((t) => t.defaultTarifa);
+      let dataTarifa = row.tarifas.find((t) => t.defaultTarifa);
 
-            row.feeId = dataTarifa?.idTarifa ?? 0;
-            row.price = dataTarifa?.precioVenta ?? 0;
-            row.precioConIva = dataTarifa?.precioConIva ?? 0;
-          }
+      row.feeId = dataTarifa?.idTarifa ?? 0;
+      row.price = dataTarifa?.precioVenta ?? 0;
+      row.precioConIva = dataTarifa?.precioConIva ?? 0;
+    }
 
-          //cuando es detalle personalizado el producto tiene que ser de tipo servicio
-          if (this.detailCustom && product.llevaInventario) {
-            this.tS.toastr({
-              type: 'warning',
-              message:
-                'Cuando la opción es Detalle Personlizado el producto tiene que ser de tipo servicio',
-            });
-            return;
-          }
+    //cuando es detalle personalizado el producto tiene que ser de tipo servicio
+    if (this.detailCustom && product.llevaInventario) {
+      this.tS.toastr({
+        type: 'warning',
+        message:
+          'Cuando la opción es Detalle Personlizado el producto tiene que ser de tipo servicio',
+      });
+      return;
+    }
 
-          //cuando el detalle es personalizado
-          if (this.detailCustom) {
-            this.orderMaintenances = [];
+    //cuando el detalle es personalizado
+    if (this.detailCustom) {
+      this.orderMaintenances = [];
 
-            row.price = pricingCalculateUtil.calculatePriceSale(
-              this.importeTotal,
-              dataTaxPercent?.porcentaje ?? 0
-            );
-            row.precioConIva = this.importeTotal;
-            row.taxValue = this.importeTotal - row.price;
+      row.price = pricingCalculateUtil.calculatePriceSale(
+        this.importeTotal,
+        dataTaxPercent?.porcentaje ?? 0
+      );
+      row.precioConIva = this.importeTotal;
+      row.taxValue = this.importeTotal - row.price;
 
-            this.orderMaintenances.push(row);
-            this.setCalculoTotales('quantity', row, undefined);
-            return;
-          }
+      this.orderMaintenances.push(row);
+      this.setCalculoTotales('quantity', row, undefined);
+      return;
+    }
 
-          //Producto de tipo Servicio
-          if (!product.llevaInventario) {
-            this.orderMaintenances.push(row);
-            this.setCalculoTotales('quantity', row, undefined);
-            this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
-            return;
-          }
+    //Producto de tipo Servicio
+    if (!product.llevaInventario) {
+      this.orderMaintenances.push(row);
+      this.setCalculoTotales('quantity', row, undefined);
+      this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
+      return;
+    }
 
-          //Producto que lleva inventario
-          if (product.llevaInventario) {
-            let oldValue = 1;
-            let productsDuplicated = structuredClone(
-              this.orderMaintenances
-            ).filter(
-              (item) =>
-                item.llevaInventario && item.productId === product.idArticulo
-            );
+    //Producto que lleva inventario
+    if (product.llevaInventario) {
+      let oldValue = 1;
+      let productsDuplicated = structuredClone(this.orderMaintenances).filter(
+        (item) => item.llevaInventario && item.productId === product.idArticulo
+      );
 
-            productsDuplicated.push({ ...row });
+      productsDuplicated.push({ ...row });
 
-            // let cloneOrderMaintenances = structuredClone(this.orderMaintenances);
-            // let findDataProduct = this.orderMaintenances.find(item => item.llevaInventario && item.productId === product.idArticulo);
+      // let cloneOrderMaintenances = structuredClone(this.orderMaintenances);
+      // let findDataProduct = this.orderMaintenances.find(item => item.llevaInventario && item.productId === product.idArticulo);
 
-            if (findDataProduct) {
-              oldValue = findDataProduct.quantity;
-              row = findDataProduct;
-              row.quantity += 1;
-            } else {
-              this.orderMaintenances.push(row);
-            }
+      if (findDataProduct) {
+        oldValue = findDataProduct.quantity;
+        row = findDataProduct;
+        row.quantity += 1;
+      } else {
+        this.orderMaintenances.push(row);
+      }
 
-            console.log(productsDuplicated);
-            let dataProductMerge = mergeProductStock({
-              rows: structuredClone(productsDuplicated),
-              row: structuredClone(row),
-            });
+      console.log(productsDuplicated);
+      let dataProductMerge = mergeProductStock({
+        rows: structuredClone(productsDuplicated),
+        row: structuredClone(row),
+      });
 
-            console.log(dataProductMerge);
+      console.log(dataProductMerge);
 
-            let cantidadStock = getCantidadStock({
-              fechaEmision: this.order.fechaEmision,
-              bodegaId: this.order.bodegaId,
-              cantidadStock: dataProductMerge.cantidadStock,
-              consolidacionesFecha: row.consolidacionesBodega,
-            });
+      let cantidadStock = getCantidadStock({
+        fechaEmision: this.order.fechaEmision,
+        bodegaId: this.order.bodegaId,
+        cantidadStock: dataProductMerge.cantidadStock,
+        consolidacionesFecha: row.consolidacionesBodega,
+      });
 
-            showLoader();
-            this.productSvc
-              .checkNotificationStock({
-                idArticulo: row.productId,
-                idBodega: this.order.bodegaId,
-                idMedida: row.medidaId,
-                cantidad: cantidadStock,
-              })
-              .subscribe({
-                next: async (response) => {
-                  hideLoader();
+      showLoader();
+      this.productSvc
+        .checkNotificationStock({
+          idArticulo: row.productId,
+          idBodega: this.order.bodegaId,
+          idMedida: row.medidaId,
+          cantidad: cantidadStock,
+        })
+        .subscribe({
+          next: async (response) => {
+            hideLoader();
 
-                  if (isApiResponse(response)) {
-                    let { code, message, titleSms } = response;
+            if (isApiResponse(response)) {
+              let { code, message, titleSms } = response;
 
-                    if (code === '1') {
-                      console.log(row);
-                      this.setCalculoTotales('quantity', row, oldValue);
-                      return;
-                    }
+              if (code === '1') {
+                console.log(row);
+                this.setCalculoTotales('quantity', row, oldValue);
+                return;
+              }
 
-                    let { isConfirmed } = await Swal.fire({
-                      title: `<small>${titleSms}</small>`,
-                      icon: 'warning',
-                      html: `<small>${message}</small>`,
-                      allowOutsideClick: false,
-                      allowEscapeKey: false,
-                    });
-
-                    if (isConfirmed) {
-                      if (code === '0') {
-                        row.quantity = oldValue;
-                        this.setCalculoTotales('quantity', row, oldValue);
-                      }
-                      if (code === '2') {
-                        this.setCalculoTotales('quantity', row, undefined);
-                        this.tabulatorComponent.refTabulator.setGroupBy([
-                          'orderDetailId',
-                        ]);
-                      }
-                    }
-                  }
-                },
-                error(error) {
-                  hideLoader();
-                  console.log(error);
-                },
+              let { isConfirmed } = await Swal.fire({
+                title: `<small>${titleSms}</small>`,
+                icon: 'warning',
+                html: `<small>${message}</small>`,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
               });
 
-            // let oldValue = 0;
-            // if (findDataProduct) {
-            //   row.quantity = row.quantity + 1;
-            // } else {
-            //   row = findDataProduct ?? row;
-            //   oldValue = row.quantity;
-            //   row.quantity = row.quantity + 1;
-            //   let dataMedida = medidas.find(m => m.idMedida === row.medidaId);
+              if (isConfirmed) {
+                if (code === '0') {
+                  row.quantity = oldValue;
+                  this.setCalculoTotales('quantity', row, oldValue);
+                }
+                if (code === '2') {
+                  this.setCalculoTotales('quantity', row, undefined);
+                  this.tabulatorComponent.refTabulator.setGroupBy([
+                    'orderDetailId',
+                  ]);
+                }
+              }
+            }
+          },
+          error(error) {
+            hideLoader();
+            console.log(error);
+          },
+        });
 
-            //   if (dataMedida) {
-            //     row.medidas = medidas;
-            //     row.tarifas = dataMedida.tarifas;
-            //     row.cost = dataMedida.precioCosto;
-            //     row.costoFraccionado = dataMedida.precioCostoFraccionado;
-            //     row.conversion = dataMedida.conversion;
-            //   }
-            // }
+      // let oldValue = 0;
+      // if (findDataProduct) {
+      //   row.quantity = row.quantity + 1;
+      // } else {
+      //   row = findDataProduct ?? row;
+      //   oldValue = row.quantity;
+      //   row.quantity = row.quantity + 1;
+      //   let dataMedida = medidas.find(m => m.idMedida === row.medidaId);
 
-            // let cloneRows = this.orderMaintenances.slice().push()
+      //   if (dataMedida) {
+      //     row.medidas = medidas;
+      //     row.tarifas = dataMedida.tarifas;
+      //     row.cost = dataMedida.precioCosto;
+      //     row.costoFraccionado = dataMedida.precioCostoFraccionado;
+      //     row.conversion = dataMedida.conversion;
+      //   }
+      // }
 
-            // this.checkNotificationStock(row, oldValue);
-          }
+      // let cloneRows = this.orderMaintenances.slice().push()
 
-          // if (findIndexById === -1) {
-
-          // } else {
-          //   index = findIndexById;
-          //   row = this.orderMaintenances[index];
-          //   row.quantity = row.quantity + 1;
-
-          //   let dataMedida = medidas.find(m => m.idMedida === row.medidaId);
-
-          //   if (dataMedida) {
-          //     row.medidas = medidas;
-          //     row.tarifas = dataMedida.tarifas;
-          //     row.cost = dataMedida.precioCosto;
-          //     row.costoFraccionado = dataMedida.precioCostoFraccionado;
-          //     row.conversion = dataMedida.conversion;
-          //   }
-          // }
-
-          // this.setCalculoTotales("quantity", row, undefined)
-          this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
-        },
-      });
+      // this.checkNotificationStock(row, oldValue);
     }
+
+    // if (findIndexById === -1) {
+
+    // } else {
+    //   index = findIndexById;
+    //   row = this.orderMaintenances[index];
+    //   row.quantity = row.quantity + 1;
+
+    //   let dataMedida = medidas.find(m => m.idMedida === row.medidaId);
+
+    //   if (dataMedida) {
+    //     row.medidas = medidas;
+    //     row.tarifas = dataMedida.tarifas;
+    //     row.cost = dataMedida.precioCosto;
+    //     row.costoFraccionado = dataMedida.precioCostoFraccionado;
+    //     row.conversion = dataMedida.conversion;
+    //   }
+    // }
+
+    // this.setCalculoTotales("quantity", row, undefined)
+    this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
   }
 
   /**
