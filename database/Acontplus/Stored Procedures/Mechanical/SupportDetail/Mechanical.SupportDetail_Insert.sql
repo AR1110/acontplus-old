@@ -48,6 +48,7 @@ BEGIN
        ,Inventory BIT NOT NULL
        ,[Enabled] BIT NOT NULL
        ,Deleted BIT NULL
+       ,Obs VARCHAR(300) NULL
     )
 
     BEGIN TRY 
@@ -75,8 +76,8 @@ BEGIN
         )
 
         INSERT INTO @tbSupportDetail 
-              (orderIndex,Id,ArticuloId,TarifaId,BodegaId,MedidaId,TaxId,TaxPercentId,[Description],Quantity,Price,Cost,TaxValue,Discount,Total,Inventory,[Enabled],Deleted)
-        SELECT orderIndex,Id,ArticuloId,TarifaId,BodegaId,MedidaId,TaxId,TaxPercentId,[Description],Quantity,Price,Cost,TaxValue,Discount,Total,Inventory,[Enabled],Deleted
+              (orderIndex,Id,ArticuloId,TarifaId,BodegaId,MedidaId,TaxId,TaxPercentId,[Description],Quantity,Price,Cost,TaxValue,Discount,Total,Inventory,Obs,[Enabled],Deleted)
+        SELECT orderIndex,Id,ArticuloId,TarifaId,BodegaId,MedidaId,TaxId,TaxPercentId,[Description],Quantity,Price,Cost,TaxValue,Discount,Total,Inventory,Obs,[Enabled],Deleted
         FROM OPENJSON(@supportDetails) WITH 
         (  
              orderIndex     INT
@@ -97,6 +98,7 @@ BEGIN
             ,inventory      BIT
             ,[enabled]      BIT 
             ,deleted        BIT
+            ,obs            VARCHAR(300)
         )
 
         --> VARIABLES
@@ -142,12 +144,13 @@ BEGIN
                   ,md.Deleted        = td.Deleted
                   ,md.[Enabled]      = td.[Enabled]
                   ,md.UpdatedAt      = GETDATE()
+                  ,md.Obs            = td.Obs
             FROM Mechanical.SupportDetail md 
             INNER JOIN @tbSupportDetail   td ON td.Id = md.Id
 
             INSERT INTO [Mechanical].[SupportDetail]
-                   (SupportId,ArticuloId,TarifaId,BodegaId,MedidaId,TaxId,TaxPercentId,[Description],Quantity,Price,Cost,Discount,TaxValue,Total)
-            SELECT @supportId,ArticuloId,TarifaId,BodegaId,MedidaId,TaxId,TaxPercentId,[Description],Quantity,Price,Cost,Discount,TaxValue,Total 
+                   (SupportId,ArticuloId,TarifaId,BodegaId,MedidaId,TaxId,TaxPercentId,[Description],Quantity,Price,Cost,Discount,TaxValue,Total,Obs)
+            SELECT @supportId,ArticuloId,TarifaId,BodegaId,MedidaId,TaxId,TaxPercentId,[Description],Quantity,Price,Cost,Discount,TaxValue,Total,Obs 
             FROM @tbSupportDetail 
             WHERE Id = 0 
             ORDER BY orderIndex ASC
