@@ -9,7 +9,7 @@ GO
 -- Author:		Ivan Paz
 -- Create date: 2023-10-18
 -- Description:	SP for get orders
--- TechnicalSupport.Order_Get 401, '{"tipo": 5, "id": 20}', ''
+-- TechnicalSupport.Order_Get 401, '{"tipo": 5, "id": 28}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE TechnicalSupport.Order_Get @userRoleId INT
 ,@json VARCHAR(MAX)
@@ -355,7 +355,7 @@ BEGIN
             ,   td.descripcion
             ,   td.codigo
             ,   CONVERT(NVARCHAR, FORMAT(o.FechaEmision, 'yyyy/MM/dd')) AS FechaEmision
-            ,   o.Serie
+            ,   it.serieComprobante                                     AS Serie
             ,   e.nombreComercial                                       AS Establecimiento
             ,   c.nombreComercial                                       AS Cliente
             ,   c.numeroIdentificacion
@@ -375,6 +375,7 @@ BEGIN
         INNER JOIN Cliente c                        WITH (NOLOCK) ON c.idCliente            = o.CustomerCompanyId
         INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento     = tsod.TipoDocumentoId
         INNER JOIN Factura f                        WITH (NOLOCK) ON f.idFactura            = tsod.DocumentoId
+        LEFT JOIN  Inventario.Transaccion it        WITH (NOLOCK) ON it.idDocumento         = tsod.DocumentoId
         WHERE tsod.OrderId = @id
 
         UNION
@@ -384,7 +385,7 @@ BEGIN
             ,   td.descripcion
             ,   td.codigo
             ,   CONVERT(NVARCHAR, FORMAT(o.FechaEmision, 'yyyy/MM/dd')) AS FechaEmision
-            ,   o.Serie
+            ,   it.serieComprobante                                     AS Serie
             ,   e.nombreComercial                                       AS Establecimiento
             ,   c.nombreComercial                                       AS Cliente
             ,   c.numeroIdentificacion
@@ -404,6 +405,7 @@ BEGIN
         INNER JOIN Cliente c                        WITH (NOLOCK) ON c.idCliente            = o.CustomerCompanyId
         INNER JOIN TipoDocumento td                 WITH (NOLOCK) ON td.idTipoDocumento     = tsod.TipoDocumentoId
         INNER JOIN NotaEntrega ne                   WITH (NOLOCK) ON ne.idNotaEntrega       = tsod.DocumentoId
+        LEFT JOIN  Inventario.Transaccion it        WITH (NOLOCK) ON it.idDocumento         = tsod.DocumentoId
         WHERE tsod.Orderid = @id
         
         ---- DETALLES
