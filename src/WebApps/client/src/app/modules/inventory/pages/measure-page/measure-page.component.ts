@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MeasureService } from '@modules/inventory/services/measure.service';
-import { MeasureAddEditDirective } from '@modules/inventory/shared/directives/measure-add-edit.directive'; 
+import { MeasureAddEditDirective } from '@modules/inventory/directives/measure-add-edit.directive';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { Pagination } from '@shared/models/pagination.model';
 

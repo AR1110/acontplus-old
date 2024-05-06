@@ -10,7 +10,7 @@ import { isValidField } from '@core/utils/utils';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupportService } from '@modules/mechanical/services/support.service';
 import { VehicleService } from '@modules/mechanical/services/vehicle.service';
-import { VehicleAddEditDirective } from '@modules/mechanical/shared/directives/vehicle-add-edit.directive';
+import { VehicleAddEditDirective } from '@modules/mechanical/directives/vehicle-add-edit.directive';
 import { NgbActiveModal, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { catchError, distinctUntilChanged, Observable, of, OperatorFunction, switchMap, tap } from 'rxjs';

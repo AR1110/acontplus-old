@@ -1,16 +1,20 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, Input } from '@angular/core'
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { TAX_RATE_CODE } from '@core/constants/global.constants';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SubCategoryModalDirective } from '@inventory/directives/sub-category.directive'
+import { GroupedSubFamilia } from '@modules/inventory/models/sub-category.model';
 import { TipoIvaSelectHtmlOnly } from '@modules/inventory/models/tipo-iva.model';
 import { ProductService } from '@modules/inventory/services/product.service';
-import { MeasureAddEditDirective } from '@modules/inventory/shared/directives/measure-add-edit.directive';
-import { TarifaSelectHtmlOnly } from '@modules/inventory/shared/models/tarifa.model';
+import { MeasureAddEditDirective } from '@modules/inventory/directives/measure-add-edit.directive';
+import { TarifaSelectHtmlOnly } from '@modules/inventory/models/tarifa.model';
 import { NgbActiveModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { Observable } from 'rxjs';
 
 interface ProductTarifa {
   tipoIva: string
@@ -25,12 +29,15 @@ interface ProductTarifa {
   standalone: true,
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     NgbNavModule,
     FontAwesomeModule,
+    MatAutocompleteModule,
     SubCategoryModalDirective,
     MeasureAddEditDirective,
     TabulatorComponent,
-    ToUpperCaseDirective
+    ToUpperCaseDirective,
+    AsyncPipe
   ],
   templateUrl: './product-add-edit-modal.component.html'
 })
@@ -42,6 +49,8 @@ export class ProductAddEditModalComponent {
   private activeModal = inject(NgbActiveModal);
 
   private productSvc = inject(ProductService)
+
+  private _formBuilder = inject(FormBuilder)
   activeTab = 1;
 
   titleModal = 'Nuevo Producto';
@@ -66,6 +75,7 @@ export class ProductAddEditModalComponent {
   data ={
     descripcion: '',
     idSubFamilia: 0,
+    subCategoriaName: null,
     codigo: '',
     codigoBarra: '',
     codigoAuxiliar: '',
@@ -78,6 +88,12 @@ export class ProductAddEditModalComponent {
     datosAdicionales: false,
     fraccionable: false
   }
+
+  subCategoriesGroupOptions!: Observable<any[]>;
+  subCategoryForm = this._formBuilder.group({
+    subCategoryGroup: '',
+  });
+
   columnNames =  [
     {
       title: "Tarifa",
@@ -162,6 +178,8 @@ export class ProductAddEditModalComponent {
           tiposIce,
           tiposIva,
         } = response;
+        console.log(response)
+   //     this.subCategoriesGroupOptions = response.subCategoriesGroupOptions;
         this.tiposArticulo = tiposArticulo;
         this.medidas = medidas;
         this.tiposIva = tiposIva;
@@ -171,6 +189,11 @@ export class ProductAddEditModalComponent {
       },
     })
   }
+
+  onKeyupSubCategory(value:string){
+
+  }
+
 
   drawProductTarifa(){
     let dataTarifaImpuesto = this.tiposIva.find(ti=>ti.codigo===TAX_RATE_CODE.FIFTEEN_PERCENT)

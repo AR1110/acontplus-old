@@ -1,6 +1,6 @@
-import { Directive, HostListener, Input } from '@angular/core';
-import { ModalService } from '@core/services/modal.service';
-import { MeasureAddEditModalComponent } from '../components/measure-add-edit-modal/measure-add-edit-modal.component';
+import { Directive, HostListener, Input } from "@angular/core";
+import { ModalService } from "@core/services/modal.service";
+import { MeasureAddEditModalComponent } from "@modules/inventory/components/measure-add-edit-modal/measure-add-edit-modal.component";
 
 @Directive({
   selector: '[appMeasureAddEdit]',

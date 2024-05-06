@@ -1,6 +1,6 @@
 <app-breadcrumb>
   <!-- appActionAdd -->
-  <button type="button" class="btn btn-info" appVehicleAddEdit>
+  <button type="button" class="btn btn-info" appVehicleAddEdit (resultModalHandler)="resultModal($event)">
     <fa-icon [icon]="'add'"></fa-icon> Nuevo
   </button>
 </app-breadcrumb>

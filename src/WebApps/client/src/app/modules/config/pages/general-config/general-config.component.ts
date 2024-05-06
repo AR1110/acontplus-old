@@ -7,7 +7,7 @@ import { hideLoader, showLoader } from "@core/utils/loader";
 import { FormsModule } from "@angular/forms";
 import { ToasterService } from "@core/services/toaster.service";
 import { isApiResponse } from "@core/models/api-response";
-import { ProductSearchComponent } from '@inventory/shared/components/product/product-search/product-search.component';
+import { ProductSearchComponent } from '@modules/inventory/components/product/product-search/product-search.component';
 import { CompanyCustomerSearchComponent } from "@modules/customer/company-customer/components/company-customer-search/company-customer-search.component";
 import { isValidField } from "@core/utils/utils";
 

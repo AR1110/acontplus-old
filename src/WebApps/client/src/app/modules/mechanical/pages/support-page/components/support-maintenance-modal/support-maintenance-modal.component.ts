@@ -9,11 +9,11 @@ import { icon } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faListAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { ProductSale } from '@modules/inventory/models/product.model';
 import { ProductService } from '@modules/inventory/services/product.service';
-import { ProductSearchOverlayComponent } from '@modules/inventory/shared/components/product/product-search-overlay/product-search-overlay.component';
-import { ConsolidacionBodega } from '@modules/inventory/shared/models/consolidacion-bodega.model';
-import { MedidaProducto } from '@modules/inventory/shared/models/measure.model';
-import { Tarifa } from '@modules/inventory/shared/models/tarifa.model';
-import { OpenModalProductService } from '@modules/inventory/shared/services/open-modal-product.service';
+import { ProductSearchOverlayComponent } from '@modules/inventory/components/product/product-search-overlay/product-search-overlay.component';
+import { ConsolidacionBodega } from '@modules/inventory/models/consolidacion-bodega.model';
+import { MedidaProducto } from '@modules/inventory/models/measure.model';
+import { Tarifa } from '@modules/inventory/models/tarifa.model';
+import { OpenModalProductService } from '@modules/inventory/services/open-modal-product.service';
 import { getCantidadStock, mergeProductStock } from '@modules/inventory/utils/product-stock.util';
 import { supportMaintenanceAdapter } from '@modules/mechanical/adapters/support-maintenance.adapter';
 import { ColSupportMaintenanceDetail, SupportMaintenanceDetail } from '@modules/mechanical/models/support-maintenance.model';
@@ -274,8 +274,8 @@ export class SupportMaintenanceModalComponent {
         });
 
         let buttonHolder = document.createElement("span");
-        buttonHolder.appendChild(delBtn);
-        buttonHolder.appendChild(editBtn);
+        // buttonHolder.appendChild(delBtn);
+        // buttonHolder.appendChild(editBtn);
 
         if (rowDataMain.llevaInventario) {
           buttonHolder.appendChild(kardexBtn)

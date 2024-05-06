@@ -14,10 +14,29 @@
               <label for="description"
                 >Descripción: <span class="text-danger">*</span></label
               >
-              <input type="text" class="form-control" placeholder="..." [(ngModel)]="data.descripcion"  appToUpperCase />
+              <input type="text" class="form-control" placeholder="..." [(ngModel)]="data.descripcion"  appToUpperCase  />
             </div>
           </div>
           <div class="colxl-6 col-lg-6 col-md-6 col-12">
+            <form [formGroup]="subCategoryForm">
+
+              <div class="form-group">
+                <label>Ciudad</label>
+                <input type="text" matInput class="form-control" formControlName="subCategoryGroup" placeholder="Ej: Mouse..."
+                  [matAutocomplete]="autoGroup">
+                <mat-autocomplete #autoGroup="matAutocomplete">
+                  @for (group of subCategoriesGroupOptions | async ; track group) {
+                  <mat-optgroup style="font-weight: 700;" [label]="group.provincia">
+                    @for (name of group.ciudades; track $index) {
+                    <mat-option [value]="name.descripcion"
+                     >{{name.descripcion}}</mat-option>
+                    }
+                  </mat-optgroup>
+                  }
+                </mat-autocomplete>
+              </div>
+            </form>
+
             <div class="form-group">
               <label for="subcategoría"
                 >SubCategoría: <span class="text-danger">*</span></label
@@ -42,7 +61,7 @@
 
                 <button
                   class="btn btn-outline-secondary btn-sm"
-                  appSubCategoryModal
+
                   type="button"
                   tabindex="-1"
                 >
@@ -64,7 +83,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Ej: COM050"
-                    formControlName="codigo"
+
                   />
                 </div>
               </div>
@@ -76,7 +95,7 @@
                     type="text"
                     class="form-control"
                     placeholder="Ej: COM050"
-                    formControlName="codigoAuxiliar"
+
                   />
                 </div>
               </div>
@@ -93,7 +112,7 @@
                     ng-model="data.codigoBarra"
                     touppercase
                     placeholder="H20089"
-                    formControlName="codigoBarra"
+
                   />
                 </div>
               </div>
@@ -107,7 +126,8 @@
                   <label for=""
                     >Tipo Artículo: <span class="text-danger">*</span>
                   </label>
-                  <select class="form-select" formControlName="idTipoArticulo">
+                  <select class="form-select"
+                  >
                      @for (item of tiposArticulo; track $index) {
                       <option [value]="item.idTipoArticulo">
                         {{ item.descripcion }}
@@ -121,7 +141,8 @@
                 <div class="form-group">
                   <label for="medida">Medida: <span class="text-danger">*</span></label>
                   <div class="input-group">
-                    <select class="form-select" formControlName="idMedida">
+                    <select class="form-select"
+                    >
                       @for (item of medidas; track $index) {
                         <option [value]="item.idMedida">
                           {{ item.descripcion }}
@@ -151,7 +172,7 @@
               class="form-select"
               ng-change="recalculateTarifaAdd()"
               ng-disabled="!articlePermission.isUpdatePrice"
-              formControlName="idTipoIva"
+
             >
               @for (item of tiposIva; track $index) {
                 <option [value]="item.idTipoIva">{{ item.descripcion }}</option>
@@ -171,7 +192,7 @@
                 ng-model="data.precioCosto"
                 ng-blur="redondearPrecioCosto()"
                 ng-change="recalculateTarifaAdd()"
-                formControlName="precioCosto"
+
                 placeholder="0.00"
               />
             </div>
@@ -183,7 +204,7 @@
               class="form-control"
               decimal
               placeholder="0.00"
-              formControlName="precioSinSubsidio"
+
             />
           </div>
           <div class="col-lg-2 col-md-6 col-sm-6 col-12">
@@ -203,7 +224,7 @@
                 <label>Etiqueta: </label>
                 <select
                   class="form-control "
-                  formControlName="idEtiqueta"
+
                 >
                   @for (item of etiquetaActividades; track $index) {
                   <option [value]="item.idEtiqueta">
