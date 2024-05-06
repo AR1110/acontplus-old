@@ -156,28 +156,6 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7120
-        }
-      ],
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/gateway/Logistica{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
           "Port": 7132
         }
       ],
