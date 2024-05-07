@@ -305,17 +305,6 @@ BEGIN
 					       WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = pr.idProforma
 				END 
 
-
-            IF @docOrigen = 'MO'
-                BEGIN
-                    UPDATE mo WITH (ROWLOCK)
-                       SET mo.[Status] = 4
-                    FROM Mechanical.Support mo
-                    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
-					       WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = mo.Id
-
-                END 
-
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' as 'message'
 	END TRY 
