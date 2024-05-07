@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
-
-namespace Vet.API.Entities
+﻿namespace Vet.API.Entities
 {
     [Table("HealthCheck", Schema = "Pet")]
     public class HealthCheck : BaseEntity

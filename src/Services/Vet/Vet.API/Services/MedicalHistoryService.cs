@@ -1,9 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Vet.API.Interfaces;
-
-namespace Vet.API.Services
+﻿namespace Vet.API.Services
 {
     public class MedicalHistoryService : IMedicalHistory
     {

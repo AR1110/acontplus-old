@@ -1,11 +1,4 @@
-﻿using Autofac;
-using Common.Core.Interfaces;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
-using Vet.API.Data;
-
-
-namespace Vet.API.Extensions
+﻿namespace Vet.API.Extensions
 {
     public class AutoFacModule : Module
     {

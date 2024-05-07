@@ -1,6 +1,4 @@
-﻿using Common.Core.Models;
-
-namespace Vet.API.Interfaces
+﻿namespace Vet.API.Interfaces
 {
     public interface IMedicalHistory
     {

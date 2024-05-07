@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Text.Json;
-using Vet.API.Entities;
 
 
 namespace Vet.API.Data

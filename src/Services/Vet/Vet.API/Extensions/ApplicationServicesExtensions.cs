@@ -1,9 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Interfaces;
-using Vet.API.Services;
-
-namespace Vet.API.Extensions
+﻿namespace Vet.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
@@ -11,6 +6,18 @@ namespace Vet.API.Extensions
         {
             services.AddDbContextPool<VetContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddControllers()
+                .AddNewtonsoftJson(x =>
+                {
+                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                }
+                 );
+
+            services.AddSwaggerDocumentation();
+
+            services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddScoped<IMedicalHistory, MedicalHistoryService>();
             services.AddScoped<IPetService, PetService>();
             return services;

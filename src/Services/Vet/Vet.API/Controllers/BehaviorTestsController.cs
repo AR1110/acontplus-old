@@ -1,15 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Entities;
-
-
-
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BehaviorTestsController : ControllerBase
+    public class BehaviorTestsController : BaseApiController
     {
         private readonly VetContext _context;
 
@@ -18,14 +9,12 @@ namespace Vet.API.Controllers
             _context = context;
         }
 
-        // GET: api/BehaviorTests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BehaviorTest>>> GetBehaviorTests()
         {
             return await _context.BehaviorTests.ToListAsync();
         }
 
-        // GET: api/BehaviorTests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BehaviorTest>> GetBehaviorTest(int id)
         {
@@ -39,8 +28,6 @@ namespace Vet.API.Controllers
             return behaviorTest;
         }
 
-        // PUT: api/BehaviorTests/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBehaviorTest(int id, BehaviorTest behaviorTest)
         {
@@ -49,33 +36,17 @@ namespace Vet.API.Controllers
                 return BadRequest();
             }
 
-            //_context.Entry(behaviorTest).State = EntityState.Modified;
             var test = await _context.BehaviorTests.FindAsync(id);
             test.BehaviorId = behaviorTest.BehaviorId;
             test.BehaviorStatusId = behaviorTest.BehaviorStatusId;
             test.UpdatedAt = DateTime.Now;
-            try
-            {
-                _context.Update(test);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BehaviorTestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+            _context.Update(test);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
-        // POST: api/BehaviorTests
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<BehaviorTest>> PostBehaviorTest(BehaviorTest behaviorTest)
         {
@@ -85,7 +56,6 @@ namespace Vet.API.Controllers
             return CreatedAtAction("GetBehaviorTest", new { id = behaviorTest.Id }, behaviorTest);
         }
 
-        // DELETE: api/BehaviorTests/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBehaviorTest(int id)
         {
@@ -98,7 +68,7 @@ namespace Vet.API.Controllers
             _context.BehaviorTests.Remove(behaviorTest);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool BehaviorTestExists(int id)

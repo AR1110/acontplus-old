@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Entities;
-
-
-
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
     public class BreedsController : BaseApiController
     {
@@ -16,14 +9,12 @@ namespace Vet.API.Controllers
             _context = context;
         }
 
-        // GET: api/Breeds
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Breed>>> GetBreeds()
         {
             return await _context.Breeds.Include(t => t.PetType).Where(x => x.Deleted == null).ToListAsync();
         }
 
-        // GET: api/Breeds/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Breed>> GetBreed(int id)
         {
@@ -37,8 +28,6 @@ namespace Vet.API.Controllers
             return petBreed;
         }
 
-        // PUT: api/Breeds/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBreed(int id, Breed petBreed)
         {
@@ -47,35 +36,19 @@ namespace Vet.API.Controllers
                 return BadRequest();
             }
 
-            //_context.Entry(petBreed).State = EntityState.Modified;
             var breedFounded = await _context.Breeds.FindAsync(id);
             breedFounded.PetTypeId = petBreed.PetTypeId;
             breedFounded.Code = petBreed.Code;
             breedFounded.Name = petBreed.Name;
             breedFounded.Description = petBreed.Description;
             breedFounded.UpdatedAt = DateTime.Now;
-            try
-            {
-                _context.Update(breedFounded);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BreedExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+            _context.Update(breedFounded);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
-        // POST: api/Breeds
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Breed>> PostBreed(Breed petBreed)
         {
@@ -85,7 +58,6 @@ namespace Vet.API.Controllers
             return CreatedAtAction("GetBreed", new { id = petBreed.Id }, petBreed);
         }
 
-        // DELETE: api/Breeds/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBreed(int id)
         {
@@ -95,30 +67,12 @@ namespace Vet.API.Controllers
                 return NotFound();
             }
 
-            //_context.Breeds.Remove(petBreed);
-            //await _context.SaveChangesAsync();
-
             petBreed.Deleted = true;
             petBreed.Enabled = false;
             _context.Entry(petBreed).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BreedExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok();
         }
 
         private bool BreedExists(int id)

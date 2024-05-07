@@ -1,11 +1,4 @@
-﻿
-using Common.Core.Utils;
-using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-
-namespace Contabilidad.API.Controllers
+﻿namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

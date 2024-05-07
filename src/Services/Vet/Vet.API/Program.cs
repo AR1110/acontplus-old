@@ -1,40 +1,20 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.Core.Utils;
-using Newtonsoft.Json.Serialization;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-
-using Vet.API.Extensions;
+﻿using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers()
-                .AddNewtonsoftJson(x =>
-                {
-                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                }
-                 );
 
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddIdentityService(builder.Configuration);
-builder.Services.AddSwaggerDocumentation();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ICustomLogger, CustomLogger>();
+builder.Services.AddIdentityService(builder.Configuration);
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 {

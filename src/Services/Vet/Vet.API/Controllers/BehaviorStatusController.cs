@@ -1,15 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Entities;
-
-
-
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BehaviorStatusController : ControllerBase
+    public class BehaviorStatusController : BaseApiController
     {
         private readonly VetContext _context;
 
@@ -18,14 +9,12 @@ namespace Vet.API.Controllers
             _context = context;
         }
 
-        // GET: api/BehaviorStatus
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BehaviorStatus>>> GetBehaviorStatuses()
         {
             return await _context.BehaviorStatuses.ToListAsync();
         }
 
-        // GET: api/BehaviorStatus/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BehaviorStatus>> GetBehaviorStatus(int id)
         {
@@ -39,8 +28,6 @@ namespace Vet.API.Controllers
             return behaviorStatus;
         }
 
-        // PUT: api/BehaviorStatus/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBehaviorStatus(int id, BehaviorStatus behaviorStatus)
         {
@@ -50,28 +37,11 @@ namespace Vet.API.Controllers
             }
 
             _context.Entry(behaviorStatus).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BehaviorStatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/BehaviorStatus
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<BehaviorStatus>> PostBehaviorStatus(BehaviorStatus behaviorStatus)
         {
@@ -81,7 +51,6 @@ namespace Vet.API.Controllers
             return CreatedAtAction("GetBehaviorStatus", new { id = behaviorStatus.Id }, behaviorStatus);
         }
 
-        // DELETE: api/BehaviorStatus/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBehaviorStatus(int id)
         {
@@ -94,7 +63,7 @@ namespace Vet.API.Controllers
             _context.BehaviorStatuses.Remove(behaviorStatus);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool BehaviorStatusExists(int id)

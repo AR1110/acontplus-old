@@ -1,11 +1,4 @@
-﻿using Asp.Versioning;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-
-namespace Contabilidad.API.Controllers.v2
+﻿namespace Contabilidad.API.Controllers.v2
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
