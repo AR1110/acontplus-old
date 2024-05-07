@@ -38,7 +38,7 @@ BEGIN
     DECLARE @customer VARCHAR(MAX),@vehicle AS VARCHAR(MAX)
 
     --> VehicleCompaby
-	DECLARE @userId INT, @CompanyId INT
+	DECLARE @userId INT, @CompanyId INT ,@LicensePlate VARCHAR(50)
 
     --> Customer
 	DECLARE @CustomerId INT
@@ -119,7 +119,8 @@ BEGIN
         )
 
         --> RUPERERATING IN VARIABLES 
-		SELECT TOP 1  @CustomerId = CustomerId FROM @tbVehicle
+		SELECT TOP 1  @CustomerId = CustomerId, @LicensePlate = LicensePlate FROM @tbVehicle
+
 
         --> VALIDATION OF INFORMATION 
         IF (SELECT COUNT(*) FROM @tbVehicle) = 0   
@@ -148,6 +149,15 @@ BEGIN
                SET [CustomerId] = @CustomerId
                   ,[UpdatedAt]  = GETDATE()
              WHERE Id = @id
+
+             SELECT TOP 1 @LicensePlate = STRING_AGG(ve.LicensePlate,'|')
+			 FROM Mechanical.VehicleCompany vc WITH (NOLOCK)
+			 INNER JOIN Mechanical.Vehicle  ve WITH (NOLOCK) ON ve.Id = vc.VehicleId
+			 WHERE vc.[Enabled] = 1
+			   AND vc.Deleted IS NULl
+               AND vc.CustomerId = @CustomerId
+
+             UPDATE dbo.Cliente WITH (ROWLOCK) SET placa = @LicensePlate WHERE idCliente = @CustomerId
 
         COMMIT TRAN 
         SELECT [Common].[ufnSpResponse]('1', 'Actualizado exitosamente', NULL)

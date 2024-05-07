@@ -195,6 +195,15 @@ BEGIN
 			SELECT @VehicleId,@CompanyId,@userId,@CustomerId,Observation
             FROM @tbVehicle
 
+            SELECT TOP 1 @LicensePlate = STRING_AGG(ve.LicensePlate,'|')
+			FROM Mechanical.VehicleCompany vc WITH (NOLOCK)
+			INNER JOIN Mechanical.Vehicle  ve WITH (NOLOCK) ON ve.Id = vc.VehicleId
+			WHERE vc.[Enabled] = 1
+			  AND vc.Deleted IS NULl
+              AND vc.CustomerId = @CustomerId
+
+            UPDATE dbo.Cliente WITH (ROWLOCK) SET placa = @LicensePlate WHERE idCliente = @CustomerId
+
 			SELECT @Id = SCOPE_IDENTITY()
 
             SET @payload = (SELECT @Id as id FOR JSON PATH)
