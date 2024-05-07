@@ -1,5 +1,3 @@
-USE [Acontplus]
-GO
 USE AcontPlus
 GO
 CREATE OR ALTER VIEW Mechanical.v_Brake WITH SCHEMABINDING AS (

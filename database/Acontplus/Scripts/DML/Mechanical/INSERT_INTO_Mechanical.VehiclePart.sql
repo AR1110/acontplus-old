@@ -1,113 +1,164 @@
 USE [Acontplus]
 GO 
 
-
 ---- PARTES DE UN MOTOR 
---SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'MT'
-
---INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (1,'VS','Vaso de expansión',GETDATE(),1)
---      ,(1,'LL','Depósito del Líquido de limpiaparabrisas',GETDATE(),1)
---	  ,(1,'BT','Batería',GETDATE(),1)
---	  ,(1,'AL','Alternador',GETDATE(),1)
---	  ,(1,'BM','Bloque motor',GETDATE(),1)
---	  ,(1,'CT','Colectores',GETDATE(),1)
---	  ,(1,'DF','Depósito del líquido de dirección y frenos',GETDATE(),1)
---	  ,(1,'IY','Inyectores',GETDATE(),1)
---	  ,(1,'BJ','Bujías',GETDATE(),1)
---	  ,(1,'CB','Caja de fusibles',GETDATE(),1)
+INSERT INTO Mechanical.VehiclePart
+       (VehiclePartTypeId,Code,[Description])
+SELECT Id,'VS','Vaso de expansión'                          FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'LL','Depósito del Líquido de limpiaparabrisas'   FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'BT','Batería'                                    FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'AL','Alternador'                                 FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'BM','Bloque motor'                               FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'CT','Colectores'                                 FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'DF','Depósito del líquido de dirección y frenos' FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'IY','Inyectores'                                 FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'BJ','Bujías'                                     FROM Mechanical.VehiclePartType WHERE Code = 'MT'
+UNION ALL
+SELECT Id,'CB','Caja de fusibles'                           FROM Mechanical.VehiclePartType WHERE Code = 'MT'
 	  
 -- Sistema de Transmisión
---SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'ST'
-
---INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (2,'BB','Bomba',GETDATE(),1)
---      ,(2,'CVT','Convertidor de torque',GETDATE(),1)
---	  ,(2,'SS','Sensores',GETDATE(),1)
---	  ,(2,'CV','Cuerpo de válvulas',GETDATE(),1)
---	  ,(2,'CC','Caja de cambios',GETDATE(),1)
---	  ,(2,'FT','Fluido de transmisión',GETDATE(),1)
+INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description])
+SELECT Id,'BB','Bomba'                  FROM Mechanical.VehiclePartType WHERE Code = 'ST'
+UNION ALL
+SELECT Id,'CVT','Convertidor de torque' FROM Mechanical.VehiclePartType WHERE Code = 'ST'
+UNION ALL
+SELECT Id,'SS','Sensores'               FROM Mechanical.VehiclePartType WHERE Code = 'ST'
+UNION ALL
+SELECT Id,'CV','Cuerpo de válvulas'     FROM Mechanical.VehiclePartType WHERE Code = 'ST'
+UNION ALL
+SELECT Id,'CC','Caja de cambios'        FROM Mechanical.VehiclePartType WHERE Code = 'ST'
+UNION ALL
+SELECT Id,'FT','Fluido de transmisión'  FROM Mechanical.VehiclePartType WHERE Code = 'ST'
 
 -- Sistema de Frenos
---SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'SF'
-
---INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (3,'PD','Pedal',GETDATE(),1)
---      ,(3,'SF','Servofreno',GETDATE(),1)
---	  ,(3,'BN','Bombines',GETDATE(),1)
---	  ,(3,'PZ','Pinza',GETDATE(),1)
---	  ,(3,'PT','Pastillas',GETDATE(),1)
---	  ,(3,'ZT','Zapatas',GETDATE(),1)
---	  ,(3,'TB','Tambores',GETDATE(),1)
---	  ,(3,'DC','Discos',GETDATE(),1)
+INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description])
+SELECT Id,'PD','Pedal' FROM Mechanical.VehiclePartType WHERE Code = 'SF'
+union all
+SELECT Id,'SF','Servofreno' FROM Mechanical.VehiclePartType WHERE Code = 'SF'
+union all
+SELECT Id,'BN','Bombines' FROM Mechanical.VehiclePartType WHERE Code = 'SF'
+union all
+SELECT Id,'PZ','Pinza' FROM Mechanical.VehiclePartType WHERE Code = 'SF'
+union all
+SELECT Id,'PT','Pastillas' FROM Mechanical.VehiclePartType WHERE Code = 'SF'
+union all
+SELECT Id,'ZT','Zapatas' FROM Mechanical.VehiclePartType WHERE Code = 'SF'
+union all
+SELECT Id,'TB','Tambores' FROM Mechanical.VehiclePartType WHERE Code = 'SF'
+union all
+SELECT Id,'DC','Discos' FROM Mechanical.VehiclePartType WHERE Code = 'SF'
 
 --Sistema de Dirección 
---SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'SD'
---INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (5,'VT','Volante',GETDATE(),1)
---      ,(5,'SD','Soporte de Dirección',GETDATE(),1)
---	  ,(5,'AD','Árbol de Dirección',GETDATE(),1)
---	  ,(5,'MD','Mecanimos de Dirección',GETDATE(),1)
---	  ,(5,'BI','Bieletas',GETDATE(),1)
---	  ,(5,'BA','Brazo de Acoplamiento',GETDATE(),1)
+INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description])
+Select Id,'VT','Volante' FROM Mechanical.VehiclePartType WHERE Code = 'SD'
+union all
+Select Id,'SD','Soporte de Dirección' FROM Mechanical.VehiclePartType WHERE Code = 'SD'
+union all
+Select Id,'AD','Árbol de Dirección' FROM Mechanical.VehiclePartType WHERE Code = 'SD'
+union all
+Select Id,'MD','Mecanimos de Dirección' FROM Mechanical.VehiclePartType WHERE Code = 'SD'
+union all
+Select Id,'BI','Bieletas' FROM Mechanical.VehiclePartType WHERE Code = 'SD'
+union all
+Select Id,'BA','Brazo de Acoplamiento' FROM Mechanical.VehiclePartType WHERE Code = 'SD'
 	  
 
 -- Sistema de Suspensión
---SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'SS'
-
---INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (6,'BRT','Barra de torsión',GETDATE(),1)
---      ,(6,'HQ','Horquillas',GETDATE(),1)
---	  ,(6,'RL','Rótulas',GETDATE(),1)
---	  ,(6,'BE','Barras estabilizadoras',GETDATE(),1)
---	  ,(6,'MH','Muelles helicoidales',GETDATE(),1)
---	  ,(6,'BUJ','Bujes',GETDATE(),1)
---	  ,(6,'BS','Brazos de suspensión',GETDATE(),1)
---	  ,(6,'AT','Amortiguadores',GETDATE(),1)	
+INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description])
+SELECT Id,'BRT','Barra de torsión' FROM Mechanical.VehiclePartType WHERE Code = 'SS'
+UNION ALL
+SELECT Id,'HQ','Horquillas' FROM Mechanical.VehiclePartType WHERE Code = 'SS'
+UNION ALL
+SELECT Id,'RL','Rótulas' FROM Mechanical.VehiclePartType WHERE Code = 'SS'
+UNION ALL
+SELECT Id,'BE','Barras estabilizadoras' FROM Mechanical.VehiclePartType WHERE Code = 'SS'
+UNION ALL
+SELECT Id,'MH','Muelles helicoidales' FROM Mechanical.VehiclePartType WHERE Code = 'SS'
+UNION ALL
+SELECT Id,'BUJ','Bujes' FROM Mechanical.VehiclePartType WHERE Code = 'SS'
+UNION ALL
+SELECT Id,'BS','Brazos de suspensión' FROM Mechanical.VehiclePartType WHERE Code = 'SS'
+UNION ALL
+SELECT Id,'AT','Amortiguadores' FROM Mechanical.VehiclePartType WHERE Code = 'SS'	
 
 -- Cabina
---SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'CB'
---INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (8,'PBD','Parabrisa delantera',GETDATE(),1)
---      ,(8,'PP','Parabrisa posterior',GETDATE(),1)
---	  ,(8,'VLD','Vidrio lateral derecho',GETDATE(),1)
---	  ,(8,'VLI','Vidrio lateral izquierdo',GETDATE(),1)
---	  ,(8,'PM','Plumillas',GETDATE(),1)
---	  ,(8,'APC','Asiento piloto y copiloto',GETDATE(),1)
---	  ,(8,'AP','Asiento Posterior',GETDATE(),1)
---      ,(8,'CS','Cinturones de Seguridad',GETDATE(),1)	
---	  ,(8,'ER','Espejo retrovisor',GETDATE(),1)	
---	  ,(8,'ELD','Espejo lateral derecho',GETDATE(),1)	
---	  ,(8,'ELI','Espejo lateral izquierdo',GETDATE(),1)	
---	  ,(8,'BC','Bocina',GETDATE(),1)	
---	  ,(8,'TC','Tablero de control',GETDATE(),1)	
---	  ,(8,'RPC','Radio / porta CD',GETDATE(),1)
+INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description])
+SELECT Id,'PBD','Parabrisa delantera' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'PP','Parabrisa posterior' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'VLD','Vidrio lateral derecho' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'VLI','Vidrio lateral izquierdo' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'PM','Plumillas' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'APC','Asiento piloto y copiloto' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'AP','Asiento Posterior' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'CS','Cinturones de Seguridad' FROM Mechanical.VehiclePartType WHERE Code = 'CB'	
+union all
+SELECT Id,'ER','Espejo retrovisor' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'ELD','Espejo lateral derecho' FROM Mechanical.VehiclePartType WHERE Code = 'CB'	
+union all
+SELECT Id,'ELI','Espejo lateral izquierdo' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'BC','Bocina' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'TC','Tablero de control' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
+union all
+SELECT Id,'RPC','Radio / porta CD' FROM Mechanical.VehiclePartType WHERE Code = 'CB'
 
 -- Sistema de luces 
---SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'SL'
---INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (7,'LB','Luz baja',GETDATE(),1)
---      ,(7,'LA','Luz alta',GETDATE(),1)
---	  ,(7,'LD','Luces direccionales',GETDATE(),1)
---	  ,(7,'LF','Luz de frenos',GETDATE(),1)
---	  ,(7,'LR','Luz de retroceso',GETDATE(),1)
---	  ,(7,'FN','Faros neblineros',GETDATE(),1)
---	  ,(7,'FR','Faros de retroceso (Pirata)',GETDATE(),1)
---	  ,(7,'LC','Luz de cabina',GETDATE(),1)	
---	  ,(7,'LIT','Luces Indicadores del tablero',GETDATE(),1)	
---	  ,(7,'AR','Alarma de retroceso',GETDATE(),1)	
---	  ,(7,'CL','Circulina',GETDATE(),1)
+INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description])
+SELECT Id,'LB','Luz baja' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'LA','Luz alta' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'LD','Luces direccionales' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'LF','Luz de frenos' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'LR','Luz de retroceso' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'FN','Faros neblineros' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'FR','Faros de retroceso (Pirata)' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'LC','Luz de cabina' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'LIT','Luces Indicadores del tablero' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'AR','Alarma de retroceso' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
+UNION ALL
+SELECT Id,'CL','Circulina' FROM Mechanical.VehiclePartType WHERE Code = 'SL'
 
 
 -- Rodamiento 
-----SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'RD'
---INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (9,'LDB','Llanta delantera derecho',GETDATE(),1)
---      ,(9,'LDI','Llanta delantera izquierdo',GETDATE(),1)
---	  ,(9,'LPD','Llanta posterior derecho',GETDATE(),1)
---	  ,(9,'LPI','Llanta posterior izquierdo',GETDATE(),1)
---	  ,(9,'LLR','Llanta de repuesto',GETDATE(),1)
---      ,(9,'PL','Portallanta',GETDATE(),1)	
---      ,(9,'GP','Guardapolvos',GETDATE(),1)
+INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description])
+SELECT Id,'LDB','Llanta delantera derecho' FROM Mechanical.VehiclePartType WHERE Code = 'RD'
+union all
+SELECT Id,'LDI','Llanta delantera izquierdo' FROM Mechanical.VehiclePartType WHERE Code = 'RD'
+union all
+SELECT Id,'LPD','Llanta posterior derecho' FROM Mechanical.VehiclePartType WHERE Code = 'RD'
+union all
+SELECT Id,'LPI','Llanta posterior izquierdo' FROM Mechanical.VehiclePartType WHERE Code = 'RD'
+union all
+SELECT Id,'LLR','Llanta de repuesto' FROM Mechanical.VehiclePartType WHERE Code = 'RD'
+union all
+SELECT Id,'PL','Portallanta' FROM Mechanical.VehiclePartType WHERE Code = 'RD'
+union all
+SELECT Id,'GP','Guardapolvos' FROM Mechanical.VehiclePartType WHERE Code = 'RD'
+
 	 
 --SELECT * FROM Mechanical.VehiclePart
