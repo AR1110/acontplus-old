@@ -3,7 +3,7 @@
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<ContabilidadContext>
     {
         private const string _databaseName = "DefaultConnection";
-        private const string _migrationAssembly = "Contabilidad.Infrastructure";
+        private const string _migrationAssembly = "Contabilidad.API";
 
         public ContabilidadContext CreateDbContext(string[] args)
         {

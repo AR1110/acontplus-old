@@ -23,6 +23,7 @@
 
             modelBuilder.Entity<Category>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity<Category>().Property(p => p.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<Category>().HasMany(c => c.Subcategories).WithOne(c => c.Category).HasForeignKey(c => c.CategoryId);
             modelBuilder.Entity<Category>().HasIndex(x => x.Code)
            .HasDatabaseName("UI_Contabilidad_Category_Code")
            .IsUnique();
