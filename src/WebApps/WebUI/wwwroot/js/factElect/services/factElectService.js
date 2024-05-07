@@ -147,7 +147,14 @@
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
                         clienteDefault = clienteDefaultTemp[0];
+
+                        clienteDefault = {
+                            ...clienteDefault,
+                            placas: clienteDefault.placa ? clienteDefault.placa.split(/[\|;]/) : []
+                        }
                     }
+
+
 
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
@@ -178,6 +185,7 @@
                     let formasPago = mainData[11]; 
                     let tiposIdentificacion = mainData[12]
                     // Devuelve los datos finales estructurados
+
                     return {
                         estabs,
                         tarifasImpuesto,
@@ -407,8 +415,10 @@
                     cliente = {
                         ...cliente,
                         identificacionComprador: cliente.numeroIdentificacion,
-                        razonSocialComprador: cliente.nombreFiscal
+                        razonSocialComprador: cliente.nombreFiscal,
+                        placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
                     }
+                    console.log(cliente)
 
 
                     let items = itemsApi.map((itemPrincipal, index) => {

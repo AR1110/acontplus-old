@@ -118,11 +118,14 @@ function modalDocVentaDetalleCtrl($scope, $uibModalInstance, $injector, $timeout
         try {
             showLoader();
             proformaSvc.getIdForInfo(id).then(response => {
-                let { data, cliente, items, tarifasImpuesto } = response;
+                let { data, cliente, items, tarifasImpuesto, infoAdicionalDocumento } = response;
                 $scope.data = data;
                 $scope.cliente = cliente;
                 $scope.gridOptions.data = calculateTotalItems(items)
                 $scope.tarifasImpuesto = tarifasImpuesto;
+
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento || [];
+
                 renderedModal();
             }).catch(error => {
                 console.error(error)

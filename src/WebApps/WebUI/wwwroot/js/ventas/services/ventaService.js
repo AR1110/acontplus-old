@@ -233,6 +233,11 @@
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
                         clienteDefault = clienteDefaultTemp[0];
+
+                        clienteDefault = {
+                            ...clienteDefault,
+                            placas: clienteDefault.placa ? clienteDefault.placa.split(/[\|;]/) : []
+                        }
                     }
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
@@ -672,6 +677,7 @@
                         ...cliente,
                         razonSocialComprador: cliente.nombreFiscal,
                         identificacionComprador: cliente.numeroIdentificacion,
+                        placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
                     }
 
                     let items = itemsApi.map((itemPrincipal, index) => {
@@ -975,6 +981,11 @@
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
                         clienteDefault = clienteDefaultTemp[0];
+
+                        clienteDefault = {
+                            ...clienteDefault,
+                            placas: clienteDefault.placa ? clienteDefault.placa.split(/[\|;]/) : []
+                        }
                     }
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
@@ -1127,9 +1138,19 @@
                         comprobanteApi,
                         clienteTempApi,
                         itemsApi,
+                        infoAdicionalDocumento,
                     ] = mainDataApi;
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
+
+                    if(Object.keys(cliente).length>0){
+                        cliente = {
+                            ...cliente,
+                            // razonSocialComprador: cliente.nombreFiscal,
+                            // identificacionComprador: cliente.numeroIdentificacion,
+                            placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
+                        }
+                    }
 
                     let items = itemsApi.map((itemPrincipal, index) => {
 
@@ -1191,6 +1212,7 @@
                         comprobante,
                         cliente,
                         items,
+                        infoAdicionalDocumento: infoAdicionalDocumento || [],
                     }
                 }
             })
@@ -1212,6 +1234,9 @@
                     let cliente = mainDataApi[1][0];
                     let items = mainDataApi[2];
                     let tarifasImpuesto = mainDataApi[3];
+
+                    let infoAdicionalDocumento = mainDataApi[4];
+
                     let { nombreComercial, fechaEmision, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -1232,7 +1257,8 @@
                         data,
                         cliente,
                         items: resultsItems,
-                        tarifasImpuesto
+                        tarifasImpuesto,
+                        infoAdicionalDocumento: infoAdicionalDocumento || [],
                     }
 
                 }
@@ -1326,7 +1352,7 @@
 
 
         service.queryMapper = function (obj) {
-            let { data, cliente, detalles, itemsDeleted } = obj;
+            let { data, cliente, detalles, itemsDeleted, infoAdicionalDocumento } = obj;
             if (cliente.idCliente === 0 && !cliente.razonSocialComprador && !cliente.identificacionComprador) {
                 throw new Error("Datos de cliente no proporcionados")
             }
@@ -1355,6 +1381,7 @@
                 proforma: service.infoComprobanteMapperTo(proforma),
                 detalles: mergeItems,
                 impuestos: impuestos,
+                infoAdicional: infoAdicionalDocumento || [],
             }
         }
 

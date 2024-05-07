@@ -256,63 +256,7 @@ export class CommonService {
     }
 
 
-    /**
-     * 
-     * @param {*} param0 
-     * @returns 
-     * Médodos relacionados a los tipos de documentos 
-     * 1. generarNroDocumento
-     * 2. Compras 
-     * 3. Ventas 
-     */
-
-    async generarNroDocumentoVenta({
-        puntoEmision,
-        idPuntoEmision,
-        nroDocumento,
-        codigoDocumento
-    }) {
-        let nroDocumentoSecuencial = null;
-        return await this.mS.getData('get', `/GenerarNroDoc/GenerarNroDocVenta?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
-            .then(response => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: "warning",
-                        html: `<small>${response.message}</small>`,
-                        allowOutsideClick: false,
-                    });
-                    return nroDocumentoSecuencial;
-                }
-                if (response.id === "1") {
-                    return (nroDocumentoSecuencial = response.data);
-                }
-            })
-    }
-
-    async generarNroDocumentoCompra({
-        puntoEmision,
-        idPuntoEmision,
-        nroDocumento,
-        codigoDocumento
-    }) {
-        let nroDocumentoSecuencial = null;
-        return await this.mS.getData('get', `/GenerarNroDoc/GenerarNroDocCompra?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
-            .then(response => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: "warning",
-                        html: `<small>${response.message}</small>`,
-                        allowOutsideClick: false,
-                    });
-                    return nroDocumentoSecuencial;
-                }
-                if (response.id === "1") {
-                    return (nroDocumentoSecuencial = response.data);
-                }
-            })
-    }
+ 
     //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
     //Eliminar mas Adelante en depuracion co
@@ -324,33 +268,7 @@ export class CommonService {
             return JSON.parse(response.payload)
         })
     }
-    //por mejorar mas adelante 
-    async generarNroDocumento({
-        puntoEmision,
-        idPuntoEmision,
-        nroDocumento,
-        codigoDocumento,
-        tipoDoc = 'C'
-    }) {
-        let nroDocumentoSecuencial = null;
-        let url = tipoDoc === 'C' ? 'GenerarNroDocCompra' : 'GenerarNroDocVenta';
-        return await this.mS.getData('get', `/GenerarNroDoc/${url}?puntoEmision=${puntoEmision}&idPuntoEmision=${idPuntoEmision}&nroDocumento=${nroDocumento}&codigoDocumento=${codigoDocumento}`)
-            .then(response => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: "warning",
-                        html: `<small>${response.message}</small>`,
-                        allowOutsideClick: false,
-                    });
-                    return nroDocumentoSecuencial;
-                }
-                if (response.id === "1") {
-                    return (nroDocumentoSecuencial = response.data);
-                }
-            })
-    }
-
+   
     //-------------------------------------------------GET DATA TIPO DOCUMENTO COMPRA ---------------------
     setUiGridDetalleCompra(detalleCompra) {
 
