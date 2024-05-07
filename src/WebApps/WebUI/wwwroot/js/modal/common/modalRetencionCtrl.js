@@ -143,10 +143,7 @@ class ModalBaseCtrl{
     }
       
     async generarNroSecuencial(){
-        return this._commonSvc.generarNroDocumento({
-            idPuntoEmision: this.data.idPuntoEmision,
-            codigoDocumento: this.TIPO_DOC.codigo
-        })
+  
     }
 
 
