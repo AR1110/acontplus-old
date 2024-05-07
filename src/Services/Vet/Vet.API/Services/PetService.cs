@@ -1,11 +1,4 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Models;
-using Common.Core.Utils;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Entities;
-using Vet.API.Interfaces;
-namespace Vet.API.Services
+﻿namespace Vet.API.Services
 {
     public class PetService : IPetService
     {

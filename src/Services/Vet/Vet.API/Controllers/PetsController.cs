@@ -1,11 +1,4 @@
-﻿using Common.Core.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Services.Common.Extensions;
-using Vet.API.Data;
-using Vet.API.Entities;
-using Vet.API.Interfaces;
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
     public class PetsController : BaseApiController
     {

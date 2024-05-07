@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Common.Core.Entities;
-
-namespace Vet.API.Entities
+﻿namespace Vet.API.Entities
 {
     [Table("Gender", Schema = "Pet")]
     public class Gender : BaseEntity

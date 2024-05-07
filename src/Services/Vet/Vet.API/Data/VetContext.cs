@@ -1,8 +1,4 @@
 ﻿using System.Reflection;
-using Common.Core.Entities;
-using Common.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Entities;
 
 
 namespace Vet.API.Data
@@ -49,7 +45,7 @@ namespace Vet.API.Data
                            p => p.ClrType == typeof(string)    // Entity is a string
                         && p.GetColumnType() == null           // No column type is set
                                                                // Next line only required if using ASP.Net Identity:
-                        //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
+                                                               //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
                     ))
                 {
                     property.SetIsUnicode(false);
