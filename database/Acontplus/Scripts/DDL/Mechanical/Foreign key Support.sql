@@ -22,7 +22,7 @@ ALTER TABLE [Mechanical].[Support]
 ADD CONSTRAINT FK_CompanyId_SupportMechanical
 FOREIGN KEY (CompanyId) REFERENCES dbo.Entidad(idEntidad);
 
--->Support
+-->Support Detail
 ALTER TABLE [Mechanical].[SupportDetail]
 ADD CONSTRAINT FK_ArticuloId_SupportMechanical
 FOREIGN KEY (ArticuloId) REFERENCES dbo.Articulo(idArticulo);

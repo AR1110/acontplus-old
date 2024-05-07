@@ -69,7 +69,6 @@ BEGIN
           ,CONVERT(NUMERIC(18,2), md.Price)    as price
           ,CONVERT(NUMERIC(18,2), md.Total)    as totalDetail
           ,md.Obs
-          ,md.[Percentage]                     as [percentage]
           ,md.Medida                           as medida
           ,md.codigo                           as code
     FROM Mechanical.v_SupportDetail md WITH (NOLOCK) 
