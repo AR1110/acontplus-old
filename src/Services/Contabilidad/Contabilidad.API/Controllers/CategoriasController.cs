@@ -1,11 +1,4 @@
-﻿using Contabilidad.Core.Entities;
-using Contabilidad.Core.Interfaces;
-using Contabilidad.Infrastructure.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Services.Common.Extensions;
-
-namespace Contabilidad.API.Controllers
+﻿namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,11 +1,4 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Contabilidad.API.Dtos;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Contabilidad.API.Controllers
 {
