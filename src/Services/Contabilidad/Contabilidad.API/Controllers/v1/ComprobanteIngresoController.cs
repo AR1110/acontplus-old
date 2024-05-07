@@ -1,4 +1,4 @@
-﻿namespace Contabilidad.API.Controllers
+﻿namespace Contabilidad.API.Controllers.v1
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -6,15 +6,12 @@
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _dbAccess;
-        private readonly ICustomLogger _log;
-        public ComprobanteIngresoController(IConfiguration configuration, ICustomLogger log)
+        public ComprobanteIngresoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dbAccess = new DbAccess(_configuration);
-            _log = log;
         }
 
-        // GET: api/<CuentaPorCobrarController>
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
@@ -27,11 +24,6 @@
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _dbAccess.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Comprobante Ingreso -> Get: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al traer los Comprobantes de Ingreso");
             }
             finally
             {
@@ -53,11 +45,6 @@
                 _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(paremeter.Data)));
                 _response = _dbAccess.GetDefault();
             }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Comprobante Ingreso -> Insert: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al registrar los Comprobantes de Ingreso");
-            }
             finally
             {
                 _dbAccess.Close();
@@ -78,11 +65,6 @@
                 _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
                 _response = _dbAccess.GetDefault();
             }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Comprobante Ingreso -> Cancel: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Cancelar los Comprobantes de Ingreso");
-            }
             finally
             {
                 _dbAccess.Close();
@@ -91,7 +73,6 @@
         }
 
 
-        //===========SE USA EN CHEQUE============
         [HttpPut]
         public async Task<IActionResult> Put(ApiRequest request)
         {
@@ -104,11 +85,6 @@
                 _dbAccess.AddDynamicParam("userRoleId", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(request.Data));
                 _response = _dbAccess.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Comprobante Ingreso -> Update: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Update los Comprobantes de Ingreso");
             }
             finally
             {
