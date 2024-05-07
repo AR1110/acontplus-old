@@ -9,14 +9,12 @@
             _context = context;
         }
 
-        // GET: api/BehaviorTests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BehaviorTest>>> GetBehaviorTests()
         {
             return await _context.BehaviorTests.ToListAsync();
         }
 
-        // GET: api/BehaviorTests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BehaviorTest>> GetBehaviorTest(int id)
         {
@@ -30,8 +28,6 @@
             return behaviorTest;
         }
 
-        // PUT: api/BehaviorTests/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBehaviorTest(int id, BehaviorTest behaviorTest)
         {
@@ -40,33 +36,17 @@
                 return BadRequest();
             }
 
-            //_context.Entry(behaviorTest).State = EntityState.Modified;
             var test = await _context.BehaviorTests.FindAsync(id);
             test.BehaviorId = behaviorTest.BehaviorId;
             test.BehaviorStatusId = behaviorTest.BehaviorStatusId;
             test.UpdatedAt = DateTime.Now;
-            try
-            {
-                _context.Update(test);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BehaviorTestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+            _context.Update(test);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
-        // POST: api/BehaviorTests
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<BehaviorTest>> PostBehaviorTest(BehaviorTest behaviorTest)
         {
@@ -76,7 +56,6 @@
             return CreatedAtAction("GetBehaviorTest", new { id = behaviorTest.Id }, behaviorTest);
         }
 
-        // DELETE: api/BehaviorTests/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBehaviorTest(int id)
         {
@@ -89,7 +68,7 @@
             _context.BehaviorTests.Remove(behaviorTest);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool BehaviorTestExists(int id)

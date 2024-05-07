@@ -9,14 +9,12 @@
             _context = context;
         }
 
-        // GET: api/BehaviorStatus
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BehaviorStatus>>> GetBehaviorStatuses()
         {
             return await _context.BehaviorStatuses.ToListAsync();
         }
 
-        // GET: api/BehaviorStatus/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BehaviorStatus>> GetBehaviorStatus(int id)
         {
@@ -30,8 +28,6 @@
             return behaviorStatus;
         }
 
-        // PUT: api/BehaviorStatus/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBehaviorStatus(int id, BehaviorStatus behaviorStatus)
         {
@@ -41,28 +37,11 @@
             }
 
             _context.Entry(behaviorStatus).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BehaviorStatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/BehaviorStatus
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<BehaviorStatus>> PostBehaviorStatus(BehaviorStatus behaviorStatus)
         {
@@ -72,7 +51,6 @@
             return CreatedAtAction("GetBehaviorStatus", new { id = behaviorStatus.Id }, behaviorStatus);
         }
 
-        // DELETE: api/BehaviorStatus/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBehaviorStatus(int id)
         {
@@ -85,7 +63,7 @@
             _context.BehaviorStatuses.Remove(behaviorStatus);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool BehaviorStatusExists(int id)

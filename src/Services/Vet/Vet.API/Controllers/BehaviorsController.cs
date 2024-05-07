@@ -37,24 +37,9 @@
             }
 
             _context.Entry(behavior).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BehaviorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok();
         }
 
         [HttpPost]
@@ -78,7 +63,7 @@
             _context.Behaviors.Remove(behavior);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool BehaviorExists(int id)

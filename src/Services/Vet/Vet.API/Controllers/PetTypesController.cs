@@ -9,14 +9,12 @@
             _context = context;
         }
 
-        // GET: api/PetTypes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PetType>>> GetPetTypes()
         {
             return await _context.PetTypes.ToListAsync();
         }
 
-        // GET: api/PetTypes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PetType>> GetPetType(int id)
         {
@@ -30,8 +28,6 @@
             return petType;
         }
 
-        // PUT: api/PetTypes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPetType(int id, PetType petType)
         {
@@ -58,11 +54,9 @@
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/PetTypes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<PetType>> PostPetType(PetType petType)
         {
@@ -72,7 +66,6 @@
             return CreatedAtAction("GetPetType", new { id = petType.Id }, petType);
         }
 
-        // DELETE: api/PetTypes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePetType(int id)
         {
@@ -85,7 +78,7 @@
             _context.PetTypes.Remove(petType);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool PetTypeExists(int id)

@@ -9,14 +9,12 @@
             _context = context;
         }
 
-        // GET: api/DiseaseStatus
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DiseaseStatus>>> GetDiseaseStatuses()
         {
             return await _context.DiseaseStatuses.ToListAsync();
         }
 
-        // GET: api/DiseaseStatus/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DiseaseStatus>> GetDiseaseStatus(int id)
         {
@@ -30,8 +28,6 @@
             return diseaseStatus;
         }
 
-        // PUT: api/DiseaseStatus/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDiseaseStatus(int id, DiseaseStatus diseaseStatus)
         {
@@ -41,28 +37,11 @@
             }
 
             _context.Entry(diseaseStatus).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DiseaseStatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/DiseaseStatus
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<DiseaseStatus>> PostDiseaseStatus(DiseaseStatus diseaseStatus)
         {
@@ -72,7 +51,6 @@
             return CreatedAtAction("GetDiseaseStatus", new { id = diseaseStatus.Id }, diseaseStatus);
         }
 
-        // DELETE: api/DiseaseStatus/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDiseaseStatus(int id)
         {
@@ -85,7 +63,7 @@
             _context.DiseaseStatuses.Remove(diseaseStatus);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool DiseaseStatusExists(int id)
