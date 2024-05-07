@@ -1,7 +1,7 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
-using Common.Infrastructure.Repository;
+using Inventario.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
 using Services.Common.Logs;
@@ -10,161 +10,117 @@ namespace Inventario.API.Controllers
 {
     public class SubFamiliaController : BaseApiController
     {
-        private readonly IConfiguration _configuration;
+        private readonly ISubFamiliaService _service;
         private readonly S3ObjectCustom _s3ObjectCustom;
         private readonly IS3StorageService _storageService;
         private readonly ICustomLogger _log;
-        public SubFamiliaController(IConfiguration configuration,
-            S3ObjectCustom s3ObjectCustom,
-            IS3StorageService storageService, ICustomLogger log)
+
+        public SubFamiliaController(S3ObjectCustom s3ObjectCustom, IS3StorageService storageService, ISubFamiliaService service, ICustomLogger log)
         {
-            _configuration = configuration;
             _s3ObjectCustom = s3ObjectCustom;
             _storageService = storageService;
+            _service = service;
             _log = log;
         }
 
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.Subfamilia_Get");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
+                var parameters = new Dictionary<string, object> {
+                    { "idUsuarioRol", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(json) }
+                };
+                var response = await _service.GetAsync(parameters);
+                return Ok(response);
+
             }
             catch (Exception ex)
             {
-
-                _log.LogActivity("Error al listar SubFamilias: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar SubFamilias");
+                _log.LogActivity("Error en get " + ex.Message);
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
         [HttpPost("Post")]
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-
             try
             {
                 if (file != null)
                 {
                     await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/subfamilias/", file);
                 }
-                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Inventario.Subfamilia_Insert");
-                _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _db.AddDynamicParam("s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "");
-                _db.AddDynamicParam("s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "");
 
-                _response = _db.GetDefault();
-                if (_response.code == "1" && file != null)
+                var parameters = new Dictionary<string, object>
                 {
-                    var s3Response = await _storageService.UploadAsync(_s3ObjectCustom);
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(json) },
+                    { "s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "" },
+                    { "s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" },
+                };
+
+                var response = await _service.AddAsync(parameters);
+
+                if (response.code == "1" && file != null)
+                {
+                    await _storageService.UploadAsync(_s3ObjectCustom);
                 }
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al insertar subfamilia: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar subfamilia");
-            }
-            finally
-            {
+
                 if (file != null)
                 {
                     _s3ObjectCustom.Dispose();
-                }
-                _db.Close();
+                };
+                return Ok(response);
             }
-            return Ok(_response);
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en post " + ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
             try
             {
-                int userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Inventario.Subfamilia_Update");
-                _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object>
+                {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "id", id },
+                    { "json", SqlStringParam.Sanitize(json) },
+                };
+
+                var response = await _service.UpdateAsync(parameters);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al actualizar subfamilia: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar subfamilia");
+                _log.LogActivity("Error en put " + ex.Message);
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Update_Cancel");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
+                var parameters = new Dictionary<string, object> {
+                    { "idUsuarioRol", User.GetUserRoleId() },
+                    { "id", id }
+                };
+
+                var response = await _service.DeleteAsync(parameters);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-
-                _log.LogActivity("Error al eliminar subfamilia: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar subfamilia");
+                _log.LogActivity("Error en put " + ex.Message);
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
         }
-
-        [HttpGet("ListForSelect")]
-        public async Task<IActionResult> ListForSelect(string json)
-        {
-            ApiResponse _response = new ApiResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            try
-            {
-                await _db.SPExecute("Almacen.SubFamilia_For_Select");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al listar SubFamilias para Select: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-        }
-
     }
 }
