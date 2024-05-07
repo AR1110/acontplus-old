@@ -1,11 +1,11 @@
 import { Route } from "@angular/router";
-import { CategoryPageComponent } from "./pages/category-page/category-page.component";
-import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
-import { ProductPageComponent } from "./pages/product-page/product-page.component";
-import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
-import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
-import { MeasurePageComponent } from "./pages/measure-page/measure-page.component";
 
+import { CategoryPageComponent } from "./pages/category-page/category-page.component";
+import { LotPricePageComponent } from "./pages/lot-price-page/lot-price-page.component";
+import { MassiveTaxPageComponent } from "./pages/massive-tax-page/massive-tax-page.component";
+import { MeasurePageComponent } from "./pages/measure-page/measure-page.component";
+import { ProductPageComponent } from "./pages/product-page/product-page.component";
+import { SubCategoryPageComponent } from "./pages/sub-category-page/sub-category-page.component";
 
 export const routes: Route[] = [
   {
@@ -51,7 +51,7 @@ export const routes: Route[] = [
   },
 
   {
-    path: 'measure-page',
+    path: 'measure',
     title: 'Medida',
     component: MeasurePageComponent,
     data: {
