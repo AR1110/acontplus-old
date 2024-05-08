@@ -147,7 +147,7 @@ app.constant('nombreModalVenta', {
         fileCtrl: '/js/ventas/modals/modalConvertToDocCtrl.min.js' + CHANGE_VERSION(),
         controller: 'convertToDocModalCtrl',
         templates: {
-            M: '~/Pages/Ventas/Shared/ConvertToDoc.cshtml', 
+            M: '~/Pages/Ventas/Shared/_ModalConvertToDoc.cshtml', 
         }
     },
 

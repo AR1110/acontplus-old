@@ -33,6 +33,8 @@
         tipoDoc = {
             codigo: DOC_TYPE['PR']
         }
+        $scope.codDoc = DOC_TYPE['PR'];
+      //  $scope.docDestino = DOC_TYPE['NE']
 
         $scope.typeSend = 'GenericFile';
         $scope.typeSendToMail = 'N';
@@ -130,6 +132,10 @@
             $scope.calculoColumnTotal();
         }
 
+        $scope.refresh = function(){
+            $scope.getProformas();
+        }
+
         //=====================Eend Filters=======================
 
 
@@ -180,8 +186,9 @@
 
                 proformaSvc.getAll(dataSearch).then(response => {
                     let { proformas, dataTotals } = response;
+                    console.log(response)
                     $scope.proformas = proformas;
-                    $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
+                    $scope.cloneProformas = structuredClone($scope.proformas);
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
                     //  $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
                     $scope.total = $scope.sumarColumnaTotal();

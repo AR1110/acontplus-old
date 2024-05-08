@@ -1777,8 +1777,10 @@
         return {
             restrict: 'A',
             scope: {
+                codDoc:'=',
+                id:'=',
                 params: '=',
-               
+                onResult: '&'               
             },
             link: function (scope, element) {
                 element.on('click', async function () {
@@ -1789,12 +1791,21 @@
                     let template = nombreModalVenta.CONVERT_TO_DOC.templates['M'];
                     let controller = (await import(fileCtrl))[ctrl];
   
-                    modalService.openModalCustom({
+                    let modalRef = modalService.openModalCustom({
                         controller,
                         template,
                         size: 'md',
                         params: {
-                            ...scope.params, 
+                            codDoc: scope.codDoc,
+                            id: scope.id,
+                            
+                        },
+                        isRenderRazorPartial: true
+                    })
+
+                    modalRef.result.then(result=>{
+                        if (result !== null && typeof result === 'object' && typeof scope.onResult==='function'){
+                            scope.onResult(result)
                         }
                     })
 

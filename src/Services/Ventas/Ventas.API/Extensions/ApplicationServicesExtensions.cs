@@ -14,6 +14,7 @@ namespace Ventas.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<INotaEntregaService, NotaEntregaService>();
+            services.AddScoped<IProformaService, ProformaService>();
 
             services.AddScoped<ICustomLogger, CustomLogger>();
             return services;

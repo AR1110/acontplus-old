@@ -166,83 +166,98 @@
                     <tbody md-body>
                         <tr md-row ng-repeat="p in proformas | orderBy: dataSearch.order" ng-class="p.rowColor">
                             <td md-cell>
-                                <md-menu>
-                                    <md-button aria-label="Open demo menu" class="md-icon-button"
-                                               ng-click="$mdMenu.open($event)">
-                                        <i class="mdi mdi-menu"></i>
-                                    </md-button>
-                                    <md-menu-content class="md-dense">
-                                        <md-menu-item>
-                                            <md-button ng-click="openModalDetalle(p)">
-                                                <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
-                                            </md-button>
-                                        </md-menu-item>
+                                <div class="d-flex">
+                                    <md-menu>
+                                        <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                ng-click="$mdMenu.open($event)">
+                                            <i class="mdi mdi-menu"></i>
+                                        </md-button>
+                                        <md-menu-content class="md-dense">
+                                            <md-menu-item>
+                                                <md-button ng-click="openModalDetalle(p)">
+                                                    <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                                </md-button>
+                                            </md-menu-item>
 
-                                        <md-menu-item ng-if="accion.editar">
-                                            <md-button ng-click="openModalEdit(p)">
-                                                <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
-                                            </md-button>
-                                        </md-menu-item>
+                                            <md-menu-item ng-if="accion.editar">
+                                                <md-button ng-click="openModalEdit(p)">
+                                                    <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                                </md-button>
+                                            </md-menu-item>
 
 
-                                        <md-menu-item ng-if="accion.anular && !p.esAnulado">
-                                            <md-button ng-click="askToDelete(p)">
-                                                <span md-menu-align-target>
-                                                    <i class="mdi mdi-block-helper"></i>
-                                                    Anular
-                                                </span>
-                                            </md-button>
-                                        </md-menu-item>
+                                            <md-menu-item ng-if="accion.anular && !p.esAnulado">
+                                                <md-button ng-click="askToDelete(p)">
+                                                    <span md-menu-align-target>
+                                                        <i class="mdi mdi-block-helper"></i>
+                                                        Anular
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
 
-                                        <md-menu-item>
-                                            <md-button ng-click="openModalDuplicate(p)">
-                                                <span md-menu-align-target><i class="ti-files"></i> Duplicar</span>
-                                            </md-button>
-                                        </md-menu-item>
+                                            <md-menu-item>
+                                                <md-button ng-click="openModalDuplicate(p)">
+                                                    <span md-menu-align-target><i class="ti-files"></i> Duplicar</span>
+                                                </md-button>
+                                            </md-menu-item>
 
-                                        <md-menu-item ng-if="accion.reporte">
-                                            <md-button ng-click="getReport(p)">
-                                                <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
-                                            </md-button>
-                                        </md-menu-item>
+                                            <md-menu-item ng-if="accion.reporte">
+                                                <md-button ng-click="getReport(p)">
+                                                    <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
+                                                </md-button>
+                                            </md-menu-item> 
 
-                                        <md-menu-item>
-                                            <md-button ng-click="print(p)">
-                                                <span md-menu-align-target>
-                                                    <icon class="mdi mdi-cloud-print-outline"></icon> Impresión
-                                                </span>
-                                            </md-button>
-                                        </md-menu-item>
+                                            <md-menu-item ng-if="accion.enviarCorreo">
+                                                <md-button btn-send-to-email params="p" type-send="typeSendToMail"
+                                                        get-param-to-send-mail="getParamToSendMail(params)">
+                                                    <span md-menu-align-target>
+                                                        <i class="far fa-envelope"></i> Enviar
+                                                        Correo
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
 
-                                        <md-menu-item ng-if="accion.enviarCorreo">
-                                            <md-button btn-send-to-email params="p" type-send="typeSendToMail"
-                                                       get-param-to-send-mail="getParamToSendMail(params)">
-                                                <span md-menu-align-target>
-                                                    <i class="far fa-envelope"></i> Enviar
-                                                    Correo
-                                                </span>
-                                            </md-button>
-                                        </md-menu-item>
+                                            <md-menu-item>
+                                                <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
+                                                        btn-send-to-whats-app params="p" has-permission="hasPermissions"
+                                                        type-send="typeSend">
+                                                    <span md-menu-align-target>
+                                                        <i class="mdi mdi-whatsapp"></i> Enviar Whatsapp
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item  ng-if="!p.isApplied">
+                                                <md-button 
+                                                btn-convert-to-doc 
+                                                cod-doc="codDoc" 
+                                                id="p.idDocumento"
+                                                on-result="refresh()"
+                                                >
+                                                    <span md-menu-align-target> 
+                                                        <i class="fas file"></i> Convertir  Documento
+                                                </md-button>
+                                            </md-menu-item>
 
-                                        <md-menu-item>
-                                            <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                       btn-send-to-whats-app params="p" has-permission="hasPermissions"
-                                                       type-send="typeSend">
-                                                <span md-menu-align-target>
-                                                    <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
-                                                </span>
-                                            </md-button>
-                                        </md-menu-item>
-                                        <md-menu-item  >
-                                            <md-button btn-convert-to-doc>
-                                                <span md-menu-align-target>
-                                                    <i class="fas file"></i> Convertir a Documento
-                                                </span>
-                                            </md-button>
-                                        </md-menu-item>
+                                            <md-menu-item  ng-if="p.isApplied">
+                                                <md-button 
+                                                btn-convert-to-doc 
+                                                cod-doc="codDoc" 
+                                                id="p.idDocumento"
+                                                on-result="refresh()"
+                                                >
+                                                    <span md-menu-align-target> 
+                                                        <i class="fas fa-history "></i> Historial Conversión
+                                                </md-button>
+                                            </md-menu-item>
 
-                                    </md-menu-content>
-                                </md-menu>
+                                        </md-menu-content>
+                                    </md-menu>
+                                    <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5"  ng-click="print(p)">
+                                            <i class="fas fa-print"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                               
                             </td>
                             <td md-cell>{{$index+1}}</td>
                             <td md-cell>{{p.nroDocumento}}</td>
