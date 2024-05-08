@@ -25,6 +25,7 @@ namespace Contabilidad.API.Extensions
             services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddScoped<ICuentaPorCobrarService, CuentaPorCobrarService>();
             services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
+            services.AddScoped<ISubcategoryService, SubcategoryService>();
             services.AddScoped<ISubEntidadFinancieraService, SubEntidadFinancieraService>();
             services.AddScoped<ITipoService, TipoService>();
             return services;
