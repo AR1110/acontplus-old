@@ -18,13 +18,16 @@ namespace Contabilidad.API.Extensions
 
             services.AddScoped<IAnticipoService, AnticipoService>();
             services.AddScoped<ICajaService, CajaService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IChequeService, ChequeService>();
             services.AddScoped<IComprobanteEgresoService, ComprobanteEgresoService>();
             services.AddScoped<IControlCajaService, ControlCajaService>();
             services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddScoped<ICuentaPorCobrarService, CuentaPorCobrarService>();
             services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
+            services.AddScoped<ISubcategoryService, SubcategoryService>();
             services.AddScoped<ISubEntidadFinancieraService, SubEntidadFinancieraService>();
+            services.AddScoped<ITipoService, TipoService>();
             return services;
         }
     }

@@ -1,8 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SubEntidadFinancieraController : ControllerBase
+    public class SubEntidadFinancieraController : BaseApiController
     {
         private readonly ISubEntidadFinancieraService _service;
         public SubEntidadFinancieraController(ISubEntidadFinancieraService service)

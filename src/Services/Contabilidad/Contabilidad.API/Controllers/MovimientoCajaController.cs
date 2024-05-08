@@ -1,8 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MovimientoCajaController : ControllerBase
+    public class MovimientoCajaController : BaseApiController
     {
         private readonly IMovimientoCajaService _movSvc;
         public MovimientoCajaController(IMovimientoCajaService movSvc)
