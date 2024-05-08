@@ -3,7 +3,7 @@
     'use strict';
 
 
-    app.directive('shouldFocus', function () {
+    app.directive('shouldFocus', [function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -25,9 +25,9 @@
                 });
             }
         }
-    })
+    }])
     //Para Doble scroll en los documentos
-    app.directive('master', function () { //declaration
+    app.directive('master', [function () { //declaration
         function link(scope, element) {
             scope.$watch(function () {
                 scope.duelScroll = {
@@ -39,12 +39,12 @@
             restrict: 'AE',
             link: link
         };
-    })
+    }])
 
 
 
 
-    app.directive('decimal', function () {
+    app.directive('decimal', [function () {
         return {
             require: 'ngModel',
             restrict: 'A',
@@ -67,10 +67,10 @@
                 ctrl.$parsers.push(inputValue);
             }
         };
-    });
+    }]);
 
     //Directiva para numeros enteros y decimales 
-    app.directive('validNumber', function () {
+    app.directive('validNumber', [function () {
         return {
             require: '?ngModel',
             link: function (scope, element, attrs, ngModelCtrl) {
@@ -114,10 +114,10 @@
                 });
             }
         };
-    });
+    }]);
 
     //DIRECTIVA PARA ENTRADA DE LETRAS MAYUSCULAS
-    app.directive('touppercase', function () {
+    app.directive('touppercase', [function () {
         let teclaAnterior = "";
         return {
             require: 'ngModel',
@@ -148,10 +148,10 @@
                 element.css("text-transform", "uppercase");
             }
         };
-    });
+    }]);
 
     //DIRECTIVA PARA ENTRADA DE LETRAS MINUSCULAS
-    app.directive('tolowercase', function () {
+    app.directive('tolowercase', [function () {
         return {
             require: 'ngModel',
             link: function (scope, element, attrs, modelCtrl) {
@@ -161,10 +161,10 @@
                 element.css("text-transform", "lowercase");
             }
         };
-    });
+    }]);
 
     //Directiva que permite entrada de solo Letras en input 
-    app.directive('validLetra', function () {
+    app.directive('validLetra', [function () {
         return {
             require: 'ngModel',
             link: function (scope, element,) {
@@ -189,10 +189,10 @@
 
             }
         };
-    })
+    }])
 
     //Validar Email
-    app.directive('validateEmail', function () {
+    app.directive('validateEmail', [function () {
         let EMAIL_REGEXP = /^[a-z0-9]+(\.[a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9]+)*(\.[a-z]{2,4})$/;
         return {
             link: function (scope, elem) {
@@ -214,20 +214,20 @@
                 });
             }
         }
-    });
+    }]);
 
 
     //Focus Input
-    app.directive('autoFocus', function () {
+    app.directive('autoFocus', [function () {
         return {
             restrict: 'A',
             link: function (scope, element,) {
                 element.focus();
             }
         };
-    });
+    }]);
 
-    app.directive('focusSearchArticulo', function ($timeout,) {
+    app.directive('focusSearchArticulo', ['$timeout', function ($timeout) {
         return {
             link: function (scope, element,) {
                 element.bind('click', function () {
@@ -237,9 +237,9 @@
                 })
             }
         }
-    })
+    }])
 
-    app.directive('tooltip', function () {
+    app.directive('tooltip', [function () {
         return {
             restrict: 'A',
             link: function (scope, element,) {
@@ -252,10 +252,10 @@
                 });
             }
         };
-    });
+    }]);
 
     //keyboard disable
-    app.directive('keyboardDisable', function () {
+    app.directive('keyboardDisable', [function () {
         return function (scope, elem,) {
             elem.on('keydown', function (e) {
                 if (e.which === 9) {
@@ -263,9 +263,9 @@
                 }
             })
         }
-    })
+    }])
 
-    app.directive('inputFocus', function ($timeout) {
+    app.directive('inputFocus', ['$timeout',function ($timeout) {
         return {
             restrict: 'AC',
             link: function (_scope, _element) {
@@ -274,9 +274,9 @@
                 }, 0);
             }
         }
-    });
+    }]);
 
-    app.directive('ngEnter', function () {
+    app.directive('ngEnter', [function () {
         return function (scope, element, attrs) {
             element.bind("keydown keypress", function (event) {
                 if (event.which === 13) {
@@ -288,9 +288,9 @@
                 }
             })
         }
-    })
+    }])
 
-    app.directive('stopEvent', function () {
+    app.directive('stopEvent', [function () {
         return {
             restrict: 'A',
             link: function (scope, element) {
@@ -299,11 +299,11 @@
                 });
             }
         };
-    });
+    }]);
 
 
     //Permiso Update Artcicle
-    app.directive('updateArticle', function ($rootScope) {
+    app.directive('updateArticle', ['$rootScope',function ($rootScope) {
         return {
 
             link: function (scope, element) {
@@ -317,9 +317,9 @@
                 }
             },
         }
-    })
+    }])
 
-    app.directive('estabStock', function (mainService, $compile, $timeout, articuloService) {
+    app.directive('estabStock', ['$compile','articuloService', function ( $compile, articuloSvc) {
         return {
             restrict: 'A',
             scope: {
@@ -353,7 +353,7 @@
                                             </div>   
                                              `;
 
-                        articuloService.getId(scope.article.idArticulo).then(response => {
+                        articuloSvc.getId(scope.article.idArticulo).then(response => {
                             const results = JSON.parse(response.payload) || [];
 
                             scope.branchs = results[4].map(val => {
@@ -376,34 +376,28 @@
                     // container: 'body'
                 };
 
-
-                // // Initialize the popover using element.popover()
+ 
                 $(element).popover(popoverOptions);
 
-                // // Open popover on element click
+           
                 element.on('mouseover', function () {
                     $(element).popover('show');
                 });
 
-                // // Close popover on outside click
+             
                 $(document).on('mouseover', function (event) {
                     if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
                         $(element).popover('hide');
                     }
-                });
-
-                // Clean up the popover when the directive is destroyed
-                // scope.$on('$destroy', function () {
-                //     $(element).popover('destroy');
-                // });
+                }); 
             }
         };
-    })
+    }])
 
 
 
 
-    app.directive('totalesVentaView', function ($rootScope) {
+    app.directive('totalesVentaView', ['$rootScope',function ($rootScope) {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -417,7 +411,7 @@
                 });
             }
         };
-    })
+    }])
 
 
 
@@ -425,7 +419,7 @@
     /**
      * ====================================START DIRECTIVES SALES=============================
      */
-    app.directive('btnCliente', function (modalService, nombreModalVenta, toastService) {
+    app.directive('btnCliente', ['modalService', 'nombreModalVenta', 'toastService', function (modalSvc, nombreModalVenta, tS) {
         return {
             restrict: 'A',
             scope: {
@@ -435,7 +429,7 @@
             link: function (scope, element) {
                 element.on('click', async function () {
                     if (typeof scope.params === 'object' && /^9{13}$/.test(scope.params.numeroIdentificacion)) {
-                        toastService.toastr('warning', 'Consumir Final no puede ser editada.');
+                        tS.toastr('warning', 'Consumir Final no puede ser editada.');
                         return
                     }
 
@@ -443,7 +437,7 @@
                     let ctrl = (await import(fileCtrl))[controllers['M']];
                     let template = templates['M'];
 
-                    let modalRef = modalService.openModalCustom({
+                    let modalRef = modalSvc.openModalCustom({
                         controller: ctrl,
                         template,
                         size: 'xl',
@@ -462,9 +456,9 @@
                 })
             }
         }
-    })
+    }])
 
-    app.directive('btnClienteLista', function (modalService, nombreModalVenta) {
+    app.directive('btnClienteLista', ['modalService', 'nombreModalVenta', function (modalSvc, nombreModalVenta) {
         return {
             restrict: 'A',
             scope: {
@@ -478,7 +472,7 @@
                     let ctrl = (await import(fileCtrl))[controllers['ML']];
                     let template = templates['ML'];
 
-                    let modalRef = modalService.openModalCustom({
+                    let modalRef = modalSvc.openModalCustom({
                         controller: ctrl,
                         template,
                         size: 'xl',
@@ -497,7 +491,7 @@
                 })
             }
         }
-    })
+    }])
 
     app.directive('clienteInfoPopover', ['toastService', function (tS) {
         return {
@@ -565,13 +559,12 @@
 
                             if (!scope.infoAdicionalDocumento) return 
 
-                            // Verificar si el valor ya existe en infoAdicionalDocumento
+                      
                             let index = scope.infoAdicionalDocumento.findIndex(function (item) {
                                 return  item.valor === valor;
                             });
 
-                            if (isChecked) {
-                                // Si la casilla está marcada y el valor no existe en infoAdicionalDocumento, agregarlo
+                            if (isChecked) { 
                                 if (index === -1) {
                                     scope.infoAdicionalDocumento.push({
                                         nombre: 'Placa',
@@ -579,8 +572,7 @@
                                     });
                                     tS.toastr('success', 'Agregado en información adicional del documento')
                                 }
-                            } else {
-                                // Si la casilla está desmarcada y el valor existe en infoAdicionalDocumento, eliminarlo
+                            } else { 
                                 if (index !== -1) {
                                     scope.infoAdicionalDocumento.splice(index, 1);
                                 }
@@ -612,7 +604,7 @@
         };
     }]);
 
-    app.directive('clienteSearchDrtv', function ($compile, clienteService) {
+    app.directive('clienteSearchDrtv', ['$compile','clienteService',function ($compile, clienteSvc) {
         return {
             restrict: 'A',
             scope: {
@@ -626,7 +618,7 @@
                 }
                 scope.searchCustomer = function (textSearch) {
                     if (textSearch.length > 1) {
-                        return clienteService.search({ textSearch })
+                        return clienteSvc.search({ textSearch })
                             .catch(error => {
                                 console.log(error);
                             })
@@ -666,13 +658,13 @@
                 $compile(element)(scope);
             }
         };
-    });
+    }]);
 
 
     /**
      * Buscador de cliente para venta en donde incluye a mas del buscador consultar datos del cliente al SRI en caso de no encontrar datos en la base de datos AcontPlus
      */
-    app.directive('customerSearchSaleDrtv', function ($compile, clienteService, commonService, toastService) {
+    app.directive('customerSearchSaleDrtv', ['$compile', 'clienteService','toastService', function ($compile, clienteSvc, tS) {
         return {
             restrict: 'A',
             scope: {
@@ -734,10 +726,10 @@
                         try {
                             showLoader();
 
-                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await clienteService.checkClientSRIByRUC(textSearch);
+                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await clienteSvc.checkClientSRIByRUC(textSearch);
                             hideLoader();
                             if (!numeroRuc) {
-                                toastService.toastr('warning', error)
+                                tS.toastr('warning', error)
                                 return
                             }
 
@@ -775,10 +767,10 @@
                     if (textSearch.length === 10) {
                         try {
                             showLoader();
-                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await clienteService.checkClientSRIByCedula(textSearch)
+                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await clienteSvc.checkClientSRIByCedula(textSearch)
                             hideLoader();
                             if (!identificacion || !nombreCompleto) {
-                                toastService.toastr('warning', error)
+                                tS.toastr('warning', error)
                                 return
                             }
 
@@ -818,14 +810,9 @@
                     validationSearchCustomerExternal = false;
                     if (textSearch.length < 2) return;
 
-                    return clienteService.search({ textSearch }).then(response => {
+                    return clienteSvc.search({ textSearch }).then(response => {
                         if (response.code === "0") {
-                            validationSearchCustomerExternal = true;
-                            // scope.functionTrigger({
-                            //     result: {
-                            //         nombreFiscal: textSearch,
-                            //     }
-                            // })
+                            validationSearchCustomerExternal = true; 
                         }
                         return response;
                     })
@@ -867,7 +854,7 @@
                 $compile(element)(scope);
             }
         };
-    });
+    }]);
 
 
 
@@ -875,7 +862,7 @@
 
 
 
-    app.directive('btnEmpresa', function (modalService, nombreModalVenta) {
+    app.directive('btnEmpresa', ['modalService','nombreModalVenta', function (modalSvc, nombreModalVenta) {
         return {
             restrict: 'A',
             scope: {
@@ -892,7 +879,7 @@
 
 
 
-                    const modalDialogRef = modalService.openModalCustom({
+                    const modalDialogRef = modalSvc.openModalCustom({
                         controller,
                         template,
                         size: 'md',
@@ -911,7 +898,7 @@
 
             }
         }
-    })
+    }])
 
 
     app.directive('btnEmpleado', function (modalService, nombreModalVenta) {
@@ -1056,58 +1043,7 @@
                 options="dateRangePicker.options" options="{locale: {separator: " :"}}" />`;
                 var e = $compile(html)(scope);
                 element.replaceWith(e);
-            }
-            // link: function (scope) {
-            //     let thisMoment = moment(new Date())
-            //     scope.startDate = thisMoment;
-            //     scope.endDate = thisMoment;
-            //     scope.dateRangePicker = {
-            //         date: {
-            //             startDate: thisMoment,
-            //             endDate: thisMoment,
-            //         },
-            //         picker: null,
-            //         options: {
-            //             pickerClasses: 'custom-display', //angular-daterangepicker extra
-            //             buttonClasses: 'btn',
-            //             applyButtonClasses: 'btn-success',
-            //             cancelButtonClasses: 'btn-danger',
-            //             locale: {
-            //                 applyLabel: "Aplicar",
-            //                 cancelLabel: 'Cancelar',
-            //                 customRangeLabel: 'Rango Personalizado',
-            //                 separator: ' - ',
-            //                 format: "YYYY-MM-DD", //will give you 2017-01-06
-            //                 //format: "D-MMM-YY", //will give you 6-Jan-17
-            //                 //format: "D-MMMM-YY", //will give you 6-January-17
-            //             },
-            //             ranges: {
-            //                 'Hoy': [moment(), moment()],
-            //                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            //                 'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
-            //                 'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
-            //                 'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-            //                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-            //             },
-            //             eventHandlers: {
-            //                 'apply.daterangepicker': function (event, picker) {
-
-            //                     scope.startDate = scope.dateRangePicker.date.startDate
-            //                     scope.endDate = scope.dateRangePicker.date.endDate;
-
-            //                     scope.resultRangeDate({
-            //                         result: {
-            //                             startDate: scope.startDate,
-            //                             endDate: scope.endDate
-            //                         }
-            //                     })
-            //                     // $scope.getComprobantes()
-            //                     // console.log('applied')
-            //                 }
-            //             }
-            //         }
-            //     };
-            // }
+            } 
         };
 
     })
@@ -1829,5 +1765,43 @@
             }
         }
     })
+
+
+    //Convertir documento proforma 
+    /**
+     * 1. Transformar datos de proforma pendiente a nota entrega o factura
+     * 2. Transformar datos de nota entrega a factura
+     */
+
+    app.directive('btnConvertToDoc', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+               
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+
+                    console.log(nombreModalVenta.CONVERT_TO_DOC)
+                    let fileCtrl = nombreModalVenta.CONVERT_TO_DOC.fileCtrl;
+                    let ctrl = nombreModalVenta.CONVERT_TO_DOC.controller;
+                    let template = nombreModalVenta.CONVERT_TO_DOC.templates['M'];
+                    let controller = (await import(fileCtrl))[ctrl];
+  
+                    modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: {
+                            ...scope.params, 
+                        }
+                    })
+
+                })
+            }
+        }
+    })
+
 
 })(window.angular)

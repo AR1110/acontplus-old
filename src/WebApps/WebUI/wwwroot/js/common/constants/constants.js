@@ -143,6 +143,14 @@ app.constant('nombreModalFactElect', {
 })
 
 app.constant('nombreModalVenta', {
+    CONVERT_TO_DOC: {
+        fileCtrl: '/js/ventas/modals/modalConvertToDocCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'convertToDocModalCtrl',
+        templates: {
+            M: '~/Pages/Ventas/Shared/ConvertToDoc.cshtml', 
+        }
+    },
+
     DOC_VENTA_DETALLE: {
         fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'modalDocVentaDetalleCtrl',
@@ -332,16 +340,7 @@ app.constant('nombreModalContabilidad', {
     }
 })
 
-app.constant('nombreModal', {
-
-    caja: {
-        MODAL_CTRL: 'admin/modalCajaCtrl.js' + CHANGE_VERSION(),
-        MODAL_CAJA_CSHTML: 'Caja/_ModalCaja.cshtml',
-        MODAL_APERTURA_CAJA_CSHTML: 'Caja/_ModalAperturaCaja.cshtml',
-        MODAL_ASIGNACION_USUARIO_CAJA_CSHTML: 'Caja/_ModalAsignUsuarioTurno.cshtml',
-        MODAL_MOVIMIENTO_CAJA_CSHTML: 'Caja/_ModalMovimientoCaja.cshtml',
-        MODAL_MOVIMIENTO_CIERRE_CSHTML: 'Caja/_ModalCierreCaja.cshtml'
-    },
+app.constant('nombreModal', { 
     common: {
         MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL: 'common/modalInfoAdicionalTipoDocCtrl.min.js' + CHANGE_VERSION(),
         MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML: '_ModalInfoAdicionalTipoDoc.cshtml',
@@ -362,39 +361,11 @@ app.constant('nombreModal', {
             controller: 'InfoAdicionalTipoDocCtrl',
             template: 'Shared/Common/_ModalInfoAdicionalTipoDoc.cshtml'
         }
-    },
-    doc_elect: {
-        MODAL_CTRL: 'factElect/docVentaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO_PROFORMA_CSHTML: 'Proforma/_ModalNuevoTest.cshtml'
-    },
-    fact_elect: {
-        MODAL_CTRL: 'factElect/modalDocElectronicoVentaCtrl.js' + CHANGE_VERSION(),
-
-    },
-    familia: {
-        MODAL_FAMILIA_CTRL: 'almacen/modalFamiliaCtrl.js' + CHANGE_VERSION(),
-        MODAL_FAMILIA_CSHTML: '_ModalFamilia.cshtml'
-    },
+    },  
     financiera: {
         MODAL_FORMA_COBRO_PAGO_CTRL: 'financiera/modalFormaCobroPagoCtrl.min.js' + CHANGE_VERSION(),
         MODAL_FORMA_COBRO_PAGO_CSHTML: 'Shared/Financiera/_ModalFormaCobroPago.cshtml'
-    },
-    subFamilia: {
-        MODAL_CTRL: 'modalSubFamiliaCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalSubFamilia.cshtml'
-    },
-    medida: {
-        MODAL_CTRL: 'modalMedidaCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalMedida.cshtml'
-    },
-    marca: {
-        MODAL_CTRL: 'modalMarcaCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalMarca.cshtml'
-    },
-    modelo: {
-        MODAL_CTRL: 'modalModeloCtrl.min.js' + CHANGE_VERSION(),
-        MODAL_CSHTML: '_ModalModelo.cshtml'
-    },
+    },   
     articulo: {
         MODAL_CTRL: 'modalArticuloCtrl.js' + CHANGE_VERSION(),
         MODAL_ARTICULO_IMAGEN_CTRL: 'modalArticuloImagenCtrl.min.js' + CHANGE_VERSION(),
@@ -781,26 +752,7 @@ app.constant('nombreModal', {
             controller: 'ModalRetencionCompraAutomaticaCtrl',
             template: 'RetencionCompra/_ModalRetencionAutomatica.cshtml'
         },
-    },
-    retencion_venta: {
-        MODAL_FILE_CTRL: 'modal/common/modalRetencionCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalRetencionVentaNuevoCtrl',
-            template: 'RetencionVenta/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalRetencionVentaEditarCtrl',
-            template: 'RetencionVenta/_ModalEditar.cshtml'
-        },
-        MODAL_DETALLE: {
-            controller: 'ModalRetencionVentaDetalleCtrl',
-            template: 'RetencionVenta/_ModalDetalle.cshtml'
-        },
-        MODAL_FILTRO: {
-            controller: 'ModalRetencionVentaFiltroCtrl',
-            template: 'RetencionVenta/_ModalFiltro.cshtml'
-        }
-    },
+    }, 
 
     transferencia_bodega: {
         MODAL_FILE_CTRL: 'modal/inventario/modalTransferenciaBodegaCtrl.js' + CHANGE_VERSION(),
@@ -821,29 +773,7 @@ app.constant('nombreModal', {
             template: 'TransferenciaBodega/_ModalFiltro.cshtml'
         },
     },
-    user: {
-        MODAL_CTRL: 'modal/admin/modalUserCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalUserCtrl',
-            template: 'Usuario/_ModalNuevo.cshtml'
-        },
-        MODAL_EDIT: {
-            controller: 'ModalUserCtrl',
-            template: 'Usuario/_ModalEditar.cshtml'
-        },
-        MODAL_USER_COMPANY: {
-            controller: 'ModalUserCompanyCtrl',
-            template: 'Usuario/_ModalUserCompany.cshtml'
-        },
-        MODAL_ASIGN_PTOEMISION_BODEGA: {
-            controller: 'ModalAsignPtoEmisionAndBodegaCtrl',
-            template: 'Usuario/_ModalAsignPtoEmisionBodega.cshtml'
-        },
-        MODAL_USER_CONFIG: {
-            controller: 'ModalConfigUserCtrl',
-            template: 'Usuario/_ModalUserConfig.cshtml'
-        }
-    }
+    
 })
 
 
