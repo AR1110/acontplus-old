@@ -32,7 +32,7 @@ BEGIN
 	DECLARE @tipo INT ,@Id INT ,@CompanyId INT ,@userId INT
 
     --> Support
-    DECLARE @Sequence INT ,@VehicleCompanyId INT ,@PuntoEmisionId INT ,@SupportStatusId INT
+    DECLARE @Sequence INT ,@VehicleCompanyId INT ,@PuntoEmisionId INT ,@SupportStatusId INT ,@TipoDocumentoId INT
 
 
     DECLARE @tbSupport AS TABLE (
@@ -71,13 +71,20 @@ BEGIN
 
         SELECT TOP 1 @SupportStatusId = Id from Mechanical.SupportStatus WITH (NOLOCK) WHERE Code = 'PE'
 
-        SELECT @Sequence = COUNT(*) + 1 FROM Mechanical.Support WHERE PuntoEmisionId = @PuntoEmisionId
-            
+        SELECT TOP 1 @TipoDocumentoId = idTipoDocumento FROM dbo.TipoDocumento WHERE codigo = 'SM'
 
+        SELECT TOP 1 @Sequence = ultimaSecuencia FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idPuntoEmision = @PuntoEmisionId AND idTipoDocumento = @TipoDocumentoId 
+            
         --> VALIDATION OF INFORMATION
         IF (SELECT COUNT(*) FROM @tbSupport) = 0
             BEGIN
                 SELECT [Common].[ufnSpResponse]('0', 'Error en la informacion del soporte', NULL)
+                RETURN
+            END 
+
+        IF @Sequence IS NULL
+            BEGIN
+                SELECT [Common].[ufnSpResponse]('0', 'No tiene una configarion de secuencial', NULL)
                 RETURN
             END 
 

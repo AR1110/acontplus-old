@@ -148,15 +148,15 @@ namespace Ventas.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("convert")]
-        public async Task<IActionResult> ConvertDocument(ApiRequest parameters)
+        [HttpPost("ConvertToDoc")]
+        public async Task<IActionResult> ConvertToDoc(ApiRequest parameters)
         {
             var _response = new ApiResponse();
             var _db = new DbAccess(_configuration);
             try
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Proforma_Convert", true);
+                await _db.SPExecute("Ventas.Proforma_Convert_To_Doc", true);
                 _db.AddDynamicParam("userRoleId", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
