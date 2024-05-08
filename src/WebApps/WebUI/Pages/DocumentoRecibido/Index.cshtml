@@ -1,6 +1,5 @@
 ﻿@page
 @model WebUI.Pages.DocumentoRecibido.IndexModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -73,7 +72,7 @@
                             <input date-range-picker class="form-control date-picker" type="text"
                                    ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
                                    picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
-                                   options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
+                                   options="dateRangePicker.options" options="{locale: {separator: ' :'}}" />
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             @await Html.PartialAsync("~/Pages/Compras/Proveedor/_ProveedorAutocompleteFiltro.cshtml")

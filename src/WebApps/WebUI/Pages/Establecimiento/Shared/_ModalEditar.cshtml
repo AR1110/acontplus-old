@@ -58,13 +58,13 @@
             <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="contribuyenteEspecial">Contribuyente Especial: </label>
-                    <input type="text" class="form-control border-select" valid-number mask="999" ng-model="$ctrl.data.contribuyenteEspecial" placeholder="">
+                    <input type="text" class="form-control border-select" id="contribuyenteEspecial" valid-number mask="999" ng-model="$ctrl.data.contribuyenteEspecial" placeholder="">
                 </div>                
             </div>
 
             <div class="col-xl-4 co-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    <span for="obligadoContabilidad">Obligado llevar Contabilidad</s>
+                    <span for="obligadoContabilidad">Obligado llevar Contabilidad</span>
                     <md-switch ng-model="$ctrl.data.obligadoContabilidad" ng-true-value="'SI'" ng-false-value="'NO'" aria-label="Obligado Contabilidad">
                         {{ $ctrl.data.obligadoContabilidad}}
                     </md-switch>
