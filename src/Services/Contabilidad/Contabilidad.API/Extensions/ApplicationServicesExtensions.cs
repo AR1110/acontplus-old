@@ -18,6 +18,7 @@ namespace Contabilidad.API.Extensions
 
             services.AddScoped<IAnticipoService, AnticipoService>();
             services.AddScoped<ICajaService, CajaService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IChequeService, ChequeService>();
             services.AddScoped<IComprobanteEgresoService, ComprobanteEgresoService>();
             services.AddScoped<IControlCajaService, ControlCajaService>();
