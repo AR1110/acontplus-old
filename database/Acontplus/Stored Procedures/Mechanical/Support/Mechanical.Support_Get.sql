@@ -39,7 +39,7 @@ BEGIN
     
     --> Filters
     DECLARE @Id INT ,@CustomerId INT ,@VehicleCompranyId INT ,@textSearch VARCHAR(100) ,@UserId INT ,@SupportStatusId INT ,@assigned BIT ,@LicensePlate VARCHAR(50)
-           ,@ckDate BIT ,@fromDate DATETIME2 ,@toDate DATETIME2
+           ,@ckDate BIT ,@fromDate DATETIME2 ,@toDate DATETIME2 ,@TipoDocumentoId INT
 
     -->Variables
     SELECT TOP 1 @CompanyId = idEntidad, @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -146,6 +146,8 @@ BEGIN
 	IF @tipo = 2
 		BEGIN
 			SET @tableNames = 'establishments,emissionPoints,vehicleTypes,countrys,idTypes,users'
+
+            SELECT TOP 1 @TipoDocumentoId = idTipoDocumento FROM dbo.TipoDocumento WHERE codigo = 'SM'
 			
             SELECT idEstablecimiento as establecimientoId
                   ,nombreComercial
@@ -156,12 +158,14 @@ BEGIN
             SELECT ap.idEstablecimiento       as establecimientoId
                   ,ap.idPuntoEmision          as puntoEmisionId
                   ,ap.estab + '-' + ap.ptoEmi as ptoEmi
-                  ,(
-                        SELECT (REPLICATE('0',(9-LEN(COUNT(*)+1)))+CONVERT(NVARCHAR(10),COUNT(*)+1)) 
-                        FROM Mechanical.Support ms 
-                        WHERE ms.PuntoEmisionId = ap.idPuntoEmision
+                  ,ISNULL
+                  ((
+                        SELECT TOP 1 (REPLICATE('0',(9-LEN(cd.ultimaSecuencia+1)))+CONVERT(NVARCHAR(10),cd.ultimaSecuencia+1)) 
+                        FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK) 
+                        WHERE cd.idPuntoEmision = ap.idPuntoEmision 
+                          AND cd.idTipoDocumento = @TipoDocumentoId
 
-                   ) as sequence
+                  ),'0') as [sequence]
             FROM v_PtoEmi_Asign ap WITH (NOLOCK) 
             WHERE idUsuarioRol = @userRoleId 
             ORDER BY defaultPtoEmi DESC
