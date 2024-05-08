@@ -1,8 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ComprobanteEgresoController : ControllerBase
+    public class ComprobanteEgresoController : BaseApiController
     {
         private readonly IComprobanteEgresoService _svc;
         public ComprobanteEgresoController(IComprobanteEgresoService service)
