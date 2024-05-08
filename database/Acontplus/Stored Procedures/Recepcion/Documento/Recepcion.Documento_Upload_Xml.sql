@@ -152,7 +152,20 @@ BEGIN
 
         IF @codDoc != '07' 
             BEGIN
-                SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = @tipoIdentificacion
+                IF LEN(@identificacionCliProv) = 13
+                    BEGIN 
+                        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
+                    END 
+
+                IF LEN(@identificacionCliProv) = 10
+                    BEGIN 
+                        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '05'
+                    END 
+
+                ELSE 
+                    BEGIN
+                        SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '06'
+                    END 
              END
 
         --> Validacion de informacion 
@@ -162,15 +175,9 @@ BEGIN
                 RETURN 
             END 
 
-        IF @ruc != @rucReceptor
-            BEGIN
-                SELECT '0'code,'El comprobante no pertenece al Contribuyente' + ' ' +  @ruc as 'message'
-                RETURN
-            END 
-
         IF @ruc != @rucReceptor + IIF(LEN(@rucReceptor) = 10,'001','')
             BEGIN
-                SELECT '0'code,'El comprobante no pertenece al Contribuyente' + ' ' +  @ruc as 'message' 
+                SELECT '0'code,'El comprobante no pertenece al Contribuyente' + ' ' +  @ruc as 'message'
                 RETURN
             END 
 

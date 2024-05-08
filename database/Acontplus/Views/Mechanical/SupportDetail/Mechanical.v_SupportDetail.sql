@@ -7,8 +7,6 @@ CREATE OR ALTER VIEW Mechanical.v_SupportDetail WITH SCHEMABINDING AS(
         ,sd.Price
         ,sd.Total
         ,sd.Obs
-        ,sd.CodePercentage
-        ,sd.[Percentage]
         ,sd.ArticuloId
         ,sd.TarifaId
         ,sd.BodegaId

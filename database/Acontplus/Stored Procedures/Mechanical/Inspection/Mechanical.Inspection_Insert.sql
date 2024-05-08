@@ -16,9 +16,9 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
     
-    DECLARE @Id INT, @CompanyId INT, @UserId INT
+    DECLARE @Id INT, @CompanyId INT, @UserId INT 
     
-    DECLARE @SupportId INT 
+    DECLARE @SupportId INT ,@SupportStatusId INT
     
     DECLARE @tbInspection AS TABLE (
         SupportId INT NOT NULL
@@ -67,6 +67,8 @@ BEGIN
 
         SELECT TOP 1 @SupportId = SupportId FROM @tbInspection
 
+        SELECT TOP 1 @SupportStatusId = Id from Mechanical.SupportStatus WITH (NOLOCK) WHERE Code = 'PR'
+
         -- ======================= VALIDATION =============================== 
         IF (SELECT COUNT(*) FROM @tbInspection) = 0 
             BEGIN
@@ -82,7 +84,7 @@ BEGIN
 
         BEGIN TRAN 
             
-            UPDATE Mechanical.Support WITH (ROWLOCK) SET [Status] = 1 WHERE Id = @SupportId
+            UPDATE Mechanical.Support WITH (ROWLOCK) SET SupportStatusId = @SupportStatusId WHERE Id = @SupportId
 
             INSERT INTO [Mechanical].[Inspection]
                   (SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs, CompanyId, UserId,[Status],CreatedAt,[Enabled])

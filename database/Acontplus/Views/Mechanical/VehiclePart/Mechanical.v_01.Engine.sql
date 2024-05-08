@@ -1,7 +1,5 @@
 USE [Acontplus]
 GO
-USE AcontPlus
-GO
 CREATE OR ALTER VIEW Mechanical.v_Engine WITH SCHEMABINDING AS (
 	SELECT it.Id
 		  ,JSON_VALUE(dj.[value],'$.description')             as Part

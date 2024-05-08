@@ -16,92 +16,92 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @idEntidad INT
-    DECLARE @tipo INT
-    DECLARE @checkBoxFecha BIT 
-    DECLARE @codEstab VARCHAR(25) 
-    DECLARE @byCliente INT 
-    DECLARE @codEstado VARCHAR(5) 
-    DECLARE @byUsuario INT 
-    DECLARE @dateStart DATETIME 
-    DECLARE @dateEnd DATETIME  
-	DECLARE @secuencial VARCHAR(100) 
-    DECLARE @pageSize INT
-    DECLARE @pageIndex INT 
-    DECLARE @id INT
-    DECLARE @uniqueId VARCHAR(500)
+    SET LANGUAGE SPANISH;
 
-	DECLARE @params NVARCHAR(MAX) = '@idEntidad         INT
-									,@codEstab  VARCHAR(25)
-									,@idCliente         INT
-									,@codEstado  VARCHAR(5)
-									,@idUsuario         INT
-									,@dateStart    DATETIME
-									,@dateEnd      DATETIME
-                                    ,@pageSize          INT
-							        ,@pageIndex         INT'
+    --> Global
+    DECLARE @tipo INT ,@idEntidad INT
 
-	DECLARE @sql NVARCHAR(MAX) = 'SELECT idAprob_Document        = ad.idAprob_Document
-										,uniqueId                = ad.uniqueId
-										,es.codEstab
-										,ad.docOrigen  
-										,ad.codDoc
-										,docOrigenDesc           = CASE ad.docOrigen WHEN ''PR'' THEN ''Proforma''
-																				     WHEN ''NE'' THEN ''Nota Entrega''
-																				     ELSE '''' 
-																   END
-										,docDestinoDesc          = CASE ad.codDoc WHEN ''01'' THEN ''Factura''
-																				  WHEN ''NE'' THEN ''Nota Entrega''
-																				  ELSE '''' 
-																   END
-										,fechaEmision            = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, ''dd/MM/yyyy HH:mm''))
-										,serie                   = ad.estab+''-''+ad.ptoEmi+''-''+Helper.F_Auto_Sequential(ad.secuencial)
-										,identificacionComprador = ad.identificacionComprador
-										,razonSocialComprador	 = cl.nombreFiscal
-										,total                   = ad.importeTotal
-										,codEstado               = ad.codEstado
-										,estado			         = ep.descripcion
-										,colorFila               = CASE ad.codEstado WHEN ''A''   THEN ''table-danger'' 
-																					 WHEN ''APR'' THEN ''table-success''
-																					 ELSE ''''
-																   END 
-                                        ,count(*) over() as totalRecords
-								  FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 
-								  INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.codigo         = ad.codEstado
-								  INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ad.idCliente
-								  INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
-								  INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab 
-								  WHERE ad.idEntidad = @idEntidad AND es.codEstab = @codEstab '
+    --> Sql
+	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
+	
+    --> Filters 
+    DECLARE @checkBoxFecha BIT ,@codEstab VARCHAR(25) ,@byCliente INT ,@codEstado VARCHAR(5) ,@byUsuario INT ,@dateStart DATETIME2 
+           ,@dateEnd DATETIME2 ,@secuencial VARCHAR(100) ,@id INT ,@uniqueId VARCHAR(500)
 
-	SELECT @idEntidad = idEntidad ,@byUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+    --> Global
+	SELECT TOP 1 @idEntidad = idEntidad ,@byUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
     --> Get 
     IF @tipo = 1
         BEGIN 
+            
+            SET @params = '@idEntidad INT
+						  ,@codEstab  VARCHAR(25)
+						  ,@idCliente INT
+						  ,@codEstado VARCHAR(5)
+						  ,@idUsuario INT
+						  ,@dateStart DATETIME2
+						  ,@dateEnd   DATETIME2
+                          ,@pageSize  INT
+						  ,@pageIndex INT'
+
+            SET @sql = 'SELECT idAprob_Document        = ad.idAprob_Document
+							  ,uniqueId                = ad.uniqueId
+							  ,es.codEstab
+							  ,ad.docOrigen  
+							  ,ad.codDoc
+							  ,docOrigenDesc           = CASE ad.docOrigen WHEN ''PR'' THEN ''Proforma''
+																		   WHEN ''NE'' THEN ''Nota Entrega''
+																		   ELSE '''' 
+														END
+							  ,docDestinoDesc          = CASE ad.codDoc WHEN ''01'' THEN ''Factura''
+																		WHEN ''NE'' THEN ''Nota Entrega''
+																		ELSE '''' 
+														END
+							  ,fechaEmision            = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, ''dd/MM/yyyy HH:mm''))
+							  ,serie                   = ad.estab+''-''+ad.ptoEmi+''-''+Helper.F_Auto_Sequential(ad.secuencial)
+							  ,identificacionComprador = ad.identificacionComprador
+							  ,razonSocialComprador	   = cl.nombreFiscal
+							  ,total                   = ad.importeTotal
+							  ,codEstado               = ad.codEstado
+							  ,estado			         = ep.descripcion
+							  ,colorFila               = CASE ad.codEstado WHEN ''A''   THEN ''table-danger'' 
+																			WHEN ''APR'' THEN ''table-success''
+																			ELSE ''''
+														END 
+                              ,count(*) over() as totalRecords
+						FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 
+						INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.codigo         = ad.codEstado
+						INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ad.idCliente
+						INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
+						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab 
+						WHERE ad.idEntidad = @idEntidad 
+                          AND es.codEstab = @codEstab '
+
 	        SELECT @checkBoxFecha = checkBoxFecha
 		          ,@codEstab      = codEstab
 		          ,@byCliente     = byCliente
 		          ,@codEstado     = byEstado
 		          ,@byUsuario     = byUsuario
-		          ,@dateStart     = CONVERT(DATETIME, fechaInicio, 105)
-		          ,@dateEnd       = CONVERT(DATETIME, fechaFin, 105)
+		          ,@dateStart     = fechaInicio
+		          ,@dateEnd       = fechaFin
 		          ,@secuencial    = LTRIM(TRIM(nroSecuencial))
                   ,@pageIndex     = pageIndex
                   ,@pageSize      = pageSize
 	        FROM OPENJSON(@json) WITH
             (    
-                 checkBoxFecha           BIT  
+                 checkBoxFecha   BIT  
 		        ,codEstab        VARCHAR(25)
-		        ,byCliente               INT 
-		        ,byEstado         VARCHAR(5) 
-		        ,byUsuario               INT
-		        ,fechaInicio     VARCHAR(50)
-		        ,fechaFin        VARCHAR(50)
+		        ,byCliente       INT 
+		        ,byEstado        VARCHAR(5) 
+		        ,byUsuario       INT
+		        ,fechaInicio     DATETIME2
+		        ,fechaFin        DATETIME2
 		        ,nroSecuencial   VARCHAR(20)
-                ,pageIndex               INT
-			    ,pageSize                INT
+                ,pageIndex       INT
+			    ,pageSize        INT
             )
 
 	        IF @secuencial IS NOT NULL
@@ -133,15 +133,15 @@ BEGIN
 
 	        EXEC sp_executesql @sql
 			                  ,@params 
-			                  ,@idEntidad     = @idEntidad
-			                  ,@codEstab      = @codEstab
-			                  ,@idCliente     = @byCliente
-			                  ,@codEstado     = @codEstado 
-			                  ,@idUsuario     = @byUsuario
-			                  ,@dateStart     = @dateStart
-			                  ,@dateEnd       = @dateEnd
-                              ,@pageSize      = @pageSize
-							  ,@pageIndex     = @pageIndex
+			                  ,@idEntidad  = @idEntidad
+			                  ,@codEstab   = @codEstab
+			                  ,@idCliente  = @byCliente
+			                  ,@codEstado  = @codEstado 
+			                  ,@idUsuario  = @byUsuario
+			                  ,@dateStart  = @dateStart
+			                  ,@dateEnd    = @dateEnd
+                              ,@pageSize   = @pageSize
+							  ,@pageIndex  = @pageIndex
             RETURN 
         END 
     
@@ -225,7 +225,7 @@ BEGIN
                   ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
 
-            SELECT idEstadoPago, descripcion, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('PE','AC')
+            SELECT idEstadoPago, descripcion, codigo as codEstado FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('NCBR','CBR','AC')
 
             RETURN 
         END 
@@ -291,10 +291,10 @@ BEGIN
              ORDER BY dt.idAprob_Document_Detailt ASC
 
              
-	        SELECT tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
-			                       WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
-			                       ELSE '' END 
-		          ,serieComprobante = serie
+	        SELECT CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
+			            WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
+			            ELSE '' END  as tipoDoc
+		          ,serie             as serieComprobante
 	        FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
             
             SELECT idTipoIva

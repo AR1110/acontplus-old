@@ -181,7 +181,8 @@ BEGIN
 		SELECT TOP 1 @idControlCaja = idControlCaja FROM ControlCaja WITH (NOLOCK) WHERE idCaja = @idCaja AND estado = 1
 
 		--======================================Validacion de datos============================================================
-		IF (SELECT COUNT(*) FROM @documento) = 0
+
+        IF (SELECT COUNT(*) FROM @documento) = 0
 			BEGIN
 				SELECT '0'code,'Error en la informacion del comprobante de ingreso ' as 'message'
 				RETURN 

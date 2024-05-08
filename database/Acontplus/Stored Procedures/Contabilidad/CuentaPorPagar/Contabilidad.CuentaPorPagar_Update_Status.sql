@@ -26,10 +26,9 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @posfechado NUMERIC(18,5)
-	DECLARE @abono NUMERIC(18,5)
-	DECLARE @idEstadoPago INT
-	DECLARE @residuo AS NUMERIC(18,5)
+    SET LANGUAGE SPANISH;
+
+	DECLARE @posfechado NUMERIC(18,5),@abono NUMERIC(18,5),@idEstadoPago INT,@residuo AS NUMERIC(18,5)
 
     SELECT @posfechado = SUM(hp.abono) 
     FROM dbo.ComprobanteEgreso ce WITH (NOLOCK) 
@@ -60,11 +59,6 @@ BEGIN
 			IF @residuo <= 0  
 				BEGIN
 					SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PA'
-
-                    IF @residuo < 0 
-                        BEGIN
-                            SET @abono = @importeTotal
-                        END 
 				END 
 
 			IF @residuo > 0 
