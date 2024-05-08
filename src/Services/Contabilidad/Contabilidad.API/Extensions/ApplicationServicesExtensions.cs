@@ -26,6 +26,7 @@ namespace Contabilidad.API.Extensions
             services.AddScoped<ICuentaPorCobrarService, CuentaPorCobrarService>();
             services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
             services.AddScoped<ISubEntidadFinancieraService, SubEntidadFinancieraService>();
+            services.AddScoped<ITipoService, TipoService>();
             return services;
         }
     }
