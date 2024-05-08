@@ -1,6 +1,7 @@
-import { Directive, HostListener, Input } from "@angular/core";
+import { Directive, EventEmitter, HostListener, Input, Output } from "@angular/core";
 import { ModalService } from "@core/services/modal.service";
 import { MeasureAddEditModalComponent } from "@modules/inventory/components/measure-add-edit-modal/measure-add-edit-modal.component";
+import { MeasureRead } from "../models/measure.model";
 
 @Directive({
   selector: '[appMeasureAddEdit]',
@@ -8,14 +9,19 @@ import { MeasureAddEditModalComponent } from "@modules/inventory/components/meas
 })
 export class MeasureAddEditDirective {
 
-    @Input() resultModalHandler!: Function;
-    @Input() params = {};
+
+    @Output() onResultModal = new EventEmitter();
+    @Input() params = {} as MeasureRead;
+    @Input() id  = 0;
     @HostListener('click') onClick() {
       const modalRef = this.modalSvc.openModalCustom(MeasureAddEditModalComponent);
-      modalRef.componentInstance.params = this.params || {};
+      modalRef.componentInstance.params = {
+        ...this.params,
+        id: this.params.idMedida
+      };
       modalRef.result.then((result: unknown) => {
-        if (this.resultModalHandler && typeof result === 'object') {
-          this.resultModalHandler(result);
+        if (this.onResultModal && typeof result === 'object') {
+          this.onResultModal.emit(result);
         }
       })
     }

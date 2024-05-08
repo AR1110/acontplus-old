@@ -243,8 +243,8 @@
                     isRenderRazorPartial: true
                 })
                 modalRef.result.then(result => {
-                    if (typeof result === 'object') {
-                        getCuentasPorCobrar();
+                    if (typeof result === 'object') { 
+                        $scope.getCuentasPorPagar();
                     }
                 })
             } catch (error) {
