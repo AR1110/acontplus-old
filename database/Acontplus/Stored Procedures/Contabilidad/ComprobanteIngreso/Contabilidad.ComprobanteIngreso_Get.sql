@@ -299,5 +299,28 @@ BEGIN
 
 			RETURN 
 		END 
+
+    ---------- DATOS AUXILIARES PARA FILTROS -------
+    IF @tipo = 4
+        BEGIN
+            SELECT idTipoDocumento
+                , descripcion
+                , codigoSri
+                , codigo 
+            FROM dbo.TipoDocumento 
+            WITH (NOLOCK) 
+            WHERE codigo IN ('FV','NE')
+
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK)
+            WHERE idUsuarioRol = @idUsuarioRol 
+            ORDER BY defaultEstab DESC
+        END
 END
 GO

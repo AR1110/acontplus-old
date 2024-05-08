@@ -5,33 +5,22 @@
     public class ChequeController : ControllerBase
     {
         private readonly IChequeService _service;
-        private readonly ICustomLogger _log;
-
-        public ChequeController(IChequeService service, ICustomLogger log)
+        public ChequeController(IChequeService service)
         {
             _service = service;
-            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
+            var parameters = new Dictionary<string, object>
                 {
                     {"userRoleId", User.GetUserRoleId()},
                     {"json", SqlStringParam.Sanitize(json)}
                 };
-                var response = await _service.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get Cheque " + ex.Message);
-                return BadRequest("Error en get Cheque " + ex.Message);
-            }
+            var response = await _service.GetAsync(parameters);
+            if (response == null) { return NoContent(); };
+            return Ok(response);
         }
     }
 }

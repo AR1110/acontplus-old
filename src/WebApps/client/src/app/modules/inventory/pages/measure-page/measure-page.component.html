@@ -1,5 +1,5 @@
 <app-breadcrumb>
-  <button class="btn btn-primary" appMeasureAddEdit >
+  <button class="btn btn-info" appMeasureAddEdit (onResultModal)="onResultModal()" >
     Nuevo
   </button>
 </app-breadcrumb>
@@ -10,8 +10,10 @@
       <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
         <div class="d-flex justify-content-start">
           <span class="form-group pull-left page-size form-inline">
-            <select class="form-control control-color" ng-model="dataSearch.pageSize" ng-change="changePageSize()"
-              ng-options="ra for ra in recordsQuantity">
+            <select class="form-select control-color" [(ngModel)]="pagination.pageSize" (change)="pageChanged()">
+              @for (item of pagination.pageSizeOptions; track $index) {
+                <option [ngValue]="item">{{item}}</option>
+              }
             </select>
           </span>
 
@@ -45,32 +47,39 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="t in medidas | filter:buscar track by $index">
-            <td  >
-              <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" btn-add-update-medida
-                results="resultModal(item)" params="t"><i class="ti-pencil"></i></button>
+          @for (item of measures; track $index) {
 
-              <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs" tooltip data-toggle="toggle"
-                title="Eliminar" ng-click="delete(t)"><i class="ti-trash"></i></button>
-            </td>
-            <!-- <td>{{ }}</td>
-            <td>{{t.descripcion}}</td>
-            <td>{{t.codigo}}</td>
-            <td ng-bind-html="t.estado | estadoPrimario"></td> -->
-          </tr>
-          <tr class="text-center" ng-show="medidas.length==0">
-            <td colspan="6">
-              No existen registros disponibles en esta tabla;
-            </td>
-          </tr>
+            <tr>
+              <td  >
+                <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs"  appMeasureAddEdit (onResultModal)="onResultModal()" [params]="item"><i class="ti-pencil"></i></button>
+
+                <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs" tooltip data-toggle="toggle"
+                  title="Eliminar" ng-click="delete(t)"><i class="ti-trash"></i></button>
+              </td>
+              <td>
+                {{$index+1}}
+              </td>
+              <td>{{item.descripcion}}</td>
+              <td>{{item.codigo}}</td>
+              <td>
+                <div [innerHTML]="item.estado | primaryStatus"></div>
+              </td>
+            </tr>
+          }@empty {
+            <tr class="text-center">
+              <td colspan="6">
+                No existen registros disponibles en esta tabla;
+              </td>
+            </tr>
+
+          }
         </tbody>
         <tfoot>
           <tr>
             <td align="center" colspan="6">
               <div class="pull-left">
-                <ul uib-pagination total-items="totalRecords" items-Per-Page="dataSearch.pageSize"
-                  ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="maxSize" class="pagination"
-                  boundary-links="true" rotate="false"></ul>
+                <ngb-pagination [collectionSize]="pagination.totalRecords" [(page)]="pagination.pageIndex" [maxSize]="pagination.maxSize"
+                  [pageSize]="pagination.pageSize" [rotate]="true" (pageChange)="pageChanged()" [boundaryLinks]="true" />
               </div>
             </td>
           </tr>

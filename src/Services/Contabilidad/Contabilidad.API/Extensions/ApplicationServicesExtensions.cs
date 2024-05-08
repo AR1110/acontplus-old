@@ -1,4 +1,6 @@
-﻿namespace Contabilidad.API.Extensions
+﻿using Contabilidad.API.Services;
+
+namespace Contabilidad.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
