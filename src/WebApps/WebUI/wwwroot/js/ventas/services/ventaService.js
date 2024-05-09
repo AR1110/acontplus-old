@@ -424,7 +424,7 @@
             notaEntrega.telefono = cliente.telefono;
 
             const itemsMainMapper = service.detalleMapperTo(detalles);
-            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted)
+            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted || [])
             const impuestos = fS.impuestoTarifaMapperTo(detalles);
 
             const mergeItems = [
@@ -952,6 +952,7 @@
      */
     app.factory('proformaService', ['$injector', function ($injector) {
         let url = `${URL_API}Proforma/`;
+        let url_v2 = `${URL_API}v2/Proforma/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         const pricingUtils = $injector.get('pricingUtils')
@@ -1016,6 +1017,38 @@
             })
         }
 
+        service.getDataFormConvert = function(){
+            let json = JSON.stringify({
+                tipo: 8
+            })
+            return mS.getData('get', `${url}Get?json=${json}`, null, true).then(response => {
+                let result = {
+                    tiemposCredito: [],
+                    formasPagoSri: [],
+                    config: {
+                        idFormaPagoSri: 0
+                    }
+                };
+                if(response.code==="0"){
+                    console.log(response)
+                }
+                if(response.code==="1"){
+                    let [tiemposCredito, config , formasPagoSri] = JSON.parse(response.payload);
+                    let dataConfig = config[0];
+
+                    result.tiemposCredito = tiemposCredito;
+                    result.formasPagoSri = formasPagoSri;
+ 
+                    result.config = { 
+                        idFormaPagoSri: dataConfig.idFormaPagoSri
+                    }
+                } 
+
+                return result;
+
+            })
+        }
+
         /**
          * tipo 1: get proformas  
          * tipo 3: get estabs, ptos. emisiones para los filtros
@@ -1064,6 +1097,7 @@
                     let proformasRepos = mainData[0];
                     let { totalRecords, totalDocument } = proformasRepos[0];
                     let proformas = proformasRepos.map(item => {
+                        console.log(item)
                         return {
                             comprobante: 'Proforma',
                             entidad: item.entidad,
@@ -1087,7 +1121,8 @@
                             codDoc: item.codDoc,
                             rowColor: item.rowColor,
                             codEstado: item.codEstado,
-                            disabledUpdate: item.codEstado === 'TRA' || item.codEstado === 'CR' || item.anulada
+                            disabledUpdate: item.codEstado === 'TRA' || item.codEstado === 'CR' || item.anulada,
+                            isApplied: item.codEstado === "APL"
                         }
                     })
 
@@ -1117,14 +1152,7 @@
 
 
         service.save = function (data) {
-            return mS.getData('post', url + 'Insert/', { data }, true).then(response => {
-                if (response.code === "0") {
-                    return response;
-                }
-                if (response.code === "1") {
-                    return response;
-                }
-            })
+            return mS.getData('post', url + 'Insert/', { data }, true) 
         }
 
         service.getId = function (id) {
@@ -1146,8 +1174,8 @@
                     if(Object.keys(cliente).length>0){
                         cliente = {
                             ...cliente,
-                            // razonSocialComprador: cliente.nombreFiscal,
-                            // identificacionComprador: cliente.numeroIdentificacion,
+                            razonSocialComprador: cliente.nombreFiscal,
+                            identificacionComprador: cliente.numeroIdentificacion,
                             placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
                         }
                     }
@@ -1180,7 +1208,8 @@
                             nota: restItem.nota,
                             porcentajeDescuento: restItem.porcentajeDescuento,
                             precioSinSubsidio: restItem.precioSinSubsidio || 0,
-                            precioCosto: 0,
+                            precioCosto: dataMedida.precioCosto,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             precioUnitario: restItem.precioUnitario,
                             precioConIva: precioConIva || 0,
                             tarifa: restItem.tarifa,//✅
@@ -1351,6 +1380,11 @@
         }
 
 
+        service.convertToDoc = function(data){
+            return mS.getData('post', url_v2 + 'ConvertToDoc', { data }, true) 
+        }
+
+
         service.queryMapper = function (obj) {
             let { data, cliente, detalles, itemsDeleted, infoAdicionalDocumento } = obj;
             if (cliente.idCliente === 0 && !cliente.razonSocialComprador && !cliente.identificacionComprador) {
@@ -1369,7 +1403,7 @@
             proforma.fechaEmision = fS.formatDateTimeZone(proforma.fechaEmision);
 
             const itemsMainMapper = service.detalleMapperTo(detalles)
-            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted)
+            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted || [])
             const impuestos = fS.impuestoTarifaMapperTo(detalles);
 
             const mergeItems = [
@@ -1446,6 +1480,68 @@
 
         }
 
+        service.queryMapperConvertToDoc = function (obj) {
+            let {id, codDocDestino, codDoc, comprobante, detalles, infoAdicionalDocumento, cuotas } = obj;
+      
+            
+            const resultDetalles = detalles.map((item, index)=>{
+                let cantidadTransaccion = item.cantidad * (item.conversion || 1)
+                return {
+                    orderIndex: index++, 
+                    idArticulo: item.idArticulo,
+                    idTarifa: item.idTarifa,
+                    idBodega: item.idBodega,
+                    idMedida: item.idMedida,
+                    idTipoIva: item.idTipoIva,
+                    tarifa: item.tarifa, //✅
+                    codigoPorcentaje: item.codigoPorcentaje, //✅
+                    ice: item.ice,
+                    descripcion: item.descripcion,
+                    cantidad: item.cantidad,
+                    precioUnitario: item.precioUnitario,
+                    valorDescuento: item.valorDescuento,
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
+                    porcentajeDescuento: item.porcentajeDescuento,
+                    nota: item.nota || undefined,
+                    llevaInventario: item.llevaInventario,
+                    precioCosto: item.precioCosto,
+                    conversion: item.conversion,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
+                    cantidadTransaccion,
+                    estado: item.estado,
+                    valorImpuesto: item.valorImpuesto
+                }
+            }) 
+            const impuestos = fS.impuestoTarifaMapperTo(detalles); 
+
+            let resultComprobante = {
+                idProforma: id,
+                idTiempoCredito: comprobante.idTiempoCredito,
+                idCliente : comprobante.idCliente,
+                idPuntoEmision: comprobante.idPuntoEmision,
+                idUsuario: comprobante.idUsuario || 0,
+                fechaEmision: fS.formatDateMoment(comprobante.fechaEmision),
+                fechaVencimiento: fS.formatDateMoment(comprobante.fechaVencimiento),
+                subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
+                totalDescuento: comprobante.totalDescuento,
+                porcentajeDescuento: comprobante.porcentajeDescuento,
+                propina: comprobante.propina || 0,
+                recargo: comprobante.recargo || 0,
+                transporte: comprobante.transporte|| 0,
+                total            : comprobante.total,
+                observacion: comprobante.observacion,
+                docDestino: codDocDestino,
+                codDoc
+            }
+
+            return {
+                comprobante: resultComprobante,
+                detalles: resultDetalles,
+                impuestos: impuestos,
+                infoAdicional: infoAdicionalDocumento || [],
+                cuotas
+            }
+        }
         return service;
 
     }])

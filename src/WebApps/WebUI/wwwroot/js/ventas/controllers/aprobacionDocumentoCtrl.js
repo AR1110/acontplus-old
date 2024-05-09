@@ -225,7 +225,6 @@
 
         $scope.getAprobComprobantes = function () {
             try {
-                showLoader();
                 $scope.aprobComprobantes = [];
                 let dataSearch = {
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -246,17 +245,16 @@
                 $scope.cloneAproComprobantes = [];
                 $scope.calculoColumnTotal();
 
-                aprobacionDocSvc.getAll(dataSearch).then(response => {
-                    hideLoader();
-                    $scope.aprobComprobantes = response;
-                    $scope.cloneAproComprobantes = JSON.parse(JSON.stringify($scope.aprobComprobantes))
-                    $scope.calculoColumnTotal();
-                    hideLoader();
+                showLoader();
 
-                }).catch(error => {
-                    hideLoader();
+                aprobacionDocSvc.getAll(dataSearch).then(response => { 
+                    $scope.aprobComprobantes = response;
+                    $scope.cloneAproComprobantes = structuredClone($scope.aprobComprobantes);
+                    $scope.calculoColumnTotal(); 
+
+                }).catch(error => { 
                     console.log(error)
-                })
+                }).finally(()=>hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -269,8 +267,7 @@
         $scope.initiload = function () {
             try {
                 showLoader();
-                aprobacionDocSvc.getDataFilter().then(response => {
-                    console.log(response)
+                aprobacionDocSvc.getDataFilter().then(response => { 
                     $scope.establecimientos = response.estabs;
                     $scope.estadoDocumentos = response.estadoDocs;
                     if ($scope.establecimientos.length > 0) {
@@ -320,8 +317,7 @@
         $scope.openModalDetalle = function (item) {
             try {
                 showLoader();
-                aprobacionDocSvc.getIdForInfo(item.idAprob_Document).then(response => {
-                    hideLoader();
+                aprobacionDocSvc.getIdForInfo(item.idAprob_Document).then(response => { 
                     modalSvc.openModalCustom({
                         controller: 'ModalAprobDocDetalleCtrl',
                         template: URL_TEMPLATE + '_ModalDetalle.cshtml',
@@ -334,10 +330,9 @@
                         },
                         isRenderRazorPartial: true
                     })
-                }).catch(error => {
-                    hideLoader();
+                }).catch(error => { 
                     console.log(error)
-                })
+                }).finally(()=>hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -385,8 +380,7 @@
 
             try {
                 showLoader();
-                aprobacionDocSvc.findById(item.idAprob_Document).then(response => {
-                    hideLoader();
+                aprobacionDocSvc.findById(item.idAprob_Document).then(response => { 
                     let modalRef = modalSvc.openModalCustom({
                         controller: 'ModalApproveDocCtrl',
                         template: URL_TEMPLATE + '_ModalAprobacionDocumento.cshtml',
@@ -404,10 +398,9 @@
                             $scope.getAprobComprobantes();
                         }
                     })
-                }).catch(error => {
-                    hideLoader();
+                }).catch(error => { 
                     console.log(error)
-                })
+                }).finally(()=>hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -564,9 +557,9 @@
 
         $scope.gridOptionsSelectedDocs = {
             enableColumnMenus: false,
-            enableFiltering: true,
-            enableSorting: true,
-            enableGridMenu: true,
+        //    enableFiltering: true,
+        //    enableSorting: true,
+        //    enableGridMenu: true,
 
             enableRowSelection: true,
             enableSelectAll: true,
@@ -659,7 +652,7 @@
                 stepDocOrigen.style.display = "block";
                 stepDocDestino.style.display = "none";
 
-                $("#clienteSearch").focus();
+                $("#customerInputSearch").focus();
 
             })
         }
@@ -732,7 +725,8 @@
       
 
         //Inicio 
-        $scope.initiload = function () {
+        onLoad()
+      function onLoad() {
             try {
                 let {
                     estabs,
@@ -777,9 +771,7 @@
             } catch (error) {
                 console.log(error);
             }
-        }
-
-        $scope.initiload();
+        } 
 
 
         //============================================ Filtros==============================
@@ -848,20 +840,22 @@
         }
 
 
-        $scope.clienteSearch = function (textSearch) {
-            let query = {
-                textSearch
+        /**
+         * cliente 
+         * @param {*} textSearch 
+         * @returns 
+         */
+        $scope.onKeyupCliente= function(){
+            if (fS.isValidField($scope.cliente.nombreCliente)){
+                $scope.dataSearch.byCliente = 0;
             }
-
-            if (textSearch.length > 2) {
-                return clienteSvc.search(query).catch(error => {
-                    console.log(error)
-                })
-            }
-        }
+        } 
 
         $scope.selectedClienteSearch = function (item) {
             $scope.cliente = item;
+            $scope.cliente.nombreCliente = item.nombreFiscal
+
+            console.log(item)
             if ($scope.isValidFilter()) {
                 $scope.getDocumentos();
             }
@@ -888,7 +882,7 @@
             try {
                 $scope.documentos = [];
                 $scope.dataSearch.byCliente = $scope.cliente.idCliente;
-
+                $scope.gridOptionsSelectedDocs.data = [];
                 if ($scope.docOrigen.codDoc === DOC_TYPE.NE) {
                     $scope.getNotaEntregas();
                 }
@@ -910,7 +904,7 @@
                     codEstab: $scope.dataSearch.codEstab,
                     byCliente: $scope.dataSearch.byCliente,
                     checkBoxFecha: true,
-                    codEstado: "PE",
+                    codEstado: "PAPR",
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -979,8 +973,7 @@
 
 
         $scope.getProformas = function () {
-            try {
-                console.log($scope.dataSearch)
+            try { 
                 showLoader();
                 $scope.documentos = [];
                 let dataSearch = {

@@ -208,115 +208,115 @@
                         <tbody md-body>
                             <tr md-row ng-repeat="ne in notaEntregas | orderBy: dataSearch.order" ng-class="ne.style">
                                 <td md-cell>
-                                <div class="d-flex">
-                                    <md-menu>
-                                        <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                   ng-click="$mdMenu.open($event)">
-                                            <icon class="mdi mdi-menu"></icon>
-                                        </md-button>
-                                        <md-menu-content class="md-dense">
-                                            <md-menu-item>
-                                                <md-button ng-click="openModalDetalle(ne)">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-menu"></i>
-                                                        Detalle
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                    <div class="d-flex">
+                                        <md-menu>
+                                            <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                    ng-click="$mdMenu.open($event)">
+                                                <icon class="mdi mdi-menu"></icon>
+                                            </md-button>
+                                            <md-menu-content class="md-dense">
+                                                <md-menu-item>
+                                                    <md-button ng-click="openModalDetalle(ne)">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-menu"></i>
+                                                            Detalle
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.editar">
-                                                <md-button ng-click="openModalEdit(ne)"
-                                                           ng-disabled="ne.codEstado==='A'">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-pencil"></i>
-                                                        Editar
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.editar">
+                                                    <md-button ng-click="openModalEdit(ne)"
+                                                            ng-disabled="ne.codEstado==='A'">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-pencil"></i>
+                                                            Editar
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="accion.anular">
-                                                <md-button ng-click="askToDelete(ne)" ng-disabled="ne.codEstado==='A'">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-close"></i>
-                                                        Anular
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.anular">
+                                                    <md-button ng-click="askToDelete(ne)" ng-disabled="ne.codEstado==='A'">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-close"></i>
+                                                            Anular
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item>
-                                                <md-button ng-click="openModalDuplicate(ne)">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-files"></i>
-                                                        Duplicar
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item>
+                                                    <md-button ng-click="openModalDuplicate(ne)">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-files"></i>
+                                                            Duplicar
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
-                                            <md-menu-item ng-if="(accion.cobroPago && ne.codEstado==='PE') || (accion.cobroPago && ne.codEstado==='PP')">
-                                                <md-button ng-click="opcionCobro(ne)"
-                                                           ng-disabled="ne.codEstado==='A' || ne.cobro || ne.gestion">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-shortcode"></i>
-                                                        Cobro
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
-
-
-                                            <md-menu-item ng-if="accion.cuota">
-                                                <md-button ng-click="openModalCuota(ne)">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-list"></i>
-                                                        Cuota
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="(accion.cobroPago && ne.codEstado==='PE') || (accion.cobroPago && ne.codEstado==='PP')">
+                                                    <md-button ng-click="opcionCobro(ne)"
+                                                            ng-disabled="ne.codEstado==='A' || ne.cobro || ne.gestion">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-shortcode"></i>
+                                                            Cobro
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
 
-                                            <md-menu-item >
-                                                <md-button ng-click="openModalHistorialCobro($event, ne)">
-                                                    <span md-menu-align-target>
-                                                        <i class="ti-layout-cta-center"></i>
-                                                        Hist. Mov.
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item> 
-
-                                            <md-menu-item ng-if="accion.enviarCorreo">
-                                                <md-button btn-send-to-email params="ne" type-send="typeSendToMail"
-                                                           get-param-to-send-mail="getParamToSendMail(params)">
-                                                    <span md-menu-align-target>
-                                                        <i class="far fa-envelope"></i>
-                                                        Enviar Correo
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
-
-                                            <md-menu-item>
-                                                <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                           btn-send-to-whats-app params="ne" has-permission="hasPermissions"
-                                                           type-send="typeSend">
-                                                    <span md-menu-align-target>
-                                                        <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
+                                                <md-menu-item ng-if="accion.cuota">
+                                                    <md-button ng-click="openModalCuota(ne)">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-list"></i>
+                                                            Cuota
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
 
 
-                                            <md-menu-item ng-if="accion.reporte">
-                                                <md-button ng-click="getReport(ne)">
-                                                    <span md-menu-align-target>
-                                                        <i class="fa fa-file-pdf"></i>
-                                                        PDF
-                                                    </span>
-                                                </md-button>
-                                            </md-menu-item>
-                                        </md-menu-content>
-                                    </md-menu>
+                                                <md-menu-item >
+                                                    <md-button ng-click="openModalHistorialCobro($event, ne)">
+                                                        <span md-menu-align-target>
+                                                            <i class="ti-layout-cta-center"></i>
+                                                            Hist. Mov.
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item> 
 
-                                     <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="print(ne)">
-                                        <i class="fas fa-print"></i>
-                                    </button>
+                                                <md-menu-item ng-if="accion.enviarCorreo">
+                                                    <md-button btn-send-to-email params="ne" type-send="typeSendToMail"
+                                                            get-param-to-send-mail="getParamToSendMail(params)">
+                                                        <span md-menu-align-target>
+                                                            <i class="far fa-envelope"></i>
+                                                            Enviar Correo
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item>
+                                                    <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
+                                                            btn-send-to-whats-app params="ne" has-permission="hasPermissions"
+                                                            type-send="typeSend">
+                                                        <span md-menu-align-target>
+                                                            <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+
+                                                <md-menu-item ng-if="accion.reporte">
+                                                    <md-button ng-click="getReport(ne)">
+                                                        <span md-menu-align-target>
+                                                            <i class="fa fa-file-pdf"></i>
+                                                            PDF
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
+
+                                        <button type="button " class="btn btn-secondary btn-sm m-r-10 m-b-5 m-t-5" ng-click="print(ne)">
+                                            <i class="fas fa-print"></i>
+                                        </button>
                                     </div>
                                 </td>
                                 @* <td md-cell>{{$index+1}}</td> *@
