@@ -157,7 +157,7 @@ BEGIN
                         SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '04'
                     END 
 
-                IF LEN(@identificacionCliProv) = 10
+               ELSE IF LEN(@identificacionCliProv) = 10
                     BEGIN 
                         SELECT TOP 1 @idTipoIdentificacion = idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = '05'
                     END 
