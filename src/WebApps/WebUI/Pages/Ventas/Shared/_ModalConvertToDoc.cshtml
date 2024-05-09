@@ -1,0 +1,60 @@
+<div class="modal-header bg-success text-white">
+    <h4 class="modal-title" id="modal-basic-title">Convertir a Documento</h4>
+    <button type="button" class="close" ng-click="closeModal()">
+        &times; 
+    </button>
+</div>
+<div class="modal-body">
+    <div class="d-flex flex-column">
+        <div class="p-1">
+            <strong>R.U.C/Cédula:</strong> {{companyCustomer.identificacionComprador}}
+        </div>
+        <div class="p-1">
+            <strong>Cliente:</strong> {{companyCustomer.razonSocialComprador}}
+        </div> 
+    </div>  
+    <hr>
+    <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+            <div class="form-group">
+                <label>Serie Comprobante:</label>
+                <input type="text" class="form-control" ng-value="comprobante.serieComprobante" readonly>
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+            <!-- <div class="form-group">
+                <label>Tiempo Credito: <span class="text-danger">*</span> </label>
+                <select class="form-control" name="tiempoCredito" id="tiempoCredito" ng-model="comprobante.idTiempoCredito">
+                    <option ng-value="item.idTiempoCredito" ng-repeat="item in tiemposCredito">
+                        {{item.descripcion}}
+                    </option>
+                </select>
+            </div> -->
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="d-flex flex-column">
+            <div class="p-1">
+                <h4>Total</h4>
+            </div>
+            <div class="p-1">
+                <h3>{{comprobante.total}}</h3>
+            </div> 
+        </div>    
+    </div>    
+
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <label>Observación: </label>
+                <textarea id="observacion" touppercase name="observacion"  cols="50" ng-model="comprobante.observacion" class="form-control border-select"> 
+                </textarea>
+            </div>
+        </div>
+    </div>  
+</div>
+<div class="modal-footer">
+   <button class="btn btn-info " (click)="saveInvoice()">Factura</button>
+  <button class="btn btn-warning" ng-click="saveNotaEntrega()">Nota Entrega</button>
+  <button class="btn btn-dark " ng-click="closeModal()">&times; Cerrar</button>
+</div>
