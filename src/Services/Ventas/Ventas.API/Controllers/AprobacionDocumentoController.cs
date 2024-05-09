@@ -1,8 +1,11 @@
-﻿using Common.Core.Models;
+﻿using Azure.Core;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Extensions;
 using Services.Common.Logs;
+using Ventas.API.Interfaces;
 
 namespace Ventas.API.Controllers
 {
@@ -12,10 +15,12 @@ namespace Ventas.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly ICustomLogger _log;
-        public AprobacionDocumentoController(IConfiguration configuration, ICustomLogger log)
+        private readonly IAprobacionDocService _svc;
+        public AprobacionDocumentoController(IConfiguration configuration, ICustomLogger log, IAprobacionDocService svc)
         {
             _configuration = configuration;
             _log = log;
+            _svc = svc;
         }
 
         [HttpGet("Get")]
@@ -44,83 +49,42 @@ namespace Ventas.API.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(ApiRequest parameters)
+        public async Task<IActionResult> Insert(ApiRequest request)
         {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Aprob_Document_Insert");
-                _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al insertar aprob. doc.: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar aprob. doc.");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+                {"userRoleId", User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
+            };
+            var response = await _svc.AddAsync(parameters);
+            return Ok(response); 
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, ApiRequest parameters)
+        public async Task<IActionResult> Update(int id, ApiRequest request)
         {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Aprob_Document_Update");
-                _db.AddDynamicParam("userRoleId", userRoleId);
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al actualizar aprob. doc: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar aprob. doc");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+                {"userRoleId", User.GetUserRoleId()},
+                {"id", id},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
+            };
+            var response = await _svc.UpdateAsync(parameters);
+            return Ok(response); 
+            
         }
 
 
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var userRoleId = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Aprob_Document_Delete");
-                _db.AddDynamicParam("idUsuarioRol", userRoleId);
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al eliminar la aprob. doc: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar aprob. doc");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+                {"idUsuarioRol", User.GetUserRoleId()},
+                {"id", id}, 
+            };
+            var response = await _svc.DeleteAsync(parameters);
+            return Ok(response); 
         }
 
         [HttpGet("GetId/{id}")]
@@ -145,6 +109,18 @@ namespace Ventas.API.Controllers
                 _db.Close();
             }
             return Ok(_response);
+        }
+
+        [HttpPost("ConvertToDoc")]
+        public async Task<IActionResult> ConvertToDoc(ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                {"userRoleId", User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
+            };
+            var response = await _svc.ConvertToDocAsync(parameters);
+            return Ok(response);
         }
 
 
