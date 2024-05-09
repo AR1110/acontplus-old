@@ -1783,11 +1783,9 @@
                 onResult: '&'               
             },
             link: function (scope, element) {
-                element.on('click', async function () {
-
-                    console.log(nombreModalVenta.CONVERT_TO_DOC)
+                element.on('click', async function () { 
                     let fileCtrl = nombreModalVenta.CONVERT_TO_DOC.fileCtrl;
-                    let ctrl = nombreModalVenta.CONVERT_TO_DOC.controller;
+                    let ctrl = nombreModalVenta.CONVERT_TO_DOC.controllers["M"];
                     let template = nombreModalVenta.CONVERT_TO_DOC.templates['M'];
                     let controller = (await import(fileCtrl))[ctrl];
   
@@ -1808,6 +1806,40 @@
                             scope.onResult(result)
                         }
                     })
+
+                })
+            }
+        }
+    })
+
+    //HISTORIAL CONVERSIÓN DOCUMENTO  
+    app.directive('btnHistorialConversionDoc', function (modalService, nombreModalVenta) {
+        return {
+            restrict: 'A',
+            scope: {
+                codDoc: '=',
+                id: '=',
+                params: '=',
+                onResult: '&'
+            },
+            link: function (scope, element) {
+                element.on('click', async function () { 
+                    let fileCtrl = nombreModalVenta.CONVERT_TO_DOC.fileCtrl;
+                    let ctrl = nombreModalVenta.CONVERT_TO_DOC.controllers["MHCD"];
+                    let template = nombreModalVenta.CONVERT_TO_DOC.templates['MHCD'];
+                    let controller = (await import(fileCtrl))[ctrl];
+
+                    let modalRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'lg',
+                        params: {
+                            codDoc: scope.codDoc,
+                            id: scope.id,
+
+                        },
+                        isRenderRazorPartial: true
+                    }) 
 
                 })
             }

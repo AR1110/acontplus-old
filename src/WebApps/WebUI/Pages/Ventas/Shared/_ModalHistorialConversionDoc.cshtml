@@ -1,0 +1,35 @@
+<div class="modal-header bg-success text-white">
+    <h4 class="modal-title" id="modal-basic-title">Historial Conversión Documento</h4>
+    <button type="button" class="close" ng-click="closeModal()">
+        &times; 
+    </button>
+</div>
+<div class="modal-body">  
+  <div class="table-responsive">
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th>Nro.</th>
+            <th>Tipo Doc.</th>
+            <th>Método</th>
+            <th>Serie Comprobante</th>
+            <th>Fecha Registro</th>
+            <th>Usuario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in historialConversion">
+              <td>{{$index+1}}</td>
+              <td>{{item.codDoc}}</td>
+              <td>{{item.metodoConversion}}</td>
+              <td>{{item.serieComprobante}}</td>
+              <td>{{item.fechaRegistro}}</td>
+              <td>{{item.usuario}}</td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
+</div>
+<div class="modal-footer"> 
+  <button class="btn btn-dark " ng-click="closeModal()">&times; Cerrar</button>
+</div>

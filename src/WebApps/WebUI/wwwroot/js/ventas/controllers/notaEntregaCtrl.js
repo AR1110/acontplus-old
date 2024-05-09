@@ -35,12 +35,14 @@
 
         const CODE_REPORT = $injector.get('CODE_REPORT');
 
-        TIPO_DOC_NE = commonSvc.tipoDoc['NE'];
-        const PERMISSION_KEY_ACTIONS = {
-            E: 'E',
-            A: 'A',
-        }
+        let DOC_TYPE = $injector.get('DOC_TYPE'); 
+        TIPO_DOC_NE = {
+            codigo: DOC_TYPE['NE']
+        } 
 
+   
+        $scope.codDoc = DOC_TYPE['NE'];
+      
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
             order: '',
@@ -209,6 +211,10 @@
                 $scope.dataSearch.totalRecords = 0;
                 console.log(error)
             }
+        }
+
+        $scope.refresh = function(){
+            $scope.getNotaEntregas();
         }
 
 
