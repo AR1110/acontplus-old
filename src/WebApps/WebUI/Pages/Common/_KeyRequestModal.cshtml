@@ -5,7 +5,7 @@
     </button>
 </div>
 <div class="modal-body">
-    <h6>El Comprobante Nro. <strong>{{data.serieComprobante}}</strong> será enviado a los siguientes destinatarios:
+    <h6>El Comprobante Nro. <strong>{{data.serieComprobante}}</strong> será enviado a los siguientes destinatarios: </h6>
         <md-chips ng-model="correos" md-add-on-blur="true" ng-keyup="onKeyupEmail($event)"
             md-transform-chip="transformChip($chip)" md-removable="true" md-enable-chip-edit="true"
             placeholder="Ej: maxi@gmail.com" input-aria-label="Correos">
@@ -15,6 +15,7 @@
     <div class="row">
         
     </div>
+   
 </div>
 <div class="modal-footer">
     <button class="btn btn-success" type="button" ng-click="saveResendEmail()">

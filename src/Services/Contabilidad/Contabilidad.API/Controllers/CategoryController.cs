@@ -1,12 +1,7 @@
 ﻿namespace Contabilidad.API.Controllers
 {
-    public class CategoryController : BaseApiController
+    public class CategoryController(ICategoryService categoryService) : BaseApiController
     {
-        private readonly ICategoryService _categoryService;
-        public CategoryController(ICategoryService categoryService)
-        {
-            _categoryService = categoryService;
-        }
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string json)
         {
@@ -14,24 +9,24 @@
                 {"userRoleId", User.GetUserRoleId() },
                 {"json", SqlStringParam.Sanitize(json)}
             };
-            return Ok(await _categoryService.GetAsync(parameters));
+            return Ok(await categoryService.GetAsync(parameters));
         }
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Category category)
         {
             category.UserId = User.GetUserId();
-            return Ok(await _categoryService.AddAsync(category));
+            return Ok(await categoryService.AddAsync(category));
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Category category)
         {
             category.UserId = User.GetUserId();
-            return Ok(await _categoryService.UpdateAsync(id, category));
+            return Ok(await categoryService.UpdateAsync(id, category));
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await _categoryService.DeleteAsync(User.GetUserId(), id));
+            return Ok(await categoryService.DeleteAsync(User.GetUserId(), id));
         }
     }
 }
