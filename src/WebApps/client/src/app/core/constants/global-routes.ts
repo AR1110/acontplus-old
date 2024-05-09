@@ -26,4 +26,5 @@ export enum GlobalRoutes {
   MechanicalVehicle = 'mechanical/vehicle-page',
   MechanicalLayout = 'mechanical/layout',
   InventarioMeasure = 'inventory/measure',
+  ContabilidadReporteCobros = 'accounting/reports/reporte-cobros',
 }
