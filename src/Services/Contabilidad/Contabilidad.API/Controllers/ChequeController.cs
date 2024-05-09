@@ -1,8 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ChequeController : ControllerBase
+    public class ChequeController : BaseApiController
     {
         private readonly IChequeService _service;
         public ChequeController(IChequeService service)

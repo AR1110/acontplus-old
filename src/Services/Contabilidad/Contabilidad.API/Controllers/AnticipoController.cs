@@ -1,8 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AnticipoController : ControllerBase
+    public class AnticipoController : BaseApiController
     {
         private readonly IAnticipoService _anticipoSvc;
         public AnticipoController(IAnticipoService anticipoSvc)

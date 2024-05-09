@@ -1,8 +1,6 @@
 ﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BancoController : ControllerBase
+    public class BancoController : BaseApiController
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;

@@ -1,0 +1,334 @@
+export {
+    convertToDocModalCtrl
+}
+
+convertToDocModalCtrl.$inject = [
+    '$scope',
+    '$injector',
+    '$uibModalInstance',
+    '$q',
+    'params'
+]
+function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params) {
+
+    let { codDoc, docDestino, id, ...restData } = params;
+    let proformaSvc = $injector.get('proformaService');
+    let notaEntregaSvc = $injector.get('notaEntregaService');
+    let DOC_TYPE = $injector.get('DOC_TYPE')
+    let fS = $injector.get('formulario')
+    let tS = $injector.get('toastService')
+
+    let codDocDestino = null;
+
+    $scope.tiemposCredito = [];
+    $scope.formasPagoSri = [];
+    $scope.config = {
+
+    }
+
+    $scope.companyCustomer = {};
+    $scope.comprobante = {};
+    $scope.detalles = [];
+    $scope.infoAdicionalDocumento = [];
+
+    //En caso de que se factura
+    $scope.dataFormaPago = {}
+
+
+    function calculateTotalItems(items) {
+        return items.map(item => {
+            let precioTotalSinImpuesto = ((item.precioUnitario * item.cantidad)) - item.valorDescuento;
+            let total = precioTotalSinImpuesto + item.valorImpuesto;
+            return {
+                ...item, 
+                precioConIva: fS.roundNumber(item.precioConIva, 5),
+                precioTotalSinImpuesto: fS.roundNumber(precioTotalSinImpuesto, 5),
+                total: fS.roundNumber(total, 5)
+            }
+
+        })
+    }
+
+    function getDataFormProforma() {
+
+        return $q.all([
+            proformaSvc.getDataFormConvert(),
+            proformaSvc.getId(id)
+        ])
+    }
+    console.log(params)
+    console.log(codDoc,)
+    if (codDoc === DOC_TYPE.PR) {
+        codDocDestino = DOC_TYPE.NE
+        onLoadProforma();
+    }
+
+    function onLoadProforma() {
+        try {
+            showLoader();
+            getDataFormProforma().then(response => {
+                const [dataForm, data] = response;
+
+                const { tiemposCredito, formasPagoSri, config } = dataForm;
+                const { cliente, comprobante, items, infoAdicionalDocumento } = data;
+
+                $scope.tiemposCredito = tiemposCredito;
+                $scope.formasPagoSri = formasPagoSri;
+                $scope.config = config;
+
+                $scope.companyCustomer = cliente;
+                $scope.comprobante = comprobante;
+                $scope.comprobante.fechaEmision = new Date();
+
+                $scope.detalles = calculateTotalItems(items);;
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                console.log(response)
+
+
+
+
+                let dataTiempoCredito = $scope.tiemposCredito[0];
+                if (dataTiempoCredito) {
+                    $scope.comprobante.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+                    $scope.comprobante.fechaVencimiento = fS.getFechaVencimiento($scope.comprobante.fechaEmision, dataTiempoCredito.diasCredito)
+                }
+
+                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
+                if ($scope.formasPagoSri.length > 0) {
+                    let dataFormaPago = $scope.formasPagoSri.find(item => {
+                        if ($scope.config.idFormaPagoSri > 0) {
+                            return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
+                        } else {
+                            return (item.codigo === "01");
+                        }
+                    });
+                    if (dataFormaPago) {
+                        $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+                    }
+                }
+
+
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())
+        } catch (error) {
+            console.log(error)
+            hideLoader();
+        }
+    }
+
+
+    function isValidForm() {
+        if (!fS.isValidField($scope.comprobante.codEstab)) {
+            tS.toastr({
+                type: 'warning',
+                message: 'Seleccione el Establecimiento'
+            });
+            return
+        }
+        if (!($scope.comprobante.idPuntoEmision > 0)) {
+            tS.toastr({
+                type: 'warning',
+                message: 'Seleccione el Punto de Emisión'
+            });
+            return
+        }
+        if (!($scope.comprobante.idTiempoCredito > 0)) {
+            tS.toastr({
+                type: 'warning',
+                message: 'Seleccione el Tiempo Credito'
+            });
+            return
+        }
+        if (!fS.isDateValid($scope.comprobante.fechaEmision)) {
+            tS.toastr({
+                type: 'warning',
+                message: 'Ingrese una fecha válida',
+            });
+            return;
+        }
+
+        if (fS.validateDateIsAfterCurrentDate($scope.comprobante.fechaEmision)) {
+            tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+            return
+        }
+
+        let ajusteFechaEmision = fS.ajustarFechaEmision(false, $scope.comprobante.fechaEmision);
+
+        if (ajusteFechaEmision) {
+            $scope.comprobante.fechaEmision = ajusteFechaEmision;
+        } else {
+            console.log('Error al justar la fecha de Emisión')
+            return
+        }
+
+
+        if (!(fS.isDateValid($scope.comprobante.fechaVencimiento))) {
+            tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
+            return
+        }
+
+
+        if (!($scope.companyCustomer.idCliente > 0)) {
+            tS.toastr({
+                type: 'warning',
+                message: 'El cliente es requerido'
+            })
+            return
+        }
+
+        // if (!($scope.comprobante.idUsuario > 0)) {
+        //     tS.toastr({
+        //         type: 'warning',
+        //         message: 'Seleccione el Vendedor'
+        //     })
+        //     return
+        // }
+
+        if ($scope.detalles.some((row) => row.llevaInventario && row.cantidad === 0)) {
+            tS.toastr({
+                type: 'warning',
+                message:
+                    'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
+            });
+            return;
+        }
+
+        if ($scope.detalles.some((row) => !(row.idBodega > 0))) {
+            tS.toastr({
+                type: 'warning',
+                message: 'Seleccione la bodega en el detalle de los artículos',
+            });
+            return;
+        }
+
+        if ($scope.comprobante.total <= 0) {
+            tS.toastr({
+                type: 'warning',
+                message: 'No se puede generar el documento con valor total 0!',
+            });
+            return;
+        }
+        return true;
+    }
+
+
+    const validateCuota = function () {
+        let objParamsCuota = {
+            fechaEmision: $scope.comprobante.fechaEmision,
+            tiemposCredito: $scope.tiemposCredito,
+            idTiempoCredito: $scope.comprobante.idTiempoCredito,
+            montoTotal: $scope.comprobante.total,
+            cuotas: []
+        }
+        let cuotas = [];
+        let montoTotalCuota = 0;
+
+
+        let dataCuota = fS.calcularCuotas(objParamsCuota);
+        cuotas = dataCuota.cuotas;
+        montoTotalCuota = dataCuota.montoTotalCuota;
+
+
+
+        if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.comprobante.total, 2)) {
+            tS.toastr({
+                type: 'warning',
+                message: 'No coincide el total de la cuota con el importe total del documento.'
+            });
+            return [];
+        }
+
+        return cuotas;
+    }
+
+
+    $scope.saveNotaEntrega = async function () {
+        try {
+
+            if (!isValidForm()) return
+
+            let cuotas = validateCuota();
+
+            if (cuotas && cuotas.length === 0) return
+
+
+
+            showLoader();
+            let serieComprobante = await notaEntregaSvc.generateSerieComprobante({
+                idPuntoEmision: $scope.comprobante.idPuntoEmision,
+            })
+                .catch(error => console.log(error))
+                .finally(() => hideLoader())
+            if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+
+
+            const customSwal = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+
+            let { isConfirmed } = await customSwal.fire({
+                title: '<small>Guardar Nota de Entrega</small>',
+                html: `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            })
+
+            if (!isConfirmed) return
+
+            let query = proformaSvc.queryMapperConvertToDoc({
+                id,
+                codDocDestino: codDocDestino,
+                codDoc: codDocDestino,
+                comprobante: $scope.comprobante, 
+                detalles: $scope.detalles,
+                infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                cuotas
+            })
+
+            showLoader();
+            proformaSvc.convertToDoc(query).then(response => {
+                if (response.code === '0') {
+                    fS.sweetAlert('warning', response.message, response.titleSms);
+                }
+                if (response.code === "1") {
+                    fS.sweetAlert('success', response.message, response.titleSms, 1000);
+
+                    let mainData = {
+                        isRegister: true,
+                        data: response.dataResponse,
+                    }
+                    $uibModalInstance.close(mainData)
+                }
+            }).catch(error => { 
+                console.log(error)
+            }).finally(() => hideLoader())
+
+
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
+
+
+
+
+
+    $scope.closeModal = function () {
+        $uibModalInstance.close();
+    }
+
+
+
+}

@@ -49,31 +49,26 @@
                                 <div class="form-group">
                                     <span for="">Cliente: <span class="text-danger">*</span></span>
                                     <div class="input-group">
-                                        <input type="text" id="clienteSearch" autocomplete="off" name="clienteSearch"
-                                            class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
-                                            ng-model="cliente.nombreFiscal" typeahead-wait-ms="10"
-                                            ng-keyup="onKeyupClienteSearch()"
-                                            uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
-                                            typeahead-loading="cliente.loading" typeahead-no-results="cliente.noResults"
-                                            typeahead-template-url="clienteSearchTemplate.html"
-                                            typeahead-editable="false"
-                                            typeahead-on-select="selectedClienteSearch($item)" onClick="select();" />
+                                        <input type="text" id="customerInputSearch" class="form-control border-select"
+                                            ng-model="cliente.nombreCliente" cliente-search-drtv
+                                            on-select="selectedClienteSearch(result)" on-keyup-cliente="onKeyupCliente()"
+                                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
-                                        <script type="text/ng-template" id="clienteSearchTemplate.html">
+                                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                                             <div class="autocomplete-suggestion-uib-typeahead">
-                                                <span class="item-title">
-                                                    <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
-                                                </span>
+                                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                                             </div>
                                         </script>
-                                        <div class="input-group-append">
+
+                                         <div class="input-group-append">
                                             <md-button class="md-icon-button" ng-click="refresh()" aria-label="Stock"
                                                 title="Actualizar">
                                                 <md-icon md-font-set="md" class="text-info">sync</md-icon>
                                             </md-button>
                                         </div>
                                     </div>
-                                </div>
+                                   
+                                </div> 
 
                             </div>
                         </div>
@@ -99,7 +94,7 @@
                     <hr>
 
                     <div ui-grid="gridOptionsSelectedDocs" ng-if="gridOptionsSelectedDocs.data.length>0"
-                        ui-grid-auto-resize ui-grid-resize-columns ui-grid-tree-view ui-grid-pinning ui-grid-expandable
+                        ui-grid-auto-resize ui-grid-resize-columns ui-grid-tree-view  ui-grid-expandable
                         ui-grid-selection class="grid">
                     </div>
 
