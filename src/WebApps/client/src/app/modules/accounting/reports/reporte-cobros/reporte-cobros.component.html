@@ -6,11 +6,9 @@
             <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
                 <div class="mb-3">
                     <div class="icheck-primary">
-                        <input type="radio" id="pxDocumento" 
-                            [(ngModel)]="dataSearch.pxDocumento"
-                            [value]="true"
+                        <input type="radio" id="pxDocumento" [(ngModel)]="dataSearch.pxDocumento" [value]="true"
                             name="pxDocumento" />
-                        <label for="pxDocumento">Por Documento</label>
+                        <label for="pxDocumento">Documento</label>
                     </div>
                 </div>
             </div>
@@ -18,10 +16,9 @@
             <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
                 <div class="mb-3">
                     <div class="icheck-primary">
-                        <input type="radio" id="pxCuotas" [(ngModel)]="dataSearch.pxDocumento" 
-                        [value]="false"
-                        name="pxCuotas" />
-                        <label for="pxCuotas">Por Cuotas</label>
+                        <input type="radio" id="pxCuotas" [(ngModel)]="dataSearch.pxDocumento" [value]="false"
+                            name="pxCuotas" />
+                        <label for="pxCuotas">Cuotas</label>
                     </div>
                 </div>
             </div>
@@ -29,8 +26,16 @@
             <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
                 <div class="mb-3">
                     <div class="icheck-primary">
-                        <input type="checkbox" id="isUseDate" [(ngModel)]="dataSearch.isUseDate" name="isUseDate" />
-                        <label for="isUseDate">Por Fechas</label>
+                        <input type="checkbox" id="isUseDate" [(ngModel)]="dataSearch.dateChecked" name="isUseDate" />
+                        <label for="isUseDate">Rango de Fechas</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="mb-3">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="isClient" [(ngModel)]="dataSearch.supplierChecked" name="isClient" />
+                        <label for="isClient">Cliente</label>
                     </div>
                 </div>
             </div>
@@ -81,7 +86,7 @@
                     <select class="form-select form-control-border" [(ngModel)]="dataSearch.idSubEntidadFinanciera">
                         <option [ngValue]="0">Todos</option>
                         @for(estab of subEntidadFinanciera; track $index ){
-                        <option [ngValue]="estab.idEntidadFinanciera">
+                        <option [ngValue]="estab.idSubEntidadFinanciera">
                             {{ estab.descripcion }}
                         </option>
                         }
@@ -90,7 +95,7 @@
             </div>
         </div>
         <div class="row">
-            @if (dataSearch.isUseDate) {
+            @if (dataSearch.dateChecked) {
             <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
                 <div class="mb-3">
                     <label for="dateRange" class="form-label">Rango de Fechas:</label>
@@ -99,13 +104,16 @@
             </div>
             }
 
-
+            @if(dataSearch.supplierChecked) {
             <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6">
                 <div class="mb-3">
                     <label for="clienteSearch" class="form-label">Cliente: </label>
-                    <input type="email" class="form-control" id="clienteSearch">
+                    <app-company-customer-search [isSearchSimple]="isCustomerSearchSimple"
+                        (onCustomerSelected)="onCustomerSelected($event)"
+                        (resultEmptyInput)="resultCustomerEmptyInput($event)" />
                 </div>
             </div>
+            }
         </div>
 
         <div class="row">

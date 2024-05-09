@@ -34,19 +34,20 @@ export class ReporteCobrosComponent implements OnInit {
     establecimientos: Array<GroupedEstab> = [];
     puntosEmision: Array<GroupedEstabPuntoEmision> = [];
     tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
-    subEntidadFinanciera: Array<SubEntidadFinancieraSelectHtmlOnly> = []
+    subEntidadFinanciera: Array<SubEntidadFinancieraSelectHtmlOnly> = [];
+    isCustomerSearchSimple = true;
 
     dataSearch = {
         codEstab: '',
         idPuntoEmision: 0,
         codDoc: '',
-        idProveedor: 0,
+        customerId: 0,
         idSubEntidadFinanciera: 0,
         fromDate: formatDateMoment(new Date()),
         toDate: formatDateMoment(new Date()),
         supplierChecked: false,
         pxDocumento: true,
-        isUseDate: true,
+        dateChecked: true,
     }
 
     ngOnInit(): void {
@@ -86,6 +87,9 @@ export class ReporteCobrosComponent implements OnInit {
                     this.tiposDoc = tiposDoc;
                     this.subEntidadFinanciera = subEntidadFinanciera;
                     this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FV)?.codDoc || '';
+
+
+                    console.log(this.subEntidadFinanciera);
                 }
             }, error(err) {
                 hideLoader()
@@ -112,6 +116,15 @@ export class ReporteCobrosComponent implements OnInit {
         this.dataSearch.toDate = range.to;
     }
 
+    onCustomerSelected<T extends { data: any }>($event: T) {
+        let { data } = $event;
+        this.dataSearch.customerId = data.idCliente;
+    }
+
+    resultCustomerEmptyInput($event: any) {
+        this.dataSearch.customerId = 0;
+    }
+
     getReport(format: 'pdf' | 'excel') {
 
         if (!isValidField(this.dataSearch.fromDate)) {
@@ -131,14 +144,15 @@ export class ReporteCobrosComponent implements OnInit {
         }
 
         if (this.dataSearch.supplierChecked) {
-            if (!isValidField(this.dataSearch.idProveedor)) {
+            if (!isValidField(this.dataSearch.customerId)) {
                 this.tS.toastr({
                     type: 'warning',
-                    message: 'Seleccione el proveedor'
+                    message: 'Seleccione el cliente'
                 })
                 return
             }
         }
+
 
         const dataParms = {
             tipo: this.dataSearch.pxDocumento ? 1 : 2,
@@ -146,10 +160,11 @@ export class ReporteCobrosComponent implements OnInit {
             codEstab: isValidField(this.dataSearch.codEstab),
             codDoc: isValidField(this.dataSearch.codDoc),
             idSubEntidadFinanciera: this.dataSearch.idSubEntidadFinanciera,
-            idProveedor: this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor) || null,
+            idCustomer: this.dataSearch.supplierChecked && isValidField(this.dataSearch.customerId) || null,
+            idPuntoEmision: this.dataSearch.idPuntoEmision,
             fechaInicio: this.dataSearch.fromDate,
             fechaFin: this.dataSearch.toDate,
-            isUseDate: this.dataSearch.isUseDate,
+            dateChecked: this.dataSearch.dateChecked,
         }
 
         const parameters = {

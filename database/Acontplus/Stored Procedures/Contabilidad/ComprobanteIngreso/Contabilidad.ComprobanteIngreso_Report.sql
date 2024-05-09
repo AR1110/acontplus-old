@@ -21,7 +21,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
--- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"FV","idSubEntidadFinanciera":0,"idProveedor":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","isUseDate":true}', ''
+-- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"NE","idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	@userRoleId			INT
 	, @json				VARCHAR(MAX)
@@ -32,8 +32,8 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
 	--> Global
-    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150),@idUsuario INT, @codDoc VARCHAR(5), @idSubEntidadFinanciera INT, @idProveedor INT
-            , @fechaInicio DATETIME2, @fechaFin DATETIME2, @codEstab VARCHAR(20), @isUseDate BIT
+    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150),@idUsuario INT, @codDoc VARCHAR(5), @idSubEntidadFinanciera INT, @fechaInicio DATETIME2
+            , @fechaFin DATETIME2, @codEstab VARCHAR(20), @dateChecked BIT, @idCustomer INT
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
@@ -51,29 +51,31 @@ BEGIN
             SELECT @codEstab                = codEstab
                 , @codDoc                   = codDoc
                 , @idSubEntidadFinanciera   = idSubEntidadFinanciera
-                , @idProveedor              = idProveedor
                 , @fechaInicio              = fechaInicio
                 , @fechaFin                 = fechaFin
-                , @isUseDate                = isUseDate
+                , @dateChecked              = dateChecked
+                , @idCustomer               = idCustomer
             FROM OPENJSON(@json) WITH (
                 codEstab                    VARCHAR(20)
                 , codDoc                    VARCHAR(5)
                 , idSubEntidadFinanciera    INT
-                , idProveedor               INT
+                , idCustomer                INT
                 , fechaInicio               DATETIME2
                 , fechaFin                  DATETIME2
-                , isUseDate                 BIT
+                , dateChecked               BIT
+                , idCustomer                INT
             )
 
             SET @params = '@idEntidad               INT 
                            ,@idSubEntidadFinanciera INT
                            ,@codEstab               VARCHAR(20)
                            ,@codDoc                 VARCHAR(5)
-                           ,@idProveedor            INT
+                           ,@idCustomer             INT
                            ,@fechaInicio            DATETIME2
                            ,@fechaFin               DATETIME2'
 
             SET @sql = 'SELECT * FROM (SELECT ci.idComprobanteIngreso
+                                            , ci.idPersona
                                             , se.nombreComercial
                                             , se.codEstab
                                             , ''CI'' +''-''+ se.estab +''-''+ Helper.F_Auto_Sequential(ci.nroDocumento)	                AS serie
@@ -112,7 +114,6 @@ BEGIN
 								                                            ELSE  ''''
 	                                            END
 	                                          )																					        AS lote
-                                            , td.codigo                                                                                 AS codigo                                            
                                             FROM dbo.ComprobanteIngreso                 ci	    WITH(NOLOCK)
                                             INNER JOIN Contabilidad.Historial_Cobro		hc		WITH(NOLOCK) ON hc.idComprobanteIngreso		= ci.idComprobanteIngreso
                                             INNER JOIN Sri.Establecimiento				se		WITH(NOLOCK) ON se.codEstab					= ci.codEstab
@@ -121,7 +122,6 @@ BEGIN
                                             INNER JOIN dbo.EntidadFinanciera			ef		WITH(NOLOCK) ON ef.idEntidadFinanciera		= co.idEntidadFinanciera
                                             LEFT  JOIN dbo.Banco						bc		WITH(NOLOCK) ON bc.idBanco					= co.idBanco
                                             LEFT  JOIN dbo.Ciudad						cd		WITH(NOLOCK) ON cd.idCiudad					= co.idCiudad
-                                            LEFT  JOIN dbo.TipoDocumento				td		WITH(NOLOCK) ON td.idTipoDocumento			= co.idTipoDocumento
                                             WHERE		ci.idEntidad    = @idEntidad
                                             AND			ci.estado       = 1
                                    ) AS dt WHERE dt.idComprobanteIngreso > 0 '
@@ -133,15 +133,20 @@ BEGIN
 
             IF @codDoc IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND dt.codigo = @codDoc '
+                    SET @sql = @sql + 'AND dt.codDoc = @codDoc '
                 END
 
             IF @idSubEntidadFinanciera > 0
                 BEGIN
                     SET @sql = @sql + 'AND dt.idSubEntidadFinanciera = @idSubEntidadFinanciera '
                 END
+
+            IF @idCustomer > 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.idPersona = @idCustomer '
+                END
                 
-            IF @isUseDate = 1
+            IF @dateChecked = 1
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
                 END
@@ -156,7 +161,7 @@ BEGIN
                               ,@idSubEntidadFinanciera      = @idSubEntidadFinanciera
                               ,@codEstab                    = @codEstab
                               ,@codDoc                      = @codDoc
-                              ,@idProveedor                 = @idProveedor
+                              ,@idCustomer                 = @idCustomer
                               ,@fechaInicio                 = @fechaInicio
                               ,@fechaFin                    = @fechaFin
 
@@ -182,29 +187,30 @@ BEGIN
             SELECT @codEstab                = codEstab
                 , @codDoc                   = codDoc
                 , @idSubEntidadFinanciera   = idSubEntidadFinanciera
-                , @idProveedor              = idProveedor
+                , @idCustomer               = idCustomer
                 , @fechaInicio              = fechaInicio
                 , @fechaFin                 = fechaFin
-                , @isUseDate                = isUseDate
+                , @dateChecked              = dateChecked
             FROM OPENJSON(@json) WITH (
                 codEstab                    VARCHAR(20)
                 , codDoc                    VARCHAR(5)
                 , idSubEntidadFinanciera    INT
-                , idProveedor               INT
+                , idCustomer                INT
                 , fechaInicio               DATETIME2
                 , fechaFin                  DATETIME2
-                , isUseDate                 BIT
+                , dateChecked               BIT
             )
 
             SET @params = '@idEntidad               INT 
                            ,@idSubEntidadFinanciera INT
                            ,@codEstab               VARCHAR(20)
                            ,@codDoc                 VARCHAR(5)
-                           ,@idProveedor            INT
+                           ,@idCustomer             INT
                            ,@fechaInicio            DATETIME2
                            ,@fechaFin               DATETIME2'
 
-            SET @sql = 'SELECT * FROM (SELECT ci.idComprobanteIngreso                                            
+            SET @sql = 'SELECT * FROM (SELECT ci.idComprobanteIngreso 
+                                        , ci.idPersona
                                         , se.nombreComercial
                                         , se.codEstab
                                         , ''CI'' +''-''+ se.estab +''-''+ Helper.F_Auto_Sequential(ci.nroDocumento)						    AS serie
@@ -228,7 +234,7 @@ BEGIN
 	                                        CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                        ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')
 	                                        END
-	                                        )																						        AS nro
+	                                      )																						            AS nro
                                         , (
 	                                        CASE ef.codigo WHEN ''TAR'' THEN  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.referencia'') 
 								                                        ELSE  ''''
@@ -238,21 +244,18 @@ BEGIN
 	                                        CASE ef.codigo WHEN ''TAR'' THEN  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.aprobacion'')
 								                                        ELSE  ''''
 	                                        END
-	                                        )																						        AS aprobacion
+	                                      )																						            AS aprobacion
                                         , (
 	                                        CASE ef.codigo WHEN ''TAR'' THEN  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.lote'')
 								                                        ELSE  ''''
 	                                        END
-	                                        )																					            AS lote
-                                        , td.codigo                                                                                         AS codigo
-                                            
+	                                      )																					                AS lote
                                         FROM dbo.ComprobanteIngreso                 ci	    WITH(NOLOCK)
                                         INNER JOIN Sri.Establecimiento				se		WITH(NOLOCK) ON se.codEstab					= ci.codEstab
                                         INNER JOIN dbo.Cobro						co		WITH(NOLOCK) ON co.idComprobanteIngreso		= ci.idComprobanteIngreso
                                         INNER JOIN dbo.EntidadFinanciera			ef		WITH(NOLOCK) ON ef.idEntidadFinanciera		= co.idEntidadFinanciera
                                         LEFT  JOIN dbo.Banco						bc		WITH(NOLOCK) ON bc.idBanco					= co.idBanco
                                         LEFT  JOIN dbo.Ciudad						cd		WITH(NOLOCK) ON cd.idCiudad					= co.idCiudad
-                                        LEFT  JOIN dbo.TipoDocumento				td		WITH(NOLOCK) ON td.idTipoDocumento			= co.idTipoDocumento
                                         INNER JOIN dbo.CobroDetalle					hc		WITH(NOLOCK) ON hc.idCobro					= co.idCobro
                                         INNER JOIN Contabilidad.CuotaPorCobrar		cx		WITH(NOLOCK) ON cx.idCuotaPorCobrar			= hc.idCuotaPorCobrar
                                         INNER JOIN Contabilidad.CuentaPorCobrar		cc		WITH(NOLOCK) ON cc.idCuentaPorCobrar		= cx.idCuentaPorCobrar
@@ -267,15 +270,20 @@ BEGIN
 
             IF @codDoc IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + 'AND dt.codigo = @codDoc '
+                    SET @sql = @sql + 'AND dt.codDoc = @codDoc '
                 END
 
             IF @idSubEntidadFinanciera > 0
                 BEGIN
                     SET @sql = @sql + 'AND dt.idSubEntidadFinanciera = @idSubEntidadFinanciera '
                 END
+
+            IF @idCustomer > 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.idPersona = @idCustomer '
+                END
                 
-            IF @isUseDate = 1
+            IF @dateChecked = 1
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
                 END
@@ -289,7 +297,7 @@ BEGIN
                               ,@idSubEntidadFinanciera      = @idSubEntidadFinanciera
                               ,@codEstab                    = @codEstab
                               ,@codDoc                      = @codDoc
-                              ,@idProveedor                 = @idProveedor
+                              ,@idCustomer                  = @idCustomer
                               ,@fechaInicio                 = @fechaInicio
                               ,@fechaFin                    = @fechaFin
 
