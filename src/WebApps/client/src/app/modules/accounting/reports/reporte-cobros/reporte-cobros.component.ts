@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { AccountingModule } from "../../accounting.module";
 import { HttpClient } from '@angular/common/http';
 import { ToasterService } from '@core/services/toaster.service';
-import { DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
+import { CODE_REPORT, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@modules/accounting/enums/accounting.constants';
 import { hideLoader, showLoader } from '@core/utils/loader';
 import { isApiResponse } from '@core/models/api-response';
@@ -12,6 +12,8 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { AppModule } from 'src/app/app.module';
 import { isValidField } from '@core/utils/utils';
+import { SubEntidadFinancieraSelectHtmlOnly } from '@modules/accounting/models/subentidad-financiera.model';
+import { SharedService } from '@core/services/shared.service';
 
 @Component({
     selector: 'app-reporte-cobros',
@@ -21,31 +23,30 @@ import { isValidField } from '@core/utils/utils';
     imports: [AccountingModule, AppModule]
 })
 export class ReporteCobrosComponent implements OnInit {
-    [x: string]: any;
     http = inject(HttpClient);
 
     // Services
     private tS = inject(ToasterService)
-    private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`
+    private sharedSvc = inject(SharedService);
+    private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.COMPROBANTE_INGRESO}`
 
     // VARIABLES Y CONSTANTES
     establecimientos: Array<GroupedEstab> = [];
     puntosEmision: Array<GroupedEstabPuntoEmision> = [];
     tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
-    estadosDoc: Array<{ codigo: string, descripcion: string }> = [];
+    subEntidadFinanciera: Array<SubEntidadFinancieraSelectHtmlOnly> = []
 
     dataSearch = {
         codEstab: '',
         idPuntoEmision: 0,
         codDoc: '',
         idProveedor: 0,
-        codEstado: '',
+        idSubEntidadFinanciera: 0,
         fromDate: formatDateMoment(new Date()),
         toDate: formatDateMoment(new Date()),
         supplierChecked: false,
-        supplierName: '',
-        pxCuotas: false,
-        pxDocumento: false,
+        pxDocumento: true,
+        isUseDate: true,
     }
 
     ngOnInit(): void {
@@ -56,7 +57,7 @@ export class ReporteCobrosComponent implements OnInit {
         showLoader();
 
         const PARAMS = {
-            params: { json: JSON.stringify({ tipo: 6 }) }
+            params: { json: JSON.stringify({ tipo: 4 }) }
         }
 
         this.http.get(this.url, PARAMS).subscribe({
@@ -68,12 +69,12 @@ export class ReporteCobrosComponent implements OnInit {
                         return console.log(response);
                     }
 
-                    const [estabs, estadosDoc, tiposDoc] = JSON.parse(response.payload as string);
-
+                    const [estabs, tiposDoc, subEntidadFinanciera] = JSON.parse(response.payload as string);
                     this.establecimientos = groupEstabUtil({ estabs, isGroupPuntoEmision: true })
 
                     const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
                     if (dataEstab) {
+
                         this.dataSearch.codEstab = dataEstab.codEstab;
                         this.puntosEmision = dataEstab.puntosEmision;
 
@@ -83,8 +84,8 @@ export class ReporteCobrosComponent implements OnInit {
                         }
                     }
                     this.tiposDoc = tiposDoc;
-                    this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FC)?.codDoc || '';
-                    this.estadosDoc = estadosDoc;
+                    this.subEntidadFinanciera = subEntidadFinanciera;
+                    this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FV)?.codDoc || '';
                 }
             }, error(err) {
                 hideLoader()
@@ -109,5 +110,56 @@ export class ReporteCobrosComponent implements OnInit {
     onDateRangeSelection(range: { from: string, to: string }) {
         this.dataSearch.fromDate = range.from;
         this.dataSearch.toDate = range.to;
+    }
+
+    getReport(format: 'pdf' | 'excel') {
+
+        if (!isValidField(this.dataSearch.fromDate)) {
+            this.tS.toastr({
+                type: 'warning',
+                message: 'Ingrese fecha inicio'
+            })
+            return
+        }
+
+        if (!isValidField(this.dataSearch.toDate)) {
+            this.tS.toastr({
+                type: 'warning',
+                message: 'Ingrese fecha fin'
+            })
+            return
+        }
+
+        if (this.dataSearch.supplierChecked) {
+            if (!isValidField(this.dataSearch.idProveedor)) {
+                this.tS.toastr({
+                    type: 'warning',
+                    message: 'Seleccione el proveedor'
+                })
+                return
+            }
+        }
+
+        const dataParms = {
+            tipo: this.dataSearch.pxDocumento ? 1 : 2,
+            format,
+            codEstab: isValidField(this.dataSearch.codEstab),
+            codDoc: isValidField(this.dataSearch.codDoc),
+            idSubEntidadFinanciera: this.dataSearch.idSubEntidadFinanciera,
+            idProveedor: this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor) || null,
+            fechaInicio: this.dataSearch.fromDate,
+            fechaFin: this.dataSearch.toDate,
+            isUseDate: this.dataSearch.isUseDate,
+        }
+
+        const parameters = {
+            reportParams: JSON.stringify({
+                codEstab: this.dataSearch.codEstab,
+                codigo: this.dataSearch.pxDocumento ? CODE_REPORT.RCXD : CODE_REPORT.RCXC,
+                format,
+            }),
+            dataParams: JSON.stringify(dataParms)
+        }
+        this.sharedSvc.getReport(parameters, format)
     }
 }
