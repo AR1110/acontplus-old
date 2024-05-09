@@ -1,37 +1,35 @@
-(function(){
+(function () {
 
     'use strict';
 
     app.controller('cobroCtrl', cobroCtrl);
 
     cobroCtrl.$inject = [
-        '$scope', 
+        '$scope',
         '$filter',
         '$injector',
-        'mainService', 
-        'commonService', 
-        'modalService', 
-        'nombreModal',
-        'nombreModalContabilidad' ,
-        'formulario', 
-        'toastService',  
-        '$mdDialog'
+        'mainService',
+        'commonService',
+        'modalService',
+        'nombreModalContabilidad',
+        'formulario',
+        'toastService',
     ]
 
-    function cobroCtrl($scope, $filter, $injector, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _form, tS, $mdDialog) { 
+    function cobroCtrl($scope, $filter, $injector, _mS, _commonSvc, _modalSvc, nombreModalContabilidad, _form, tS) {
 
         let compIngresoSvc = $injector.get('comprobanteIngresoService');
         //Filtro y Pagination  
         $scope.moreSearchOptions = false;
 
         $scope.tiposPersona = [
-            {codigo: 1, descripcion: 'Cliente'},
-            {codigo: 2, descripcion: 'Empleado'},
+            { codigo: 1, descripcion: 'Cliente' },
+            { codigo: 2, descripcion: 'Empleado' },
         ]
 
         $scope.tiposDoc = [
-            {codigo: 'FV', descripcion: 'Factura Venta'},
-            {codigo: 'NE', descripcion: 'Nota Entrega'},
+            { codigo: 'FV', descripcion: 'Factura Venta' },
+            { codigo: 'NE', descripcion: 'Nota Entrega' },
         ]
 
         $scope.showCliente = false;
@@ -57,12 +55,12 @@
         $scope.typeSend = 'GenericFile';
         $scope.typeSendMail = 'N';
 
-        
-        $scope.openModalCobroLote = async function() {
+
+        $scope.openModalCobroLote = async function () {
             try {
                 let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
                 let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
-                let template = nombreModalContabilidad.COBRO.templates['CL']; 
+                let template = nombreModalContabilidad.COBRO.templates['CL'];
                 let controller = (await import(fileCtrl))[ctrl];
 
                 let modalRef = _modalSvc.openModalCustom({
@@ -70,14 +68,14 @@
                     template,
                     params: {
                     },
-                    size:'xl',
+                    size: 'xl',
                     isRenderRazorPartial: true
-                })  
-                modalRef.result.then(result=>{
-                    if(typeof result==='object'){
+                })
+                modalRef.result.then(result => {
+                    if (typeof result === 'object') {
                         $scope.getCobros();
                     }
-                })         
+                })
             } catch (error) {
                 console.log(error)
             }
@@ -87,59 +85,59 @@
         //Filters 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
-            $scope.dataSearch.fechaFin = item.endDate
+                $scope.dataSearch.fechaFin = item.endDate
             $scope.filterValidation();
         }
 
-        $scope.onKeyupUser = function(){
-            if(!$scope.searchUser.nombreCompleto){
+        $scope.onKeyupUser = function () {
+            if (!$scope.searchUser.nombreCompleto) {
                 $scope.dataSearch.byUsuario = 0;
             }
         }
-        $scope.onSelectUser = function(item) {
+        $scope.onSelectUser = function (item) {
             $scope.dataSearch.byUsuario = item.idUsuario;
             $scope.filterValidation();
         }
 
-        
-        
+
+
         $scope.onClickBtnMore = function () {
             $scope.moreSearchOptions = !$scope.moreSearchOptions;
         }
 
-        $scope.onChangePersona = function () { 
+        $scope.onChangePersona = function () {
             $scope.showCliente = false;
-            $scope.showEmpleado = false;  
-            $scope.dataSearch.nroIdentificacion = null;         
-            if($scope.dataSearch.byTipoPersona===1){
+            $scope.showEmpleado = false;
+            $scope.dataSearch.nroIdentificacion = null;
+            if ($scope.dataSearch.byTipoPersona === 1) {
                 $scope.showCliente = true;
                 $scope.showEmpleado = false;
             }
-            if($scope.dataSearch.byTipoPersona===2){
+            if ($scope.dataSearch.byTipoPersona === 2) {
                 $scope.showCliente = false;
                 $scope.showEmpleado = true;
             }
         }
 
         //====================Cliente===========
-        $scope.onKeyupCliente= function(){
-            if(!$scope.searchCliente.nombreCompleto){
+        $scope.onKeyupCliente = function () {
+            if (!$scope.searchCliente.nombreCompleto) {
                 $scope.dataSearch.nroIdentificacion = null;
             }
         }
-        $scope.onSelectCliente= function(item){
+        $scope.onSelectCliente = function (item) {
             $scope.dataSearch.nroIdentificacion = item.numeroIdentificacion;
             $scope.filterValidation();
         }
         //====================Cliente===========
 
         //====================Empleado===========
-        $scope.onKeyupEmpleado= function(){
-            if(!$scope.searchEmpleado.nombreCompleto){
+        $scope.onKeyupEmpleado = function () {
+            if (!$scope.searchEmpleado.nombreCompleto) {
                 $scope.dataSearch.nroIdentificacion = null;
             }
         }
-        $scope.onSelectEmpleado= function(item){
+        $scope.onSelectEmpleado = function (item) {
             $scope.dataSearch.nroIdentificacion = item.nroIdentificacion;
             $scope.filterValidation();
         }
@@ -147,28 +145,28 @@
 
 
 
-        $scope.onChangeTipoDoc = function(){
-            if($scope.dataSearch.codTipoDoc)        {
+        $scope.onChangeTipoDoc = function () {
+            if ($scope.dataSearch.codTipoDoc) {
                 $scope.disabledTempInputPersona = true; //Bloqueamos tipo persona(buscador cliente y empleado)
-            }else{
+            } else {
                 $scope.disabledTempInputPersona = false;
                 $scope.dataSearch.nroSecuencialTipoDoc = null;
             }
-            if(!$scope.dataSearch.nroSecuencialTipoDoc) return;
+            if (!$scope.dataSearch.nroSecuencialTipoDoc) return;
 
             $scope.getCobros();
         }
 
-        $scope.filterValidation = function(){
-            if($scope.dataSearch.byTipoPersona){
-                if(!$scope.dataSearch.nroIdentificacion){
+        $scope.filterValidation = function () {
+            if ($scope.dataSearch.byTipoPersona) {
+                if (!$scope.dataSearch.nroIdentificacion) {
                     tS.toastr('warning', 'Seleccione el cliente o el empleado');
                     return
                 }
             }
 
-            if(['FV', 'NE'].includes($scope.dataSearch.codTipoDoc)){
-                if(!$scope.dataSearch.nroSecuencialTipoDoc){
+            if (['FV', 'NE'].includes($scope.dataSearch.codTipoDoc)) {
+                if (!$scope.dataSearch.nroSecuencialTipoDoc) {
                     tS.toastr('warning', 'Ingrese número secuencial de tipo documento (Nota Entrega o Factura)')
                     return
                 }
@@ -178,40 +176,42 @@
         }
 
 
-        $scope.filterLocal= function(){
+        $scope.filterLocal = function () {
             let cobros = JSON.parse(JSON.stringify($scope.cloneCobros));
             $scope.cobros = $filter("filter")(cobros, $scope.dataSearch.bySearch);
             setTotalsColumn();
         }
 
 
-        function setTotalsColumn(){
+        function setTotalsColumn() {
             let total = 0, abono = 0, cambio = 0;
-            for(let item of $scope.cobros){
-                total+=item.total;
-                abono+=item.abono;
-                cambio+=item.cambio;
+            for (let item of $scope.cobros) {
+                total += item.total;
+                abono += item.abono;
+                cambio += item.cambio;
             }
             $scope.total = _form.roundNumber(total);
             $scope.abono = _form.roundNumber(abono);
             $scope.cambio = _form.roundNumber(cambio);
         }
 
+        $scope.refresh = function () {
+            $scope.getCobros();
+        }
 
 
         $scope.getCobros = function () {
             try {
-                showLoader();
                 $scope.cobros = [];
-                $scope.cloneCobros  = [];
+                $scope.cloneCobros = [];
                 setTotalsColumn();
 
                 const dataSearch = {
                     tipo: 1,
-                    codEstab: $scope.dataSearch.codEstab, 
+                    codEstab: $scope.dataSearch.codEstab,
                     fechaInicio: _form.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: _form.formatDateMoment($scope.dataSearch.fechaFin),
-                    checkBoxPersona: $scope.tiposPersona.some(item=>item.codigo===$scope.dataSearch.byTipoPersona),
+                    checkBoxPersona: $scope.tiposPersona.some(item => item.codigo === $scope.dataSearch.byTipoPersona),
                     nroIdentificacion: $scope.dataSearch.nroIdentificacion,
                     checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
                     byUsuario: $scope.dataSearch.byUsuario,
@@ -219,18 +219,20 @@
                     byEstado: $scope.dataSearch.byEstado,
                     codTipoDoc: $scope.dataSearch.codTipoDoc,
                     nroSecuencialTipoDoc: $scope.dataSearch.nroSecuencialTipoDoc,
-                    isSearchNroDoc: $scope.dataSearch.nroSecuencialDoc ? true:false,
+                    isSearchNroDoc: $scope.dataSearch.nroSecuencialDoc ? true : false,
                     nroSecuencialDoc: $scope.dataSearch.nroSecuencialDoc
                 }
-          
-                compIngresoSvc.getAll(dataSearch).then(response=>{
+
+                showLoader();
+
+                compIngresoSvc.getAll(dataSearch).then(response => {
                     $scope.cobros = response;
-                    $scope.cloneCobros = JSON.parse(JSON.stringify(tempCobros))
+                    $scope.cloneCobros = structuredClone(response)
                     setTotalsColumn();
-                    console.log(response)
-                }).catch(error=>{
+
+                }).catch(error => {
                     console.log(error)
-                }).finally(()=>hideLoader()) 
+                }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -245,8 +247,8 @@
                 $scope.getCobros();
             })
         }
-        $scope.initiload(); 
-        
+        $scope.initiload();
+
         $scope.openModalParam = async ({
             controller,
             template,
@@ -270,34 +272,36 @@
 
         $scope.askToDelete = async (item) => {
 
-            let {
-                isConfirmed,
-                value
-            } = await Swal.fire({
-                icon: 'warning',
-                html: '<small>Esta seguro/a de Anular este registro ahora?</small>',
-                input: 'text',
-                inputPlaceholder: 'Ingrese la observación',
-                showConfirmButton: true,
-                confirmButtonText: 'Si, anular',
-                showCancelButton: true,
-                cancelButtonText: 'No, cancelar!',
-                allowOutsideClick: false,
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'Ingrese la Observación!'
+            try {
+                let {
+                    isConfirmed,
+                    value
+                } = await Swal.fire({
+                    icon: 'warning',
+                    html: '<small>Esta seguro/a de Anular este registro ahora?</small>',
+                    input: 'text',
+                    inputPlaceholder: 'Ingrese la observación',
+                    showConfirmButton: true,
+                    confirmButtonText: 'Si, anular',
+                    showCancelButton: true,
+                    cancelButtonText: 'No, cancelar!',
+                    allowOutsideClick: false,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Ingrese la Observación!'
+                        }
                     }
-                }
-            })
+                })
 
-            if (isConfirmed) {
+                if (!isConfirmed) return
+
+
                 let data = {
                     idComprobanteIngreso: item.idComprobanteIngreso,
                     observacion: value
                 }
                 showLoader();
-                _mS.getData('put', `Contabilidad/ComprobanteIngreso/Cancel`, {data}, true).then(response => {
-                    hideLoader();
+                compIngresoSvc.cancel(data).then(response => {
                     if (response.code == "0") {
                         tS.toastr('warning', response.message, response.titleSms);
                     }
@@ -305,39 +309,15 @@
                         tS.toastr('success', response.message, response.titleSms);
                         $scope.getCobros();
                     }
-                }).catch(error=>{
-                    hideLoader();
+                }).catch(error => {
                     console.log(error)
-                })
-            }
-        }
-
-
-
-        //----------------------------Detalle Comprobante Ingreso ---------------------
-        $scope.openModalCobroDetalle = async function (ev, item) {
-            try {
-                // showLoader();
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
-                let templateUrl = nombreModalContabilidad.COBRO.templates['CD']; 
-                let controller = (await import(fileCtrl))[ctrl];                
-              
-
-                let config = {
-                    controller,
-                    template: templateUrl,
-                    size: 'lg',
-                    params: Object.assign({}, item),
-                    isRenderRazorPartial: true
-                }
-
-                _modalSvc.openModalCustom(config)              
+                }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
-            }           
-        };
+            }
+
+        }
 
 
         //Reporte 
@@ -347,7 +327,7 @@
 
             let dataParms = {
                 id: item.idComprobanteIngreso,
-            } 
+            }
             const parameters = {
                 hasService: true,
                 reportParams: JSON.stringify({
@@ -367,8 +347,8 @@
             })
         }
 
-        
-        $scope.getParamToSendMail = function(item){
+
+        $scope.getParamToSendMail = function (item) {
             return {
                 codDoc: 'CI',
                 serieComprobante: item.nroDoc,

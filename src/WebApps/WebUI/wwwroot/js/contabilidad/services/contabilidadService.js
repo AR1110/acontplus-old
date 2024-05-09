@@ -463,19 +463,18 @@
             mapperTo,
             getHistorialCobrosById,
             getHistorialCobrosByDoc,
-            update
+            update,
+            cancel,
         }
 
         function getAll(obj) {
             let params = JSON.stringify(obj)
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
-
-                if (response.code === "0") {
-                    throw response;
-                }
+                let results = [];
+                
                 if (response.code === "1") {
                     const [comprobantesIngreso] = JSON.parse(response.payload);
-                    const results = comprobantesIngreso.map(compIngreso => {
+                    results = comprobantesIngreso.map(compIngreso => {
                         return {
                             codDoc: 'CI',
                             idComprobanteIngreso: compIngreso.idComprobanteIngreso,
@@ -497,8 +496,8 @@
                             esAnulado: compIngreso.color === 'table-danger'
                         }
                     })
-                    return results;
                 }
+                return results;
             })
         }
 
@@ -589,7 +588,7 @@
 
                 for (let item of cobros) {
                     item.infoCobro = JSON.parse(item.infoCobro)
-                    item.cobroDetalles = $scope.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
+                    item.cobroDetalles = cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
                     item.showInfoCobro = item.codPago !== 'EFE'
                 }
 
@@ -603,6 +602,11 @@
         function getHistorialCobrosByDoc(idCuentaPorCobrar) {
             let params = JSON.stringify({ idCuentaPorCobrar, tipo: 3 })
             return mS.getData('get', `${url}?json=${params}`, null, true).then(response => {
+                let result = {
+                    comprobante: [],
+                    cobroDetalles: [],
+                    comprobanteIngresos: []
+                }
                 if (response.code === '0') {
                     throw response;
                 }
@@ -610,21 +614,21 @@
 
                 let mainDataRepository = JSON.parse(response.payload);
 
-                let comprobante = mainDataRepository[0][0];
+                result.comprobante = mainDataRepository[0][0];
                 let comprobanteIngresos = mainDataRepository[1];
 
                 let cobros = mainDataRepository[2];
-                let cobroDetalles = mainDataRepository[3];
+                result.cobroDetalles = mainDataRepository[3];
 
 
 
                 for (let item of cobros) {
                     item.infoCobro = JSON.parse(item.infoCobro)
-                    item.cobroDetalles = cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
+                    item.cobroDetalles = result.cobroDetalles.filter(itemDetalle => itemDetalle.idCobro === item.idCobro);
 
                 }
 
-                comprobanteIngresos = comprobanteIngresos.map(item => {
+                result.comprobanteIngresos = comprobanteIngresos.map(item => {
                     item.cobros = cobros.filter(cc => cc.idComprobanteIngreso === item.idComprobanteIngreso)
                         .map(cobro => {
                             cobro.infoCobro = cobro.infoCobro
@@ -634,11 +638,7 @@
                     return item;
                 })
 
-                return {
-                    comprobante,
-                    cobroDetalles,
-                    comprobanteIngresos
-                }
+                return result;
             })
         }
 
@@ -646,6 +646,11 @@
         function update(data) {
             return mS.getData('put', `${url}`, { data }, true)
         }
+
+        function cancel(data){
+            return mS.getData('put', `${url}Cancel`, { data }, true)
+        }
+
     }]);
 
 
@@ -710,7 +715,8 @@
                         codEstab: cxc.codEstab,
                         identificacionComprador: cxc.identificacionComprador,
                         diasMora: cxc.diasMora,
-                        mora: cxc.mora
+                        mora: cxc.mora,
+                        enabledHistorialCobro: cxc.codEstado==='PE'
                     }
                 })
 

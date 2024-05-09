@@ -635,33 +635,7 @@
                 console.log(error)
             }
         }
-
-        $scope.openModalHistorialCobro = async (ev, item) => {
-            try {
-                if (['PE'].includes(item.codEstado)) return
-
-                // showLoader();
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
-                let templateUrl = nombreModalContabilidad.COBRO.templates['CD'];
-                let controller = (await import(fileCtrl))[ctrl];
-
-                let config = {
-                    controller,
-                    template: templateUrl,
-                    size: 'lg',
-                    params: Object.assign({}, item),
-                    isRenderRazorPartial: true
-                }
-
-                modalSvc.openModalCustom(config)
-            } catch (error) {
-                hideLoader();
-                console.log(error)
-            }
-
-        }
-
+ 
 
 
 
