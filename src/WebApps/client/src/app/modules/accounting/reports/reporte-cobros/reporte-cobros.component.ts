@@ -46,7 +46,7 @@ export class ReporteCobrosComponent implements OnInit {
         fromDate: formatDateMoment(new Date()),
         toDate: formatDateMoment(new Date()),
         supplierChecked: false,
-        pxDocumento: true,
+        documentoChecked: true,
         dateChecked: true,
     }
 
@@ -155,7 +155,7 @@ export class ReporteCobrosComponent implements OnInit {
 
 
         const dataParms = {
-            tipo: this.dataSearch.pxDocumento ? 1 : 2,
+            tipo: this.dataSearch.documentoChecked ? 1 : 2,
             format,
             codEstab: isValidField(this.dataSearch.codEstab),
             codDoc: isValidField(this.dataSearch.codDoc),
@@ -170,7 +170,7 @@ export class ReporteCobrosComponent implements OnInit {
         const parameters = {
             reportParams: JSON.stringify({
                 codEstab: this.dataSearch.codEstab,
-                codigo: this.dataSearch.pxDocumento ? CODE_REPORT.RCXD : CODE_REPORT.RCXC,
+                codigo: this.dataSearch.documentoChecked ? CODE_REPORT.RCXD : CODE_REPORT.RCXC,
                 format,
             }),
             dataParams: JSON.stringify(dataParms)

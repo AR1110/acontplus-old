@@ -32,8 +32,9 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
 	--> Global
-    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150),@idUsuario INT, @codDoc VARCHAR(5), @idSubEntidadFinanciera INT, @fechaInicio DATETIME2
-            , @fechaFin DATETIME2, @codEstab VARCHAR(20), @dateChecked BIT, @idCustomer INT
+    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150),@idUsuario INT, @codDoc VARCHAR(5), @idSubEntidadFinanciera INT
+            , @fechaInicio DATETIME2, @fechaFin DATETIME2, @codEstab VARCHAR(20), @dateChecked BIT, @idCustomer INT
+            , @idPuntoEmision   INT
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
@@ -55,6 +56,7 @@ BEGIN
                 , @fechaFin                 = fechaFin
                 , @dateChecked              = dateChecked
                 , @idCustomer               = idCustomer
+                , @idPuntoEmision           = idPuntoEmision
             FROM OPENJSON(@json) WITH (
                 codEstab                    VARCHAR(20)
                 , codDoc                    VARCHAR(5)
@@ -64,6 +66,7 @@ BEGIN
                 , fechaFin                  DATETIME2
                 , dateChecked               BIT
                 , idCustomer                INT
+                , idPuntoEmision            INT
             )
 
             SET @params = '@idEntidad               INT 
@@ -71,6 +74,7 @@ BEGIN
                            ,@codEstab               VARCHAR(20)
                            ,@codDoc                 VARCHAR(5)
                            ,@idCustomer             INT
+                           ,@idPuntoEmision         INT
                            ,@fechaInicio            DATETIME2
                            ,@fechaFin               DATETIME2'
 
@@ -84,6 +88,7 @@ BEGIN
                                             , ci.nombreFiscal
                                             , CAST(ci.abono  AS NUMERIC(18,2))															AS abono
                                             , CAST(ci.total  AS NUMERIC(18,2))															AS total
+                                            , cc.idPuntoEmision
                                             , cc.codDoc
                                             , cc.serieComprobante
                                             , ef.descripcion
@@ -131,6 +136,11 @@ BEGIN
                     SET @sql = @sql + 'AND dt.codEstab = @codEstab '
                 END
 
+            IF @idPuntoEmision > 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.idPuntoEmision = @idPuntoEmision '
+                END
+
             IF @codDoc IS NOT NULL
                 BEGIN
                     SET @sql = @sql + 'AND dt.codDoc = @codDoc '
@@ -161,7 +171,8 @@ BEGIN
                               ,@idSubEntidadFinanciera      = @idSubEntidadFinanciera
                               ,@codEstab                    = @codEstab
                               ,@codDoc                      = @codDoc
-                              ,@idCustomer                 = @idCustomer
+                              ,@idCustomer                  = @idCustomer
+                              ,@idPuntoEmision              = @idPuntoEmision
                               ,@fechaInicio                 = @fechaInicio
                               ,@fechaFin                    = @fechaFin
 
@@ -191,6 +202,7 @@ BEGIN
                 , @fechaInicio              = fechaInicio
                 , @fechaFin                 = fechaFin
                 , @dateChecked              = dateChecked
+                , @idPuntoEmision           = idPuntoEmision
             FROM OPENJSON(@json) WITH (
                 codEstab                    VARCHAR(20)
                 , codDoc                    VARCHAR(5)
@@ -199,6 +211,7 @@ BEGIN
                 , fechaInicio               DATETIME2
                 , fechaFin                  DATETIME2
                 , dateChecked               BIT
+                , idPuntoEmision            INT
             )
 
             SET @params = '@idEntidad               INT 
@@ -206,6 +219,7 @@ BEGIN
                            ,@codEstab               VARCHAR(20)
                            ,@codDoc                 VARCHAR(5)
                            ,@idCustomer             INT
+                           ,@idPuntoEmision         INT
                            ,@fechaInicio            DATETIME2
                            ,@fechaFin               DATETIME2'
 
@@ -219,6 +233,7 @@ BEGIN
                                         , ci.nombreFiscal
                                         , CAST(ci.abono  AS NUMERIC(18,2))															        AS abono
                                         , CAST(ci.total  AS NUMERIC(18,2))															        AS total
+                                        , cc.idPuntoEmision
                                         , cc.codDoc
                                         , cc.serieComprobante
                                         , cx.nroCuota
@@ -268,6 +283,11 @@ BEGIN
                     SET @sql = @sql + 'AND dt.codEstab = @codEstab '
                 END
 
+            IF @idPuntoEmision > 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.idPuntoEmision = @idPuntoEmision '
+                END
+
             IF @codDoc IS NOT NULL
                 BEGIN
                     SET @sql = @sql + 'AND dt.codDoc = @codDoc '
@@ -298,6 +318,7 @@ BEGIN
                               ,@codEstab                    = @codEstab
                               ,@codDoc                      = @codDoc
                               ,@idCustomer                  = @idCustomer
+                              ,@idPuntoEmision              = @idPuntoEmision
                               ,@fechaInicio                 = @fechaInicio
                               ,@fechaFin                    = @fechaFin
 
