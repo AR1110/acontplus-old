@@ -9,8 +9,8 @@
                 <div class="form-group">
                     <label for="ruc">Ruc <span class="text-danger">*</span></label>
                     <input type="text" id="ruc" name="ruc" ng-class="typeNotify" placeholder="Ej. 1450152325001"
-                        ng-model="data.ruc" ng-keyup="validarRuc()" maxlength="13" valid-number
-                        class="form-control border-select">
+                           ng-model="data.ruc" ng-keyup="validarRuc()" maxlength="13" valid-number
+                           class="form-control border-select">
                     <small class="invalid-feedback">{{message}}</small>
                     <small class="valid-feedback">{{message}}</small>
                 </div>
@@ -19,28 +19,30 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="form-group">
-                    <label for="razonSocial">Razón Social
-                        <span tooltip-placement="top"
+                    <label for="razonSocial">
+                        Razón Social
+                        <span tooltip-placement="top">
                             uib-tooltip="Nombre oficial y legal de la Persona Natural o Juridica ">
-                            <i class="fas fa-info-circle"></i></span> <span class="text-danger">*</span>
-                        </span>
+                            <i class="fas fa-info-circle"></i>
+                        </span> <span class="text-danger">*</span>
                     </label>
                     <input type="text" ng-model="data.razonSocial" touppercase
-                        placeholder="CORREA CALLE MARTHA MARICELA" class="form-control border-select" touppercase
-                        id="razonSocial">
+                           placeholder="CORREA CALLE MARTHA MARICELA" class="form-control border-select" touppercase
+                           id="razonSocial">
                 </div>
             </div>
             <div class="col-lg-12">
                 <div class="form-group">
-                    <label for="nombreComercial">Nombre Comercial
+                    <label for="nombreComercial">
+                        Nombre Comercial
                         <span tooltip-placement="top"
-                            uib-tooltip="Nombre de la Persona Natural o Juridica para el ejercicio de Actividades Economicas">
-                            <i class="fas fa-info-circle"></i></span> <span class="text-danger">*</span>
-                        </span>
+                              uib-tooltip="Nombre de la Persona Natural o Juridica para el ejercicio de Actividades Economicas">
+                            <i class="fas fa-info-circle"></i>
+                        </span> <span class="text-danger">*</span>
                     </label>
                     <input type="text" ng-model="data.nombreComercial" touppercase
-                        placeholder="VENTA AL POR MAYOR DE COMPUTADORAS Y EQUIPO PERIFÉRICO"
-                        class="form-control border-select" touppercase id="nombreComercial">
+                           placeholder="VENTA AL POR MAYOR DE COMPUTADORAS Y EQUIPO PERIFÉRICO"
+                           class="form-control border-select" touppercase id="nombreComercial">
                 </div>
             </div>
         </div>
@@ -55,7 +57,7 @@
                 <div class="form-group ">
                     <label for="email" class="text-muted">Correo</label>
                     <input type="text" ng-model="data.email" tolowercase validate-email
-                        class="form-control border-select" id="email" placeholder="example@gmail.com">
+                           class="form-control border-select" id="email" placeholder="example@gmail.com">
                     <small class="invalid-feedback">Por favor, ingrese un correo electrónico válido.</small>
                     <small class="valid-feedback">Correo Electrónico válido.</small>
                 </div>
@@ -66,14 +68,14 @@
                 <div class="form-group">
                     <label for="celular" class="text-muted">Teléfono: </label>
                     <input type="tel" class="form-control border-select" placeholder="0959889752"
-                        ng-model="data.telefono" valid-number maxlength="10" id="celular">
+                           ng-model="data.telefono" valid-number maxlength="10" id="celular">
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="form-group">
                     <label for="ciudad" class="text-muted"> Ciudad :</label>
                     <select class="form-control border-select" ng-model="data.idCiudad" id="ciudad"
-                        ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in ciudadPronvincias">
+                            ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in ciudadPronvincias">
                     </select>
                 </div>
             </div>
@@ -84,11 +86,11 @@
                 <div ng-if="tipoRegistro===2">
                     <label for="">Estado</label><br>
                     <div class="icheck-emerland icheck-inline">
-                        <input type="radio" id="chb1" ng-value="true" ng-model="data.estado" name="estadoEntidad" />
+                        <input type="radio" id="chb1" ng-value="true" ng-model="data.estado" name="estadoEntidad"/>
                         <label for="chb1">Activo</label>
                     </div>
                     <div class="icheck-alizarin icheck-inline">
-                        <input type="radio" id="chb2" ng-value="false" ng-model="data.estado" name="estadoEntidad" />
+                        <input type="radio" id="chb2" ng-value="false" ng-model="data.estado" name="estadoEntidad"/>
                         <label for="chb2">Inactivo</label>
                     </div>
                 </div>

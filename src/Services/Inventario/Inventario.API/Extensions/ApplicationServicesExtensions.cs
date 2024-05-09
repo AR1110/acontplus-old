@@ -31,6 +31,7 @@ namespace Inventario.API.Extensions
             services.AddScoped<ILotPriceService, LotPriceService>();
             services.AddScoped<IMeasureService, MeasureService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ISubFamiliaService, SubFamiliaService>();
 
             services.AddScoped<ICustomLogger, CustomLogger>();
             services.AddSingleton<S3ObjectCustom>();

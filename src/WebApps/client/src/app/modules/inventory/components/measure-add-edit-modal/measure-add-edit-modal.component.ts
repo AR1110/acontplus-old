@@ -17,7 +17,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styles: ``
 })
 export class MeasureAddEditModalComponent {
-  @Input() data = {
+  @Input() params = {
     id: 0,
     descripcion: null
   }
@@ -27,6 +27,11 @@ export class MeasureAddEditModalComponent {
 
   btnText = 'Guardar';
   titleModal = 'Nueva Medida'
+
+  data = {
+    id: 0,
+    descripcion: null
+  }
 
   successReponse = {
     next: (response: any) => {
@@ -50,6 +55,16 @@ export class MeasureAddEditModalComponent {
     error(error: any) {
       hideLoader()
       console.log(error)
+    }
+  }
+
+  ngOnInit(){
+    this.data = {
+      ...this.params
+    }
+    if(this.params.id>0){
+      this.btnText = 'Actualizar';
+      this.titleModal = 'Editar Medida'
     }
   }
 

@@ -1,15 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Entities;
-
-
-
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BehaviorsController : ControllerBase
+    public class BehaviorsController : BaseApiController
     {
         private readonly VetContext _context;
 
@@ -18,14 +9,12 @@ namespace Vet.API.Controllers
             _context = context;
         }
 
-        // GET: api/Behaviors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Behavior>>> GetBehaviors()
         {
             return await _context.Behaviors.ToListAsync();
         }
 
-        // GET: api/Behaviors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Behavior>> GetBehavior(int id)
         {
@@ -39,8 +28,6 @@ namespace Vet.API.Controllers
             return behavior;
         }
 
-        // PUT: api/Behaviors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBehavior(int id, Behavior behavior)
         {
@@ -50,28 +37,11 @@ namespace Vet.API.Controllers
             }
 
             _context.Entry(behavior).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BehaviorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/Behaviors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Behavior>> PostBehavior(Behavior behavior)
         {
@@ -81,7 +51,6 @@ namespace Vet.API.Controllers
             return CreatedAtAction("GetBehavior", new { id = behavior.Id }, behavior);
         }
 
-        // DELETE: api/Behaviors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBehavior(int id)
         {
@@ -94,7 +63,7 @@ namespace Vet.API.Controllers
             _context.Behaviors.Remove(behavior);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool BehaviorExists(int id)

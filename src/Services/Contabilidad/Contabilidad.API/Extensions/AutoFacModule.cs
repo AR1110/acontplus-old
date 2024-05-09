@@ -1,10 +1,4 @@
-﻿using Autofac;
-using Common.Core.Interfaces;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
-using Contabilidad.Infrastructure.Data;
-
-namespace Contabilidad.API.Extensions
+﻿namespace Contabilidad.API.Extensions
 {
     public class AutoFacModule : Module
     {

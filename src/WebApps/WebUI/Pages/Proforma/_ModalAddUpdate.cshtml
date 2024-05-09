@@ -82,7 +82,11 @@
                                 <i class="fa fa-search fa-xs"></i>
                             </button>
 
-                            <button type="button" cliente-info-popover customer="cliente" popover-placement='top'
+                            <button type="button"
+                            cliente-info-popover 
+                            customer="cliente" 
+                            info-adicional-documento="infoAdicionalDocumento"
+                            popover-placement='top'
                                 class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
                                 <i class="fa fa-info fa-xs"></i>
                             </button>
@@ -299,12 +303,14 @@
                 <div class="card border p-2">
                     <div id="drawImpuestoTotales"></div>
                 </div>
-                @* <div class="mt-2">
-                <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
-                ng-click="openModalInfoAdicional(false)">
-                <i class="fas fa-info-circle text-info"></i> Dato Adicional
-                </button>
-                </div> *@
+                <div class="mt-2"> 
+                    <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
+                        open-modal-additional-data-document datos-adicionales="infoAdicionalDocumento"
+                        get-data-additional-document="resultModalDatoAdicional(result)"
+                        ng-click="openModalInfoAdicional(false)">
+                        <i class="fas fa-info-circle text-info"></i> Dato Adicional
+                    </button> 
+                </div> 
             </div>
         </div>
     </div>

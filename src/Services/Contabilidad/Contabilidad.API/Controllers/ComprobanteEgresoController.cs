@@ -1,108 +1,61 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-
-namespace Contabilidad.API.Controllers
+﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ComprobanteEgresoController : ControllerBase
+    public class ComprobanteEgresoController : BaseApiController
     {
         private readonly IComprobanteEgresoService _svc;
-        private readonly ICustomLogger _log;
-
-        public ComprobanteEgresoController(IComprobanteEgresoService service, ICustomLogger log)
+        public ComprobanteEgresoController(IComprobanteEgresoService service)
         {
             _svc = service;
-            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(json)}
-                };
-                var response = await _svc.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en get comprobantes egreso" + ex.Message);
-                return BadRequest("Error en get comprobantes egreso" + ex.Message);
-            }
+                {"userRoleId", User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(json)}
+            };
+            var response = await _svc.GetAsync(parameters);
+            if (response == null) { return NoContent(); };
+            return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-                };
-                var response = await _svc.AddAsync(parameters);
-                if (response == null) { return NoContent(); };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error en Post comprobantes egreso" + ex.Message);
-                return BadRequest("Error en Post comprobantes egreso" + ex.Message);
-            }
+                {"userRoleId", User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+            };
+            var response = await _svc.AddAsync(parameters);
+            if (response == null) { return NoContent(); };
+            return Ok(response);
         }
-
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Cancel(int id, string observacion)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"id", id},
-                    {"observacion", observacion}
-                };
-                var response = await _svc.DeleteAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al anular comprobantes egreso: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", User.GetUserRoleId()},
+                {"id", id},
+                {"observacion", observacion}
+            };
+            var response = await _svc.DeleteAsync(parameters);
+            return Ok(response);
         }
 
-        //===========SE USA EN CHEQUE============
         [HttpPut]
         public async Task<IActionResult> Put(ApiRequest request)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
+            var parameters = new Dictionary<string, object>{
                 {"userRoleId", User.GetUserRoleId()},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
 
-                var response = await _svc.UpdateAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar comprobante ingreso desde cheque: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+            var response = await _svc.UpdateAsync(parameters);
+            return Ok(response);
         }
     }
 }

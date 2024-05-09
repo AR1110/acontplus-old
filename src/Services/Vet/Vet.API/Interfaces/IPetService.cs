@@ -1,8 +1,4 @@
-using Common.Core.Models;
-using Vet.API.Entities;
-
-
-namespace Vet.API.Interfaces
+﻿namespace Vet.API.Interfaces
 {
     public interface IPetService
     {

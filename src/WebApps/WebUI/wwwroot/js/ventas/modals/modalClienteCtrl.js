@@ -3,10 +3,19 @@ export {
     ModalClienteListaCtrl
 }
 
-ModalClienteCtrl.$inject = ["$uibModalInstance", "$scope", "commonService", "clienteService", "toastService", "params"]
+ModalClienteCtrl.$inject = [
+    "$uibModalInstance", 
+    "$scope", 
+    "$q",
+    "commonService", 
+    "clienteService", 
+    "toastService", 
+    "params"
+]
 
-function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, params) {
+function ModalClienteCtrl($uibModalInstance, $scope, $q, commonSvc, clienteSvc, tS, params) {
 
+    let id = params && typeof params ==='object' ? params.idCliente : 0
 
     $scope.tabContent = 0; //Por defecto tab general
     $scope.data = {};
@@ -34,11 +43,36 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
         $scope.iconBtnSaveModal = 'ti-save';
     }
 
+    function getLoadData(){
+        if (id>0){
+            return $q.all([
+                clienteSvc.getDataForm(),
+                clienteSvc.findById(params.idCliente)
+            ])
+        }else{
+            return $q.all([
+                clienteSvc.getDataForm(), 
+            ])
+        }
+    }
 
-    $scope.initiload = async function () {
+    initiload()
+    async function initiload() {
         try {
+
             showLoader();
-            await clienteSvc.getDataForm().then(response => {
+            getLoadData().then(response=>{
+                let mainDataForm = {};
+                let dataCompanyCustomer = {};
+                console.log(response.length)
+                if (Array.isArray(response) && response.length===2) {
+                    mainDataForm = response[0];
+                    dataCompanyCustomer = response[1]
+                } else {
+                    mainDataForm = response[0]
+                }
+ 
+
                 let {
                     tipoIdentificacion,
                     tipoContribuyentes,
@@ -48,7 +82,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     empresas,
                     cargos,
                     formasPagoSri
-                } = response;
+                } = mainDataForm;
 
                 $scope.tiposIdentificacion = tipoIdentificacion;
                 $scope.tipoContribuyentes = tipoContribuyentes;
@@ -62,38 +96,30 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 $scope.cargos = cargos;
                 $scope.formasPagoSri = formasPagoSri;
 
-                if ($scope.tipoRegistro === 1) {
+                if (!(id>0)) {
                     let { idTipoIdentificacion, codigo } = $scope.tiposIdentificacion.find(item => item.codigo === 'R');
                     $scope.data.idTipoIdentificacion = idTipoIdentificacion;
                     $scope.data.codigoIdentificacion = codigo;
 
                     $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
+                
                 }
-
-            }).catch(error => {
-                console.log(error);
-            }).finally(() => hideLoader())
-
-
-            if ($scope.tipoRegistro === 2) {
-                showLoader();
-                clienteSvc.findById(params.idCliente).then(response => {
-
+                if(id>0){
                     let {
                         correos,
                         telefonos,
                         placas,
                         empleado,
                         estado
-                    } = response;
+                    } = dataCompanyCustomer;
 
                     $scope.isDisableInputIdentificacion = true;
                     $scope.isDisableSelectIdentificacion = true;
                     $scope.isDisableInput = true;
-                   
 
 
-                    $scope.data = response;
+                    $scope.data = dataCompanyCustomer;
+                    console.log($scope.data)
                     $scope.tempIdTipoIdentificacion = $scope.data.idTipoIdentificacion;
 
                     $scope.correos = correos;
@@ -110,7 +136,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     }
 
                     let codigoIdentificacion = $scope.dataFindByIdTipoIdentificacion().codigo;
-                    
+
                     if (codigoIdentificacion === "P") {
                         $scope.isDisableInput = false;
                     }
@@ -124,18 +150,19 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                         $scope.consultaIdentificacionSRI(dataIdentificacion.codigo, params);
                     }
 
-                }).catch(error => {
-                    console.log(error);
-                }).finally(() => hideLoader())
-            }
+                }  
+            })
+            .catch(error=>{
+                console.log(error)
+            })
+            .finally(()=>hideLoader()) 
 
         } catch (error) {
             hideLoader();
             console.log(error);
         }
     }
-
-    $scope.initiload();
+ 
 
     $uibModalInstance.rendered.then(() => {
 

@@ -1,11 +1,4 @@
-﻿using Common.Core.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Services.Common.Extensions;
-using Vet.API.Data;
-using Vet.API.Entities;
-using Vet.API.Interfaces;
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
     public class PetsController : BaseApiController
     {
@@ -18,73 +11,40 @@ namespace Vet.API.Controllers
             _petService = petService;
         }
 
-        // GET: api/Pet
         [HttpGet]
         public async Task<ActionResult<ApiResponse>> GetPets(string json)
         {
             int companyId = Convert.ToInt32(User.GetCompanyId());
             if (!_context.Pets.Any(x => x.CompanyId == companyId))
             {
-                return NoContent();
+                return Ok();
             }
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    { "companyId", companyId },
-                    { "json", json}
-                };
+                { "companyId", companyId },
+                { "json", json}
+            };
 
-                return await _petService.GetAsync(parameters);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Error al buscar las mascotas:" + ex.Message);
-            }
-            //return await _context.Pets
-            //    .Include(t => t.PetType)
-            //    .Include(b => b.Breed)
-            //    .Include(s => s.Gender)
-            //    .Where(x => x.CompanyId == companyId
-            //    && x.Deleted == null
-            //    )
-            //    .ToListAsync();
+            return await _petService.GetAsync(parameters);
         }
-        // GET: api/Pet
+
         [HttpGet("search")]
         public async Task<ActionResult<ApiResponse>> Search(string json)
         {
             int companyId = Convert.ToInt32(User.GetCompanyId());
             if (!_context.Pets.Any(x => x.CompanyId == companyId))
             {
-                //return NoContent();
+                //return Ok();
             }
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var parameters = new Dictionary<string, object>
-                {
-                    { "companyId", companyId },
-                    { "json", json}
-                };
+                { "companyId", companyId },
+                { "json", json}
+            };
 
-                return await _petService.SearchAsync(parameters);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Error al buscar las mascotas:" + ex.Message);
-            }
-            //return await _context.Pets
-            //    .Include(t => t.PetType)
-            //    .Include(b => b.Breed)
-            //    .Include(s => s.Gender)
-            //    .Where(x =>
-            //            x.Enabled &&
-            //            x.CompanyId == companyId
-            //            && (x.Name.Contains(textSearch))
-            //     )
-            //    .ToListAsync();
+            return await _petService.SearchAsync(parameters);
         }
-        // GET: api/Pet/5
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Pet>> GetPet(int id)
         {
@@ -98,8 +58,6 @@ namespace Vet.API.Controllers
             return pet;
         }
 
-        // PUT: api/Pet/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPet(int id, Pet pet)
         {
@@ -108,20 +66,17 @@ namespace Vet.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(pet).State = EntityState.Modified;
-
             var petFounded = await _context.Pets.FindAsync(id);
             petFounded.Name = pet.Name;
             petFounded.PetTypeId = pet.PetTypeId;
             petFounded.BreedId = pet.BreedId;
             petFounded.GenderId = pet.GenderId;
-            //petFounded.Age = pet.Age;
             petFounded.Color = pet.Color;
-            //petFounded.Weight = pet.Weight;
             petFounded.Enabled = pet.Enabled;
             petFounded.Weight = pet.Weight;
             petFounded.UpdatedAt = DateTime.Now;
             petFounded.UserId = User.GetUserId();
+
             try
             {
                 _context.Update(petFounded);
@@ -139,11 +94,9 @@ namespace Vet.API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/Pet
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Pet>> PostPet(Pet pet)
         {
@@ -154,19 +107,14 @@ namespace Vet.API.Controllers
             return CreatedAtAction("GetPet", new { id = pet.Id }, pet);
         }
 
-        // DELETE: api/Pet/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePet(int id)
         {
-            // _context.Pets.Remove(pet);
-            //await _context.SaveChangesAsync();
-
             var pet = await _context.Pets.FindAsync(id);
             if (pet == null)
             {
                 return NotFound();
             }
-
 
             pet.Deleted = true;
             pet.Enabled = false;
@@ -188,7 +136,7 @@ namespace Vet.API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         private bool PetExists(int id)

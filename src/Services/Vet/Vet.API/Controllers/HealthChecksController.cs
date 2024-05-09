@@ -1,15 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Entities;
-
-
-
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class HealthChecksController : ControllerBase
+    public class HealthChecksController : BaseApiController
     {
         private readonly VetContext _context;
 
@@ -18,14 +9,12 @@ namespace Vet.API.Controllers
             _context = context;
         }
 
-        // GET: api/HealthChecks
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HealthCheck>>> GetHealthChecks()
         {
             return await _context.HealthChecks.ToListAsync();
         }
 
-        // GET: api/HealthChecks/5
         [HttpGet("{id}")]
         public async Task<ActionResult<HealthCheck>> GetHealthCheck(int id)
         {
@@ -39,8 +28,6 @@ namespace Vet.API.Controllers
             return healthCheck;
         }
 
-        // PUT: api/HealthChecks/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutHealthCheck(int id, HealthCheck healthCheck)
         {
@@ -48,34 +35,18 @@ namespace Vet.API.Controllers
             {
                 return BadRequest();
             }
+
             var healthCheckFounded = await _context.HealthChecks.FindAsync(id);
             healthCheckFounded.DiseaseId = healthCheck.DiseaseId;
             healthCheckFounded.DiseaseStatusId = healthCheck.DiseaseStatusId;
             healthCheckFounded.UpdatedAt = DateTime.Now;
-            //_context.Entry(healthCheck).State = EntityState.Modified;
 
-            try
-            {
-                _context.Update(healthCheckFounded);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!HealthCheckExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.Update(healthCheckFounded);
+            await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/HealthChecks
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<HealthCheck>> PostHealthCheck(HealthCheck healthCheck)
         {
@@ -85,7 +56,6 @@ namespace Vet.API.Controllers
             return CreatedAtAction("GetHealthCheck", new { id = healthCheck.Id }, healthCheck);
         }
 
-        // DELETE: api/HealthChecks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHealthCheck(int id)
         {
@@ -98,7 +68,7 @@ namespace Vet.API.Controllers
             _context.HealthChecks.Remove(healthCheck);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool HealthCheckExists(int id)

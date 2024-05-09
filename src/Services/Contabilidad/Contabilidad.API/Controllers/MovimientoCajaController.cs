@@ -1,84 +1,46 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Contabilidad.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Extensions;
-using Services.Common.Logs;
-
-namespace Contabilidad.API.Controllers
+﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MovimientoCajaController : ControllerBase
+    public class MovimientoCajaController : BaseApiController
     {
-        private IMovimientoCajaService _movSvc;
-        private ICustomLogger _log;
-
-        public MovimientoCajaController(IMovimientoCajaService movSvc, ICustomLogger log)
+        private readonly IMovimientoCajaService _movSvc;
+        public MovimientoCajaController(IMovimientoCajaService movSvc)
         {
             _movSvc = movSvc;
-            _log = log;
-
         }
 
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            try
-            {
-                var response = await _movSvc.GetAsync(new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(json) }
-                });
-                if (response == null) { return NoContent(); };
-                return Ok(new { code = "1", payload = response });
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al listar movimientos de caja: \n" + ex.ToString());
-                return BadRequest("Error on get movimientos de caja: " + ex.Message);
-            }
+            var response = await _movSvc.GetAsync(new Dictionary<string, object> {
+                { "userRoleId", User.GetUserRoleId() },
+                { "json", SqlStringParam.Sanitize(json) }
+            });
+            if (response == null) { return NoContent(); };
+            return Ok(new { code = "1", payload = response });
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(ApiRequest request)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
+            var parameters = new Dictionary<string, object>{
                 {"userRoleId", User.GetUserRoleId()},
                 {"json", DataConverters.SerializeDictionary(request.Data)}
             };
 
-                var response = await _movSvc.AddAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al crear movimientos de caja: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+            var response = await _movSvc.AddAsync(parameters);
+            return Ok(response);
         }
 
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>{
-                    {"userRoleId", User.GetUserRoleId()},
-                    {"id", id}
-                };
-                var response = await _movSvc.DeleteAsync(parameters);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al eliminar movimientos de caja: " + ex.ToString());
-                return BadRequest(ex.Message);
-            }
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", User.GetUserRoleId()},
+                {"id", id}
+            };
+            var response = await _movSvc.DeleteAsync(parameters);
+            return Ok(response);
         }
     }
 }

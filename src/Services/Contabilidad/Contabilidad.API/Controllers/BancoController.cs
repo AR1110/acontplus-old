@@ -1,22 +1,12 @@
-﻿using Common.Core.Models;
-using Common.Core.Utils;
-using Common.Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-
-namespace Contabilidad.API.Controllers
+﻿namespace Contabilidad.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BancoController : ControllerBase
+    public class BancoController : BaseApiController
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        private readonly ICustomLogger _log;
-        public BancoController(IConfiguration configuration, ICustomLogger log)
+        public BancoController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _log = log;
             _db = new DbAccess(_configuration);
         }
 
@@ -32,12 +22,6 @@ namespace Contabilidad.API.Controllers
                 _db.AddDynamicParam("userRoleId", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al obtener los bancos: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener los bancos");
-
             }
             finally
             {
@@ -57,12 +41,6 @@ namespace Contabilidad.API.Controllers
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error on Post Bank: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al guardar el Banco");
-            }
             finally
             {
                 _db.Close();
@@ -81,12 +59,6 @@ namespace Contabilidad.API.Controllers
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error on Put banck: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar el banco");
-            }
             finally
             {
                 _db.Close();
@@ -103,12 +75,6 @@ namespace Contabilidad.API.Controllers
                 _db.AddDynamicParam("userRoleId", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error on Delete Category buy: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al elimianr la categoria compra");
             }
             finally
             {

@@ -205,7 +205,7 @@
      * Nota Entrega 
      */
 
-    app.factory('notaEntregaService',['$injector', function ($injector) {
+    app.factory('notaEntregaService', ['$injector', function ($injector) {
         let url = `${URL_API}NotaEntrega/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
@@ -233,6 +233,11 @@
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
                         clienteDefault = clienteDefaultTemp[0];
+
+                        clienteDefault = {
+                            ...clienteDefault,
+                            placas: clienteDefault.placa ? clienteDefault.placa.split(/[\|;]/) : []
+                        }
                     }
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
@@ -243,7 +248,7 @@
                     notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
                     let tempEstabsAndPtosEmision = mainData[9];
                     let tempBodegas = mainData[10];
-                    let {sales: permisoVenta, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
+                    let { sales: permisoVenta, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
                         estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
@@ -499,8 +504,8 @@
                     nota: item.nota || undefined,
                     llevaInventario: item.llevaInventario,
                     precioCosto: item.precioCosto,
-                    conversion : item.conversion,
-                    precioCostoFraccionado : item.precioCostoFraccionado,
+                    conversion: item.conversion,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
                     cantidadTransaccion,
                     estado: item.estado,
                     valorImpuesto: item.valorImpuesto
@@ -662,7 +667,7 @@
                         itemsApi,
                         infoAdicionalDocumento,
                         datosAdicionalesArticuloTemp,
-                         cuentaPorCobrar,
+                        cuentaPorCobrar,
                         cuotas,
                     ] = mainDataApi;
 
@@ -671,7 +676,8 @@
                     cliente = {
                         ...cliente,
                         razonSocialComprador: cliente.nombreFiscal,
-                        identificacionComprador: cliente.numeroIdentificacion,                        
+                        identificacionComprador: cliente.numeroIdentificacion,
+                        placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
                     }
 
                     let items = itemsApi.map((itemPrincipal, index) => {
@@ -748,9 +754,9 @@
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
                         irbpnr: comprobanteTemp.irbpnr || 0,
-                        idTiempoCredito : cuentaPorCobrar[0].idTiempoCredito,
+                        idTiempoCredito: cuentaPorCobrar[0].idTiempoCredito,
                         fechaVencimiento: fS.formatDate(cuentaPorCobrar[0].fechaVencimiento),
-                        
+
                     }
 
                     cuotas = cuotas.map(item => {
@@ -944,7 +950,7 @@
     /**
      * Proforma 
      */
-    app.factory('proformaService',['$injector', function ($injector) {
+    app.factory('proformaService', ['$injector', function ($injector) {
         let url = `${URL_API}Proforma/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
@@ -975,11 +981,16 @@
                     let clienteDefault = {};
                     if (clienteDefaultTemp && clienteDefaultTemp.length > 0) {
                         clienteDefault = clienteDefaultTemp[0];
+
+                        clienteDefault = {
+                            ...clienteDefault,
+                            placas: clienteDefault.placa ? clienteDefault.placa.split(/[\|;]/) : []
+                        }
                     }
                     let config = mainData[6][0];
                     let vendedores = mainData[7];
                     let tempEstabsAndPtosEmision = mainData[8];
-                    let tempBodegas = mainData[9]; 
+                    let tempBodegas = mainData[9];
                     let { sales: permisoVenta, permisoEditarDoc } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
@@ -1076,10 +1087,10 @@
                             codDoc: item.codDoc,
                             rowColor: item.rowColor,
                             codEstado: item.codEstado,
-                            disabledUpdate: item.codEstado === 'TRA' || item.codEstado==='CR' || item.anulada
+                            disabledUpdate: item.codEstado === 'TRA' || item.codEstado === 'CR' || item.anulada
                         }
                     })
-                 
+
                     return {
                         proformas,
                         dataTotals: { totalRecords, totalDocument }
@@ -1127,9 +1138,19 @@
                         comprobanteApi,
                         clienteTempApi,
                         itemsApi,
+                        infoAdicionalDocumento,
                     ] = mainDataApi;
                     let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
                     let cliente = clienteTempApi && clienteTempApi[0] || {};
+
+                    if(Object.keys(cliente).length>0){
+                        cliente = {
+                            ...cliente,
+                            // razonSocialComprador: cliente.nombreFiscal,
+                            // identificacionComprador: cliente.numeroIdentificacion,
+                            placas: cliente.placa ? cliente.placa.split(/[\|;]/) : []
+                        }
+                    }
 
                     let items = itemsApi.map((itemPrincipal, index) => {
 
@@ -1191,6 +1212,7 @@
                         comprobante,
                         cliente,
                         items,
+                        infoAdicionalDocumento: infoAdicionalDocumento || [],
                     }
                 }
             })
@@ -1212,6 +1234,9 @@
                     let cliente = mainDataApi[1][0];
                     let items = mainDataApi[2];
                     let tarifasImpuesto = mainDataApi[3];
+
+                    let infoAdicionalDocumento = mainDataApi[4];
+
                     let { nombreComercial, fechaEmision, ...restData } = dataTemp;
                     let data = {
                         ...restData,
@@ -1232,7 +1257,8 @@
                         data,
                         cliente,
                         items: resultsItems,
-                        tarifasImpuesto
+                        tarifasImpuesto,
+                        infoAdicionalDocumento: infoAdicionalDocumento || [],
                     }
 
                 }
@@ -1326,7 +1352,7 @@
 
 
         service.queryMapper = function (obj) {
-            let { data, cliente, detalles, itemsDeleted } = obj;
+            let { data, cliente, detalles, itemsDeleted, infoAdicionalDocumento } = obj;
             if (cliente.idCliente === 0 && !cliente.razonSocialComprador && !cliente.identificacionComprador) {
                 throw new Error("Datos de cliente no proporcionados")
             }
@@ -1355,6 +1381,7 @@
                 proforma: service.infoComprobanteMapperTo(proforma),
                 detalles: mergeItems,
                 impuestos: impuestos,
+                infoAdicional: infoAdicionalDocumento || [],
             }
         }
 
@@ -1425,7 +1452,7 @@
 
 
     //---------------------------------Cliente------------------------------------------
-    app.factory('clienteService', ['$injector',function ($injector) {
+    app.factory('clienteService', ['$injector', function ($injector) {
         let url = `FactElect/CompanyCustomer/`;
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
@@ -1441,7 +1468,7 @@
                         throw response
                     }
                     if (response.code === '1') {
-                        let mainDataRepository = JSON.parse(response.payload) 
+                        let mainDataRepository = JSON.parse(response.payload)
                         return {
                             tipoIdentificacion: mainDataRepository[0],
                             tipoContribuyentes: mainDataRepository[1],
@@ -1453,7 +1480,7 @@
                             formasPagoSri: mainDataRepository[7] || []
                         }
                     }
-                }) 
+                })
 
         }
 
@@ -1540,37 +1567,41 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let dataRepository = JSON.parse(response.payload)[0];
-
+                    let { correo, telefono, placa, ...data } = JSON.parse(response.payload)[0]; 
+          
+                    const correos = correo ? correo.split(/[\|;]/) : [];
+                    const telefonos = telefono ? telefono.split(/[\|;]/) : [];
+                    const placas = placa ? placa.split(/[\|;]/) : [];
+     
                     return {
-                        idCliente: dataRepository.idCliente,
-                        idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
-                        idTipoEntidad: dataRepository.idTipoEntidad,
-                        idSubContribuyente: dataRepository.idSubContribuyente,
-                        idTiempoCredito: dataRepository.idTiempoCredito,
-                        idTipoIdentificacion: dataRepository.idTipoIdentificacion,
-                        idCiudad: dataRepository.idCiudad,
-                        numeroIdentificacion: dataRepository.numeroIdentificacion,
-                        identificacionComprador: dataRepository.numeroIdentificacion,
-                        razonSocialComprador: dataRepository.nombreFiscal,
-                        nombreFiscal: dataRepository.nombreFiscal,
-                        montoCredito: dataRepository.montoCredito,
-                        nombreComercial: dataRepository.nombreComercial,
-                        direccion: dataRepository.direccion,
-                        telefono: dataRepository.telefono,
-                        correo: dataRepository.correo,
-                        estado: dataRepository.estado,
-                        idEmpleado: dataRepository.idEmpleado,
-                        diasCredito: dataRepository.diasCredito,
-                        empleado: dataRepository.empleado,
-                        idEmpresa: dataRepository.idEmpresa,
-                        idCargo: dataRepository.idCargo,
-                        placa: dataRepository.placa,
-                        validationSri: dataRepository.validationSri,
-                        correos: dataRepository.correo ? dataRepository.correo.split('|') : [],
-                        telefonos: dataRepository.telefono ? dataRepository.telefono.split('|') : [],
-                        placas: dataRepository.placa !== '' ? dataRepository.placa.split('|') : [],
-                        idFormaPagoSri: dataRepository.idFormaPagoSri
+                        idCliente: data.idCliente,
+                        idTipoClienteProveedor: data.idTipoClienteProveedor,
+                        idTipoEntidad: data.idTipoEntidad,
+                        idSubContribuyente: data.idSubContribuyente,
+                        idTiempoCredito: data.idTiempoCredito,
+                        idTipoIdentificacion: data.idTipoIdentificacion,
+                        idCiudad: data.idCiudad,
+                        numeroIdentificacion: data.numeroIdentificacion,
+                        identificacionComprador: data.numeroIdentificacion,
+                        razonSocialComprador: data.nombreFiscal,
+                        nombreFiscal: data.nombreFiscal,
+                        montoCredito: data.montoCredito,
+                        nombreComercial: data.nombreComercial,
+                        direccion: data.direccion,
+                        telefono: data.telefono,
+                        correo: data.correo,
+                        estado: data.estado,
+                        idEmpleado: data.idEmpleado,
+                        diasCredito: data.diasCredito,
+                        empleado: data.empleado,
+                        idEmpresa: data.idEmpresa,
+                        idCargo: data.idCargo,
+                        placa: data.placa,
+                        validationSri: data.validationSri,
+                        correos,
+                        telefonos,
+                        placas,
+                        idFormaPagoSri: data.idFormaPagoSri
                     }
                 }
             })

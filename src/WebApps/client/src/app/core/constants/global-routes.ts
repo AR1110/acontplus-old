@@ -25,4 +25,5 @@ export enum GlobalRoutes {
   FactElectAts = 'billing/ats-page',
   MechanicalVehicle = 'mechanical/vehicle-page',
   MechanicalLayout = 'mechanical/layout',
+  InventarioMeasure = 'inventory/measure',
 }

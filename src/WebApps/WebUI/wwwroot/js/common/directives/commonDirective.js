@@ -407,14 +407,14 @@
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
-                scope.$watch(attrs.totalesVentaView, function (obj) { 
-                    if ($rootScope.usuarioPermiso!==null && typeof $rootScope.usuarioPermiso==='object'){
+                scope.$watch(attrs.totalesVentaView, function (obj) {
+                    if ($rootScope.usuarioPermiso !== null && typeof $rootScope.usuarioPermiso === 'object') {
                         let { sales } = $rootScope.usuarioPermiso;
-                        if (sales.adicionales && !sales.adicionales.totalesVenta){
+                        if (sales.adicionales && !sales.adicionales.totalesVenta) {
                             element.remove();
                         }
-                    } 
-                }); 
+                    }
+                });
             }
         };
     })
@@ -499,30 +499,118 @@
         }
     })
 
-    app.directive('clienteInfoPopover', function () {
+    app.directive('clienteInfoPopover', ['toastService', function (tS) {
         return {
             restrict: 'A',
             scope: {
                 customer: '=',
-                popoverPlacement: '@'
+                popoverPlacement: '@',
+                infoAdicionalDocumento: '='
             },
             link: function (scope, element) {
-                element.popover({
-                    title: '<i class="text-info fas fa-info"></i> Información Cliente',
-                    content: `<div>
-                                <span><b>Nombre Fiscal:</b> ${scope.customer.nombreFiscal}</span><br>
-                                <span><b>Nombre Comercial:</b> ${scope.customer.nombreComercial}</span><br>
-                                <span><b>Correo:</b> ${scope.customer.correo || ''}</span><br>
-                                <span><b>Teléfono:</b> ${scope.customer.telefono || ''}</span><br>
+
+                $(element).popover({
+                    content: function () {
+                 
+                        let placas = scope.customer.placas || [];
+                        let infoAdicionalDocumento = scope.infoAdicionalDocumento || [];
+                        let placasSeleccionadas = infoAdicionalDocumento.map(v=>v.valor);
+                     
+                        // Crear una cadena para almacenar el contenido HTML de las casillas de verificación
+                        let checkboxesHTML = '';
+
+                        // Iterar sobre la matriz "placas" y generar una casilla de verificación para cada elemento
+                        placas.forEach(function (placa) {
+                            let isChecked = placasSeleccionadas.includes(placa); // Verificar si la placa está en el array de placas seleccionadas
+
+                            checkboxesHTML += `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkbox_${placa}" value="${placa}" ${isChecked ? 'checked' : ''}>
+                                    <label class="form-check-label" for="checkbox_${placa}">
+                                        ${placa}
+                                    </label>
+                                </div>
+                            `;
+                        });
+
+                        let popoverContentHTML = `
+                        <div class="d-flex flex-column">
+                            <div class="p-0">
+                                <span><b>Nombre Fiscal:</b> ${scope.customer.nombreFiscal}</span>
+                            </div>
+                            <div class="p-0">
+                                <span><b>Nombre Comercial:</b> ${scope.customer.nombreComercial}</span>
+                            </div>
+                            <div class="p-0">
+                                <span><b>Correo:</b> ${scope.customer.correo || ''}</span>
+                            </div>
+                            <div class="p-0">
+                                <span><b>Teléfono:</b> ${scope.customer.telefono || ''}</span>
+                            </div>
+                            <div class="p-0">
                                 <span><b>Dirección:</b> ${scope.customer.direccion || ''}</span>
-                            </div>`,
+                            </div>
+                            <div class="p-0">
+                                <span><b>Placa:</b> </span>
+                                 ${checkboxesHTML}
+                            </div>
+                        `;
+
+                        // Convert the HTML string to a jQuery object
+                        let $popoverContent = $(popoverContentHTML);
+
+                        $popoverContent.find('.form-check-input').change(function () {
+                            let valor = $(this).val();
+                            let isChecked = $(this).is(':checked');
+
+                            if (!scope.infoAdicionalDocumento) return 
+
+                            // Verificar si el valor ya existe en infoAdicionalDocumento
+                            let index = scope.infoAdicionalDocumento.findIndex(function (item) {
+                                return  item.valor === valor;
+                            });
+
+                            if (isChecked) {
+                                // Si la casilla está marcada y el valor no existe en infoAdicionalDocumento, agregarlo
+                                if (index === -1) {
+                                    scope.infoAdicionalDocumento.push({
+                                        nombre: 'Placa',
+                                        valor: valor
+                                    });
+                                    tS.toastr('success', 'Agregado en información adicional del documento')
+                                }
+                            } else {
+                                // Si la casilla está desmarcada y el valor existe en infoAdicionalDocumento, eliminarlo
+                                if (index !== -1) {
+                                    scope.infoAdicionalDocumento.splice(index, 1);
+                                }
+                            }
+                             
+                        });
+
+                        return $popoverContent;
+                    },
+                    html: true,
+                    trigger: 'manual',
                     placement: scope.popoverPlacement,
-                    trigger: 'outisideclick',
-                    html: true
                 });
+
+
+                // Toggle popover on click
+                element.on('click', function () {
+                    $(this).popover('toggle');
+                });
+
+                // Hide popover when clicking outside
+                $(document).on('click', function (event) {
+                    if (!$(element).is(event.target) && $(element).has(event.target).length === 0 && $('.popover').has(event.target).length === 0) {
+                        $(element).popover('hide');
+                    }
+                });
+
             }
         };
-    });
+    }]);
 
     app.directive('clienteSearchDrtv', function ($compile, clienteService) {
         return {
@@ -618,7 +706,7 @@
                     let idTipoIdentificacion = 0;
                     if (Array.isArray(scope.tiposIdentificacion)) {
                         let dataTipoIdentificacion = scope.tiposIdentificacion.find(ti => ti.codigoSri === codigo);
-                        if (dataTipoIdentificacion){
+                        if (dataTipoIdentificacion) {
                             idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
                         }
                     }

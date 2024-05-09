@@ -1,15 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Vet.API.Data;
-using Vet.API.Entities;
-
-
-
-namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DiseasesController : ControllerBase
+    public class DiseasesController : BaseApiController
     {
         private readonly VetContext _context;
 
@@ -18,14 +9,12 @@ namespace Vet.API.Controllers
             _context = context;
         }
 
-        // GET: api/Diseases
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Disease>>> GetDiseases()
         {
             return await _context.Diseases.ToListAsync();
         }
 
-        // GET: api/Diseases/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Disease>> GetDisease(int id)
         {
@@ -39,8 +28,6 @@ namespace Vet.API.Controllers
             return disease;
         }
 
-        // PUT: api/Diseases/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDisease(int id, Disease disease)
         {
@@ -50,28 +37,11 @@ namespace Vet.API.Controllers
             }
 
             _context.Entry(disease).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DiseaseExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/Diseases
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Disease>> PostDisease(Disease disease)
         {
@@ -81,7 +51,6 @@ namespace Vet.API.Controllers
             return CreatedAtAction("GetDisease", new { id = disease.Id }, disease);
         }
 
-        // DELETE: api/Diseases/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDisease(int id)
         {
@@ -94,7 +63,7 @@ namespace Vet.API.Controllers
             _context.Diseases.Remove(disease);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool DiseaseExists(int id)

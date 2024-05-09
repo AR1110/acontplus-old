@@ -37,11 +37,11 @@ namespace Services.Common.Middleware
 
                 var response = _env.IsDevelopment()
                     ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace?.ToString())
-                    : new ApiException(context.Response.StatusCode, $"Internal Server Error: \n Message: {ex.Message} \n {ex.StackTrace?.ToString()}");
+                    : new ApiException(context.Response.StatusCode, $"Internal Server Error");
 
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-                var json = JsonSerializer.Serialize(response, options);
+                var json = JsonSerializer.Serialize(new ApiException(context.Response.StatusCode, $"Internal Server Error: \n Message: {ex.Message} \n {ex.StackTrace?.ToString()}"), options);
 
                 _customLogger.LogActivity(json, context.Response.StatusCode.ToString());
 

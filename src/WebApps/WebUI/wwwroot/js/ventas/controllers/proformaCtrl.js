@@ -783,6 +783,7 @@
                 const {
                     comprobante,
                     cliente,
+                    infoAdicionalDocumento,
                     items,
                 } = params.data;
 
@@ -792,6 +793,8 @@
                 }
                 $scope.data.fechaEmision = new Date();
                 $scope.data.idProforma = 0;
+
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
                 $scope.gridOptions.data = calculateTotalItems(items);
@@ -814,6 +817,7 @@
                 const {
                     comprobante,
                     cliente,
+                    infoAdicionalDocumento,
                     items,
                 } = params.data;
 
@@ -837,6 +841,8 @@
                 $scope.cliente = cliente;
                 counterGridOptions();
                 $scope.isDisabledFormField = true;
+
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
             }
 
             $uibModalInstance.rendered.then(() => {
@@ -1909,6 +1915,7 @@
                     cliente: $scope.cliente,
                     detalles: $scope.gridOptions.data,
                     itemsDeleted: $scope.gridOptionsItemsDeleted,
+                    infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                 })
 
                 //Registar Doc 

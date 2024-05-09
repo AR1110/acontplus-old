@@ -1,8 +1,4 @@
-﻿using Contabilidad.Application.Servicios;
-using Contabilidad.Core.Interfaces;
-using Contabilidad.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Services.Common.Logs;
+﻿using Contabilidad.API.Services;
 
 namespace Contabilidad.API.Extensions
 {
@@ -10,22 +6,28 @@ namespace Contabilidad.API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddControllers()
+                .AddNewtonsoftJson(x =>
+                {
+                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                });
+
             services.AddDbContextPool<ContabilidadContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<ISubCategoriaService, SubCategoriaService>();
-            services.AddScoped<ICajaService, CajaService>();
-            services.AddScoped<IControlCajaService, ControlCajaService>();
-            services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
             services.AddScoped<IAnticipoService, AnticipoService>();
-            services.AddScoped<IComprobanteEgresoService, ComprobanteEgresoService>();
-            services.AddScoped<ICuentaPorCobrarService, CuentaPorCobrarService>();
+            services.AddScoped<ICajaService, CajaService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IChequeService, ChequeService>();
-            services.AddScoped<ISubEntidadFinancieraService, SubEntidadFinancieraService>();
-
-
-
+            services.AddScoped<IComprobanteEgresoService, ComprobanteEgresoService>();
+            services.AddScoped<IControlCajaService, ControlCajaService>();
             services.AddScoped<ICustomLogger, CustomLogger>();
+            services.AddScoped<ICuentaPorCobrarService, CuentaPorCobrarService>();
+            services.AddScoped<IMovimientoCajaService, MovimientoCajaService>();
+            services.AddScoped<ISubcategoryService, SubcategoryService>();
+            services.AddScoped<ISubEntidadFinancieraService, SubEntidadFinancieraService>();
+            services.AddScoped<ITipoService, TipoService>();
             return services;
         }
     }
