@@ -129,7 +129,9 @@ BEGIN
 				 ,nroSecuencialDoc  VARCHAR(13)    '$.nroSecuencialDoc'
 				 )
 
-			SELECT @isViewOtherDocs = JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WITH (NOLOCK) WHERE codModule ='V' AND idUsuarioRol = @idUsuarioRol
+            SELECT TOP 1 @isViewOtherDocs =viewOthersDocs FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @idUsuarioRol
+
+			----SELECT @isViewOtherDocs = JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WITH (NOLOCK) WHERE codModule ='V' AND idUsuarioRol = @idUsuarioRol
 		
 			IF @isSearchNroDoc = 1
 				BEGIN
@@ -303,14 +305,6 @@ BEGIN
     ---------- DATOS AUXILIARES PARA FILTROS -------
     IF @tipo = 4
         BEGIN
-            SELECT idTipoDocumento
-                , descripcion
-                , codigoSri
-                , codigo 
-            FROM dbo.TipoDocumento 
-            WITH (NOLOCK) 
-            WHERE codigo IN ('FV','NE')
-
             SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
@@ -321,6 +315,29 @@ BEGIN
             FROM v_PtoEmi_Asign WITH(NOLOCK)
             WHERE idUsuarioRol = @idUsuarioRol 
             ORDER BY defaultEstab DESC
+            
+            SELECT idTipoDocumento
+                , descripcion
+                , codigoSri
+                , codigo AS codDoc
+            FROM dbo.TipoDocumento
+            WITH (NOLOCK) 
+            WHERE codigo IN ('FV','NE')
+
+            SELECT idSubEntidadFinanciera
+                    , idEntidadFinanciera
+                    , descripcion
+                    , codigo
+                    , interes
+                    , estado
+                    , idEntidad
+                    , predeterminado
+                    , controlCaja
+            FROM SubEntidadFinanciera
+            WHERE idEntidad = @idEntidad
+            RETURN
         END
 END
 GO
+
+--- 1070
