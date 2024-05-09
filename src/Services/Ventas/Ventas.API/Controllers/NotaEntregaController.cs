@@ -1,22 +1,23 @@
-﻿using Common.Core.Models;
+﻿using Autofac.Core;
+using Azure.Core;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
 using Services.Common.Logs;
 using Ventas.API.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Ventas.API.Controllers
 {
     public class NotaEntregaController : BaseApiController
-    {
-        private readonly IConfiguration _configuration;
-        private readonly INotaEntregaService _notaEntrega;
+    { 
+        private readonly INotaEntregaService _svc;
         private readonly ICustomLogger _log;
-        public NotaEntregaController(IConfiguration configuration, INotaEntregaService notaEntrega, ICustomLogger log)
-        {
-            _configuration = configuration;
-            _notaEntrega = notaEntrega;
+        public NotaEntregaController( INotaEntregaService svc, ICustomLogger log)
+        { 
+            _svc = svc;
             _log = log;
         }
 
@@ -25,7 +26,7 @@ namespace Ventas.API.Controllers
         {
             try
             {
-                var response = await _notaEntrega.GetAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
+                var response = await _svc.GetAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
                 if (response == null) { return NoContent(); };
                 return Ok(new { code = "1", payload = response });
             }
@@ -42,7 +43,7 @@ namespace Ventas.API.Controllers
         {
             try
             {
-                var response = await _notaEntrega.GetByIdAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
+                var response = await _svc.GetByIdAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
                 if (response == null) { return NoContent(); };
                 return Ok(new { code = "1", payload = response });
             }
@@ -56,105 +57,52 @@ namespace Ventas.API.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(ApiRequest data)
         {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var idUsuarioRol = User.GetUserRoleId();
-                await _db.SPExecute("Ventas.NotaEntrega_Insert", true);
-                _db.AddDynamicParam("userRoleId", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al insertar nota entrega: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar nota de entrega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+                {"userRoleId", User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
+            };
+            var response = await _svc.AddAsync(parameters); 
+            return Ok(response);
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, ApiRequest parameters)
+        public async Task<IActionResult> Update(int id, ApiRequest request)
         {
-            var _db = new DbAccess(_configuration);
-
-            var _response = new ApiResponse();
-            try
+            var parameters = new Dictionary<string, object>
             {
-                await _db.SPExecute("Ventas.NotaEntrega_Update", true);
-                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al actualizar nota entrega: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar la nota de entrega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+                {"userRoleId", User.GetUserRoleId()},
+                {"id", id},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
+            };
+            var response = await _svc.UpdateAsync(parameters);
+            return Ok(response); 
+             
         }
 
 
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var _db = new DbAccess(_configuration);
-            var _response = new ApiResponse();
-            try
+            var parameters = new Dictionary<string, object>
             {
-                await _db.SPExecute("Ventas.NotaEntrega_Delete");
-                _db.AddDynamicParam("idRol", User.GetUserRoleId());
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al anular la nota entrega: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al anular la nota entrega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+                {"idRol", User.GetUserRoleId()},
+                {"id", id}, 
+            };
+            var response = await _svc.DeleteAsync(parameters);
+            return Ok(response); 
         }
 
         [HttpPost("ConvertToDoc")]
-        public async Task<IActionResult> ConvertToDoc(ApiRequest data)
+        public async Task<IActionResult> ConvertToDoc(ApiRequest request)
         {
-            var _response = new ApiResponse();
-            var _db = new DbAccess(_configuration);
-            try
+            var parameters = new Dictionary<string, object>
             {
-                var idUsuarioRol = User.GetUserRoleId();
-                await _db.SPExecute("Ventas.NotaEntrega_Convert_To_Doc", true);
-                _db.AddDynamicParam("userRoleId", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
-                _response = _db.GetDefault();
-            }
-            catch (Exception ex)
-            {
-
-                _log.LogActivity("Error al convertir nota entrega: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al convertir nota de entrega");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+                {"userRoleId", User.GetUserRoleId()},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
+            };
+            var response = await _svc.ConvertToDocAsync(parameters);
+            return Ok(response); 
         }
     }
 }
