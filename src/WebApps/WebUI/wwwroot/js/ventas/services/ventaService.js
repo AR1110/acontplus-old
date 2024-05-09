@@ -118,13 +118,7 @@
             return mS.getData('get', "Venta/NotaEntrega/GetId/" + id, null, true).catch(error => {
                 console.log('sale service', error)
                 throw new Error(error)
-            })
-            // return mS.getData('get', 'Venta/NotaEntrega/' + 'GetId/' + id, null, true)
-
-            // .catch(error=>{
-            //     console.log('sale service', error)
-            //     throw new Error(error)
-            // })
+            }) 
         }
 
         service.verifyPendientAccount = (query) => {
@@ -1029,9 +1023,6 @@
                         idFormaPagoSri: 0
                     }
                 };
-                if(response.code==="0"){
-                    console.log(response)
-                }
                 if(response.code==="1"){
                     let [tiemposCredito, config , formasPagoSri] = JSON.parse(response.payload);
                     let dataConfig = config[0];
@@ -1096,8 +1087,7 @@
                     let mainData = JSON.parse(response.payload) || [];
                     let proformasRepos = mainData[0];
                     let { totalRecords, totalDocument } = proformasRepos[0];
-                    let proformas = proformasRepos.map(item => {
-                        console.log(item)
+                    let proformas = proformasRepos.map(item => { 
                         return {
                             comprobante: 'Proforma',
                             entidad: item.entidad,
@@ -1380,10 +1370,7 @@
         }
 
 
-        service.convertToDoc = function(data){
-            return mS.getData('post', url_v2 + 'ConvertToDoc', { data }, true) 
-        }
-
+        
 
         service.queryMapper = function (obj) {
             let { data, cliente, detalles, itemsDeleted, infoAdicionalDocumento } = obj;
@@ -1480,8 +1467,22 @@
 
         }
 
+        //Conversion proforma a FACTURA O NOTA ENTREGA
+        service.convertToDoc = function (data) {
+            return mS.getData('post', url_v2 + 'ConvertToDoc', { data }, true)
+        }
+
         service.queryMapperConvertToDoc = function (obj) {
-            let {id, codDocDestino, codDoc, comprobante, detalles, infoAdicionalDocumento, cuotas } = obj;
+            let { 
+                id, 
+                codDocDestino, 
+                codDoc, 
+                comprobante, 
+                detalles, 
+                infoAdicionalDocumento, 
+                cuotas, 
+                dataFormaPago 
+            } = obj;
       
             
             const resultDetalles = detalles.map((item, index)=>{
@@ -1539,8 +1540,20 @@
                 detalles: resultDetalles,
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumento || [],
-                cuotas
+                cuotas,
+                formaPago: dataFormaPago,
             }
+        }
+
+        service.getHistorialConversionDoc = function(id){
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 7, id }), null, true).then(response=>{
+                let results = [];
+                if(response.code==="1"){
+                    let [historialConversion] = JSON.parse(response.payload)
+                    results = historialConversion;
+                }
+                return results;                
+            })
         }
         return service;
 

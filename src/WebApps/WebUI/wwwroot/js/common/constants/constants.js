@@ -145,11 +145,16 @@ app.constant('nombreModalFactElect', {
 app.constant('nombreModalVenta', {
     CONVERT_TO_DOC: {
         fileCtrl: '/js/ventas/modals/modalConvertToDocCtrl.min.js' + CHANGE_VERSION(),
-        controller: 'convertToDocModalCtrl',
+        controllers: {
+            M: 'convertToDocModalCtrl',
+            MHCD: 'historialConversionDocCtrl'
+        },
         templates: {
-            M: '~/Pages/Ventas/Shared/_ModalConvertToDoc.cshtml', 
+            M: '~/Pages/Ventas/Shared/_ModalConvertToDoc.cshtml',
+            MHCD: '~/Pages/Ventas/Shared/_ModalHistorialConversionDoc.cshtml', 
         }
-    },
+    }, 
+
 
     DOC_VENTA_DETALLE: {
         fileCtrl: '/js/common/modals/modalDocVentaDetalleCtrl.min.js' + CHANGE_VERSION(),
