@@ -9,6 +9,7 @@ CREATE TABLE Ventas.ProformaDocumento(
 	,DocumentoId INT NOT NULL 
 	,SerieComprobante VARCHAR(50) NOT NULL
 	,FechaRegistro DATETIME2 NOT NULL DEFAULT GETDATE()
+	,FechaActualizacion DATETIME2 NULL DEFAULT GETDATE()
 	,Estado BIT NOT NULL DEFAULT 1 
 	,Eliminado BIT NULL
 )
