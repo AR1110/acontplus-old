@@ -130,5 +130,31 @@ namespace Ventas.API.Controllers
             }
             return Ok(_response);
         }
+
+        [HttpPost("ConvertToDoc")]
+        public async Task<IActionResult> ConvertToDoc(ApiRequest data)
+        {
+            var _response = new ApiResponse();
+            var _db = new DbAccess(_configuration);
+            try
+            {
+                var idUsuarioRol = User.GetUserRoleId();
+                await _db.SPExecute("Ventas.NotaEntrega_Convert_To_Doc", true);
+                _db.AddDynamicParam("userRoleId", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+
+                _log.LogActivity("Error al convertir nota entrega: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al convertir nota de entrega");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
     }
 }
