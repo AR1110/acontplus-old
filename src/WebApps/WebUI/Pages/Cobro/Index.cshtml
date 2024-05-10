@@ -1,7 +1,10 @@
-﻿@{
-    ViewData["title"] = "Gestión de Cobros";
+﻿@page
+@model WebUI.Pages.Cobro.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["title"] = "Cobro";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <div ng-controller="cobroCtrl">
     <div>
         <div class="row page-titles">
@@ -244,14 +247,14 @@
                                         </md-button>
                                         <md-menu-content class="md-dense">
                                             <md-menu-item>
-                                                <md-button ng-click="openModalCobroDetalle($event, c)">
+                                                <md-button btn-historial-cobro params="c"  on-result="refresh()">
                                                     <span md-menu-align-target><i class="ti-menu"></i>
                                                         Detalle</span>
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item>
-                                                <md-button ng-if="accion.anular" ng-click="askToDelete(c)"
+                                            <md-menu-item ng-if="accion.anular">
+                                                <md-button  ng-click="askToDelete(c)"
                                                     ng-disabled="c.esAnulado">
                                                     <span md-menu-align-target>
                                                         <i class="ti-na"></i> Anular
@@ -259,8 +262,8 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item>
-                                                <md-button ng-if="accion.reporte" ng-click="getReport(c)"
+                                            <md-menu-item  ng-if="accion.reporte">
+                                                <md-button ng-click="getReport(c)"
                                                     ng-disabled="c.esAnulado">
                                                     <span md-menu-align-target>
                                                         <i class="fa fa-file-pdf"></i> Reporte

@@ -15,6 +15,7 @@ namespace Ventas.API.Extensions
 
             services.AddScoped<INotaEntregaService, NotaEntregaService>();
             services.AddScoped<IProformaService, ProformaService>();
+            services.AddScoped<IAprobacionDocService, AprobacionDocService>();
 
             services.AddScoped<ICustomLogger, CustomLogger>();
             return services;

@@ -35,12 +35,14 @@
 
         const CODE_REPORT = $injector.get('CODE_REPORT');
 
-        TIPO_DOC_NE = commonSvc.tipoDoc['NE'];
-        const PERMISSION_KEY_ACTIONS = {
-            E: 'E',
-            A: 'A',
-        }
+        let DOC_TYPE = $injector.get('DOC_TYPE'); 
+        TIPO_DOC_NE = {
+            codigo: DOC_TYPE['NE']
+        } 
 
+   
+        $scope.codDoc = DOC_TYPE['NE'];
+      
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
             order: '',
@@ -209,6 +211,10 @@
                 $scope.dataSearch.totalRecords = 0;
                 console.log(error)
             }
+        }
+
+        $scope.refresh = function(){
+            $scope.getNotaEntregas();
         }
 
 
@@ -629,33 +635,7 @@
                 console.log(error)
             }
         }
-
-        $scope.openModalHistorialCobro = async (ev, item) => {
-            try {
-                if (['PE'].includes(item.codEstado)) return
-
-                // showLoader();
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
-                let templateUrl = nombreModalContabilidad.COBRO.templates['CD'];
-                let controller = (await import(fileCtrl))[ctrl];
-
-                let config = {
-                    controller,
-                    template: templateUrl,
-                    size: 'lg',
-                    params: Object.assign({}, item),
-                    isRenderRazorPartial: true
-                }
-
-                modalSvc.openModalCustom(config)
-            } catch (error) {
-                hideLoader();
-                console.log(error)
-            }
-
-        }
-
+ 
 
 
 

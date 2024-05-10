@@ -36,11 +36,16 @@
                 <tbody md-body>
                     <tr md-row ng-repeat-start="item in cobros">
                         <td md-cell>
+                            <div class="d-flex flex-column">
+                                <i ng-if="!item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-right "></i>
+                                <i ng-if="item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-down"></i>
 
-                            <i ng-if="!item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-right "></i>
-                            <i ng-if="item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-down"></i>
+                                <i ng-if="item.showInfoCobro" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></i>
 
-                            <i ng-if="item.showInfoCobro" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></i>
+                                <button type="button" class="btn btn-danger btn-sm" ng-click="askToDelete(item)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
                         </td>
                         <td md-cell>{{$index+1}}</td>
                         <td md-cell>{{item.fechaEmision}}</td>
@@ -126,12 +131,28 @@
                 </thead>
                 <tbody md-body>
                     <tr md-row ng-repeat-start="item in comprobanteIngresos">
-                        <td md-cell>
+                        <td md-cell> 
+                            <div class="d-flex flex-row">
+                                <div class="p-1">    
+                                        <i  class=" fas fa-arrow-right " ng-if="!item.showDetalle" ng-click="expandDetalle(item)"></i> 
+                                     
+                                        <i ng-if="item.showDetalle" ng-click="expandDetalle(item)"  class=" fas fa-arrow-down "></i>
+                                    
 
-                            <icon ng-if="!item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-right "></icon>
-                            <icon ng-if="item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-down"></icon>
+                                </div>
+                                <div class="p-1">
+                                    <button type="button" ng-if="item.showInfoCobro" uib-tooltip="Información" ng-click="showInfo(item)" class="btn btn-info btn-sm">
+                                        <i  class="fas fa-info-circle"></i>
+                                    </button>
 
-                            <icon ng-if="item.showInfoCobro" uib-tooltip="Información" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></icon>
+                                </div>
+                                <div class="p-1">
+                                    <button type="button" class="btn btn-danger btn-sm" ng-click="askToDelete(item)">
+                                        <i class="fas fa-trash-alt fa-xs"></i>
+                                    </button>
+                                </div>
+
+                            </div>
                         </td>
                         <td md-cell>{{$index+1}}</td>
                         <td md-cell>{{item.serieComprobante}}</td>

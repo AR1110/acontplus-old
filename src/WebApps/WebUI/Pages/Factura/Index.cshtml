@@ -275,7 +275,7 @@
                                             </md-menu-item>
 
                                             <md-menu-item ng-if="accion.historialFinanciero && item.enabledActionHC">
-                                                <md-button ng-click="openModalHistorialCobro($event, item)">
+                                                <md-button btn-historial-cobro params="item" on-result="refresh()">
                                                     <span md-menu-align-target>
                                                         <i class=" fas fa-tasks"></i>
                                                         Hist. Mov.

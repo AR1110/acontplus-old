@@ -25,7 +25,7 @@
         fS = $injector.get('formulario');
         modalSvc = $injector.get('modalService');
         let nombreModalContabilidad = $injector.get('nombreModalContabilidad');
-        nombreModalVenta = $injector.get('nombreModalVenta'); 
+        nombreModalVenta = $injector.get('nombreModalVenta');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
 
         let DOC_TYPE = $injector.get('DOC_TYPE');
@@ -159,6 +159,9 @@
         }
 
 
+        $scope.refresh = function () {
+            $scope.getFacturas();
+        }
 
         $scope.getFacturas = function () {
 
@@ -353,9 +356,9 @@
                 console.log(error)
             }
         }
- 
-        function getParamsPermission(item, codigoAccion){
-             let paramsPermission = {
+
+        function getParamsPermission(item, codigoAccion) {
+            let paramsPermission = {
                 idDocumento: item.idDocumento,
                 codDoc: item.codDoc,
                 codigoAccion,
@@ -372,17 +375,17 @@
             return paramsPermission;
         }
         $scope.openModalInvoiceEdit = async (item) => {
-            try { 
+            try {
                 if (item.disabledActionUpdate) {
                     fS.sweetAlert('warning', 'Este documento ya no se puede editar');
                     return
                 }
- 
+
                 let paramsPermission = getParamsPermission(item, 'E');
                 let response = await userCustomerPermissionSvc.checkHasPermissionToEdit(paramsPermission);
-    
-                if(!response) return
-               
+
+                if (!response) return
+
                 if (response && response.code === "2") {
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
@@ -401,12 +404,12 @@
                         windowClass: 'uibModalFullScreen',
                         isRenderRazorPartial: true
                     })
-                    modalRef.result.then(result => {                           
+                    modalRef.result.then(result => {
 
                         if (typeof result === 'object' && result.isUpdate) {
                             //Actualizar el estado de solicitud en caso de tener 
-                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {      
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)                                
+                            if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
                             }
 
                             $scope.getFacturas();
@@ -497,7 +500,7 @@
                 if (response && response.code === "2") {
                     userCustomerPermissionSvc.requestAuthorizationKey(paramsPermission);
                     return
-                } 
+                }
 
                 let { isConfirmed } = await Swal.fire({
                     title: '<small>Anular Factura?</small>',
@@ -522,7 +525,7 @@
 
                             //Una vez actualizado el documento 
                             if (typeof $scope.permisoEditarDoc === 'object' && $scope.permisoEditarDoc.requiereClave) {
-                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)    
+                                userCustomerPermissionSvc.updateRequestKey(paramsPermission)
                             }
                             $scope.getFacturas();
                         }
@@ -700,34 +703,7 @@
                 console.log(error)
             }
         }
-
-
-        //----------------------------Detalle Comprobante Ingreso ---------------------
-        $scope.openModalHistorialCobro = async (ev, item) => {
-            try {
-                if (['PE'].includes(item.codEstado)) return
-
-                // showLoader();
-                let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
-                let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
-                let templateUrl = nombreModalContabilidad.COBRO.templates['CD'];
-                let controller = (await import(fileCtrl))[ctrl];
-
-
-                let config = {
-                    controller,
-                    template: templateUrl,
-                    size: 'lg',
-                    params: Object.assign({}, item),
-                    isRenderRazorPartial: true
-                }
-
-                modalSvc.openModalCustom(config)
-            } catch (error) {
-                hideLoader();
-                console.log(error)
-            }
-        }
+ 
 
         $scope.print = function (item) {
             let parameters = {
@@ -1198,7 +1174,7 @@
                     formasPago,
                     cuotas
                 } = params.data;
-          
+
                 $scope.data = {
                     ...$scope.data,
                     ...structuredClone(comprobante)
@@ -2033,7 +2009,7 @@
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
 
-               
+
                 tarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
                 entity.idImpuesto = tarifaImpuesto.idImpuesto;
@@ -2131,7 +2107,7 @@
         /**
          * Calculamos todos los totales y subtotales del comprobantes 
          */
-        function recalculateTotalsSimple() { 
+        function recalculateTotalsSimple() {
             drawImpuestoTotales();
         }
 
@@ -2466,9 +2442,9 @@
 
                 let cuotas = validateCuota();
 
-                if (cuotas && cuotas.length === 0) return   
+                if (cuotas && cuotas.length === 0) return
 
-                
+
 
                 if ($scope.cliente.numeroIdentificacion === NUM_CONSUMIDOR_FINAL && $scope.data.total > 50) {
                     fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>');

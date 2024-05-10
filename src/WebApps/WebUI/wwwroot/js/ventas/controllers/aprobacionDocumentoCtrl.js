@@ -247,14 +247,14 @@
 
                 showLoader();
 
-                aprobacionDocSvc.getAll(dataSearch).then(response => { 
+                aprobacionDocSvc.getAll(dataSearch).then(response => {
                     $scope.aprobComprobantes = response;
                     $scope.cloneAproComprobantes = structuredClone($scope.aprobComprobantes);
-                    $scope.calculoColumnTotal(); 
+                    $scope.calculoColumnTotal();
 
-                }).catch(error => { 
+                }).catch(error => {
                     console.log(error)
-                }).finally(()=>hideLoader())
+                }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -267,7 +267,7 @@
         $scope.initiload = function () {
             try {
                 showLoader();
-                aprobacionDocSvc.getDataFilter().then(response => { 
+                aprobacionDocSvc.getDataFilter().then(response => {
                     $scope.establecimientos = response.estabs;
                     $scope.estadoDocumentos = response.estadoDocs;
                     if ($scope.establecimientos.length > 0) {
@@ -317,7 +317,7 @@
         $scope.openModalDetalle = function (item) {
             try {
                 showLoader();
-                aprobacionDocSvc.getIdForInfo(item.idAprob_Document).then(response => { 
+                aprobacionDocSvc.getIdForInfo(item.idAprob_Document).then(response => {
                     modalSvc.openModalCustom({
                         controller: 'ModalAprobDocDetalleCtrl',
                         template: URL_TEMPLATE + '_ModalDetalle.cshtml',
@@ -330,9 +330,9 @@
                         },
                         isRenderRazorPartial: true
                     })
-                }).catch(error => { 
+                }).catch(error => {
                     console.log(error)
-                }).finally(()=>hideLoader())
+                }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -380,7 +380,7 @@
 
             try {
                 showLoader();
-                aprobacionDocSvc.findById(item.idAprob_Document).then(response => { 
+                aprobacionDocSvc.findById(item.idAprob_Document).then(response => {
                     let modalRef = modalSvc.openModalCustom({
                         controller: 'ModalApproveDocCtrl',
                         template: URL_TEMPLATE + '_ModalAprobacionDocumento.cshtml',
@@ -398,9 +398,9 @@
                             $scope.getAprobComprobantes();
                         }
                     })
-                }).catch(error => { 
+                }).catch(error => {
                     console.log(error)
-                }).finally(()=>hideLoader())
+                }).finally(() => hideLoader())
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -465,7 +465,7 @@
                     id: item.idAprob_Document,
                     codEstab: item.codEstab,
                     codDoc: item.docDestino,
-                    tipo : 1
+                    tipo: 1
                 }
 
                 const parameters = {
@@ -496,14 +496,14 @@
                     id: item.idAprob_Document,
                     codEstab: item.codEstab,
                     codDoc: item.docDestino,
-                    tipo : 2
+                    tipo: 2
                 }
 
                 const parameters = {
                     hasService: true,
                     reportParams: JSON.stringify({
                         hasParams: true,
-                        codigo : "RHA",
+                        codigo: "RHA",
                         codEstab: item.codEstab,
                         format,
                         aditionalParams: []
@@ -557,9 +557,9 @@
 
         $scope.gridOptionsSelectedDocs = {
             enableColumnMenus: false,
-        //    enableFiltering: true,
-        //    enableSorting: true,
-        //    enableGridMenu: true,
+            //    enableFiltering: true,
+            //    enableSorting: true,
+            //    enableGridMenu: true,
 
             enableRowSelection: true,
             enableSelectAll: true,
@@ -678,7 +678,7 @@
                 //UNIMOS TODOS LOS DETALLES DEL COMPROBANTE
 
                 let resultJoinItems = $scope.selectedDocuments.flatMap(item => item.subGridOptions.data);
- 
+
 
                 //Agregamos Bodega e Indice
                 let index = 1;
@@ -722,11 +722,11 @@
             }
         }
 
-      
+
 
         //Inicio 
         onLoad()
-      function onLoad() {
+        function onLoad() {
             try {
                 let {
                     estabs,
@@ -771,7 +771,7 @@
             } catch (error) {
                 console.log(error);
             }
-        } 
+        }
 
 
         //============================================ Filtros==============================
@@ -845,17 +845,16 @@
          * @param {*} textSearch 
          * @returns 
          */
-        $scope.onKeyupCliente= function(){
-            if (fS.isValidField($scope.cliente.nombreCliente)){
+        $scope.onKeyupCliente = function () {
+            if (fS.isValidField($scope.cliente.nombreCliente)) {
                 $scope.dataSearch.byCliente = 0;
             }
-        } 
+        }
 
         $scope.selectedClienteSearch = function (item) {
             $scope.cliente = item;
             $scope.cliente.nombreCliente = item.nombreFiscal
-
-            console.log(item)
+ 
             if ($scope.isValidFilter()) {
                 $scope.getDocumentos();
             }
@@ -973,7 +972,7 @@
 
 
         $scope.getProformas = function () {
-            try { 
+            try {
                 showLoader();
                 $scope.documentos = [];
                 let dataSearch = {
@@ -1658,6 +1657,11 @@
 
         function drawImpuestoTotales() {
             try {
+                const getTotals = gridOptionsSvc.getImpuestoTotales({
+                    items: $scope.gridOptionsDetalle.data,
+                    decimal: $scope.decimal,
+                    tarifasImpuesto: $scope.tarifasImpuesto.slice(),
+                });
                 let {
                     subTotalSinImpuestos,
                     irbpnr,
@@ -1674,7 +1678,8 @@
                 $scope.data.totalDescuento = totalDescuento;
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
                 $scope.data.irbpnr = irbpnr
-                $scope.data.propina = propina;
+                $scope.data.propina = propina; 
+
             } catch (error) {
                 console.log(error);
             }
@@ -2046,9 +2051,9 @@
             }
         }
 
-        function setColumnDefs() { 
+        function setColumnDefs() {
 
-            const ventaDetailPermission = $scope.permisoDetalleVenta 
+            const ventaDetailPermission = $scope.permisoDetalleVenta
 
             $scope.gridOptionsDetalle.columnDefs = [{
                 name: 'Op.',
@@ -2363,7 +2368,7 @@
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
- 
+
 
                 let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === articulo.codigoPorcentaje);
                 entity.idImpuesto = dataImpuestoTarifa.idImpuesto;
@@ -2636,7 +2641,7 @@
 
         $scope.mostrarFormasPago = $scope.data.docDestino === DOC_TYPE.FV_SRI;
 
-        $scope.cliente = cliente; 
+        $scope.cliente = cliente;
 
         $scope.dataClone = {};
         $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
@@ -2662,7 +2667,7 @@
 
         $scope.formasPago = formasPago;
         $scope.config = config;
-        
+
         $scope.dataFormaPago = {
             idFormaPagoSri: 0,
             idTiempoCredito: 0,
@@ -3021,9 +3026,9 @@
 
         $scope.initiload();
 
-        function setColumnDefs() { 
+        function setColumnDefs() {
 
-            const ventaDetailPermission = $scope.permisoDetalleVenta  
+            const ventaDetailPermission = $scope.permisoDetalleVenta
 
             $scope.gridOptionsDetalle.columnDefs = [{
                 name: 'Op.',
@@ -3605,7 +3610,7 @@
         $scope.resultModalInfoAdicional = function (result) {
             $scope.infoAdicionalDocumento = result;
         }
-        
+
         function setDataFormaPagoSri() {
             let dataFormaPago = {};
             if ($scope.cliente.idFormaPagoSri > 0) {
@@ -3738,13 +3743,13 @@
             let cuotas = [];
             let montoTotalCuota = 0;
 
-         
+
             let dataCuota = fS.calcularCuotas(objParamsCuota);
             cuotas = dataCuota.cuotas;
             montoTotalCuota = dataCuota.montoTotalCuota;
 
-           
-             
+
+
 
             if (fS.roundNumber(montoTotalCuota, 2) !== fS.roundNumber($scope.data.total, 2)) {
                 tS.toastr('warning', 'No coincide el total de la cuota con el importe total del documento.');
@@ -3762,10 +3767,15 @@
 
                 let cuotas = validateCuota();
 
-                if (cuotas && cuotas.length === 0) return   
+                if (cuotas && cuotas.length === 0) return
 
                 let serieComprobante = null;
+                let codDocDestino = null;
+                let codDoc = null;
                 if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
+                    codDocDestino = DOC_TYPE.FE;
+                    codDoc = DOC_TYPE.FV_SRI;
+
                     showLoader();
                     serieComprobante = await facturaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
@@ -3773,6 +3783,9 @@
                     hideLoader();
                 }
                 if ($scope.data.docDestino === DOC_TYPE.NE) {
+                    codDocDestino = DOC_TYPE.NE;
+                    codDoc = DOC_TYPE.NE;
+
                     showLoader();
                     serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
@@ -3796,82 +3809,109 @@
                 if (isConfirmed) {
                     showLoader();
 
-                    //Documento Destino Factuta
-                    if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
-                        let detalles = checkStockDetalle($scope.gridOptionsDetalle.data)
-                        let query = facturaSvc.queryMapper({
-                            data: $scope.data,
-                            cliente: $scope.cliente,
-                            detalles,
-                            dataFormaPago: $scope.dataFormaPago,
-                            itemsDeleted: [],
-                            infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                            historyDatosAdicionales: $scope.historyDatosAdicionales,
-                            fromAprobacion: true,
-                            cuotas,
-                        })
+                    let query = aprobacionDocSvc.queryMapperConvertToDoc({
+                        id: $scope.data.idAprob_Document,
+                        codDocDestino,
+                        codDoc,
+                        comprobante: $scope.data,
+                        detalles: $scope.gridOptionsDetalle.data,
+                        infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                        cuotas,
+                        dataFormaPago: $scope.dataFormaPago,
+                        historyDatosAdicionales: $scope.historyDatosAdicionales,
+                    })
 
-                        showLoader();
-                        facturaSvc.save(query).then(response => {
-                            hideLoader();
-                            if (response.code === "0") {
-                                fS.sweetAlert('warning', response.message);
-                            }
-                            if (response.code === '1') {
-                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                                $uibModalInstance.close(response);
-                            }
-                        }).catch(error => {
-                            hideLoader();
-                            console.error(error)
-                        })
-                    }
+                    showLoader();
+                    aprobacionDocSvc.convertToDoc(query).then(response => {
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            $uibModalInstance.close(response)
+                        }
+                    }).catch(error => {
+                        console.log(error)
+                    }).finally(() => hideLoader())
+
+
+                    //Documento Destino Factuta
+                    // if ($scope.data.docDestino === DOC_TYPE.FV_SRI) {
+                    //     let detalles = checkStockDetalle($scope.gridOptionsDetalle.data)
+                    //     let query = facturaSvc.queryMapper({
+                    //         data: $scope.data,
+                    //         cliente: $scope.cliente,
+                    //         detalles,
+                    //         dataFormaPago: $scope.dataFormaPago,
+                    //         itemsDeleted: [],
+                    //         infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                    //         historyDatosAdicionales: $scope.historyDatosAdicionales,
+                    //         fromAprobacion: true,
+                    //         cuotas,
+                    //     })
+
+                    //     showLoader();
+                    //     facturaSvc.save(query).then(response => {
+                    //         hideLoader();
+                    //         if (response.code === "0") {
+                    //             fS.sweetAlert('warning', response.message);
+                    //         }
+                    //         if (response.code === '1') {
+                    //             fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                    //             $uibModalInstance.close(response);
+                    //         }
+                    //     }).catch(error => {
+                    //         hideLoader();
+                    //         console.error(error)
+                    //     })
+                    // }
 
 
                     //Documento Destino Nota Entrega
-                    if ($scope.data.docDestino === DOC_TYPE.NE) {
-                        let query = notaEntregaSvc.queryMapper({
-                            data: $scope.data,
-                            cliente: $scope.cliente,
-                            detalles: $scope.gridOptionsDetalle.data,
-                            itemsDeleted: [],
-                            historyDatosAdicionales: $scope.historyDatosAdicionales,
-                            cuotas
-                        })
-                        showLoader();
-                        notaEntregaSvc.save(query).then(response => {
-                            hideLoader()
-                            if (response.code === '0') {
-                                fS.sweetAlert('warning', response.message, response.titleSms);
-                            }
-                            if (response.code === "1") {
-                                fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                    // if ($scope.data.docDestino === DOC_TYPE.NE) {
+                    //     let query = notaEntregaSvc.queryMapper({
+                    //         data: $scope.data,
+                    //         cliente: $scope.cliente,
+                    //         detalles: $scope.gridOptionsDetalle.data,
+                    //         itemsDeleted: [],
+                    //         historyDatosAdicionales: $scope.historyDatosAdicionales,
+                    //         cuotas
+                    //     })
+                    //     showLoader();
+                    //     notaEntregaSvc.save(query).then(response => {
+                    //         hideLoader()
+                    //         if (response.code === '0') {
+                    //             fS.sweetAlert('warning', response.message, response.titleSms);
+                    //         }
+                    //         if (response.code === "1") {
+                    //             fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
-                                $uibModalInstance.close(response)
-                            }
-                        }).catch(error => {
-                            hideLoader();
-                            console.log(error)
-                        })
-                    }
+                    //             $uibModalInstance.close(response)
+                    //         }
+                    //     }).catch(error => {
+                    //         hideLoader();
+                    //         console.log(error)
+                    //     })
+                    // }
 
                 }
 
             } catch (error) {
+                hideLoader()
                 console.log(error)
             }
         }
 
 
-        function checkStockDetalle() {
-            let resultsItem = $scope.gridOptionsDetalle.data.map(item => {
-                let conversion = item.conversion || 1;
-                let cantidadTransaccion = item.cantidad * conversion;
-                item.cantidadTransaccion = cantidadTransaccion;
-                return item;
-            })
-            return resultsItem;
-        }
+        // function checkStockDetalle() {
+        //     let resultsItem = $scope.gridOptionsDetalle.data.map(item => {
+        //         let conversion = item.conversion || 1;
+        //         let cantidadTransaccion = item.cantidad * conversion;
+        //         item.cantidadTransaccion = cantidadTransaccion;
+        //         return item;
+        //     })
+        //     return resultsItem;
+        // }
 
 
         $scope.closeModal = function () {

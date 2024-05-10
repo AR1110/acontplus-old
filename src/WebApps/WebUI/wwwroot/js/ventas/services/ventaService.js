@@ -118,13 +118,7 @@
             return mS.getData('get', "Venta/NotaEntrega/GetId/" + id, null, true).catch(error => {
                 console.log('sale service', error)
                 throw new Error(error)
-            })
-            // return mS.getData('get', 'Venta/NotaEntrega/' + 'GetId/' + id, null, true)
-
-            // .catch(error=>{
-            //     console.log('sale service', error)
-            //     throw new Error(error)
-            // })
+            }) 
         }
 
         service.verifyPendientAccount = (query) => {
@@ -348,6 +342,7 @@
                     let { totalRecords, totalDocument, totalAbono, totalSaldo } = notaEntregaRepos[0];
 
                     let notaEntregas = notaEntregaRepos.map(item => {
+                        
                         return {
                             idCliente: item.idCliente,
                             comprobante: 'Nota de Entrega',
@@ -375,7 +370,10 @@
                             tiempoCredito: item.tiempoCredito,
                             esContado: item.tiempoCredito,
                             disabledUpdate: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.anulada,
-                            disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR'
+                            disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR',
+                            enabledConvertToDoc: item.codEstado === 'CBR' || item.codEstado === 'PE' || item.codEstado === 'PP',
+                            enabledHistorialConvert: item.codEstado === 'TRA',
+                            enabledHistorialCobro: item.codEstado === 'CBR' || item.codEstado === 'PP', 
                         }
                     })
 
@@ -749,6 +747,7 @@
 
                     let comprobante = {
                         ...comprobanteTemp,
+                        idCliente:  cliente.idCliente,
                         serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
@@ -943,6 +942,126 @@
             }
         }
 
+
+        //Conversion nota entrega a FACTURA  
+        service.getDataFormConvert = function () {
+            let json = JSON.stringify({
+                tipo:9
+            })
+            return mS.getData('get', `${url}Get?json=${json}`, null, true).then(response => {
+                let result = {
+                    tiemposCredito: [],
+                    formasPagoSri: [],
+                    config: {
+                        idFormaPagoSri: 0
+                    }
+                };
+                if (response.code === "1") {
+                    let [tiemposCredito, config, formasPagoSri] = JSON.parse(response.payload);
+                    let dataConfig = config[0];
+
+                    result.tiemposCredito = tiemposCredito;
+                    result.formasPagoSri = formasPagoSri;
+
+                    result.config = {
+                        idFormaPagoSri: dataConfig.idFormaPagoSri
+                    }
+                }
+
+                return result;
+
+            })
+        }
+
+        service.convertToDoc = function (data) {
+            return mS.getData('post', url + 'ConvertToDoc', { data }, true)
+        }
+
+        service.queryMapperConvertToDoc = function (obj) {
+            let {
+                id,
+                codDocDestino,
+                codDoc,
+                comprobante,
+                detalles,
+                infoAdicionalDocumento,
+                cuotas,
+                dataFormaPago
+            } = obj;
+
+            let resultComprobante = {
+                idNotaEntrega: id,
+                idTiempoCredito: comprobante.idTiempoCredito,
+                idCliente: comprobante.idCliente,
+                idPuntoEmision: comprobante.idPuntoEmision,
+                idUsuario: comprobante.idUsuario || 0,
+                fechaEmision: fS.formatDateMoment(comprobante.fechaEmision),
+                fechaVencimiento: fS.formatDateMoment(comprobante.fechaVencimiento),
+                subTotalSinImpuestos: comprobante.subTotalSinImpuestos,
+                totalDescuento: comprobante.totalDescuento,
+                porcentajeDescuento: comprobante.porcentajeDescuento,
+                propina: comprobante.propina || 0,
+                recargo: comprobante.recargo || 0,
+                transporte: comprobante.transporte || 0,
+                total: comprobante.total,
+                observacion: comprobante.observacion,
+                docDestino: codDocDestino,
+                codDoc
+            }
+
+
+            const resultDetalles = detalles.map((item, index) => {
+                let cantidadTransaccion = item.cantidad * (item.conversion || 1)
+                return {
+                    orderIndex: index++,
+                    idArticulo: item.idArticulo,
+                    idTarifa: item.idTarifa,
+                    idBodega: item.idBodega,
+                    idMedida: item.idMedida,
+                    idTipoIva: item.idTipoIva,
+                    tarifa: item.tarifa, //✅
+                    codigoPorcentaje: item.codigoPorcentaje, //✅
+                    ice: item.ice,
+                    descripcion: item.descripcion,
+                    cantidad: item.cantidad,
+                    precioUnitario: item.precioUnitario,
+                    valorDescuento: item.valorDescuento,
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
+                    porcentajeDescuento: item.porcentajeDescuento,
+                    nota: item.nota || undefined,
+                    llevaInventario: item.llevaInventario,
+                    precioCosto: item.precioCosto,
+                    precioSinSubsidio: item.precioSinSubsidio,
+                    conversion: item.conversion,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
+                    cantidadTransaccion,
+                    estado: item.estado,
+                    valorImpuesto: item.valorImpuesto
+                }
+            })
+            const impuestos = fS.impuestoTarifaMapperTo(detalles);
+ 
+            return {
+                comprobante: resultComprobante,
+                detalles: resultDetalles,
+                impuestos: impuestos,
+                infoAdicional: infoAdicionalDocumento || [],
+                cuotas,
+                formaPago: dataFormaPago,
+            }
+        }
+
+        service.getHistorialConversionDoc = function (id) {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 8, id }), null, true).then(response => {
+                let results = [];
+                if (response.code === "1") {
+                    let [historialConversion] = JSON.parse(response.payload)
+                    results = historialConversion;
+                }
+                return results;
+            })
+        }
+
         return service;
 
     }])
@@ -1017,38 +1136,7 @@
             })
         }
 
-        service.getDataFormConvert = function(){
-            let json = JSON.stringify({
-                tipo: 8
-            })
-            return mS.getData('get', `${url}Get?json=${json}`, null, true).then(response => {
-                let result = {
-                    tiemposCredito: [],
-                    formasPagoSri: [],
-                    config: {
-                        idFormaPagoSri: 0
-                    }
-                };
-                if(response.code==="0"){
-                    console.log(response)
-                }
-                if(response.code==="1"){
-                    let [tiemposCredito, config , formasPagoSri] = JSON.parse(response.payload);
-                    let dataConfig = config[0];
-
-                    result.tiemposCredito = tiemposCredito;
-                    result.formasPagoSri = formasPagoSri;
- 
-                    result.config = { 
-                        idFormaPagoSri: dataConfig.idFormaPagoSri
-                    }
-                } 
-
-                return result;
-
-            })
-        }
-
+        
         /**
          * tipo 1: get proformas  
          * tipo 3: get estabs, ptos. emisiones para los filtros
@@ -1096,8 +1184,7 @@
                     let mainData = JSON.parse(response.payload) || [];
                     let proformasRepos = mainData[0];
                     let { totalRecords, totalDocument } = proformasRepos[0];
-                    let proformas = proformasRepos.map(item => {
-                        console.log(item)
+                    let proformas = proformasRepos.map(item => { 
                         return {
                             comprobante: 'Proforma',
                             entidad: item.entidad,
@@ -1380,10 +1467,7 @@
         }
 
 
-        service.convertToDoc = function(data){
-            return mS.getData('post', url_v2 + 'ConvertToDoc', { data }, true) 
-        }
-
+        
 
         service.queryMapper = function (obj) {
             let { data, cliente, detalles, itemsDeleted, infoAdicionalDocumento } = obj;
@@ -1480,8 +1564,51 @@
 
         }
 
+        //Conversion proforma a FACTURA O NOTA ENTREGA
+        service.getDataFormConvert = function(){
+            let json = JSON.stringify({
+                tipo: 8
+            })
+            return mS.getData('get', `${url}Get?json=${json}`, null, true).then(response => {
+                let result = {
+                    tiemposCredito: [],
+                    formasPagoSri: [],
+                    config: {
+                        idFormaPagoSri: 0
+                    }
+                };
+                if(response.code==="1"){
+                    let [tiemposCredito, config , formasPagoSri] = JSON.parse(response.payload);
+                    let dataConfig = config[0];
+
+                    result.tiemposCredito = tiemposCredito;
+                    result.formasPagoSri = formasPagoSri;
+ 
+                    result.config = { 
+                        idFormaPagoSri: dataConfig.idFormaPagoSri
+                    }
+                } 
+
+                return result;
+
+            })
+        }
+
+        service.convertToDoc = function (data) {
+            return mS.getData('post', url_v2 + 'ConvertToDoc', { data }, true)
+        }
+
         service.queryMapperConvertToDoc = function (obj) {
-            let {id, codDocDestino, codDoc, comprobante, detalles, infoAdicionalDocumento, cuotas } = obj;
+            let { 
+                id, 
+                codDocDestino, 
+                codDoc, 
+                comprobante, 
+                detalles, 
+                infoAdicionalDocumento, 
+                cuotas, 
+                dataFormaPago 
+            } = obj;
       
             
             const resultDetalles = detalles.map((item, index)=>{
@@ -1539,8 +1666,20 @@
                 detalles: resultDetalles,
                 impuestos: impuestos,
                 infoAdicional: infoAdicionalDocumento || [],
-                cuotas
+                cuotas,
+                formaPago: dataFormaPago,
             }
+        }
+
+        service.getHistorialConversionDoc = function(id){
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 7, id }), null, true).then(response=>{
+                let results = [];
+                if(response.code==="1"){
+                    let [historialConversion] = JSON.parse(response.payload)
+                    results = historialConversion;
+                }
+                return results;                
+            })
         }
         return service;
 

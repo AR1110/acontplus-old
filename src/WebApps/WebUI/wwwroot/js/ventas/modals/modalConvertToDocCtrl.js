@@ -1,5 +1,6 @@
 export {
-    convertToDocModalCtrl
+    convertToDocModalCtrl,
+    historialConversionDocCtrl
 }
 
 convertToDocModalCtrl.$inject = [
@@ -11,14 +12,17 @@ convertToDocModalCtrl.$inject = [
 ]
 function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params) {
 
-    let { codDoc, docDestino, id, ...restData } = params;
+    let { codDoc, id } = params;
     let proformaSvc = $injector.get('proformaService');
     let notaEntregaSvc = $injector.get('notaEntregaService');
+    let facturaSvc = $injector.get('facturaService');
     let DOC_TYPE = $injector.get('DOC_TYPE')
     let fS = $injector.get('formulario')
     let tS = $injector.get('toastService')
 
-    let codDocDestino = null;
+
+    $scope.isDocOriginProforma = false;
+    $scope.isDocOriginNotaEntrega = false;
 
     $scope.tiemposCredito = [];
     $scope.formasPagoSri = [];
@@ -30,9 +34,15 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
     $scope.comprobante = {};
     $scope.detalles = [];
     $scope.infoAdicionalDocumento = [];
+ 
 
-    //En caso de que se factura
-    $scope.dataFormaPago = {}
+    //En caso de que se factura }
+     $scope.dataFormaPago = {
+            idFormaPagoSri: 0,
+            idTiempoCredito: 0,
+            plazo: 1,
+            total: 0
+        }
 
 
     function calculateTotalItems(items) {
@@ -56,11 +66,23 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
             proformaSvc.getId(id)
         ])
     }
-    console.log(params)
-    console.log(codDoc,)
-    if (codDoc === DOC_TYPE.PR) {
-        codDocDestino = DOC_TYPE.NE
+
+    function getDataFormNotaEntrega() {
+
+        return $q.all([
+            notaEntregaSvc.getDataFormConvert(),
+            notaEntregaSvc.getId(id)
+        ])
+    }
+ 
+    if (codDoc === DOC_TYPE.PR) { 
+        $scope.isDocOriginProforma = true;
         onLoadProforma();
+    }
+ 
+    if (codDoc === DOC_TYPE.NE) {
+        $scope.isDocOriginNotaEntrega = true;
+        onLoadNotaEntrega();
     }
 
     function onLoadProforma() {
@@ -80,16 +102,14 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 $scope.comprobante = comprobante;
                 $scope.comprobante.fechaEmision = new Date();
 
-                $scope.detalles = calculateTotalItems(items);;
-                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
-                console.log(response)
-
-
-
-
+                $scope.detalles = calculateTotalItems(items);
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento; 
+ 
                 let dataTiempoCredito = $scope.tiemposCredito[0];
-                if (dataTiempoCredito) {
+                if (dataTiempoCredito) { 
+                    $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
                     $scope.comprobante.idTiempoCredito = dataTiempoCredito.idTiempoCredito;
+                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                     $scope.comprobante.fechaVencimiento = fS.getFechaVencimiento($scope.comprobante.fechaEmision, dataTiempoCredito.diasCredito)
                 }
 
@@ -106,6 +126,66 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                         $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
                     }
                 }
+
+                $scope.dataFormaPago.total = $scope.comprobante.total;
+
+
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())
+        } catch (error) {
+            console.log(error)
+            hideLoader();
+        }
+    }
+
+
+    function onLoadNotaEntrega() {
+        try {
+            showLoader();
+            getDataFormNotaEntrega().then(response => {
+                const [dataForm, data] = response; 
+
+                const { tiemposCredito, formasPagoSri, config } = dataForm;
+                const { cliente, comprobante, items, infoAdicionalDocumento } = data;
+
+                $scope.tiemposCredito = tiemposCredito;
+                $scope.formasPagoSri = formasPagoSri;
+                $scope.config = config;
+
+                $scope.companyCustomer = cliente;
+                $scope.comprobante = comprobante;
+                $scope.comprobante.fechaEmision = new Date();
+              
+                $scope.detalles = calculateTotalItems(items);
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+
+              
+
+                //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
+                if ($scope.formasPagoSri.length > 0) {
+                    let dataFormaPago = $scope.formasPagoSri.find(item => {
+                        if ($scope.config.idFormaPagoSri > 0) {
+                            return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
+                        } else {
+                            return (item.codigo === "01");
+                        }
+                    });
+                    if (dataFormaPago) {
+                        $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+                    }
+                }
+
+                let dataTiempoCredito = $scope.tiemposCredito.find(item => item.idTiempoCredito === $scope.comprobante.idTiempoCredito) 
+                if (dataTiempoCredito) {
+                    $scope.dataFormaPago.idTiempoCredito = dataTiempoCredito.idTiempoCredito; 
+                    $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
+                    $scope.comprobante.fechaVencimiento = fS.getFechaVencimiento($scope.comprobante.fechaEmision, dataTiempoCredito.diasCredito)
+
+                    $scope.dataFormaPago.total = $scope.comprobante.total;
+
+                }
+
 
 
             }).catch(error => {
@@ -283,16 +363,17 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 allowEscapeKey: false
             })
 
-            if (!isConfirmed) return
+            if (!isConfirmed) return 
 
             let query = proformaSvc.queryMapperConvertToDoc({
                 id,
-                codDocDestino: codDocDestino,
-                codDoc: codDocDestino,
+                codDocDestino: DOC_TYPE.NE, //documento destino
+                codDoc: DOC_TYPE.NE,//documento origen 
                 comprobante: $scope.comprobante, 
                 detalles: $scope.detalles,
                 infoAdicionalDocumento: $scope.infoAdicionalDocumento,
-                cuotas
+                cuotas,
+                dataFormaPago
             })
 
             showLoader();
@@ -321,6 +402,149 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
     }
 
 
+    $scope.saveInvoiceOfProforma = async function () {
+        try {
+
+            if (!isValidForm()) return
+
+            let cuotas = validateCuota();
+
+            if (cuotas && cuotas.length === 0) return
+ 
+            showLoader();
+            let serieComprobante = await facturaSvc.generateSerieComprobante({
+                idPuntoEmision: $scope.comprobante.idPuntoEmision,
+            })
+                .catch(error => console.log(error))
+                .finally(() => hideLoader())
+            if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+
+
+            const customSwal = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+
+            let { isConfirmed } = await customSwal.fire({
+                title: '<small>Guardar Factura</small>',
+                html: `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            })
+
+            if (!isConfirmed) return 
+
+            let query = proformaSvc.queryMapperConvertToDoc({
+                id,
+                codDocDestino: DOC_TYPE.FE, //documento destino
+                codDoc: DOC_TYPE.FV_SRI,//documento origen 
+                comprobante: $scope.comprobante,
+                detalles: $scope.detalles,
+                infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                cuotas,
+                dataFormaPago: $scope.dataFormaPago
+            })
+
+            showLoader();
+            proformaSvc.convertToDoc(query).then(response => {
+                if (response.code === '0') {
+                    fS.sweetAlert('warning', response.message, response.titleSms);
+                }
+                if (response.code === "1") {
+                    fS.sweetAlert('success', response.message, response.titleSms, 1000); 
+                    $uibModalInstance.close(response)
+                }
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())
+
+
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
+
+    $scope.saveInvoiceOfNotaEntrega = async function () {
+        try {
+
+            if (!isValidForm()) return
+ 
+            let cuotas = validateCuota();
+
+            if (cuotas && cuotas.length === 0) return
+
+            showLoader();
+            let serieComprobante = await facturaSvc.generateSerieComprobante({
+                idPuntoEmision: $scope.comprobante.idPuntoEmision,
+            })
+                .catch(error => console.log(error))
+                .finally(() => hideLoader())
+            if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+
+
+            const customSwal = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger ml-2'
+                },
+                buttonsStyling: false
+            })
+
+            let { isConfirmed } = await customSwal.fire({
+                title: '<small>Guardar Factura</small>',
+                html: `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            })
+
+            if (!isConfirmed) return
+
+            let query = notaEntregaSvc.queryMapperConvertToDoc({
+                id,
+                codDocDestino: DOC_TYPE.FE, //documento destino inventario
+                codDoc: DOC_TYPE.FV_SRI, //cuentas por cobrar
+                comprobante: $scope.comprobante,
+                detalles: $scope.detalles,
+                infoAdicionalDocumento: $scope.infoAdicionalDocumento,
+                cuotas,
+                dataFormaPago: $scope.dataFormaPago
+            })
+
+            showLoader();
+            notaEntregaSvc.convertToDoc(query).then(response => {
+                if (response.code === '0') {
+                    fS.sweetAlert('warning', response.message, response.titleSms);
+                }
+                if (response.code === "1") {
+                    fS.sweetAlert('success', response.message, response.titleSms, 1000); 
+                    $uibModalInstance.close(response)
+                }
+            }).catch(error => {
+                console.log(error)
+            }).finally(() => hideLoader())
+
+
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
 
 
 
@@ -331,4 +555,61 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
 
 
+}
+
+
+historialConversionDocCtrl.$inject = [
+    '$scope',
+    '$uibModalInstance',
+    '$injector',
+    'params'
+]
+
+function historialConversionDocCtrl($scope, $uibModalInstance, $injector, params){
+    let proformaSvc = $injector.get('proformaService');
+    let notaEntregaSvc = $injector.get('notaEntregaService');
+    let DOC_TYPE = $injector.get('DOC_TYPE');
+
+    $scope.historialConversion = [];
+
+    const {codDoc, id} = params;
+
+    if(DOC_TYPE.PR===codDoc){
+       try {
+           showLoader();
+           proformaSvc.getHistorialConversionDoc(id)
+               .then(response => {
+                   $scope.historialConversion = response;
+               })
+               .catch(error => {
+                   console.log(error)
+               })
+               .finally(() => hideLoader())
+       } catch (error) {
+        hideLoader();
+       }
+    }
+
+    if (DOC_TYPE.NE === codDoc) {
+       try {
+           showLoader();
+           notaEntregaSvc.getHistorialConversionDoc(id)
+               .then(response => {
+                   $scope.historialConversion = response;
+               })
+               .catch(error => {
+                   console.log(error)
+               })
+               .finally(() => hideLoader())
+       } catch (error) {
+        console.log(error)
+       }
+    }
+
+
+
+
+    $scope.closeModal = function(){
+        $uibModalInstance.close();
+    }
 }

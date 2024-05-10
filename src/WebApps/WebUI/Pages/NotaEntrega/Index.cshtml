@@ -273,8 +273,8 @@
                                                 </md-menu-item>
 
 
-                                                <md-menu-item >
-                                                    <md-button ng-click="openModalHistorialCobro($event, ne)">
+                                                <md-menu-item ng-if="ne.enabledHistorialCobro" >
+                                                    <md-button btn-historial-cobro params="ne" on-result="refresh()">
                                                         <span md-menu-align-target>
                                                             <i class="ti-layout-cta-center"></i>
                                                             Hist. Mov.
@@ -311,6 +311,31 @@
                                                         </span>
                                                     </md-button>
                                                 </md-menu-item>
+
+                                                <md-menu-item ng-if="ne.enabledConvertToDoc"  >
+                                                    <md-button 
+                                                    btn-convert-to-doc 
+                                                    cod-doc="codDoc" 
+                                                    id="ne.idDocumento"
+                                                    on-result="refresh()"
+                                                    >
+                                                        <span md-menu-align-target> 
+                                                            <i class="fas file"></i> Convertir  Documento
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item ng-if="ne.enabledHistorialConvert" >
+                                                    <md-button 
+                                                btn-historial-conversion-doc
+                                                    cod-doc="codDoc" 
+                                                    id="ne.idDocumento" 
+                                                    >
+                                                        <span md-menu-align-target> 
+                                                            <i class="fas fa-history "></i> Historial Conversión
+                                                        </span>
+                                                    </md-button>
+                                                </md-menu-item>
+
                                             </md-menu-content>
                                         </md-menu>
 
