@@ -273,8 +273,8 @@
                                                 </md-menu-item>
 
 
-                                                <md-menu-item >
-                                                    <md-button ng-click="openModalHistorialCobro($event, ne)">
+                                                <md-menu-item ng-if="ne.enabledHistorialCobro" >
+                                                    <md-button btn-historial-cobro params="ne" on-result="refresh()">
                                                         <span md-menu-align-target>
                                                             <i class="ti-layout-cta-center"></i>
                                                             Hist. Mov.

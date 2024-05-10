@@ -342,7 +342,7 @@
                     let { totalRecords, totalDocument, totalAbono, totalSaldo } = notaEntregaRepos[0];
 
                     let notaEntregas = notaEntregaRepos.map(item => {
-                        console.log(item)
+                        
                         return {
                             idCliente: item.idCliente,
                             comprobante: 'Nota de Entrega',
@@ -373,6 +373,7 @@
                             disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR',
                             enabledConvertToDoc: item.codEstado === 'CBR' || item.codEstado === 'PE' || item.codEstado === 'PP',
                             enabledHistorialConvert: item.codEstado === 'TRA',
+                            enabledHistorialCobro: item.codEstado === 'CBR' || item.codEstado === 'PP', 
                         }
                     })
 

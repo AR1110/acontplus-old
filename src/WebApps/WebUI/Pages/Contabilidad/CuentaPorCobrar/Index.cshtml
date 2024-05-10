@@ -189,7 +189,7 @@
                                     </div>
                                 </div> -->
                                 <div class="btn-group">
-                                    <button class="btn btn-success btn-sm" ng-click="openModalHistory(item)">
+                                    <button ng-if="item.enabledHistorialCobro" class="btn btn-success btn-sm" btn-historial-cobro params="item" on-result="refresh()" >
                                         <i class="fas fa-history"></i>
                                     </button>
                                 </div>

@@ -315,6 +315,7 @@ app.constant('nombreModalContabilidad', {
     COBRO: {
         fileCtrl: '/js/contabilidad/modals/modalCobroCtrl.min.js' + CHANGE_VERSION(),
         fileCuotaCtrl: '/js/contabilidad/modals/modalCuotaCtrl.min.js' + CHANGE_VERSION(),
+        fileHistorialCobro: '/js/contabilidad/modals/modalHistorialCobroCtrl.min.js' + CHANGE_VERSION(),
         controllers: {
             CR: 'ModalCobroRapidoCtrl', //Modal - Cobro Rapido 
             CL: 'ModalCobroLoteCtrl', //Cobro Lote
