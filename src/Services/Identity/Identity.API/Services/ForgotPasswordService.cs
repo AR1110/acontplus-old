@@ -1,6 +1,5 @@
-﻿namespace Identity.API.Services
+﻿namespace Identity.API.Services;
+
+public class ForgotPasswordService
 {
-    public class ForgotPasswordService
-    {
-    }
 }

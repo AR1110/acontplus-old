@@ -1,7 +1,6 @@
-﻿namespace Identity.API.Interfaces
+﻿namespace Identity.API.Interfaces;
+
+public interface IUserService
 {
-    public interface IUserService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }
