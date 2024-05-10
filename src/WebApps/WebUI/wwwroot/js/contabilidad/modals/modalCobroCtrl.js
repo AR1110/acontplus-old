@@ -401,8 +401,7 @@ class CobroService {
 export {
     ModalCobroRapidoCtrl,
     ModalCobroLoteCtrl,
-    ModalFormaCobroCtrl,
-    ModalCobroDetalleCtrl
+    ModalFormaCobroCtrl, 
 }
 
 

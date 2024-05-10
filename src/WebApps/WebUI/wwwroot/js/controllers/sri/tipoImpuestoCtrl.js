@@ -17,6 +17,7 @@
         $scope.pageIndex = 1;
         $scope.pageSize = 10;
         $scope.recordsQuantity = [5, 10, 25, 50]
+        let text =''
 
         $scope.get = function() {
             mS.getData('get', '/TipoImpuesto/Get?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize).then(response => {

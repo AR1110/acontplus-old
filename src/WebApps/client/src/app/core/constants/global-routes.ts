@@ -21,10 +21,11 @@ export enum GlobalRoutes {
   ConfigUserCustomer = 'config/user-customer-page',
   ConfigUserCustomerRequest = 'config/user-customer-request-page',
   ConfigUserProfile = 'config/user-profile-page',
-  ConfigEstablishment = 'config/establishment-page',
+  ConfigEstablishment = 'config/establishment',
   FactElectAts = 'billing/ats-page',
   MechanicalVehicle = 'mechanical/vehicle-page',
   MechanicalLayout = 'mechanical/layout',
   InventarioMeasure = 'inventory/measure',
   ContabilidadReporteCobros = 'accounting/reports/reporte-cobros',
+
 }

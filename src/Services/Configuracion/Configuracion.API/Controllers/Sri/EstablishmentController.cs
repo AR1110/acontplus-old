@@ -1,11 +1,10 @@
 ﻿
 using Common.Core.Models;
-using Common.Core.Utils;
-using Configuracion.API.Interfaces;
+using Common.Core.Utils; 
 using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-using Configuracion.API.Interfaces.Sri;
+using Services.Common.Logs; 
 using Services.Common.Extensions;
+using Configuracion.API.Interfaces.Sri;
 
 namespace Configuracion.API.Controllers.Sri
 {
@@ -82,6 +81,18 @@ namespace Configuracion.API.Controllers.Sri
                 _log.LogActivity("Error en Update User Customer " + ex.Message);
                 return BadRequest("Error en Update User Customer " + ex.Message);
             }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        { 
+            var parameters = new Dictionary<string, object>
+            {
+                {"userRoleId", User.GetUserRoleId()},
+                {"id", id},                   
+            };
+            var response = await _service.DeleteAsync(parameters);
+            return Ok(response); 
         }
     }
 }

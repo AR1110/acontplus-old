@@ -7,8 +7,7 @@ namespace WebUI.Controllers.Tributaria
     public class SubContribuyenteController : Controller
     {
         // GET: SubContribuyente
-        private readonly IConfiguration _config;
-        private readonly string _connectionStrings = string.Empty;
+        private readonly IConfiguration _config; 
         ApiResponse _gr = new();
         private SubContribuyenteDao _sc;
 

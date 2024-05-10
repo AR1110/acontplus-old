@@ -374,6 +374,8 @@
                             enabledConvertToDoc: item.codEstado === 'CBR' || item.codEstado === 'PE' || item.codEstado === 'PP',
                             enabledHistorialConvert: item.codEstado === 'TRA',
                             enabledHistorialCobro: item.codEstado === 'CBR' || item.codEstado === 'PP', 
+                            convertToDoc: item.convertToDoc,
+                            esAnulado: item.codEstado === 'A'
                         }
                     })
 
