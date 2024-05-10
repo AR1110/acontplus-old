@@ -17,9 +17,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- Author:		IGNACIO MANCHU
+-- Create date: 2024/05/15
+-- Description:	REPORT FOR COBROS
 -- =============================================
 -- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"NE","idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
