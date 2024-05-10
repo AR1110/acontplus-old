@@ -1,17 +1,16 @@
-﻿namespace Identity.API.Entities
-{
-    [Table("LoginFailed", Schema = "Seguridad")]
-    public class LoginFailed
-    {
-        public int Id { get; set; }
+﻿namespace Identity.API.Entities;
 
-        [MaxLength(100)]
-        public string Username { get; set; }
-        [MaxLength(100)]
-        public string Password { get; set; }
-        public string UserAgent { get; set; }
-        public DateTime ErrorDate { get; set; }
-        [MaxLength(15)]
-        public string IpAddress { get; set; }
-    }
+[Table("LoginFailed", Schema = "Seguridad")]
+public class LoginFailed
+{
+    public int Id { get; set; }
+
+    [MaxLength(100)] public string Username { get; set; }
+
+    [MaxLength(100)] public string Password { get; set; }
+
+    public string UserAgent { get; set; }
+    public DateTime ErrorDate { get; set; }
+
+    [MaxLength(15)] public string IpAddress { get; set; }
 }

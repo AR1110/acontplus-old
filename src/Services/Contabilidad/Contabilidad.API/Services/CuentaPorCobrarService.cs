@@ -1,45 +1,42 @@
-﻿namespace Contabilidad.API.Services
+﻿namespace Contabilidad.API.Services;
+
+public class CuentaPorCobrarService : ICuentaPorCobrarService
 {
-    public class CuentaPorCobrarService : ICuentaPorCobrarService
+    private readonly ContabilidadContext _context;
+    private readonly IADORepository _repository;
+    private readonly ApiResponse _response;
+
+    public CuentaPorCobrarService(IADORepository repository, ContabilidadContext context)
     {
-        private readonly IADORepository _repository;
-        private readonly ContabilidadContext _context;
-        private readonly ApiResponse _response;
+        _repository = repository;
+        _context = context;
+        _response = new ApiResponse();
+    }
 
-        public CuentaPorCobrarService(IADORepository repository, ContabilidadContext context)
+    public async Task<object> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync("Contabilidad.CuentaPorCobrar_Get", parameters);
+        if (ds.Tables.Count == 0)
         {
-            _repository = repository;
-            _context = context;
-            _response = new ApiResponse();
+            return null;
         }
 
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync("Contabilidad.CuentaPorCobrar_Get", parameters);
-            if (ds.Tables.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJSON(ds);
-            }
-        }
+        return DataConverters.DataSetToJSON(ds);
+    }
 
 
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Insert", parameters);
-        }
+    public async Task<string> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Insert", parameters);
+    }
 
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Update", parameters);
-        }
+    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.CuotaPorCobrar_Update", parameters);
+    }
 
-        public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
-        }
+    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SPExecuteDeprecatedAsync("Contabilidad.Caja_Delete", parameters);
     }
 }

@@ -1,28 +1,27 @@
-﻿namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers;
+
+public class DeviceCustomerController : BaseApiController
 {
-    public class DeviceCustomerController : BaseApiController
+    private readonly IDeviceCustomerService _service;
+
+    public DeviceCustomerController(IDeviceCustomerService service)
     {
-        private IDeviceCustomerService _service;
+        _service = service;
+    }
 
-        public DeviceCustomerController(IDeviceCustomerService service)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _service = service;
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await _service.GetAsync(parameters);
+        if (response == null)
+        {
+            return BadRequest("Can't Get Data");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId", User.GetUserRoleId()},
-                {"json", SqlStringParam.Sanitize(json)}
-            };
-            var response = await _service.GetAsync(parameters);
-            if (response == null)
-            {
-                return BadRequest("Can't Get Data");
-            }
-            return Ok(response);
-        }
+        return Ok(response);
     }
 }

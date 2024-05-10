@@ -1,7 +1,6 @@
-﻿namespace Identity.API.Interfaces
+﻿namespace Identity.API.Interfaces;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        string CreateToken(UserData data);
-    }
+    string CreateToken(UserData data);
 }

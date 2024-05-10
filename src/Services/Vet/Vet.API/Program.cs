@@ -37,13 +37,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
-           {
-               _ = endpoints.MapGet("/", context =>
-               {
-                   context.Response.Redirect("swagger");
-                   return Task.CompletedTask;
-               });
-           });
+{
+    _ = endpoints.MapGet("/", context =>
+    {
+        context.Response.Redirect("swagger");
+        return Task.CompletedTask;
+    });
+});
 
 app.MapControllers().RequireAuthorization();
 

@@ -1,74 +1,73 @@
-﻿namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers;
+
+public class BehaviorStatusController : BaseApiController
 {
-    public class BehaviorStatusController : BaseApiController
+    private readonly VetContext _context;
+
+    public BehaviorStatusController(VetContext context)
     {
-        private readonly VetContext _context;
+        _context = context;
+    }
 
-        public BehaviorStatusController(VetContext context)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BehaviorStatus>>> GetBehaviorStatuses()
+    {
+        return await _context.BehaviorStatuses.ToListAsync();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<BehaviorStatus>> GetBehaviorStatus(int id)
+    {
+        var behaviorStatus = await _context.BehaviorStatuses.FindAsync(id);
+
+        if (behaviorStatus == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<BehaviorStatus>>> GetBehaviorStatuses()
+        return behaviorStatus;
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutBehaviorStatus(int id, BehaviorStatus behaviorStatus)
+    {
+        if (id != behaviorStatus.Id)
         {
-            return await _context.BehaviorStatuses.ToListAsync();
+            return BadRequest();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<BehaviorStatus>> GetBehaviorStatus(int id)
+        _context.Entry(behaviorStatus).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<BehaviorStatus>> PostBehaviorStatus(BehaviorStatus behaviorStatus)
+    {
+        _context.BehaviorStatuses.Add(behaviorStatus);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction("GetBehaviorStatus", new { id = behaviorStatus.Id }, behaviorStatus);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteBehaviorStatus(int id)
+    {
+        var behaviorStatus = await _context.BehaviorStatuses.FindAsync(id);
+        if (behaviorStatus == null)
         {
-            var behaviorStatus = await _context.BehaviorStatuses.FindAsync(id);
-
-            if (behaviorStatus == null)
-            {
-                return NotFound();
-            }
-
-            return behaviorStatus;
+            return NotFound();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBehaviorStatus(int id, BehaviorStatus behaviorStatus)
-        {
-            if (id != behaviorStatus.Id)
-            {
-                return BadRequest();
-            }
+        _context.BehaviorStatuses.Remove(behaviorStatus);
+        await _context.SaveChangesAsync();
 
-            _context.Entry(behaviorStatus).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+        return Ok();
+    }
 
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<BehaviorStatus>> PostBehaviorStatus(BehaviorStatus behaviorStatus)
-        {
-            _context.BehaviorStatuses.Add(behaviorStatus);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBehaviorStatus", new { id = behaviorStatus.Id }, behaviorStatus);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBehaviorStatus(int id)
-        {
-            var behaviorStatus = await _context.BehaviorStatuses.FindAsync(id);
-            if (behaviorStatus == null)
-            {
-                return NotFound();
-            }
-
-            _context.BehaviorStatuses.Remove(behaviorStatus);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        private bool BehaviorStatusExists(int id)
-        {
-            return _context.BehaviorStatuses.Any(e => e.Id == id);
-        }
+    private bool BehaviorStatusExists(int id)
+    {
+        return _context.BehaviorStatuses.Any(e => e.Id == id);
     }
 }

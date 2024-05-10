@@ -6,14 +6,15 @@ export const enum ACCOUNTING_PATHS {
   ANTICIPO = 'Anticipo/',
   COMPROBANTE_INGRESO = 'ComprobanteIngreso/',
   SUB_ENTIDAD_FINANCIERA = 'SubEntidadFinanciera/',
-  CUENTA_POR_COBRAR = 'CuentaPorCobrar/'
+  CUENTA_POR_COBRAR = 'CuentaPorCobrar/',
+  CATEGORY = 'Category/',
+  SUBCATEGORY = 'Subcategory/',
 }
 
-
 export const enum PaymentTypeCode {
-  TAR = "TAR",
-  EFE = "EFE",
-  TRA = "TRA",
-  CHE = "CHE",
-  DOC = "DOC"
+  TAR = 'TAR',
+  EFE = 'EFE',
+  TRA = 'TRA',
+  CHE = 'CHE',
+  DOC = 'DOC',
 }

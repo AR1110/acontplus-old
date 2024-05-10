@@ -1,38 +1,38 @@
-﻿namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers;
+
+public class OrderStatusController : BaseApiController
 {
-    public class OrderStatusController : BaseApiController
+    private readonly TechnicalSupportContext _context;
+
+    public OrderStatusController(TechnicalSupportContext context)
     {
-        private readonly TechnicalSupportContext _context;
+        _context = context;
+    }
 
-        public OrderStatusController(TechnicalSupportContext context)
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        if (!_context.Categories.Any())
         {
-            _context = context;
+            return NoContent();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        return Ok(await _context.OrderStatuses.ToListAsync());
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Put(int id)
+    {
+        var status = await _context.OrderStatuses.FindAsync(id);
+        if (status == null)
         {
-            if (!_context.Categories.Any())
-            {
-                return NoContent();
-            }
-            return Ok(await _context.OrderStatuses.ToListAsync());
+            return NotFound("No se encontro dicho estado");
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Put(int id)
-        {
-            var status = await _context.OrderStatuses.FindAsync(id);
-            if (status == null)
-            {
-                return NotFound("No se encontro dicho estado");
-            }
-
-            status.Enabled = false;
-            status.Deleted = true;
-            _context.Entry(status).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return Ok("Eliminada Exitosamente");
-        }
+        status.Enabled = false;
+        status.Deleted = true;
+        _context.Entry(status).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+        return Ok("Eliminada Exitosamente");
     }
 }

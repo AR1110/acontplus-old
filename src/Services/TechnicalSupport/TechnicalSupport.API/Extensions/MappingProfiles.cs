@@ -1,10 +1,9 @@
-﻿namespace TechnicalSupport.API.Extensions
+﻿namespace TechnicalSupport.API.Extensions;
+
+public class MappingProfiles : Profile
 {
-    public class MappingProfiles : Profile
+    public MappingProfiles()
     {
-        public MappingProfiles()
-        {
-            CreateMap<OrderDto, Order>();
-        }
+        CreateMap<OrderDto, Order>();
     }
 }

@@ -1,43 +1,39 @@
-﻿namespace Contabilidad.API.Services
+﻿namespace Contabilidad.API.Services;
+
+public class SubEntidadFinancieraService : ISubEntidadFinancieraService
 {
-    public class SubEntidadFinancieraService : ISubEntidadFinancieraService
+    private readonly IADORepository _repository;
+    private readonly string nameSchema = "Contabilidad.SubEntidadFinanciera";
+
+    public SubEntidadFinancieraService(IADORepository repository)
     {
-        private readonly IADORepository _repository;
-        private readonly string nameSchema = "Contabilidad.SubEntidadFinanciera";
+        _repository = repository;
+    }
 
-        public SubEntidadFinancieraService(IADORepository repository)
+    public async Task<object> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
+        if (ds.Tables.Count == 0)
         {
-            _repository = repository;
+            return null;
         }
 
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
-        {
-            var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-            if (ds.Tables.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return DataConverters.DataSetToJSON(ds);
-            }
-        }
+        return DataConverters.DataSetToJSON(ds);
+    }
 
 
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
-        }
+    public async Task<string> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Insert", parameters);
+    }
 
-        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
-        }
+    public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Update", parameters);
+    }
 
-        public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
-        }
-
+    public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.SPExecuteDeprecatedAsync(nameSchema + "_Delete", parameters);
     }
 }

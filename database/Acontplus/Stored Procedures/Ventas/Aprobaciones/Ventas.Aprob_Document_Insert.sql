@@ -289,8 +289,10 @@ BEGIN
 				BEGIN
 					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'TRA'
 
-					UPDATE cc SET cc.idEstadoPago = @idEstadoDocumento FROM Contabilidad.CuentaPorCobrar cc WITH(NOLOCK)
-				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = cc.idDocumento AND cc.codDoc = 'NE'
+                    UPDATE dbo.NotaEntrega WITH (ROWLOCK) SET convertToDoc = 1 
+                    WHERE idNotaEntrega IN (
+                                              SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId  
+                                           )
 
 				END 
 

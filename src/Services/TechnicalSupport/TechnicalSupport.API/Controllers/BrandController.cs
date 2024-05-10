@@ -1,37 +1,44 @@
-﻿namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers;
+
+public class BrandController : BaseApiController
 {
-    public class BrandController : BaseApiController
+    private readonly IBrandService _brandService;
+
+    public BrandController(IBrandService brandService)
     {
-        private readonly IBrandService _brandService;
-        public BrandController(IBrandService brandService)
+        _brandService = brandService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var response = await _brandService.GetAsync(new Dictionary<string, object>
         {
-            _brandService = brandService;
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            var response = await _brandService.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
-            return Ok(response);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Brand brand)
-        {
-            brand.UserId = User.GetUserId();
-            var response = await _brandService.AddAsync(brand);
-            return Ok(response);
-        }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Brand brand)
-        {
-            brand.UserId = User.GetUserId();
-            var response = await _brandService.UpdateAsync(id, brand);
-            return Ok(response);
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var response = await _brandService.DeleteAsync(User.GetUserId(), id);
-            return Ok(response);
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        });
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] Brand brand)
+    {
+        brand.UserId = User.GetUserId();
+        var response = await _brandService.AddAsync(brand);
+        return Ok(response);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] Brand brand)
+    {
+        brand.UserId = User.GetUserId();
+        var response = await _brandService.UpdateAsync(id, brand);
+        return Ok(response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var response = await _brandService.DeleteAsync(User.GetUserId(), id);
+        return Ok(response);
     }
 }
