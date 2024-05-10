@@ -1,52 +1,73 @@
-﻿namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers;
+
+public class MedicalHistoriesController : BaseApiController
 {
-    public class MedicalHistoriesController : BaseApiController
+    private readonly VetContext _context;
+    private readonly IMedicalHistory _medicalHistory;
+
+    public MedicalHistoriesController(VetContext context, IMedicalHistory medicalHistory)
     {
-        private readonly VetContext _context;
-        private readonly IMedicalHistory _medicalHistory;
+        _context = context;
+        _medicalHistory = medicalHistory;
+    }
 
-        public MedicalHistoriesController(VetContext context, IMedicalHistory medicalHistory)
+    [HttpGet]
+    public async Task<ActionResult<ApiResponse>> GetMedicalHistories(string json)
+    {
+        var companyId = Convert.ToInt32(User.GetCompanyId());
+        var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", json } };
+        return await _medicalHistory.GetAsync(parameters);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ApiResponse>> GetMedicalHistory(int id)
+    {
+        return await _medicalHistory.GetByIdAsync(id);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutMedicalHistory(int id, MedicalHistory medicalHistory)
+    {
+        if (id != medicalHistory.Id)
         {
-            _context = context;
-            _medicalHistory = medicalHistory;
+            return BadRequest();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetMedicalHistories(string json)
+        var mh = await _context.MedicalHistories.FindAsync(id);
+        mh.Date = medicalHistory.Date;
+        mh.Observations = medicalHistory.Observations;
+        mh.Age = medicalHistory.Age;
+        mh.Weight = medicalHistory.Weight;
+        mh.UpdatedAt = DateTime.Now;
+        mh.CodEstab = medicalHistory.CodEstab;
+        mh.UserId = User.GetUserId();
+
+        var pet = await _context.Pets.FindAsync(mh.PetId);
+        if (pet != null)
         {
-            int companyId = Convert.ToInt32(User.GetCompanyId());
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", User.GetUserRoleId() },
-                { "json", json }
-            };
-            return await _medicalHistory.GetAsync(parameters);
+            pet.Age = medicalHistory.Age;
+            pet.Weight = medicalHistory.Weight;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse>> GetMedicalHistory(int id)
+        _context.Update(pet);
+        await _context.SaveChangesAsync();
+
+        _context.Update(mh);
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistory medicalHistory)
+    {
+        try
         {
-            return await _medicalHistory.GetByIdAsync(id);
-        }
+            medicalHistory.UserId = User.GetUserId();
+            _context.MedicalHistories.Add(medicalHistory);
+            await _context.SaveChangesAsync();
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMedicalHistory(int id, MedicalHistory medicalHistory)
-        {
-            if (id != medicalHistory.Id)
-            {
-                return BadRequest();
-            }
-
-            var mh = await _context.MedicalHistories.FindAsync(id);
-            mh.Date = medicalHistory.Date;
-            mh.Observations = medicalHistory.Observations;
-            mh.Age = medicalHistory.Age;
-            mh.Weight = medicalHistory.Weight;
-            mh.UpdatedAt = DateTime.Now;
-            mh.CodEstab = medicalHistory.CodEstab;
-            mh.UserId = User.GetUserId();
-
-            var pet = await _context.Pets.FindAsync(mh.PetId);
+            var pet = await _context.Pets.FindAsync(medicalHistory.PetId);
             if (pet != null)
             {
                 pet.Age = medicalHistory.Age;
@@ -56,60 +77,34 @@
             _context.Update(pet);
             await _context.SaveChangesAsync();
 
-            _context.Update(mh);
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            return CreatedAtAction("GetMedicalHistory", new { id = medicalHistory.Id }, medicalHistory);
         }
-
-        [HttpPost]
-        public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistory medicalHistory)
+        catch (Exception)
         {
-            try
-            {
-                medicalHistory.UserId = User.GetUserId();
-                _context.MedicalHistories.Add(medicalHistory);
-                await _context.SaveChangesAsync();
-
-                var pet = await _context.Pets.FindAsync(medicalHistory.PetId);
-                if (pet != null)
-                {
-                    pet.Age = medicalHistory.Age;
-                    pet.Weight = medicalHistory.Weight;
-                }
-
-                _context.Update(pet);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction("GetMedicalHistory", new { id = medicalHistory.Id }, medicalHistory);
-            }
-            catch (Exception)
-            {
-                return BadRequest("Error al guardar");
-            }
+            return BadRequest("Error al guardar");
         }
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMedicalHistory(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteMedicalHistory(int id)
+    {
+        var medicalHistory = await _context.MedicalHistories.FindAsync(id);
+        if (medicalHistory == null)
         {
-            var medicalHistory = await _context.MedicalHistories.FindAsync(id);
-            if (medicalHistory == null)
-            {
-                return NotFound();
-            }
-
-            medicalHistory.Deleted = true;
-            medicalHistory.Enabled = false;
-
-            _context.Entry(medicalHistory).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            return NotFound();
         }
 
-        private bool MedicalHistoryExists(int id)
-        {
-            return _context.MedicalHistories.Any(e => e.Id == id);
-        }
+        medicalHistory.Deleted = true;
+        medicalHistory.Enabled = false;
+
+        _context.Entry(medicalHistory).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    private bool MedicalHistoryExists(int id)
+    {
+        return _context.MedicalHistories.Any(e => e.Id == id);
     }
 }
