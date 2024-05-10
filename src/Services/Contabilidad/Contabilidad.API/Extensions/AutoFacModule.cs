@@ -1,21 +1,18 @@
-﻿namespace Contabilidad.API.Extensions
+﻿namespace Contabilidad.API.Extensions;
+
+public class AutoFacModule : Module
 {
-    public class AutoFacModule : Module
+    protected override void Load(ContainerBuilder builder)
     {
-        protected override void Load(ContainerBuilder builder)
+        builder.RegisterType<ContabilidadContext>().As<BaseContext>();
+        builder.Register(ctx =>
         {
-            builder.RegisterType<ContabilidadContext>().As<BaseContext>();
-            builder.Register(ctx =>
+            var allContext = new Dictionary<string, BaseContext>
             {
-                var allContext = new Dictionary<string, BaseContext>
-                {
-                    { "ContabilidadContext", ctx.Resolve<ContabilidadContext>() }
-                };
-                return new DbContextFactory(allContext);
-
-            });
-            builder.RegisterType<ADORepository>().As<IADORepository>();
-
-        }
+                { "ContabilidadContext", ctx.Resolve<ContabilidadContext>() }
+            };
+            return new DbContextFactory(allContext);
+        });
+        builder.RegisterType<ADORepository>().As<IADORepository>();
     }
 }
