@@ -79,6 +79,8 @@ export enum CODE_REPORT {
   CCPC = 'CCPC', //Contabilidad Cartera Proveedor Cuota
   CDCC = 'CDCC', //Contabilidad Detalle Control Caja
   RTS = 'RTS', // Technical Support Report
+  RCXC = 'RCXC', // Contabilidad Cobros por Cuotas.
+  RCXD = 'RCXD' // Contabilidad Cobros por Documentos
 }
 
 export enum CODE_ESTADO {

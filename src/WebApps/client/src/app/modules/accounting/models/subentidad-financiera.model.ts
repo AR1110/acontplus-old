@@ -5,5 +5,6 @@ export interface SubEntidadFinanciera {
   codigo: string
 }
 
-
 export interface SubEntidadFinancieraRead extends SubEntidadFinanciera {}
+
+export interface SubEntidadFinancieraSelectHtmlOnly extends Pick<SubEntidadFinanciera, 'idSubEntidadFinanciera' | 'idEntidadFinanciera' | 'descripcion' | 'codigo'> { }
