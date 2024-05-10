@@ -40,6 +40,9 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		                                                         ELSE 0 END     
           ,cc.mora
           ,us.nombreUsuario
+          ,CASE WHEN cc.codDoc  = 'NE' THEN (SELECT TOP 1 ne.convertToDoc FROM dbo.NotaEntrega ne WITH (NOLOCK) WHERE ne.idNotaEntrega = cc.idDocumento)
+                               
+           END as convertToDoc
 	FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
 	INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision  = cc.idPuntoEmision
 	INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab        = pt.codEstab

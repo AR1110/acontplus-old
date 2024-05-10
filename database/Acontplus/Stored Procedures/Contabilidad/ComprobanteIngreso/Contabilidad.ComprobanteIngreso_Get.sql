@@ -260,6 +260,9 @@ BEGIN
 				  ,ci.abono
 				  ,ci.cambio
 				  ,estado           = CASE ci.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END 
+                  ,(
+                    SELECT COUNT(DISTINCT cc.idCuentaPorCobrar) FROM Contabilidad.Historial_Cobro cc WITH (NOLOCK) WHERE cc.idComprobanteIngreso = ci.idComprobanteIngreso
+                   ) as cantDocs
 			FROM dbo.ComprobanteIngreso     ci WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento  es WITH (NOLOCK) ON es.codEstab = ci.codEstab
 			WHERE ci.idComprobanteIngreso IN (SELECT hc.idComprobanteIngreso FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar)
