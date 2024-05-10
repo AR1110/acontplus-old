@@ -1,63 +1,65 @@
-﻿namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers;
+
+public class DeviceController : BaseApiController
 {
-    public class DeviceController : BaseApiController
+    private readonly IDeviceService _deviceService;
+
+    public DeviceController(IDeviceService deviceService)
     {
-        private IDeviceService _deviceService;
+        _deviceService = deviceService;
+    }
 
-        public DeviceController(IDeviceService deviceService)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _deviceService = deviceService;
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await _deviceService.GetAsync(parameters);
+        if (response == null)
+        {
+            return BadRequest("Can't Get Data");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] Device device)
+    {
+        device.UserId = User.GetUserId();
+        var response = await _deviceService.AddAsync(device);
+        if (response == null)
         {
-            var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId", User.GetUserRoleId()},
-                {"json", SqlStringParam.Sanitize(json)}
-            };
-            var response = await _deviceService.GetAsync(parameters);
-            if (response == null)
-            {
-                return BadRequest("Can't Get Data");
-            }
-            return Ok(response);
+            return BadRequest("Cant Save");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Device device)
+        return Ok(response);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] Device device)
+    {
+        device.UserId = User.GetUserId();
+        var response = await _deviceService.UpdateAsync(id, device);
+        if (response == null)
         {
-            device.UserId = User.GetUserId();
-            var response = await _deviceService.AddAsync(device);
-            if (response == null)
-            {
-                return BadRequest("Cant Save");
-            }
-            return Ok(response);
+            return BadRequest("Cant Update");
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Device device)
+        return Ok(response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var response = await _deviceService.DeleteAsync(id, User.GetUserId());
+        if (response == null)
         {
-            device.UserId = User.GetUserId();
-            var response = await _deviceService.UpdateAsync(id, device);
-            if (response == null)
-            {
-                return BadRequest("Cant Update");
-            }
-            return Ok(response);
+            return BadRequest("Cant Delete");
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var response = await _deviceService.DeleteAsync(id, User.GetUserId());
-            if (response == null)
-            {
-                return BadRequest("Cant Delete");
-            }
-            return Ok(response);
-        }
+        return Ok(response);
     }
 }

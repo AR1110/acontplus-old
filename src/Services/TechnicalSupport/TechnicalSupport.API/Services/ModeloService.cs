@@ -1,7 +1,7 @@
 ﻿public class ModeloService : IModeloService
 {
-    private readonly IADORepository _repository;
     private readonly TechnicalSupportContext _context;
+    private readonly IADORepository _repository;
 
     public ModeloService(TechnicalSupportContext context, IADORepository repository)
     {
@@ -41,6 +41,7 @@
         {
             return new ApiResponse { code = "0", message = "No data" };
         }
+
         return new ApiResponse { code = "1", payload = DataConverters.DataTableToJSON(dt) };
     }
 
