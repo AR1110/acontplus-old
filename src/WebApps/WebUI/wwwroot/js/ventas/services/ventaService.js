@@ -369,15 +369,17 @@
                             codEstado: item.codEstado,
                             tiempoCredito: item.tiempoCredito,
                             esContado: item.tiempoCredito,
-                            disabledUpdate: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.anulada,
-                            disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR',
-                            enabledConvertToDoc: item.codEstado === 'CBR' || item.codEstado === 'PE' || item.codEstado === 'PP',
-                            enabledHistorialConvert: item.codEstado === 'TRA',
+                            disabledUpdate: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.anulada || item.convertToDoc,
+                            disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.convertToDoc,
+                            enabledConvertToDoc: !(item.convertToDoc) || item.codEstado === 'CBR'  || item.codEstado === 'PP',
+                            enabledHistorialConvert: item.convertToDoc,
                             enabledHistorialCobro: item.codEstado === 'CBR' || item.codEstado === 'PP', 
                             convertToDoc: item.convertToDoc,
-                            esAnulado: item.codEstado === 'A'
+                            esAnulado: item.codEstado === 'A',
+                            enabledPayment: !(item.convertToDoc || item.codEstado === 'A') && (item.codEstado === 'PP' || item.codEstado === 'PE')
+                            
                         }
-                    })
+                    })                    
 
 
                     return {

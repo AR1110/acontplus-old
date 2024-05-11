@@ -250,9 +250,8 @@
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                <md-menu-item ng-if="(accion.cobroPago && ne.codEstado==='PE') || (accion.cobroPago && ne.codEstado==='PP')">
-                                                    <md-button ng-click="opcionCobro(ne)"
-                                                            ng-disabled="ne.codEstado==='A' || ne.cobro || ne.gestion">
+                                                <md-menu-item ng-if="(accion.cobroPago && ne.enabledPayment)">
+                                                    <md-button ng-click="opcionCobro(ne)" >
                                                         <span md-menu-align-target>
                                                             <i class="ti-shortcode"></i>
                                                             Cobro
