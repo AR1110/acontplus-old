@@ -1,12 +1,8 @@
-﻿using Common.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+﻿namespace Compras.API.Data;
 
-namespace Compras.API.Data
+public class ComprasContext : BaseContext
 {
-    public class ComprasContext : BaseContext
+    public ComprasContext(DbContextOptions<ComprasContext> options) : base(options)
     {
-        public ComprasContext(DbContextOptions<ComprasContext> options) : base(options)
-        {
-        }
     }
 }
