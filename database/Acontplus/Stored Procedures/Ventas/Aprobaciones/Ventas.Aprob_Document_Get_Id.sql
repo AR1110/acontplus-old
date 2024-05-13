@@ -40,7 +40,8 @@ BEGIN
 	      ,totalSinImpuestos
 	      ,totalDescuento
 	      ,propina
-	      ,importeTotal	   
+	      ,importeTotal	  
+          ,d.idUsuario
 	FROM Ventas.Aprob_Document d WITH (NOLOCK)
 	INNER JOIN Cliente        cl WITH (NOLOCK) ON cl.idCliente = d.idCliente
 	WHERE d.idAprob_Document = @id

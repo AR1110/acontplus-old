@@ -48,6 +48,7 @@ BEGIN
 		,propina NUMERIC(18,5) NOT NULL
 		,importeTotal NUMERIC(18,5) NOT NULL
 		,observacion VARCHAR(300) NULL
+        ,idUsuario INT NOT NULL
 	)
 
 	DECLARE @tbDetalle AS TABLE (
@@ -108,8 +109,8 @@ BEGIN
         )
 
 		INSERT INTO @tbComprobante
-		      (idCliente,fechaEmision,totalSinImpuestos,totalDescuento,propina,importeTotal,observacion)
-		SELECT idCliente,fechaEmision,totalSinImpuestos,totalDescuento,propina,importeTotal,observacion
+		      (idCliente,fechaEmision,totalSinImpuestos,totalDescuento,propina,importeTotal,observacion,idUsuario)
+		SELECT idCliente,fechaEmision,totalSinImpuestos,totalDescuento,propina,importeTotal,observacion,idUsuario
 		FROM OPENJSON(@comprobante)
 		WITH (
 				idCliente                   INT '$.idCliente' 
@@ -119,6 +120,7 @@ BEGIN
 			   ,propina           NUMERIC(18,5) '$.propina'
 			   ,importeTotal      NUMERIC(18,5) '$.importeTotal'
 			   ,observacion        VARCHAR(300) '$.observacion'
+               ,idUsuario         INT 
 		     )
 
 		INSERT INTO @tbDetalle 
@@ -223,6 +225,7 @@ BEGIN
                ,ap.propina                 = tb.propina
                ,ap.importeTotal            = tb.importeTotal
                ,ap.observacion             = tb.observacion 
+               ,ap.idUsuario               = tb.idUsuario
             FROM Ventas.Aprob_Document ap
 			INNER JOIN @tbComprobante tb ON idAprob_Document  = @id
 

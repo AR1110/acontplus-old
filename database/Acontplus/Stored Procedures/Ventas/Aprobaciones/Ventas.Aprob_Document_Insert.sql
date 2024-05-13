@@ -52,6 +52,7 @@ BEGIN
 		,docOrigen VARCHAR(15) NOT NULL
 		,docDestino VARCHAR(15) NOT NULL
 		,observacion VARCHAR(300) NULL
+        ,idUsuario INT NOT NULL
 	)
 
 	DECLARE @tbDetalle AS TABLE (
@@ -119,8 +120,8 @@ BEGIN
         )
 
 		INSERT INTO @tbComprobante
-		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,docDestino,observacion)
-		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,docDestino,observacion
+		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,docDestino,observacion,idUsuario)
+		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,propina,importeTotal,docOrigen,docDestino,observacion,idUsuario
 		FROM OPENJSON(@comprobante)
 		WITH (
 				idCliente                   INT '$.idCliente' 
@@ -134,6 +135,7 @@ BEGIN
 			   ,docOrigen           VARCHAR(15) '$.docOrigen'
 			   ,docDestino          VARCHAR(15) '$.docDestino'
 			   ,observacion        VARCHAR(300) '$.observacion'
+               ,idUsuario        INT 
 		     )
 
 		INSERT INTO @tbDetalle 
@@ -193,6 +195,7 @@ BEGIN
 		   ,@ptoEmi                  = pt.ptoEmi
 		   ,@ambiente                = pt.ambiente
 		   ,@fechaEmision            = dt.fechaEmision
+           ,@idUsuario               = dt.idUsuario
 		FROM @tbComprobante dt 
 		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = dt.idPuntoEmision
 		INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab

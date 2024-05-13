@@ -72,11 +72,13 @@ BEGIN
 																			ELSE ''''
 														END 
                               ,count(*) over() as totalRecords
+                              ,userName                = u.nombreUsuario 
 						FROM Ventas.Aprob_Document     ad WITH (NOLOCK) 
 						INNER JOIN dbo.EstadoPago      ep WITH (NOLOCK) ON ep.codigo         = ad.codEstado
 						INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = ad.idCliente
 						INNER JOIN PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
 						INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab 
+                        INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario       = ad.idUsuario  
 						WHERE ad.idEntidad = @idEntidad 
                           AND es.codEstab = @codEstab '
 
@@ -103,6 +105,12 @@ BEGIN
                 ,pageIndex       INT
 			    ,pageSize        INT
             )
+
+             
+            IF EXISTS(SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @idUsuarioRol AND viewOthersDocs=0)
+                BEGIN 
+                    SELECT TOP 1 @byUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @idUsuarioRol
+                END
 
 	        IF @secuencial IS NOT NULL
 		        BEGIN
