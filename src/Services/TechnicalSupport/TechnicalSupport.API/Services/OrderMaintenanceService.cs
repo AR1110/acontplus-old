@@ -17,10 +17,8 @@
         {
             return new ApiResponse { code = "0", message = "No se encontraron datos" };
         }
-        else
-        {
-            return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
-        }
+
+        return new ApiResponse { code = "1", payload = DataConverters.DataSetToJSON(ds) };
     }
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)

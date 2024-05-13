@@ -1,47 +1,48 @@
-﻿namespace Vet.API.Services
+﻿namespace Vet.API.Services;
+
+public class MedicalHistoryService : IMedicalHistory
 {
-    public class MedicalHistoryService : IMedicalHistory
+    private readonly IADORepository _generic;
+    private readonly ApiResponse _response;
+
+    public MedicalHistoryService(IADORepository genericRepository)
     {
-        private readonly IADORepository _generic;
-        private readonly ApiResponse _response;
-        public MedicalHistoryService(IADORepository genericRepository)
-        {
-            _response = new ApiResponse();
-            _generic = genericRepository;
-        }
-        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-        {
-            //var sqlParam = new SqlParameter("@json", Converters.SerializeDictionary(parameters.Data));
-            //var result = _context.MedicalHistories.FromSqlRaw($"Pet.MedicalHistory_Get {sqlParam}");
-            var dt = await _generic.GetDataTableAsync("Pet.MedicalHistory_Get", parameters);
+        _response = new ApiResponse();
+        _generic = genericRepository;
+    }
 
-            if (DataValidation.DataTableIsNull(dt))
-            {
-                _response.Create(code: "0", "La transacción no devolvio respuesta");
-            }
-            else
-            {
-                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
-            }
-            return _response;
-        }
-        public async Task<ApiResponse> GetByIdAsync(int id)
-        {
-            var parameters = new Dictionary<string, object>()
-            {
-                {"id", id}
-            };
-            var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_GetById", parameters);
+    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        //var sqlParam = new SqlParameter("@json", Converters.SerializeDictionary(parameters.Data));
+        //var result = _context.MedicalHistories.FromSqlRaw($"Pet.MedicalHistory_Get {sqlParam}");
+        var dt = await _generic.GetDataTableAsync("Pet.MedicalHistory_Get", parameters);
 
-            if (DataValidation.DataTableIsNull(ds.Tables[0]))
-            {
-                _response.Create(code: "0", "La transacción no devolvio respuesta");
-            }
-            else
-            {
-                _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds));
-            }
-            return _response;
+        if (DataValidation.DataTableIsNull(dt))
+        {
+            _response.Create("0", "La transacción no devolvio respuesta");
         }
+        else
+        {
+            _response.Create("1", payload: DataConverters.DataTableToJSON(dt));
+        }
+
+        return _response;
+    }
+
+    public async Task<ApiResponse> GetByIdAsync(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "id", id } };
+        var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_GetById", parameters);
+
+        if (DataValidation.DataTableIsNull(ds.Tables[0]))
+        {
+            _response.Create("0", "La transacción no devolvio respuesta");
+        }
+        else
+        {
+            _response.Create("1", payload: DataConverters.DataSetToJSON(ds));
+        }
+
+        return _response;
     }
 }

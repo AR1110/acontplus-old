@@ -47,7 +47,7 @@ export const routes: Routes = [
     }
   },
   {
-    path: 'establishment-page',
+    path: 'establishment',
     title: 'Establecimiento',
     component: EstablishmentPageComponent,
     data: {

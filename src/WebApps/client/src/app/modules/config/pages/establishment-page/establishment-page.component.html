@@ -1,5 +1,5 @@
 <app-breadcrumb>
-  <button type="button"  class="btn btn-info  m-l-15 text-white" (click)="openModalAddEdit()">
+  <button type="button" class="btn btn-info  m-l-15 text-white" (click)="openModalAddEdit()">
     <fa-icon [icon]="'plus'"></fa-icon> Nuevo
   </button>
 </app-breadcrumb>
@@ -7,29 +7,123 @@
 
 <div class="card">
   <div class="card-body">
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Nro.</th>
-            <th>Op.</th>
-            <th>Nro. Establecimiento</th>
-            <th>Nombre Comercial</th>
-            <th>Ubicación</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+    <div ngbAccordion [closeOthers]="true">
+      @for (item of establishments; track item) {
+      <div ngbAccordionItem #first="ngbAccordionItem" (shown)="onEstabShow(item.idEstablecimiento)" (hidden)="onEstabHide()">
+        <div ngbAccordionHeader class="accordion-button custom-header d-flex justify-content-between">
+          <div class="d-flex justify-content-start">
+            <div class="d-flex flex-row">
+              <div class="p-1"><span class="font-weight-bold">{{item.estab}}</span> - </div>
+              <div class="p-1">{{ item.nombreComercial }}</div>
+              <div class="p-1">
+                @if (item.estado) {
+                <span class="badge bg-success">ABIERTO</span>
+                }@else {
+                <span class="badge bg-danger">CERRADO</span>
+                }
+              </div>
+
+            </div>
+          </div>
+          <div class="d-flex justify-content-end">
+            <div class="d-grid gap-2 d-md-flex">
+              <button type="button" class="btn btn-info btn-sm" (click)="openModalAddEdit(item.idEstablecimiento)">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>
+              </button>
+
+              @if (item.estado) {
+              <button type="button" class="btn btn-danger btn-sm" placement="top" ngbTooltip="Cerrar Establecimiento"
+                (click)="askToCloseEstab(item.idEstablecimiento)">
+                <fa-icon [icon]="'close'"></fa-icon>
+              </button>
+              }
+
+              <button ngbAccordionToggle class="btn btn-secondary btn-sm ">
+                <fa-icon [icon]="'eye'"></fa-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div ngbAccordionCollapse>
+          <div ngbAccordionBody>
+            <ng-template>
+              <div class="row">
+                <div class="col-xl-5 col-lg-5 col-md-12 col-12">
+                  <div class="card border-primary border-1">
+
+                    <div class="card-body">
+                      <h1>Imagen</h1>
+
+                      <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-12"></div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xl-7 col-lg-7 col-md-12 col-12">
+                  <div class="card border-dark border-1">
+                    <div class="card-header d-flex flex-row justify-content-between align-content-center h-25">
+                      <span class="card-title ">Puntos de Emisión</span>
+                      <button type="button" class="btn btn-info btn-sm">
+                        Nuevo
+                      </button>
+                    </div>
+                    <div class="card-body ">
+                      <div class="table-responsive ">
+                        <table class="table table-condensed">
+                          <thead>
+                            <tr>
+                              <th>Op.</th>
+                              <th>N°</th>
+                              <th>Punto de Emisión</th>
+                              <th>Ambiente</th>
+                              <th>Estado </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (item of puntosEmision; track $index) {
+                            <tr>
+                              <td>
+                                <div class="d-flex flex-row gap-1 justify-content-center">
+                                  <button type="button" ng-click="$ctrl.openModalPtoEmisionEdit(item)"
+                                    class="btn btn-info btn-xs">
+                                        <fa-icon [icon]="'pencil'"></fa-icon>
+                                  </button>
+                                  <button type="button" ng-click="$ctrl.askToDeletePtoEmision(item)"
+                                    class="btn btn-danger btn-xs">
+                                    <fa-icon [icon]="'trash'"></fa-icon>
+                                  </button>
+                                </div>
+                              </td>
+                              <td>{{$index+1}}</td>
+                              <td>{{item.ptoEmi}}</td>
+                              <td>{{item.descripcion}}</td>
+                              <td>
+
+                                <div [innerHTML]="item.estado | primaryStatus"></div>
+                              </td>
+                            </tr>
+                            }@empty {
+                            <tr class="text-center">
+                              <td colspan="5">No hay registros</td>
+                            </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      }
     </div>
   </div>
 </div>

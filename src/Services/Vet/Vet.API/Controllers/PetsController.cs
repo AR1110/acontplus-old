@@ -1,147 +1,136 @@
-﻿namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers;
+
+public class PetsController : BaseApiController
 {
-    public class PetsController : BaseApiController
+    private readonly VetContext _context;
+    private readonly IPetService _petService;
+
+    public PetsController(VetContext context, IPetService petService)
     {
-        private readonly VetContext _context;
-        private readonly IPetService _petService;
+        _context = context;
+        _petService = petService;
+    }
 
-        public PetsController(VetContext context, IPetService petService)
+    [HttpGet]
+    public async Task<ActionResult<ApiResponse>> GetPets(string json)
+    {
+        var companyId = Convert.ToInt32(User.GetCompanyId());
+        if (!_context.Pets.Any(x => x.CompanyId == companyId))
         {
-            _context = context;
-            _petService = petService;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetPets(string json)
-        {
-            int companyId = Convert.ToInt32(User.GetCompanyId());
-            if (!_context.Pets.Any(x => x.CompanyId == companyId))
-            {
-                return Ok();
-            }
-            var parameters = new Dictionary<string, object>
-            {
-                { "companyId", companyId },
-                { "json", json}
-            };
-
-            return await _petService.GetAsync(parameters);
-        }
-
-        [HttpGet("search")]
-        public async Task<ActionResult<ApiResponse>> Search(string json)
-        {
-            int companyId = Convert.ToInt32(User.GetCompanyId());
-            if (!_context.Pets.Any(x => x.CompanyId == companyId))
-            {
-                //return Ok();
-            }
-            var parameters = new Dictionary<string, object>
-            {
-                { "companyId", companyId },
-                { "json", json}
-            };
-
-            return await _petService.SearchAsync(parameters);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Pet>> GetPet(int id)
-        {
-            var pet = await _context.Pets.FindAsync(id);
-
-            if (pet == null)
-            {
-                return NotFound();
-            }
-
-            return pet;
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPet(int id, Pet pet)
-        {
-            if (id != pet.Id)
-            {
-                return BadRequest();
-            }
-
-            var petFounded = await _context.Pets.FindAsync(id);
-            petFounded.Name = pet.Name;
-            petFounded.PetTypeId = pet.PetTypeId;
-            petFounded.BreedId = pet.BreedId;
-            petFounded.GenderId = pet.GenderId;
-            petFounded.Color = pet.Color;
-            petFounded.Enabled = pet.Enabled;
-            petFounded.Weight = pet.Weight;
-            petFounded.UpdatedAt = DateTime.Now;
-            petFounded.UserId = User.GetUserId();
-
-            try
-            {
-                _context.Update(petFounded);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PetExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
             return Ok();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Pet>> PostPet(Pet pet)
+        var parameters = new Dictionary<string, object> { { "companyId", companyId }, { "json", json } };
+
+        return await _petService.GetAsync(parameters);
+    }
+
+    [HttpGet("search")]
+    public async Task<ActionResult<ApiResponse>> Search(string json)
+    {
+        var companyId = Convert.ToInt32(User.GetCompanyId());
+        if (!_context.Pets.Any(x => x.CompanyId == companyId))
         {
-            pet.UserId = User.GetUserId();
-            _context.Pets.Add(pet);
+            //return Ok();
+        }
+
+        var parameters = new Dictionary<string, object> { { "companyId", companyId }, { "json", json } };
+
+        return await _petService.SearchAsync(parameters);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Pet>> GetPet(int id)
+    {
+        var pet = await _context.Pets.FindAsync(id);
+
+        if (pet == null)
+        {
+            return NotFound();
+        }
+
+        return pet;
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutPet(int id, Pet pet)
+    {
+        if (id != pet.Id)
+        {
+            return BadRequest();
+        }
+
+        var petFounded = await _context.Pets.FindAsync(id);
+        petFounded.Name = pet.Name;
+        petFounded.PetTypeId = pet.PetTypeId;
+        petFounded.BreedId = pet.BreedId;
+        petFounded.GenderId = pet.GenderId;
+        petFounded.Color = pet.Color;
+        petFounded.Enabled = pet.Enabled;
+        petFounded.Weight = pet.Weight;
+        petFounded.UpdatedAt = DateTime.Now;
+        petFounded.UserId = User.GetUserId();
+
+        try
+        {
+            _context.Update(petFounded);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPet", new { id = pet.Id }, pet);
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePet(int id)
+        catch (DbUpdateConcurrencyException)
         {
-            var pet = await _context.Pets.FindAsync(id);
-            if (pet == null)
+            if (!PetExists(id))
             {
                 return NotFound();
             }
 
-            pet.Deleted = true;
-            pet.Enabled = false;
-            _context.Entry(pet).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PetExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Ok();
+            throw;
         }
 
-        private bool PetExists(int id)
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Pet>> PostPet(Pet pet)
+    {
+        pet.UserId = User.GetUserId();
+        _context.Pets.Add(pet);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction("GetPet", new { id = pet.Id }, pet);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePet(int id)
+    {
+        var pet = await _context.Pets.FindAsync(id);
+        if (pet == null)
         {
-            return _context.Pets.Any(e => e.Id == id);
+            return NotFound();
         }
+
+        pet.Deleted = true;
+        pet.Enabled = false;
+        _context.Entry(pet).State = EntityState.Modified;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!PetExists(id))
+            {
+                return NotFound();
+            }
+
+            throw;
+        }
+
+        return Ok();
+    }
+
+    private bool PetExists(int id)
+    {
+        return _context.Pets.Any(e => e.Id == id);
     }
 }

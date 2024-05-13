@@ -1,59 +1,64 @@
-﻿namespace Contabilidad.API.Controllers.v2
+﻿namespace Contabilidad.API.Controllers.v2;
+
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiController]
+[ApiVersion("2.0")]
+public class ControlCajaController : ControllerBase
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiController]
-    [ApiVersion("2.0")]
-    public class ControlCajaController : ControllerBase
+    private readonly IControlCajaService _service;
+
+    public ControlCajaController(IControlCajaService service)
     {
-        private readonly IControlCajaService _service;
-        public ControlCajaController(IControlCajaService service)
+        _service = service;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _service = service;
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+
+        var response = await _service.GetAsync(parameters);
+        if (response == null)
+        {
+            return NoContent();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        ;
+
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId", User.GetUserRoleId()},
-                {"json", SqlStringParam.Sanitize(json)}
-            };
+            { "userRoleId", User.GetUserRoleId() },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        var response = await _service.AddAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-            var response = await _service.GetAsync(parameters);
-            if (response == null)
-            {
-                return NoContent();
-            };
+        ;
+        return Ok(response);
+    }
 
-            return Ok(response);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId", User.GetUserRoleId()},
-                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-            };
-            var response = await _service.AddAsync(parameters);
-            if (response == null) { return NoContent(); };
-            return Ok(response);
-        }
+            { "userRoleId", User.GetUserRoleId() },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+        };
+        var response = await _service.UpdateAsync(parameters);
+        if (response == null) { return NoContent(); }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
-        {
-            var parameters = new Dictionary<string, object>
-            {
-                {"userRoleId", User.GetUserRoleId()},
-                {"id", id },
-                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
-            };
-            var response = await _service.UpdateAsync(parameters);
-            if (response == null) { return NoContent(); };
-            return Ok(response);
-        }
+        ;
+        return Ok(response);
     }
 }

@@ -5,31 +5,36 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Common.Extensions;
 using Services.Common.Logs;
 
-namespace Common.API.Controllers
+namespace Common.API.Controllers;
+
+public class DashboardController : BaseApiController
 {
-    public class DashboardController : BaseApiController
+    private readonly IDashboardService _dashboard;
+    private readonly ICustomLogger _log;
+
+    public DashboardController(IDashboardService dashboard, ICustomLogger log)
     {
-        private readonly IDashboardService _dashboard;
-        private readonly ICustomLogger _log;
-        public DashboardController(IDashboardService dashboard, ICustomLogger log)
+        _dashboard = dashboard;
+        _log = log;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        try
         {
-            _dashboard = dashboard;
-            _log = log;
+            var response = await _dashboard.GetAsync(new Dictionary<string, object>
+            {
+                { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json ?? "") }
+            });
+            if (response == null || string.IsNullOrEmpty(response)) { return BadRequest(); }
+
+            return Ok(new ApiResponse { code = "1", payload = response });
         }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        catch (Exception ex)
         {
-            try
-            {
-                var response = await _dashboard.GetAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json ?? "") } });
-                if (response == null || string.IsNullOrEmpty(response)) { return BadRequest(); }
-                return Ok(new ApiResponse() { code = "1", payload = response });
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error on Get Statistis: \n" + ex.ToString());
-                return BadRequest("Error on get Statistis");
-            }
+            _log.LogActivity("Error on Get Statistis: \n" + ex);
+            return BadRequest("Error on get Statistis");
         }
     }
 }

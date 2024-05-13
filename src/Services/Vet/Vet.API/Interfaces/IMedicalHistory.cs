@@ -1,8 +1,7 @@
-﻿namespace Vet.API.Interfaces
+﻿namespace Vet.API.Interfaces;
+
+public interface IMedicalHistory
 {
-    public interface IMedicalHistory
-    {
-        public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-        public Task<ApiResponse> GetByIdAsync(int id);
-    }
+    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    public Task<ApiResponse> GetByIdAsync(int id);
 }

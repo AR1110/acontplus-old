@@ -1,68 +1,69 @@
-﻿
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.API.Extensions;
 using Common.Core.Utils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Services.Common.Extensions;
 
-namespace Common.API
+namespace Common.API;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
-            ConfigHelper.AddJsonFiles(builder.Configuration);
+        builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+        ConfigHelper.AddJsonFiles(builder.Configuration);
 
-            // Add services to the container.
-            builder.Services.AddApplicationServices(builder.Configuration);
-            builder.Services.AddControllers()
-                            .AddNewtonsoftJson(x =>
-                            {
-                                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                                x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                            });
-
-            builder.Services.AddIdentityService(builder.Configuration);
-
-            builder.Services.AddSwaggerDocumentation();
-
-            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-            builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
-
-            var app = builder.Build();
-
-            app.UseSwaggerDocumentation();
-
-            app.UseRouting();
-
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        // Add services to the container.
+        builder.Services.AddApplicationServices(builder.Configuration);
+        builder.Services.AddControllers()
+            .AddNewtonsoftJson(x =>
             {
-                app.Urls.Add("http://*:5002"); // Linux Port
-            }
-            else
-            {
-                app.UseHttpsRedirection();
-            }
-            app.UseAuthentication();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                _ = endpoints.MapGet("/", context =>
-                {
-                    context.Response.Redirect("swagger");
-                    return Task.CompletedTask;
-                });
+                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                x.SerializerSettings.ContractResolver =
+                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             });
 
-            app.MapControllers().RequireAuthorization();
+        builder.Services.AddIdentityService(builder.Configuration);
 
-            app.Run();
+        builder.Services.AddSwaggerDocumentation();
+
+        builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
+
+        var app = builder.Build();
+
+        app.UseSwaggerDocumentation();
+
+        app.UseRouting();
+
+        if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+        {
+            app.Urls.Add("http://*:5002"); // Linux Port
         }
+        else
+        {
+            app.UseHttpsRedirection();
+        }
+
+        app.UseAuthentication();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            _ = endpoints.MapGet("/", context =>
+            {
+                context.Response.Redirect("swagger");
+                return Task.CompletedTask;
+            });
+        });
+
+        app.MapControllers().RequireAuthorization();
+
+        app.Run();
     }
 }

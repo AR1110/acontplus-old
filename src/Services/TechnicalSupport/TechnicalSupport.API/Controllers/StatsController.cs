@@ -1,20 +1,22 @@
-﻿namespace TechnicalSupport.API.Controllers
+﻿namespace TechnicalSupport.API.Controllers;
+
+public class StatsController : BaseApiController
 {
-    public class StatsController : BaseApiController
+    private readonly IStatsService _statsService;
+
+    public StatsController(IStatsService statsService)
     {
-        private readonly IStatsService _statsService;
+        _statsService = statsService;
+    }
 
-        public StatsController(IStatsService statsService)
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        var parameters = new Dictionary<string, object>
         {
-            _statsService = statsService;
-
-        }
-        [HttpGet]
-        public async Task<IActionResult> Get(string json)
-        {
-            var parameters = new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } };
-            var response = await _statsService.GetAsync(parameters);
-            return Ok(response);
-        }
+            { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) }
+        };
+        var response = await _statsService.GetAsync(parameters);
+        return Ok(response);
     }
 }

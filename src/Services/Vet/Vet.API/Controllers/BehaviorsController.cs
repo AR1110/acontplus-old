@@ -1,74 +1,73 @@
-﻿namespace Vet.API.Controllers
+﻿namespace Vet.API.Controllers;
+
+public class BehaviorsController : BaseApiController
 {
-    public class BehaviorsController : BaseApiController
+    private readonly VetContext _context;
+
+    public BehaviorsController(VetContext context)
     {
-        private readonly VetContext _context;
+        _context = context;
+    }
 
-        public BehaviorsController(VetContext context)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Behavior>>> GetBehaviors()
+    {
+        return await _context.Behaviors.ToListAsync();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Behavior>> GetBehavior(int id)
+    {
+        var behavior = await _context.Behaviors.FindAsync(id);
+
+        if (behavior == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Behavior>>> GetBehaviors()
+        return behavior;
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutBehavior(int id, Behavior behavior)
+    {
+        if (id != behavior.Id)
         {
-            return await _context.Behaviors.ToListAsync();
+            return BadRequest();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Behavior>> GetBehavior(int id)
+        _context.Entry(behavior).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Behavior>> PostBehavior(Behavior behavior)
+    {
+        _context.Behaviors.Add(behavior);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction("GetBehavior", new { id = behavior.Id }, behavior);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteBehavior(int id)
+    {
+        var behavior = await _context.Behaviors.FindAsync(id);
+        if (behavior == null)
         {
-            var behavior = await _context.Behaviors.FindAsync(id);
-
-            if (behavior == null)
-            {
-                return NotFound();
-            }
-
-            return behavior;
+            return NotFound();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBehavior(int id, Behavior behavior)
-        {
-            if (id != behavior.Id)
-            {
-                return BadRequest();
-            }
+        _context.Behaviors.Remove(behavior);
+        await _context.SaveChangesAsync();
 
-            _context.Entry(behavior).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+        return Ok();
+    }
 
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<Behavior>> PostBehavior(Behavior behavior)
-        {
-            _context.Behaviors.Add(behavior);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBehavior", new { id = behavior.Id }, behavior);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBehavior(int id)
-        {
-            var behavior = await _context.Behaviors.FindAsync(id);
-            if (behavior == null)
-            {
-                return NotFound();
-            }
-
-            _context.Behaviors.Remove(behavior);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        private bool BehaviorExists(int id)
-        {
-            return _context.Behaviors.Any(e => e.Id == id);
-        }
+    private bool BehaviorExists(int id)
+    {
+        return _context.Behaviors.Any(e => e.Id == id);
     }
 }

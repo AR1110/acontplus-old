@@ -1,30 +1,179 @@
 <div class="modal-header">
-  <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  <h4 class="modal-title" id="modal-basic-title">{{titleModal}}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
 </div>
 <div class="modal-body">
   <div class="form-group">
     <label for="nombreComercial">Nombre Comercial: <span class="text-danger">*</span></label>
-    <input type="text" name="nombreComercial" id="nombreComercial" class="form-control">
+    <input type="text" name="nombreComercial" id="nombreComercial" [(ngModel)]="data.nombreComercial" appToUpperCase class="form-control">
   </div>
   <div class="row">
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="nroEstab">Nro. Establecimiento</label>
-        <input type="text" name="nroEstab" id="nroEstab" class="form-control">
+        @if (params.id>0) {
+  <input type="text" name="nroEstab" id="nroEstab" [value]="data.estab" class="form-control" readonly>
+        }@else {
+          <input type="text" name="nroEstab" id="nroEstab" [(ngModel)]="data.estab" class="form-control" maxlength="3"  >
+        }
       </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
       <div class="form-group">
-        <label for="tipoContribuyente">Tipo Contribuyente: <span class="text-danger">*</span></label>
-        <select name="tipoContribuyente" id="tipoContribuyente" class="form-select">
-          <option value=""></option>
+        <label for="contribuyente">Tipo Contribuyente: <span class="text-danger">*</span> </label>
+        <div class="input-group">
+          <select name="contribuyente" id="contribuyente" class="form-select" [(ngModel)]="data.contribuyente"
+            (change)="onChangeTipoContribuyente()">
+            @for (item of contribuyentes; track $index) {
+            <option [ngValue]="item.codigo">
+              {{item.descripcion}}
+            </option>
+            }
+          </select>
+
+          <button type="button" (click)="showInfoTipoContribuyente()" class="btn btn-secondary btn-sm">
+            <fa-icon [icon]="'info-circle'"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="agenteRetencion">Agente Retención: </label>
+        <select name="agenteRetencion" id="agenteRetencion" class="form-select" [(ngModel)]="data.agenteRetencion"
+          [disabled]="isDisabledAgenteRetencion">
+          <option [value]="null">Ninguna</option>
+          @for (item of agentesRetencion; track $index) {
+          <option [ngValue]="item.resolucion">
+            {{item.resolucion}}
+          </option>
+          }
         </select>
       </div>
     </div>
-    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
   </div>
+
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="actividadEconomica">Actividad: <span class="text-danger">*</span> </label>
+        <div class="input-group">
+          <select name="actividadEconomica" id="actividadEconomica" class="form-select"
+            [(ngModel)]="data.actividad">
+            @for (item of actividadesEconomica; track $index) {
+              <option [ngValue]="item.codigo">
+                {{item.descripcion}}
+              </option>
+            }
+          </select>
+          <button type="button" (click)="showInfoActividadEconomica()" class="btn btn-secondary btn-sm">
+            <fa-icon [icon]="'info-circle'"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+          <div class="form-group">
+            <label for="contribuyenteEspecial">Contribuyente Especial: </label>
+            <input type="text" class="form-control border-select"  [maxlength]="3" [minlength]="3"
+              [(ngModel)]="data.contribuyenteEspecial" placeholder="">
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-12 col-12">
+          <div class="form-group text-center">
+            <label for="obligadoContabilidad">Lleva Contabilidad: </label>
+            <section class="d-flex flex-row">
+              <mat-radio-group [(ngModel)]="data.obligadoContabilidad">
+                <mat-radio-button  value="NO">NO</mat-radio-button>
+                <mat-radio-button  value="SI">SI</mat-radio-button>
+              </mat-radio-group>
+            </section>
+            <!-- <div class="icheck-primary">
+              <input type="checkbox" id="someCheckboxId" />
+              <label for="someCheckboxId"></label>
+            </div> -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-6 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label>Email:
+          <span tooltip-placement="top" ngbTooltip="Haz doble 'Click' sobre el correo para editar">
+            <fa-icon [icon]="'info-circle'"></fa-icon>
+          </span>
+        </label>
+        <mat-chip-grid #chipGridEmail aria-label="Enter emails">
+          <mat-chip-row *ngFor="let email of emails" (removed)="removeEmail(email)" [editable]="true"
+            (edited)="editEmail(email, $event)" [aria-description]="'press enter to edit ' + email">
+            {{ email }}
+            <button matChipRemove [attr.aria-label]="'remove ' + email">
+              <fa-icon [icon]="'close'"></fa-icon>
+            </button>
+          </mat-chip-row>
+          <input placeholder="example@example.com,info@example.com" class="form-control" [matChipInputFor]="chipGridEmail"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+            (matChipInputTokenEnd)="addEmail($event)" />
+        </mat-chip-grid>
+      </div>
+    </div>
+    <div class="col-xl-6 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label>Telefono:
+          <span tooltip-placement="top" ngbTooltip="Haz doble 'Click' sobre el número de telefono para editar">
+            <fa-icon [icon]="'info-circle'"></fa-icon>
+          </span>
+        </label>
+        <mat-chip-grid #chipGridTelephone aria-label="Ingrese los teléfonos">
+          <mat-chip-row *ngFor="let telephone of telephones" (removed)="removeTelephone(telephone)" [editable]="true"
+            (edited)="editTelephone(telephone, $event)" [aria-description]="'press enter to edit ' + telephone">
+            {{ telephone }}
+            <button matChipRemove [attr.aria-label]="'remove ' + telephone">
+              <fa-icon [icon]="'close'"></fa-icon>
+            </button>
+          </mat-chip-row>
+          <input placeholder="0900000001,0900000002" class="form-control" [matChipInputFor]="chipGridTelephone"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+            (matChipInputTokenEnd)="addTelephone($event)" />
+        </mat-chip-grid>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="cantones">Cantón: <span class="text-danger">*</span> </label>
+        <select class="form-select" [(ngModel)]="data.canton">
+          @for (item of cantones; track $index) {
+            <option [ngValue]="item.codigo">{{item.descripcion}}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="direccion">Dirección <span class="text-danger">*</span> </label>
+        <textarea class="form-control border-select" appToUpperCase  [(ngModel)]="data.dirEstablecimiento"
+          rows="2"></textarea>
+      </div>
+    </div>
+  </div>
+
+
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+  <button type="button" class="btn btn-success" (click)="save()">
+      {{btnText}}
+  </button>
+  <button type="button" class="btn btn-dark" (click)="modal.close()">
+    &times; Cerrar
+  </button>
 </div>

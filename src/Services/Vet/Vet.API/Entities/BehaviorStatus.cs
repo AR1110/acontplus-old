@@ -1,16 +1,13 @@
-﻿namespace Vet.API.Entities
+﻿namespace Vet.API.Entities;
+
+[Table("BehaviorStatus", Schema = "Pet")]
+public class BehaviorStatus : BaseEntity
 {
-    [Table("BehaviorStatus", Schema = "Pet")]
-    public class BehaviorStatus : BaseEntity
-    {
-        [Required]
-        [MaxLength(2)]
-        public string Code { get; set; }
-        [Required]
-        [MaxLength(50)]
-        public string Name { get; set; }
-        [MaxLength(100)]
-        public string Description { get; set; }
-        public int? Order { get; set; }
-    }
+    [Required] [MaxLength(2)] public string Code { get; set; }
+
+    [Required] [MaxLength(50)] public string Name { get; set; }
+
+    [MaxLength(100)] public string Description { get; set; }
+
+    public int? Order { get; set; }
 }

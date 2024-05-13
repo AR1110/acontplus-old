@@ -1,23 +1,21 @@
-﻿
-using Common.Application.Services;
+﻿using Common.Application.Services;
 using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
 
-namespace Common.API.Extensions
+namespace Common.API.Extensions;
+
+public static class ApplicationServicesExtensions
 {
-    public static class ApplicationServicesExtensions
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            services.AddDbContextPool<CommonContext>(options =>
+        services.AddDbContextPool<CommonContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<IDashboardService, DashboardService>();
-            services.AddScoped<INotificacionService, NotificacionService>();
-            services.AddScoped<ICustomLogger, CustomLogger>();
-            return services;
-        }
+        services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<INotificacionService, NotificacionService>();
+        services.AddScoped<ICustomLogger, CustomLogger>();
+        return services;
     }
 }

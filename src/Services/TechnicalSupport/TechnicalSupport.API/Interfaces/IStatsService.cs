@@ -1,7 +1,6 @@
-﻿namespace TechnicalSupport.API.Interfaces
+﻿namespace TechnicalSupport.API.Interfaces;
+
+public interface IStatsService
 {
-    public interface IStatsService
-    {
-        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    }
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
 }

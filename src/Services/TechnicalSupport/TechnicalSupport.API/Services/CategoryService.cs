@@ -1,7 +1,7 @@
 ﻿public class CategoryService : ICategoryService
 {
-    private readonly IADORepository _repository;
     private readonly TechnicalSupportContext _context;
+    private readonly IADORepository _repository;
 
     public CategoryService(TechnicalSupportContext context, IADORepository repository)
     {
@@ -58,6 +58,7 @@
             // Handle case where category not found
             return new ApiResponse { code = "0", message = "Categoría no encontrada" };
         }
+
         categoryFound.CompanyId = category.CompanyId;
         categoryFound.Code = category.Code;
         categoryFound.Enabled = category.Enabled;

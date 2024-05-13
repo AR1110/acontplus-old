@@ -1,19 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TechnicalSupport.API.Entities
+namespace TechnicalSupport.API.Entities;
+
+[Table("Device", Schema = "TechnicalSupport")]
+public class Device : BaseEntity
 {
-    [Table("Device", Schema = "TechnicalSupport")]
-    public class Device : BaseEntity
-    {
-        [Required]
-        [MaxLength(300)]
-        public string Name { get; set; }
-        public Modelo Modelo { get; set; }
-        public int ModeloId { get; set; }
-        [MaxLength(100)]
-        public string Color { get; set; }
-        public List<DeviceCustomer> Customers { get; set; }
-        public DeviceSpecs Specs { get; set; }
-    }
+    [Required] [MaxLength(300)] public string Name { get; set; }
+
+    public Modelo Modelo { get; set; }
+    public int ModeloId { get; set; }
+
+    [MaxLength(100)] public string Color { get; set; }
+
+    public List<DeviceCustomer> Customers { get; set; }
+    public DeviceSpecs Specs { get; set; }
 }

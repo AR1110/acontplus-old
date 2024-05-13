@@ -175,3 +175,8 @@ export enum IDENTIFICATION_CODE {
   CEDULA = "C",
   PASSPORT = "P"
 }
+
+
+export enum SEPARATOR_KEY_CODE  {
+  SLASH = '|'
+}
