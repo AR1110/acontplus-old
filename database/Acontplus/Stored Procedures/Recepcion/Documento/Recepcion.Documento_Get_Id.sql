@@ -12,9 +12,8 @@ GO
 -- =============================================
 --Recepcion.Documento_Get_Id 38, '16160bc8-541a-44e9-92a7-53a4bffb7713'
 
-CREATE OR ALTER PROCEDURE Recepcion.Documento_Get_Id @idRol INT
+CREATE OR ALTER PROCEDURE Recepcion.Documento_Get_Id @userRoleId INT
 ,@idDocumento INT
-,@backendInfo VARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -26,5 +25,7 @@ BEGIN
     	END
     SELECT idDocumento, codDoc, CONVERT(XML, DECOMPRESS(xmlCompressed)) xmlDoc
     FROM Recepcion.DocumentoRecibido
-    WHERE idDocumento  = @idDocumento 
+    WHERE idDocumento  = @idDocumento
+
+
 END

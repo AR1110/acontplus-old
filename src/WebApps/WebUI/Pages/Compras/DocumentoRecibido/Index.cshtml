@@ -1,7 +1,6 @@
 ﻿@page
 @model WebUI.Pages.Compras.DocumentoRecibido.IndexModel
 
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,7 +13,7 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-               
+
             </div>
         </div>
     </div>
@@ -27,9 +26,9 @@
                         <span for="establecimiento">
                             Estab: <span class="text-danger">*</span>
                         </span>
-                        <select class="form-control border-select" 
-                        ng-model="dataSearch.codEstab" 
-                        ng-change="onChangeEstab()">
+                        <select class="form-control border-select"
+                                ng-model="dataSearch.codEstab"
+                                ng-change="onChangeEstab()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -37,21 +36,21 @@
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <span for="date-range-filter">Rango Fechas: </span>
+                    <span for="date-range-filter">Rango Fechas: </span>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
                                 <div class="custom-control custom-checkbox mr-sm-2">
                                     <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
-                                        class="custom-control-input" id="checkBoxFecha">
+                                           class="custom-control-input" id="checkBoxFecha">
                                     <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
                             </div>
                         </div>
 
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                            end-date="dataSearch.fechaFin"
-                            result-range-date="resultRangeFilter(result)"></date-range-filter>
+                                           end-date="dataSearch.fechaFin"
+                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
                     </div>
 
                 </div>
@@ -62,7 +61,7 @@
                             Tipo Comprobante
                         </span>
                         <select class="form-control border-select" ng-model="dataSearch.codDoc" ng-change="getComprobantes()">
-                        <option ng-value="">Todos</option>
+                            <option ng-value="">Todos</option>
                             <option ng-value="item.codDoc" ng-repeat="item in tipoComprobantes">
                                 {{item.descripcion}}
                             </option>
@@ -71,16 +70,16 @@
                 </div>
 
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                            <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
-                                    <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
-                                </button>
-                                <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                                    ng-click="getComprobantes()">
-                                    <i class="fas fa-redo"></i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                            <i class="{{extraOptionsIcon}}" uib-tooltip="{{extraOptionsTooltip}}"></i>
+                        </button>
+                        <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                                ng-click="getComprobantes()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                </div>
 
             </div>
 
@@ -109,7 +108,7 @@
                 </div>
             </div>
             <div class="row">
-                 <div class="button-group ml-2">
+                <div class="button-group ml-2">
                     <button hidden type="button" class="btn btn-info" ng-click="openModalImportacionAutomatica()">
                         <i class="ti-cloud"></i> Importación Automatica
                     </button>
@@ -123,14 +122,14 @@
             </div>
         </div>
     </div>
- 
+
     <div class="card">
         <div class="card-body">
             <div class="row">
                 <div class="col-6 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color border-select" ng-model="dataSearch.pageSize"
-                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
                 </div>
@@ -138,31 +137,12 @@
                 <div class="col-6 d-flex justify-content-end">
                     <form class="form-material">
                         <input type="text" class="form-control" onclick="select();" ng-keyup="onKeyupSearchFilter()" ng-model="dataSearch.textSearch"
-                            placeholder="Buscar">
+                               placeholder="Buscar en el listado actual">
                     </form>
                 </div>
             </div>
-            <!-- <div section layout="row" layout-wrap>
-
-
-                <md-input-container flex-gt-sm="30">
-                    <label for="search">Buscar:</label>
-                    <input type="text" ng-model="search" ng-keyup="onKeyupSearchFilter()">
-                </md-input-container>
-                <md-input-container>
-                    <md-button class="md-icon-button" ng-click="refresh()" aria-label="Stock"
-                                title="Actualizar">
-                        <md-icon md-font-set="md" class="text-info">sync</md-icon>
-                    </md-button>
-                </md-input-container>
-            </div>  -->
-            <!-- <div class="row" ng-if="establecimientos.length > 1">
-                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                    
-                </div>
-            </div> -->
             <div class="table-responsive" style="max-height: 400px;">
-                <table md-table md-row-select ng-model="selected" md-progress="promise"> 
+                <table md-table md-row-select ng-model="selected" class="table table-hover" md-progress="promise">
                     <thead md-head md-order="query.sortBy" fix-head>
                         <tr md-row>
                             <th md-column>Doc.</th>
@@ -198,30 +178,23 @@
                             </td>
                         </tr>
                     </tbody>
+                    <tfoot ng-if="comprobantes.length == 0">
+                        <tr>
+                            <td colspan="8">No se encontraron registros</td>
+                        </tr>
+                    </tfoot>
                 </table>
-                @*<md-table-pagination md-limit="query.limit" md-limit-options="pages" md-page="query.page"
-                md-total="{{totalRecords}}" md-on-paginate="getComprobantes" md-page-select>
-                </md-table-pagination>*@
-            </div>
-
+            </div> 
         </div>
-         <div class="card-body">
+        <div class="card-body">
             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
                 ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                 class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
-      
-    @* @await Html.PartialAsync("Shared/_NewImport.cshtml")
-    @await Html.PartialAsync("Shared/_CompFounded.cshtml")
-    @await Html.PartialAsync("Shared/_MigrateEstab.cshtml")
-    @await Html.PartialAsync("Shared/_Retencion.cshtml")
-    @await Html.PartialAsync("Shared/_NotaCredito.cshtml")
-    @await Html.PartialAsync("Shared/_Doc_Relacionado.cshtml")
-    @await Html.PartialAsync("Shared/_ModalNewManual.cshtml") *@
-
 </div>
 @section Scripts {
     <script src="~/js/compras/services/docRecibidoService.js" asp-append-version="true"></script>
-    <script src="~/js/compras/controllers/documentoRecibidoCorreccion.min.js" asp-append-version="true"></script>
+    <script src="~/js/contabilidad/services/subcategoryService.js" asp-append-version="true"></script>
+    <script src="~/js/compras/controllers/documentoRecibidoCtrl.js" asp-append-version="true"></script>
 }

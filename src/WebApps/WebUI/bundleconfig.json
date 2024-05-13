@@ -676,5 +676,11 @@
     "inputFiles": [
       "wwwroot/js/factElect/modals/modalRetencionAtsCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/services/docRecibidoService.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/services/docRecibidoService.js"
+    ]
   }
 ]

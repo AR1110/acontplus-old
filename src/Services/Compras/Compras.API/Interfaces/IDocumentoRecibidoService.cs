@@ -2,13 +2,11 @@
 
 public interface IDocumentoRecibidoService
 {
-    Task<object> GetAsync(Dictionary<string, object> parameters);
-
-    Task<string> AddAsync(ApiRequest request);
-
-    //  Task<object> GetByIdAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> AddAsync(ApiRequest request);
+    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<byte[]> DownloadAsync(Dictionary<string, object> parameters);
+    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<XmlDocument> GetById(Dictionary<string, object> parameters);
     Task<string> UpdateAsync(int id, ApiRequest request);
-
-    Task<string> DeleteAsync(Dictionary<string, object> parameters);
-    //Task<string> DocumentoCheckExistence(Dictionary<string, object> parameters);
+    Task<ApiResponse> UploadXml(Dictionary<string, object> parameters);
 }

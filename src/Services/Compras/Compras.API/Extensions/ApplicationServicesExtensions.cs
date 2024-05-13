@@ -17,6 +17,7 @@ public static class ApplicationServicesExtensions
 
         services.AddScoped<FileTxt>();
         services.AddScoped<ICustomLogger, CustomLogger>();
+        services.AddScoped<IDocumentoTempService, DocumentoTempService>();
         services.AddScoped<IProveedorService, ProveedorService>();
         services.AddScoped<ILiquidacionCompraService, LiquidacionCompraService>();
         services.AddScoped<IFacturaCompraService, FacturaCompraService>();

@@ -11,9 +11,8 @@ GO
 -- Description:	SP PARA ELIMINAR LOS COMPROBANTES ELECTRONICOS DEL SRI
 -- =============================================
 
-CREATE OR ALTER PROCEDURE Recepcion.Documento_Delete @idRol INT
+CREATE OR ALTER PROCEDURE Recepcion.Documento_Delete @userRoleId INT
 ,@idDocumento INT
-,@backendInfo VARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,7 +22,7 @@ BEGIN
 	
 	BEGIN TRY
         
-        SET @idUsuario = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @idRol)
+        SET @idUsuario = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 		
         IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND complete = 1)
 			 BEGIN
@@ -47,9 +46,7 @@ BEGIN
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'
 		IF (@@TRANCOUNT > 0)
 			ROLLBACK TRAN
-		DECLARE @method VARCHAR(200)
-		SET @method = (SELECT method FROM OPENJSON(@backendInfo) WITH(method VARCHAR(200) '$.methodName'))
-		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
+  		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'DocumentoRecibido/Delete', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH 
 END
