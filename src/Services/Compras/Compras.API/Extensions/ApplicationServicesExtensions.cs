@@ -1,29 +1,30 @@
-﻿using Compras.API.Data;
-using Compras.API.Interfaces;
-using Compras.API.Services;
-using Microsoft.EntityFrameworkCore;
-using Services.Common.Logs;
+﻿namespace Compras.API.Extensions;
 
-namespace Compras.API.Extensions
+public static class ApplicationServicesExtensions
 {
-    public static class ApplicationServicesExtensions
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContextPool<ComprasContext>(options =>
+        services.AddControllers()
+            .AddNewtonsoftJson(x =>
+            {
+                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                x.SerializerSettings.ContractResolver =
+                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+            });
+        services.AddDbContextPool<ComprasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<FileTxt>();
-            services.AddScoped<IProveedorService, ProveedorService>();
-            services.AddScoped<ILiquidacionCompraService, LiquidacionCompraService>();
-            services.AddScoped<IFacturaCompraService, FacturaCompraService>();
-            services.AddScoped<IOrdenCompraService, OrdenCompraService>();
-            services.AddScoped<INotaCreditoService, NotaCreditoService>();
-            services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
-            services.AddScoped<IDocumentoRecibidoService, DocumentoRecibidoService>();
+        services.AddScoped<FileTxt>();
+        services.AddScoped<ICustomLogger, CustomLogger>();
+        services.AddScoped<IProveedorService, ProveedorService>();
+        services.AddScoped<ILiquidacionCompraService, LiquidacionCompraService>();
+        services.AddScoped<IFacturaCompraService, FacturaCompraService>();
+        services.AddScoped<IOrdenCompraService, OrdenCompraService>();
+        services.AddScoped<INotaCreditoService, NotaCreditoService>();
+        services.AddScoped<ICompraNoHabitualService, CompraNoHabitualService>();
+        services.AddScoped<IDocumentoRecibidoService, DocumentoRecibidoService>();
 
-            services.AddScoped<ICustomLogger, CustomLogger>();
-            return services;
-        }
+        return services;
     }
 }
