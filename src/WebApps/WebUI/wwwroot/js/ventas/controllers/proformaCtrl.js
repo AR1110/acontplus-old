@@ -582,6 +582,7 @@
         $scope.puntosEmision = [];
         $scope.bodegas = [];
         $scope.tarifasImpuesto = [];
+        $scope.vendedores = [];
 
         $scope.datosAdicionalesArticulo = []
         $scope.historyDatosAdicionales = [];
@@ -761,8 +762,9 @@
                     $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
                 }
 
-                if ($scope.vendedores.length > 0) {
-                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                let dataUsuario = $scope.vendedores.find(item => (item.predeterminado));
+                if ($scope.vendedores.length > 0 && dataUsuario) {
+                    $scope.data.idUsuario = dataUsuario.idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
                 }
@@ -839,11 +841,11 @@
 
                 $scope.data.fechaEmisionEscrita = fS.getFechaEscrita($scope.data.fechaEmision);
 
-                if ($scope.vendedores.length > 0) {
-                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
-                } else {
-                    $scope.data.idUsuario = 0;
-                }
+                // if ($scope.vendedores.length > 0) {
+                //     $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                // } else {
+                //     $scope.data.idUsuario = 0;
+                // }
 
                 $scope.cliente = cliente;
                 counterGridOptions();

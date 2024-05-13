@@ -115,6 +115,7 @@
                                 codEstado: item.codEstado,
                                 estado: item.estado,
                                 colorFila: item.colorFila,
+                                userName: item.userName
                             }
                         })
 
@@ -176,7 +177,8 @@
 
                         puntoEmision: `${compRepository.estab}-${compRepository.ptoEmi}`,
                         fechaEmision: fS.formatDate(compRepository.fechaEmision),
-                        fechaEmisionDocCreado: fS.formatDate(compRepository.fechaEmision)
+                        fechaEmisionDocCreado: fS.formatDate(compRepository.fechaEmision),
+                        idUsuario: compRepository.idUsuario
                     }
                     
 
@@ -379,6 +381,7 @@
                 docOrigen: data.docOrigen,
                 docDestino: data.docDestino,
                 observacion: data.observacion,
+                idUsuario: data.idUsuario
             }
             return result;
         }
