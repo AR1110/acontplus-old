@@ -54,6 +54,10 @@
 
         $scope.estadoDocumentos = [];
 
+        $scope.cliente = {
+
+        }
+
         let OPTION_APROBACION = Object.freeze({
             0: Object.freeze({
                 docOrigen: {
@@ -149,30 +153,18 @@
         //========================Start Filters=================
 
         $scope.resultRangeFilter = function (item) {
-            $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaInicio = item.startDate;
+            $scope.dataSearch.fechaFin = item.endDate
             $scope.getAprobComprobantes();
-        }
+        } 
 
-        $scope.clienteSearch = function (textSearch) {
-            let query = {
-                textSearch
-            }
-
-            if (textSearch.length > 2) {
-                return clienteSvc.search(query).catch(error => {
-                    console.log(error)
-                })
-            }
-        }
-
-        $scope.onKeyupClienteSearchFiltro = function () {
-            if (!$scope.modelTextSearch) {
+        $scope.onKeyupCliente = function () {
+            if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.byCliente = 0;
             }
         }
 
-        $scope.selectedClienteSearchFiltro = function (item) {
+        $scope.onSelectCliente = function (item) {
             $scope.dataSearch.byCliente = item.idCliente;
             $scope.getAprobComprobantes();
         }
@@ -590,6 +582,7 @@
         $scope.establecimientos = [];
         $scope.impuestosTarifas = []
         $scope.ptosEmision = [];
+        $scope.vendedores = [];
 
         $scope.data = {
             codEstab: 0,
@@ -735,6 +728,7 @@
                     // tarifas,
                     permisoVenta,
                     decimal,
+                    vendedores
                 } = mainDataForm;
 
                 /**
@@ -767,6 +761,14 @@
                 $scope.permisoComprobanteVenta = permisoVenta.comprobante;
                 $scope.permisoDetalleVenta = permisoVenta.detalle;
                 $scope.tarifasImpuesto = tarifasImpuesto;
+
+                $scope.vendedores = vendedores;
+
+                let dataUsuario = $scope.vendedores.find(v => v.predeterminado);
+                if(dataUsuario){
+                    $scope.data.idUsuario = dataUsuario.idUsuario;
+
+                }
                 $scope.stepUno()
             } catch (error) {
                 console.log(error);
@@ -854,7 +856,7 @@
         $scope.selectedClienteSearch = function (item) {
             $scope.cliente = item;
             $scope.cliente.nombreCliente = item.nombreFiscal
- 
+
             if ($scope.isValidFilter()) {
                 $scope.getDocumentos();
             }
@@ -1566,6 +1568,11 @@
                     return
                 }
 
+                if (!($scope.data.idUsuario > 0)) {
+                    tS.taostr('warning', 'Seleccione el Usuario')
+                    return
+                }
+
                 if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
                     tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
                     return
@@ -1678,7 +1685,7 @@
                 $scope.data.totalDescuento = totalDescuento;
                 $scope.data.porcentajeDescuento = porcentajeDescuento;
                 $scope.data.irbpnr = irbpnr
-                $scope.data.propina = propina; 
+                $scope.data.propina = propina;
 
             } catch (error) {
                 console.log(error);
@@ -1710,6 +1717,8 @@
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
 
+        $scope.vendedores = [];
+
         //params to MdAutocomplete to search article
         $scope.tipoDoc = {
             codigo: 'NE'
@@ -1717,8 +1726,8 @@
 
         $scope.data = comprobante;
 
-        let formattedDateTime = moment($scope.data.fechaEmision).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
-        $scope.data.fechaEmision = new Date(formattedDateTime)
+        // let formattedDateTime = moment($scope.data.fechaEmision).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
+      //  $scope.data.fechaEmision = new Date(formattedDateTime)
         $scope.cliente = cliente;
 
         $scope.dataClone = {};
@@ -1788,86 +1797,7 @@
                 $scope.setCalculoTotales(colDef.field, rowEntity, oldValue);
 
             })
-        }
-
-        /**
-         * Combina elementos en base a propiedades específicas del objeto rowEntity.
-         * @param {*} items - Conjunto de elementos a fusionar.
-         * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
-         * @returns {*} - Objeto resultante de la fusión.
-         */
-        function mergeItem(items, rowEntity) {
-            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
-            let foundItemByArticuloAndBodega = items.filter(item => (
-                item.idArticulo === rowEntity.idArticulo &&
-                item.idBodega === rowEntity.idBodega
-            ))
-
-            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
-                let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
-                let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
-                if (dataMedidaFraccionado) {
-                    let conversionFraccionadaSum = item.cantidad * dataMedidaFraccionado.conversion;
-                    total.totalCantidadFraccionada += conversionFraccionadaSum;
-                }
-                if (dataMedidaPrincipal) {
-                    let conversionPrincipalSum = item.cantidad * dataMedidaPrincipal.conversion;
-                    total.totalCantidadPrincipal += conversionPrincipalSum;
-                }
-                return total;
-            }, {
-                totalCantidadFraccionada: 0,
-                totalCantidadPrincipal: 0,
-            });
-
-            // let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
-            //     let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
-            //     if (dataMedida) {
-            //         let conversionSum = item.cantidad * dataMedida.conversion;
-            //         total += conversionSum;
-            //     }
-            //     return total;
-            // }, 0)
-
-            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
-                itemPrevious.cantidad += itemCurrent.cantidad;
-                return itemPrevious;
-            }, {
-                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
-                ...rowEntity,
-                cantidad: 0,
-            });
-
-            // Devuelve el objeto resultante de la fusión. 
-            return {
-                idBodega: dataItemMerge.idBodega,
-                cantidad: dataItemMerge.cantidad,
-                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
-                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
-            };
-        }
-
-        function getCantidadStock(rowEntity) {
-            try {
-                let fechaEmisionValidate = $scope.data.fechaEmision;
-                let cantidadStock = rowEntity.cantidadStock;
-
-                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
-                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
-                )
-
-                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
-                        return 0;
-                    }
-                }
-
-                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-                return resultCantStock;
-            } catch (error) {
-                console.log(error)
-            }
-        }
+        } 
 
         /**
          * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
@@ -1889,15 +1819,15 @@
                 let rowItemClone = structuredClone(rowEntity);
                 let gridOptionsClone = structuredClone($scope.gridOptionsDetalle.data);
 
-                // Realiza la fusión de elementos en la lista de artículos clonada.
-                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+                // Realiza la fusión de elementos en la lista de artículos clonada. 
+                let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
 
                 // Si la cantidad no ha cambiado, no realizar más acciones.
-                if (dataItemMerge.cantidad == oldValue) return;
+                if (dataItemMerge.cantidad == oldValue) return; 
 
 
                 // Llama a un servicio para verificar la notificación de stock.
-                let cantidadStock = getCantidadStock(dataItemMerge);
+                let cantidadStock = fS.getCantidadStock(dataItemMerge, $scope.data.fechaEmision); 
                 if (cantidadStock === 0) {
                     $scope.setCalculoTotales(field, rowEntity, oldValue);
                     return;
@@ -2003,6 +1933,7 @@
                     tarifas,
                     permisoVenta,
                     decimal,
+                    vendedores
                 } = mainDataForm;
 
                 /**
@@ -2037,6 +1968,8 @@
                 //Permisos para detalle y documento  
                 $scope.permisoComprobanteVenta = permisoVenta.comprobante;
                 $scope.permisoDetalleVenta = permisoVenta.detalle;
+
+                $scope.vendedores = vendedores;
 
 
                 setColumnDefs();
@@ -2543,6 +2476,11 @@
                     tS.toastr('warning', 'Ingrese la Fecha de Emisión')
                     return
                 }
+
+                if(!($scope.data.idUsuario>0)){
+                    tS.toastr('warning', 'Seleccione el usuario')
+                    return
+                }
                 if (!fS.isValidDate($scope.data.fechaEmision)) {
                     tS.toastr('warning', 'Ingrese la fecha de emisióm correctamente')
                     return
@@ -2663,6 +2601,8 @@
             selected: true,
         }))
 
+        $scope.vendedores = [];
+
         $scope.infoAdicionalDocumento = [];
 
         $scope.formasPago = formasPago;
@@ -2729,85 +2669,7 @@
 
             })
         }
-
-        /**
-        * Combina elementos en base a propiedades específicas del objeto rowEntity.
-        * @param {*} items - Conjunto de elementos a fusionar.
-        * @param {*} rowEntity - Objeto utilizado como referencia para la fusión.
-        * @returns {*} - Objeto resultante de la fusión.
-        */
-        function mergeItem(items, rowEntity) {
-            // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
-            let foundItemByArticuloAndBodega = items.filter(item => (
-                item.idArticulo === rowEntity.idArticulo &&
-                item.idBodega === rowEntity.idBodega
-            ))
-
-            let { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
-                let dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'FRACCIONADO');
-                let dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
-                if (dataMedidaFraccionado) {
-                    let conversionFraccionadaSum = item.cantidad * dataMedidaFraccionado.conversion;
-                    total.totalCantidadFraccionada += conversionFraccionadaSum;
-                }
-                if (dataMedidaPrincipal) {
-                    let conversionPrincipalSum = item.cantidad * dataMedidaPrincipal.conversion;
-                    total.totalCantidadPrincipal += conversionPrincipalSum;
-                }
-                return total;
-            }, {
-                totalCantidadFraccionada: 0,
-                totalCantidadPrincipal: 0,
-            });
-
-            // let totalCantidadPrincipal = foundItemByArticuloAndBodega.reduce((total, item) => {
-            //     let dataMedida = item.medidas.find(medida => medida.idMedida === item.idMedida && medida.tipo === 'PRINCIPAL')
-            //     if (dataMedida) {
-            //         let conversionSum = item.cantidad * dataMedida.conversion;
-            //         total += conversionSum;
-            //     }
-            //     return total;
-            // }, 0)
-
-            let dataItemMerge = foundItemByArticuloAndBodega.reduce((itemPrevious, itemCurrent) => {
-                itemPrevious.cantidad += itemCurrent.cantidad;
-                return itemPrevious;
-            }, {
-                // Inicializa el objeto resultante con las propiedades de rowEntity y cantidades en cero.
-                ...rowEntity,
-                cantidad: 0,
-            });
-
-            // Devuelve el objeto resultante de la fusión. 
-            return {
-                idBodega: dataItemMerge.idBodega,
-                cantidad: dataItemMerge.cantidad,
-                consolidacionesFecha: dataItemMerge.consolidacionesFecha,
-                cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
-            };
-        }
-
-        function getCantidadStock(rowEntity) {
-            try {
-                let fechaEmisionValidate = $scope.data.fechaEmision;
-                let cantidadStock = rowEntity.cantidadStock;
-
-                let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
-                    cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
-                )
-
-                if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                    if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
-                        return 0;
-                    }
-                }
-
-                let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-                return resultCantStock;
-            } catch (error) {
-                console.log(error)
-            }
-        }
+ 
 
         /**
          * Comprueba la notificación de stock al modificar un campo en una fila de la cuadrícula.
@@ -2830,14 +2692,16 @@
                 let gridOptionsClone = structuredClone($scope.gridOptionsDetalle.data);
 
                 // Realiza la fusión de elementos en la lista de artículos clonada.
-                let dataItemMerge = mergeItem(gridOptionsClone, rowItemClone);
+                let dataItemMerge = fS.mergeItemStock(gridOptionsClone, rowItemClone);
 
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
 
+
                 // Llama a un servicio para verificar la notificación de stock.
-                let cantidadStock = getCantidadStock(dataItemMerge);
+          
+                let cantidadStock = fS.getCantidadStock(dataItemMerge, $scope.data.fechaEmision);
                 if (cantidadStock === 0) {
                     $scope.setCalculoTotales(field, rowEntity, oldValue);
                     return;
@@ -3707,13 +3571,11 @@
                 return
             }
 
-            let dataUsuario = $scope.vendedores.find(vendedor => (vendedor.predeterminado));
-            if (!dataUsuario) {
+        //    let dataUsuario = $scope.vendedores.find(vendedor => (vendedor.predeterminado));
+            if (!($scope.data.idUsuario>0)) {
                 tS.toastr('warning', 'No se encontró los datos del usuario');
                 return
-            } else {
-                $scope.data.idUsuario = dataUsuario.idUsuario;
-            }
+            } 
 
             if (
                 $scope.data.docDestino === DOC_TYPE.FV_SRI &&
