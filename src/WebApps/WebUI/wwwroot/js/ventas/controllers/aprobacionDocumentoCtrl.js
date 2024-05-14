@@ -615,6 +615,8 @@
             numeroIndentificacion: null,
         };
 
+        $scope.config = {};
+
 
         $scope.dataClone = {};
         $scope.dataClone.fechaEmision = new Date();
@@ -728,7 +730,8 @@
                     // tarifas,
                     permisoVenta,
                     decimal,
-                    vendedores
+                    vendedores,
+                    config
                 } = mainDataForm;
 
                 /**
@@ -766,9 +769,10 @@
 
                 let dataUsuario = $scope.vendedores.find(v => v.predeterminado);
                 if(dataUsuario){
-                    $scope.data.idUsuario = dataUsuario.idUsuario;
-
+                    $scope.data.idUsuario = dataUsuario.idUsuario; 
                 }
+
+                $scope.config = config;
                 $scope.stepUno()
             } catch (error) {
                 console.log(error);
@@ -1718,6 +1722,7 @@
         $scope.docDestinoDesc = docDestinoDesc;
 
         $scope.vendedores = [];
+        $scope.config = {};
 
         //params to MdAutocomplete to search article
         $scope.tipoDoc = {
@@ -1933,7 +1938,8 @@
                     tarifas,
                     permisoVenta,
                     decimal,
-                    vendedores
+                    vendedores,
+                    config
                 } = mainDataForm;
 
                 /**
@@ -1970,6 +1976,7 @@
                 $scope.permisoDetalleVenta = permisoVenta.detalle;
 
                 $scope.vendedores = vendedores;
+                $scope.config = config;
 
 
                 setColumnDefs();
@@ -2601,6 +2608,7 @@
             selected: true,
         }))
 
+        $scope.config = {};
         $scope.vendedores = [];
 
         $scope.infoAdicionalDocumento = [];
@@ -2813,7 +2821,8 @@
                     tarifas,
                     permisoVenta,
                     decimal,
-                    vendedores
+                    vendedores,
+                    config
                 } = mainDataForm;
 
                 /**
@@ -2871,6 +2880,7 @@
 
                 //Vendedores-usuarios
                 $scope.vendedores = vendedores;
+                $scope.config = config;
 
 
 

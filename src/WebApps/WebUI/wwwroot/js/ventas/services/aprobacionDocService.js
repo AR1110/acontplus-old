@@ -59,6 +59,7 @@
                     let tempEstabsAndPtosEmision = mainData[4];
                     let tempBodegas = mainData[5];
                     let vendedores = mainData[6]; 
+                    let config = mainData[6][0];
                     let { sales: permisoVenta } = userCustomerPermissionSvc.userPermissionAdapter();
 
                     let dataToGroup = {
@@ -75,7 +76,8 @@
                         tarifas,
                         permisoVenta,
                         decimal,
-                        vendedores
+                        vendedores,
+                        config
                     }
                 }
             })
