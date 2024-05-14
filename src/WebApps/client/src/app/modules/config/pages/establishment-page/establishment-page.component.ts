@@ -1,17 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
-import { Tabulator } from 'tabulator-tables';
-import { EstabAddEditModalComponent } from './components/estab-add-edit-modal/estab-add-edit-modal.component';
-import { ModalService } from '@core/services/modal.service';
-import { EstablishmentRead } from "@modules/config/models/sri/establishment.model";
-import { NgbAccordionModule, NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap";
-import Swal from 'sweetalert2';
 import { isApiResponse } from '@core/models/api-response';
-import { ToasterService } from '@core/services/toaster.service';
 import { PuntoEmisionRead } from '@core/models/punto-emision.model';
+import { ModalService } from '@core/services/modal.service';
+import { ToasterService } from '@core/services/toaster.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { EstablishmentRead } from "@modules/config/models/sri/establishment.model";
+import { PuntoEmisionAddEditModalComponent } from "@modules/config/pages/establishment-page/components/punto-emision-add-edit-modal/punto-emision-add-edit-modal.component";
+import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
+import { NgbAccordionModule, NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap";
 import { PrimaryStatusPipe } from '@shared/pipe/primary-status.pipe';
+import Swal from 'sweetalert2';
+
+import { EstabAddEditModalComponent } from './components/estab-add-edit-modal/estab-add-edit-modal.component';
 
 @Component({
   selector: 'app-establishment-page',
@@ -32,7 +33,7 @@ export class EstablishmentPageComponent {
   private modalSvc = inject(ModalService)
   private tS = inject(ToasterService)
   establishments: EstablishmentRead[] = [];
-  puntosEmision: PuntoEmisionRead[]=[]
+  puntosEmision: PuntoEmisionRead[] = []
 
   dataSeach = {
     pageIndex: 1,
@@ -56,7 +57,7 @@ export class EstablishmentPageComponent {
 
   openModalAddEdit(id?: number) {
     const modalRef = this.modalSvc.openModalCustom(EstabAddEditModalComponent, {
-      size: 'lg'
+      size: 'md'
     })
     modalRef.componentInstance.params = {
       id: id
@@ -111,14 +112,37 @@ export class EstablishmentPageComponent {
   }
 
 
-  onEstabShow(id:number){
+  onEstabShow(id: number) {
     this.puntosEmision = [];
-    this.estabSvc.getId(id).subscribe(response=>{
+    this.estabSvc.getId(id).subscribe(response => {
       this.puntosEmision = response.puntosEmision;
     })
   }
 
-  onEstabHide(){
+  onEstabHide() {
     this.puntosEmision = [];
+  }
+
+
+  modalAddEditPuntoEmision(data: EstablishmentRead, dataPuntoEmision?: PuntoEmisionRead) {
+    const modalRef = this.modalSvc.openModalCustom(PuntoEmisionAddEditModalComponent, {
+      size: 'sm'
+    })
+
+    modalRef.componentInstance.params = {
+      codEstab: data.codEstab,
+      establishmentName: data.nombreComercial,
+      idPuntoEmision: dataPuntoEmision?.idPuntoEmision,
+      estado: dataPuntoEmision?.estado ?? false,
+      ptoEmi: dataPuntoEmision?.ptoEmi,
+      ambiente: dataPuntoEmision?.ambiente
+    }
+
+    modalRef.result.then(result => {
+      if (result !== null && typeof result === 'object')
+        this.getEstabs()
+    })
+
+
   }
 }

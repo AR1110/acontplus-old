@@ -20,7 +20,9 @@ BEGIN
 	DECLARE @idUsuario INT ,@idEntidad INT ,@identificacionReceptor AS VARCHAR(20) ,@idEstab INT
 	
     --> Data Json
-    DECLARE @codEstab VARCHAR(50) ,@jsonData NVARCHAR(MAX)
+    DECLARE @codEstab VARCHAR(50),
+        @jsonData NVARCHAR(MAX),
+        @subcategoryId INT
 
 
 	DECLARE @Comprobantes AS TABLE( 
@@ -44,7 +46,13 @@ BEGIN
 
         SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
         
-        SELECT  @codEstab = codEstab, @jsonData = jsonData FROM OPENJSON(@json) WITH(codEstab VARCHAR(MAX) '$.codEstab', jsonData NVARCHAR(MAX) '$.comprobantes' AS JSON)
+        SELECT  @codEstab = codEstab
+            ,@jsonData = jsonData
+            ,@subcategoryId = subcategoryId
+        FROM OPENJSON(@json) WITH(
+                                    codEstab VARCHAR(MAX) '$.codEstab', 
+                                    jsonData NVARCHAR(MAX) '$.comprobantes' AS JSON,
+                                    subcategoryId INT)
 
         INSERT INTO @Comprobantes
               (comprobante,serieComprobante,rucEmisor,razonSocialEmisior,fechaEmision,fechaAutorizacion,tipoEmision,identificacionReceptor,claveAcceso,numeroAutorizacion,importeTotal)
@@ -71,7 +79,7 @@ BEGIN
         --> Validacion de informacion
         IF (SELECT COUNT(*) FROM @Comprobantes) = 0 
             BEGIN
-                SELECT [Common].[ufnSpResponse]('0','Los comprobantes ya se encuentran registrados', DEFAULT)
+                SELECT '0' code,'Los comprobantes ya se encuentran registrados' as 'message'
                 RETURN
             END  
 
@@ -88,7 +96,7 @@ BEGIN
 			WHERE t.identificacionReceptor = SUBSTRING(ltrim(rtrim(@identificacionReceptor)), 1, 10) 
 
 		COMMIT TRAN
-        SELECT [Common].[ufnSpResponse]('1', 'Importación Exitosa',DEFAULT)
+        SELECT '1' code, 'Importación Exitosa' as 'message'
 	END TRY
 
 	BEGIN CATCH
@@ -96,7 +104,7 @@ BEGIN
             BEGIN 
 			    ROLLBACK TRAN
             END 
-        SELECT [Common].[ufnSpResponse]('0', 'Error en base de datos: ',DEFAULT)
+        SELECT '0' code, 'Error en base de datos: ' as 'message'
 		INSERT INTO ErroresSistema([token], [method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [errorDate], [idUsuario])
 		VALUES (NEWID(), 'DocumentoRecepcion/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @idUsuario)
 	END CATCH 

@@ -60,9 +60,7 @@
             return mS.getData('get', `${URL}?json=${JSON.stringify(data)}`, null, true).then(
                 response => {
                     if (!response) return [];
-
                     if (response.code === "0") {
-                        console.log(response)
                         return [];
                     }
                     if (response.code === "1") {

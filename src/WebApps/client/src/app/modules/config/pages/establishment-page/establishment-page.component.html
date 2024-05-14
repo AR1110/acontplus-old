@@ -9,7 +9,8 @@
   <div class="card-body">
     <div ngbAccordion [closeOthers]="true">
       @for (item of establishments; track item) {
-      <div ngbAccordionItem #first="ngbAccordionItem" (shown)="onEstabShow(item.idEstablecimiento)" (hidden)="onEstabHide()">
+      <div ngbAccordionItem #first="ngbAccordionItem" (shown)="onEstabShow(item.idEstablecimiento)"
+        (hidden)="onEstabHide()">
         <div ngbAccordionHeader class="accordion-button custom-header d-flex justify-content-between">
           <div class="d-flex justify-content-start">
             <div class="d-flex flex-row">
@@ -68,7 +69,7 @@
                   <div class="card border-dark border-1">
                     <div class="card-header d-flex flex-row justify-content-between align-content-center h-25">
                       <span class="card-title ">Puntos de Emisión</span>
-                      <button type="button" class="btn btn-info btn-sm">
+                      <button type="button" class="btn btn-info btn-sm" (click)="modalAddEditPuntoEmision(item)">
                         Nuevo
                       </button>
                     </div>
@@ -85,13 +86,13 @@
                             </tr>
                           </thead>
                           <tbody>
-                            @for (item of puntosEmision; track $index) {
+                            @for (ptoEmi of puntosEmision; track $index) {
                             <tr>
                               <td>
                                 <div class="d-flex flex-row gap-1 justify-content-center">
-                                  <button type="button" ng-click="$ctrl.openModalPtoEmisionEdit(item)"
+                                  <button type="button" (click)="modalAddEditPuntoEmision(item, ptoEmi)"
                                     class="btn btn-info btn-xs">
-                                        <fa-icon [icon]="'pencil'"></fa-icon>
+                                    <fa-icon [icon]="'pencil'"></fa-icon>
                                   </button>
                                   <button type="button" ng-click="$ctrl.askToDeletePtoEmision(item)"
                                     class="btn btn-danger btn-xs">
@@ -100,11 +101,11 @@
                                 </div>
                               </td>
                               <td>{{$index+1}}</td>
-                              <td>{{item.ptoEmi}}</td>
-                              <td>{{item.descripcion}}</td>
+                              <td>{{ptoEmi.ptoEmi}}</td>
+                              <td>{{ptoEmi.descripcion}}</td>
                               <td>
 
-                                <div [innerHTML]="item.estado | primaryStatus"></div>
+                                <div [innerHTML]="ptoEmi.estado | primaryStatus"></div>
                               </td>
                             </tr>
                             }@empty {

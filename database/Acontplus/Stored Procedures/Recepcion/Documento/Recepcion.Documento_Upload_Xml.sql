@@ -50,6 +50,7 @@ BEGIN
 	,@idDocumento INT
     ,@tipoIdentificacion VARCHAR(20)
     ,@CustomerId INT
+    ,@subcategoryId INT
 
 	BEGIN TRY
         
@@ -60,7 +61,7 @@ BEGIN
 
         SELECT TOP 1 @ruc = ruc FROM Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 	
-        SELECT  @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(100) '$.codEstab')
+        SELECT  @codEstab = codEstab, @subcategoryId = subcategoryId FROM OPENJSON(@json) WITH(codEstab VARCHAR(100) '$.codEstab', subcategoryId INT)
 	
         SELECT TOP 1 @idEstab = idEstablecimiento FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
@@ -183,10 +184,14 @@ BEGIN
 
 		BEGIN TRAN
 			INSERT  INTO Recepcion.DocumentoRecibido
-                (idEstablecimiento, [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior],[fechaEmision], [fechaAutorizacion],[tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], xmlCompressed, [versionComp], [idUsuario], [fechaRegistro], downloaded)
-			VALUES(@idEstab, @codEstab, @comprobante, @codDoc, @serieComprobante, @identificacionCliProv
-			, @razonSocial, @fechaEmision,  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
-			, 'NORMAL', @rucReceptor, @claveAcceso, @claveAcceso, @importeTotal, COMPRESS(CONVERT(VARBINARY(MAX), @xmlDoc)), @versionComp, @idUsuario, dbo.ufnGetDateEcuador(), 'DE')
+                (idEstablecimiento, [codEstab], [comprobante], [codDoc], [serieComprobante], [rucEmisor], [razonSocialEmisior],
+                [fechaEmision], [fechaAutorizacion],
+                [tipoEmision], [identificacionReceptor], [claveAcceso], [numeroAutorizacion], [importeTotal], xmlCompressed, [versionComp],
+                [idUsuario], [fechaRegistro], downloaded, subcategoryId)
+			VALUES(@idEstab, @codEstab, @comprobante, @codDoc, @serieComprobante, @identificacionCliProv, @razonSocial, 
+                @fechaEmision,  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
+			    ,'NORMAL', @rucReceptor, @claveAcceso, @claveAcceso, @importeTotal, COMPRESS(CONVERT(VARBINARY(MAX), @xmlDoc)), @versionComp, 
+                @idUsuario, dbo.ufnGetDateEcuador(), 'DE', @subcategoryId)
 
 			SET @idDocumento = @@IDENTITY
 
@@ -226,8 +231,10 @@ BEGIN
 				IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					BEGIN 
 						INSERT INTO Contabilidad.CuentaPorPagar
-							   (idDocumento,idEstablecimiento, idProveedor, idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
-						SELECT @idDocumento,idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,@identificacionCliProv,CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario
+							   (idDocumento,idEstablecimiento, idProveedor, idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,
+                               fechaEmision,importeTotal,idEntidad,idUsuario, subcategoryId)
+						SELECT @idDocumento,idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,@identificacionCliProv,
+                        CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario, @subcategoryId
 						FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
 						WHERE dr.idDocumento = @idDocumento 
                           AND dr.codDoc = '01'

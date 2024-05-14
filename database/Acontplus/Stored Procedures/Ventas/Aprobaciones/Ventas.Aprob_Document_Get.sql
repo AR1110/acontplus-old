@@ -218,6 +218,11 @@ BEGIN
 	        INNER JOIN App.UsuarioRol ur WITH(NOLOCK) ON u.idUsuario = ur.idUsuario
 	        WHERE ur.idEntidad = @idEntidad
 
+             SELECT    
+	              CAST(multipleVendedor AS BIT) as multipleVendedor 
+	        FROM Config.v_Sistema_Ventas gs
+            WHERE gs.idEntidad = @idEntidad
+
             RETURN
         END 
 
