@@ -1,15 +1,17 @@
 export {
     ModalCobroDetalleCtrl
 }
-ModalCobroDetalleCtrl.$inject = ['$scope', '$uibModalInstance', 'comprobanteIngresoService','toastService', 'params']
+ModalCobroDetalleCtrl.$inject = ['$scope', '$uibModalInstance', 'comprobanteIngresoService', 'toastService', 'params']
 
-function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,tS, params) {
+function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc, tS, params) {
     $scope.showDetalleCompIngreso = false;
     $scope.showDetalleCompIngresoByDoc = false;
 
     $scope.comprobante = {};
     $scope.cobros = [];
     $scope.cobroDetalles = [];
+
+    let isRefreshPage = false;
 
 
     initialLoad();
@@ -135,10 +137,26 @@ function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,
 
     }
 
+    async function messageQtyDoc() {
+        let isConfirmed = await Swal.fire({
+            icon: 'warning',
+            text: 'Este anulación de comprobante afectará mas de un doc. porque se ha realizado cobro por lote ¿Desea continuar? '
+        })
+        return isConfirmed;
+    }
 
     $scope.askToDelete = async (item) => {
 
         try {
+
+            let isContinue = true;
+
+            if (item.cantDocs > 1) {
+                isContinue = await messageQtyDoc();
+            }
+
+            if (!isContinue) return
+
             let {
                 isConfirmed,
                 value
@@ -162,18 +180,20 @@ function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,
             if (!isConfirmed) return
 
 
-            let data = {
+            let params = {
                 idComprobanteIngreso: item.idComprobanteIngreso,
                 observacion: value
             }
             showLoader();
-            comprobanteIngresoSvc.cancel(data).then(response => {
+      
+            comprobanteIngresoSvc.cancel(params).then(response => {
                 if (response.code == "0") {
                     tS.toastr('warning', response.message, response.titleSms);
                 }
                 if (response.code == "1") {
                     tS.toastr('success', response.message, response.titleSms);
-                    $uibModalInstance.close(response)
+                    isRefreshPage = true;
+                    // $uibModalInstance.close(response)
                 }
             }).catch(error => {
                 console.log(error)
@@ -187,7 +207,12 @@ function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,
 
 
     $scope.closeModal = function () {
-        $uibModalInstance.close();
+        if (isRefreshPage) {
+            $uibModalInstance.close({ response: 1 });
+        } else {
+            $uibModalInstance.close();
+
+        }
     };
 }
 

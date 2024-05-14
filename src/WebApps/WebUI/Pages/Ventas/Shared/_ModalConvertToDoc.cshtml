@@ -1,5 +1,5 @@
 <div class="modal-header bg-success text-white">
-    <h4 class="modal-title" id="modal-basic-title">Convertir a Documento</h4>
+    <h4 class="modal-title" id="modal-basic-title">Convertir a {{titleModal}}</h4>
     <button type="button" class="close" ng-click="closeModal()">
         &times; 
     </button>
@@ -21,7 +21,19 @@
                 <input type="text" class="form-control" ng-value="comprobante.serieComprobante" readonly>
             </div>
         </div>
-        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12" ng-if="config.multipleVendedor">
+            <div class="form-group">
+                <label for="vendedor">Vendedor: <span class="text-danger">*</span></label>
+                <select name="vendedor" id="vendedor" class="form-control border-select"
+                    ng-model="data.idUsuario">
+                    <option ng-value="item.idUsuario" ng-repeat="item in vendedores">
+                        {{item.nombreCompleto}}
+                    </option>
+                </select>
+            </div>
+        </div>
+            
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12"> 
             <!-- <div class="form-group">
                 <label>Tiempo Credito: <span class="text-danger">*</span> </label>
                 <select class="form-control" name="tiempoCredito" id="tiempoCredito" ng-model="comprobante.idTiempoCredito">

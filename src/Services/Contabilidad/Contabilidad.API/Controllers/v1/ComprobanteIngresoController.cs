@@ -55,7 +55,7 @@ public class ComprobanteIngresoController : ControllerBase
     }
 
     [HttpPut("Cancel")]
-    public async Task<IActionResult> Cancel([FromBody] ApiRequest paremeter)
+    public async Task<IActionResult> Cancel(ApiRequest paremeter)
     {
         var _response = new ApiResponse();
         try
