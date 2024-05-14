@@ -143,10 +143,6 @@
       "destination": "wwwroot/lib/axios/"
     },
     {
-      "library": "material-design-iconic-font@2.2.0",
-      "destination": "wwwroot/assets/icons/material-design-iconic-font/"
-    },
-    {
       "library": "tabulator@6.2.1",
       "destination": "wwwroot/lib/tabulator/",
       "files": [
@@ -173,6 +169,10 @@
     {
       "library": "simple-line-icons@2.5.5",
       "destination": "wwwroot/assets/icons/simple-line-icons/"
+    },
+    {
+      "library": "material-design-iconic-font@2.2.0",
+      "destination": "wwwroot/assets/icons/material-design-iconic-font/"
     }
   ]
 }
