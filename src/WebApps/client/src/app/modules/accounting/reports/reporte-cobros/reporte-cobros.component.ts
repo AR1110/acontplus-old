@@ -71,6 +71,7 @@ export class ReporteCobrosComponent implements OnInit {
                     }
 
                     const [estabs, tiposDoc, subEntidadFinanciera] = JSON.parse(response.payload as string);
+
                     this.establecimientos = groupEstabUtil({ estabs, isGroupPuntoEmision: true })
 
                     const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
@@ -87,9 +88,6 @@ export class ReporteCobrosComponent implements OnInit {
                     this.tiposDoc = tiposDoc;
                     this.subEntidadFinanciera = subEntidadFinanciera;
                     this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FV)?.codDoc || '';
-
-
-                    console.log(this.subEntidadFinanciera);
                 }
             }, error(err) {
                 hideLoader()

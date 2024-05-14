@@ -3,6 +3,7 @@
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("2.0")]
+
     public class ReporteController : ControllerBase
     {
         private readonly IReportService _reportService;

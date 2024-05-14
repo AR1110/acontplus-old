@@ -7,104 +7,13 @@
       <ConnectionProperties>
         <DataProvider>SQL</DataProvider>
         <ConnectString />
+        <IntegratedSecurity>true</IntegratedSecurity>
       </ConnectionProperties>
-      <rd:SecurityType>None</rd:SecurityType>
+      <rd:SecurityType>Integrated</rd:SecurityType>
       <rd:DataSourceID>80bcd543-01bd-4c79-8094-87b60a94fc2a</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
-    <DataSet Name="details">
-      <Query>
-        <DataSourceName>main</DataSourceName>
-        <CommandText />
-      </Query>
-      <Fields>
-        <Field Name="serie">
-          <DataField>serie</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="fechaRegistro">
-          <DataField>fechaRegistro</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="nroIdentificacion">
-          <DataField>nroIdentificacion</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="nombreFiscal">
-          <DataField>nombreFiscal</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="abono">
-          <DataField>abono</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="total">
-          <DataField>total</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="codDoc">
-          <DataField>codDoc</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="serieComprobante">
-          <DataField>serieComprobante</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="descripcion">
-          <DataField>descripcion</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="totalDoc">
-          <DataField>totalDoc</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="abonoDoc">
-          <DataField>abonoDoc</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="saldoDoc">
-          <DataField>saldoDoc</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="banco">
-          <DataField>banco</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="ciudad">
-          <DataField>ciudad</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="fechaEmision">
-          <DataField>fechaEmision</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="nro">
-          <DataField>nro</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="referencia">
-          <DataField>referencia</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="aprobacion">
-          <DataField>aprobacion</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="lote">
-          <DataField>lote</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="nombreComercial">
-          <DataField>nombreComercial</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="codEstab">
-          <DataField>codEstab</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-      </Fields>
-    </DataSet>
     <DataSet Name="header">
       <Query>
         <DataSourceName>main</DataSourceName>
@@ -138,6 +47,125 @@
         <Field Name="fechaFin">
           <DataField>fechaFin</DataField>
           <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="details">
+      <Query>
+        <DataSourceName>main</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@userRoleId">
+            <Value>=Parameters!userRoleId.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@json">
+            <Value>=Parameters!json.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@tableNames">
+            <Value>=Parameters!tableNames.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>Contabilidad.ComprobanteIngreso_Report</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="idComprobanteIngreso">
+          <DataField>idComprobanteIngreso</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="idPersona">
+          <DataField>idPersona</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="nombreComercial">
+          <DataField>nombreComercial</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="codEstab">
+          <DataField>codEstab</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="serie">
+          <DataField>serie</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="fechaRegistro">
+          <DataField>fechaRegistro</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="nroIdentificacion">
+          <DataField>nroIdentificacion</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="nombreFiscal">
+          <DataField>nombreFiscal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="abono">
+          <DataField>abono</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="total">
+          <DataField>total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="idPuntoEmision">
+          <DataField>idPuntoEmision</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="codDoc">
+          <DataField>codDoc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="serieComprobante">
+          <DataField>serieComprobante</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="descripcion">
+          <DataField>descripcion</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="totalDoc">
+          <DataField>totalDoc</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="abonoDoc">
+          <DataField>abonoDoc</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="saldoDoc">
+          <DataField>saldoDoc</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="banco">
+          <DataField>banco</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ciudad">
+          <DataField>ciudad</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="idSubEntidadFinanciera">
+          <DataField>idSubEntidadFinanciera</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="secuencial">
+          <DataField>secuencial</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="nro">
+          <DataField>nro</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="referencia">
+          <DataField>referencia</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="aprobacion">
+          <DataField>aprobacion</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="lote">
+          <DataField>lote</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1006,7 +1034,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="fechaRegistro1">
+                        <Textbox Name="fechaRegistro">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1024,7 +1052,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>fechaRegistro1</rd:DefaultName>
+                          <rd:DefaultName>fechaRegistro</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1041,7 +1069,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="serieComprobante1">
+                        <Textbox Name="serieComprobante">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1058,7 +1086,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>serieComprobante1</rd:DefaultName>
+                          <rd:DefaultName>serieComprobante</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1075,7 +1103,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="descripcion1">
+                        <Textbox Name="descripcion">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1092,7 +1120,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>descripcion1</rd:DefaultName>
+                          <rd:DefaultName>descripcion</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1109,7 +1137,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="totalDoc1">
+                        <Textbox Name="totalDoc">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1128,7 +1156,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>totalDoc1</rd:DefaultName>
+                          <rd:DefaultName>totalDoc</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1145,7 +1173,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="abonoDoc1">
+                        <Textbox Name="abonoDoc">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1164,7 +1192,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>abonoDoc1</rd:DefaultName>
+                          <rd:DefaultName>abonoDoc</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1181,7 +1209,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="saldoDoc1">
+                        <Textbox Name="saldoDoc">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1200,7 +1228,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>saldoDoc1</rd:DefaultName>
+                          <rd:DefaultName>saldoDoc</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1217,7 +1245,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="banco1">
+                        <Textbox Name="banco">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1236,7 +1264,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>banco1</rd:DefaultName>
+                          <rd:DefaultName>banco</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1253,7 +1281,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="ciudad1">
+                        <Textbox Name="ciudad">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1272,7 +1300,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>ciudad1</rd:DefaultName>
+                          <rd:DefaultName>ciudad</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1289,7 +1317,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="nro1">
+                        <Textbox Name="nro">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1308,7 +1336,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>nro1</rd:DefaultName>
+                          <rd:DefaultName>nro</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1325,7 +1353,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="referencia1">
+                        <Textbox Name="referencia">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1344,7 +1372,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>referencia1</rd:DefaultName>
+                          <rd:DefaultName>referencia</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1361,7 +1389,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="aprobacion1">
+                        <Textbox Name="aprobacion">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1380,7 +1408,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>aprobacion1</rd:DefaultName>
+                          <rd:DefaultName>aprobacion</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1397,7 +1425,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="lote1">
+                        <Textbox Name="lote">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1416,7 +1444,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>lote1</rd:DefaultName>
+                          <rd:DefaultName>lote</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1512,7 +1540,7 @@
                   <TablixHeader>
                     <Size>3.87067cm</Size>
                     <CellContents>
-                      <Textbox Name="nombreFiscal1">
+                      <Textbox Name="nombreFiscal">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
@@ -1531,7 +1559,7 @@
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>nombreFiscal1</rd:DefaultName>
+                        <rd:DefaultName>nombreFiscal</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
@@ -1809,6 +1837,23 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>mimeType</Prompt>
     </ReportParameter>
+    <ReportParameter Name="userRoleId">
+      <DataType>Integer</DataType>
+      <Prompt>user Role Id</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="json">
+      <DataType>String</DataType>
+      <Prompt>json</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="tableNames">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>header,details</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>table Names</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -1824,6 +1869,21 @@
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>0</RowIndex>
           <ParameterName>mimeType</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>userRoleId</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>json</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>tableNames</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>
