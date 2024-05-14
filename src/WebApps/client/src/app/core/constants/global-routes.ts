@@ -2,7 +2,7 @@ export enum GlobalRoutes {
   ComprasReportes = 'purchase/reports-page',
   ComprasReportesRecepcion = 'purchase/reception-reports-page',
   ConfigDocConfig = 'config/doc-config-page',
-  ConfigEstablishment = 'config/establishment-page',
+  ConfigEstablishment = 'config/establishment',
   ConfigGeneralConfig = 'config/general-config-page',
   ConfigUserProfile = 'config/user-profile-page',
   ConfigUserCustomer = 'config/user-customer-page',

@@ -30,6 +30,7 @@ namespace Configuracion.API.Extensions
             services.AddScoped<IUserCustomerPermissionService, UserCustomerPermissionService>();
             services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<IEstablishmentService, EstablishmentService>();
+            services.AddScoped<IPtoEmisionService, PtoEmisionService>();
 
             services.AddScoped<ICustomLogger, CustomLogger>();
 
