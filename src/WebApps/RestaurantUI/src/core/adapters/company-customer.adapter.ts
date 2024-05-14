@@ -22,6 +22,7 @@ const mapperTo = function(data: any){
         telefono: isValidField(telefono),
         correo: isValidField(correo),
         placa: null,
+        estado: 1,
         montoCredito: isValidField(data.montoCredito),
         nota: isValidField(data.nota),
         validationSri: data.validationSri,
