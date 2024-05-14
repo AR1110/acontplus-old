@@ -119,10 +119,6 @@
       "destination": "wwwroot/lib/ngMask/"
     },
     {
-      "library": "MaterialDesign-Webfont@7.4.47",
-      "destination": "wwwroot/assets/icons/MaterialDesign-Webfont/"
-    },
-    {
       "library": "ngStorage@0.3.11",
       "destination": "wwwroot/lib/ngStorage/"
     },
@@ -173,6 +169,10 @@
     {
       "library": "animate.css@4.1.1",
       "destination": "wwwroot/lib/animate/"
+    },
+    {
+      "library": "simple-line-icons@2.5.5",
+      "destination": "wwwroot/assets/icons/simple-line-icons/"
     }
   ]
 }
