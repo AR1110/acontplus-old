@@ -12,7 +12,7 @@ GO
 -- =============================================
 
 CREATE OR ALTER PROCEDURE Recepcion.Doc_Detail_Temp_Insert_All
-    @idRol INT
+    @userRoleId INT
     ,@idDocumento INT
     ,@jsonData VARCHAR(MAX)
     ,@impuestos VARCHAR(MAX)
@@ -88,7 +88,7 @@ BEGIN
             RETURN
         END
 
-        SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @idRol
+        SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
         SELECT @rucProv = rucEmisor FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
 

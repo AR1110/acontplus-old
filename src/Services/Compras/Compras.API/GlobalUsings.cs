@@ -21,7 +21,6 @@ global using Services.Common.Extensions;
 global using Services.Common.Logs;
 global using Services.Common.Middleware;
 global using System.Data;
-global using System.Security.Claims;
 global using System.Text;
 global using System.Xml;
 global using System.Xml.Linq;

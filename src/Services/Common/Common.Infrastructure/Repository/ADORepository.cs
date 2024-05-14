@@ -226,7 +226,7 @@ namespace Common.Infrastructure.Repository
             }
             return dt;
         }
-        public async Task<int> OnlyExecuteAsync(string spName, Dictionary<string, object> parameters, bool useStoredProcedure)
+        public async Task<int> OnlyExecuteAsync(string spName, Dictionary<string, object> parameters, bool useStoredProcedure, bool timeout)
         {
             var _context = _contexts.GetContext(_configuration["ContextName"]);
             using (var cmd = _context.Database.GetDbConnection().CreateCommand())
@@ -252,6 +252,11 @@ namespace Common.Infrastructure.Repository
                     else
                     {
                         cmd.CommandType = CommandType.Text;
+                    }
+
+                    if (!timeout)
+                    {
+                        cmd.CommandTimeout = 0;
                     }
                     if (!wasOpen) await _context.Database.OpenConnectionAsync();
                    return await cmd.ExecuteNonQueryAsync();
