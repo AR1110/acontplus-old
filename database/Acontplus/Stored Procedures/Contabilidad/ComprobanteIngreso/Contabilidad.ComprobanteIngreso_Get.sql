@@ -262,6 +262,7 @@ BEGIN
 				  ,ci.abono
 				  ,ci.cambio
 				  ,estado           = CASE ci.estado WHEN 1 THEN 'ACTIVO' ELSE 'ANULADO' END 
+                  ,[status] =  ci.estado
                   ,(
                     SELECT COUNT(DISTINCT cc.idCuentaPorCobrar) FROM Contabilidad.Historial_Cobro cc WITH (NOLOCK) WHERE cc.idComprobanteIngreso = ci.idComprobanteIngreso
                    ) as cantDocs
