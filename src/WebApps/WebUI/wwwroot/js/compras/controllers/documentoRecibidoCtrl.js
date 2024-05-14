@@ -221,7 +221,7 @@
         $scope.openModalImportacionManual = async function () {
             try {
 
-                if (!await alertEstabSelected()) return; 
+                if (!await alertEstabSelected()) return;
                 subcategories = await subcategoryService.get({ params: { tipo: 1 } });
 
                 if (subcategories.length == 0) {
@@ -292,10 +292,10 @@
                 html: `<div> ${$scope.selected[0].comprobante} <strong> ${$scope.selected[0].serieComprobante} </strong> </div>
                             <div class="btn btn-group btn-group-xs" role="group">
                                 <button type="button" id="btnImportar" class="btn btn-info btn-sm" title="Importar Comprobante"><i class="ti-upload"></i> Visualizar</button>
-                                <button type="button" id="btnGetXml" class="btn btn-success btn-sm" title="Actualizar Xml Sri"><i class="ti-download"></i> Actualizar Xml</button>
+                                <button type="button" id="btnUpdateXml" class="btn btn-success btn-sm" title="Actualizar Xml Sri"><i class="fa fa-sync"></i> Actualizar Xml</button>
                                 <button type="button" id="btnDelete" class="btn btn-danger btn-sm" title="Eliminar"><i class="ti-trash"></i> Eliminar</button>
                                 <button type="button" id="btnDocRel" class="btn btn-primary btn-sm" title="Documentos relacionados"><i class="fa fa-link"></i> Docs. Rel.</button>
-                                <button type="button" id="btnReport" class="btn btn-secondary btn-sm" title="PDF"><i class="mdi mdi-file-pdf"></i> Reporte</button>
+                                <button type="button" id="btnDownloadXml" class="btn btn-secondary btn-sm" title="PDF"><i class="ti-download"></i> Descargar Xml</button>
                             </div>`,
                 width: 600,
                 showCancelButton: true,
@@ -307,17 +307,15 @@
                 allowEnterKey: false
             })
 
-
-
             if ($scope.selected[0].complete) {
                 document.getElementById("btnDelete").style.display = "none";
+                document.getElementById("btnUpdateXml").style.display = "none";
             }
             document.getElementById("btnImportar").onclick = function (event) {
                 getId()
-                Swal.close()
                 event.preventDefault()
             }
-            document.getElementById("btnGetXml").onclick = function (event) {
+            document.getElementById("btnUpdateXml").onclick = function (event) {
                 putXml()
                 event.preventDefault()
             }
@@ -329,16 +327,10 @@
                 getMergedDocs()
                 event.preventDefault()
             }
-
-            //Reporte 
-            if ($scope.selected[0].codDoc !== '01') {
-                document.getElementById("btnReport").style.display = "none";
-            } else {
-                document.getElementById("btnReport").onclick = function () {
-                    getReport();
-                }
+            document.getElementById("btnDownloadXml").onclick = function (event) {
+                getReport();
+                event.preventDefault()
             }
-
         }
 
         function getId() {
@@ -635,7 +627,7 @@
         $scope.compToImport = [];
 
 
-        $scope.query = { sortBy: '' } 
+        $scope.query = { sortBy: '' }
 
         let importarXMLRef = null;
         let stepCompFoundedRef = null;
@@ -874,7 +866,7 @@
                         if (response.code == "1") {
                             tS.toastr("success", response.message)
                         }
-                    } 
+                    }
                 }, function (error) {
                     tS.toastr("error", "Error al cargar el archivo: " + error)
                 });

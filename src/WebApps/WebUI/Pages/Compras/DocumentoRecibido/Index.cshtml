@@ -99,11 +99,16 @@
                         </script>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="form-group">
-                        <span for="claveAcceso">Clave Acceso</span>
+                        <span for="claveAcceso">Clave Acceso:</span>
                         <input type="text" class="form-control border-select" ng-change="onChangeClaveAcceso()" valid-number ng-model="dataSearch.claveAcceso" />
                         <span class="text-info" ng-if="claveAccesoLongitud">{{claveAccesoLongitud}} dígitos</span>
+                    </div>
+                </div><div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="claveAcceso">Nro. Documento:</span>
+                        <input type="text" class="form-control border-select" ng-change="onChangeNroDocumento()" valid-number ng-model="dataSearch.claveAcceso" />
                     </div>
                 </div>
             </div>
@@ -194,7 +199,14 @@
     </div>
 </div>
 @section Scripts {
-    <script src="~/js/compras/services/docRecibidoService.js" asp-append-version="true"></script>
-    <script src="~/js/contabilidad/services/subcategoryService.js" asp-append-version="true"></script>
-    <script src="~/js/compras/controllers/documentoRecibidoCtrl.js" asp-append-version="true"></script>
+    <environment include="Development">
+        <script src="~/js/compras/services/docRecibidoService.js" asp-append-version="true"></script>
+        <script src="~/js/contabilidad/services/subcategoryService.js" asp-append-version="true"></script>
+        <script src="~/js/compras/controllers/documentoRecibidoCtrl.js" asp-append-version="true"></script>
+    </environment>
+    <environment include="Staging,Production">
+        <script src="~/js/compras/services/docRecibidoService.min.js" asp-append-version="true"></script>
+        <script src="~/js/contabilidad/services/subcategoryService.min.js" asp-append-version="true"></script>
+        <script src="~/js/compras/controllers/documentoRecibidoCtrl.min.js" asp-append-version="true"></script>
+    </environment>
 }
