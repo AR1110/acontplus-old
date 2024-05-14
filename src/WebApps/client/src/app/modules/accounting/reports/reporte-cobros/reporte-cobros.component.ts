@@ -125,54 +125,65 @@ export class ReporteCobrosComponent implements OnInit {
 
     getReport(format: 'pdf' | 'excel') {
 
-        if (!isValidField(this.dataSearch.fromDate)) {
-            this.tS.toastr({
-                type: 'warning',
-                message: 'Ingrese fecha inicio'
-            })
-            return
-        }
-
-        if (!isValidField(this.dataSearch.toDate)) {
-            this.tS.toastr({
-                type: 'warning',
-                message: 'Ingrese fecha fin'
-            })
-            return
-        }
-
-        if (this.dataSearch.supplierChecked) {
-            if (!isValidField(this.dataSearch.customerId)) {
+        try {
+            if (!isValidField(this.dataSearch.fromDate)) {
                 this.tS.toastr({
                     type: 'warning',
-                    message: 'Seleccione el cliente'
+                    message: 'Ingrese fecha inicio'
                 })
                 return
             }
-        }
+
+            if (!isValidField(this.dataSearch.toDate)) {
+                this.tS.toastr({
+                    type: 'warning',
+                    message: 'Ingrese fecha fin'
+                })
+                return
+            }
+
+            if (this.dataSearch.supplierChecked) {
+                if (!isValidField(this.dataSearch.customerId)) {
+                    this.tS.toastr({
+                        type: 'warning',
+                        message: 'Seleccione el cliente'
+                    })
+                    return
+                }
+            }
 
 
-        const dataParms = {
-            tipo: this.dataSearch.documentoChecked ? 1 : 2,
-            format,
-            codEstab: isValidField(this.dataSearch.codEstab),
-            codDoc: isValidField(this.dataSearch.codDoc),
-            idSubEntidadFinanciera: this.dataSearch.idSubEntidadFinanciera,
-            idCustomer: this.dataSearch.supplierChecked && isValidField(this.dataSearch.customerId) || null,
-            idPuntoEmision: this.dataSearch.idPuntoEmision,
-            fechaInicio: this.dataSearch.fromDate,
-            fechaFin: this.dataSearch.toDate,
-            dateChecked: this.dataSearch.dateChecked,
-        }
-
-        const parameters = {
-            reportParams: JSON.stringify({
-                codEstab: this.dataSearch.codEstab,
-                codigo: this.dataSearch.documentoChecked ? CODE_REPORT.RCXD : CODE_REPORT.RCXC,
+            const dataParms = {
+                tipo: this.dataSearch.documentoChecked ? 1 : 2,
                 format,
-            }),
-            dataParams: JSON.stringify(dataParms)
+                codEstab: isValidField(this.dataSearch.codEstab),
+                codDoc: isValidField(this.dataSearch.codDoc),
+                idSubEntidadFinanciera: this.dataSearch.idSubEntidadFinanciera,
+                idCustomer: this.dataSearch.supplierChecked && isValidField(this.dataSearch.customerId) || null,
+                idPuntoEmision: this.dataSearch.idPuntoEmision,
+                fechaInicio: this.dataSearch.fromDate,
+                fechaFin: this.dataSearch.toDate,
+                dateChecked: this.dataSearch.dateChecked,
+            }
+
+            const parameters = {
+                reportParams: JSON.stringify({
+                    codEstab: this.dataSearch.codEstab,
+                    codigo: this.dataSearch.documentoChecked ? CODE_REPORT.RCXD : CODE_REPORT.RCXC,
+                    format,
+                }),
+                dataParams: JSON.stringify(dataParms)
+            }
+            this.sharedSvc.getReport(parameters, format)
+        } catch (error: any) {
+            if (error.status === 400) {
+                this.tS.toastr({
+                    type: 'warning',
+                    message: 'No se pudo obtener el reporte'
+                })
+            } else {
+                console.log(error)
+            }
         }
-        this.sharedSvc.getReport(parameters, format)
     }
 }

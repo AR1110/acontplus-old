@@ -2331,7 +2331,7 @@
                 <DataSetName>details</DataSetName>
                 <Top>0.21061cm</Top>
                 <Height>0.6cm</Height>
-                <Width>29.1458cm</Width>
+                <Width>29.14583cm</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -2343,7 +2343,7 @@
             <Top>3.4011cm</Top>
             <Left>0.02406cm</Left>
             <Height>0.98466cm</Height>
-            <Width>29.1458cm</Width>
+            <Width>29.14583cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -2353,14 +2353,14 @@
             </Style>
           </Rectangle>
         </ReportItems>
-        <Height>79.57575mm</Height>
+        <Height>94.39247mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>291.69856mm</Width>
+      <Width>291.6989mm</Width>
       <Page>
         <PageFooter>
           <Height>6.70278mm</Height>
@@ -2385,6 +2385,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>usuario</rd:DefaultName>
+              <Top>0cm</Top>
               <Left>0.02406cm</Left>
               <Height>0.6cm</Height>
               <Width>6.35233cm</Width>
@@ -2418,7 +2419,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>ExecutionTime</rd:DefaultName>
-              <Top>0mm</Top>
+              <Top>-0.00005mm</Top>
               <Left>240.89856mm</Left>
               <Height>6.35mm</Height>
               <Width>50.8mm</Width>

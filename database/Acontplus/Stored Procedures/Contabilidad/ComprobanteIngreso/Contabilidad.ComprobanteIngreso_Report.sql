@@ -21,7 +21,7 @@ GO
 -- Create date: 2024/05/15
 -- Description:	REPORT FOR COBROS
 -- =============================================
--- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":2,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"NE","idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
+-- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":null,"idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	@userRoleId			INT
 	, @json				VARCHAR(MAX)
@@ -49,7 +49,7 @@ BEGIN
 		BEGIN
             SET @tableNames = 'header,details'
 
-             SELECT @codEstab                = codEstab
+             SELECT @codEstab               = codEstab
                 , @codDoc                   = codDoc
                 , @idSubEntidadFinanciera   = idSubEntidadFinanciera
                 , @fechaInicio              = fechaInicio
@@ -90,7 +90,7 @@ BEGIN
                                             , CAST(ci.abono  AS NUMERIC(18,2))															AS abono
                                             , CAST(ci.total  AS NUMERIC(18,2))															AS total
                                             , cc.idPuntoEmision
-                                            , cc.codDoc
+                                            , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
                                             , cc.serieComprobante
                                             , ef.descripcion
                                             , CAST(hc.saldo  AS NUMERIC(18,2))															AS totalDoc
@@ -100,6 +100,7 @@ BEGIN
                                             , ISNULL(cd.descripcion, '''')																AS ciudad
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
                                             , co.secuencial                                                                             AS secuencial
+                                            , co.fechaEmision
                                             , (
 	                                            CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                            ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')
@@ -212,13 +213,7 @@ BEGIN
                 , dateChecked               BIT
                 , idPuntoEmision            INT
             )
-
             
-            --- Serie
-            --- fechaRegistro => Fecha cobro.
-            --- Numero de cobro.
-            ---> Comprobante ingreso => Eliminar
-
 
             SET @params = '@idEntidad               INT 
                            ,@idSubEntidadFinanciera INT
@@ -241,7 +236,7 @@ BEGIN
                                         , CAST(ci.total  AS NUMERIC(18,2))															        AS total
                                         , co.fechaEmision
                                         , cc.idPuntoEmision
-                                        , (	CASE cc.codDoc WHEN ''01'' THEN ''EFE'' ELSE cc.codDoc END )								    AS codDoc
+                                        , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )								        AS codDoc
                                         , cc.serieComprobante
                                         , cx.nroCuota
                                         , ef.descripcion
