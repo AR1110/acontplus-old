@@ -274,13 +274,11 @@ function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
 
     function _getFile(method, url, data = null, forApi = false) {
         return $http({
-            method: method,
-            url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
-            data: data,
+            method,
+            url: forApi ? `${_token.urlGateway}/gateway/${url}` : url,
+            data,
             responseType: 'blob'
-        }).then(response => {
-            return response
-        })
+        }).then(response => response);
     }
 
     _detectDevice = () => {

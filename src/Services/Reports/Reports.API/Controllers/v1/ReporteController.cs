@@ -3,17 +3,9 @@
     [Route("api/reporte/[action]")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class ReporteController : ControllerBase
+    public class ReporteController(IReportService reportService, IRdlcReportService rdlcReportService)
+        : ControllerBase
     {
-        private readonly IReportService _reportService;
-        private readonly IRdlcReportService _rdlcReportService;
-
-        public ReporteController(IReportService reportService, IRdlcReportService rdlcReportService)
-        {
-            _reportService = reportService;
-            _rdlcReportService = rdlcReportService;
-        }
-
         [HttpPost]
         public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
@@ -27,13 +19,13 @@
             string sanitizedReportParams = SqlStringParam.Sanitize(data.reportParams);
             string sanitizedDataParams = SqlStringParam.Sanitize(data.dataParams);
 
-            var dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", sanitizedReportParams } });
+            var dsParams = await reportService.GetParamsAsync(new Dictionary<string, object> { { "json", sanitizedReportParams } });
 
-            if (dsParams.Tables["ReportProps"].Rows.Count == 0)
+            if (dsParams.Tables["ReportProps"]!.Rows.Count == 0)
             {
                 return BadRequest("Can't get report params.");
             }
-
+            
             string storedProcedure = dsParams.Tables["ReportProps"].Rows[0].Field<string>("storedProcedure");
 
             var dataParams = new Dictionary<string, object>();
@@ -48,14 +40,14 @@
 
             dataParams["json"] = sanitizedDataParams;
 
-            var ds = await _reportService.GetDataAsync(storedProcedure, dataParams);
+            var ds = await reportService.GetDataAsync(storedProcedure, dataParams);
 
             if (ds.Tables[0].Rows.Count == 0)
             {
                 return BadRequest("Can't get report data.");
             }
 
-            var response = _rdlcReportService.GetReport(dsParams, ds);
+            var response = rdlcReportService.GetReport(dsParams, ds);
 
             if (response == null)
             {

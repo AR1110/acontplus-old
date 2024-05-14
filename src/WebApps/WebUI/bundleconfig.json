@@ -682,5 +682,11 @@
     "inputFiles": [
       "wwwroot/js/compras/services/docRecibidoService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/services/subcategoryService.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/services/subcategoryService.js"
+    ]
   }
 ]

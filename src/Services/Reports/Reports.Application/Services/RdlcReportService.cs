@@ -10,25 +10,18 @@ using Reports.Core.Models;
 
 namespace Reports.Application.Services
 {
-    public class RdlcReportService : IRdlcReportService
+    public class RdlcReportService(IConfiguration configuration) : IRdlcReportService
     {
-        private readonly IConfiguration _configuration;
-
-        public RdlcReportService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
-        public ReportResponse GetReport(DataSet dsParams, DataSet ds, bool offline = false)
+        public ReportResponse GetReport(DataSet parameters, DataSet data, bool offline = false)
         {
             var response = new ReportResponse();
-            var reportProps = DataTableMapper.BindData<ReportProps>(dsParams.Tables["ReportProps"]);
+            var reportProps = DataTableMapper.BindData<ReportProps>(parameters.Tables["ReportProps"]);
 
 
             using var lr = new LocalReport();
             if (offline)
             {
-                var reportPath = Path.Combine(_configuration.GetSection("dirReports").Value, dsParams.Tables[0].Rows[0]["reportPath"].ToString());
+                var reportPath = Path.Combine(configuration.GetSection("dirReports").Value ?? throw new InvalidOperationException(), parameters.Tables[0].Rows[0]["reportPath"].ToString() ?? string.Empty);
                 lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(reportPath));
             }
             else
@@ -51,12 +44,16 @@ namespace Reports.Application.Services
                 }
             }
 
-            if (dsParams.Tables.Contains("DataSources"))
+            if (parameters.Tables.Contains("DataSources"))
             {
-                var dataSources = dsParams.Tables["DataSources"];
-                foreach (DataRow row in dataSources.Rows)
+                var dataSources = parameters.Tables["DataSources"];
+                if (dataSources != null)
                 {
-                    lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(), ds.Tables[row.Field<int>("position")]));
+                    foreach (DataRow row in dataSources.Rows)
+                    {
+                        lr.DataSources.Add(new ReportDataSource(row["dataSource"].ToString(),
+                            data.Tables[row.Field<int>("position")]));
+                    }
                 }
             }
             else
@@ -64,11 +61,11 @@ namespace Reports.Application.Services
                 var dataSourceNames = lr.GetDataSourceNames();
                 foreach (var dataSourceName in dataSourceNames)
                 {
-                    lr.DataSources.Add(new ReportDataSource(dataSourceName, ds.Tables[dataSourceName]));
+                    lr.DataSources.Add(new ReportDataSource(dataSourceName, data.Tables[dataSourceName]));
                 }
             }
 
-            var firstDataSource = ds.Tables[0];
+            var firstDataSource = data.Tables[0];
             if (firstDataSource.Columns.Contains("codigoAutorizacion"))
             {
                 var byteBarcode = BarcodeGen.Create(firstDataSource.Rows[0].Field<string>("codigoAutorizacion"));
@@ -79,21 +76,14 @@ namespace Reports.Application.Services
                 lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
             }
 
-            if (dsParams.Tables.Contains("ReportParams") && dsParams.Tables["ReportParams"].Rows.Count > 0)
+            if (parameters.Tables.Contains("ReportParams") && parameters.Tables["ReportParams"]!.Rows.Count > 0)
             {
-                foreach (DataRow item in dsParams.Tables["ReportParams"].Rows)
+                foreach (DataRow item in parameters.Tables["ReportParams"].Rows)
                 {
                     string paramValue = "";
                     if (Convert.ToBoolean(item["isPicture"]))
                     {
-                        if (item.Field<bool>("isCompressed"))
-                        {
-                            paramValue = FileExtensions.GetBase64FromByte(CompressionHelper.Decompress((byte[])item["paramValue"]));
-                        }
-                        else
-                        {
-                            paramValue = FileExtensions.GetBase64FromByte((byte[])item["paramValue"]);
-                        }
+                        paramValue = item.Field<bool>("isCompressed") ? FileExtensions.GetBase64FromByte(CompressionHelper.Decompress((byte[])item["paramValue"])) : FileExtensions.GetBase64FromByte((byte[])item["paramValue"]);
                         lr.SetParameters(new ReportParameter(item["paramName"].ToString(), paramValue));
                     }
                     else
@@ -108,8 +98,8 @@ namespace Reports.Application.Services
             Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileContentType fc);
             Enum.TryParse(reportProps.ReportFormat.ToUpper(), out FileFormats.FileExtension fe);
             response.FileContents = fileReport;
-            response.ContentType = EnumExtensions.DisplayName(fc);
-            response.FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + EnumExtensions.DisplayName(fe), Encoding.UTF8);
+            response.ContentType = fc.DisplayName();
+            response.FileDownloadName = HttpUtility.UrlEncode(reportProps.ReportName + fe.DisplayName(), Encoding.UTF8);
             return response;
         }
 
@@ -118,7 +108,6 @@ namespace Reports.Application.Services
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "NotFound.pdf");
             var fileContents = await File.ReadAllBytesAsync(filePath);
             return new ReportResponse { FileContents = fileContents, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
-
         }
     }
 }

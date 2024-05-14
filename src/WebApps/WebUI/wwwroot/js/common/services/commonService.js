@@ -256,7 +256,7 @@ export class CommonService {
     }
 
 
- 
+
     //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
     //Eliminar mas Adelante en depuracion co
@@ -268,7 +268,7 @@ export class CommonService {
             return JSON.parse(response.payload)
         })
     }
-   
+
     //-------------------------------------------------GET DATA TIPO DOCUMENTO COMPRA ---------------------
     setUiGridDetalleCompra(detalleCompra) {
 
@@ -711,6 +711,7 @@ export class CommonService {
             let url = params.v2 ? 'Reports/v2/Reporte/Download' : params.url || 'Reports/Reporte/Download';
             let parameters = params.parameters;
             let formatType = params.formatType || "pdf";
+            let downloadOnly = params.downloadOnly || false;
             showLoader();
             await this.mS.getFile(method, url, parameters, true).then(response => {
 
@@ -730,44 +731,51 @@ export class CommonService {
 
                     let objectUrl = window.URL || window.webkitURL;
                     let urlFile = objectUrl.createObjectURL(fileBlob);
-                    // Ajuste horizontal
-                    let x = parseInt((screen.width - 1200) / 2);
-                    // Ajustae vertical
-                    let y = parseInt((screen.height - 650) / 4);
-                    // var link = document.createElement('a');
-                    // link.href = window.URL.createObjectURL(fileBlob);
-                    // link.setAttribute('download', fileName);
-                    // document.body.appendChild(link);
-                    // link.click();
-                    // document.body.removeChild(link);    
 
-                    let newWindow = window.open(
-                        urlFile,
-                        "_blank",
-                        `resizable=yes
+                    if (downloadOnly) {
+                         var link = document.createElement('a');
+                         link.href = urlFile
+                         link.setAttribute('download', fileName);
+                         document.body.appendChild(link);
+                         link.click();
+                         document.body.removeChild(link);    
+                    } else {
+                        // Ajuste horizontal
+                        let x = parseInt((screen.width - 1200) / 2);
+                        // Ajustae vertical
+                        let y = parseInt((screen.height - 650) / 4);
+
+                        let newWindow = window.open(
+                            urlFile,
+                            "_blank",
+                            `resizable=yes
                     width=1200
                     height=650
                     screenY=${y}
                     screenX=${x}`
-                    )
-
-                    setTimeout(function () { newWindow.document.title = fileName; }, 1000);
-
-                    //newWindow.document.title = "YOUR PDF NAME HERE!";
+                        )
+                        setTimeout(function () { newWindow.document.title = fileName; }, 1000);
+                    }
                 } else {
                     let serverData = new Blob([response.data], {
                         type: response.headers()["content-type"],
                     });
-                    // let fileName = response
-                    //     .headers()["content-disposition"].split(";")[1]
-                    //     .split("=")[1];
                     let filename = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
                     filename = filename.replace('"', "")
                     this.FileSaver.saveAs(serverData, decodeURIComponent(filename));
                 }
             }).catch(error => {
                 hideLoader();
-                console.log(error)
+                if (error.status === 400) {
+                    toastr.warning("No se pudo obtener el reporte", "Aviso", {
+                        positionClass: "toast-bottom-center",
+                        closeButton: true,
+                        preventDuplicates: true,
+                        progressBar: true,
+                    });
+                } else {
+                    console.error("An error occurred:", error);
+                }
             })
         } catch (error) {
             hideLoader();
