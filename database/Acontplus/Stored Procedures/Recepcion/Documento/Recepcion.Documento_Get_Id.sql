@@ -13,19 +13,21 @@ GO
 --Recepcion.Documento_Get_Id 38, '16160bc8-541a-44e9-92a7-53a4bffb7713'
 
 CREATE OR ALTER PROCEDURE Recepcion.Documento_Get_Id @userRoleId INT
-,@idDocumento INT
+,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-    IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND xmlCompressed is null)
+    IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @id AND xmlCompressed is null)
     	BEGIN
     		RETURN
     	END
-    SELECT idDocumento, codDoc, CONVERT(XML, DECOMPRESS(xmlCompressed)) xmlDoc
+    SELECT idDocumento
+        ,codDoc
+        ,CONVERT(XML, DECOMPRESS(xmlCompressed)) xmlDoc
     FROM Recepcion.DocumentoRecibido
-    WHERE idDocumento  = @idDocumento
+    WHERE idDocumento  = @id
 
 
 END

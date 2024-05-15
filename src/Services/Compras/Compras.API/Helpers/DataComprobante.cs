@@ -77,7 +77,7 @@ public class DataComprobante
                         .SelectSingleNode("fechaEmision").InnerText;
                     break;
             }
-
+            XmlTosave = new XmlDocument();
             XmlTosave.LoadXml(nodeAuth.OuterXml);
 
 

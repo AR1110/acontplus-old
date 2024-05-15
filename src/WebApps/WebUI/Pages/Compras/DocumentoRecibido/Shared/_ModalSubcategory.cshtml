@@ -1,0 +1,38 @@
+﻿<form ng-submit="onSave()">
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="fa fa-edit"></i> Editar Subcategoría</h5>
+        <button type="button" class="close" ng-click="onModalClose()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="emisor">Emisor:</label>
+                    <input type="text" id="emisor" name="emisor" class="form-control" ng-model="selected.razonSocialEmisor" readonly />
+                </div>
+            </div>
+        </div> 
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="serieComprobante">Serie Comprobante:</label>
+                    <input type="text" id="serieComprobante" name="serieComprobante" class="form-control" ng-model="selected.serieComprobante" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="subcategoryId">Subcategoría:</label>
+                    <select id="subcategoryId" name="subcategoryId" class="form-control" ng-model="selected.subcategoryId">
+                        <option ng-value="item.id" ng-repeat="item in subcategories">{{item.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Guardar</button>
+        <button type="button" class="btn btn-outline-dark" ng-click="onModalClose()">&times; Cancelar</button>
+    </div>
+</form>

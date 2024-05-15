@@ -26,9 +26,8 @@
                         <span for="establecimiento">
                             Estab: <span class="text-danger">*</span>
                         </span>
-                        <select class="form-control border-select"
-                                ng-model="dataSearch.codEstab"
-                                ng-change="onChangeEstab()">
+                        <select class="form-control border-select" ng-model="dataSearch.codEstab"
+                            ng-change="onChangeEstab()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -42,15 +41,15 @@
                             <div class="input-group-text">
                                 <div class="custom-control custom-checkbox mr-sm-2">
                                     <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
-                                           class="custom-control-input" id="checkBoxFecha">
+                                        class="custom-control-input" id="checkBoxFecha">
                                     <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
                             </div>
                         </div>
 
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                                           end-date="dataSearch.fechaFin"
-                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
                     </div>
 
                 </div>
@@ -60,7 +59,8 @@
                         <span for="tipoComprobante">
                             Tipo Comprobante
                         </span>
-                        <select class="form-control border-select" ng-model="dataSearch.codDoc" ng-change="getComprobantes()">
+                        <select class="form-control border-select" ng-model="dataSearch.codDoc"
+                            ng-change="getComprobantes()">
                             <option ng-value="">Todos</option>
                             <option ng-value="item.codDoc" ng-repeat="item in tipoComprobantes">
                                 {{item.descripcion}}
@@ -75,7 +75,7 @@
                             <i class="{{extraOptionsIcon}}" uib-tooltip="{{extraOptionsTooltip}}"></i>
                         </button>
                         <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                                ng-click="getComprobantes()">
+                            ng-click="getComprobantes()">
                             <i class="fas fa-redo"></i>
                         </button>
                     </div>
@@ -88,9 +88,9 @@
                     <div class="form-group">
                         <span for="proveedorFiltro">Proveedor:</span>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
-                               ng-model="proveedor.nombreProveedor" provider-search-drtv
-                               on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
-                               placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+                            ng-model="proveedor.nombreProveedor" provider-search-drtv
+                            on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
+                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteProviderTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -102,13 +102,17 @@
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="claveAcceso">Clave Acceso:</span>
-                        <input type="text" class="form-control border-select" ng-change="onChangeClaveAcceso()" valid-number ng-model="dataSearch.claveAcceso" />
+                        <input type="text" class="form-control border-select" ng-change="onChangeClaveAcceso()" id="claveAcceso"
+                            valid-number ng-model="dataSearch.claveAcceso" />
                         <span class="text-info" ng-if="claveAccesoLongitud">{{claveAccesoLongitud}} dígitos</span>
                     </div>
-                </div><div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="form-group">
-                        <span for="claveAcceso">Nro. Documento:</span>
-                        <input type="text" class="form-control border-select" ng-change="onChangeNroDocumento()" valid-number ng-model="dataSearch.claveAcceso" />
+                        <span for="serieComprobante">Nro. Documento:</span>
+                        <input type="text" class="form-control border-select" id="serieComprobante"
+                            ng-change="onChangeSerieComprobante()" valid-number
+                            ng-model="dataSearch.serieComprobante" />
                     </div>
                 </div>
             </div>
@@ -134,52 +138,55 @@
                 <div class="col-6 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color border-select" ng-model="dataSearch.pageSize"
-                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
                 </div>
 
                 <div class="col-6 d-flex justify-content-end">
                     <form class="form-material">
-                        <input type="text" class="form-control" onclick="select();" ng-keyup="onKeyupSearchFilter()" ng-model="dataSearch.textSearch"
-                               placeholder="Buscar en el listado actual">
+                        <input type="text" class="form-control" onclick="select();" ng-keyup="onKeyupSearchFilter()"
+                            ng-model="dataSearch.textSearch" placeholder="Buscar en el listado actual">
                     </form>
                 </div>
             </div>
             <div class="table-responsive" style="max-height: 400px;">
-                <table md-table md-row-select ng-model="selected" class="table table-hover" md-progress="promise">
+                <table md-table md-row-select ng-model="selected" md-progress="promise">
                     <thead md-head md-order="query.sortBy" fix-head>
                         <tr md-row>
+                            <th md-column>Subcategoría</th>
+                            <th md-column>No. Aut.</th>
                             <th md-column>Doc.</th>
                             <th md-column md-order-by="serieComprobante">Serie</th>
                             <th md-column>Ruc Emisor</th>
-                            <th md-column md-order-by="razonSocialEmisior">
+                            <th md-column md-order-by="razonSocialEmisor">
                                 <span>Razón Social Emisor</span>
                             </th>
                             <th md-column md-order-by="fechaEmision">Fecha Emisión</th>
                             <th md-column>F. Aut.</th>
                             <th md-column md-order-by="importeTotal">Total</th>
-                            <th md-column>No. Aut.</th>
                         </tr>
                     </thead>
                     <tbody md-body>
                         <tr md-row md-select="item" md-select-id="index" md-on-select="showOptions"
-                            md-auto-select="false" ng-repeat="item in comprobantes | orderBy: query.sortBy track by $index" style="{{item.colorRow}}"
-                            title="{{item.hoverText}}">
+                            md-auto-select="false"
+                            ng-repeat="item in comprobantes | orderBy: query.sortBy track by $index"
+                            style="{{item.colorRow}}" title="{{item.hoverText}}">
+                            <td md-cell style="{{item.colorCol}}">{{item.subcategoryName}}</td>
+                            <td class="text-left" style="{{item.colorCol}}" md-cell>
+                                {{item.numeroAutorizacion}}
+                            </td>
                             <td md-cell style="{{item.colorCol}}">{{item.comprobante}}</td>
                             <td md-cell style="{{item.colorCol}}">{{item.serieComprobante}}</td>
                             <td md-cell style="{{item.colorCol}}">{{item.rucEmisor}}</td>
                             <td class="text-left" style="{{item.colorCol}}" md-cell>
-                                {{item.razonSocialEmisior}}
+                                {{item.razonSocialEmisor}}
                             </td>
                             <td md-cell style="{{item.colorCol}}">{{item.fechaEmision}}</td>
                             <td md-cell style="{{item.colorCol}}">{{item.fechaAutorizacion}}</td>
                             <td md-cell class="text-right" style="{{item.colorCol}}">
                                 {{item.importeTotal |
                                 currency }}
-                            </td>
-                            <td class="text-left" style="{{item.colorCol}}" md-cell>
-                                {{item.numeroAutorizacion}}
                             </td>
                         </tr>
                     </tbody>
@@ -189,7 +196,7 @@
                         </tr>
                     </tfoot>
                 </table>
-            </div> 
+            </div>
         </div>
         <div class="card-body">
             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
