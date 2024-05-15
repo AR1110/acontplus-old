@@ -153,7 +153,7 @@ app.factory("errorInterceptor", function ($q, toastService) {
     responseError: function (response) {
       switch (response.status) {
         case 400:
-          toastService.toastr("warning", "Recurson no encontrado!");
+          toastService.toastr("warning", "Recurso no encontrado!");
           break;
         default:
           console.error("HTTP error:", response);
