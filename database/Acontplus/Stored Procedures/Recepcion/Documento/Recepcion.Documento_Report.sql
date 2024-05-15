@@ -90,6 +90,7 @@ BEGIN
 	                                  ,dr.serieComprobante
 	                                  ,dr.claveAcceso
 	                                  ,dr.fechaEmision
+                                      ,Format(dr.fechaAutorizacion,''dd/MM/yyyy'') as fechaAutorizacion
 	                                  ,dr.rucEmisor
 	                                  ,dr.razonSocialEmisior as razonSocialEmisor
                                       ,''FE'' as tipoDoc
@@ -234,7 +235,8 @@ BEGIN
 	                                  ,fc.idUsuario
 	                                  ,fc.puntoEmision + ''-'' + Helper.F_Auto_Sequential(fc.nroDocumento) 
 	                                  ,fc.nroAutorizacion
-	                                  ,Format(fc.fechaEmision,''dd/MM/yyyy'') 
+	                                  ,Format(fc.fechaEmision,''dd/MM/yyyy'')
+                                      ,Format(fc.fechaEmision,''dd/MM/yyyy'') as fechaAutorizacion  
 	                                  ,pr.numeroIdentificacion
 	                                  ,pr.nombreFiscal
                                       ,''FF'' as tipoDoc
@@ -477,6 +479,7 @@ BEGIN
 	                            ,dr.serieComprobante
 	                            ,dr.claveAcceso
 	                            ,dr.fechaEmision
+                                ,Format(dr.fechaAutorizacion,''dd/MM/yyyy'') as fechaAutorizacion
 	                            ,dr.rucEmisor
 	                            ,dr.razonSocialEmisior as razonSocialEmisor
 	                            ,ISNULL
@@ -662,6 +665,7 @@ BEGIN
                               ,es.nombreComercial
 	                          ,dr.serieComprobante
 	                          ,dr.fechaEmision
+                              ,Format(dr.fechaAutorizacion,''dd/MM/yyyy'') as fechaAutorizacion
 	                          ,dr.claveAcceso
 	                          ,dr.rucEmisor
 	                          ,dr.razonSocialEmisior as razonSocialEmisor

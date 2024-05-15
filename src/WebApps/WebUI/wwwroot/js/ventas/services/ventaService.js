@@ -957,19 +957,23 @@
                     tiemposCredito: [],
                     formasPagoSri: [],
                     config: {
-                        idFormaPagoSri: 0
-                    }
+                        idFormaPagoSri: 0,
+                        multipleVendedor: false,
+                    },
+                    vendedores: []
                 };
                 if (response.code === "1") {
-                    let [tiemposCredito, config, formasPagoSri] = JSON.parse(response.payload);
+                    let [tiemposCredito, config, formasPagoSri, vendedores] = JSON.parse(response.payload);
                     let dataConfig = config[0];
 
                     result.tiemposCredito = tiemposCredito;
-                    result.formasPagoSri = formasPagoSri;
+                    result.formasPagoSri = formasPagoSri; 
 
                     result.config = {
-                        idFormaPagoSri: dataConfig.idFormaPagoSri
+                        idFormaPagoSri: dataConfig.idFormaPagoSri,
+                        multipleVendedor: dataConfig.multipleVendedor
                     }
+                    result.vendedores = vendedores;
                 }
 
                 return result;
@@ -1578,19 +1582,23 @@
                     tiemposCredito: [],
                     formasPagoSri: [],
                     config: {
-                        idFormaPagoSri: 0
-                    }
+                        idFormaPagoSri: 0,
+                        multipleVendedor: false,
+                    },
+                    vendedores: [],
                 };
                 if(response.code==="1"){
-                    let [tiemposCredito, config , formasPagoSri] = JSON.parse(response.payload);
+                    let [tiemposCredito, config , formasPagoSri, vendedores] = JSON.parse(response.payload);
                     let dataConfig = config[0];
 
                     result.tiemposCredito = tiemposCredito;
                     result.formasPagoSri = formasPagoSri;
  
                     result.config = { 
-                        idFormaPagoSri: dataConfig.idFormaPagoSri
+                        idFormaPagoSri: dataConfig.idFormaPagoSri,
+                        multipleVendedor: dataConfig.multipleVendedor
                     }
+                    result.vendedores = vendedores;
                 } 
 
                 return result;

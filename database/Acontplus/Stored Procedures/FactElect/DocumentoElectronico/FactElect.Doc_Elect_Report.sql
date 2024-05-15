@@ -68,6 +68,7 @@ BEGIN
                                               ,estab + ''-'' + ptoEmi + ''-'' + RIGHT(''000000000'' + CONVERT(VARCHAR(9), secuencial), 9) serieComprobante
                                               ,claveAcceso
 	                                          ,Format(fechaEmision,''dd/MM/yyyy'') as fechaEmision
+	                                          ,Format(fechaAutorizacion,''dd/MM/yyyy'') as fechaAutorizacion
 	                                          ,f.razonSocialComprador
 	                                          ,f.identificacionComprador
 	                                          ,ISNULL
@@ -335,7 +336,8 @@ BEGIN
 							  ,ncp.idEstablecimiento
                               ,ncp.claveAcceso
 						      ,dbo.AFTGenerarNroDocumento(ncp.estab+ncp.ptoEmi,ncp.secuencial) as serieComprobante										
-							  ,Format(ncp.fechaEmision,''dd/MM/yyyy'')                         as fechaEmision									
+							  ,Format(ncp.fechaEmision,''dd/MM/yyyy'')                         as fechaEmision	
+                              ,Format(fechaAutorizacion,''dd/MM/yyyy'') as fechaAutorizacion
 							  ,ncp.identificacionComprador
 							  ,ncp.razonSocialComprador
 							  ,dbo.AFTGenerarNroDocumento(sFv.estab+peFv.ptoEmi,fv.nroFactura) as nroFactura										
@@ -537,7 +539,8 @@ BEGIN
                               ,es.idEstablecimiento
                               ,lc.claveAcceso
                               ,dbo.AFTGenerarNroDocumento(es.estab+pt.ptoEmi,lc.secuencial) as serieComprobante										
-                              ,Format(lc.fechaEmision,''dd/MM/yyyy'')                       as fechaEmision									
+                              ,Format(lc.fechaEmision,''dd/MM/yyyy'')                       as fechaEmision	
+                               ,Format(fechaAutorizacion,''dd/MM/yyyy'') as fechaAutorizacion
                               ,lc.identificacionProveedor
                               ,lc.razonSocialProveedor										
                               ,ISNULL((
@@ -717,6 +720,7 @@ BEGIN
                               ,es.nombreComercial
 	                          ,es.estab + ''-'' + pt.ptoEmi + ''-'' + Helper.F_Auto_Sequential(de.nroDocumento) as serieComprobante
 	                          ,FORMAT(de.fechaEmision,''dd/MM/yyyy'') as fechaEmision
+                              ,Format(fechaAutorizacion,''dd/MM/yyyy'') as fechaAutorizacion
 	                          ,claveAcceso
 	                          ,(SELECT TOP 1 numeroIdentificacion FROM Proveedor pr WITH (NOLOCK) WHERE pr.idProveedor = de.idContribuyente) as identificacionSujetoRetenido
 	                          ,(SELECT TOP 1 nombreFiscal         FROM Proveedor pr WITH (NOLOCK) WHERE pr.idProveedor = de.idContribuyente) as razonSocialSujetoRetenido

@@ -735,7 +735,7 @@ BEGIN
     EXEC Contabilidad.CuentaPorCobrar_Insert @codDocCuentaCobrar
                                             , @documentoId
                                             , @puntoEmisionId
-                                            , 1
+                                            , @tiempoCreditoId
                                             , @customerCompanyId
                                             , @nroDocumento
                                             , @serieDocument
