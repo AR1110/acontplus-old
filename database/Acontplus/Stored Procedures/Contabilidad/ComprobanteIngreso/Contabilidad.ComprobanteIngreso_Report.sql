@@ -21,7 +21,7 @@ GO
 -- Create date: 2024/05/15
 -- Description:	REPORT FOR COBROS
 -- =============================================
--- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":null,"idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
+-- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":2,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":null,"idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	@userRoleId			INT
 	, @json				VARCHAR(MAX)
@@ -320,7 +320,7 @@ BEGIN
                 , @usuario          AS usuario
                 , @fechaInicio      AS fechaInicio
                 , @fechaFin         AS fechaFin
-            FROM v_Estab_Asign ve WITH(NOLOCK)
+            FROM v_Estab_Asign ve   WITH(NOLOCK)
             WHERE ve.codEstab = @codEstab
 
             ---> Details

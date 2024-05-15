@@ -1829,6 +1829,20 @@
                                   <FontSize>7pt</FontSize>
                                 </Style>
                               </TextRun>
+                              <TextRun>
+                                <Value> - </Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                </Style>
+                              </TextRun>
+                              <TextRun>
+                                <Value>=Fields!nroIdentificacion.Value</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                </Style>
+                              </TextRun>
                             </TextRuns>
                             <Style />
                           </Paragraph>
@@ -2363,7 +2377,7 @@
       <Width>291.6989mm</Width>
       <Page>
         <PageFooter>
-          <Height>6.70278mm</Height>
+          <Height>6.70283mm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -2419,7 +2433,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>ExecutionTime</rd:DefaultName>
-              <Top>-0.00005mm</Top>
+              <Top>0mm</Top>
               <Left>240.89856mm</Left>
               <Height>6.35mm</Height>
               <Width>50.8mm</Width>
