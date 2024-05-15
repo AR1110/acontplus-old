@@ -1,751 +1,798 @@
 ﻿const swalOffline = () => {
-    Swal.fire({
-        html: `<small>Esperando la conexión...</small>`,
-        imageUrl: "/assets/images/offline.webp",
-        imageHeight: '150px',
-        allowOutsideClick: false,
-        allowEscapeKey: true,
-        showConfirmButton: false,
-        didOpen: () => Swal.showLoading()
-    })
-}
+  Swal.fire({
+    html: `<small>Esperando la conexión...</small>`,
+    imageUrl: "/assets/images/offline.webp",
+    imageHeight: "150px",
+    allowOutsideClick: false,
+    allowEscapeKey: true,
+    showConfirmButton: false,
+    didOpen: () => Swal.showLoading(),
+  });
+};
 
-let app = angular.module('acontPlusApp', [
-    'ngAnimate',
-    'ngFileSaver',
-    'ui.bootstrap',
-    'ui.grid',
-    'ui.grid.moveColumns',
-    'ui.grid.edit',
-    'ui.grid.validate',
-    'ui.grid.cellNav',
-    'ui.grid.resizeColumns',
-    "ui.grid.pagination",
-    'ui.grid.selection', //data grid Select Rows        
-    'ui.grid.autoResize',
-    'ui.grid.expandable',
-    'ui.grid.saveState',
-    'ngSanitize',
-    'ngMaterial',
-    'md.data.table',
-    'fixed.table.header',
-    'ngMessages',
-    'ngFileUpload', //for  file upload
-    //'ngIdle',
-    'ngMask',
-    'ngStorage',
-    'ui.router',
-    'ngCookies',
-    'angularUUID2',
-    'angularUtils.directives.dirPagination',
-    'daterangepicker',
-    'angular-jwt',
-    'matchMedia'
+let app = angular.module("acontPlusApp", [
+  "ngAnimate",
+  "ngFileSaver",
+  "ui.bootstrap",
+  "ui.grid",
+  "ui.grid.moveColumns",
+  "ui.grid.edit",
+  "ui.grid.validate",
+  "ui.grid.cellNav",
+  "ui.grid.resizeColumns",
+  "ui.grid.pagination",
+  "ui.grid.selection", 
+  "ui.grid.autoResize",
+  "ui.grid.expandable",
+  "ui.grid.saveState",
+  "ngSanitize",
+  "ngMaterial",
+  "md.data.table",
+  "fixed.table.header",
+  "ngMessages",
+  "ngFileUpload",
+  "ngMask",
+  "ngStorage",
+  "ui.router",
+  "ngCookies",
+  "angularUUID2",
+  "angularUtils.directives.dirPagination",
+  "daterangepicker",
+  "angular-jwt",
+  "matchMedia",
 ]);
-
-// app.config(['KeepaliveProvider', 'IdleProvider', function (KeepaliveProvider, IdleProvider) {
-//     IdleProvider.idle(600);
-//     IdleProvider.timeout(15);
-//     KeepaliveProvider.interval(10);
-//     IdleProvider.interrupt('mousemove keydown DOMMouseScroll mousewheel mousedown');
-// }]);
-
-// app.run(function (Idle) {
-//     Idle.watch();
-// })
 
 //check connection offilne/online
 app.run(function ($window, $rootScope) {
-    $rootScope.online = navigator.onLine;
+  $rootScope.online = navigator.onLine;
 
-    $window.addEventListener("offline", function () {
-        $rootScope.$apply(function () {
-            $rootScope.online = false;
-            swalOffline();
-        });
-    }, false);
-
-    $window.addEventListener("online", function () {
-        $rootScope.$apply(function () {
-            $rootScope.online = true;
-            Swal.fire({
-                html: `<small>Recuperando la conexión...</small>`,
-                allowOutsideClick: false,
-                allowEscapeKey: true,
-                showConfirmButton: false,
-                timer: 999
-            })
-        });
-    }, false);
-
-    if (!$rootScope.online) {
+  $window.addEventListener(
+    "offline",
+    function () {
+      $rootScope.$apply(function () {
+        $rootScope.online = false;
         swalOffline();
-    }
-})
+      });
+    },
+    false,
+  );
+
+  $window.addEventListener(
+    "online",
+    function () {
+      $rootScope.$apply(function () {
+        $rootScope.online = true;
+        Swal.fire({
+          html: `<small>Recuperando la conexión...</small>`,
+          allowOutsideClick: false,
+          allowEscapeKey: true,
+          showConfirmButton: false,
+          timer: 999,
+        });
+      });
+    },
+    false,
+  );
+
+  if (!$rootScope.online) {
+    swalOffline();
+  }
+});
 
 function alertEndSession() {
-    let timerInterval;
-    Swal.fire({
-        icon: 'warning',
-        title: "Ha perdido sesión!",
-        html: "Redirigiendo en <b></b> segundos",
-        timer: 10000,
-        timerProgressBar: true,
-        didOpen: () => {
-            Swal.showLoading();
-            const timer = Swal.getPopup().querySelector("b");
-            timerInterval = setInterval(() => {
-                timer.textContent = `${(Swal.getTimerLeft() * 0.001).toFixed()}`;
-            }, 100);
-        },
-        willClose: () => {
-            clearInterval(timerInterval);
-        }
-    }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.timer) {
-            Object.keys(localStorage).forEach(function (key) {
-                localStorage.removeItem(key);
-            });
-            window.location.href = '/Login/Index';
-        }
-    });
+  let timerInterval;
+  Swal.fire({
+    icon: "warning",
+    title: "Ha perdido sesión!",
+    html: "Redirigiendo en <b></b> segundos",
+    timer: 10000,
+    timerProgressBar: true,
+    didOpen: () => {
+      Swal.showLoading();
+      const timer = Swal.getPopup().querySelector("b");
+      timerInterval = setInterval(() => {
+        timer.textContent = `${(Swal.getTimerLeft() * 0.001).toFixed()}`;
+      }, 100);
+    },
+    willClose: () => {
+      clearInterval(timerInterval);
+    },
+  }).then((result) => {
+    if (result.dismiss === Swal.DismissReason.timer) {
+      Object.keys(localStorage).forEach(function (key) {
+        localStorage.removeItem(key);
+      });
+      window.location.href = "/Login/Index";
+    }
+  });
 }
 
-app.factory('authInterceptorService', function ($q, $localStorage, jwtHelper) {
-    let authInterceptorServiceFactory = {}
+app.factory("authInterceptorService", function ($q, $localStorage, jwtHelper) {
+  let authInterceptorServiceFactory = {};
 
-    let _request = (config) => {
-        config.headers = config.headers || {}
-        let authData = $localStorage.currentUser
-        if (authData) {
-            if (!authData.token) {
-                alertEndSession()
-                return
-            }
-            config.headers.Authorization = 'Bearer ' + authData.token
-            let decodedJwt = jwtHelper.decodeToken(authData.token)
-            //console.log(decodedJwt)
-            const expiration = Number(decodedJwt.exp)
-            let newDate = moment.tz(new Date(), "America/Guayaquil")
-            //console.log(newDate)
-            const currentTime = Math.floor(new Date(newDate) / 1000); // convert to seconds
-            //console.log(currentTime)
-            //console.log(expiration)
+  let _request = (config) => {
+    config.headers = config.headers || {};
+    let authData = $localStorage.currentUser;
+    if (authData) {
+      if (!authData.token) {
+        alertEndSession();
+        return;
+      }
+      config.headers.Authorization = "Bearer " + authData.token;
+      let decodedJwt = jwtHelper.decodeToken(authData.token);
+      //console.log(decodedJwt)
+      const expiration = Number(decodedJwt.exp);
+      let newDate = moment.tz(new Date(), "America/Guayaquil");
+      //console.log(newDate)
+      const currentTime = Math.floor(new Date(newDate) / 1000); // convert to seconds
+      //console.log(currentTime)
+      //console.log(expiration)
 
-            if (expiration < currentTime) {
-                alertEndSession()
-            } else {
-                config.headers['X-IdUsuarioRol'] = decodedJwt.idUsuarioRol
-            }
-        }
-        return config
+      if (expiration < currentTime) {
+        alertEndSession();
+      } else {
+        config.headers["X-IdUsuarioRol"] = decodedJwt.idUsuarioRol;
+      }
     }
+    return config;
+  };
 
-    let _responseError = (rejection) => {
-        if (rejection.status == 401) {
-            alertEndSession()
-        }
-        return $q.reject(rejection)
+  let _responseError = (rejection) => {
+    if (rejection.status == 401) {
+      alertEndSession();
     }
-    authInterceptorServiceFactory.request = _request
-    authInterceptorServiceFactory.responseError = _responseError
-    return authInterceptorServiceFactory
-})
+    return $q.reject(rejection);
+  };
+  authInterceptorServiceFactory.request = _request;
+  authInterceptorServiceFactory.responseError = _responseError;
+  return authInterceptorServiceFactory;
+});
 
+app.factory("errorInterceptor", function ($q, toastService) {
+  return {
+    responseError: function (response) {
+      switch (response.status) {
+        case 400:
+          toastService.toastr("warning", "Recurson no encontrado!");
+          break;
+        default:
+          console.error("HTTP error:", response);
+          break;
+      }
+      return $q.reject(response);
+    },
+  };
+});
+
+app.factory("loaderInterceptor", function () {
+  return {
+    request: function (config) {
+      // Skip loader for requests marked with `noLoader` config
+      if (config.noLoader) {
+        return config;
+      }
+      showLoader();
+      return config;
+    },
+    response: function (response) {
+      hideLoader();
+      return response;
+    },
+    responseError: function (error) {
+      hideLoader();
+      return $q.reject(error); // Re-throw the error
+    },
+  };
+});
+
+// Register the interceptor with $httpProvider
 app.config(function ($httpProvider) {
-    $httpProvider.interceptors.push('authInterceptorService')
-})
-
-//app.config(function ($httpProvider) {
-//    $httpProvider.useApplyAsync(true);
-//});
-
+  $httpProvider.interceptors.push("authInterceptorService");
+  $httpProvider.interceptors.push("errorInterceptor");
+  $httpProvider.interceptors.push("loaderInterceptor");
+});
 
 //Settings for incons in angularjs materialize
-app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
+app.config([
+  "$mdThemingProvider",
+  "$mdIconProvider",
+  function ($mdThemingProvider, $mdIconProvider) {
     // $mdThemingProvider.theme('default').primaryPalette('blue');
-    $mdIconProvider.fontSet('md', 'material-symbols-outlined');
-}]);
-
+    $mdIconProvider.fontSet("md", "material-symbols-outlined");
+  },
+]);
 
 /** Trasnlating to spanish buttons pagination ui.boostrap */
-app.config(['uibPaginationConfig', function (uibPaginationConfig) {
-    uibPaginationConfig.firstText = 'Primera',
-        uibPaginationConfig.previousText = 'Anterior',
-        uibPaginationConfig.nextText = 'Siguiente',
-        uibPaginationConfig.lastText = 'Ultima'
-}]);
+app.config([
+  "uibPaginationConfig",
+  function (uibPaginationConfig) {
+    (uibPaginationConfig.firstText = "Primera"),
+      (uibPaginationConfig.previousText = "Anterior"),
+      (uibPaginationConfig.nextText = "Siguiente"),
+      (uibPaginationConfig.lastText = "Ultima");
+  },
+]);
 
-
-app.constant('sessionDataEntidad', JSON.parse(localStorage.getItem('userData')))
+app.constant(
+  "sessionDataEntidad",
+  JSON.parse(localStorage.getItem("userData")),
+);
 
 //SERVICIOS
 
-app.factory('decodeToken', function ($localStorage, jwtHelper) {
-    let authData = $localStorage.currentUser;
-    let decodedJwt = {};
-    if (authData) {
-        decodedJwt = jwtHelper.decodeToken(authData.token)
-    }
-    return decodedJwt
-})
-
-app.factory('authToken', function ($localStorage, jwtHelper) {
-    let token = {}
-    function _get({ decoded = false }) {
-        let authData = $localStorage.currentUser;
-        if (authData) {
-            if (decoded) {
-                return decodedJwt = jwtHelper.decodeToken(authData.token)
-            } else {
-                return authData;
-            }
-        }
-    }
-    token.get = _get;
-    return token;
+app.factory("decodeToken", function ($localStorage, jwtHelper) {
+  let authData = $localStorage.currentUser;
+  let decodedJwt = {};
+  if (authData) {
+    decodedJwt = jwtHelper.decodeToken(authData.token);
+  }
+  return decodedJwt;
 });
 
-app.factory('mainService', mainService);
+app.factory("authToken", function ($localStorage, jwtHelper) {
+  let token = {};
+  function _get({ decoded = false }) {
+    let authData = $localStorage.currentUser;
+    if (authData) {
+      if (decoded) {
+        return (decodedJwt = jwtHelper.decodeToken(authData.token));
+      } else {
+        return authData;
+      }
+    }
+  }
+  token.get = _get;
+  return token;
+});
+
+app.factory("mainService", mainService);
 
 mainService.$inject = [
-    '$http',
-    'Upload',
-    'decodeToken',
-    'screenSize',
-    '$timeout',
-    'authToken'
+  "$http",
+  "Upload",
+  "decodeToken",
+  "screenSize",
+  "$timeout",
+  "authToken",
 ];
 
 function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
-    let service = {}
+  let service = {};
 
-    function _getData(method, url, data = null, forApi = false, externalApi = false) {
-        if (externalApi) {
-            return fetch(url, {
-                method: method,
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            }).then(response => {
-                return response.json()
-            })
-        }
-        return $http({
-            method: method,
-            url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
-            data: data
-        }).then(response => {
-            return response.data
-        })
+  function _getData(
+    method,
+    url,
+    data = null,
+    forApi = false,
+    externalApi = false,
+  ) {
+    if (externalApi) {
+      return fetch(url, {
+        method: method,
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((response) => {
+        return response.json();
+      });
     }
+    return $http({
+      method: method,
+      url: forApi ? _token.urlGateway + "/gateway/" + url : url,
+      data: data,
+    }).then((response) => {
+      return response.data;
+    });
+  }
 
-    function _getDataFile(url, file, data = null, forApi = false) {
-        return Upload.upload({
-            url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
-            headers: {
-                'Authorization': authToken.get({ decoded: false })
-            },
-            data: {
-                file: file,
-                data: data
-            },
-        }).then(response => {
-            return response.data
-        })
+  function _getDataFile(url, file, data = null, forApi = false) {
+    return Upload.upload({
+      url: forApi ? _token.urlGateway + "/gateway/" + url : url,
+      headers: {
+        Authorization: authToken.get({ decoded: false }),
+      },
+      data: {
+        file: file,
+        data: data,
+      },
+    }).then((response) => {
+      return response.data;
+    });
+  }
+
+  function _uploadFile({ url, file, data = null }) {
+    return Upload.upload({
+      url: _token.urlGateway + "/gateway/" + url,
+      headers: {
+        Authorization: authToken.get({ decoded: false }),
+      },
+      data: {
+        file: file,
+        data: data,
+      },
+    }).then((response) => {
+      return response.data;
+    });
+  }
+
+  function _getFile(method, url, data = null, forApi = false) {
+    return $http({
+      method,
+      url: forApi ? `${_token.urlGateway}/gateway/${url}` : url,
+      data,
+      responseType: "blob",
+    }).then((response) => response);
+  }
+
+  _detectDevice = () => {
+    let isMobile = _screenSize.on("xs, sm", (isMatch) => {
+      isMobile = isMatch;
+    });
+    if (isMobile) {
+      Swal.fire(
+        "Dispositivo Móvil Detectado!",
+        "Para una mejor comodidad, le recomendamos usar una Laptop o PC.",
+        "success",
+      );
+    } else {
+      $timeout(() => {
+        document.getElementById("menu_toggle").click();
+      }, 1100);
     }
+  };
 
-    function _uploadFile({ url, file, data = null }) {
-        return Upload.upload({
-            url: _token.urlGateway + '/gateway/' + url,
-            headers: {
-                'Authorization': authToken.get({ decoded: false })
-            },
-            data: {
-                file: file,
-                data: data
-            },
-        }).then(response => {
-            return response.data
-        })
-    }
-
-    function _getFile(method, url, data = null, forApi = false) {
-        return $http({
-            method,
-            url: forApi ? `${_token.urlGateway}/gateway/${url}` : url,
-            data,
-            responseType: 'blob'
-        }).then(response => response);
-    }
-
-    _detectDevice = () => {
-        let isMobile = _screenSize.on('xs, sm', (isMatch) => {
-            isMobile = isMatch
-        })
-        if (isMobile) {
-            Swal.fire(
-                'Dispositivo Móvil Detectado!',
-                'Para una mejor comodidad, le recomendamos usar una Laptop o PC.',
-                'success'
-            )
-        } else {
-            $timeout(() => {
-                document.getElementById('menu_toggle').click()
-            }, 1100)
-        }
-    }
-
-    service.getData = _getData
-    service.getDataFile = _getDataFile
-    service.uploadFile = _uploadFile
-    service.getFile = _getFile
-    service.detectDevice = _detectDevice
-    return service
+  service.getData = _getData;
+  service.getDataFile = _getDataFile;
+  service.uploadFile = _uploadFile;
+  service.getFile = _getFile;
+  service.detectDevice = _detectDevice;
+  return service;
 }
 
 //Toastr Notifications//
-app.factory('toastService', function () {
-    return {
-        toastr: function (...rest) {
-            let obj = {
-                type: 'warning',
-                message: '',
-                title: "",
-                timeOut: null,
-                extendedTimeOut: null,
-                positionClass: null
-            }
-            if (rest.length > 0) {
-                const [optionsOrType, message, title, positionClass, timeOut, extendedTimeOut] = rest;
+app.factory("toastService", function () {
+  return {
+    toastr: function (...rest) {
+      let obj = {
+        type: "warning",
+        message: "",
+        title: "",
+        timeOut: null,
+        extendedTimeOut: null,
+        positionClass: null,
+      };
+      if (rest.length > 0) {
+        const [
+          optionsOrType,
+          message,
+          title,
+          positionClass,
+          timeOut,
+          extendedTimeOut,
+        ] = rest;
 
-                if (optionsOrType !== null && typeof optionsOrType === 'object') {
-                    obj.type = optionsOrType.type;
-                    obj.message = optionsOrType.message;
-                    obj.title = optionsOrType.title;
-                    obj.timeOut = optionsOrType.timeOut;
-                    obj.extendedTimeOut = optionsOrType.extendedTimeOut;
-                    obj.positionClass = optionsOrType.positionClass
-                } else {
-                    obj.type = optionsOrType;
-                    obj.message = message;
-                    obj.title = title;
-                    obj.timeOut = timeOut;
-                    obj.extendedTimeOut = extendedTimeOut;
-                    obj.positionClass = positionClass
-                }
-            }
-
-
-
-            toastr[obj.type](obj.message, obj.title, {
-                closeButton: true,
-                debug: false,
-                newestOnTop: true,
-                progressBar: true,
-                positionClass: obj.positionClass || 'toast-bottom-center',
-                preventDuplicates: true,
-                timeOut: obj.timeOut || 5000,
-                extendedTimeOut: obj.extendedTimeOut || 1000
-            })
+        if (optionsOrType !== null && typeof optionsOrType === "object") {
+          obj.type = optionsOrType.type;
+          obj.message = optionsOrType.message;
+          obj.title = optionsOrType.title;
+          obj.timeOut = optionsOrType.timeOut;
+          obj.extendedTimeOut = optionsOrType.extendedTimeOut;
+          obj.positionClass = optionsOrType.positionClass;
+        } else {
+          obj.type = optionsOrType;
+          obj.message = message;
+          obj.title = title;
+          obj.timeOut = timeOut;
+          obj.extendedTimeOut = extendedTimeOut;
+          obj.positionClass = positionClass;
         }
-    }
+      }
+
+      toastr[obj.type](obj.message, obj.title, {
+        closeButton: true,
+        debug: false,
+        newestOnTop: true,
+        progressBar: true,
+        positionClass: obj.positionClass || "toast-bottom-center",
+        preventDuplicates: true,
+        timeOut: obj.timeOut || 5000,
+        extendedTimeOut: obj.extendedTimeOut || 1500,
+      });
+    },
+  };
 });
 
-app.factory('modalService', modalService);
-modalService.$inject = ['$uibModal', '$mdDialog'];
+app.factory("modalService", modalService);
+modalService.$inject = ["$uibModal", "$mdDialog"];
 
 function modalService($uibModal, $mdDialog) {
-    return {
-        openModal: function (controller, template, size, params, animation = true, windowClass = null, props = {}) {
-            return $uibModal.open({
-                animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
-                controller: controller,
-                size,
-                windowClass,
-                backdrop: "static",
-                keyboard: false,
-                scrollable: true,
-                width: props.width,
-                height: props.height,
-                maxWidth: props.maxWidth,
-                maxHeight: props.maxHeight,
-                minWidth: props.minWidth,
-                minHeight: props.minHeight,
-                resolve: {
-                    params: function () {
-                        return params;
-                    }
-                }
-            });
+  return {
+    openModal: function (
+      controller,
+      template,
+      size,
+      params,
+      animation = true,
+      windowClass = null,
+      props = {},
+    ) {
+      return $uibModal.open({
+        animation,
+        templateUrl: `/Home/RenderView?name=~/Views/${template}`,
+        controller: controller,
+        size,
+        windowClass,
+        backdrop: "static",
+        keyboard: false,
+        scrollable: true,
+        width: props.width,
+        height: props.height,
+        maxWidth: props.maxWidth,
+        maxHeight: props.maxHeight,
+        minWidth: props.minWidth,
+        minHeight: props.minHeight,
+        resolve: {
+          params: function () {
+            return params;
+          },
         },
+      });
+    },
 
+    /**
+     *
+     * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
+     * @returns object
+     */
+    openModalCustom: function ({
+      controller,
+      template,
+      size,
+      params,
+      keyboard = false,
+      animation = true,
+      windowClass = null,
+      windowTopClass,
+      openedClass,
+      scope,
+      props = {},
+      isRenderRazorPartial = false,
+      isRenderHtmlNormal = false,
+    }) {
+      let templateUrl = "";
+      if (isRenderRazorPartial) {
+        templateUrl = `/Index?name=${template}`;
+      }
 
-        /**
-         * 
-         * @param {object} params {controller, template, size, params, keyboard=false, animation = true, windowClass = null, scope, props = {}}
-         * @returns object 
-         */
-        openModalCustom: function ({
-            controller,
-            template,
-            size,
-            params,
-            keyboard = false,
-            animation = true,
-            windowClass = null,
-            windowTopClass,
-            openedClass,
-            scope,
-            props = {},
-            isRenderRazorPartial = false,
-            isRenderHtmlNormal = false,
-        }) {
+      if (!isRenderRazorPartial) {
+        templateUrl = `/Index?name=~/Views/${template}`;
+      }
 
-            let templateUrl = '';
-            if (isRenderRazorPartial) {
-                templateUrl = `/Index?name=${template}`;
-            }
-
-            if (!isRenderRazorPartial) {
-                templateUrl = `/Index?name=~/Views/${template}`
-            }
-
-
-            return $uibModal.open({
-                animation,
-                templateUrl,
-                controller,
-                controllerAs: '$ctrl',
-                scope,
-                size,
-                windowClass,
-                backdrop: "static",
-                scrollable: true,
-                keyboard,
-                width: props.width,
-                height: props.height,
-                maxWidth: props.maxWidth,
-                maxHeight: props.maxHeight,
-                minWidth: props.minWidth,
-                minHeight: props.minHeight,
-                windowTopClass,
-                openedClass,
-                resolve: {
-                    params: function () {
-                        return params;
-                    }
-                }
-            })
+      return $uibModal.open({
+        animation,
+        templateUrl,
+        controller,
+        controllerAs: "$ctrl",
+        scope,
+        size,
+        windowClass,
+        backdrop: "static",
+        scrollable: true,
+        keyboard,
+        width: props.width,
+        height: props.height,
+        maxWidth: props.maxWidth,
+        maxHeight: props.maxHeight,
+        minWidth: props.minWidth,
+        minHeight: props.minHeight,
+        windowTopClass,
+        openedClass,
+        resolve: {
+          params: function () {
+            return params;
+          },
         },
-        openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
-            return $uibModal.open({
-                animation,
-                templateUrl: `/Index?name=~/Views/${template}`,
-                controller,
-                controllerAs: '$ctrl',
-                scope: $scope,
-                size,
-                windowClass,
-                backdrop: "static",
-                scrollable: true,
-                keyboard: false,
-                width: props.width,
-                height: props.height,
-                maxWidth: props.maxWidth,
-                maxHeight: props.maxHeight,
-                minWidth: props.minWidth,
-                minHeight: props.minHeight,
-                resolve: {
-                    params: function () {
-                        return params;
-                    }
-                }
-            });
+      });
+    },
+    openModalSecond: function (
+      controller,
+      template,
+      size,
+      params,
+      animation = true,
+      windowClass = null,
+      $scope,
+      props = {},
+    ) {
+      return $uibModal.open({
+        animation,
+        templateUrl: `/Index?name=~/Views/${template}`,
+        controller,
+        controllerAs: "$ctrl",
+        scope: $scope,
+        size,
+        windowClass,
+        backdrop: "static",
+        scrollable: true,
+        keyboard: false,
+        width: props.width,
+        height: props.height,
+        maxWidth: props.maxWidth,
+        maxHeight: props.maxHeight,
+        minWidth: props.minWidth,
+        minHeight: props.minHeight,
+        resolve: {
+          params: function () {
+            return params;
+          },
         },
+      });
+    },
 
-        openMdDialog: function ({ controller, templateUrl, targetEvent, clickOutsideToClose = false, fullscreen = true, params }) {
-            return $mdDialog.show({
-                controller,
-                templateUrl: `/Index?name=${templateUrl}`,
-                // Appending dialog to document.body to cover sidenav in docs app
-                // Modal dialogs should fully cover application to prevent interaction outside of dialog
-                parent: angular.element(document.body),
-                targetEvent,
-                clickOutsideToClose,
-                fullscreen,
-                locals: {
-                    params
-                }
-            })
+    openMdDialog: function ({
+      controller,
+      templateUrl,
+      targetEvent,
+      clickOutsideToClose = false,
+      fullscreen = true,
+      params,
+    }) {
+      return $mdDialog.show({
+        controller,
+        templateUrl: `/Index?name=${templateUrl}`,
+        // Appending dialog to document.body to cover sidenav in docs app
+        // Modal dialogs should fully cover application to prevent interaction outside of dialog
+        parent: angular.element(document.body),
+        targetEvent,
+        clickOutsideToClose,
+        fullscreen,
+        locals: {
+          params,
         },
-        modalOptions: {}
-    }
-
+      });
+    },
+    modalOptions: {},
+  };
 }
 
-//
-
-
-//(function () {
-//    "use strict";
-
-//    angular.module('mainApp')
-//        .controller('dynamicMenuCtrl', dynamicMenuCtrl)
-
-//    dynamicMenuCtrl.$inject = ['$scope']
-
-//    function dynamicMenuCtrl($scope) {
-//        $scope.menus = [];
-//        $scope.subMenus = [];
-
-//        var userInfo = JSON.parse(localStorage.getItem('userInfo'));
-//        $scope.menus = JSON.parse(localStorage.getItem('menus'));
-//        $scope.subMenus = JSON.parse(localStorage.getItem('subMenus'));
-
-//        if (userInfo != null || userInfo != undefined) {
-//            var textHtml = "";
-//            var subMenu = false;
-//            textHtml +=
-//                '<li class="user-pro"> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><img src="' + userInfo.imagen + '" alt="" class="img-circle"><span class="hide-menu">' + userInfo.nombreUsuario + '</span></a>' +
-//                '<ul aria-expanded="false" class="collapse">' +
-//                '<li><a href="/Usuario/Perfil"><i class="ti-user"></i> Mi Perfil</a></li>' +
-//                '<li><a href="/Login/Logout"><i class="fa fa-power-off"></i> Salir</a></li>' +
-//                '</ul>' +
-//                '</li>';
-//            for (var i = 0; i < $scope.menus.length; i++) {
-//                if (subMenu == true) {
-//                    textHtml += '</ul></li>';
-//                    subMenu = false;
-//                };
-//                if ($scope.menus[i].subMenu == false) {
-//                    textHtml += '<li>' +
-//                        '<a href="' + $scope.menus[i].url + '" class="waves-effect waves-dark">' +
-//                        '<i class="' + $scope.menus[i].icono + '" ></i ><span class="hide-menu"> ' + $scope.menus[i].descripcion + '</a></span>' +
-//                        '</li>';
-//                };
-//                if ($scope.menus[i].subMenu == true) {
-//                    subMenu = true;
-//                    textHtml += '<li>' +
-//                        '<a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="' + $scope.menus[i].icono + '"></i><span class="hide-menu"> ' + $scope.menus[i].descripcion + '</span></a>' +
-//                        '<ul aria-expanded="false" class="collapse">';
-//                    for (var sm = 0; sm < $scope.subMenus.length; sm++) {
-//                        if ($scope.menus[i].idMenu == $scope.subMenus[sm].idMenu) {
-//                            textHtml += '<li><a href="' + $scope.subMenus[sm].url + '">' + $scope.subMenus[sm].descripcion + '</a></li>';
-//                        }
-//                    }
-//                };
-//            };
-//            $('#sidebarnav').html(textHtml);
-//        }
-//    }
-
-//})(window.angular);
-
-//Directivas 
-
-//FILTERS GENERAL 
-app.filter('estadoPrimario', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='label label-success font-weight-100'>Activo</span>") : $sce.trustAsHtml("<span class='label label-danger font-weight-100'>Inactivo</span>");
-    }
+//FILTERS GENERAL
+app.filter("estadoPrimario", function ($sce) {
+  return function (text) {
+    return text
+      ? $sce.trustAsHtml(
+          "<span class='label label-success font-weight-100'>Activo</span>",
+        )
+      : $sce.trustAsHtml(
+          "<span class='label label-danger font-weight-100'>Inactivo</span>",
+        );
+  };
 });
 
-app.filter('estadoSecundario', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<i class='fa fa-circle text-success'></i>") : $sce.trustAsHtml("<i class='fa fa-circle text-warning'></i>");
-    }
+app.filter("estadoSecundario", function ($sce) {
+  return function (text) {
+    return text
+      ? $sce.trustAsHtml("<i class='fa fa-circle text-success'></i>")
+      : $sce.trustAsHtml("<i class='fa fa-circle text-warning'></i>");
+  };
 });
 
-app.filter('sino', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>SI</span>") : $sce.trustAsHtml("<span class='text-info'>NO</span>");
-    }
+app.filter("sino", function ($sce) {
+  return function (text) {
+    return text
+      ? $sce.trustAsHtml("<span class='text-success'>SI</span>")
+      : $sce.trustAsHtml("<span class='text-info'>NO</span>");
+  };
 });
-app.filter('tipo', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>PROVEEDOR</span>") : $sce.trustAsHtml("<span class='text-info'>CLIENTE</span>");
-    }
+app.filter("tipo", function ($sce) {
+  return function (text) {
+    return text
+      ? $sce.trustAsHtml("<span class='text-success'>PROVEEDOR</span>")
+      : $sce.trustAsHtml("<span class='text-info'>CLIENTE</span>");
+  };
 });
-app.filter('ambienteSri', function ($sce) {
-    return function (text) {
-        let sriEnvironment = text == "2" ? true : false
-        return sriEnvironment ? $sce.trustAsHtml("<span class='text-success'>PRODUCCIÓN</span>") : $sce.trustAsHtml("<span class='text-warning'>PRUEBAS</span>");
-    }
-})
-app.filter('tipoEmisionSri', function ($sce) {
-    return function (text) {
-        return text ? $sce.trustAsHtml("<span class='text-success'>NORMAL</span>") : $sce.trustAsHtml("<span class='text-info'></span>");
-    }
-})
-//Filter tipo Iva 
-app.filter('mapTipoIva', () => {
-    return function (idTipoIva, tipoIvas) {
-        let result = tipoIvas.reduce((acc, curr) => ({
-            ...acc,
-            [curr.idTipoIva]: curr.descripcion
-        }), {
-            0: 'Tipo Iva'
-        });
-        return !idTipoIva ? result[0] : result[idTipoIva];
-    }
+app.filter("ambienteSri", function ($sce) {
+  return function (text) {
+    let sriEnvironment = text == "2" ? true : false;
+    return sriEnvironment
+      ? $sce.trustAsHtml("<span class='text-success'>PRODUCCIÓN</span>")
+      : $sce.trustAsHtml("<span class='text-warning'>PRUEBAS</span>");
+  };
+});
+app.filter("tipoEmisionSri", function ($sce) {
+  return function (text) {
+    return text
+      ? $sce.trustAsHtml("<span class='text-success'>NORMAL</span>")
+      : $sce.trustAsHtml("<span class='text-info'></span>");
+  };
+});
+//Filter tipo Iva
+app.filter("mapTipoIva", () => {
+  return function (idTipoIva, tipoIvas) {
+    let result = tipoIvas.reduce(
+      (acc, curr) => ({
+        ...acc,
+        [curr.idTipoIva]: curr.descripcion,
+      }),
+      {
+        0: "Tipo Iva",
+      },
+    );
+    return !idTipoIva ? result[0] : result[idTipoIva];
+  };
 });
 
-app.filter('cellFilterTipoIva', () => {
-    let result = {};
+app.filter("cellFilterTipoIva", () => {
+  let result = {};
 
-    return (input, context) => {
+  return (input, context) => {
+    let fieldLevel =
+      context.editDropdownOptionsArray == undefined
+        ? context.col.colDef
+        : context;
+    let map = fieldLevel.editDropdownOptionsArray;
+    let idField = fieldLevel.editDropdownIdLabel;
+    let valueField = fieldLevel.editDropdownValueLabel;
 
-        let fieldLevel = (context.editDropdownOptionsArray == undefined) ? context.col.colDef : context;
-        let map = fieldLevel.editDropdownOptionsArray;
-        let idField = fieldLevel.editDropdownIdLabel;
-        let valueField = fieldLevel.editDropdownValueLabel;
-
-        if (typeof map !== "undefined") {
-            for (let value of map) {
-                result[value[idField]] = value.descripcion
-                //  result[idField] = value.descripcion
-            }
-        }
-
-        if (!input) {
-            return result[0];
-        } else {
-            return result[input];
-        }
+    if (typeof map !== "undefined") {
+      for (let value of map) {
+        result[value[idField]] = value.descripcion;
+        //  result[idField] = value.descripcion
+      }
     }
-})
 
-app.filter('cellFilterBodega', () => {
-    let result = {
-        '0': 'Seleccione Bodega'
-    };
-    return (input, context) => {
-
-        let fieldLevel = (context.editDropdownOptionsArray == undefined) ? context.col.colDef : context;
-        let map = fieldLevel.editDropdownOptionsArray;
-        let idField = fieldLevel.editDropdownIdLabel;
-        let valueField = fieldLevel.editDropdownValueLabel;
-
-        if (typeof map !== "undefined") {
-            for (let value of map) {
-                result[value.idBodega] = value[valueField]
-            }
-        }
-
-        if (!input) {
-            return result[0];
-        } else {
-            return result[input];
-        }
+    if (!input) {
+      return result[0];
+    } else {
+      return result[input];
     }
-})
+  };
+});
 
+app.filter("cellFilterBodega", () => {
+  let result = {
+    0: "Seleccione Bodega",
+  };
+  return (input, context) => {
+    let fieldLevel =
+      context.editDropdownOptionsArray == undefined
+        ? context.col.colDef
+        : context;
+    let map = fieldLevel.editDropdownOptionsArray;
+    let idField = fieldLevel.editDropdownIdLabel;
+    let valueField = fieldLevel.editDropdownValueLabel;
+
+    if (typeof map !== "undefined") {
+      for (let value of map) {
+        result[value.idBodega] = value[valueField];
+      }
+    }
+
+    if (!input) {
+      return result[0];
+    } else {
+      return result[input];
+    }
+  };
+});
 
 // app.directive('autoocus')
 
-//Filter bodegas 
-app.filter('mapBodega', () => {
-    return function (idBodega, bodegas) {
-        if (!bodegas || bodegas.length === 0) return {
-            0: 'Seleccionar bodega'
-        }
+//Filter bodegas
+app.filter("mapBodega", () => {
+  return function (idBodega, bodegas) {
+    if (!bodegas || bodegas.length === 0)
+      return {
+        0: "Seleccionar bodega",
+      };
 
-        let result = bodegas.reduce((acc, curr) => ({
-            ...acc,
-            [curr.idBodega]: curr.descripcion
-        }), {
-            0: 'Seleccionar bodega'
-        });
-        return !idBodega ? result[0] : result[idBodega];
-    };
-});
-
-app.filter('estadoPago', () => {
-    return function (text) {
-        let template;
-        if (text == 'PE') template = "<span class='label label-danger font-weight-100'>Pendiente</span>";
-        if (text == 'PP') template = "<span class='label label-info font-weight-100'>Pendiente-Parcial</span>";
-        if (text == 'PA') template = "<span class='label label-success font-weight-100'>Pagada</span>";
-        return $sce.trustAsHtml(template);
-    }
+    let result = bodegas.reduce(
+      (acc, curr) => ({
+        ...acc,
+        [curr.idBodega]: curr.descripcion,
+      }),
+      {
+        0: "Seleccionar bodega",
+      },
+    );
+    return !idBodega ? result[0] : result[idBodega];
+  };
 });
 
-app.filter('mapTipoImpuesto', () => {
-    return (idTipoImpuesto, tipoImpuestos) => {
-        let result = tipoImpuestos.reduce((acc, curr) => ({
-            ...acc,
-            [curr.idTipoImpuestoRenta]: curr.descripcion.toUpperCase()
-        }), {
-            0: 'Seleccione el Tipo Impuesto'
-        })
-        return !idTipoImpuesto ? result[0] : result[idTipoImpuesto];
-    }
+app.filter("estadoPago", () => {
+  return function (text) {
+    let template;
+    if (text == "PE")
+      template =
+        "<span class='label label-danger font-weight-100'>Pendiente</span>";
+    if (text == "PP")
+      template =
+        "<span class='label label-info font-weight-100'>Pendiente-Parcial</span>";
+    if (text == "PA")
+      template =
+        "<span class='label label-success font-weight-100'>Pagada</span>";
+    return $sce.trustAsHtml(template);
+  };
 });
-app.filter('mapRetencionIva', () => {
-    return (idRetencionIva, retencionesIvas) => {
-        let result = retencionesIvas.reduce((acc, curr) => ({
-            ...acc,
-            [curr.idRetencionIva]: curr.descripcion.toUpperCase()
-        }), {
-            0: 'Seleccione Retención de IVA'
-        })
-        return !idRetencionIva ? result[0] : result[idRetencionIva];
-    }
+
+app.filter("mapTipoImpuesto", () => {
+  return (idTipoImpuesto, tipoImpuestos) => {
+    let result = tipoImpuestos.reduce(
+      (acc, curr) => ({
+        ...acc,
+        [curr.idTipoImpuestoRenta]: curr.descripcion.toUpperCase(),
+      }),
+      {
+        0: "Seleccione el Tipo Impuesto",
+      },
+    );
+    return !idTipoImpuesto ? result[0] : result[idTipoImpuesto];
+  };
 });
-app.filter('mapTarifa', mapTarifa);
+app.filter("mapRetencionIva", () => {
+  return (idRetencionIva, retencionesIvas) => {
+    let result = retencionesIvas.reduce(
+      (acc, curr) => ({
+        ...acc,
+        [curr.idRetencionIva]: curr.descripcion.toUpperCase(),
+      }),
+      {
+        0: "Seleccione Retención de IVA",
+      },
+    );
+    return !idRetencionIva ? result[0] : result[idRetencionIva];
+  };
+});
+app.filter("mapTarifa", mapTarifa);
 
 function mapTarifa() {
-    let result = {
-        '0': 'Seleccione Tarifa'
-    };
-    return function (input, tarifas) {
-        if (tarifas !== undefined) {
-            for (var value of tarifas) {
-                result[value.idTarifa] = value.tarifa;
-            }
-            if (!input) {
-                return result[0];
-            } else {
-                return result[input];
-            }
-        }
+  let result = {
+    0: "Seleccione Tarifa",
+  };
+  return function (input, tarifas) {
+    if (tarifas !== undefined) {
+      for (var value of tarifas) {
+        result[value.idTarifa] = value.tarifa;
+      }
+      if (!input) {
+        return result[0];
+      } else {
+        return result[input];
+      }
     }
+  };
 }
 
-app.filter('mapMedida', mapMedida);
+app.filter("mapMedida", mapMedida);
 
 function mapMedida() {
-    let result = {
-        '0': 'Seleccione Médida'
-    };
-    return function (input, medidas) {
-        if (medidas !== undefined) {
-            for (var value of medidas) {
-                result[value.idMedida] = value.descripcion;
-            }
-            if (!input) {
-                return result[0];
-            } else {
-                return result[input];
-            }
-        }
+  let result = {
+    0: "Seleccione Médida",
+  };
+  return function (input, medidas) {
+    if (medidas !== undefined) {
+      for (var value of medidas) {
+        result[value.idMedida] = value.descripcion;
+      }
+      if (!input) {
+        return result[0];
+      } else {
+        return result[input];
+      }
     }
+  };
 }
 
-app.filter('mapTipoIce', () => {
-    let result = {
-        0: 'Seleccione el Tipo Ice'
+app.filter("mapTipoIce", () => {
+  let result = {
+    0: "Seleccione el Tipo Ice",
+  };
+  return (input, tipoIces) => {
+    if (tipoIces === null || tipoIces == undefined) return result[0];
+    for (let item of tipoIces) {
+      result[item.codigo] = item.descripcion;
     }
-    return (input, tipoIces) => {
-        if (tipoIces === null || tipoIces == undefined) return result[0];
-        for (let item of tipoIces) {
-            result[item.codigo] = item.descripcion
-        }
-        return result[input]
-    }
-})
-
+    return result[input];
+  };
+});
