@@ -165,7 +165,7 @@ app.factory("errorInterceptor", function ($q, toastService) {
     };
 });
 
-app.factory("loaderInterceptor", function () {
+app.factory("loaderInterceptor", function ($q) {
     return {
         request: function (config) {
             // Skip loader for requests marked with `noLoader` config
