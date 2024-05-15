@@ -11,8 +11,8 @@ import { TipoDoc } from '@core/models/tipo-doc.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { formatDateMoment } from '@core/utils/format-date-moment';
 import { AppModule } from 'src/app/app.module';
-import { isValidField } from '@core/utils/utils';
-import { SubEntidadFinancieraSelectHtmlOnly } from '@modules/accounting/models/subentidad-financiera.model';
+import { isValidField, removeSpacesInValue } from '@core/utils/utils';
+import { BancoSelectOnly, SubEntidadFinancieraSelectHtmlOnly } from '@modules/accounting/models/subentidad-financiera.model';
 import { SharedService } from '@core/services/shared.service';
 
 @Component({
@@ -35,6 +35,7 @@ export class ReporteCobrosComponent implements OnInit {
     puntosEmision: Array<GroupedEstabPuntoEmision> = [];
     tiposDoc: Array<Pick<TipoDoc, 'descripcion'> & { codDoc: string }> = [];
     subEntidadFinanciera: Array<SubEntidadFinancieraSelectHtmlOnly> = [];
+    bancos: Array<BancoSelectOnly> = [];
     isCustomerSearchSimple = true;
 
     dataSearch = {
@@ -42,12 +43,19 @@ export class ReporteCobrosComponent implements OnInit {
         idPuntoEmision: 0,
         codDoc: '',
         customerId: 0,
+        idBanco: 0,
         idSubEntidadFinanciera: 0,
         fromDate: formatDateMoment(new Date()),
         toDate: formatDateMoment(new Date()),
         supplierChecked: false,
         documentoChecked: true,
         dateChecked: true,
+        nroDocChecked: false,
+        nroDocument: "",
+        referenceChecked: false,
+        reference: "",
+        loteChecked: false,
+        lote: "",
     }
 
     ngOnInit(): void {
@@ -70,7 +78,7 @@ export class ReporteCobrosComponent implements OnInit {
                         return console.log(response);
                     }
 
-                    const [estabs, tiposDoc, subEntidadFinanciera] = JSON.parse(response.payload as string);
+                    const [estabs, tiposDoc, subEntidadFinanciera, bancos] = JSON.parse(response.payload as string);
 
                     this.establecimientos = groupEstabUtil({ estabs, isGroupPuntoEmision: true })
 
@@ -87,6 +95,7 @@ export class ReporteCobrosComponent implements OnInit {
                     }
                     this.tiposDoc = tiposDoc;
                     this.subEntidadFinanciera = subEntidadFinanciera;
+                    this.bancos = bancos;
                     this.dataSearch.codDoc = this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FV)?.codDoc || '';
                 }
             }, error(err) {
@@ -152,7 +161,6 @@ export class ReporteCobrosComponent implements OnInit {
                 }
             }
 
-
             const dataParms = {
                 tipo: this.dataSearch.documentoChecked ? 1 : 2,
                 format,
@@ -164,6 +172,13 @@ export class ReporteCobrosComponent implements OnInit {
                 fechaInicio: this.dataSearch.fromDate,
                 fechaFin: this.dataSearch.toDate,
                 dateChecked: this.dataSearch.dateChecked,
+                idBanco: this.dataSearch.idBanco,
+                nroDocChecked: this.dataSearch.nroDocChecked,
+                nroDocument: removeSpacesInValue(this.dataSearch.nroDocument),
+                referenceChecked: this.dataSearch.referenceChecked,
+                reference: removeSpacesInValue(this.dataSearch.reference),
+                loteChecked: this.dataSearch.loteChecked,
+                lote: removeSpacesInValue(this.dataSearch.lote)
             }
 
             const parameters = {

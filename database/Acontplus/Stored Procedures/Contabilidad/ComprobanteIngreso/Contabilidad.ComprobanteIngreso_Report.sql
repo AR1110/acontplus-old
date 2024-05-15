@@ -32,9 +32,25 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
 	--> Global
-    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150),@idUsuario INT, @codDoc VARCHAR(5), @idSubEntidadFinanciera INT
-            , @fechaInicio DATETIME2, @fechaFin DATETIME2, @codEstab VARCHAR(20), @dateChecked BIT, @idCustomer INT
-            , @idPuntoEmision   INT
+    DECLARE @tipo               INT
+    , @idEntidad                INT
+    , @usuario                  VARCHAR(150)
+    , @idUsuario                INT
+    , @codDoc                   VARCHAR(5)
+    , @idSubEntidadFinanciera   INT
+    , @fechaInicio              DATETIME2
+    , @fechaFin                 DATETIME2
+    , @codEstab                 VARCHAR(20)
+    , @dateChecked              BIT
+    , @idCustomer               INT
+    , @idPuntoEmision           INT
+    , @idBanco                  INT
+    , @nroDocChecked            BIT
+    , @nroDocument              VARCHAR(30)
+    , @referenceChecked         BIT
+    , @reference                VARCHAR(30)
+    , @loteChecked              BIT
+    , @lote                     VARCHAR(30)
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
@@ -57,6 +73,13 @@ BEGIN
                 , @dateChecked              = dateChecked
                 , @idCustomer               = idCustomer
                 , @idPuntoEmision           = idPuntoEmision
+                , @idBanco                  = idBanco
+                , @nroDocChecked            = nroDocChecked
+                , @nroDocument              = nroDocument
+                , @referenceChecked         = referenceChecked
+                , @reference                = reference
+                , @loteChecked              = loteChecked
+                , @lote                     = lote
             FROM OPENJSON(@json) WITH (
                 codEstab                    VARCHAR(20)
                 , codDoc                    VARCHAR(5)
@@ -67,9 +90,15 @@ BEGIN
                 , dateChecked               BIT
                 , idCustomer                INT
                 , idPuntoEmision            INT
+                , idBanco                   INT
+                , nroDocChecked             BIT
+                , nroDocument               VARCHAR(30)
+                , referenceChecked          BIT
+                , reference                 VARCHAR(30)
+                , loteChecked               BIT
+                , lote                      VARCHAR(30)
             )
-
-
+            
             SET @params = '@idEntidad               INT 
                            ,@idSubEntidadFinanciera INT
                            ,@codEstab               VARCHAR(20)
@@ -77,7 +106,11 @@ BEGIN
                            ,@idCustomer             INT
                            ,@idPuntoEmision         INT
                            ,@fechaInicio            DATETIME2
-                           ,@fechaFin               DATETIME2'
+                           ,@fechaFin               DATETIME2
+                           ,@idBanco                INT
+                           ,@nroDocument            VARCHAR(30)
+                           ,@reference              VARCHAR(30)
+                           ,@lote                   VARCHAR(30)'
 
             SET @sql = 'SELECT * FROM (SELECT ci.idComprobanteIngreso
                                             , ci.idPersona
@@ -89,8 +122,8 @@ BEGIN
                                             , ci.nombreFiscal
                                             , CAST(ci.abono  AS NUMERIC(18,2))															AS abono
                                             , CAST(ci.total  AS NUMERIC(18,2))															AS total
-                                            , cc.idPuntoEmision
-                                            , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
+                                            , ci.nroDocumento
+                                            , cc.idPuntoEmision                                            
                                             , cc.serieComprobante
                                             , ef.descripcion
                                             , CAST(hc.saldo  AS NUMERIC(18,2))															AS totalDoc
@@ -101,6 +134,8 @@ BEGIN
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
                                             , co.secuencial                                                                             AS secuencial
                                             , co.fechaEmision
+                                            , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
+                                            , co.idBanco
                                             , (
 	                                            CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                            ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')
@@ -157,7 +192,27 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND dt.idPersona = @idCustomer '
                 END
-                
+
+            IF @idBanco > 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.idBanco = @idBanco '
+                END
+
+            IF @nroDocChecked       = 1
+                BEGIN
+                    SET @sql = @sql + 'AND dt.nroDocumento = @nroDocument '
+                END
+
+            IF @referenceChecked    = 1
+                BEGIN 
+                    SET @sql = @sql + 'AND dt.referencia = @reference '
+                END
+
+            IF @loteChecked         = 1
+                BEGIN
+                    SET @sql = @sql + 'AND dt.lote = @lote '
+                END
+
             IF @dateChecked = 1
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
@@ -188,6 +243,10 @@ BEGIN
                               ,@idPuntoEmision              = @idPuntoEmision
                               ,@fechaInicio                 = @fechaInicio
                               ,@fechaFin                    = @fechaFin
+                              ,@idBanco                     = @idBanco
+                              ,@nroDocument                 = @nroDocument
+                              ,@reference                   = @reference
+                              ,@lote                        = @lote
 			RETURN
 		END
 	
@@ -203,6 +262,13 @@ BEGIN
                 , @fechaFin                 = fechaFin
                 , @dateChecked              = dateChecked
                 , @idPuntoEmision           = idPuntoEmision
+                , @idBanco                  = idBanco
+                , @nroDocChecked            = nroDocChecked
+                , @nroDocument              = nroDocument
+                , @referenceChecked         = referenceChecked
+                , @reference                = reference
+                , @loteChecked              = loteChecked
+                , @lote                     = lote
             FROM OPENJSON(@json) WITH (
                 codEstab                    VARCHAR(20)
                 , codDoc                    VARCHAR(5)
@@ -212,6 +278,13 @@ BEGIN
                 , fechaFin                  DATETIME2
                 , dateChecked               BIT
                 , idPuntoEmision            INT
+                , idBanco                   INT
+                , nroDocChecked             BIT
+                , nroDocument               VARCHAR(30)
+                , referenceChecked          BIT
+                , reference                 VARCHAR(30)
+                , loteChecked               BIT
+                , lote                      VARCHAR(30)
             )
             
 
@@ -222,7 +295,11 @@ BEGIN
                            ,@idCustomer             INT
                            ,@idPuntoEmision         INT
                            ,@fechaInicio            DATETIME2
-                           ,@fechaFin               DATETIME2'
+                           ,@fechaFin               DATETIME2
+                           ,@idBanco                INT
+                           ,@nroDocument            VARCHAR(30)
+                           ,@reference              VARCHAR(30)
+                           ,@lote                   VARCHAR(30)'
 
             SET @sql = 'SELECT * FROM (SELECT ci.idComprobanteIngreso 
                                         , ci.idPersona
@@ -234,9 +311,8 @@ BEGIN
                                         , ci.nombreFiscal
                                         , CAST(ci.abono  AS NUMERIC(18,2))															        AS abono
                                         , CAST(ci.total  AS NUMERIC(18,2))															        AS total
-                                        , co.fechaEmision
+                                        , ci.nroDocumento
                                         , cc.idPuntoEmision
-                                        , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )								        AS codDoc
                                         , cc.serieComprobante
                                         , cx.nroCuota
                                         , ef.descripcion
@@ -247,6 +323,9 @@ BEGIN
                                         , ISNULL(cd.descripcion, '''')																        AS ciudad
                                         , ISNULL(co.idSubEntidadFinanciera, 0)														        AS idSubEntidadFinanciera
                                         , co.secuencial                                                                                     AS secuencial
+                                        , co.fechaEmision
+                                        , (CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END)								        AS codDoc
+                                        , co.idBanco
                                         , (
 	                                        CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                        ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')
@@ -304,11 +383,33 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND dt.idPersona = @idCustomer '
                 END
-                
-            IF @dateChecked = 1
+
+            IF @idBanco > 0
+                BEGIN
+                    SET @sql = @sql + 'AND dt.idBanco = @idBanco '
+                END
+
+            IF @nroDocChecked       = 1
+                BEGIN
+                    SET @sql = @sql + 'AND dt.nroDocumento = @nroDocument '
+                END
+
+            IF @referenceChecked    = 1
+                BEGIN 
+                    SET @sql = @sql + 'AND dt.referencia = @reference '
+                END
+
+            IF @loteChecked         = 1
+                BEGIN
+                    SET @sql = @sql + 'AND dt.lote = @lote '
+                END
+
+            IF @dateChecked         = 1
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
                 END
+
+            
 
             SET @sql = @sql + 'ORDER BY dt.fechaRegistro DESC '
 
@@ -334,6 +435,10 @@ BEGIN
                               ,@idPuntoEmision              = @idPuntoEmision
                               ,@fechaInicio                 = @fechaInicio
                               ,@fechaFin                    = @fechaFin
+                              ,@idBanco                     = @idBanco
+                              ,@nroDocument                 = @nroDocument
+                              ,@reference                   = @reference
+                              ,@lote                        = @lote
             RETURN
         END
 END
