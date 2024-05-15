@@ -50,7 +50,7 @@ namespace Inventario.API.Controllers
                 data.UserId = User.GetUserId();
                 if (file != null)
                 {
-                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/articulos/", file);
+                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
                 }
                 data.SubcategoryId = subcategoryId;
                 data.S3ObjectKey = _s3ObjectCustom.S3ObjectKey;
@@ -83,7 +83,7 @@ namespace Inventario.API.Controllers
                 data.UserId = User.GetUserId();
                 if (file != null)
                 {
-                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/articulos/", file, data.S3ObjectKey, data.S3ObjectUrl);
+                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file, data.S3ObjectKey, data.S3ObjectUrl);
                 }
                 var response = await _subcategoryPhoto.UpdateAsync(id, data);
                 if (response.code == "1" && file != null)

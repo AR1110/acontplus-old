@@ -1,22 +1,10 @@
 USE AcontPlus
-
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+GO
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- =============================================
 -- Author:		Ivan Fernando Paz
 -- Create date: 2022-07-31
@@ -32,10 +20,20 @@ BEGIN
 	SET LANGUAGE SPANISH;
 
     --> Global
-    DECLARE @tipo INT ,@idEntidad INT ,@idUsuario INT
+    DECLARE @tipo INT,
+        @idEntidad INT,
+        @idUsuario INT
     
     --> Filter
-	DECLARE @codEstab VARCHAR(50) ,@codDoc VARCHAR(2) ,@startDate DATETIME ,@endDate DATETIME ,@claveAcceso VARCHAR(50) ,@rucProveedor VARCHAR(25) ,@id INT ,@ckBoxFecha BIT 
+	DECLARE @codEstab VARCHAR(50),
+        @codDoc VARCHAR(2),
+        @startDate DATETIME,
+        @endDate DATETIME,
+        @claveAcceso VARCHAR(50),
+        @serieComprobante VARCHAR(20),
+        @rucProveedor VARCHAR(25),
+        @id INT,
+        @ckBoxFecha BIT
 	
 	--> Sql
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
@@ -58,22 +56,23 @@ BEGIN
 						  ,@rucProveedor VARCHAR(25)
                           ,@claveAcceso  VARCHAR(49)
                           ,@pageIndex    INT
-                          ,@pageSize     INT'
+                          ,@pageSize     INT
+                          ,@serieComprobante VARCHAR(20)'
 
-            SET @sql = 'SELECT [idDocumento]
-		                      ,[codEstab]
-		                      ,[comprobante]
-		                      ,[codDoc]
-		                      ,[serieComprobante]
-		                      ,[rucEmisor]
-		                      ,[razonSocialEmisior]
-		                      ,[fechaEmision]
-		                      ,[fechaAutorizacion]
-		                      ,[tipoEmision]
-		                      ,[identificacionReceptor]
-		                      ,[claveAcceso]
-		                      ,[numeroAutorizacion]
-		                      ,[importeTotal]
+            SET @sql = 'SELECT dr.[idDocumento]
+		                      ,dr.[codEstab]
+		                      ,dr.[comprobante]
+		                      ,dr.[codDoc]
+		                      ,dr.[serieComprobante]
+		                      ,dr.[rucEmisor]
+		                      ,dr.[razonSocialEmisior] razonSocialEmisor
+		                      ,dr.[fechaEmision]
+		                      ,dr.[fechaAutorizacion]
+		                      ,dr.[tipoEmision]
+		                      ,dr.[identificacionReceptor]
+		                      ,dr.[claveAcceso]
+		                      ,dr.[numeroAutorizacion]
+		                      ,dr.[importeTotal]
 		                      ,CASE WHEN xmlCompressed IS NOT NULL THEN 1 ELSE 0 END hasXml
 		                      ,ISNULL(complete, 0) complete
 		                      ,CASE WHEN xmlCompressed IS NOT NULL AND complete = 0 THEN ''background-color: #FFF5BD;''
@@ -85,8 +84,12 @@ BEGIN
 			                   END                                                               as colorCol
 		                      ,CASE WHEN complete = 1 THEN ''Documento Importado'' ELSE '''' END as hoverText
                               ,COUNT(*) OVER()                                                   as totalRecords
-	                    FROM Recepcion.DocumentoRecibido WITH (NOLOCK)
-	                    WHERE codEstab = @codEstab '
+                              ,ISNULL(s.[Name], '''') subcategoryName
+                              ,ISNULL(dr.subcategoryId, 0) subcategoryId
+	                    FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
+                            LEFT JOIN Contabilidad.CuentaPorPagar cpp ON dr.claveAcceso = cpp.uniqueId
+                            LEFT JOIN Contabilidad.Subcategory s ON dr.subcategoryId = s.Id
+	                    WHERE dr.codEstab = @codEstab '
 
             SELECT @codDoc       = codDoc
 		          ,@ckBoxFecha   = ckBoxFecha
@@ -97,6 +100,7 @@ BEGIN
 		          ,@rucProveedor = rucProveedor
                   ,@pageSize     = pageSize
 				  ,@pageIndex    = pageIndex
+                  ,@serieComprobante = serieComprobante
 	        FROM OPENJSON(@JSON) WITH 
             (
 			     codDoc       VARCHAR(2) 
@@ -108,11 +112,12 @@ BEGIN
 			    ,rucProveedor VARCHAR(25)
                 ,pageSize     INT
                 ,pageIndex    INT
+                ,serieComprobante VARCHAR(20)
 			)
 
             IF @ckBoxFecha = 1
                 BEGIN
-                    SET @sql = @sql + 'AND CAST(fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
+                    SET @sql = @sql + 'AND CAST(dr.fechaEmision AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
                 END 
 
             IF @codDoc IS NOT NULL
@@ -127,8 +132,15 @@ BEGIN
 
             IF @claveAcceso IS NOT NULL
                 BEGIN 
-                    SET @sql = @sql + 'AND claveAcceso = @claveAcceso '
-                END 
+                    SET @sql = @sql + 'AND dr.claveAcceso = @claveAcceso '
+                END
+
+             IF @serieComprobante IS NOT NULL
+                BEGIN
+                    SET @sql = @sql + ' AND dr.serieComprobante LIKE ''%' + @serieComprobante + '%'' ' 
+                END
+
+
 
             SET @sql = @sql + ' ORDER BY idDocumento DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
@@ -142,6 +154,7 @@ BEGIN
                               ,@claveAcceso  = @claveAcceso
                               ,@pageIndex    = @pageIndex
                               ,@pageSize     = @pageSize
+                              ,@serieComprobante = @serieComprobante
 
             RETURN 
         END 
@@ -199,7 +212,7 @@ BEGIN
 			        SELECT 'Retención'                                                           as comprobante
 				           ,rAts.estab + rAts.ptoEmi + Helper.F_Auto_Sequential(rAts.secuencial) as serieComprobante
 				           ,rAts.identificacionSujetoRetenido                                    as rucEmisor
-				           ,rAts.razonSocialSujetoRetenido                                       as razonSocialEmisior
+				           ,rAts.razonSocialSujetoRetenido                                       as razonSocialEmisor
 				           ,CONVERT(NVARCHAR, FORMAT(rAts.fechaEmision, 'dd/MM/yyyy HH:mm'))     as fechaEmision
 				           ,rAts.claveAcceso
 				           ,0                                                                    as importeTotal

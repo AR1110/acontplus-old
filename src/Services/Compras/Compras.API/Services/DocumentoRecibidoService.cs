@@ -1,4 +1,6 @@
-﻿namespace Compras.API.Services;
+﻿using System.Web;
+
+namespace Compras.API.Services;
 
 public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRecibidoService
 {
@@ -40,7 +42,7 @@ public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRec
     }
 
 
-    public async Task<string> UpdateAsync(int id, ApiRequest request)
+    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -48,12 +50,12 @@ public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRec
             { "id", id },
             { "json", DataConverters.SerializeDictionary(request.Data) }
         };
-        return await repository.SPExecuteDeprecatedAsync("Compra.Documento_Ingreso_Update", parameters);
+        return await repository.SPExecuteAsync("Recepcion.Documento_Update", parameters);
     }
 
     public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SPExecuteAsync("Compra.Recepcion.Documento_Delete", parameters);
+        return await repository.SPExecuteAsync("Recepcion.Documento_Delete", parameters);
     }
 
     public async Task<ApiResponse> UploadXml(Dictionary<string, object> parameters)
@@ -63,10 +65,11 @@ public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRec
 
     public async Task<byte[]> DownloadAsync(Dictionary<string, object> parameters)
     {
-        var dt = await repository.GetDataTableAsync("", parameters);
+        var dt = await repository.GetDataTableAsync("Recepcion.Documento_Get_Id", parameters);
         if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
         {
-            return Encoding.UTF8.GetBytes(dt.Rows[0]["xmlDoc"].ToString());
+            var xmlDoc = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlDoc"));
+            return Encoding.UTF8.GetBytes(xmlDoc);
         }
         else
         {

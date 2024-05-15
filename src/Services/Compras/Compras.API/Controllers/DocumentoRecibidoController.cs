@@ -43,7 +43,7 @@ public class DocumentoRecibidoController : ControllerBase
         var getXmlSriData = new DataXmlComprobante();
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetUserRoleId() }, { "idDocumento", id }
+            { "userRoleId", User.GetUserRoleId() }, { "id", id }
         };
         var xdoc = await _docRecibidoSvc.GetById(parameters);
 
@@ -182,30 +182,10 @@ public class DocumentoRecibidoController : ControllerBase
 
 
     [HttpPut("Put/{id}")]
-    public async Task<IActionResult> Put(int id)
+    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
     {
-        var _response = new ApiResponse();
-        try
-        {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            await _db.SPExecute("Recepcion.Documento_Update");
-            _db.AddDynamicParam("idRol", idUsuarioRol);
-            _db.AddDynamicParam("idDocumento", id);
-            _db.AddDynamicParam("tipo", 1);
-            _db.AddDynamicParam("xmlDoc", "");
-            _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al descargar el archivo xml: " + ex);
-            _response.Create("0", "Error al descargar el archivo xml");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
+        data.UserRoleId = User.GetUserRoleId();
+        return Ok(await _docRecibidoSvc.UpdateAsync(id, data));
     }
 
 
@@ -282,65 +262,28 @@ public class DocumentoRecibidoController : ControllerBase
         return Ok(_response);
     }
 
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Upload(int id, IFormFile file)
-    {
-        var _response = new ApiResponse();
-
-        if (file.ContentType != "text/plain")
-        {
-            _response.Create("0", "Formato de archivo no soportado");
-            return BadRequest(_response);
-        }
-
-        try
-        {
-            var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
-            var xmlSri = Encoding.UTF8.GetString(FileData.GetFileByte(file));
-            xmlSri = xmlSri.Replace("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>", "")
-                .Replace("</xml>", ""); //DELETE UNNECESARY
-            var xmlDocSri = new XmlDocument();
-            xmlDocSri.LoadXml(xmlSri);
-            var nodeAuth = xmlDocSri.GetElementsByTagName("autorizacion")[0];
-            var nodeComp = nodeAuth.SelectSingleNode("comprobante");
-            var xmlComp = new XmlDocument();
-            xmlComp.LoadXml(nodeComp.InnerText);
-            var node = xmlComp.GetElementsByTagName("infoTributaria")[0];
-            var claveAccesoXml = node.SelectSingleNode("claveAcceso").InnerText;
-            var codDoc = node.SelectSingleNode("codDoc").InnerText;
-            await _db.SPExecute("Recepcion.Documento_Update");
-            _db.AddDynamicParam("idRol", idUsuarioRol);
-            _db.AddDynamicParam("idDocumento", id);
-            _db.AddDynamicParam("tipo", 2);
-            _db.AddDynamicParam("xmlDoc", xmlDocSri.OuterXml);
-            _response = _db.GetDefault();
-        }
-        catch (Exception ex)
-        {
-            _log.LogActivity("Error al importar el archivo: " + ex);
-            _response.Create("0", "Error al importar el archivo");
-        }
-        finally
-        {
-            _db.Close();
-        }
-
-        return Ok(_response);
-    }
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var parameters = new Dictionary<string, object>();
-        parameters.Add("userRoleId", User.GetUserRoleId());
-        parameters.Add("idDocumento", id);
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetUserRoleId() },
+            { "idDocumento", id }
+        };
         return Ok(await _docRecibidoSvc.DeleteAsync(parameters));
     }
-    [HttpGet("Download/{id}")]
-    public async Task<IActionResult> Download()
+    [HttpGet("DownloadXml/{id}")]
+    public async Task<IActionResult> Download(int id)
     {
-        return Ok();
+        var parameters = new Dictionary<string, object> {
+            {"userRoleId", User.GetUserRoleId()},
+            {"id", id }
+        };
+        var response = await _docRecibidoSvc.DownloadAsync(parameters);
+        if (response == null)
+        {
+            return BadRequest();
+        }
+        return File(response, "text/xml");
     }
 }
