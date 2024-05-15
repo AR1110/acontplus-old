@@ -177,7 +177,7 @@ public class DocumentoRecibidoController : ControllerBase
             { "fechaEmision", dataComprobante.FechaEmision },
             { "XmlDoc", dataComprobante.XmlTosave.OuterXml },
         };
-        return Ok(await _docRecibidoSvc.UploadXml(parameters));
+        return Ok(await _docRecibidoSvc.UploadXmlAsync(parameters));
     }
 
 
@@ -285,5 +285,11 @@ public class DocumentoRecibidoController : ControllerBase
             return BadRequest();
         }
         return File(response, "text/xml");
+    }
+    [HttpPut("PutSubcategory")]
+    public async Task<IActionResult> PutSubcategory([FromBody] ApiRequest data)
+    {
+        data.UserRoleId = User.GetUserRoleId();
+        return Ok(await _docRecibidoSvc.UpdateSubcategoryAsync(data));
     }
 }

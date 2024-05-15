@@ -10,8 +10,6 @@
         const URL_PROVEEDOR = 'Compra/Proveedor/'
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
-        let _token = $injector.get('decodeToken');
-        let $http = $injector.get('$http');
 
         return {
             getDataFilter,
@@ -36,6 +34,7 @@
             getId,
             migrate,
             downloadXml,
+            updateSubcategory,
         }
 
         function getDataFilter() {
@@ -275,9 +274,11 @@
         }
 
         function downloadXml(id) {
-            return $http.get(`${_token.urlGateway}/gateway/${URL}DownloadXml/${id}`, {
-                responseType: 'blob'
-            }).then(response => response);
+            return mS.getFile(`${URL}DownloadXml/${id}`, null, true);
+        }
+
+        function updateSubcategory(data) {
+            return mS.getData('put', `${URL}PutSubcategory`, { data: data }, true);
         }
 
 

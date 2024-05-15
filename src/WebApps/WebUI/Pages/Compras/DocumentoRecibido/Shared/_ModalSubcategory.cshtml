@@ -4,35 +4,48 @@
         <button type="button" class="close" ng-click="onModalClose()">&times;</button>
     </div>
     <div class="modal-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="form-group">
-                    <label for="emisor">Emisor:</label>
-                    <input type="text" id="emisor" name="emisor" class="form-control" ng-model="selected.razonSocialEmisor" readonly />
-                </div>
-            </div>
-        </div> 
-        <div class="row">
-            <div class="col-12">
-                <div class="form-group">
-                    <label for="serieComprobante">Serie Comprobante:</label>
-                    <input type="text" id="serieComprobante" name="serieComprobante" class="form-control" ng-model="selected.serieComprobante" readonly />
-                </div>
-            </div>
+        <div class="table-responsive" style=" max-height: 400px; overflow-y: auto;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Op.</th>
+                        <th class="text-center">#</th>
+                        <th>Subcategoría</th>
+                        <th>Serie</th>
+                        <th>Clave Acceso</th>
+                        <th>Comprobante</th>
+                        <th>Emisor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="small" ng-repeat="item in selectedDocs">
+                        <td class="text-center">
+                            <button type="button" class="btn btn-outline-danger btn-sm" ng-click="onDelete($index)"><i class="fa fa-trash"></i></button>
+                        </td>
+                        <td class="text-center">{{$index + 1}}</td>
+                        <td>{{item.subcategoryName}}</td>
+                        <td>{{item.serieComprobante}}</td>
+                        <td>{{item.claveAcceso}}</td>
+                        <td>{{item.comprobante}}</td>
+                        <td>{{item.razonSocialEmisor}}</td> 
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="row">
-            <div class="col-12">
+        <div class="row mt-2">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                     <label for="subcategoryId">Subcategoría:</label>
-                    <select id="subcategoryId" name="subcategoryId" class="form-control" ng-model="selected.subcategoryId">
+                    <select id="subcategoryId" name="subcategoryId" class="form-control" ng-model="data.subcategoryId">
                         <option ng-value="item.id" ng-repeat="item in subcategories">{{item.name}}</option>
                     </select>
                 </div>
             </div>
         </div>
+
     </div>
     <div class="modal-footer">
-        <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Guardar</button>
+        <button type="submit" class="btn btn-outline-success" ng-disabled="!data.subcategoryId"><i class="fa fa-save"></i> Guardar</button>
         <button type="button" class="btn btn-outline-dark" ng-click="onModalClose()">&times; Cancelar</button>
     </div>
 </form>
