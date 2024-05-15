@@ -2,51 +2,40 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace Services.Common.Extensions
+namespace Services.Common.Extensions;
+
+public static class SwaggerServiceExtensions
 {
-    public static class SwaggerServiceExtensions
+    public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
     {
-        public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
         {
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen(c =>
+            var securitySchema = new OpenApiSecurityScheme
             {
-                var securitySchema = new OpenApiSecurityScheme
-                {
-                    Description = "JWT Auth Bearer Scheme",
-                    Name = "Authorisation",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "Bearer",
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                };
+                Description = "JWT Auth Bearer Scheme",
+                Name = "Authorisation",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            };
 
-                c.AddSecurityDefinition("Bearer", securitySchema);
+            c.AddSecurityDefinition("Bearer", securitySchema);
 
-                var securityRequirement = new OpenApiSecurityRequirement
-                {
-                    {
-                        securitySchema, new[] {"Bearer"}
-                    }
-                };
+            var securityRequirement = new OpenApiSecurityRequirement { { securitySchema, new[] { "Bearer" } } };
 
-                c.AddSecurityRequirement(securityRequirement);
+            c.AddSecurityRequirement(securityRequirement);
+        });
+        return services;
+    }
 
-            });
-            return services;
-        }
+    public static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
-        public static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app)
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-
-            return app;
-        }
+        return app;
     }
 }

@@ -95,7 +95,7 @@ namespace Inventario.API.Controllers.v1
             {
                 if (file != null)
                 {
-                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/articulos/", file);
+                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/articulos/", file);
                 }
                 await _db.SPExecute("Inventario.Articulo_Insert", true);
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());

@@ -50,7 +50,7 @@ namespace Inventario.API.Controllers
             {
                 if (file != null)
                 {
-                    await _s3ObjectCustom.Add($"{User.GetIDCardCompany()}/subfamilias/", file);
+                    await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/subfamilias/", file);
                 }
 
                 var parameters = new Dictionary<string, object>

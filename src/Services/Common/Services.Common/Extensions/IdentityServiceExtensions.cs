@@ -4,13 +4,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Services.Common.Extensions
+namespace Services.Common.Extensions;
+
+public static class IdentityServiceExtensions
 {
-    public static class IdentityServiceExtensions
+    public static IServiceCollection AddIdentityService(this IServiceCollection services, IConfiguration config)
     {
-        public static IServiceCollection AddIdentityService(this IServiceCollection services, IConfiguration config)
-        {
-            services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -27,12 +27,10 @@ namespace Services.Common.Extensions
                     ClockSkew = TimeSpan.FromSeconds(0),
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Token:Key"]))
                 };
-
             });
 
-            services.AddAuthorization();
-            services.AddAuthorizationBuilder();
-            return services;
-        }
+        services.AddAuthorization();
+        services.AddAuthorizationBuilder();
+        return services;
     }
 }
