@@ -21,7 +21,7 @@ GO
 -- Create date: 2024/05/15
 -- Description:	REPORT FOR COBROS
 -- =============================================
--- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":"NE","idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
+-- Contabilidad.ComprobanteIngreso_Report 307,'{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000216","codDoc":null,"idSubEntidadFinanciera":0,"idCustomer":null,"fechaInicio":"2024-03-01 00:00:00 AM","fechaFin":"2024-03-25 23:59:59 PM","dateChecked":true}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	@userRoleId			INT
 	, @json				VARCHAR(MAX)
@@ -47,9 +47,9 @@ BEGIN
 	--> Por Documentos.
 	IF @tipo = 1
 		BEGIN
-            SET @tableNames = 'details,header'
+            SET @tableNames = 'header,details'
 
-            SELECT @codEstab                = codEstab
+             SELECT @codEstab               = codEstab
                 , @codDoc                   = codDoc
                 , @idSubEntidadFinanciera   = idSubEntidadFinanciera
                 , @fechaInicio              = fechaInicio
@@ -68,6 +68,7 @@ BEGIN
                 , idCustomer                INT
                 , idPuntoEmision            INT
             )
+
 
             SET @params = '@idEntidad               INT 
                            ,@idSubEntidadFinanciera INT
@@ -89,7 +90,7 @@ BEGIN
                                             , CAST(ci.abono  AS NUMERIC(18,2))															AS abono
                                             , CAST(ci.total  AS NUMERIC(18,2))															AS total
                                             , cc.idPuntoEmision
-                                            , cc.codDoc
+                                            , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
                                             , cc.serieComprobante
                                             , ef.descripcion
                                             , CAST(hc.saldo  AS NUMERIC(18,2))															AS totalDoc
@@ -99,6 +100,7 @@ BEGIN
                                             , ISNULL(cd.descripcion, '''')																AS ciudad
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
                                             , co.secuencial                                                                             AS secuencial
+                                            , co.fechaEmision
                                             , (
 	                                            CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                            ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')
@@ -163,19 +165,6 @@ BEGIN
 
             SET @sql = @sql + 'ORDER BY dt.fechaRegistro DESC '
             
-
-            ---> Details
-            EXEC sp_executesql @sql
-							  ,@params 
-							  ,@idEntidad                   = @idEntidad
-                              ,@idSubEntidadFinanciera      = @idSubEntidadFinanciera
-                              ,@codEstab                    = @codEstab
-                              ,@codDoc                      = @codDoc
-                              ,@idCustomer                  = @idCustomer
-                              ,@idPuntoEmision              = @idPuntoEmision
-                              ,@fechaInicio                 = @fechaInicio
-                              ,@fechaFin                    = @fechaFin
-
             ---> Header
             SELECT TOP 1 
                 ve.nombreComercial
@@ -188,12 +177,23 @@ BEGIN
             FROM v_Estab_Asign ve WITH(NOLOCK)
             WHERE ve.codEstab = @codEstab
 
+            ---> Details
+            EXEC sp_executesql @sql
+							  ,@params 
+							  ,@idEntidad                   = @idEntidad
+                              ,@idSubEntidadFinanciera      = @idSubEntidadFinanciera
+                              ,@codEstab                    = @codEstab
+                              ,@codDoc                      = @codDoc
+                              ,@idCustomer                  = @idCustomer
+                              ,@idPuntoEmision              = @idPuntoEmision
+                              ,@fechaInicio                 = @fechaInicio
+                              ,@fechaFin                    = @fechaFin
 			RETURN
 		END
 	
     IF @tipo = 2
-        BEGIN 
-            SET @tableNames = 'details,header'
+        BEGIN
+            SET @tableNames = 'header,details'
 
             SELECT @codEstab                = codEstab
                 , @codDoc                   = codDoc
@@ -213,6 +213,7 @@ BEGIN
                 , dateChecked               BIT
                 , idPuntoEmision            INT
             )
+            
 
             SET @params = '@idEntidad               INT 
                            ,@idSubEntidadFinanciera INT
@@ -233,8 +234,9 @@ BEGIN
                                         , ci.nombreFiscal
                                         , CAST(ci.abono  AS NUMERIC(18,2))															        AS abono
                                         , CAST(ci.total  AS NUMERIC(18,2))															        AS total
+                                        , co.fechaEmision
                                         , cc.idPuntoEmision
-                                        , cc.codDoc
+                                        , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )								        AS codDoc
                                         , cc.serieComprobante
                                         , cx.nroCuota
                                         , ef.descripcion
@@ -310,6 +312,17 @@ BEGIN
 
             SET @sql = @sql + 'ORDER BY dt.fechaRegistro DESC '
 
+            ---> Header
+            SELECT TOP 1 ve.nombreComercial
+                , ve.ruc
+                , ve.telefono
+                , ve.correo
+                , @usuario          AS usuario
+                , @fechaInicio      AS fechaInicio
+                , @fechaFin         AS fechaFin
+            FROM v_Estab_Asign ve WITH(NOLOCK)
+            WHERE ve.codEstab = @codEstab
+
             ---> Details
             EXEC sp_executesql @sql
 							  ,@params 
@@ -321,18 +334,6 @@ BEGIN
                               ,@idPuntoEmision              = @idPuntoEmision
                               ,@fechaInicio                 = @fechaInicio
                               ,@fechaFin                    = @fechaFin
-
-             ---> Header
-            SELECT TOP 1 ve.nombreComercial
-                , ve.ruc
-                , ve.telefono
-                , ve.correo
-                , @usuario          AS usuario
-                , @fechaInicio      AS fechaInicio
-                , @fechaFin         AS fechaFin
-            FROM v_Estab_Asign ve WITH(NOLOCK)
-            WHERE ve.codEstab = @codEstab
-
             RETURN
         END
 END
