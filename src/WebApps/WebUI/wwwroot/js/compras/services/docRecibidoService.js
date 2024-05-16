@@ -274,7 +274,7 @@
         }
 
         function downloadXml(id) {
-            return mS.getFile(`${URL}DownloadXml/${id}`, null, true);
+            return mS.getFile('get', `${URL}DownloadXml/${id}`, null, true);
         }
 
         function updateSubcategory(data) {
