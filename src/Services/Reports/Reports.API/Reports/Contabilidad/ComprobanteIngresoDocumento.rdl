@@ -1748,6 +1748,20 @@
                                   <FontSize>7pt</FontSize>
                                 </Style>
                               </TextRun>
+                              <TextRun>
+                                <Value> - </Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                </Style>
+                              </TextRun>
+                              <TextRun>
+                                <Value>=Fields!nroIdentificacion.Value</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                </Style>
+                              </TextRun>
                             </TextRuns>
                             <Style />
                           </Paragraph>
@@ -1877,7 +1891,7 @@
             <DataSetName>details</DataSetName>
             <Top>5.02197cm</Top>
             <Height>2.88239cm</Height>
-            <Width>28.89903cm</Width>
+            <Width>28.89907cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2248,7 +2262,7 @@
                 <DataSetName>details</DataSetName>
                 <Top>0.21061cm</Top>
                 <Height>0.6cm</Height>
-                <Width>28.89903cm</Width>
+                <Width>28.89905cm</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -2259,7 +2273,7 @@
             <KeepTogether>true</KeepTogether>
             <Top>3.2554cm</Top>
             <Height>0.98466cm</Height>
-            <Width>28.89903cm</Width>
+            <Width>28.89905cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -2276,7 +2290,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>288.99033mm</Width>
+      <Width>288.9907mm</Width>
       <Page>
         <PageFooter>
           <Height>7.05556mm</Height>

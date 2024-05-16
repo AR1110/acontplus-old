@@ -339,6 +339,8 @@ BEGIN
                     , controlCaja
             FROM SubEntidadFinanciera
             WHERE idEntidad = @idEntidad
+            
+            SELECT idBanco,descripcion,codigo FROM dbo.Banco WITH (NOLOCK) WHERE estado = 1
             RETURN
         END
 END
