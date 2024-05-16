@@ -3,7 +3,10 @@ import { NgbAccordionModule, NgbActiveModal, NgbNavModule } from "@ng-bootstrap/
 import { UserCustomerRoleEstabComponent } from "./components/user-customer-role-estab/user-customer-role-estab.component";
 import { UserCustomerRolePermissionComponent } from "./components/user-customer-role-permission/user-customer-role-permission.component";
 import { UserCustomerRoleService } from "@modules/config/services/user-customer/user-customer-role.service";
-import { hideLoader, showLoader } from "@core/utils/loader";
+import {
+  UserCustomerRoleAccessComponent
+} from "@modules/config/pages/user-customer-page/components/user-customer-role-modal/components/user-customer-role-access/user-customer-role-access.component";
+
 
 @Component({
   selector: 'app-user-customer-role-modal',
@@ -12,7 +15,8 @@ import { hideLoader, showLoader } from "@core/utils/loader";
     NgbAccordionModule,
     NgbNavModule,
     UserCustomerRoleEstabComponent,
-    UserCustomerRolePermissionComponent
+    UserCustomerRolePermissionComponent,
+    UserCustomerRoleAccessComponent
   ],
   templateUrl: './user-customer-role-modal.component.html'
 })
@@ -35,16 +39,8 @@ export class UserCustomerRoleModalComponent {
 
 
   ngOnInit(){
-    showLoader();
-    this.userCustomerRoleSvc.getAll({idUsuario: this.params.idUsuario}).subscribe({
-      next: (response:any) =>{
-        hideLoader();
+    this.userCustomerRoleSvc.getAll({idUsuario: this.params.idUsuario}).subscribe((response:any)=>{
         this.userCustomerRoles = response.userCustomerRoles;
-      },
-      error(err) {
-          hideLoader();
-          console.log(err)
-      },
     })
   }
 
@@ -53,17 +49,17 @@ export class UserCustomerRoleModalComponent {
     this.idUsuarioRol = data.idUsuarioRol;
 
     setTimeout(()=>{
-      this.childEstab.getUserCustomerRoleEstabs(data.idUsuarioRol);
+      this.childEstab?.getUserCustomerRoleEstabs(data.idUsuarioRol);
     }, 100)
   }
   onNavChange(data: any){
 
     setTimeout(()=>{
       if(this.activeNav===1){
-        this.childEstab.getUserCustomerRoleEstabs(data.idUsuarioRol);
+        this.childEstab?.getUserCustomerRoleEstabs(data.idUsuarioRol);
       }
       if (this.activeNav === 2){
-        this.childPermission.getUserPermissions(data.idUsuarioRol)
+        this.childPermission?.getUserPermissions(data.idUsuarioRol)
       }
 
     })

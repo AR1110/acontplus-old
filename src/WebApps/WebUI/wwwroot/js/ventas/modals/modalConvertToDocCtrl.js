@@ -138,7 +138,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
                 if (!$scope.config.multipleVendedor) { 
                     let dataUsuario = $scope.vendedores.find(item => (item.predeterminado));
-                    $scope.data.idUsuario = dataUsuario.idUsuario;
+                    $scope.comprobante.idUsuario = dataUsuario.idUsuario;
                 } 
 
             }).catch(error => {
@@ -199,7 +199,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
 
                 if (!$scope.config.multipleVendedor) { 
                     let dataUsuario = $scope.vendedores.find(item => (item.predeterminado));
-                    $scope.data.idUsuario = dataUsuario.idUsuario;
+                    $scope.comprobante.idUsuario = dataUsuario.idUsuario;
                 } 
 
 
@@ -272,7 +272,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
             return
         }
 
-        if (!($scope.data.idUsuario > 0)) {
+        if (!($scope.comprobante.idUsuario > 0)) {
             tS.toastr({
                 type: 'warning',
                 message: 'Seleccione el vendedor'
@@ -396,7 +396,7 @@ function convertToDocModalCtrl($scope, $injector, $uibModalInstance, $q, params)
                 detalles: $scope.detalles,
                 infoAdicionalDocumento: $scope.infoAdicionalDocumento,
                 cuotas,
-                dataFormaPago
+                dataFormaPago: $scope.dataFormaPago
             })
 
             showLoader();

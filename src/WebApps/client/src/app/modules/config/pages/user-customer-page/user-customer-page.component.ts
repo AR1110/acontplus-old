@@ -3,7 +3,6 @@ import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { BreadcrumbComponent } from "@core/components/breadcrumb/breadcrumb.component";
 import { ModalService } from "@core/services/modal.service";
-import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRead } from "@modules/config/models/user-customer/user-customer.model";
 import { UserCustomerService } from "@modules/config/services/user-customer/user-customer.service";
@@ -27,7 +26,6 @@ import { UserCustomerRoleModalComponent } from "./components/user-customer-role-
 export class UserCustomerPageComponent {
   private readonly userCustomerSvc = inject(UserCustomerService);
   private readonly modalSvc = inject(ModalService)
-  private router = inject(Router)
 
 
   pagination = new Pagination();
@@ -38,19 +36,13 @@ export class UserCustomerPageComponent {
       pageIndex: this.pagination.pageIndex,
       pageSize: this.pagination.pageSize
     }
-    showLoader();
     this.userCustomerSvc.getAll(obj).subscribe({
       next: (response: any) => {
-        hideLoader();
         this.usersCustomer = response.userCustomers;
         if(this.usersCustomer.length>0){
           this.pagination.totalRecords= this.usersCustomer[0].totalRecords;
         }
-      },
-      error(err) {
-          hideLoader();
-          console.log(err)
-      },
+      }
     })
   }
 

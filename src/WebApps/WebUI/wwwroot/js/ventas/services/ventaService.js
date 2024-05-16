@@ -371,7 +371,7 @@
                             esContado: item.tiempoCredito,
                             disabledUpdate: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.anulada || item.convertToDoc,
                             disabledAnular: item.codEstado === 'A' || item.codEstado === 'TRA' || item.codEstado === 'CBR' || item.convertToDoc,
-                            enabledConvertToDoc: !(item.convertToDoc) || item.codEstado === 'CBR'  || item.codEstado === 'PP',
+                            enabledConvertToDoc: !(item.convertToDoc || item.codEstado === 'A'),
                             enabledHistorialConvert: item.convertToDoc,
                             enabledHistorialCobro: item.codEstado === 'CBR' || item.codEstado === 'PP', 
                             convertToDoc: item.convertToDoc,

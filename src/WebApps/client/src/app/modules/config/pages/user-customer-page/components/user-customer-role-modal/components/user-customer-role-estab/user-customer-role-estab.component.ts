@@ -1,6 +1,5 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerCustomerRoleEstab } from "@modules/config/models/user-customer/user-customer-role-estab.model";
 import { UserCustomerRoleEstabService } from "@modules/config/services/user-customer/user-customer-role-estab.service";
@@ -36,25 +35,15 @@ export class UserCustomerRoleEstabComponent {
     let obj = {
       idUsuarioRol
     }
-    showLoader()
-    this.userCustomerRoleEstabSvc.getAll(obj).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.userCustomerRoleEstabSvc.getAll(obj).subscribe( (response) => {
         this.userCustomerRoleEstabs = response;
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
+
     })
   }
 
 
   onChangeDefault(data: UserCustomerCustomerRoleEstab) {
-    showLoader();
-    this.userCustomerRoleEstabSvc.put(data.idEstab_Asig).subscribe({
-      next: (response) => {
-        hideLoader();
+    this.userCustomerRoleEstabSvc.put(data.idEstab_Asig).subscribe((response) => {
         if (isApiResponse(response)) {
           if (response.code === "0") {
             this.tS.toastr({
@@ -70,11 +59,6 @@ export class UserCustomerRoleEstabComponent {
             this.getUserCustomerRoleEstabs(this.idUsuarioRol)
           }
         }
-      },
-      error(err) {
-        hideLoader();
-        console.log(err)
-      },
     })
   }
 
@@ -108,9 +92,7 @@ export class UserCustomerRoleEstabComponent {
         idUsuarioRol: this.idUsuarioRol,
         codEstab: data.codEstab
       }
-      this.userCustomerRoleEstabSvc.post(params).subscribe({
-        next: (response) => {
-          hideLoader();
+      this.userCustomerRoleEstabSvc.post(params).subscribe((response) => {
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -126,11 +108,6 @@ export class UserCustomerRoleEstabComponent {
               this.getUserCustomerRoleEstabs(this.idUsuarioRol)
             }
           }
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
       })
 
     }

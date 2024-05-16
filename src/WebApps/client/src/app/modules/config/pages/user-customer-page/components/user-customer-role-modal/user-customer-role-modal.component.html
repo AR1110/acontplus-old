@@ -23,17 +23,30 @@
               <li [ngbNavItem]="1">
                 <button ngbNavLink  >Establecimientos</button>
                 <ng-template ngbNavContent>
-                   <div class="card">
-                    <div class="card-body shadow">
-                      <app-user-customer-role-estab   />
+                    <div class="card">
+                      <div class="card-body shadow">
+                        <app-user-customer-role-estab   />
+                      </div>
                     </div>
-                   </div>
                 </ng-template>
               </li>
               <li [ngbNavItem]="2">
                 <button ngbNavLink>Permisos</button>
                 <ng-template ngbNavContent>
                     <app-user-customer-role-permission/>
+
+
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="3">
+                <button ngbNavLink>Accesos</button>
+                <ng-template ngbNavContent>
+                  <div class="card">
+                    <div class="card-body">
+                      <app-user-customer-role-access/>
+                    </div>
+                  </div>
+
                 </ng-template>
               </li>
             </ul>
@@ -46,4 +59,8 @@
     }
   </div>
 </div>
-<div class="modal-footer"></div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-dark" (click)="modal.close()">
+    &times; Cerrar
+  </button>
+</div>

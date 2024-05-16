@@ -166,7 +166,8 @@
                     const dataPermission = userCustomerPermissionSvc.userPermissionAdapter();
                     
                     let permission = {
-                        isUpdatePrice: dataPermission.product.precio
+                        isUpdatePrice: dataPermission.product.precio,
+                        gestionUbicacion: dataPermission.product.gestionUbicacion
                     }  
                     const establecimientos = fS.groupEstabBodega(tempEstabs);
                       
