@@ -59,6 +59,8 @@ BEGIN
 		                       ,IIF(codEstado = ''A'', ''table-danger'','''')  as colorRow 
                                ,codEstado
                                ,COUNT(*) OVER()                                as totalRecods
+                               ,ISNULL(subcategoryId, 0) subcategoryId
+                               ,ISNULL(subcategoryName, '''') subcategoryName
 	                     FROM v_CuentaPorPagar 
 	                     WHERE codDoc = ''DH''
                           AND idEntidad = @idEntidad '
@@ -150,7 +152,7 @@ BEGIN
     --> DataForm
 	IF @typeList = 2
 		BEGIN
-            SET @tableNames = 'configDecimales,impuestos,tiempoCredito,ptoEmi,estab'
+            SET @tableNames = 'configDecimales,impuestos,tiempoCredito,ptoEmi,estab,subcategories'
 
             SELECT nroPrecio
 	              ,nroCantidad
@@ -195,6 +197,8 @@ BEGIN
             FROM v_Bodega_Asign WITH(NOLOCK) 
             WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
+            SELECT * FROM Contabilidad.Subcategory WITH (NOLOCK) WHERE CompanyId = @idEntidad AND [Enabled] = 1
+
             RETURN 
 		END 
 
@@ -234,9 +238,12 @@ BEGIN
 				  ,di.descuento 
 				  ,total = di.importeTotal
                   ,di.observacion
+                  ,ISNULL(cpp.subcategoryId, 0) subcategoryId
+                  ,ISNULL(cpp.subcategoryName,  '') subcategoryName
 			FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
 			INNER JOIN dbo.PuntoEmision    pe WITH (NOLOCK) ON pe.idPuntoEmision = di.idPuntoEmision
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pe.codEstab
+            LEFT JOIN v_CuentaPorPagar cpp ON di.idDocumentoIngreso = cpp.idDocumento AND cpp.codDoc = 'DH'
 			WHERE di.idDocumentoIngreso = @id
 
 			SELECT di.idProveedor
@@ -372,9 +379,12 @@ BEGIN
 		          ,di.porcentajeDescuento
 		          ,di.importeTotal
 		          ,ISNULL(di.observacion,'') as observacion
+                  ,ISNULL(cpp.subcategoryId, 0) subcategoryId
+                  ,ISNULL(cpp.subcategoryName,  '') subcategoryName
             FROM Compra.Documento_Ingreso  di WITH (NOLOCK)
             INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = di.idPuntoEmision
             INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+            LEFT JOIN v_CuentaPorPagar cpp ON di.idDocumentoIngreso = cpp.idDocumento AND cpp.codDoc = 'DH'
             WHERE di.idDocumentoIngreso = @id
 
             SELECT di.idProveedor

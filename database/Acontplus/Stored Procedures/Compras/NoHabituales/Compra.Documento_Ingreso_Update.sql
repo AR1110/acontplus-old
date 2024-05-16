@@ -39,6 +39,7 @@ BEGIN
 
     --> contabilidad
 	DECLARE @idEstablecimiento INT ,@identificacion VARCHAR(20) ,@serieComprobante VARCHAR(20) ,@idProveedor INT ,@idTiempoCredito INT
+        ,@subcategoryId INT
 
     -----DATOS CONTABILIDAD------
 	DECLARE @fechaVencimiento DATETIME2
@@ -56,6 +57,7 @@ BEGIN
         ,descuento NUMERIC(18,5) NOT NULL
         ,importeTotal NUMERIC (18,5) NOT NULL
         ,observacion VARCHAR(300) NULL
+        ,subcategoryId INT
 	)
 
 	DECLARE @tblDetails AS TABLE (
@@ -130,20 +132,20 @@ BEGIN
         )
         
 		INSERT INTO @document 
-		      (idDocumentoIngreso,idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
-		SELECT @id               ,idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
+		      (idDocumentoIngreso,idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento, subcategoryId)
+		SELECT @id               ,idProveedor,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento, subcategoryId
 		FROM OPENJSON(@comprobante)WITH 
         (
-             idDocumentoIngreso  INT
-            ,idProveedor         INT  
-		    ,fechaEmision        DATETIME2 
-		    ,fechaVencimiento    DATETIME2  
-		    ,totalSinImpuestos   NUMERIC(18,5)
-            ,descuento           NUMERIC(18,5) 
-            ,porcentajeDescuento NUMERIC(18,5) 
-		    ,importeTotal        NUMERIC(18,5)
-            ,observacion         VARCHAR(300)  
-
+             idDocumentoIngreso     INT
+            ,idProveedor            INT  
+		    ,fechaEmision           DATETIME2 
+		    ,fechaVencimiento       DATETIME2  
+		    ,totalSinImpuestos      NUMERIC(18,5)
+            ,descuento              NUMERIC(18,5) 
+            ,porcentajeDescuento    NUMERIC(18,5) 
+		    ,importeTotal           NUMERIC(18,5)
+            ,observacion            VARCHAR(300)  
+            ,subcategoryId          INT
 		) as dt
 		
 		INSERT INTO @tblDetails
@@ -214,7 +216,7 @@ BEGIN
         )
 
 		--> Recuperar datos de las Tablas
-		SELECT TOP 1 @fechaEmision = fechaEmision ,@importeTotal = importeTotal ,@idProveedor = idProveedor ,@fechaVencimiento = fechaVencimiento FROM @document
+		SELECT TOP 1 @fechaEmision = fechaEmision ,@importeTotal = importeTotal ,@idProveedor = idProveedor ,@fechaVencimiento = fechaVencimiento, @subcategoryId = subcategoryId FROM @document
 
         SELECT TOP 1 @identificacion = numeroIdentificacion ,@CustomerId = ISNULL(CustomerId,0) FROM dbo.Proveedor WITH (NOLOCK) WHERE idProveedor = @idProveedor
 
@@ -347,11 +349,12 @@ BEGIN
 
 		    --> Contabilidad
 		    UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
-               SET idProveedor      = @idProveedor
-		          ,identificacion   = @identificacion
-		          ,fechaEmision     = @fechaEmision
-                  ,fechaVencimiento = @fechaVencimiento
-		          ,importeTotal     = @importeTotal
+               SET idProveedor      =   @idProveedor
+		          ,identificacion   =   @identificacion
+		          ,fechaEmision     =   @fechaEmision
+                  ,fechaVencimiento =   @fechaVencimiento
+		          ,importeTotal     =   @importeTotal
+                  ,subcategoryId    =   @subcategoryId
             WHERE idDocumento = @id 
               AND codDoc = 'DH'
 
