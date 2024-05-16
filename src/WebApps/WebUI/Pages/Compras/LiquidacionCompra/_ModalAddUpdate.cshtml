@@ -141,6 +141,17 @@
             </div>
             </div> *@
         </div>
+        <div class="row" ng-show="showHeader">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                    <label for="subcategoryId">Subcategoría:</label>
+                    <select id="subcategoryId" name="subcategoryId" class="form-control" ng-model="data.subcategoryId">
+                        <option ng-value="item.id" ng-repeat="item in subcategories">{{item.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
 
         <div class="row">
             <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
@@ -174,16 +185,6 @@
                             {{data.idLiquidacionCompra>0?'Actualizar': 'Guardar'}}
                         </button>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" ng-show="showHeader">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div class="form-group">
-                    <label for="subcategoryId">Subcategoría:</label>
-                    <select id="subcategoryId" name="subcategoryId" class="form-control" ng-model="data.subcategoryId">
-                        <option ng-value="item.id" ng-repeat="item in subcategories">{{item.name}}</option>
-                    </select>
                 </div>
             </div>
         </div>
