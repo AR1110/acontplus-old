@@ -50,7 +50,7 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="3" class="text-right"><b>Total: </b></td>
-                                    <td class="text-right">$ ${$scope.licenses.reduce((prev, next) => prev + next.total, 0).toFixed(2)}</td>
+                                    <td class="text-right">$ ${$scope.licenses[0].totalGlobal.toFixed(2)}</td>
                                 </tr>
                             </tfoot>
                          </table>`
@@ -149,15 +149,17 @@
             const documentsPromises = getDocs().catch(error => { console.log(error) });
             $q.all([dashboardPromises, documentsPromises]).then(response => {
                 if (response[0]) {
-                    let dashboard = JSON.parse(response[0].payload);
-                    $scope.cantidad = angular.fromJson(dashboard[0].statistics);
-                    $scope.licenses = angular.fromJson(dashboard[0].licenses) || []
+                    let { statistics, licenses } = JSON.parse(response[0].payload)
+                    $scope.cantidad = angular.fromJson(statistics)
+                    $scope.licenses = angular.fromJson(licenses) || []
+
+                    console.log($scope.licenses)
 
                     if ($scope.licenses.length > 0) {
-                        let expired = angular.fromJson(dashboard[0].licenses)[0].expired || false
+                        let expired = $scope.licenses[0].expired || false
 
                         if (expired) {
-                            warningMessage = angular.fromJson(dashboard[0].licenses)[0].warningMessage
+                            warningMessage = $scope.licenses[0].warningMessage
                             $scope.openAlertExpired()
                             return
                         }

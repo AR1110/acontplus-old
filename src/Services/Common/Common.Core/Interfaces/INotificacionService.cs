@@ -1,7 +1,9 @@
-﻿namespace Common.Core.Interfaces
+﻿using Common.Core.Models;
+
+namespace Common.Core.Interfaces
 {
     public interface INotificacionService
     {
-        Task<string> AddAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
     }
 }
