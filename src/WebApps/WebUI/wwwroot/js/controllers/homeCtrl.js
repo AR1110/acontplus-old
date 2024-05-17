@@ -153,8 +153,6 @@
                     $scope.cantidad = angular.fromJson(statistics)
                     $scope.licenses = angular.fromJson(licenses) || []
 
-                    console.log($scope.licenses)
-
                     if ($scope.licenses.length > 0) {
                         let expired = $scope.licenses[0].expired || false
 
@@ -164,25 +162,28 @@
                             return
                         }
                     }
+                    let maxPaymentDate = $scope.licenses[0].maxPaymentDate;
+                    let date1 = new Date();
+                    let date2 = new Date(maxPaymentDate);
+
+                    // To calculate the time difference of two dates 
+                    let differenceInTime = date2.getTime() - date1.getTime();
+
+                    // To calculate the no. of days between two dates 
+                    let differenceInDays = differenceInTime / (1000 * 3600 * 24);
 
                     if ($scope.licenses.length == 1) {
-                        let maxPaymentDate = $scope.licenses[0].maxPaymentDate;
                         warningMessage = $scope.licenses[0].warningMessage;
                         $scope.countDownDate = new Date(maxPaymentDate).setMinutes(new Date().getMinutes() + 5);
 
-                        let date1 = new Date();
-                        let date2 = new Date(maxPaymentDate);
 
-                        // To calculate the time difference of two dates 
-                        let differenceInTime = date2.getTime() - date1.getTime();
 
-                        // To calculate the no. of days between two dates 
-                        let differenceInDays = differenceInTime / (1000 * 3600 * 24);
+
                         if (differenceInDays <= 30) {
                             $scope.startTimer();
                         }
                     }
-                    if ($scope.licenses.length > 1) {
+                    if ($scope.licenses.length > 1 && differenceInDays <= 30) {
                         $scope.openAlertMultiple();
                     }
                 }
