@@ -248,6 +248,11 @@
 </div>
 
 @section Scripts { 
-    <script src="~/js/compras/controllers/liquidacionCompraCtrl.min.js" asp-append-version="true"></script>
+    <environment include="Development">
+        <script src="~/js/compras/controllers/liquidacionCompraCtrl.js" asp-append-version="true"></script>
+    </environment>
+    <environment include="Staging,Production">
+        <script src="~/js/compras/controllers/liquidacionCompraCtrl.min.js" asp-append-version="true"></script>
+    </environment>
 
 }

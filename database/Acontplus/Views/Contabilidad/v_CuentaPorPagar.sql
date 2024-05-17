@@ -1,7 +1,7 @@
 USE AcontPlus
 GO
 
-CREATE OR ALTER VIEW v_CuentaPorPagar AS (
+CREATE OR ALTER VIEW v_CuentaPorPagar WITH SCHEMABINDING AS (
 	SELECT cp.idCuentaPorPagar
 	      ,cp.idProveedor
 		  ,cp.idTiempoCredito
@@ -32,10 +32,13 @@ CREATE OR ALTER VIEW v_CuentaPorPagar AS (
 		                                                         ELSE 0 END 
 		  ,usuario = us.nombreUsuario
           ,tc.descripcion as tiempoCredito
+          ,cp.subcategoryId
+          ,s.[Name] subcategoryName
 	FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
 	INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = cp.idEstablecimiento 
-	INNER JOIN Proveedor             pr WITH (NOLOCK) ON pr.idProveedor       = cp.idProveedor
-	INNER JOIN EstadoPago            ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
-	INNER JOIN Usuario               us WITH (NOLOCK) ON us.idUsuario         = cp.idUsuario
-     LEFT JOIN TiempoCredito         tc WITH (NOLOCK) ON tc.idTiempoCredito   = cp.idTiempoCredito
+	INNER JOIN dbo.Proveedor             pr WITH (NOLOCK) ON pr.idProveedor       = cp.idProveedor
+	INNER JOIN dbo.EstadoPago            ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
+	INNER JOIN dbo.Usuario               us WITH (NOLOCK) ON us.idUsuario         = cp.idUsuario
+    LEFT JOIN dbo.TiempoCredito         tc WITH (NOLOCK) ON tc.idTiempoCredito   = cp.idTiempoCredito
+    LEFT JOIN Contabilidad.Subcategory s WITH (NOLOCK) ON cp.subcategoryId = s.Id 
 )

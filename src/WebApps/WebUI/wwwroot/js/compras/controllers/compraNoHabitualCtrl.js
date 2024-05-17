@@ -416,6 +416,7 @@
         $scope.puntosEmision = [];
         $scope.tiemposCredito = [];
         $scope.datosAdicionalesArticulo = [];
+        $scope.subcategories = []
 
         $scope.cuotas = [];
 
@@ -501,7 +502,8 @@
                     estabs,
                     decimal,
                     tarifasImpuesto,
-                    tiemposCredito
+                    tiemposCredito,
+                    subcategories,
                 } = mainDataForm;
 
                 $scope.establecimientos = estabs;
@@ -509,6 +511,7 @@
                 $scope.decimal = decimal;
                 $scope.tarifasImpuesto = tarifasImpuesto;
                 $scope.tiemposCredito = tiemposCredito;
+                $scope.subcategories = subcategories;
 
                 if (!("comprobante" in params && params.comprobante.idDocumentoIngreso > 0)) {
                     if ($scope.establecimientos.length > 0) {

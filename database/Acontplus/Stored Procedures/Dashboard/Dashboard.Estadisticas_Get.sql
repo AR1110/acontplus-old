@@ -79,7 +79,7 @@ BEGIN
                                         REPLACE(
                                                 REPLACE(s.warningMessage, '$Costo', CONVERT(VARCHAR, CAST( s.total  as numeric(18,2)))), '$FechaMaximaPago', CONVERT(VARCHAR, FORMAT(s.maxPaymentDate, 'dd/MM/yyyy'), 106)
                                             ), '$Tipo', lt.[Name]) warningMessage
-                                    , lt.[Name] licenseType
+                                    , lt.[Name] + ' - ' + a.[Name] licenseType
                                     , l.code licenseCode
                                     , s.total
                                     , st.[Name] susbscriptionType 
@@ -95,6 +95,7 @@ BEGIN
                              INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON ld.LicenciaId = l.Id
                              INNER JOIN AcontplusAdmin.Config.LicenseType lt ON l.LicenseTypeId = lt.Id
                              INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH (NOLOCK) ON s.SubscriptionTypeId = st.Id
+                             INNER JOIN AcontplusAdmin.Config.Aplicacion a ON ld.AplicacionId = a.Id
                              WHERE ur.idUsuarioRol = @idUsuarioRol
                                 AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate                                                       
                                 AND ur.estado = 1 FOR JSON PATH)
@@ -107,7 +108,7 @@ BEGIN
 		@facturaVenta	   as cantidadFacturaV,
 		@facturaCompra	   as cantidadFacturaC,
 		@proforma		   as cantidadProforma,
-		@notaEntrega	   as cantidadNotaEntrega FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as 'statistics', '[]' licenses FOR JSON PATH
+		@notaEntrega	   as cantidadNotaEntrega FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as 'statistics', ISNULL(@licenses, '[]') licenses FOR JSON PATH
 
 END
 
