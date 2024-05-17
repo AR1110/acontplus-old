@@ -25,7 +25,7 @@
             <div class="form-group">
                 <label for="vendedor">Vendedor: <span class="text-danger">*</span></label>
                 <select name="vendedor" id="vendedor" class="form-control border-select"
-                    ng-model="data.idUsuario">
+                    ng-model="comprobante.idUsuario">
                     <option ng-value="item.idUsuario" ng-repeat="item in vendedores">
                         {{item.nombreCompleto}}
                     </option>

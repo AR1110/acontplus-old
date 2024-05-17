@@ -763,7 +763,7 @@
                 }
 
                 let dataUsuario = $scope.vendedores.find(item => (item.predeterminado));
-                if ($scope.vendedores.length > 0 && dataUsuario) {
+                if ($scope.vendedores.length > 0 && !$scope.config.multipleVendedor) {
                     $scope.data.idUsuario = dataUsuario.idUsuario
                 } else {
                     $scope.data.idUsuario = 0;
@@ -1309,6 +1309,7 @@
         async function setCustomerData(item) {
             let dataCliente = await clienteSvc.findById(item.idCliente);
             $scope.cliente = dataCliente;
+      
             $scope.data.fechaEmision = new Date();
             $scope.$apply();
         }

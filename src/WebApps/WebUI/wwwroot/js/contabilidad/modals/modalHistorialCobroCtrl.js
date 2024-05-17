@@ -192,6 +192,7 @@ function ModalCobroDetalleCtrl($scope, $uibModalInstance, comprobanteIngresoSvc,
                 }
                 if (response.code == "1") {
                     tS.toastr('success', response.message, response.titleSms);
+                    initialLoad()
                     isRefreshPage = true;
                     // $uibModalInstance.close(response)
                 }
