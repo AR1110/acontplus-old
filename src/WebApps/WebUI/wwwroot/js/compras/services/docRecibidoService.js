@@ -3,7 +3,7 @@
 
     'use strict';
 
-    app.factory('docRecibidoService', function ($injector) {
+    app.factory('docRecibidoService', ['$injector',function ($injector) {
 
 
         const URL = 'Compra/DocumentoRecibido/'
@@ -282,5 +282,5 @@
         }
 
 
-    })
+    }])
 })(window.angular)

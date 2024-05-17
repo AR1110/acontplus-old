@@ -1,17 +1,13 @@
 ﻿using Common.Core.Interfaces;
+using Common.Core.Models;
 
 namespace Common.Application.Services
 {
-    public class DashboardService : IDashboardService
+    public class DashboardService(IADORepository repository) : IDashboardService
     {
-        private readonly IADORepository _repository;
-        public DashboardService(IADORepository repository)
+        public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            _repository = repository;
-        }
-        public async Task<string> GetAsync(Dictionary<string, object> parameters)
-        {
-            return await _repository.SPExecuteDeprecatedAsync("Dashboard.Estadisticas_Get", parameters);
+            return await repository.SPExecuteAsync("Common.Dashboard_Get", parameters);
         }
     }
 }

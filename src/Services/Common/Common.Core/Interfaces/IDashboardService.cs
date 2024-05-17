@@ -1,7 +1,9 @@
-﻿namespace Common.Core.Interfaces
+﻿using Common.Core.Models;
+
+namespace Common.Core.Interfaces
 {
     public interface IDashboardService
     {
-        Task<string> GetAsync(Dictionary<string, object> parameters);
+        Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
     }
 }
