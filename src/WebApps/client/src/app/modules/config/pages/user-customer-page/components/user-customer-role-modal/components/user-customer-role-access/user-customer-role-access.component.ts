@@ -1,62 +1,42 @@
-import { SelectionModel } from '@angular/cdk/collections';
-import { Component } from '@angular/core';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
+import {Component, inject} from '@angular/core';
+import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
+import {UserCustomerRoleService} from "@modules/config/services/user-customer/user-customer-role.service";
+import {Menu} from "@modules/config/models/menu.model";
+import { NgbAccordionModule} from "@ng-bootstrap/ng-bootstrap";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-];
 
 @Component({
   selector: 'app-user-customer-role-access',
   standalone: true,
-  imports: [MatTableModule, MatCheckboxModule],
+  imports: [NgbAccordionModule, FontAwesomeModule ],
   templateUrl: './user-customer-role-access.component.html',
   styles: ``
 })
 export class UserCustomerRoleAccessComponent {
-  displayedColumns: string[] = ['select', 'position', 'name', 'weight', 'symbol'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
-  selection = new SelectionModel<PeriodicElement>(true, []);
 
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
+  state = inject(UserCustomerRoleStateService)
+  userRoleId = this.state.select("userRoleId")
+
+  userCustomerRoleSvc = inject(UserCustomerRoleService)
+  menus:Menu[] = [];
+
+  getAccesses(){
+    this.userCustomerRoleSvc.getAccesses(this.userRoleId()).subscribe(response=>{
+      this.menus = response.menus;
+    })
+  }
+  ngOnInit(){
+    this.getAccesses()
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  toggleAllRows() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-      return;
-    }
+  askToDelete(data:any){
 
-    this.selection.select(...this.dataSource.data);
   }
 
-  /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: PeriodicElement): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  onActionsOpen(data:any){
+
   }
+
 }
