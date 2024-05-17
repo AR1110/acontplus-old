@@ -596,7 +596,7 @@
         </uib-tab>
 
         <!--UBICACIONES-->
-        <uib-tab index="4" heading="Ubicación" select="onTabArticulo(4)">
+        <uib-tab index="4" heading="Ubicación" select="onTabArticulo(4)" disable="!articlePermission.gestionUbicacion">
             <!--Agregar-->
             <div class="card-body" ng-if="tipoRegistro===1">
                 <div class="row">

@@ -2,7 +2,6 @@ import { Component, inject, Input } from '@angular/core'
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToasterService } from '@core/services/toaster.service';
-import { hideLoader, showLoader } from '@core/utils/loader';
 import { Role } from '@modules/config/models/role.model';
 import { UserCustomerService } from '@modules/config/services/user-customer/user-customer.service';
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
@@ -46,15 +45,9 @@ export class UserCustomerAddEditModalComponent {
 
   ngOnInit() {
     try {
-      showLoader();
       this.userCustomerSvc.getDataForm().subscribe({
         next: (response: any) => {
-          hideLoader();
           this.roles = response.roles;
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
         },
       })
       if (this.params.idUsuario > 0) {
@@ -92,7 +85,6 @@ export class UserCustomerAddEditModalComponent {
         );
       }
     } catch (error) {
-      hideLoader();
     }
   }
 
@@ -127,10 +119,7 @@ export class UserCustomerAddEditModalComponent {
     }
 
     if (this.params.idUsuario > 0) {
-      showLoader();
-      this.userCustomerSvc.put(this.params.idUsuario, data).subscribe({
-        next: (response) => {
-          hideLoader()
+      this.userCustomerSvc.put(this.params.idUsuario, data).subscribe(response=>{
           if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
@@ -146,21 +135,12 @@ export class UserCustomerAddEditModalComponent {
               this.modal.close(response)
             }
           }
-
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
       })
     }
 
     if (!(this.params.idUsuario > 0)) {
-      showLoader();
-      this.userCustomerSvc.post(data).subscribe({
-        next: (response) => {
-          hideLoader();
-          if (isApiResponse(response)) {
+      this.userCustomerSvc.post(data).subscribe(response=>{
+        if (isApiResponse(response)) {
             if (response.code === "0") {
               this.tS.toastr({
                 type: 'warning',
@@ -175,12 +155,6 @@ export class UserCustomerAddEditModalComponent {
               this.modal.close(response)
             }
           }
-
-        },
-        error(err) {
-          hideLoader();
-          console.log(err)
-        },
       })
     }
 

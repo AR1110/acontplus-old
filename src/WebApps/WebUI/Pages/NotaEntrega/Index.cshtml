@@ -206,7 +206,7 @@
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="ne in notaEntregas | orderBy: dataSearch.order" ng-class="ne.style">
+                            <tr md-row ng-repeat="ne in notaEntregas | orderBy: dataSearch.order" ng-class="{'table-success': ne.convertToDoc, 'table-danger': ne.esAnulado}">
                                 <td md-cell>
                                     <div class="d-flex">
                                         <md-menu>

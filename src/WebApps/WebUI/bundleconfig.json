@@ -688,5 +688,29 @@
     "inputFiles": [
       "wwwroot/js/contabilidad/services/subcategoryService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/services/compraService.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/services/compraService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/controllers/facturaCompraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/controllers/facturaCompraCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/controllers/liquidacionCompraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/controllers/liquidacionCompraCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/controllers/compraNoHabitualCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/controllers/compraNoHabitualCtrl.js"
+    ]
   }
 ]

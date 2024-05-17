@@ -57,6 +57,7 @@ BEGIN
         ,descuento NUMERIC(18,5) NOT NULL
         ,importeTotal NUMERIC (18,5) NOT NULL
         ,observacion VARCHAR(300) NULL
+        ,subcategoryId  INT
 	)
 
 	DECLARE @tblDetails AS TABLE (
@@ -128,21 +129,21 @@ BEGIN
         )
 
 		INSERT INTO @document 
-		      (idPuntoEmision,idProveedor,idTiempoCredito,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento)
-		SELECT idPuntoEmision,idProveedor,idTiempoCredito,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento
+		      (idPuntoEmision,idProveedor,idTiempoCredito,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento, subcategoryId)
+		SELECT idPuntoEmision,idProveedor,idTiempoCredito,fechaEmision,fechaVencimiento,totalSinImpuestos,importeTotal,observacion,descuento,porcentajeDescuento, subcategoryId
 		FROM OPENJSON(@comprobante)WITH 
         (
-             idPuntoEmision      INT           
-		    ,idProveedor         INT            
-		    ,idTiempoCredito     INT           
-		    ,fechaEmision        DATETIME2     
-		    ,fechaVencimiento    DATETIME2     
-		    ,totalSinImpuestos   NUMERIC(18,5) 
-            ,descuento           NUMERIC(18,5) 
-            ,porcentajeDescuento NUMERIC(18,5) 
-		    ,importeTotal        NUMERIC(18,5) 
-            ,observacion         VARCHAR(300)
-
+             idPuntoEmision         INT           
+		    ,idProveedor            INT            
+		    ,idTiempoCredito        INT           
+		    ,fechaEmision           DATETIME2     
+		    ,fechaVencimiento       DATETIME2     
+		    ,totalSinImpuestos      NUMERIC(18,5) 
+            ,descuento              NUMERIC(18,5) 
+            ,porcentajeDescuento    NUMERIC(18,5) 
+		    ,importeTotal           NUMERIC(18,5) 
+            ,observacion            VARCHAR(300)
+            ,subcategoryId          INT
 		) as dt
 		
 		INSERT INTO @tblDetails
@@ -357,8 +358,10 @@ BEGIN
 
 			--> Contabilidad 
 			INSERT INTO Contabilidad.CuentaPorPagar WITH (ROWLOCK)
-                   (idEstablecimiento,idTiempoCredito,idProveedor, idEstadoPago,codDoc, idDocumento,        uniqueId,serieComprobante,  identificacion,fechaEmision,fechaVencimiento,importeTotal, idEntidad, idUsuario)
-		    SELECT @idEstablecimiento,idTiempoCredito,idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,@uniqueId,@serieComprobante,@identificacion,fechaEmision,fechaVencimiento,importeTotal,@idEntidad,@idUsuario 
+                   (idEstablecimiento,idTiempoCredito,idProveedor, idEstadoPago,codDoc, idDocumento, uniqueId,serieComprobante,  identificacion,
+                   fechaEmision,fechaVencimiento,importeTotal, idEntidad, idUsuario, subcategoryId)
+		    SELECT @idEstablecimiento,idTiempoCredito,idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,@uniqueId,@serieComprobante,@identificacion,
+            fechaEmision,fechaVencimiento,importeTotal,@idEntidad,@idUsuario, subcategoryId
             FROM @document
 
             SELECT @idCuentaPorPagar = SCOPE_IDENTITY()

@@ -5,7 +5,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { isApiResponse } from "@core/models/api-response";
 import { ToasterService } from "@core/services/toaster.service";
-import { hideLoader, showLoader } from "@core/utils/loader";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRole } from "@modules/config/models/user-customer/user-customer-role.model";
 import { UserCustomerPermissionService } from "@modules/config/services/user-customer/user-customer-permission.service";
@@ -62,20 +61,12 @@ export class UserCustomerRolePermissionComponent {
     let params = {
       idUsuarioRol
     }
-    showLoader();
-    this.userCustomerPermissionSvc.getAll(params).subscribe({
-      next:(response:any)=> {
-        hideLoader();
+    this.userCustomerPermissionSvc.getAll(params).subscribe((response:any)=> {
         this.usersCustomerAdmin = response.usersCustomerAdmin;
         this.mainPermission = response;
         this.setDataPermissionSale();
         this.setDataPermissionArticulo();
         this.setDataPermissionCashBox()
-      },
-      error(err) {
-          hideLoader();
-          console.log(err)
-      },
     })
   }
 
@@ -256,11 +247,7 @@ export class UserCustomerRolePermissionComponent {
         dataPermissions
       }
 
-
-      showLoader();
-      this.userCustomerPermissionSvc.put(data).subscribe({
-        next: (response)=> {
-          hideLoader();
+      this.userCustomerPermissionSvc.put(data).subscribe( (response)=> {
             if(isApiResponse(response)){
               if(response.code==='0'){
                 this.tS.toastr({
@@ -276,11 +263,6 @@ export class UserCustomerRolePermissionComponent {
                 this.getUserPermissions(this.idUsuarioRol)
               }
             }
-        },
-        error(err) {
-            hideLoader();
-            console.log(err)
-        },
       })
     } catch (error) {
       console.log(error)

@@ -58,7 +58,7 @@ public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRec
         return await repository.SPExecuteAsync("Recepcion.Documento_Delete", parameters);
     }
 
-    public async Task<ApiResponse> UploadXml(Dictionary<string, object> parameters)
+    public async Task<ApiResponse> UploadXmlAsync(Dictionary<string, object> parameters)
     {
         return await repository.SPExecuteAsync("Recepcion.Documento_Upload_Xml", parameters);
     }
@@ -75,5 +75,15 @@ public class DocumentoRecibidoService(IADORepository repository) : IDocumentoRec
         {
             return null;
         }
+    }
+
+    public async Task<ApiResponse> UpdateSubcategoryAsync(ApiRequest request)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", request.UserRoleId },
+            { "json", DataConverters.SerializeDictionary(request.Data) }
+        };
+        return await repository.SPExecuteAsync("Recepcion.Documento_Update_Subcategory", parameters);
     }
 }

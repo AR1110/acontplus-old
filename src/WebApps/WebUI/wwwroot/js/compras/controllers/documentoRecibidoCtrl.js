@@ -303,76 +303,7 @@
             }
         };
 
-        $scope.showOptions = function () {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-dark btn-sm",
-                },
-                buttonsStyling: false,
-            });
-
-            swalWithBootstrapButtons.fire({
-                title: `${$scope.selected[0].subcategoryName}`,
-                html: `<div> ${$scope.selected[0].comprobante} <strong> ${$scope.selected[0].serieComprobante} </strong> </div>
-                            <div class="btn btn-group btn-group-sm" role="group">
-                                <button type="button" id="btnImportar" class="btn btn-info btn-sm" title="Importar Comprobante"><i class="ti-upload"></i> Visualizar</button>
-                                <button type="button" id="btnUpdateXml" class="btn btn-success btn-sm" title="Actualizar Xml Sri"><i class="fa fa-sync"></i> Actualizar Xml</button>
-                                <button type="button" id="btnDelete" class="btn btn-danger btn-sm" title="Eliminar"><i class="ti-trash"></i> Eliminar</button> 
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Más opciones">
-                                      <i class="fa fa-bars"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a id="btnDocRel" class="dropdown-item" href="#" title="Documentos relacionados"><i class="fa fa-link"></i> Docs. Rel.</a>
-                                        <a id="btnDownloadXml" class="dropdown-item" href="#" title="Descargar Xml"><i class="ti-download"></i> Descargar Xml</a>
-                                        <a id="btnSubcategoryEdit" class="dropdown-item" href="#" title="Editar subcategoría"><i class="ti-pencil"></i> Editar subcategoría</a>
-                                    </div>
-                              </div>
-                            </div>`,
-                width: 600,
-                showCancelButton: true,
-                showConfirmButton: false,
-                cancelButtonText: "Cancelar",
-                reverseButtons: true,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                allowEnterKey: false,
-            });
-
-            if ($scope.selected[0].complete) {
-                document.getElementById("btnDelete").style.display = "none";
-                document.getElementById("btnUpdateXml").style.display = "none";
-            }
-            document.getElementById("btnImportar").onclick = function (event) {
-                getId();
-                Swal.close();
-                event.preventDefault();
-            };
-            document.getElementById("btnUpdateXml").onclick = function (event) {
-                putXml();
-                event.preventDefault();
-            };
-            document.getElementById("btnDelete").onclick = function (event) {
-                askToDelete();
-                event.preventDefault();
-            };
-            document.getElementById("btnDocRel").onclick = function (event) {
-                getMergedDocs();
-                event.preventDefault();
-            };
-            document.getElementById("btnDownloadXml").onclick = function (event) {
-                downloadXml();
-                event.preventDefault();
-            };
-            document.getElementById("btnSubcategoryEdit").onclick = function (event) {
-                Swal.close();
-                editSubcategory();
-                event.preventDefault();
-            };
-        };
-
-        async function editSubcategory() {
+        $scope.editSubcategory = async () => {
             subcategories = await subcategoryService.get({ params: { tipo: 1 } });
 
             if (subcategories.length == 0) {
@@ -386,8 +317,9 @@
                     controller: "modalSubcategoryCtrl",
                     template: `${TEMPLATE_URL}_ModalSubcategory.cshtml`,
                     centered: true,
+                    size: 'lg',
                     params: {
-                        selected: $scope.selected[0],
+                        selected: $scope.selected,
                         subcategories,
                     },
                     isRenderRazorPartial: true,
@@ -399,15 +331,12 @@
                 });
         }
 
-        function getId() {
+        $scope.getById = (item) => {
             try {
+                $scope.selected.push(item);
                 docRecibidoSvc
-                    .getId($scope.selected[0].idDocumento)
+                    .getId(item.idDocumento)
                     .then((response) => {
-                        // if (response.code === "0") {
-                        //     tS.toastr('warning', response.message);
-                        //     return
-                        // }
                         if (!response.payload) {
                             tS.toastr("warning", "Aun no se actualizado el Xml del SRI");
                             return;
@@ -497,54 +426,23 @@
             }
         }
 
-        function putXml() {
-                docRecibidoSvc
-                    .putXml($scope.selected[0].idDocumento)
-                    .then((response) => {
-                        if (response.code == 0) {
-                            tS.toastr("warning", response.message);
-                            return;
-                        }
-                        if (response.code == 1) {
-                            tS.toastr("success", response.message);
-                            return;
-                        }
-                    }); 
+        $scope.putXml = (item) => {
+            $scope.selected.push(item);
+            docRecibidoSvc
+                .putXml($scope.selected[0].idDocumento)
+                .then((response) => {
+                    if (response.code == 0) {
+                        tS.toastr("warning", response.message);
+                        return;
+                    }
+                    if (response.code == 1) {
+                        tS.toastr("success", response.message);
+                        return;
+                    }
+                });
         }
-
-        function askToUploadXml() {
-            Swal.fire({
-                title: "Xml no encontrado!",
-                text: "Desea subir el xml manualmente?",
-                icon: "info",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Si",
-                cancelButtonText: "No",
-                allowOutsideClick: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    modalSvc
-                        .openModalCustom({
-                            controller: "modalXmlIndividualCtrl",
-                            template: `${TEMPLATE_URL}_ModalXmlIndividual.cshtml`,
-                            size: "md",
-                            params: {
-                                selected: $scope.selected,
-                            },
-                            isRenderRazorPartial: true,
-                        })
-                        .result.then((result) => {
-                            if (typeof result === "object") {
-                                $scope.showOptions();
-                            }
-                        });
-                }
-            });
-        }
-
-        function askToDelete() {
+        $scope.askToDelete = (item) => {
+            $scope.selected.push(item);
             $scope.itemToDelete = $scope.selected[0];
             Swal.fire({
                 title: "¿Está seguro de eliminar este comprobante?",
@@ -572,7 +470,8 @@
             });
         }
 
-        function downloadXml() {
+        $scope.downloadXml = (item) => {
+            $scope.selected.push(item);
             let id = $scope.selected[0].idDocumento;
             return docRecibidoSvc.downloadXml(id).then((response) => {
                 let filename = `${$scope.selected[0].serieComprobante}.xml`;
@@ -592,9 +491,9 @@
                 document.body.removeChild(link);
             });
         }
-        function getMergedDocs() {
+        $scope.getMergedDocs = (item) => {
             try {
-                Swal.close();
+                $scope.selected.push(item);
                 modalSvc.openModalCustom({
                     controller: [
                         "$scope",
@@ -2107,12 +2006,33 @@
     modalSubcategoryCtrl.$inject = ["$scope", "$uibModalInstance", "params"];
     function modalSubcategoryCtrl($scope, $uibModalInstance, params) {
         let { selected, subcategories } = params;
-        console.log(selected)
-        $scope.selected = selected;
+        $scope.selectedDocs = structuredClone(selected);
+        $scope.data = {};
         $scope.subcategories = subcategories;
 
         $scope.onSave = () => {
-
+            if (!$scope.data.subcategoryId || $scope.data.subcategoryId == 0) {
+                return tS.toastr('warning', "Debe seleccionar una subcategoría!")
+            }
+            $scope.mappedDocs = $scope.selectedDocs.map(doc => ({ idDocumento: doc.idDocumento }));
+            let data = {
+                subcategoryId: $scope.data.subcategoryId,
+                docs: JSON.stringify($scope.mappedDocs),
+            }
+            docRecibidoSvc.updateSubcategory(data).then(response => {
+                if (response.code == "1") {
+                    $uibModalInstance.close(response);
+                    tS.toastr('success', response.message);
+                } else {
+                    tS.toastr('warning', response.message);
+                }
+            })
+        }
+        $scope.onDelete = (index) => {
+            $scope.selectedDocs.splice(index, 1);
+            if ($scope.selectedDocs.length == 0) {
+                $scope.onModalClose();
+            }
         }
         $scope.onModalClose = function () {
             $uibModalInstance.close();

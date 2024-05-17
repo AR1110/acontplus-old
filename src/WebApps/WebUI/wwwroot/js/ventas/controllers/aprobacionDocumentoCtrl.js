@@ -563,9 +563,9 @@
                 subGridVariable: 'subGridScopeVariable'
             },
             expandableRowHeight: 150,
-            isRowSelectable: function (row) {
-                return ["AC", "PE"].includes(row.entity.codEstado);
-            }
+            // isRowSelectable: function (row) {
+            //     return ["AC", "PE"].includes(row.entity.codEstado);
+            // }
         }
 
 

@@ -240,7 +240,7 @@
                 }
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
-                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito } = results;
+                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito, subcategories } = results;
 
 
                     let dataToGroup = {
@@ -256,7 +256,8 @@
                         estabs,
                         decimal,
                         tarifasImpuesto,
-                        tiemposCredito: tiempoCredito
+                        tiemposCredito: tiempoCredito,
+                        subcategories,
                     }
                 }
             })
@@ -363,6 +364,7 @@
                 transporte: data.transporte || 0,
                 total: data.total,
                 observacion: data.observacion || null,
+                subcategoryId: data.subcategoryId || null
             }
             return result;
         }
@@ -440,6 +442,7 @@
                             total: comprobante.total,
                             observacion: comprobante.observacion,
                             irbpnr: comprobante.irbpnr,
+                            subcategoryId: comprobante.subcategoryId,
                         }
 
 
@@ -620,7 +623,7 @@
                 response => {
                     if (response.code == "1") {
                         const mainData = JSON.parse(response.payload);
-                        const { bodegas, configDecimales, impuestos, tiempoCredito, categoriasCompra, sustentosTributario } = mainData;
+                        const { bodegas, configDecimales, impuestos, tiempoCredito, categoriasCompra, sustentosTributario, subcategories } = mainData;
 
                         const estabs = fS.groupEstabBodega(bodegas);
                         const decimal = configDecimales[0];
@@ -632,7 +635,8 @@
                             tarifasImpuesto,
                             tiemposCredito,
                             categoriasCompra,
-                            sustentosTributario
+                            sustentosTributario,
+                            subcategories,
                         }
 
                     } else {
@@ -690,7 +694,8 @@
                             estado: item.estado,
                             usuario: item.usuario,
                             totalRecords: item.totalRecords,
-                            style: item.style
+                            style: item.style,
+                            subcategoryId: item.subcategoryId,
                         }
                     ))
                 } else {
@@ -823,6 +828,7 @@
                             total: restComprobante.total,
                             observacion: restComprobante.observacion,
                             puntoEmision: restComprobante.puntoEmision,
+                            subcategoryId: restComprobante.subcategoryId,
                         }
 
                         const detalles = detallesApi.map((item, index) => {
@@ -961,6 +967,7 @@
                 transporte: data.transporte || 0,
                 total: data.total,
                 observacion: data.observacion || null,
+                subcategoryId: data.subcategoryId || null
             }
             return result;
         }
@@ -1116,7 +1123,7 @@
                 if (response.code === '1') {
                     let results = JSON.parse(response.payload) || [];
 
-                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito } = results;
+                    const { configDecimales, estab, impuestos, ptoEmi, tiempoCredito, subcategories } = results;
 
 
                     let dataToGroup = {
@@ -1132,7 +1139,8 @@
                         estabs,
                         decimal,
                         tarifasImpuesto,
-                        tiemposCredito: tiempoCredito
+                        tiemposCredito: tiempoCredito,
+                        subcategories,
                     }
                 }
             })
@@ -1181,7 +1189,9 @@
                         codEstado: item.codEstado,
                         isUpdate: item.codEstado === 'PE',
                         isDelete: item.codEstado === 'PE',
-                        totalRecords: item.totalRecords
+                        totalRecords: item.totalRecords,
+                        subcategoryId: item.subcategoryId,
+                        subcategoryName: item.subcategoryName,
                     }))
                 }
                 return [];
@@ -1235,7 +1245,8 @@
                 porcentajeDescuento: data.porcentajeDescuento,
                 descuento: data.totalDescuento,
                 importeTotal: data.total,
-                observacion: fS.isValidField(data.observacion)
+                observacion: fS.isValidField(data.observacion),
+                subcategoryId: data.subcategoryId || null
             }
             return result;
         }
@@ -1314,6 +1325,7 @@
                             porcentajeDescuento: comprobante.porcentajeDescuento || 0,
                             total: comprobante.total,
                             observacion: comprobante.observacion,
+                            subcategoryId: comprobante.subcategoryId,
                         }
 
 
