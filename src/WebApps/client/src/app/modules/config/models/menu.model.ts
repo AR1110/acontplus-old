@@ -1,7 +1,7 @@
-import {SubMenuNode} from "@modules/config/models/sub-menu.model";
+import {AccesoSubMenu, LicenciaSubMenu, SubMenuNode} from "@modules/config/models/sub-menu.model";
 
 export  interface  Menu {
-  id: number
+  menuId: number
   code: string
   url: string
   icon:string
@@ -10,3 +10,14 @@ export  interface  Menu {
   subMenusNode: SubMenuNode[]
 }
 
+export interface LicenciaMenu {
+  menuId: number
+  name: string
+  subMenus:LicenciaSubMenu[]
+}
+
+export  interface  AccesoMenu {
+  menuId: number
+  name: string
+  subMenus:AccesoSubMenu[]
+}
