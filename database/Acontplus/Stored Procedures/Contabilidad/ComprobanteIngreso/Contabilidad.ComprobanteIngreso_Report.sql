@@ -10,7 +10,6 @@ GO
 --
 -- This block of comments will not be included in
 -- the definition of the procedure.
-
 -- ================================================
 SET ANSI_NULLS ON
 GO
