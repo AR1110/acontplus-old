@@ -160,7 +160,7 @@ BEGIN
                   ,ap.estab + '-' + ap.ptoEmi as ptoEmi
                   ,ISNULL
                   ((
-                        SELECT TOP 1 (REPLICATE('0',(9-LEN(cd.ultimaSecuencia+1)))+CONVERT(NVARCHAR(10),cd.ultimaSecuencia+1)) 
+                        SELECT TOP 1 (REPLICATE('0',(9-LEN(cd.ultimaSecuencia)))+CONVERT(NVARCHAR(10),cd.ultimaSecuencia)) 
                         FROM dbo.ConfiguracionDocumento cd WITH (NOLOCK) 
                         WHERE cd.idPuntoEmision = ap.idPuntoEmision 
                           AND cd.idTipoDocumento = @TipoDocumentoId

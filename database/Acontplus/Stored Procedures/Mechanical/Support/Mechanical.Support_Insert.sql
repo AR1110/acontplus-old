@@ -104,6 +104,8 @@ BEGIN
 
 			SELECT @Id = SCOPE_IDENTITY()
 
+            UPDATE dbo.ConfiguracionDocumento WITH (ROWLOCK) SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @PuntoEmisionId AND idTipoDocumento = @TipoDocumentoId 
+
 		COMMIT TRAN 
         SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
 	END TRY 
