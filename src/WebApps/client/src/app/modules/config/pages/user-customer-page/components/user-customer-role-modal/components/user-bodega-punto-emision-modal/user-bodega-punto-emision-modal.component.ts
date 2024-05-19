@@ -10,7 +10,7 @@ import { UserCustomerCustomerRolePtoEmision } from "@modules/config/models/user-
 import { UserCustomerRoleBodegaService } from "@modules/config/services/user-customer/user-customer-role-bodega.service";
 import { UserCustomerRolePuntoEmisionService } from "@modules/config/services/user-customer/user-customer-role-punto-emision.service";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { forkJoin, Observable } from "rxjs";
+import { forkJoin } from "rxjs";
 import Swal from "sweetalert2";
 
 

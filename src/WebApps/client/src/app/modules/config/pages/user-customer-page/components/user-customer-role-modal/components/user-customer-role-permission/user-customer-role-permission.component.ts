@@ -8,6 +8,7 @@ import { ToasterService } from "@core/services/toaster.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { UserCustomerRole } from "@modules/config/models/user-customer/user-customer-role.model";
 import { UserCustomerPermissionService } from "@modules/config/services/user-customer/user-customer-permission.service";
+import {UserCustomerRoleStateService} from "@modules/config/store/user-customer/user-customer-role-state.service";
 
 
 @Component({
@@ -26,9 +27,11 @@ import { UserCustomerPermissionService } from "@modules/config/services/user-cus
 })
 export class UserCustomerRolePermissionComponent {
 
+  state = inject(UserCustomerRoleStateService)
+  userRoleId = this.state.select("userRoleId");
+
   private readonly userCustomerPermissionSvc = inject(UserCustomerPermissionService);
   private readonly tS = inject(ToasterService);
-  idUsuarioRol = 0;
 
   usersCustomerAdmin: UserCustomerRole[] = [];
   userCustomerAdminSelected = new FormControl([]);
@@ -56,10 +59,9 @@ export class UserCustomerRolePermissionComponent {
   permissionSaleDetailKey:string[] =[];
   permissionSaleAdditionalKey: string[] = [];
 
-  getUserPermissions(idUsuarioRol: number){
-    this.idUsuarioRol = idUsuarioRol;
+  getUserPermissions(){
     let params = {
-      idUsuarioRol
+      idUsuarioRol: this.userRoleId()
     }
     this.userCustomerPermissionSvc.getAll(params).subscribe((response:any)=> {
         this.usersCustomerAdmin = response.usersCustomerAdmin;
@@ -97,8 +99,7 @@ export class UserCustomerRolePermissionComponent {
   }
 
   ngOnInit(){
-    // this.updateAllCompleteSaleComprobante();
-    // this.updateAllCompleteSaleDetail();
+    this.getUserPermissions()
   }
 
 
@@ -260,7 +261,7 @@ export class UserCustomerRolePermissionComponent {
                   type: 'success',
                   message: response.message
                 })
-                this.getUserPermissions(this.idUsuarioRol)
+                this.getUserPermissions()
               }
             }
       })
