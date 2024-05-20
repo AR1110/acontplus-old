@@ -7,6 +7,7 @@ using Configuracion.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 using Services.Common.Extensions;
+using Common.Core.Models;
 
 namespace Configuracion.API.Controllers
 {
@@ -41,6 +42,27 @@ namespace Configuracion.API.Controllers
             {
                 _log.LogActivity("Error en get " + ex.Message);
                 return BadRequest("Error en get " + ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"id", id },
+                    {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+                };
+                var response = await User.UpdateAsync(parameters);
+                if (response == null) { return NoContent(); };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en put " + ex.Message);
+                return BadRequest("Error en put " + ex.Message);
             }
         }
 

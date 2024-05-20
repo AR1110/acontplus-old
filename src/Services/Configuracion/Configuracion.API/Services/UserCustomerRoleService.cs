@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Configuracion.API.Interfaces;
 
@@ -31,6 +32,10 @@ namespace Configuracion.API.Services
             }
         }
 
-         
+        public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+        {
+            return await _repository.SPExecuteAsync(nameSchema + "Update", parameters);
+        }
+
     }
 }
