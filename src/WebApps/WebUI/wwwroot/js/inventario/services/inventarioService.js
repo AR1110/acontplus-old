@@ -41,8 +41,6 @@
         return service;
     })
 
-
-
     /**
      * SubFamilias 
      */
@@ -53,7 +51,7 @@
         let service = {};
 
         service.getAll = function (query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -86,7 +84,7 @@
                 montoObjetivo: data.montoObjetivo,
                 siglas: data.siglas,
             }
-            return mS.getDataFile(url + "Post/?json=" + JSON.stringify(spParams), file, null, true);
+            return mS.getDataFile(url + "/?json=" + JSON.stringify(spParams), file, null, true);
         }
 
         service.update = function (id, data) {
@@ -97,7 +95,7 @@
                 estado: data.estado,
                 secuencial: data.ultimoSecuencial || 0
             }
-            return mS.getData('PUT', url + `Put/${id}/?json=${JSON.stringify(spParams)}`, null, true);
+            return mS.getData('PUT', url + `/${id}/?json=${JSON.stringify(spParams)}`, null, true);
         }
 
         service.delete = function (id) {

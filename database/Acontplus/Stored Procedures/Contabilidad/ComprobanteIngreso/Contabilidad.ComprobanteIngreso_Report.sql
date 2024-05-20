@@ -124,6 +124,7 @@ BEGIN
                                             , ci.nroDocumento
                                             , cc.idPuntoEmision                                            
                                             , cc.serieComprobante
+                                            , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
                                             , ef.descripcion
                                             , CAST(hc.saldo  AS NUMERIC(18,2))															AS totalDoc
                                             , CAST(hc.abono  AS NUMERIC(18,2))															AS abonoDoc
@@ -132,9 +133,9 @@ BEGIN
                                             , ISNULL(cd.descripcion, '''')																AS ciudad
                                             , co.idSubEntidadFinanciera         														AS idSubEntidadFinanciera
                                             , co.secuencial                                                                             AS secuencial
-                                            , co.fechaEmision
-                                            , (	CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END )						        AS codDoc
+                                            , co.fechaEmision                                            
                                             , co.idBanco
+                                            , co.observacion
                                             , (
 	                                            CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                            ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')
@@ -313,6 +314,7 @@ BEGIN
                                         , ci.nroDocumento
                                         , cc.idPuntoEmision
                                         , cc.serieComprobante
+                                        , (CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END)								        AS codDoc
                                         , cx.nroCuota
                                         , ef.descripcion
                                         , CAST(hc.saldo  AS NUMERIC(18,2))															        AS totalDoc
@@ -322,9 +324,9 @@ BEGIN
                                         , ISNULL(cd.descripcion, '''')																        AS ciudad
                                         , ISNULL(co.idSubEntidadFinanciera, 0)														        AS idSubEntidadFinanciera
                                         , co.secuencial                                                                                     AS secuencial
-                                        , co.fechaEmision
-                                        , (CASE cc.codDoc WHEN ''01'' THEN ''FV'' ELSE cc.codDoc END)								        AS codDoc
+                                        , co.fechaEmision                                        
                                         , co.idBanco
+                                        , co.observacion
                                         , (
 	                                        CASE ef.codigo WHEN ''EFE'' THEN  ''''
 								                                        ELSE  JSON_VALUE(dbo.f_sanitize_json(co.infoCobro), ''$.nro'')

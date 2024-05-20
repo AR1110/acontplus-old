@@ -23,7 +23,7 @@ namespace Inventario.API.Controllers
             _log = log;
         }
 
-        [HttpGet("Get")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             try
@@ -43,11 +43,12 @@ namespace Inventario.API.Controllers
             }
         }
 
-        [HttpPost("Post")]
+        [HttpPost]
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
             try
             {
+
                 if (file != null)
                 {
                     await _s3ObjectCustom.Add($"{User.GetIdCardCompany()}/subfamilias/", file);
@@ -81,7 +82,30 @@ namespace Inventario.API.Controllers
             }
         }
 
-        [HttpPut("Put/{id}")]
+        [HttpPost("Post")]
+        public async Task<IActionResult> PostApp(string json)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(json) },
+                    { "s3ObjectKey", _s3ObjectCustom.S3ObjectKey ?? "" },
+                    { "s3ObjectUrl", _s3ObjectCustom.S3ObjectUrl ?? "" },
+                };
+
+                var response = await _service.AddAsync(parameters);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en post " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
             try
@@ -118,7 +142,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error en put " + ex.Message);
+                _log.LogActivity("Error en delete " + ex.Message);
                 return BadRequest(ex.Message);
             }
         }
